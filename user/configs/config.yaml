@@ -1,0 +1,23 @@
+server:
+  http:
+    addr: 0.0.0.0:8500
+    timeout: 1s
+  grpc:
+    addr: 0.0.0.0:8501
+    timeout: 1s
+data:
+  database:
+    driver: mysql
+    source: root:rZakvdyjAmz73J8p@tcp(127.0.0.1:3309)/user?parseTime=true
+  redis:
+    addr: 127.0.0.1:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+  admin:
+    username: admin
+    password: zfe9R23Crbi7DybS
+
+security:
+  jwt:
+    expire_in: 2592000s #    30 days
+    secret: 6efa4458-b245-40a3-9685-6b30d5dcda49

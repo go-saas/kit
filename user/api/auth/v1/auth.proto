@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package user.api.auth.v1;
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/goxiaoy/go-saas-kit/user/api/auth/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.auth";
+
+service Auth {
+    rpc Register(RegisterAuthRequest) returns (RegisterAuthReply){
+        option (google.api.http) = {
+            post: "/v1/auth/register"
+            body:"*"
+        };
+    }
+    rpc Login(LoginAuthRequest) returns (LoginAuthReply){
+        option (google.api.http) = {
+            post: "/v1/auth/login",
+            body: "*",
+        };
+    }
+    rpc Token(LoginAuthRequest) returns (LoginAuthReply){
+        option (google.api.http) = {
+            post: "/v1/auth/token",
+            body: "*",
+        };
+    }
+    rpc Refresh(RefreshTokenAuthRequest) returns (RefreshTokenAuthReply){
+        option (google.api.http) = {
+            post: "/v1/auth/refresh",
+            body: "*",
+        };
+    }
+    rpc SendPasswordlessToken(PasswordlessTokenAuthRequest) returns(PasswordlessTokenAuthReply){
+        option (google.api.http) = {
+            post: "/v1/auth/action/passwordless",
+            body: "*",
+        };
+    }
+    rpc LoginPasswordless(LoginPasswordlessRequest) returns(LoginPasswordlessReply){
+        option (google.api.http) = {
+            post: "/v1/auth/login/passwordless",
+            body: "*",
+        };
+    }
+    rpc SendForgetPasswordToken(ForgetPasswordTokenRequest) returns(ForgetPasswordTokenReply){
+        option (google.api.http) = {
+            post: "/v1/auth/action/forget",
+            body: "*",
+        };
+    }
+    rpc ForgetPassword(ForgetPasswordRequest) returns (ForgetPasswordReply){
+        option (google.api.http) = {
+            post: "/v1/auth/password/forget",
+            body: "*",
+        };
+    }
+}
+
+message RegisterAuthRequest{
+
+}
+message RegisterAuthReply{
+
+}
+
+message LoginAuthRequest{
+    string username =1 [(validate.rules).string.min_len = 1];;
+    string password =2 [(validate.rules).string.min_len = 1];;
+}
+
+message LoginAuthReply{
+    string access_token=1;
+    // Bearer
+    string token_type=2;
+    // Expires time in seconds
+    int32 expires=3;
+    // Refresh token to keep login state
+    string refresh_token=4;
+}
+
+message RefreshTokenAuthRequest{
+
+}
+message RefreshTokenAuthReply{
+
+}
+message PasswordlessTokenAuthRequest{
+
+}
+message PasswordlessTokenAuthReply{
+
+}
+
+message LoginPasswordlessRequest{
+
+}
+message LoginPasswordlessReply{
+
+}
+message ForgetPasswordTokenRequest{
+
+}
+message ForgetPasswordTokenReply{
+
+}
+message ForgetPasswordRequest{
+
+}
+message ForgetPasswordReply{
+
+}

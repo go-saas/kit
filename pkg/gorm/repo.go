@@ -1,0 +1,77 @@
+package gorm
+
+import (
+	rql2 "github.com/a8m/rql"
+	"github.com/goxiaoy/go-saas-kit/pkg/rql"
+	g "gorm.io/gorm"
+)
+
+type Repo struct {
+
+}
+
+func (r *Repo) BuildQuery(db *g.DB, model interface{}, query interface{}) (*g.DB, error) {
+	if query == nil {
+		return db, nil
+	}
+	queryParser := rql2.MustNewParser(rql2.Config{
+		Model:    model,
+		FieldSep: ".",
+		OpPrefix: "",
+	})
+	q := rql2.Query{}
+	if page, ok := query.(rql.Page); ok {
+		q.Limit = int(page.GetPageSize())
+		q.Offset = int(page.GetPageOffset())
+	}
+	if sort, ok := query.(rql.Sort); ok {
+		q.Sort = sort.GetSort()
+	}
+	if filter, ok := query.(rql.Filter); ok {
+		q.Filter = filter.GetFilter()
+	}
+	if sel, ok := query.(rql.Select); ok {
+		if f := sel.GetFields(); f != nil {
+			q.Select = f.GetPaths()
+		}
+	}
+	p, err := queryParser.ParseQuery(&q)
+	if err != nil {
+		return db, err
+	}
+
+	ret :=db.Model(model)
+	if p.FilterExp!=""{
+		ret = ret.Where(p.FilterExp, p.FilterArgs)
+	}
+	if p.Sort !=""{
+		ret =ret.Order(p.Sort)
+	}
+	return ret.
+		Offset(p.Offset).
+		Limit(p.Limit), nil
+}
+
+func (r *Repo) BuildFilter(db *g.DB, model interface{}, query interface{}) (*g.DB, error) {
+	if query == nil {
+		return db, nil
+	}
+	queryParser := rql2.MustNewParser(rql2.Config{
+		Model:    model,
+		FieldSep: ".",
+		OpPrefix: "",
+	})
+	q := rql2.Query{}
+	if filter, ok := query.(rql.Filter); ok {
+		q.Filter = filter.GetFilter()
+	}
+	p, err := queryParser.ParseQuery(&q)
+	if err != nil {
+		return db, err
+	}
+	ret :=db.Model(model)
+	if p.FilterExp!=""{
+		ret = ret.Where(p.FilterExp, p.FilterArgs)
+	}
+	return ret, nil
+}

@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package user.api.account.v1;
+
+import "google/api/annotations.proto";
+import "user/api/user/v1/user.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+option go_package = "github.com/goxiaoy/go-saas-kit/user/api/account/v1;v1";
+
+service Account{
+  rpc GetProfile(GetProfileRequest)returns(GetProfileResponse){
+    option (google.api.http) = {
+      get: "/v1/account/profile"
+    };
+  }
+  rpc UpdateProfile(UpdateProfileRequest)returns(UpdateProfileResponse){
+    option (google.api.http) = {
+      put: "/v1/account/profile",
+      body:"*"
+    };
+  }
+  rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse){
+    option (google.api.http) = {
+      get: "/v1/account/settings"
+    };
+  }
+  rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse){
+    option (google.api.http) = {
+      put: "/v1/account/settings",
+      body:"*"
+    };
+  }
+  rpc GetAddresses(GetAddressesRequest) returns(GetAddressesReply){
+    option (google.api.http) = {
+      get: "/v1/account/addresses"
+    };
+  }
+  rpc UpdateAddresses(UpdateAddressesRequest) returns(UpdateAddressesReply){
+    option (google.api.http) = {
+      put: "/v1/account/addresses",
+      body:"*"
+    };
+  }
+}
+
+message GetProfileRequest{
+
+}
+message GetProfileResponse{
+  string  id=1;
+  google.protobuf.StringValue username =2;
+  google.protobuf.StringValue name=3;
+  google.protobuf.StringValue phone =4;
+  google.protobuf.StringValue email=5;
+  google.protobuf.Timestamp birthday=6;
+  //
+  .user.api.user.v1.Gender gender=7;
+  repeated .user.api.user.v1.Role roles=8;
+}
+message UpdateProfileRequest{
+
+}
+message UpdateProfileResponse{
+
+}
+message GetSettingsRequest{
+
+}
+message GetSettingsResponse{
+
+}
+message UpdateSettingsRequest{
+
+}
+message UpdateSettingsResponse{
+
+}
+message GetAddressesRequest{
+
+}
+
+message GetAddressesReply{
+
+}
+message UpdateAddressesRequest{
+
+}
+
+message UpdateAddressesReply{
+
+}
