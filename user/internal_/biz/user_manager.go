@@ -45,10 +45,10 @@ type Config struct {
 }
 
 func (um *UserManager) Create(ctx context.Context, u *User) (err error) {
+	um.normalize(ctx, u)
 	if err = um.validateUser(ctx, u); err != nil {
 		return
 	}
-	um.normalize(ctx, u)
 	return um.userRepo.Create(ctx, u)
 }
 
@@ -76,10 +76,10 @@ func (um *UserManager) FindByEmail(ctx context.Context, email string) (user *Use
 }
 
 func (um *UserManager) Update(ctx context.Context, user *User) (err error) {
+	um.normalize(ctx, user)
 	if err = um.validateUser(ctx, user); err != nil {
 		return
 	}
-	um.normalize(ctx, user)
 	return um.userRepo.Update(ctx, user)
 }
 
@@ -142,9 +142,9 @@ func (um *UserManager) validateUser(ctx context.Context, u *User) (err error) {
 
 func (um *UserManager) normalize(_ context.Context, u *User) {
 	//normalize
-	if u.Name != nil {
-		n := um.lookupNormalizer.Name(*u.Name)
-		u.NormalizedUserName = &n
+	if u.Username != nil {
+		n := um.lookupNormalizer.Name(*u.Username)
+		u.NormalizedUsername = &n
 	}
 	if u.Email != nil {
 		e := um.lookupNormalizer.Name(*u.Email)

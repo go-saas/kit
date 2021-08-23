@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package user.api.user.v1;
+import "errors/errors.proto";
+
+option go_package = "github.com/goxiaoy/go-saas-kit/user/api/auth/v1;v1";
+
+enum ErrorReason {
+
+  option (errors.default_code) = 500;
+
+  CONFIRM_PASSWORD_MISMATCH = 0 [(errors.code) = 400];
+
+  PASSWORD_INSUFFICIENT_STRENGTH = 1 [(errors.code) = 400];
+
+  INVALID_PASSWORD=2 [(errors.code) = 400];
+
+  DUPLICATE_USERNAME=3 [(errors.code) = 400];
+  DUPLICATE_EMAIL=4 [(errors.code) = 400];
+  DUPLICATE_PHONE=5 [(errors.code) = 400];
+}

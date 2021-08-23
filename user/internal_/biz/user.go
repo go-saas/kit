@@ -1,10 +1,10 @@
 package biz
 
 import (
+	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	gorm3 "github.com/goxiaoy/go-saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	gorm2 "gorm.io/gorm"
-	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"time"
 )
 
@@ -20,9 +20,9 @@ type User struct {
 	FirstName *string `json:"first_name"`
 	LastName  *string `json:"last_name"`
 
-	UserName *string `json:"user_name" gorm:"index"`
-	// NormalizedUserName uppercase normalized userName
-	NormalizedUserName *string `json:"normalized_user_name" gorm:"index"`
+	Username *string `json:"username" gorm:"index"`
+	// NormalizedUsername uppercase normalized userName
+	NormalizedUsername *string `json:"normalized_username" gorm:"index"`
 
 	// Phone
 	Phone          *string `json:"phone" gorm:"index"`
@@ -43,7 +43,7 @@ type User struct {
 	Location *string `json:"location"`
 	Tags     *string `json:"tags"`
 
-	// Avatar could be a id of asset or simple url
+	// Avatar could be an id of asset or simple url
 	Avatar   *string    `json:"avatar"`
 	Birthday *time.Time `json:"birthday"`
 	Gender   *string    `json:"gender" rql:"filter"`

@@ -35,7 +35,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	}
 	res := &pb.GetProfileResponse{
 		Id:u.ID.String(),
-		Username: &wrappers.StringValue{Value: *u.UserName } ,
+		Username: &wrappers.StringValue{Value: *u.Username} ,
 	}
 	if u.Name!=nil{
 		res.Name =  &wrappers.StringValue{Value: *u.Name }

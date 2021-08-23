@@ -16,14 +16,14 @@ require (
 	github.com/google/subcommands v1.2.0 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
-	github.com/goxiaoy/go-saas v0.0.9-0.20210822170139-48b80c8a4781
+	github.com/goxiaoy/go-saas v0.0.9-0.20210823075450-cdc028cd8324
 	github.com/goxiaoy/gorm-concurrency v1.0.2
 	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/mod v0.5.0 // indirect
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
-	golang.org/x/sys v0.0.0-20210820121016-41cdb8703e55 // indirect
+	golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf // indirect
 	google.golang.org/genproto v0.0.0-20210821163610-241b8fcbd6c8
 	google.golang.org/grpc v1.40.0
 	google.golang.org/protobuf v1.27.1

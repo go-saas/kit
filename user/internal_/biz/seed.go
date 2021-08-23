@@ -7,7 +7,7 @@ import (
 )
 
 const Admin = "admin"
-const AdminUserNameKey = "admin_username"
+const AdminUsernameKey = "admin_username"
 const AdminPasswordKey = "admin_password"
 type RoleSeed struct {
 	rm *RoleManager
@@ -46,22 +46,22 @@ func NewUserSeed(um *UserManager,rm *RoleManager)  *UserSeed {
 	return &UserSeed{um:um ,rm: rm}
 }
 func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
-	adminUserName :=""
-	adminUserName,_ = sCtx.Extra[AdminUserNameKey].(string)
+	adminUsername :=""
+	adminUsername,_ = sCtx.Extra[AdminUsernameKey].(string)
 
 	adminPassword :=""
 	adminPassword,_ = sCtx.Extra[AdminPasswordKey].(string)
 
-	admin,err := u.um.FindByName(ctx,adminUserName)
+	admin,err := u.um.FindByName(ctx,adminUsername)
 	if err!=nil{
 		return err
 	}
 	if admin==nil{
 		//seed
-		name := adminUserName
+		name := adminUsername
 		admin = &User{
-			Name:               &name,
-			UserName:           &name,
+			Name:     &name,
+			Username: &name,
 		}
 		if err = u.um.CreateWithPassword(ctx,admin,adminPassword);err!=nil{
 			return err

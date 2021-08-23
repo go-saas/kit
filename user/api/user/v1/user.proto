@@ -78,17 +78,16 @@ message ListUsersResponse{
 
 }
 message CreateUserRequest{
-    google.protobuf.StringValue username =1;
-    google.protobuf.StringValue name=2 [(validate.rules).string.min_len = 1];
+    google.protobuf.StringValue username =1 [(validate.rules).string.min_len = 1];
+    google.protobuf.StringValue name=2;
     google.protobuf.StringValue phone =3;
-    google.protobuf.StringValue email=4;
+    google.protobuf.StringValue email=4 [(validate.rules).string.email = true];
 
     string password=5 [(validate.rules).string.min_len = 6];
     string confirm_password=6 [(validate.rules).string.min_len = 6];
-    google.protobuf.Timestamp birthday=7 [(validate.rules).timestamp.required = true];
+    google.protobuf.Timestamp birthday=7;
     //
     Gender gender=8;
-
 }
 
 enum Gender{

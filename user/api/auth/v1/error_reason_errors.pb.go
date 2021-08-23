@@ -13,9 +13,9 @@ const _ = errors.SupportPackageIsVersion1
 
 func IsInvalidCredentials(err error) bool {
 	e := errors.FromError(err)
-	return e.Reason == ErrorReason_INVALID_CREDENTIALS.String() && e.Code == 404
+	return e.Reason == ErrorReason_INVALID_CREDENTIALS.String() && e.Code == 400
 }
 
 func ErrorInvalidCredentials(format string, args ...interface{}) *errors.Error {
-	return errors.New(404, ErrorReason_INVALID_CREDENTIALS.String(), fmt.Sprintf(format, args...))
+	return errors.New(400, ErrorReason_INVALID_CREDENTIALS.String(), fmt.Sprintf(format, args...))
 }

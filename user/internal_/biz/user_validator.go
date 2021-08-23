@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	ErrDuplicateUserName = errors.New("duplicate userName")
+	ErrDuplicateUsername = errors.New("duplicate userName")
 	ErrDuplicateEmail    = errors.New("duplicate email")
 	ErrDuplicatePhone    = errors.New("duplicate phone")
 )
@@ -27,13 +27,13 @@ func NewUserValidator() UserValidator {
 
 func (u *userValidator) Validate(ctx context.Context, um *UserManager, user *User) (err error) {
 	//check duplicate email/phone/username
-	if user.UserName != nil {
-		u, err := um.FindByName(ctx, *user.UserName)
+	if user.Username != nil {
+		u, err := um.FindByName(ctx, *user.Username)
 		if err != nil {
 			return err
 		}
 		if u != nil && u.ID != user.ID {
-			return ErrDuplicateUserName
+			return ErrDuplicateUsername
 		}
 	}
 	if user.Email != nil {

@@ -2,18 +2,16 @@ package data
 
 import (
 	"errors"
-	concurrency "github.com/goxiaoy/gorm-concurrency"
-	"gorm.io/gorm"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	concurrency "github.com/goxiaoy/gorm-concurrency"
+	"gorm.io/gorm"
 )
 import "context"
 
 type UserRepo struct {
 	Repo
 }
-
-
 
 func NewUserRepo(data *Data) biz.UserRepo {
 	return &UserRepo{
@@ -26,7 +24,7 @@ func NewUserRepo(data *Data) biz.UserRepo {
 var _ biz.UserRepo = (*UserRepo)(nil)
 
 func (u *UserRepo) GetDb(ctx context.Context) *gorm.DB {
-	return GetDb(ctx, u.DbProvider).Preload("Roles")
+	return GetDb(ctx, u.DbProvider)
 }
 
 
@@ -44,7 +42,7 @@ func (u *UserRepo) Delete(ctx context.Context, user *biz.User) error {
 
 func (u *UserRepo) FindByID(ctx context.Context, id string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).First(user,"id=?", id).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user,"id=?", id).Error
 	if err!=nil{
 		if  errors.Is(err,gorm.ErrRecordNotFound){
 			return nil,nil
@@ -56,7 +54,7 @@ func (u *UserRepo) FindByID(ctx context.Context, id string) (*biz.User, error) {
 
 func (u *UserRepo) FindByName(ctx context.Context, name string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).First(user, "normalized_user_name = ?", name).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "normalized_username = ?", name).Error
 	if err!=nil{
 		if  errors.Is(err,gorm.ErrRecordNotFound){
 			return nil,nil
@@ -68,7 +66,7 @@ func (u *UserRepo) FindByName(ctx context.Context, name string) (*biz.User, erro
 
 func (u *UserRepo) FindByPhone(ctx context.Context, phone string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).First(user, "phone = ?", phone).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "phone = ?", phone).Error
 	if err!=nil{
 		if  errors.Is(err,gorm.ErrRecordNotFound){
 			return nil,nil
@@ -98,13 +96,15 @@ func (u *UserRepo) ListLogin(ctx context.Context, user *biz.User) (userLogins []
 	return
 }
 
-func (u *UserRepo) FindByLogin(ctx context.Context, loginProvider string, providerKey string) (user *biz.User, err error) {
-	err = u.GetDb(ctx).Model(&biz.User{}).Joins("left join user_logins on user_logins.user_id = users.id").Where("user_logins.login_provider=? and user_logins.provider_key=?", loginProvider, providerKey).First(user).Error
-	return
+func (u *UserRepo) FindByLogin(ctx context.Context, loginProvider string, providerKey string) (*biz.User, error) {
+	user := &biz.User{}
+	err := u.GetDb(ctx).Model(&biz.User{}).Joins("left join user_logins on user_logins.user_id = users.id").Where("user_logins.login_provider=? and user_logins.provider_key=?", loginProvider, providerKey).First(user).Error
+	return user,err
 }
 
-func (u *UserRepo) FindByEmail(ctx context.Context, email string) (user *biz.User, err error) {
-	err = u.GetDb(ctx).Model(&biz.User{}).First(user, "normalized_email = ?", email).Error
+func (u *UserRepo) FindByEmail(ctx context.Context, email string) (*biz.User,error) {
+	user := &biz.User{}
+	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "normalized_email = ?", email).Error
 	if err!=nil{
 		if  errors.Is(err,gorm.ErrRecordNotFound){
 			return nil,nil
@@ -145,7 +145,7 @@ func (u *UserRepo) GetToken(ctx context.Context, user *biz.User, loginProvider s
 }
 
 func (u *UserRepo) GetRoles(ctx context.Context, user *biz.User) ([]*biz.Role, error) {
-	db :=u.GetDb(ctx)
+	db :=u.GetDb(ctx).Preload("Roles")
 	dbUser := &biz.User{}
 	if err := db.Model(&biz.User{}).Preload("Roles").Where("id=?",user.ID).Find(dbUser).Error;err!=nil{
 		return nil,err
@@ -185,5 +185,7 @@ func (u *UserRepo) AddToRole(ctx context.Context, user *biz.User, role *biz.Role
 }
 
 func (u *UserRepo) RemoveFromRole(ctx context.Context, user *biz.User, role *biz.Role) error {
-	panic("implement me")
+	db :=u.GetDb(ctx)
+	err :=db.Where("user_id=? and role_id=?",user.ID,role.ID).Delete(&biz.UserRole{}).Error
+	return err
 }

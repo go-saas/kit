@@ -78,7 +78,7 @@ func main() {
 	}
 
 	app, cleanup, err := initApp(bc.Server, bc.Data, logger,&biz.PasswordValidatorConfig{
-		MinScore: 2,
+		MinScore: 1,
 	},&jwt.TokenizerConfig{
 		ExpireDuration: bc.Security.Jwt.ExpireIn.AsDuration(),
 		Secret:         bc.Security.Jwt.Secret,

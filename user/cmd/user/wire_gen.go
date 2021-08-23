@@ -26,7 +26,6 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, pa
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbOpener, cleanup := gorm.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
-	userService := service.NewUserService()
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, manager, logger)
 	dataData, cleanup2, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
@@ -39,6 +38,7 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, pa
 	passwordValidator := biz.NewPasswordValidator(passwordValidatorConfig)
 	lookupNormalizer := biz.NewLookupNormalizer()
 	userManager := biz.NewUserManager(userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, logger)
+	userService := service.NewUserService(userManager)
 	accountService := service.NewAccountService(userManager)
 	roleRepo := data.NewRoleRepo(dataData)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
@@ -48,7 +48,7 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, pa
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
-	seeder := server.NewSeeder(confData, migrate, roleSeed, userSeed)
+	seeder := server.NewSeeder(confData, manager, migrate, roleSeed, userSeed)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
 		cleanup2()
