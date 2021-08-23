@@ -16,7 +16,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData,gorm.NewDbOpener,uow2.NewUowManager,NewProvider,NewUserRepo,NewRefreshTokenRepo,NewRoleRepo,NewMigrate)
+var ProviderSet = wire.NewSet(NewData,gorm.NewDbOpener,uow2.NewUowManager,NewTenantStore,NewProvider,NewUserRepo,NewRefreshTokenRepo,NewRoleRepo,NewMigrate)
 
 // Data .
 type Data struct {
@@ -41,11 +41,15 @@ func NewData(c *conf.Data,dbProvider gorm.DbProvider, logger log.Logger) (*Data,
 	}, cleanup, nil
 }
 
-func NewProvider(c *conf.Data,cfg *gorm.Config, opener gorm.DbOpener,uow uow.Manager, logger log.Logger) gorm.DbProvider{
-	ct := common.ContextCurrentTenant{}
-	//TODO replace with correct tenant store
-	ts := common.NewMemoryTenantStore(
+// NewTenantStore TODO replace with correct tenant store
+func NewTenantStore() common.TenantStore {
+	return common.NewMemoryTenantStore(
 		[]common.TenantConfig{})
+}
+
+func NewProvider(c *conf.Data,cfg *gorm.Config, opener gorm.DbOpener,uow uow.Manager,ts common.TenantStore, logger log.Logger) gorm.DbProvider{
+	ct := common.ContextCurrentTenant{}
+
 	conn := make(data.ConnStrings, 1)
 	conn.SetDefault(c.Database.Source)
 	mr := common.NewMultiTenancyConnStrResolver(ct, func() common.TenantStore {
