@@ -1,12 +1,13 @@
 server:
   http:
     addr: 0.0.0.0:8500
-    timeout: 1s
+    timeout: 2s
   grpc:
     addr: 0.0.0.0:8501
-    timeout: 1s
+    timeout: 2s
 data:
   database:
+    debug: false
     driver: mysql
     source: root:rZakvdyjAmz73J8p@tcp(127.0.0.1:3309)/user?parseTime=true
   redis:

@@ -9,22 +9,25 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
+	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/conf"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/data"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/server"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/service"
 	"github.com/goxiaoy/go-saas/gorm"
+	"github.com/goxiaoy/uow"
 )
 
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, tokenizerConfig *jwt.TokenizerConfig) (*kratos.App, func(), error) {
+func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, tokenizerConfig *jwt.TokenizerConfig, config *uow.Config, gormConfig *gorm.Config) (*kratos.App, func(), error) {
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
-	userService := service.NewUserService()
 	dbOpener, cleanup := gorm.NewDbOpener()
-	dbProvider := data.NewProvider(confData, dbOpener, logger)
+	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
+	userService := service.NewUserService()
+	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, manager, logger)
 	dataData, cleanup2, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup()
@@ -40,8 +43,8 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, pa
 	roleRepo := data.NewRoleRepo(dataData)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig)
-	httpServer := server.NewHTTPServer(confServer, tokenizer, userService, accountService, authService, logger)
-	grpcServer := server.NewGRPCServer(confServer, tokenizer, userService, accountService, authService, logger)
+	httpServer := server.NewHTTPServer(confServer, tokenizer, manager, userService, accountService, authService, logger)
+	grpcServer := server.NewGRPCServer(confServer, tokenizer, manager, userService, accountService, authService, logger)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager)
 	userSeed := biz.NewUserSeed(userManager, roleManager)

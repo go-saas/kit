@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
+	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/goxiaoy/go-saas/seed"
+	"github.com/goxiaoy/uow"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
@@ -80,7 +82,9 @@ func main() {
 	},&jwt.TokenizerConfig{
 		ExpireDuration: bc.Security.Jwt.ExpireIn.AsDuration(),
 		Secret:         bc.Security.Jwt.Secret,
-	})
+	},&uow.Config{
+		SupportNestedTransaction: false,
+	},uow2.NewGormConfig(bc.Data.Database.Debug,bc.Data.Database.Driver))
 	if err != nil {
 		panic(err)
 	}

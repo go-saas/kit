@@ -34,6 +34,7 @@ message Data {
   message Database {
     string driver = 1;
     string source = 2;
+    bool  debug =3;
   }
   message Redis {
     string network = 1;

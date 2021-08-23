@@ -14,9 +14,11 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/internal_/data"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/server"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/service"
+	"github.com/goxiaoy/go-saas/gorm"
+	"github.com/goxiaoy/uow"
 )
 
 // initApp init kratos application.
-func initApp(*conf.Server, *conf.Data, log.Logger, *biz.PasswordValidatorConfig,*jwt.TokenizerConfig) (*kratos.App, func(), error) {
+func initApp(*conf.Server, *conf.Data, log.Logger, *biz.PasswordValidatorConfig,*jwt.TokenizerConfig,*uow.Config,*gorm.Config) (*kratos.App, func(), error) {
 	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }
