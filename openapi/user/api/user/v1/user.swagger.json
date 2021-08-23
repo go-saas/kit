@@ -83,37 +83,7 @@
             "type": "string"
           },
           {
-            "name": "filter.name.contains",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.startsWith",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.nstartsWith",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.endsWith",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.nendsWith",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.in",
+            "name": "filter.name.$in",
             "in": "query",
             "required": false,
             "type": "array",
@@ -123,7 +93,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "filter.name.nin",
+            "name": "filter.name.$nin",
             "in": "query",
             "required": false,
             "type": "array",
@@ -133,25 +103,13 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "filter.name.null",
+            "name": "filter.name.$null",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
-            "name": "filter.name.nnull",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.name.empty",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.name.nmpty",
+            "name": "filter.name.$nnull",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -175,37 +133,7 @@
             "type": "string"
           },
           {
-            "name": "filter.gender.contains",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.gender.startsWith",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.gender.nstartsWith",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.gender.endsWith",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.gender.nendsWith",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.gender.in",
+            "name": "filter.gender.$in",
             "in": "query",
             "required": false,
             "type": "array",
@@ -215,7 +143,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "filter.gender.nin",
+            "name": "filter.gender.$nin",
             "in": "query",
             "required": false,
             "type": "array",
@@ -225,25 +153,13 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "filter.gender.null",
+            "name": "filter.gender.$null",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
-            "name": "filter.gender.nnull",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.gender.empty",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.gender.nmpty",
+            "name": "filter.gender.$nnull",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -291,13 +207,13 @@
             "type": "string"
           },
           {
-            "name": "filter.birthday.null",
+            "name": "filter.birthday.$null",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
-            "name": "filter.birthday.nnull",
+            "name": "filter.birthday.$nnull",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -448,10 +364,10 @@
         "$lte": {
           "type": "string"
         },
-        "null": {
+        "$null": {
           "type": "boolean"
         },
-        "nnull": {
+        "$nnull": {
           "type": "boolean"
         }
       }
@@ -465,43 +381,22 @@
         "$neq": {
           "type": "string"
         },
-        "contains": {
-          "type": "string"
-        },
-        "startsWith": {
-          "type": "string"
-        },
-        "nstartsWith": {
-          "type": "string"
-        },
-        "endsWith": {
-          "type": "string"
-        },
-        "nendsWith": {
-          "type": "string"
-        },
-        "in": {
+        "$in": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "nin": {
+        "$nin": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "null": {
+        "$null": {
           "type": "boolean"
         },
-        "nnull": {
-          "type": "boolean"
-        },
-        "empty": {
-          "type": "boolean"
-        },
-        "nmpty": {
+        "$nnull": {
           "type": "boolean"
         },
         "$like": {

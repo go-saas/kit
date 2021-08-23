@@ -2,11 +2,11 @@ package biz
 
 import (
 	"context"
+	"github.com/a8m/rql"
 	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	gorm2 "github.com/goxiaoy/go-saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
-	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	"github.com/goxiaoy/go-saas-kit/pkg/rql"
 )
 
 type Role struct {

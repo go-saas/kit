@@ -21,4 +21,5 @@ type UserRepo interface {
 	UpdateRoles(ctx context.Context, user *User,roles []*Role)error
 	AddToRole(ctx context.Context, user *User,role *Role )error
 	RemoveFromRole(ctx context.Context, user *User,role *Role )error
+
 }

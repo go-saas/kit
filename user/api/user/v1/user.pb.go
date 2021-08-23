@@ -7,10 +7,10 @@
 package v1
 
 import (
+	rql "github.com/a8m/rql"
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
-	rql "github.com/goxiaoy/go-saas-kit/pkg/rql"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	field_mask "google.golang.org/genproto/protobuf/field_mask"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"

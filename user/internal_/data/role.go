@@ -3,9 +3,9 @@ package data
 import (
 	"context"
 	"errors"
-	"gorm.io/gorm"
-	"github.com/goxiaoy/go-saas-kit/pkg/rql"
+	"github.com/a8m/rql"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"gorm.io/gorm"
 )
 
 type RoleRepo struct {

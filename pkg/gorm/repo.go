@@ -1,8 +1,7 @@
 package gorm
 
 import (
-	rql2 "github.com/a8m/rql"
-	"github.com/goxiaoy/go-saas-kit/pkg/rql"
+	"github.com/a8m/rql"
 	g "gorm.io/gorm"
 )
 
@@ -14,12 +13,12 @@ func (r *Repo) BuildQuery(db *g.DB, model interface{}, query interface{}) (*g.DB
 	if query == nil {
 		return db, nil
 	}
-	queryParser := rql2.MustNewParser(rql2.Config{
+	queryParser := rql.MustNewParser(rql.Config{
 		Model:    model,
 		FieldSep: ".",
 		OpPrefix: "",
 	})
-	q := rql2.Query{}
+	q := rql.Query{}
 	if page, ok := query.(rql.Page); ok {
 		q.Limit = int(page.GetPageSize())
 		q.Offset = int(page.GetPageOffset())
@@ -56,12 +55,12 @@ func (r *Repo) BuildFilter(db *g.DB, model interface{}, query interface{}) (*g.D
 	if query == nil {
 		return db, nil
 	}
-	queryParser := rql2.MustNewParser(rql2.Config{
+	queryParser := rql.MustNewParser(rql.Config{
 		Model:    model,
 		FieldSep: ".",
 		OpPrefix: "",
 	})
-	q := rql2.Query{}
+	q := rql.Query{}
 	if filter, ok := query.(rql.Filter); ok {
 		q.Filter = filter.GetFilter()
 	}
