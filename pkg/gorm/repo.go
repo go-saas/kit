@@ -41,7 +41,11 @@ func (r *Repo) BuildQuery(db *g.DB, model interface{}, query interface{}) (*g.DB
 
 	ret :=db.Model(model)
 	if p.FilterExp!=""{
-		ret = ret.Where(p.FilterExp, p.FilterArgs)
+		if len(p.FilterArgs)>0{
+			ret = ret.Where(p.FilterExp, p.FilterArgs)
+		}else{
+			ret = ret.Where(p.FilterExp)
+		}
 	}
 	if p.Sort !=""{
 		ret =ret.Order(p.Sort)
@@ -70,7 +74,11 @@ func (r *Repo) BuildFilter(db *g.DB, model interface{}, query interface{}) (*g.D
 	}
 	ret :=db.Model(model)
 	if p.FilterExp!=""{
-		ret = ret.Where(p.FilterExp, p.FilterArgs)
+		if len(p.FilterArgs)>0{
+			ret = ret.Where(p.FilterExp, p.FilterArgs)
+		}else{
+			ret = ret.Where(p.FilterExp)
+		}
 	}
 	return ret, nil
 }

@@ -41,9 +41,17 @@ message UserFilter{
   rql.operation.StringFilterOperation name =1;
   rql.operation.StringFilterOperation gender =2;
   rql.operation.DateFilterOperators birthday =3;
+  
+//  RoleFilter roles =4;
+
   repeated UserFilter and =7;
   repeated UserFilter or =8;
 }
+
+message RoleFilter{
+  rql.operation.StringFilterOperation name =1;
+}
+
 message ListUsersRequest{
   int32 page_offset =1;
   int32 page_size = 2;

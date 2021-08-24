@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/a8m/rql"
+	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
@@ -21,7 +23,32 @@ func NewUserService(um *biz.UserManager) *UserService {
 }
 
 func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
-	return &pb.ListUsersResponse{}, nil
+	ret := &pb.ListUsersResponse{}
+	q := rql.NewQueryFromProto(req, req.Filter)
+	if err := q.ParseAndValidate(); err != nil {
+		return nil, errors2.BadRequest("Filter", err.Error())
+	}
+	totalCount, filterCount, err := s.um.Count(ctx, q)
+	ret.TotalSize = totalCount
+	ret.FilterSize = filterCount
+
+	if err != nil {
+		return ret, err
+	}
+	items, err := s.um.List(ctx, q)
+	if err != nil {
+		return ret, err
+	}
+	rItems := make([]*pb.User, len(items))
+	for index, i := range items {
+		rItems[index] = &pb.User{
+			Id:   i.ID.String(),
+			//TODO mapping
+		}
+	}
+	ret.Items = rItems
+	return ret, nil
+
 }
 func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	// check confirm password

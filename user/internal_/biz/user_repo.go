@@ -3,6 +3,8 @@ package biz
 import "context"
 
 type UserRepo interface {
+	List(ctx context.Context, query interface{}) ([]*User, error)
+	Count(ctx context.Context, query interface{}) (total int64, filtered int64, err error)
 	Create(ctx context.Context, user *User) error
 	Update(ctx context.Context, user *User) error
 	Delete(ctx context.Context, user *User) error

@@ -157,6 +157,80 @@ var _ interface {
 	ErrorName() string
 } = UserFilterValidationError{}
 
+// Validate checks the field values on RoleFilter with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *RoleFilter) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RoleFilterValidationError{
+				field:  "Name",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	return nil
+}
+
+// RoleFilterValidationError is the validation error returned by
+// RoleFilter.Validate if the designated constraints aren't met.
+type RoleFilterValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RoleFilterValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RoleFilterValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RoleFilterValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RoleFilterValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RoleFilterValidationError) ErrorName() string { return "RoleFilterValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RoleFilterValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRoleFilter.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RoleFilterValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RoleFilterValidationError{}
+
 // Validate checks the field values on ListUsersRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, an
 // error is returned.

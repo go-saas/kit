@@ -13,6 +13,7 @@ type UserRepo struct {
 	Repo
 }
 
+
 func NewUserRepo(data *Data) biz.UserRepo {
 	return &UserRepo{
 		Repo{
@@ -27,6 +28,31 @@ func (u *UserRepo) GetDb(ctx context.Context) *gorm.DB {
 	return GetDb(ctx, u.DbProvider)
 }
 
+
+func (u *UserRepo) List(ctx context.Context, query interface{}) ([]*biz.User, error) {
+	db := u.GetDb(ctx)
+	db, err := u.BuildQuery(db, &biz.User{}, query)
+	if err != nil {
+		return nil, err
+	}
+	var items []*biz.User
+	res := db.Find(&items)
+	return items, res.Error
+}
+
+func (u *UserRepo) Count(ctx context.Context, query interface{}) (total int64, filtered int64, err error) {
+	db := u.GetDb(ctx)
+	err = db.Model(&biz.User{}).Count(&total).Error
+	if err != nil {
+		return
+	}
+	db, err = u.BuildFilter(db, &biz.User{}, query)
+	if err != nil {
+		return
+	}
+	err = db.Count(&filtered).Error
+	return
+}
 
 func (u *UserRepo) Create(ctx context.Context, user *biz.User) error {
 	return u.GetDb(ctx).Create(user).Error

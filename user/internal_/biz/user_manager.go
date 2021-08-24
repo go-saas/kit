@@ -44,6 +44,14 @@ func NewUserManager(
 type Config struct {
 }
 
+func (um *UserManager) List(ctx context.Context, query interface{}) ([]*User, error) {
+	return um.userRepo.List(ctx,query)
+}
+
+func (um *UserManager)  Count(ctx context.Context, query interface{}) (total int64, filtered int64, err error) {
+	return um.userRepo.Count(ctx,query)
+}
+
 func (um *UserManager) Create(ctx context.Context, u *User) (err error) {
 	um.normalize(ctx, u)
 	if err = um.validateUser(ctx, u); err != nil {
