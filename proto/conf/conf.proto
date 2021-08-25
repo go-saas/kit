@@ -39,6 +39,13 @@ message Databases{
   map<string, Database> databases = 1;
 }
 
+message Redis {
+  string network = 1;
+  string addr = 2;
+  google.protobuf.Duration read_timeout = 3;
+  google.protobuf.Duration write_timeout = 4;
+}
+
 message Security{
   message Jwt{
     google.protobuf.Duration expire_in=1;

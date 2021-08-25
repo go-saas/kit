@@ -288,6 +288,77 @@ func (x *Databases) GetDatabases() map[string]*Database {
 	return nil
 }
 
+type Redis struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Network      string               `protobuf:"bytes,1,opt,name=network,proto3" json:"network,omitempty"`
+	Addr         string               `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`
+	ReadTimeout  *durationpb.Duration `protobuf:"bytes,3,opt,name=read_timeout,json=readTimeout,proto3" json:"read_timeout,omitempty"`
+	WriteTimeout *durationpb.Duration `protobuf:"bytes,4,opt,name=write_timeout,json=writeTimeout,proto3" json:"write_timeout,omitempty"`
+}
+
+func (x *Redis) Reset() {
+	*x = Redis{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_conf_conf_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Redis) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Redis) ProtoMessage() {}
+
+func (x *Redis) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Redis.ProtoReflect.Descriptor instead.
+func (*Redis) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *Redis) GetNetwork() string {
+	if x != nil {
+		return x.Network
+	}
+	return ""
+}
+
+func (x *Redis) GetAddr() string {
+	if x != nil {
+		return x.Addr
+	}
+	return ""
+}
+
+func (x *Redis) GetReadTimeout() *durationpb.Duration {
+	if x != nil {
+		return x.ReadTimeout
+	}
+	return nil
+}
+
+func (x *Redis) GetWriteTimeout() *durationpb.Duration {
+	if x != nil {
+		return x.WriteTimeout
+	}
+	return nil
+}
+
 type Security struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -299,7 +370,7 @@ type Security struct {
 func (x *Security) Reset() {
 	*x = Security{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[5]
+		mi := &file_conf_conf_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -312,7 +383,7 @@ func (x *Security) String() string {
 func (*Security) ProtoMessage() {}
 
 func (x *Security) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[5]
+	mi := &file_conf_conf_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -325,7 +396,7 @@ func (x *Security) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Security.ProtoReflect.Descriptor instead.
 func (*Security) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{5}
+	return file_conf_conf_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Security) GetJwt() *Security_Jwt {
@@ -348,7 +419,7 @@ type Server_HTTP struct {
 func (x *Server_HTTP) Reset() {
 	*x = Server_HTTP{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[6]
+		mi := &file_conf_conf_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -361,7 +432,7 @@ func (x *Server_HTTP) String() string {
 func (*Server_HTTP) ProtoMessage() {}
 
 func (x *Server_HTTP) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[6]
+	mi := &file_conf_conf_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -411,7 +482,7 @@ type Server_GRPC struct {
 func (x *Server_GRPC) Reset() {
 	*x = Server_GRPC{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[7]
+		mi := &file_conf_conf_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -424,7 +495,7 @@ func (x *Server_GRPC) String() string {
 func (*Server_GRPC) ProtoMessage() {}
 
 func (x *Server_GRPC) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[7]
+	mi := &file_conf_conf_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -473,7 +544,7 @@ type Security_Jwt struct {
 func (x *Security_Jwt) Reset() {
 	*x = Security_Jwt{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[10]
+		mi := &file_conf_conf_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -486,7 +557,7 @@ func (x *Security_Jwt) String() string {
 func (*Security_Jwt) ProtoMessage() {}
 
 func (x *Security_Jwt) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[10]
+	mi := &file_conf_conf_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -499,7 +570,7 @@ func (x *Security_Jwt) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Security_Jwt.ProtoReflect.Descriptor instead.
 func (*Security_Jwt) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{5, 0}
+	return file_conf_conf_proto_rawDescGZIP(), []int{6, 0}
 }
 
 func (x *Security_Jwt) GetExpireIn() *durationpb.Duration {
@@ -570,19 +641,31 @@ var file_conf_conf_proto_rawDesc = []byte{
 	0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79,
 	0x12, 0x24, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32,
 	0x0e, 0x2e, 0x63, 0x6f, 0x6e, 0x66, 0x2e, 0x44, 0x61, 0x74, 0x61, 0x62, 0x61, 0x73, 0x65, 0x52,
-	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x87, 0x01, 0x0a, 0x08, 0x53,
-	0x65, 0x63, 0x75, 0x72, 0x69, 0x74, 0x79, 0x12, 0x24, 0x0a, 0x03, 0x6a, 0x77, 0x74, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x63, 0x6f, 0x6e, 0x66, 0x2e, 0x53, 0x65, 0x63, 0x75,
-	0x72, 0x69, 0x74, 0x79, 0x2e, 0x4a, 0x77, 0x74, 0x52, 0x03, 0x6a, 0x77, 0x74, 0x1a, 0x55, 0x0a,
-	0x03, 0x4a, 0x77, 0x74, 0x12, 0x36, 0x0a, 0x09, 0x65, 0x78, 0x70, 0x69, 0x72, 0x65, 0x5f, 0x69,
-	0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0xb3, 0x01, 0x0a, 0x05, 0x52,
+	0x65, 0x64, 0x69, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x12, 0x12,
+	0x0a, 0x04, 0x61, 0x64, 0x64, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x61, 0x64,
+	0x64, 0x72, 0x12, 0x3c, 0x0a, 0x0c, 0x72, 0x65, 0x61, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x6f,
+	0x75, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
+	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x52, 0x0b, 0x72, 0x65, 0x61, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74,
+	0x12, 0x3e, 0x0a, 0x0d, 0x77, 0x72, 0x69, 0x74, 0x65, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75,
+	0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69,
-	0x6f, 0x6e, 0x52, 0x08, 0x65, 0x78, 0x70, 0x69, 0x72, 0x65, 0x49, 0x6e, 0x12, 0x16, 0x0a, 0x06,
-	0x73, 0x65, 0x63, 0x72, 0x65, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x65,
-	0x63, 0x72, 0x65, 0x74, 0x42, 0x2e, 0x5a, 0x2c, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
-	0x6f, 0x6d, 0x2f, 0x67, 0x6f, 0x78, 0x69, 0x61, 0x6f, 0x79, 0x2f, 0x67, 0x6f, 0x2d, 0x73, 0x61,
-	0x61, 0x73, 0x2d, 0x6b, 0x69, 0x74, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x63, 0x6f, 0x6e, 0x66, 0x3b,
-	0x63, 0x6f, 0x6e, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x6e, 0x52, 0x0c, 0x77, 0x72, 0x69, 0x74, 0x65, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74,
+	0x22, 0x87, 0x01, 0x0a, 0x08, 0x53, 0x65, 0x63, 0x75, 0x72, 0x69, 0x74, 0x79, 0x12, 0x24, 0x0a,
+	0x03, 0x6a, 0x77, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x63, 0x6f, 0x6e,
+	0x66, 0x2e, 0x53, 0x65, 0x63, 0x75, 0x72, 0x69, 0x74, 0x79, 0x2e, 0x4a, 0x77, 0x74, 0x52, 0x03,
+	0x6a, 0x77, 0x74, 0x1a, 0x55, 0x0a, 0x03, 0x4a, 0x77, 0x74, 0x12, 0x36, 0x0a, 0x09, 0x65, 0x78,
+	0x70, 0x69, 0x72, 0x65, 0x5f, 0x69, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e,
+	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
+	0x44, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x08, 0x65, 0x78, 0x70, 0x69, 0x72, 0x65,
+	0x49, 0x6e, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x65, 0x63, 0x72, 0x65, 0x74, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x06, 0x73, 0x65, 0x63, 0x72, 0x65, 0x74, 0x42, 0x2e, 0x5a, 0x2c, 0x67, 0x69,
+	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x6f, 0x78, 0x69, 0x61, 0x6f, 0x79,
+	0x2f, 0x67, 0x6f, 0x2d, 0x73, 0x61, 0x61, 0x73, 0x2d, 0x6b, 0x69, 0x74, 0x2f, 0x70, 0x6b, 0x67,
+	0x2f, 0x63, 0x6f, 0x6e, 0x66, 0x3b, 0x63, 0x6f, 0x6e, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -597,37 +680,40 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 	return file_conf_conf_proto_rawDescData
 }
 
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_conf_conf_proto_goTypes = []interface{}{
 	(*Server)(nil),              // 0: conf.Server
 	(*Service)(nil),             // 1: conf.Service
 	(*Services)(nil),            // 2: conf.Services
 	(*Database)(nil),            // 3: conf.Database
 	(*Databases)(nil),           // 4: conf.Databases
-	(*Security)(nil),            // 5: conf.Security
-	(*Server_HTTP)(nil),         // 6: conf.Server.HTTP
-	(*Server_GRPC)(nil),         // 7: conf.Server.GRPC
-	nil,                         // 8: conf.Services.ServicesEntry
-	nil,                         // 9: conf.Databases.DatabasesEntry
-	(*Security_Jwt)(nil),        // 10: conf.Security.Jwt
-	(*durationpb.Duration)(nil), // 11: google.protobuf.Duration
+	(*Redis)(nil),               // 5: conf.Redis
+	(*Security)(nil),            // 6: conf.Security
+	(*Server_HTTP)(nil),         // 7: conf.Server.HTTP
+	(*Server_GRPC)(nil),         // 8: conf.Server.GRPC
+	nil,                         // 9: conf.Services.ServicesEntry
+	nil,                         // 10: conf.Databases.DatabasesEntry
+	(*Security_Jwt)(nil),        // 11: conf.Security.Jwt
+	(*durationpb.Duration)(nil), // 12: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
-	6,  // 0: conf.Server.http:type_name -> conf.Server.HTTP
-	7,  // 1: conf.Server.grpc:type_name -> conf.Server.GRPC
-	8,  // 2: conf.Services.services:type_name -> conf.Services.ServicesEntry
-	9,  // 3: conf.Databases.databases:type_name -> conf.Databases.DatabasesEntry
-	10, // 4: conf.Security.jwt:type_name -> conf.Security.Jwt
-	11, // 5: conf.Server.HTTP.timeout:type_name -> google.protobuf.Duration
-	11, // 6: conf.Server.GRPC.timeout:type_name -> google.protobuf.Duration
-	1,  // 7: conf.Services.ServicesEntry.value:type_name -> conf.Service
-	3,  // 8: conf.Databases.DatabasesEntry.value:type_name -> conf.Database
-	11, // 9: conf.Security.Jwt.expire_in:type_name -> google.protobuf.Duration
-	10, // [10:10] is the sub-list for method output_type
-	10, // [10:10] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	7,  // 0: conf.Server.http:type_name -> conf.Server.HTTP
+	8,  // 1: conf.Server.grpc:type_name -> conf.Server.GRPC
+	9,  // 2: conf.Services.services:type_name -> conf.Services.ServicesEntry
+	10, // 3: conf.Databases.databases:type_name -> conf.Databases.DatabasesEntry
+	12, // 4: conf.Redis.read_timeout:type_name -> google.protobuf.Duration
+	12, // 5: conf.Redis.write_timeout:type_name -> google.protobuf.Duration
+	11, // 6: conf.Security.jwt:type_name -> conf.Security.Jwt
+	12, // 7: conf.Server.HTTP.timeout:type_name -> google.protobuf.Duration
+	12, // 8: conf.Server.GRPC.timeout:type_name -> google.protobuf.Duration
+	1,  // 9: conf.Services.ServicesEntry.value:type_name -> conf.Service
+	3,  // 10: conf.Databases.DatabasesEntry.value:type_name -> conf.Database
+	12, // 11: conf.Security.Jwt.expire_in:type_name -> google.protobuf.Duration
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -697,7 +783,7 @@ func file_conf_conf_proto_init() {
 			}
 		}
 		file_conf_conf_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Security); i {
+			switch v := v.(*Redis); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -709,7 +795,7 @@ func file_conf_conf_proto_init() {
 			}
 		}
 		file_conf_conf_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Server_HTTP); i {
+			switch v := v.(*Security); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -721,6 +807,18 @@ func file_conf_conf_proto_init() {
 			}
 		}
 		file_conf_conf_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Server_HTTP); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_conf_conf_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Server_GRPC); i {
 			case 0:
 				return &v.state
@@ -732,7 +830,7 @@ func file_conf_conf_proto_init() {
 				return nil
 			}
 		}
-		file_conf_conf_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_conf_conf_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Security_Jwt); i {
 			case 0:
 				return &v.state
@@ -751,7 +849,7 @@ func file_conf_conf_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_conf_conf_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
