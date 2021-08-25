@@ -35,8 +35,8 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server,seeder seed.Seeder) *kratos.App {
-	if err := seeder.Seed(context.Background());err!=nil{
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.Seeder) *kratos.App {
+	if err := seeder.Seed(context.Background()); err != nil {
 		panic(err)
 	}
 	return kratos.New(
@@ -77,14 +77,14 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := initApp(bc.Server, bc.Data, logger,&biz.PasswordValidatorConfig{
+	app, cleanup, err := initApp(bc.Server, bc.Data, logger, &biz.PasswordValidatorConfig{
 		MinScore: 1,
-	},&jwt.TokenizerConfig{
+	}, &jwt.TokenizerConfig{
 		ExpireDuration: bc.Security.Jwt.ExpireIn.AsDuration(),
 		Secret:         bc.Security.Jwt.Secret,
-	},&uow.Config{
+	}, &uow.Config{
 		SupportNestedTransaction: false,
-	},uow2.NewGormConfig(bc.Data.Database.Debug,bc.Data.Database.Driver))
+	}, uow2.NewGormConfig(bc.Data.Database.Debug, bc.Data.Database.Driver))
 	if err != nil {
 		panic(err)
 	}

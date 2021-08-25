@@ -24,7 +24,7 @@ func (r *RefreshTokenRepo) Create(ctx context.Context, t *biz.RefreshToken) (err
 
 func (r *RefreshTokenRepo) FindUser(ctx context.Context, token string) (uId string, err error) {
 	var t biz.RefreshToken
-	err =r.GetDb(ctx).Model(&biz.RefreshToken{}).First(&t,"token=?", token).Error
+	err = r.GetDb(ctx).Model(&biz.RefreshToken{}).First(&t, "token=?", token).Error
 	uId = t.UserId.String()
 	return
 }
@@ -39,6 +39,6 @@ func (r *RefreshTokenRepo) Refresh(ctx context.Context, pre *biz.RefreshToken, n
 }
 
 func (r *RefreshTokenRepo) Revoke(ctx context.Context, token string) (err error) {
-	err =r.GetDb(ctx).Delete(&biz.RefreshToken{}, token).Error
+	err = r.GetDb(ctx).Delete(&biz.RefreshToken{}, token).Error
 	return
 }

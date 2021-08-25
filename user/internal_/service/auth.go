@@ -11,41 +11,41 @@ import (
 type AuthService struct {
 	pb.UnimplementedAuthServer
 
-	um *biz.UserManager
-	rm *biz.RoleManager
-	token jwt.Tokenizer
+	um     *biz.UserManager
+	rm     *biz.RoleManager
+	token  jwt.Tokenizer
 	config *jwt.TokenizerConfig
 }
 
-func NewAuthService(um *biz.UserManager,rm *biz.RoleManager,token jwt.Tokenizer,config *jwt.TokenizerConfig) *AuthService {
-	return &AuthService{um: um,rm: rm,token: token,config: config}
+func NewAuthService(um *biz.UserManager, rm *biz.RoleManager, token jwt.Tokenizer, config *jwt.TokenizerConfig) *AuthService {
+	return &AuthService{um: um, rm: rm, token: token, config: config}
 }
 
 func (s *AuthService) Register(ctx context.Context, req *pb.RegisterAuthRequest) (*pb.RegisterAuthReply, error) {
 	return &pb.RegisterAuthReply{}, nil
 }
 func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.LoginAuthReply, error) {
-	user,err := s.um.FindByName(ctx,req.GetUsername())
-	if err!=nil{
-		return nil,err
+	user, err := s.um.FindByName(ctx, req.GetUsername())
+	if err != nil {
+		return nil, err
 	}
-	if user==nil{
-		return nil,pb.ErrorInvalidCredentials("")
+	if user == nil {
+		return nil, pb.ErrorInvalidCredentials("")
 	}
 	// check password
-	ok,err:=s.um.CheckPassword(ctx,user,req.Password)
-	if !ok{
-		return nil,pb.ErrorInvalidCredentials("")
+	ok, err := s.um.CheckPassword(ctx, user, req.Password)
+	if !ok {
+		return nil, pb.ErrorInvalidCredentials("")
 	}
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 	//login success
-	t ,err :=s.token.Issue(user.ID.String())
-	if err!=nil{
-		return nil,err
+	t, err := s.token.Issue(user.ID.String())
+	if err != nil {
+		return nil, err
 	}
-	return &pb.LoginAuthReply{AccessToken: t,Expires: int32(s.config.ExpireDuration.Seconds()),TokenType: "Bearer"}, nil
+	return &pb.LoginAuthReply{AccessToken: t, Expires: int32(s.config.ExpireDuration.Seconds()), TokenType: "Bearer"}, nil
 }
 func (s *AuthService) Token(ctx context.Context, req *pb.LoginAuthRequest) (*pb.LoginAuthReply, error) {
 	return &pb.LoginAuthReply{}, nil

@@ -16,7 +16,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData,gorm.NewDbOpener,uow2.NewUowManager,NewTenantStore,NewProvider,NewUserRepo,NewRefreshTokenRepo,NewRoleRepo,NewMigrate)
+var ProviderSet = wire.NewSet(NewData, gorm.NewDbOpener, uow2.NewUowManager, NewTenantStore, NewProvider, NewUserRepo, NewRefreshTokenRepo, NewRoleRepo, NewMigrate)
 
 // Data .
 type Data struct {
@@ -24,15 +24,15 @@ type Data struct {
 }
 
 func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
-	db :=provider.Get(ctx, ConnKey)
-	if err :=db.SetupJoinTable(&biz.User{}, "Roles", &biz.UserRole{});err!=nil{
+	db := provider.Get(ctx, ConnKey)
+	if err := db.SetupJoinTable(&biz.User{}, "Roles", &biz.UserRole{}); err != nil {
 		panic(err)
 	}
 	return db
 }
 
 // NewData .
-func NewData(c *conf.Data,dbProvider gorm.DbProvider, logger log.Logger) (*Data, func(), error) {
+func NewData(c *conf.Data, dbProvider gorm.DbProvider, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
 		logger.Log(log.LevelInfo, "closing the data resources")
 	}
@@ -47,7 +47,7 @@ func NewTenantStore() common.TenantStore {
 		[]common.TenantConfig{})
 }
 
-func NewProvider(c *conf.Data,cfg *gorm.Config, opener gorm.DbOpener,uow uow.Manager,ts common.TenantStore, logger log.Logger) gorm.DbProvider{
+func NewProvider(c *conf.Data, cfg *gorm.Config, opener gorm.DbOpener, uow uow.Manager, ts common.TenantStore, logger log.Logger) gorm.DbProvider {
 	ct := common.ContextCurrentTenant{}
 
 	conn := make(data.ConnStrings, 1)

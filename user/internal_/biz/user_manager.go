@@ -32,10 +32,10 @@ func NewUserManager(
 	logger log.Logger) *UserManager {
 	return &UserManager{
 		//cfg:       cfg,
-		userRepo:  userRepo,
-		pwdHasher: pwdHasher,
-		userValidator: userValidator,
-		pwdValidator: pwdValidator,
+		userRepo:         userRepo,
+		pwdHasher:        pwdHasher,
+		userValidator:    userValidator,
+		pwdValidator:     pwdValidator,
 		lookupNormalizer: lookupNormalizer,
 		//tokenFactory: tokenFactory,
 		log: log.With(logger, "module", "/biz/user_manager")}
@@ -45,11 +45,11 @@ type Config struct {
 }
 
 func (um *UserManager) List(ctx context.Context, query interface{}) ([]*User, error) {
-	return um.userRepo.List(ctx,query)
+	return um.userRepo.List(ctx, query)
 }
 
-func (um *UserManager)  Count(ctx context.Context, query interface{}) (total int64, filtered int64, err error) {
-	return um.userRepo.Count(ctx,query)
+func (um *UserManager) Count(ctx context.Context, query interface{}) (total int64, filtered int64, err error) {
+	return um.userRepo.Count(ctx, query)
 }
 
 func (um *UserManager) Create(ctx context.Context, u *User) (err error) {
@@ -129,18 +129,18 @@ func (um *UserManager) UpdatePassword(ctx context.Context, user *User, newPwd st
 	return um.Update(ctx, user)
 }
 
-func (um *UserManager) GetRoles(ctx context.Context, user *User) ([]*Role,error){
-	return um.userRepo.GetRoles(ctx,user)
+func (um *UserManager) GetRoles(ctx context.Context, user *User) ([]*Role, error) {
+	return um.userRepo.GetRoles(ctx, user)
 }
 
-func (um *UserManager) UpdateRoles(ctx context.Context, user *User,roles []*Role)error{
-	return um.userRepo.UpdateRoles(ctx,user,roles)
+func (um *UserManager) UpdateRoles(ctx context.Context, user *User, roles []*Role) error {
+	return um.userRepo.UpdateRoles(ctx, user, roles)
 }
-func (um *UserManager) AddToRole(ctx context.Context, user *User,role *Role) error {
-	return um.userRepo.AddToRole(ctx,user,role)
+func (um *UserManager) AddToRole(ctx context.Context, user *User, role *Role) error {
+	return um.userRepo.AddToRole(ctx, user, role)
 }
-func (um *UserManager) RemoveFromRole(ctx context.Context, user *User,role *Role) error {
-	return um.userRepo.RemoveFromRole(ctx,user,role)
+func (um *UserManager) RemoveFromRole(ctx context.Context, user *User, role *Role) error {
+	return um.userRepo.RemoveFromRole(ctx, user, role)
 }
 
 func (um *UserManager) validateUser(ctx context.Context, u *User) (err error) {

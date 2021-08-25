@@ -2,22 +2,22 @@ package data
 
 import (
 	"context"
+	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"github.com/goxiaoy/go-saas/seed"
 	"gorm.io/gorm"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 )
 
 type Migrate struct {
 	data *Data
 }
 
-func NewMigrate(data *Data) *Migrate  {
+func NewMigrate(data *Data) *Migrate {
 	return &Migrate{
 		data: data,
 	}
 }
 func (m *Migrate) Seed(ctx context.Context, sCtx *seed.Context) error {
-	db := GetDb(ctx,m.data.DbProvider)
+	db := GetDb(ctx, m.data.DbProvider)
 	return migrateDb(db)
 }
 
@@ -30,9 +30,9 @@ func migrateDb(db *gorm.DB) error {
 		&biz.UserLogin{},
 		&biz.UserSetting{},
 		&biz.UserToken{},
-		&biz.RefreshToken{} ); err != nil {
+		&biz.RefreshToken{}); err != nil {
 		return err
 	}
-	
+
 	return nil
 }

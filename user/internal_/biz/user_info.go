@@ -1,8 +1,8 @@
 package biz
 
 import (
-	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	concurrency "github.com/goxiaoy/gorm-concurrency"
 )
 
 type UserInfo struct {

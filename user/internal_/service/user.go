@@ -42,7 +42,7 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 	rItems := make([]*pb.User, len(items))
 	for index, i := range items {
 		rItems[index] = &pb.User{
-			Id:   i.ID.String(),
+			Id: i.ID.String(),
 			//TODO mapping
 		}
 	}
@@ -52,71 +52,71 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 }
 func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	// check confirm password
-	if req.Password!=""{
-		if req.ConfirmPassword!=req.Password{
-			return nil,pb.ErrorConfirmPasswordMismatch("","")
+	if req.Password != "" {
+		if req.ConfirmPassword != req.Password {
+			return nil, pb.ErrorConfirmPasswordMismatch("", "")
 		}
 	}
-	u:=biz.User{}
-	if req.Name!=nil{
-		u.Name=&req.Name.Value
+	u := biz.User{}
+	if req.Name != nil {
+		u.Name = &req.Name.Value
 	}
-	if req.Username!=nil{
-		u.Username =&req.Username.Value
+	if req.Username != nil {
+		u.Username = &req.Username.Value
 	}
-	if req.Email!=nil{
-		u.Email =&req.Email.Value
+	if req.Email != nil {
+		u.Email = &req.Email.Value
 	}
-	if req.Phone!=nil{
+	if req.Phone != nil {
 		u.Phone = &req.Phone.Value
 	}
 
-	if req.Birthday!=nil{
-		b:=req.Birthday.AsTime()
+	if req.Birthday != nil {
+		b := req.Birthday.AsTime()
 		u.Birthday = &b
 	}
-	gender:= req.Gender.String()
+	gender := req.Gender.String()
 	u.Gender = &gender
 	var err error
-	if req.Password!=""{
-		err = s.um.CreateWithPassword(ctx,&u,req.Password)
-	}else{
-		err = s.um.Create(ctx,&u)
+	if req.Password != "" {
+		err = s.um.CreateWithPassword(ctx, &u, req.Password)
+	} else {
+		err = s.um.Create(ctx, &u)
 	}
-	if err!=nil{
-		if errors.Is(err,biz.ErrInsufficientStrength){
-			return nil,pb.ErrorPasswordInsufficientStrength("","")
+	if err != nil {
+		if errors.Is(err, biz.ErrInsufficientStrength) {
+			return nil, pb.ErrorPasswordInsufficientStrength("", "")
 		}
-		if errors.Is(err,biz.ErrDuplicateEmail){
-			return nil,pb.ErrorDuplicateEmail("","")
+		if errors.Is(err, biz.ErrDuplicateEmail) {
+			return nil, pb.ErrorDuplicateEmail("", "")
 		}
-		if errors.Is(err,biz.ErrDuplicateUsername){
-			return nil,pb.ErrorDuplicateUsername("","")
+		if errors.Is(err, biz.ErrDuplicateUsername) {
+			return nil, pb.ErrorDuplicateUsername("", "")
 		}
-		if errors.Is(err,biz.ErrDuplicatePhone){
-			return nil,pb.ErrorDuplicatePhone("","")
+		if errors.Is(err, biz.ErrDuplicatePhone) {
+			return nil, pb.ErrorDuplicatePhone("", "")
 		}
-		return nil,err
+		return nil, err
 	}
 	res := &pb.CreateUserResponse{
-		Id:       u.ID.String()}
-	if u.Username!=nil{
-		res.Username= &wrappers.StringValue{Value: *u.Username}
+		Id: u.ID.String()}
+	if u.Username != nil {
+		res.Username = &wrappers.StringValue{Value: *u.Username}
 	}
-	if u.Name!=nil{
-		res.Name= &wrappers.StringValue{Value: *u.Name}
+	if u.Name != nil {
+		res.Name = &wrappers.StringValue{Value: *u.Name}
 	}
-	if u.Phone!=nil{
-		res.Phone= &wrappers.StringValue{Value: *u.Phone}
+	if u.Phone != nil {
+		res.Phone = &wrappers.StringValue{Value: *u.Phone}
 	}
-	if u.Email!=nil{
-		res.Email= &wrappers.StringValue{Value: *u.Email}
+	if u.Email != nil {
+		res.Email = &wrappers.StringValue{Value: *u.Email}
 	}
-	if u.Birthday!=nil{
-		res.Birthday= timestamppb.New(*u.Birthday)
+	if u.Birthday != nil {
+		res.Birthday = timestamppb.New(*u.Birthday)
 	}
-	if u.Gender!=nil{
-		if v ,ok:= pb.Gender_value[*u.Gender];ok{
+	if u.Gender != nil {
+		if v, ok := pb.Gender_value[*u.Gender]; ok {
 			res.Gender = pb.Gender(v)
 		}
 	}

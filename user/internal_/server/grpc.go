@@ -22,7 +22,7 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server,tokenizer jwt.Tokenizer,ts common.TenantStore, uowMgr uow2.Manager, user *service.UserService, account *service.AccountService, auth *service.AuthService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, user *service.UserService, account *service.AccountService, auth *service.AuthService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -30,9 +30,9 @@ func NewGRPCServer(c *conf.Server,tokenizer jwt.Tokenizer,ts common.TenantStore,
 			logging.Server(logger),
 			metrics.Server(),
 			validate.Validator(),
-			authentication.ServerExtractAndAuth(logger,tokenizer),
-			uow.Uow(logger,uowMgr),
-			middleware.MultiTenancy(nil,nil,ts),
+			authentication.ServerExtractAndAuth(logger, tokenizer),
+			uow.Uow(logger, uowMgr),
+			middleware.MultiTenancy(nil, nil, ts),
 		),
 	}
 	if c.Grpc.Network != "" {

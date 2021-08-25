@@ -50,5 +50,4 @@ type User struct {
 
 	// SecondEmail back up email
 	SecondEmail *string `json:"second_email"`
-
 }

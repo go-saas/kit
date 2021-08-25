@@ -14,28 +14,28 @@ import (
 	g "gorm.io/gorm"
 )
 
-func NewGormConfig(debug bool,driver string) *gorm.Config {
+func NewGormConfig(debug bool, driver string) *gorm.Config {
 	cfg := &gorm.Config{
 		Debug: debug,
-		Cfg: &g.Config{},
+		Cfg:   &g.Config{},
 	}
-	if driver == "mysql"{
+	if driver == "mysql" {
 		cfg.Dialect = func(s string) g.Dialector {
 			return mysql.Open(s)
 		}
 	}
-	if driver == "sqlite"{
+	if driver == "sqlite" {
 		cfg.Dialect = func(s string) g.Dialector {
 			return sqlite.Open(s)
 		}
 		//https://github.com/go-gorm/gorm/issues/2875
-		cfg.MaxOpenConn=1
-		cfg.MaxIdleConn=1
+		cfg.MaxOpenConn = 1
+		cfg.MaxIdleConn = 1
 	}
 	return cfg
 }
 
-func NewUowManager(cfg *gorm.Config,config *uow.Config, opener gorm.DbOpener) uow.Manager {
+func NewUowManager(cfg *gorm.Config, config *uow.Config, opener gorm.DbOpener) uow.Manager {
 	return uow.NewManager(config, func(ctx context.Context, kind, key string) uow.TransactionalDb {
 		if kind == gorm.DbKind {
 			db, err := opener.Open(cfg, key)
@@ -48,7 +48,7 @@ func NewUowManager(cfg *gorm.Config,config *uow.Config, opener gorm.DbOpener) uo
 	})
 }
 
-func Uow(l log.Logger,um uow.Manager) middleware.Middleware {
+func Uow(l log.Logger, um uow.Manager) middleware.Middleware {
 	logger := log.NewHelper(l)
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
@@ -56,12 +56,12 @@ func Uow(l log.Logger,um uow.Manager) middleware.Middleware {
 			var err error
 			// wrap into new unit of work
 			logger.Debugf("run into unit of work")
-			err = um.WithNew(ctx,func (ctx context.Context) error{
+			err = um.WithNew(ctx, func(ctx context.Context) error {
 				var err error
-				 res,err = handler(ctx, req)
-				 return err
+				res, err = handler(ctx, req)
+				return err
 			})
-			return res,err
+			return res, err
 		}
 	}
 }

@@ -2,8 +2,8 @@ package biz
 
 import (
 	"github.com/google/uuid"
-	"github.com/goxiaoy/go-saas/gorm"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas/gorm"
 )
 
 type UserRole struct {

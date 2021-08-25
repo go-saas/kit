@@ -2,9 +2,9 @@ package data
 
 import (
 	"context"
+	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas/gorm"
 	g "gorm.io/gorm"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 )
 
 const ConnKey = "User"

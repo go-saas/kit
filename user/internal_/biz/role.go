@@ -13,8 +13,8 @@ type Role struct {
 	gorm.UIDBase
 	concurrency.Version `gorm:"type:char(36)"`
 	gorm2.MultiTenancy
-	Name                string `json:"name" gorm:"index" rql:"filter"`
-	NormalizedName      string `json:"normalized_name" gorm:"index"`
+	Name           string `json:"name" gorm:"index" rql:"filter"`
+	NormalizedName string `json:"normalized_name" gorm:"index"`
 }
 
 // RoleRepo crud role

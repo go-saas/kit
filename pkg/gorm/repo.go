@@ -6,7 +6,6 @@ import (
 )
 
 type Repo struct {
-
 }
 
 func (r *Repo) BuildQuery(db *g.DB, model interface{}, query interface{}) (*g.DB, error) {
@@ -39,16 +38,16 @@ func (r *Repo) BuildQuery(db *g.DB, model interface{}, query interface{}) (*g.DB
 		return db, err
 	}
 
-	ret :=db.Model(model)
-	if p.FilterExp!=""{
-		if len(p.FilterArgs)>0{
+	ret := db.Model(model)
+	if p.FilterExp != "" {
+		if len(p.FilterArgs) > 0 {
 			ret = ret.Where(p.FilterExp, p.FilterArgs)
-		}else{
+		} else {
 			ret = ret.Where(p.FilterExp)
 		}
 	}
-	if p.Sort !=""{
-		ret =ret.Order(p.Sort)
+	if p.Sort != "" {
+		ret = ret.Order(p.Sort)
 	}
 	return ret.
 		Offset(p.Offset).
@@ -72,11 +71,11 @@ func (r *Repo) BuildFilter(db *g.DB, model interface{}, query interface{}) (*g.D
 	if err != nil {
 		return db, err
 	}
-	ret :=db.Model(model)
-	if p.FilterExp!=""{
-		if len(p.FilterArgs)>0{
+	ret := db.Model(model)
+	if p.FilterExp != "" {
+		if len(p.FilterArgs) > 0 {
 			ret = ret.Where(p.FilterExp, p.FilterArgs)
-		}else{
+		} else {
 			ret = ret.Where(p.FilterExp)
 		}
 	}
