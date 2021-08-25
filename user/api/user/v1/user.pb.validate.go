@@ -660,19 +660,9 @@ func (m *CreateUserRequest) Validate() error {
 
 	}
 
-	if utf8.RuneCountInString(m.GetPassword()) < 6 {
-		return CreateUserRequestValidationError{
-			field:  "Password",
-			reason: "value length must be at least 6 runes",
-		}
-	}
+	// no validation rules for Password
 
-	if utf8.RuneCountInString(m.GetConfirmPassword()) < 6 {
-		return CreateUserRequestValidationError{
-			field:  "ConfirmPassword",
-			reason: "value length must be at least 6 runes",
-		}
-	}
+	// no validation rules for ConfirmPassword
 
 	if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
