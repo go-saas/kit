@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/a8m/rql"
+	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"gorm.io/gorm"
 )
@@ -20,25 +21,35 @@ func NewRoleRepo(data *Data) biz.RoleRepo {
 	}
 }
 
-func (r RoleRepo) List(ctx context.Context, query interface{}) ([]*biz.Role, error) {
-	db := r.GetDb(ctx)
-	db, err := r.BuildQuery(db, &biz.Role{}, query)
-	if err != nil {
-		return nil, err
+func (r *RoleRepo) buildFilter(db *gorm.DB,query *v1.RoleFilter)*gorm.DB{
+	ret := db.Model(&biz.Role{})
+	if query==nil{
+		return ret
 	}
+	if len(query.IdIn)>0{
+		ret = ret.Where("id IN ?",query.IdIn)
+	}
+	if len(query.NameIn)>0{
+		ret = ret.Where("name IN ?",query.IdIn)
+	}
+	return ret
+}
+
+func (r *RoleRepo) List(ctx context.Context, query v1.ListRolesRequest) ([]*biz.Role, error) {
+	db := r.GetDb(ctx)
+	db =  r.buildFilter(db,query.Filter)
+	db = r.BuildSort(db,&query)
+	db = r.BuildPage(db,&query)
 	var items []*biz.Role
 	res := db.Find(&items)
 	return items, res.Error
 }
 
-func (r RoleRepo) First(ctx context.Context, query interface{}) (*biz.Role, error) {
+func (r *RoleRepo) First(ctx context.Context, query v1.RoleFilter) (*biz.Role, error) {
 	db := r.GetDb(ctx)
-	db, err := r.BuildFilter(db, &biz.Role{}, query)
-	if err != nil {
-		return nil, err
-	}
+	db =  r.buildFilter(db,&query)
 	var item = biz.Role{}
-	if err = db.First(&item).Error; err != nil {
+	if err := db.First(&item).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
@@ -47,7 +58,7 @@ func (r RoleRepo) First(ctx context.Context, query interface{}) (*biz.Role, erro
 	return &item, nil
 }
 
-func (r RoleRepo) FindByName(ctx context.Context, name string) (*biz.Role, error) {
+func (r *RoleRepo) FindByName(ctx context.Context, name string) (*biz.Role, error) {
 	db := r.GetDb(ctx)
 	var item = &biz.Role{}
 	if err := db.Where("normalized_name = ?", name).First(item).Error; err != nil {
@@ -59,13 +70,13 @@ func (r RoleRepo) FindByName(ctx context.Context, name string) (*biz.Role, error
 	return item, nil
 }
 
-func (r RoleRepo) Count(ctx context.Context, query interface{}) (total int64, filtered int64, err error) {
+func (r *RoleRepo) Count(ctx context.Context, query v1.RoleFilter) (total int64, filtered int64, err error) {
 	db := r.GetDb(ctx)
 	err = db.Model(&biz.Role{}).Count(&total).Error
 	if err != nil {
 		return
 	}
-	db, err = r.BuildFilter(db, &biz.Role{}, query)
+	db = r.buildFilter(db,&query)
 	if err != nil {
 		return
 	}
@@ -73,7 +84,7 @@ func (r RoleRepo) Count(ctx context.Context, query interface{}) (total int64, fi
 	return
 }
 
-func (r RoleRepo) Get(ctx context.Context, id string) (*biz.Role, error) {
+func (r *RoleRepo) Get(ctx context.Context, id string) (*biz.Role, error) {
 	db := r.GetDb(ctx)
 	var item = &biz.Role{}
 	if err := db.First(item, id).Error; err != nil {
@@ -85,16 +96,16 @@ func (r RoleRepo) Get(ctx context.Context, id string) (*biz.Role, error) {
 	return item, nil
 }
 
-func (r RoleRepo) Create(ctx context.Context, role *biz.Role) error {
+func (r *RoleRepo) Create(ctx context.Context, role *biz.Role) error {
 	db := r.GetDb(ctx)
 	return db.Create(role).Error
 }
 
-func (r RoleRepo) Update(ctx context.Context, id string, role *biz.Role, p rql.Select) error {
+func (r *RoleRepo) Update(ctx context.Context, id string, role *biz.Role, p rql.Select) error {
 	db := r.GetDb(ctx)
 	return db.Where("id=?", id).Updates(role).Error
 }
 
-func (r RoleRepo) Delete(ctx context.Context, id string) error {
+func (r *RoleRepo) Delete(ctx context.Context, id string) error {
 	panic("implement me")
 }

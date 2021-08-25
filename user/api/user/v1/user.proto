@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
-import "rql/operation.proto";
+
 import "validate/validate.proto";
 
 
@@ -38,19 +38,32 @@ service UserService{
 }
 
 message UserFilter{
-  rql.operation.StringFilterOperation name =1;
-  rql.operation.StringFilterOperation gender =2;
-  rql.operation.DateFilterOperators birthday =3;
-  
-//  RoleFilter roles =4;
+  repeated string gender_in=2;
 
-  repeated UserFilter and =7;
-  repeated UserFilter or =8;
+  google.protobuf.Timestamp birthday_gte=3;
+  google.protobuf.Timestamp birthday_lte=4;
+
+  RoleFilter roles =5;
+
+//  repeated UserFilter and =7;
+//  repeated UserFilter or =8;
+
 }
 
 message RoleFilter{
-  rql.operation.StringFilterOperation name =1;
+  repeated string id_in=1;
+  repeated string name_in =2;
 }
+
+message ListRolesRequest{
+  int32 page_offset =1;
+  int32 page_size = 2;
+  string search = 3;
+  repeated string sort =4;
+  google.protobuf.FieldMask fields=5;
+  RoleFilter filter =6;
+}
+
 
 message ListUsersRequest{
   int32 page_offset =1;

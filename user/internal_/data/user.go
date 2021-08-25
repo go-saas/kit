@@ -3,6 +3,7 @@ package data
 import (
 	"errors"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"gorm.io/gorm"
@@ -27,24 +28,42 @@ func (u *UserRepo) GetDb(ctx context.Context) *gorm.DB {
 	return GetDb(ctx, u.DbProvider)
 }
 
-func (u *UserRepo) List(ctx context.Context, query interface{}) ([]*biz.User, error) {
-	db := u.GetDb(ctx)
-	db, err := u.BuildQuery(db, &biz.User{}, query)
-	if err != nil {
-		return nil, err
+
+func (u *UserRepo) buildFilter(db *gorm.DB,query *v1.UserFilter)*gorm.DB{
+	ret := db.Model(&biz.User{})
+	if query==nil{
+		return ret
 	}
+	if len(query.GetGenderIn())>0{
+		ret = ret.Where("gender IN ?",query.GetGenderIn())
+	}
+	if query.BirthdayLte!=nil{
+		ret = ret.Where("birthday <= ?",query.BirthdayLte)
+	}
+	if query.BirthdayGte!=nil{
+		ret = ret.Where("birthday >= ?",query.BirthdayGte)
+	}
+	return ret
+}
+
+func (u *UserRepo) List(ctx context.Context, query v1.ListUsersRequest) ([]*biz.User, error) {
+	db := u.GetDb(ctx)
+	db =  u.buildFilter(db,query.Filter)
+	db = u.BuildSort(db,&query)
+	db = u.BuildPage(db,&query)
+
 	var items []*biz.User
 	res := db.Find(&items)
 	return items, res.Error
 }
 
-func (u *UserRepo) Count(ctx context.Context, query interface{}) (total int64, filtered int64, err error) {
+func (u *UserRepo) Count(ctx context.Context, query v1.UserFilter) (total int64, filtered int64, err error) {
 	db := u.GetDb(ctx)
 	err = db.Model(&biz.User{}).Count(&total).Error
 	if err != nil {
 		return
 	}
-	db, err = u.BuildFilter(db, &biz.User{}, query)
+	db =  u.buildFilter(db,&query)
 	if err != nil {
 		return
 	}

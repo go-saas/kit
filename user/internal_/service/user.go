@@ -3,8 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"github.com/a8m/rql"
-	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
@@ -24,18 +22,15 @@ func NewUserService(um *biz.UserManager) *UserService {
 
 func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
 	ret := &pb.ListUsersResponse{}
-	q := rql.NewQueryFromProto(req, req.Filter)
-	if err := q.ParseAndValidate(); err != nil {
-		return nil, errors2.BadRequest("Filter", err.Error())
+
+	totalCount, filterCount, err := s.um.Count(ctx, *req.Filter)
+	if err != nil {
+		return nil, err
 	}
-	totalCount, filterCount, err := s.um.Count(ctx, q)
 	ret.TotalSize = totalCount
 	ret.FilterSize = filterCount
 
-	if err != nil {
-		return ret, err
-	}
-	items, err := s.um.List(ctx, q)
+	items, err := s.um.List(ctx, *req)
 	if err != nil {
 		return ret, err
 	}

@@ -71,19 +71,7 @@
             "type": "string"
           },
           {
-            "name": "filter.name.$eq",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.$neq",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.$in",
+            "name": "filter.genderIn",
             "in": "query",
             "required": false,
             "type": "array",
@@ -93,7 +81,21 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "filter.name.$nin",
+            "name": "filter.birthdayGte",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "filter.birthdayLte",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "filter.roles.idIn",
             "in": "query",
             "required": false,
             "type": "array",
@@ -103,37 +105,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "filter.name.$null",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.name.$nnull",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.name.$like",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.gender.$eq",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.gender.$neq",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.gender.$in",
+            "name": "filter.roles.nameIn",
             "in": "query",
             "required": false,
             "type": "array",
@@ -141,82 +113,6 @@
               "type": "string"
             },
             "collectionFormat": "multi"
-          },
-          {
-            "name": "filter.gender.$nin",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "filter.gender.$null",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.gender.$nnull",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.gender.$like",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.birthday.$eq",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.birthday.$neq",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.birthday.$gt",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.birthday.$gte",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.birthday.$lt",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.birthday.$lte",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.birthday.$null",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.birthday.$nnull",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
           }
         ],
         "tags": [
@@ -343,67 +239,6 @@
     }
   },
   "definitions": {
-    "operationDateFilterOperators": {
-      "type": "object",
-      "properties": {
-        "$eq": {
-          "type": "string"
-        },
-        "$neq": {
-          "type": "string"
-        },
-        "$gt": {
-          "type": "string"
-        },
-        "$gte": {
-          "type": "string"
-        },
-        "$lt": {
-          "type": "string"
-        },
-        "$lte": {
-          "type": "string"
-        },
-        "$null": {
-          "type": "boolean"
-        },
-        "$nnull": {
-          "type": "boolean"
-        }
-      }
-    },
-    "operationStringFilterOperation": {
-      "type": "object",
-      "properties": {
-        "$eq": {
-          "type": "string"
-        },
-        "$neq": {
-          "type": "string"
-        },
-        "$in": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "$nin": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "$null": {
-          "type": "boolean"
-        },
-        "$nnull": {
-          "type": "boolean"
-        },
-        "$like": {
-          "type": "string"
-        }
-      }
-    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -533,6 +368,23 @@
         }
       }
     },
+    "v1RoleFilter": {
+      "type": "object",
+      "properties": {
+        "idIn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nameIn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "v1UpdateUserResponse": {
       "type": "object",
       "properties": {
@@ -596,26 +448,22 @@
     "v1UserFilter": {
       "type": "object",
       "properties": {
-        "name": {
-          "$ref": "#/definitions/operationStringFilterOperation"
-        },
-        "gender": {
-          "$ref": "#/definitions/operationStringFilterOperation"
-        },
-        "birthday": {
-          "$ref": "#/definitions/operationDateFilterOperators"
-        },
-        "and": {
+        "genderIn": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/v1UserFilter"
+            "type": "string"
           }
         },
-        "or": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1UserFilter"
-          }
+        "birthdayGte": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "birthdayLte": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "roles": {
+          "$ref": "#/definitions/v1RoleFilter"
         }
       }
     }

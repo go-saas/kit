@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/go-kratos/kratos/v2/log"
+	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 )
 
 var (
@@ -44,11 +45,11 @@ func NewUserManager(
 type Config struct {
 }
 
-func (um *UserManager) List(ctx context.Context, query interface{}) ([]*User, error) {
+func (um *UserManager) List(ctx context.Context, query v1.ListUsersRequest) ([]*User, error) {
 	return um.userRepo.List(ctx, query)
 }
 
-func (um *UserManager) Count(ctx context.Context, query interface{}) (total int64, filtered int64, err error) {
+func (um *UserManager) Count(ctx context.Context, query v1.UserFilter) (total int64, filtered int64, err error) {
 	return um.userRepo.Count(ctx, query)
 }
 

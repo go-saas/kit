@@ -40,64 +40,34 @@ func (m *UserFilter) Validate() error {
 		return nil
 	}
 
-	if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
+	if v, ok := interface{}(m.GetBirthdayGte()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserFilterValidationError{
-				field:  "Name",
+				field:  "BirthdayGte",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
 	}
 
-	if v, ok := interface{}(m.GetGender()).(interface{ Validate() error }); ok {
+	if v, ok := interface{}(m.GetBirthdayLte()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserFilterValidationError{
-				field:  "Gender",
+				field:  "BirthdayLte",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
 	}
 
-	if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
+	if v, ok := interface{}(m.GetRoles()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserFilterValidationError{
-				field:  "Birthday",
+				field:  "Roles",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
-	}
-
-	for idx, item := range m.GetAnd() {
-		_, _ = idx, item
-
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserFilterValidationError{
-					field:  fmt.Sprintf("And[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	for idx, item := range m.GetOr() {
-		_, _ = idx, item
-
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserFilterValidationError{
-					field:  fmt.Sprintf("Or[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
 	}
 
 	return nil
@@ -164,16 +134,6 @@ func (m *RoleFilter) Validate() error {
 		return nil
 	}
 
-	if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return RoleFilterValidationError{
-				field:  "Name",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	return nil
 }
 
@@ -230,6 +190,97 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RoleFilterValidationError{}
+
+// Validate checks the field values on ListRolesRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, an
+// error is returned.
+func (m *ListRolesRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for PageOffset
+
+	// no validation rules for PageSize
+
+	// no validation rules for Search
+
+	if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListRolesRequestValidationError{
+				field:  "Fields",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListRolesRequestValidationError{
+				field:  "Filter",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	return nil
+}
+
+// ListRolesRequestValidationError is the validation error returned by
+// ListRolesRequest.Validate if the designated constraints aren't met.
+type ListRolesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListRolesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListRolesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListRolesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListRolesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListRolesRequestValidationError) ErrorName() string { return "ListRolesRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ListRolesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListRolesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListRolesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListRolesRequestValidationError{}
 
 // Validate checks the field values on ListUsersRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, an
