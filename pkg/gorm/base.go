@@ -10,6 +10,8 @@ type UIDBase struct {
 }
 
 func (u *UIDBase) BeforeCreate(tx *gorm.DB) error {
-	u.ID = uuid.New()
+	if u.ID == uuid.Nil {
+		u.ID = uuid.New()
+	}
 	return nil
 }
