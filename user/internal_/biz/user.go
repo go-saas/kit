@@ -9,7 +9,7 @@ import (
 )
 
 type User struct {
-	gorm.UIDBase
+	gorm.UIDBase `json:",squash"`
 	concurrency.Version `gorm:"type:char(36)"`
 	gorm.AuditedModel
 	gorm3.MultiTenancy
