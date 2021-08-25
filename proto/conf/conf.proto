@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package conf;
+
+import "google/protobuf/duration.proto";
+option go_package = "github.com/goxiaoy/go-saas-kit/pkg/conf;conf";
+
+message Server {
+  message HTTP {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  message GRPC {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  HTTP http = 1;
+  GRPC grpc = 2;
+}
+
+message Service{
+  string grpc_endpoint=1;
+  string http_endpoint=2;
+}
+
+message Services{
+  map<string, Service> services = 1;
+}
+
+message Database {
+  string driver = 1;
+  string source = 2;
+  bool  debug =3;
+}
+
+message Databases{
+  map<string, Database> databases = 1;
+}
+
+message Security{
+  message Jwt{
+    google.protobuf.Duration expire_in=1;
+    string secret=2;
+  }
+  Jwt jwt=1;
+}

@@ -11,12 +11,13 @@ import (
 	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
-
 	g "gorm.io/gorm"
 )
 
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(NewData, gorm.NewDbOpener, uow2.NewUowManager, NewTenantStore, NewProvider, NewUserRepo, NewRefreshTokenRepo, NewRoleRepo, NewMigrate)
+
+const ConnName = "user"
 
 // Data .
 type Data struct {
@@ -51,7 +52,9 @@ func NewProvider(c *conf.Data, cfg *gorm.Config, opener gorm.DbOpener, uow uow.M
 	ct := common.ContextCurrentTenant{}
 
 	conn := make(data.ConnStrings, 1)
-	conn.SetDefault(c.Database.Source)
+	for k,v :=range c.Databases.Databases{
+		conn[k]=v.Source
+	}
 	mr := common.NewMultiTenancyConnStrResolver(ct, func() common.TenantStore {
 		return ts
 	}, data.NewConnStrOption(conn))

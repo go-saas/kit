@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
+	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
 	gorm2 "github.com/goxiaoy/uow/gorm"
@@ -14,17 +16,23 @@ import (
 	g "gorm.io/gorm"
 )
 
-func NewGormConfig(debug bool, driver string) *gorm.Config {
+func NewGormConfig(databases *conf.Databases,name string) *gorm.Config {
+	var c *conf.Database
+	var ok bool
+	c,ok = databases.Databases[name]
+	if !ok{
+		c,ok = databases.Databases[data.Default]
+	}
 	cfg := &gorm.Config{
-		Debug: debug,
+		Debug: c.Debug,
 		Cfg:   &g.Config{},
 	}
-	if driver == "mysql" {
+	if c.Driver == "mysql" {
 		cfg.Dialect = func(s string) g.Dialector {
 			return mysql.Open(s)
 		}
 	}
-	if driver == "sqlite" {
+	if c.Driver == "sqlite" {
 		cfg.Dialect = func(s string) g.Dialector {
 			return sqlite.Open(s)
 		}

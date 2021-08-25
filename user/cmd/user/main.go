@@ -6,6 +6,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/user/internal_/data"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
 	"os"
@@ -84,7 +85,7 @@ func main() {
 		Secret:         bc.Security.Jwt.Secret,
 	}, &uow.Config{
 		SupportNestedTransaction: false,
-	}, uow2.NewGormConfig(bc.Data.Database.Debug, bc.Data.Database.Driver))
+	}, uow2.NewGormConfig(bc.Data.Databases,data.ConnName))
 	if err != nil {
 		panic(err)
 	}

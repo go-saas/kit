@@ -10,9 +10,10 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/conf"
+	conf2 "github.com/goxiaoy/go-saas-kit/user/internal_/conf"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/data"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/seed"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/server"
@@ -24,7 +25,7 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, tokenizerConfig *jwt.TokenizerConfig, config *uow.Config, gormConfig *gorm.Config) (*kratos.App, func(), error) {
+func initApp(confServer *conf.Server, confData *conf2.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, tokenizerConfig *jwt.TokenizerConfig, config *uow.Config, gormConfig *gorm.Config) (*kratos.App, func(), error) {
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbOpener, cleanup := gorm.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)

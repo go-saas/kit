@@ -6,10 +6,12 @@ server:
     addr: 0.0.0.0:8501
     timeout: 2s
 data:
-  database:
-    debug: false
-    driver: mysql
-    source: root:rZakvdyjAmz73J8p@tcp(127.0.0.1:3309)/user?parseTime=true
+  databases:
+    databases:
+      default:
+        debug: false
+        driver: mysql
+        source: root:rZakvdyjAmz73J8p@tcp(127.0.0.1:3309)/user?parseTime=true
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
