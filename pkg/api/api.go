@@ -11,7 +11,7 @@ import (
 )
 
 // NewGrpcConn create new grpc client from name
-func NewGrpcConn(name string, services *conf.Services, insecure bool, opts ...grpc.ClientOption) (grpc2.ClientConnInterface, func() error) {
+func NewGrpcConn(name string, services *conf.Services, insecure bool, opts ...grpc.ClientOption) (grpc2.ClientConnInterface, func()) {
 	endpoint, ok := services.Services[name]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", name)))
@@ -31,13 +31,13 @@ func NewGrpcConn(name string, services *conf.Services, insecure bool, opts ...gr
 	if err != nil {
 		panic(err)
 	}
-	return conn, func() error {
-		return conn.Close()
+	return conn, func() {
+		conn.Close()
 	}
 }
 
 // NewHttpClient create new http client from name
-func NewHttpClient(name string, services *conf.Services, opts ...http.ClientOption) (*http.Client, func() error) {
+func NewHttpClient(name string, services *conf.Services, opts ...http.ClientOption) (*http.Client, func()) {
 	endpoint, ok := services.Services[name]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", name)))
@@ -51,7 +51,7 @@ func NewHttpClient(name string, services *conf.Services, opts ...http.ClientOpti
 	if err != nil {
 		panic(err)
 	}
-	return conn, func() error {
-		return conn.Close()
+	return conn, func() {
+		conn.Close()
 	}
 }
