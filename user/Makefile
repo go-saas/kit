@@ -46,7 +46,7 @@ api:
  	       --go-http_out=paths=source_relative:../ \
  	       --go-grpc_out=paths=source_relative:../ \
                --validate_out=paths=source_relative,lang=go:../ \
-               --openapiv2_out ../openapi/ \
+               --openapiv2_out=allow_merge=true,merge_file_name=user:../openapi/ \
 	       $(API_PROTO_FILES)
 
 .PHONY: build
