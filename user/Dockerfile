@@ -1,9 +1,9 @@
-FROM golang:1.15 AS builder
+FROM golang:1.17 AS builder
 
 COPY . /src
 WORKDIR /src
 
-RUN GOPROXY=https://goproxy.cn make build
+RUN GOPROXY=https://goproxy.cn make -f ./user/Makefile build
 
 FROM debian:stable-slim
 
@@ -21,4 +21,4 @@ EXPOSE 8000
 EXPOSE 9000
 VOLUME /data/conf
 
-CMD ["./server", "-conf", "/data/conf"]
+CMD ["./user", "-conf", "/data/conf"]
