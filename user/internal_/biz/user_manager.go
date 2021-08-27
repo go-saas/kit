@@ -45,11 +45,11 @@ func NewUserManager(
 type Config struct {
 }
 
-func (um *UserManager) List(ctx context.Context, query v1.ListUsersRequest) ([]*User, error) {
+func (um *UserManager) List(ctx context.Context, query *v1.ListUsersRequest) ([]*User, error) {
 	return um.userRepo.List(ctx, query)
 }
 
-func (um *UserManager) Count(ctx context.Context, query v1.UserFilter) (total int64, filtered int64, err error) {
+func (um *UserManager) Count(ctx context.Context, query *v1.UserFilter) (total int64, filtered int64, err error) {
 	return um.userRepo.Count(ctx, query)
 }
 

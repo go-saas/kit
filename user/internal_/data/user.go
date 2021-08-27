@@ -66,21 +66,21 @@ func buildUserScope(filter *v1.UserFilter) func (db *gorm.DB) *gorm.DB  {
 }
 
 
-func (u *UserRepo) List(ctx context.Context, query v1.ListUsersRequest) ([]*biz.User, error) {
+func (u *UserRepo) List(ctx context.Context, query *v1.ListUsersRequest) ([]*biz.User, error) {
 	db := u.GetDb(ctx).Model(&biz.User{})
-	db = db.Scopes(buildUserScope(query.Filter),gorm2.SortScope(&query),gorm2.PageScope(&query))
+	db = db.Scopes(buildUserScope(query.Filter),gorm2.SortScope(query),gorm2.PageScope(query))
 	var items []*biz.User
 	res := db.Find(&items)
 	return items, res.Error
 }
 
-func (u *UserRepo) Count(ctx context.Context, query v1.UserFilter) (total int64, filtered int64, err error) {
+func (u *UserRepo) Count(ctx context.Context, query *v1.UserFilter) (total int64, filtered int64, err error) {
 	db := u.GetDb(ctx).Model(&biz.User{})
 	err = db.Count(&total).Error
 	if err != nil {
 		return
 	}
-	db =  db.Scopes(buildUserScope(&query))
+	db =  db.Scopes(buildUserScope(query))
 	if err != nil {
 		return
 	}

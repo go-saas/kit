@@ -18,6 +18,9 @@ type Repo struct {
 
 func PageScope(page rql.Page) func(db *gorm.DB) *gorm.DB {
 	return func (db *gorm.DB) *gorm.DB {
+		if page==nil{
+			return db
+		}
 		ret := db
 		if page.GetPageOffset()>0{
 			ret=db.Offset(int(page.GetPageOffset()))
@@ -31,6 +34,9 @@ func PageScope(page rql.Page) func(db *gorm.DB) *gorm.DB {
 
 func SortScope(sort rql.Sort) func(db *gorm.DB) *gorm.DB {
 	return func (db *gorm.DB) *gorm.DB  {
+		if sort==nil{
+			return db
+		}
 		s := parseSort(sort.GetSort())
 		ret := db
 		if s!=""{

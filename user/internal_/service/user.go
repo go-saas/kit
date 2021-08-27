@@ -25,14 +25,14 @@ func NewUserService(um *biz.UserManager) *UserService {
 func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
 	ret := &pb.ListUsersResponse{}
 
-	totalCount, filterCount, err := s.um.Count(ctx, *req.Filter)
+	totalCount, filterCount, err := s.um.Count(ctx, req.Filter)
 	if err != nil {
 		return nil, err
 	}
 	ret.TotalSize = totalCount
 	ret.FilterSize = filterCount
 
-	items, err := s.um.List(ctx, *req)
+	items, err := s.um.List(ctx, req)
 	if err != nil {
 		return ret, err
 	}

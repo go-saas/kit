@@ -56,8 +56,8 @@ type User struct {
 
 
 type UserRepo interface {
-	List(ctx context.Context, query v1.ListUsersRequest) ([]*User, error)
-	Count(ctx context.Context, query v1.UserFilter) (total int64, filtered int64, err error)
+	List(ctx context.Context, query *v1.ListUsersRequest) ([]*User, error)
+	Count(ctx context.Context, query *v1.UserFilter) (total int64, filtered int64, err error)
 	Create(ctx context.Context, user *User) error
 	Update(ctx context.Context, user *User) error
 	Delete(ctx context.Context, user *User) error
