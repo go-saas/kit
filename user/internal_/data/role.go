@@ -28,12 +28,12 @@ func buildRoleScope( filter *v1.RoleFilter) func (db *gorm.DB) *gorm.DB  {
 			return db
 		}
 		ret := db
-		if len(filter.IdIn)>0{
-			ret = ret.Where("id IN ?",filter.IdIn)
-		}
-		if len(filter.NameIn)>0{
-			ret = ret.Where("name IN ?",filter.IdIn)
-		}
+		ret = ret.Scopes(gorm2.WhereIf(func() bool {
+			return filter.IdIn!=nil
+		},"id IN ?",filter.IdIn))
+		ret = ret.Scopes(gorm2.WhereIf(func() bool {
+			return filter.NameIn!=nil
+		},"name IN ?",filter.NameIn))
 		return ret
 	}
 }

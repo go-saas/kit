@@ -47,7 +47,7 @@ func buildUserScope(filter *v1.UserFilter) func (db *gorm.DB) *gorm.DB  {
 		}
 
 		ret = ret.Scopes(gorm2.WhereIf(func() bool {
-			return len(filter.GetGenderIn())>0
+			return filter.GetGenderIn()!=nil
 		},"gender IN ?",filter.GetGenderIn()))
 
 		ret = ret.Scopes(gorm2.WhereIf(func() bool {
@@ -58,7 +58,7 @@ func buildUserScope(filter *v1.UserFilter) func (db *gorm.DB) *gorm.DB  {
 			return filter.BirthdayGte!=nil
 		},"birthday >= ?",filter.BirthdayGte))
 		ret = ret.Scopes(gorm2.WhereIf(func() bool {
-			return len(filter.IdIn)>0
+			return filter.IdIn!=nil
 		},"id In ?",filter.IdIn))
 
 		return ret
