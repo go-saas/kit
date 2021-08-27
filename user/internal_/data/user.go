@@ -45,18 +45,21 @@ func buildUserScope(filter *v1.UserFilter) func (db *gorm.DB) *gorm.DB  {
 				ret = ret.Or(buildUserScope(filter)(db.Session(&gorm.Session{NewDB: true})))
 			}
 		}
-		if len(filter.GetGenderIn())>0{
-			ret = ret.Where("gender IN ?",filter.GetGenderIn())
-		}
-		if filter.BirthdayLte!=nil{
-			ret = ret.Where("birthday <= ?",filter.BirthdayLte)
-		}
-		if filter.BirthdayGte!=nil{
-			ret = ret.Where("birthday >= ?",filter.BirthdayGte)
-		}
-		if len(filter.IdIn)>0{
-			ret =ret.Where("id In ?",filter.IdIn)
-		}
+
+		ret = ret.Scopes(gorm2.WhereIf(func() bool {
+			return len(filter.GetGenderIn())>0
+		},"gender IN ?",filter.GetGenderIn()))
+
+		ret = ret.Scopes(gorm2.WhereIf(func() bool {
+			return filter.BirthdayLte!=nil
+		},"birthday <= ?",filter.BirthdayLte))
+
+		ret = ret.Scopes(gorm2.WhereIf(func() bool {
+			return filter.BirthdayGte!=nil
+		},"birthday >= ?",filter.BirthdayGte))
+		ret = ret.Scopes(gorm2.WhereIf(func() bool {
+			return len(filter.IdIn)>0
+		},"id In ?",filter.IdIn))
 
 		return ret
 	}
