@@ -28,42 +28,56 @@ func (u *UserRepo) GetDb(ctx context.Context) *gorm.DB {
 	return GetDb(ctx, u.DbProvider)
 }
 
+func buildUserScope(filter *v1.UserFilter) func (db *gorm.DB) *gorm.DB  {
+	return func (db *gorm.DB) *gorm.DB {
+		ret:= db
+		if filter==nil{
+			return ret
+		}
 
-func (u *UserRepo) buildFilter(db *gorm.DB,query *v1.UserFilter)*gorm.DB{
-	ret := db.Model(&biz.User{})
-	if query==nil{
+		if len(filter.And)>0{
+			for _, filter := range filter.And {
+				ret = ret.Where(buildUserScope(filter)(db.Session(&gorm.Session{NewDB: true})))
+			}
+		}
+		if len(filter.Or)>0{
+			for _, filter := range filter.Or {
+				ret = ret.Or(buildUserScope(filter)(db.Session(&gorm.Session{NewDB: true})))
+			}
+		}
+		if len(filter.GetGenderIn())>0{
+			ret = ret.Where("gender IN ?",filter.GetGenderIn())
+		}
+		if filter.BirthdayLte!=nil{
+			ret = ret.Where("birthday <= ?",filter.BirthdayLte)
+		}
+		if filter.BirthdayGte!=nil{
+			ret = ret.Where("birthday >= ?",filter.BirthdayGte)
+		}
+		if len(filter.IdIn)>0{
+			ret =ret.Where("id In ?",filter.IdIn)
+		}
+
 		return ret
 	}
-	if len(query.GetGenderIn())>0{
-		ret = ret.Where("gender IN ?",query.GetGenderIn())
-	}
-	if query.BirthdayLte!=nil{
-		ret = ret.Where("birthday <= ?",query.BirthdayLte)
-	}
-	if query.BirthdayGte!=nil{
-		ret = ret.Where("birthday >= ?",query.BirthdayGte)
-	}
-	return ret
 }
 
-func (u *UserRepo) List(ctx context.Context, query v1.ListUsersRequest) ([]*biz.User, error) {
-	db := u.GetDb(ctx)
-	db =  u.buildFilter(db,query.Filter)
-	db = u.BuildSort(db,&query)
-	db = u.BuildPage(db,&query)
 
+func (u *UserRepo) List(ctx context.Context, query v1.ListUsersRequest) ([]*biz.User, error) {
+	db := u.GetDb(ctx).Model(&biz.User{})
+	db = db.Scopes(buildUserScope(query.Filter),gorm2.SortScope(&query),gorm2.PageScope(&query))
 	var items []*biz.User
 	res := db.Find(&items)
 	return items, res.Error
 }
 
 func (u *UserRepo) Count(ctx context.Context, query v1.UserFilter) (total int64, filtered int64, err error) {
-	db := u.GetDb(ctx)
-	err = db.Model(&biz.User{}).Count(&total).Error
+	db := u.GetDb(ctx).Model(&biz.User{})
+	err = db.Count(&total).Error
 	if err != nil {
 		return
 	}
-	db =  u.buildFilter(db,&query)
+	db =  db.Scopes(buildUserScope(&query))
 	if err != nil {
 		return
 	}
@@ -126,16 +140,12 @@ func (u *UserRepo) AddLogin(ctx context.Context, user *biz.User, userLogin *biz.
 }
 
 func (u *UserRepo) RemoveLogin(ctx context.Context, user *biz.User, loginProvider string, providerKey string) error {
-	err := u.GetDb(ctx).Scopes(func(db *gorm.DB) *gorm.DB {
-		return gorm2.WhereUserId(db, user.ID)
-	}).Where("login_provider =?", loginProvider).Where("provider_key =?", providerKey).Delete(&biz.UserLogin{}).Error
+	err := u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID)).Where("login_provider =?", loginProvider).Where("provider_key =?", providerKey).Delete(&biz.UserLogin{}).Error
 	return err
 }
 
 func (u *UserRepo) ListLogin(ctx context.Context, user *biz.User) (userLogins []*biz.UserLogin, err error) {
-	err = u.GetDb(ctx).Scopes(func(db *gorm.DB) *gorm.DB {
-		return gorm2.WhereUserId(db, user.ID)
-	}).Model(&biz.UserLogin{}).Find(userLogins).Error
+	err = u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID)).Model(&biz.UserLogin{}).Find(userLogins).Error
 	return
 }
 
@@ -167,17 +177,13 @@ func (u *UserRepo) SetToken(ctx context.Context, user *biz.User, loginProvider s
 }
 
 func (u *UserRepo) RemoveToken(ctx context.Context, user *biz.User, loginProvider string, name string) (err error) {
-	err = u.GetDb(ctx).Scopes(func(db *gorm.DB) *gorm.DB {
-		return gorm2.WhereUserId(db, user.ID)
-	}).Where("login_provider =?", loginProvider).Where("name =?", name).Delete(&biz.UserToken{}).Error
+	err = u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID)).Where("login_provider =?", loginProvider).Where("name =?", name).Delete(&biz.UserToken{}).Error
 	return
 }
 
 func (u *UserRepo) GetToken(ctx context.Context, user *biz.User, loginProvider string, name string) (token *string, err error) {
 	var t biz.UserToken
-	err = u.GetDb(ctx).Scopes(func(db *gorm.DB) *gorm.DB {
-		return gorm2.WhereUserId(db, user.ID)
-	}).Where("login_provider =?", loginProvider).Where("name =?", name).First(&t).Error
+	err = u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID)).Where("login_provider =?", loginProvider).Where("name =?", name).First(&t).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

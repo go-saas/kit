@@ -16,28 +16,33 @@ service UserService{
   rpc ListUsers(ListUsersRequest)returns(ListUsersResponse){
     option (google.api.http) = {
       get: "/v1/users"
+      additional_bindings:{
+        post: "/v1/user/list"
+        body: "*"
+      }
     };
   }
   rpc CreateUser(CreateUserRequest) returns(CreateUserResponse){
     option (google.api.http) = {
-      post: "/v1/users"
+      post: "/v1/user"
       body:"*"
     };
   }
   rpc UpdateUser(UpdateUserRequest) returns(UpdateUserResponse){
     option (google.api.http) = {
-      put: "/v1/users/{id}"
+      put: "/v1/user/{id}"
       body: "*"
     };
   }
   rpc DeleteUser(DeleteUserRequest) returns(DeleteUserResponse){
     option (google.api.http) = {
-      delete: "/v1/users/{id}"
+      delete: "/v1/user/{id}"
     };
   }
 }
 
 message UserFilter{
+  repeated string id_in =1;
   repeated string gender_in=2;
 
   google.protobuf.Timestamp birthday_gte=3;
@@ -45,8 +50,8 @@ message UserFilter{
 
   RoleFilter roles =5;
 
-//  repeated UserFilter and =7;
-//  repeated UserFilter or =8;
+  repeated UserFilter and =7;
+  repeated UserFilter or =8;
 
 }
 

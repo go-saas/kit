@@ -2,7 +2,7 @@ package gorm
 
 import (
 	"github.com/a8m/rql"
-	g "gorm.io/gorm"
+	"gorm.io/gorm"
 	"strings"
 )
 
@@ -16,27 +16,33 @@ var(
 type Repo struct {
 }
 
-func (r *Repo)BuildPage(db *g.DB,page rql.Page) *g.DB {
-	ret := db
-	if page.GetPageOffset()>0{
-		ret=db.Offset(int(page.GetPageOffset()))
+func PageScope(page rql.Page) func(db *gorm.DB) *gorm.DB {
+	return func (db *gorm.DB) *gorm.DB {
+		ret := db
+		if page.GetPageOffset()>0{
+			ret=db.Offset(int(page.GetPageOffset()))
+		}
+		if page.GetPageSize()>0{
+			ret=db.Limit(int(page.GetPageSize()))
+		}
+		return ret
 	}
-	if page.GetPageSize()>0{
-		ret=db.Limit(int(page.GetPageSize()))
-	}
-	return ret
 }
 
-func (r *Repo)BuildSort(db *g.DB,sort rql.Sort) *g.DB {
-	s := r.parseSort(sort.GetSort())
-	ret := db
-	if s!=""{
-		ret = db.Order(s)
+func SortScope(sort rql.Sort) func(db *gorm.DB) *gorm.DB {
+	return func (db *gorm.DB) *gorm.DB  {
+		s := parseSort(sort.GetSort())
+		ret := db
+		if s!=""{
+			ret = db.Order(s)
+		}
+		return ret
 	}
-	return ret
+
 }
 
-func (r *Repo)parseSort(fields []string) string {
+
+func parseSort(fields []string) string {
 	sortParams := make([]string, len(fields))
 	for i, field := range fields {
 		var orderBy string

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/a8m/rql"
+	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"gorm.io/gorm"
@@ -21,33 +22,30 @@ func NewRoleRepo(data *Data) biz.RoleRepo {
 	}
 }
 
-func (r *RoleRepo) buildFilter(db *gorm.DB,query *v1.RoleFilter)*gorm.DB{
-	ret := db.Model(&biz.Role{})
-	if query==nil{
+func buildRoleScope( filter *v1.RoleFilter) func (db *gorm.DB) *gorm.DB  {
+	return func (db *gorm.DB) *gorm.DB {
+		ret := db
+		if len(filter.IdIn)>0{
+			ret = ret.Where("id IN ?",filter.IdIn)
+		}
+		if len(filter.NameIn)>0{
+			ret = ret.Where("name IN ?",filter.IdIn)
+		}
 		return ret
 	}
-	if len(query.IdIn)>0{
-		ret = ret.Where("id IN ?",query.IdIn)
-	}
-	if len(query.NameIn)>0{
-		ret = ret.Where("name IN ?",query.IdIn)
-	}
-	return ret
 }
 
 func (r *RoleRepo) List(ctx context.Context, query v1.ListRolesRequest) ([]*biz.Role, error) {
-	db := r.GetDb(ctx)
-	db =  r.buildFilter(db,query.Filter)
-	db = r.BuildSort(db,&query)
-	db = r.BuildPage(db,&query)
+	db := r.GetDb(ctx).Model(&biz.Role{})
+	db = db.Scopes(buildRoleScope(query.Filter),gorm2.SortScope(&query),gorm2.PageScope(&query))
 	var items []*biz.Role
 	res := db.Find(&items)
 	return items, res.Error
 }
 
 func (r *RoleRepo) First(ctx context.Context, query v1.RoleFilter) (*biz.Role, error) {
-	db := r.GetDb(ctx)
-	db =  r.buildFilter(db,&query)
+	db := r.GetDb(ctx).Model(&biz.Role{})
+	db =  db.Scopes(buildRoleScope(&query))
 	var item = biz.Role{}
 	if err := db.First(&item).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -71,12 +69,12 @@ func (r *RoleRepo) FindByName(ctx context.Context, name string) (*biz.Role, erro
 }
 
 func (r *RoleRepo) Count(ctx context.Context, query v1.RoleFilter) (total int64, filtered int64, err error) {
-	db := r.GetDb(ctx)
-	err = db.Model(&biz.Role{}).Count(&total).Error
+	db := r.GetDb(ctx).Model(&biz.Role{})
+	err = db.Count(&total).Error
 	if err != nil {
 		return
 	}
-	db = r.buildFilter(db,&query)
+	db =  db.Scopes(buildRoleScope(&query))
 	if err != nil {
 		return
 	}

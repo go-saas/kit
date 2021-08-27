@@ -26,13 +26,33 @@ type UserServiceHTTPServer interface {
 
 func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/v1/users", _UserService_ListUsers0_HTTP_Handler(srv))
-	r.POST("/v1/users", _UserService_CreateUser0_HTTP_Handler(srv))
-	r.PUT("/v1/users/{id}", _UserService_UpdateUser0_HTTP_Handler(srv))
-	r.DELETE("/v1/users/{id}", _UserService_DeleteUser0_HTTP_Handler(srv))
+	r.POST("/v1/user/list", _UserService_ListUsers0_HTTP_Handler(srv))
+	r.GET("/v1/users", _UserService_ListUsers1_HTTP_Handler(srv))
+	r.POST("/v1/user", _UserService_CreateUser0_HTTP_Handler(srv))
+	r.PUT("/v1/user/{id}", _UserService_UpdateUser0_HTTP_Handler(srv))
+	r.DELETE("/v1/user/{id}", _UserService_DeleteUser0_HTTP_Handler(srv))
 }
 
 func _UserService_ListUsers0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListUsersRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.user.v1.UserService/ListUsers")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListUsers(ctx, req.(*ListUsersRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListUsersResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _UserService_ListUsers1_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ListUsersRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -131,7 +151,7 @@ func NewUserServiceHTTPClient(client *http.Client) UserServiceHTTPClient {
 
 func (c *UserServiceHTTPClientImpl) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...http.CallOption) (*CreateUserResponse, error) {
 	var out CreateUserResponse
-	pattern := "/v1/users"
+	pattern := "/v1/user"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.user.v1.UserService/CreateUser"))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -144,7 +164,7 @@ func (c *UserServiceHTTPClientImpl) CreateUser(ctx context.Context, in *CreateUs
 
 func (c *UserServiceHTTPClientImpl) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...http.CallOption) (*DeleteUserResponse, error) {
 	var out DeleteUserResponse
-	pattern := "/v1/users/{id}"
+	pattern := "/v1/user/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation("/user.api.user.v1.UserService/DeleteUser"))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -170,7 +190,7 @@ func (c *UserServiceHTTPClientImpl) ListUsers(ctx context.Context, in *ListUsers
 
 func (c *UserServiceHTTPClientImpl) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...http.CallOption) (*UpdateUserResponse, error) {
 	var out UpdateUserResponse
-	pattern := "/v1/users/{id}"
+	pattern := "/v1/user/{id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.user.v1.UserService/UpdateUser"))
 	opts = append(opts, http.PathTemplate(pattern))
