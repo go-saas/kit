@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/golang/protobuf/ptypes/wrappers"
+
 	pb "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/mennanov/fmutils"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -35,11 +37,32 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 		return ret, err
 	}
 	rItems := make([]*pb.User, len(items))
-	for index, i := range items {
-		rItems[index] = &pb.User{
-			Id: i.ID.String(),
-			//TODO mapping
+	for index, u := range items {
+		res := &pb.User{	Id:       u.ID.String()}
+		if u.Username != nil {
+			res.Username = &wrappers.StringValue{Value: *u.Username}
 		}
+		if u.Name != nil {
+			res.Name = &wrappers.StringValue{Value: *u.Name}
+		}
+		if u.Phone != nil {
+			res.Phone = &wrappers.StringValue{Value: *u.Phone}
+		}
+		if u.Email != nil {
+			res.Email = &wrappers.StringValue{Value: *u.Email}
+		}
+		if u.Birthday != nil {
+			res.Birthday = timestamppb.New(*u.Birthday)
+		}
+		if u.Gender != nil {
+			if v, ok := pb.Gender_value[*u.Gender]; ok {
+				res.Gender = pb.Gender(v)
+			}
+		}
+		if req.Fields!=nil{
+			fmutils.Filter(res, req.Fields.Paths)
+		}
+		rItems[index] = res
 	}
 	ret.Items = rItems
 	return ret, nil
