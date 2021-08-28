@@ -3,8 +3,9 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/ahmetb/go-linq/v3"
+	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/golang/protobuf/ptypes/wrappers"
-
 	pb "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"github.com/mennanov/fmutils"
@@ -62,12 +63,69 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 		if req.Fields!=nil{
 			fmutils.Filter(res, req.Fields.Paths)
 		}
+		if u.Roles!=nil{
+			var returnRoles []*pb.Role
+			linq.From(u.Roles).SelectT(func(i biz.Role) *pb.Role{
+				return &pb.Role{
+					Id:   i.ID.String(),
+					Name: i.Name,
+				}
+			}).ToSlice(&returnRoles)
+			res.Roles = returnRoles
+		}
 		rItems[index] = res
 	}
 	ret.Items = rItems
 	return ret, nil
 
 }
+
+func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
+	u, err := s.um.FindByID(ctx, req.Id)
+	if err!=nil{
+		return nil,err
+	}
+	if u==nil{
+		return nil,errors2.BadRequest("","")
+	}
+	res := &pb.GetUserResponse{
+		Id:       u.ID.String(),
+		Roles:    nil,
+	}
+	//TODO duplicate codes????
+	if u.Username != nil {
+		res.Username = &wrappers.StringValue{Value: *u.Username}
+	}
+	if u.Name != nil {
+		res.Name = &wrappers.StringValue{Value: *u.Name}
+	}
+	if u.Phone != nil {
+		res.Phone = &wrappers.StringValue{Value: *u.Phone}
+	}
+	if u.Email != nil {
+		res.Email = &wrappers.StringValue{Value: *u.Email}
+	}
+	if u.Birthday != nil {
+		res.Birthday = timestamppb.New(*u.Birthday)
+	}
+	if u.Gender != nil {
+		if v, ok := pb.Gender_value[*u.Gender]; ok {
+			res.Gender = pb.Gender(v)
+		}
+	}
+	if u.Roles!=nil{
+		var returnRoles []*pb.Role
+		linq.From(u.Roles).SelectT(func(i biz.Role) *pb.Role{
+			return &pb.Role{
+				Id:   i.ID.String(),
+				Name: i.Name,
+			}
+		}).ToSlice(&returnRoles)
+		res.Roles = returnRoles
+	}
+	return res, nil
+}
+
 func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	// check confirm password
 	if req.Password != "" {

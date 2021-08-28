@@ -22,6 +22,11 @@ service UserService{
       }
     };
   }
+  rpc GetUser (GetUserRequest) returns (GetUserResponse){
+    option (google.api.http) = {
+      get: "/v1/user/{id}"
+    };
+  }
   rpc CreateUser(CreateUserRequest) returns(CreateUserResponse){
     option (google.api.http) = {
       post: "/v1/user"
@@ -79,6 +84,21 @@ message ListUsersRequest{
   UserFilter filter =6;
 }
 
+message GetUserRequest{
+  string  id=1 [(validate.rules).string.min_len = 1];
+}
+
+message GetUserResponse{
+  string  id=1;
+  google.protobuf.StringValue username =2;
+  google.protobuf.StringValue name=3;
+  google.protobuf.StringValue phone =4;
+  google.protobuf.StringValue email=5;
+  google.protobuf.Timestamp birthday=6;
+  //
+  Gender gender=7;
+  repeated Role roles=8;
+}
 message User{
   string  id=1;
   google.protobuf.StringValue username =2;
@@ -103,6 +123,7 @@ message ListUsersResponse{
   repeated User items = 3;
 
 }
+
 message CreateUserRequest{
     google.protobuf.StringValue username =1 [(validate.rules).string.min_len = 1];
     google.protobuf.StringValue name=2;
