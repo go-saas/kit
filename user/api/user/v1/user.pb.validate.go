@@ -1201,59 +1201,32 @@ func (m *UpdateUserRequest) Validate() error {
 		return nil
 	}
 
-	// no validation rules for Id
+	if m.GetUser() == nil {
+		return UpdateUserRequestValidationError{
+			field:  "User",
+			reason: "value is required",
+		}
+	}
 
-	if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
+	if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateUserRequestValidationError{
-				field:  "Username",
+				field:  "User",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
 	}
 
-	if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
+	if v, ok := interface{}(m.GetUpdateMask()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateUserRequestValidationError{
-				field:  "Name",
+				field:  "UpdateMask",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
 	}
-
-	if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateUserRequestValidationError{
-				field:  "Phone",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateUserRequestValidationError{
-				field:  "Email",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateUserRequestValidationError{
-				field:  "Birthday",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	// no validation rules for Gender
 
 	return nil
 }
@@ -1313,6 +1286,129 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateUserRequestValidationError{}
+
+// Validate checks the field values on UpdateUser with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *UpdateUser) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	if utf8.RuneCountInString(m.GetId()) < 1 {
+		return UpdateUserValidationError{
+			field:  "Id",
+			reason: "value length must be at least 1 runes",
+		}
+	}
+
+	if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateUserValidationError{
+				field:  "Username",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateUserValidationError{
+				field:  "Name",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateUserValidationError{
+				field:  "Phone",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateUserValidationError{
+				field:  "Email",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateUserValidationError{
+				field:  "Birthday",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Gender
+
+	return nil
+}
+
+// UpdateUserValidationError is the validation error returned by
+// UpdateUser.Validate if the designated constraints aren't met.
+type UpdateUserValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateUserValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateUserValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateUserValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateUserValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateUserValidationError) ErrorName() string { return "UpdateUserValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UpdateUserValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateUser.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateUserValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateUserValidationError{}
 
 // Validate checks the field values on UpdateUserResponse with the rules
 // defined in the proto definition for this message. If any rules are

@@ -35,8 +35,14 @@ service UserService{
   }
   rpc UpdateUser(UpdateUserRequest) returns(UpdateUserResponse){
     option (google.api.http) = {
-      put: "/v1/user/{id}"
+      put: "/v1/user/{user.id}"
       body: "*"
+      additional_bindings [
+        {
+          patch: "/v1/user/{user.id}"
+          body: "*"
+        }
+      ]
     };
   }
   rpc DeleteUser(DeleteUserRequest) returns(DeleteUserResponse){
@@ -138,9 +144,10 @@ message CreateUserRequest{
 }
 
 enum Gender{
-  MALE =0;
-  FEMALE =1;
-  OTHER=2;
+  UNKNOWN =0;
+  MALE =1;
+  FEMALE =2;
+  OTHER=3;
 }
 message CreateUserResponse{
   string  id=1;
@@ -149,11 +156,16 @@ message CreateUserResponse{
   google.protobuf.StringValue phone =4;
   google.protobuf.StringValue email=5;
   google.protobuf.Timestamp birthday=6;
-  //
+  //Gender
   Gender gender=7;
 }
 message UpdateUserRequest{
-  string id =1;
+  UpdateUser user=2 [(validate.rules).message.required=true];
+  google.protobuf.FieldMask update_mask = 3;
+}
+
+message UpdateUser{
+  string id =1[(validate.rules).string.min_len=1];
 
   google.protobuf.StringValue username =2;
   google.protobuf.StringValue name=3;
@@ -163,6 +175,7 @@ message UpdateUserRequest{
   //
   Gender gender=7;
 }
+
 message UpdateUserResponse{
   string id =1;
 

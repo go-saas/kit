@@ -554,7 +554,9 @@
         "tags": [
           "UserService"
         ]
-      },
+      }
+    },
+    "/v1/user/{user.id}": {
       "put": {
         "operationId": "UserService_UpdateUser",
         "responses": {
@@ -573,7 +575,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "user.id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -583,28 +585,43 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "username": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "phone": {
-                  "type": "string"
-                },
-                "email": {
-                  "type": "string"
-                },
-                "birthday": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "gender": {
-                  "$ref": "#/definitions/v1Gender"
-                }
-              }
+              "$ref": "#/definitions/v1UpdateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      },
+      "patch": {
+        "operationId": "UserService_UpdateUser2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateUserRequest"
             }
           }
         ],
@@ -812,7 +829,8 @@
           "format": "date-time"
         },
         "gender": {
-          "$ref": "#/definitions/v1Gender"
+          "$ref": "#/definitions/v1Gender",
+          "title": "Gender"
         }
       }
     },
@@ -834,11 +852,12 @@
     "v1Gender": {
       "type": "string",
       "enum": [
+        "UNKNOWN",
         "MALE",
         "FEMALE",
         "OTHER"
       ],
-      "default": "MALE"
+      "default": "UNKNOWN"
     },
     "v1GetAddressesReply": {
       "type": "object"
@@ -1060,6 +1079,44 @@
     },
     "v1UpdateSettingsResponse": {
       "type": "object"
+    },
+    "v1UpdateUser": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "gender": {
+          "$ref": "#/definitions/v1Gender"
+        }
+      }
+    },
+    "v1UpdateUserRequest": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1UpdateUser"
+        },
+        "updateMask": {
+          "type": "string"
+        }
+      }
     },
     "v1UpdateUserResponse": {
       "type": "object",

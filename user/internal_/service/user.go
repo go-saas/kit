@@ -86,7 +86,7 @@ func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 		return nil,err
 	}
 	if u==nil{
-		return nil,errors2.BadRequest("","")
+		return nil,errors2.NotFound("","")
 	}
 	res := &pb.GetUserResponse{
 		Id:       u.ID.String(),
@@ -198,8 +198,71 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	}
 	return res, nil
 }
+
 func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
-	return &pb.UpdateUserResponse{}, nil
+	if req.UpdateMask!=nil{
+		fmutils.Filter(req, req.UpdateMask.Paths)
+	}
+	u,err:=s.um.FindByID(ctx,req.User.Id)
+	if err!=nil{
+		return nil,err
+	}
+	if u==nil{
+		return nil,errors2.NotFound("","")
+	}
+	if req.GetUser().GetUsername()!=nil{
+		v := req.GetUser().GetUsername().Value
+		u.Username = &v
+	}
+
+	if req.GetUser().GetName()!=nil{
+		v := req.GetUser().GetName().Value
+		u.Name = &v
+	}
+	if req.GetUser().GetPhone()!=nil{
+		v := req.GetUser().GetPhone().Value
+		u.Phone = &v
+	}
+	if req.GetUser().GetEmail()!=nil{
+		v := req.GetUser().GetEmail().Value
+		u.Email = &v
+	}
+	if req.GetUser().GetBirthday()!=nil{
+		v := req.GetUser().GetBirthday().AsTime()
+		u.Birthday = &v
+	}
+
+	g:=req.GetUser().Gender.Enum().String()
+	u.Gender =  &g
+	if err := s.um.Update(ctx,u);err!=nil{
+		return nil,err
+	}
+	res := &pb.UpdateUserResponse{
+		Id: u.ID.String(),
+	}
+
+
+	if u.Username != nil {
+		res.Username = &wrappers.StringValue{Value: *u.Username}
+	}
+	if u.Name != nil {
+		res.Name = &wrappers.StringValue{Value: *u.Name}
+	}
+	if u.Phone != nil {
+		res.Phone = &wrappers.StringValue{Value: *u.Phone}
+	}
+	if u.Email != nil {
+		res.Email = &wrappers.StringValue{Value: *u.Email}
+	}
+	if u.Birthday != nil {
+		res.Birthday = timestamppb.New(*u.Birthday)
+	}
+	if u.Gender != nil {
+		if v, ok := pb.Gender_value[*u.Gender]; ok {
+			res.Gender = pb.Gender(v)
+		}
+	}
+	return res, nil
 }
 func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
 	return &pb.DeleteUserResponse{}, nil

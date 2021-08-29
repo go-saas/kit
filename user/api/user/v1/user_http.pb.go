@@ -31,7 +31,8 @@ func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
 	r.GET("/v1/users", _UserService_ListUsers1_HTTP_Handler(srv))
 	r.GET("/v1/user/{id}", _UserService_GetUser0_HTTP_Handler(srv))
 	r.POST("/v1/user", _UserService_CreateUser0_HTTP_Handler(srv))
-	r.PUT("/v1/user/{id}", _UserService_UpdateUser0_HTTP_Handler(srv))
+	r.PATCH("/v1/user/{user.id}", _UserService_UpdateUser0_HTTP_Handler(srv))
+	r.PUT("/v1/user/{user.id}", _UserService_UpdateUser1_HTTP_Handler(srv))
 	r.DELETE("/v1/user/{id}", _UserService_DeleteUser0_HTTP_Handler(srv))
 }
 
@@ -115,6 +116,28 @@ func _UserService_CreateUser0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx h
 }
 
 func _UserService_UpdateUser0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.user.v1.UserService/UpdateUser")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateUser(ctx, req.(*UpdateUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdateUserResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _UserService_UpdateUser1_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UpdateUserRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -228,7 +251,7 @@ func (c *UserServiceHTTPClientImpl) ListUsers(ctx context.Context, in *ListUsers
 
 func (c *UserServiceHTTPClientImpl) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...http.CallOption) (*UpdateUserResponse, error) {
 	var out UpdateUserResponse
-	pattern := "/v1/user/{id}"
+	pattern := "/v1/user/{user.id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.user.v1.UserService/UpdateUser"))
 	opts = append(opts, http.PathTemplate(pattern))
