@@ -11,7 +11,9 @@ import (
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/auth/middleware/authentication"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
+	"github.com/goxiaoy/go-saas-kit/user/api"
 	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 	v14 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
@@ -22,7 +24,7 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, user *service.UserService, account *service.AccountService, auth *service.AuthService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, user *service.UserService, account *service.AccountService, auth *service.AuthService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -35,15 +37,7 @@ func NewGRPCServer(c *conf.Server, tokenizer jwt.Tokenizer, ts common.TenantStor
 			middleware.MultiTenancy(nil, nil, ts),
 		),
 	}
-	if c.Grpc.Network != "" {
-		opts = append(opts, grpc.Network(c.Grpc.Network))
-	}
-	if c.Grpc.Addr != "" {
-		opts = append(opts, grpc.Address(c.Grpc.Addr))
-	}
-	if c.Grpc.Timeout != nil {
-		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
-	}
+	opts = server.PatchGrpcOpts(opts,api.ServiceName,c)
 	srv := grpc.NewServer(opts...)
 	v12.RegisterUserServiceServer(srv, user)
 	v13.RegisterAccountServer(srv, account)

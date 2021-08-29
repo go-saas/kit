@@ -12,7 +12,9 @@ import (
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/auth/middleware/authentication"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
+	"github.com/goxiaoy/go-saas-kit/user/api"
 	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 	v14 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
@@ -23,7 +25,7 @@ import (
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Server, tokenizer jwt.Tokenizer, uowMgr uow2.Manager, ts common.TenantStore, user *service.UserService, account *service.AccountService, auth *service.AuthService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manager, ts common.TenantStore, user *service.UserService, account *service.AccountService, auth *service.AuthService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -36,15 +38,8 @@ func NewHTTPServer(c *conf.Server, tokenizer jwt.Tokenizer, uowMgr uow2.Manager,
 			middleware.MultiTenancy(nil, nil, ts),
 		),
 	}
-	if c.Http.Network != "" {
-		opts = append(opts, http.Network(c.Http.Network))
-	}
-	if c.Http.Addr != "" {
-		opts = append(opts, http.Address(c.Http.Addr))
-	}
-	if c.Http.Timeout != nil {
-		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
-	}
+	opts = server.PatchHttpOpts(opts,api.ServiceName,c)
+
 	openAPIhandler := openapiv2.NewHandler()
 	srv := http.NewServer(opts...)
 	srv.HandlePrefix("/q/", openAPIhandler)

@@ -27,6 +27,7 @@ message Service{
 
 message Services{
   map<string, Service> services = 1;
+  map<string,Server> servers =2;
 }
 
 message Database {

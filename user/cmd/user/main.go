@@ -78,7 +78,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := initApp(bc.Server, bc.Data, logger, &biz.PasswordValidatorConfig{
+	app, cleanup, err := initApp(bc.Services, bc.Data, logger, &biz.PasswordValidatorConfig{
 		MinScore: 1,
 	}, &jwt.TokenizerConfig{
 		ExpireDuration: bc.Security.Jwt.ExpireIn.AsDuration(),

@@ -1,10 +1,12 @@
-server:
-  http:
-    addr: 0.0.0.0:8500
-    timeout: 200s
-  grpc:
-    addr: 0.0.0.0:8501
-    timeout: 200s
+services:
+  servers:
+    user:
+      http:
+        addr: 0.0.0.0:8500
+        timeout: 200s
+      grpc:
+        addr: 0.0.0.0:8501
+        timeout: 200s
 data:
   databases:
     databases:
