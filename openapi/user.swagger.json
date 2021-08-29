@@ -441,7 +441,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1CreateUserResponse"
+              "$ref": "#/definitions/v1User"
             }
           },
           "default": {
@@ -505,7 +505,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetUserResponse"
+              "$ref": "#/definitions/v1User"
             }
           },
           "default": {
@@ -563,7 +563,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1UpdateUserResponse"
+              "$ref": "#/definitions/v1User"
             }
           },
           "default": {
@@ -599,7 +599,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1UpdateUserResponse"
+              "$ref": "#/definitions/v1User"
             }
           },
           "default": {
@@ -806,34 +806,6 @@
         }
       }
     },
-    "v1CreateUserResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "phone": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "birthday": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "gender": {
-          "$ref": "#/definitions/v1Gender",
-          "title": "Gender"
-        }
-      }
-    },
     "v1DeleteUserResponse": {
       "type": "object"
     },
@@ -897,39 +869,6 @@
     },
     "v1GetSettingsResponse": {
       "type": "object"
-    },
-    "v1GetUserResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "phone": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "birthday": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "gender": {
-          "$ref": "#/definitions/v1Gender"
-        },
-        "roles": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1Role"
-          }
-        }
-      }
     },
     "v1ListUsersRequest": {
       "type": "object",
@@ -1115,33 +1054,6 @@
         },
         "updateMask": {
           "type": "string"
-        }
-      }
-    },
-    "v1UpdateUserResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "phone": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "birthday": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "gender": {
-          "$ref": "#/definitions/v1Gender"
         }
       }
     },

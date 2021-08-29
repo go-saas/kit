@@ -22,18 +22,18 @@ service UserService{
       }
     };
   }
-  rpc GetUser (GetUserRequest) returns (GetUserResponse){
+  rpc GetUser (GetUserRequest) returns (User){
     option (google.api.http) = {
       get: "/v1/user/{id}"
     };
   }
-  rpc CreateUser(CreateUserRequest) returns(CreateUserResponse){
+  rpc CreateUser(CreateUserRequest) returns(User){
     option (google.api.http) = {
       post: "/v1/user"
       body:"*"
     };
   }
-  rpc UpdateUser(UpdateUserRequest) returns(UpdateUserResponse){
+  rpc UpdateUser(UpdateUserRequest) returns(User){
     option (google.api.http) = {
       put: "/v1/user/{user.id}"
       body: "*"
