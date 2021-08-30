@@ -7,9 +7,17 @@ option go_package = "github.com/goxiaoy/go-saas-kit/pkg/conf;conf";
 
 message Server {
   message HTTP {
+
+    message Cors{
+      repeated string allowed_origins=1;
+      repeated string allowed_methods=2;
+    }
+
     string network = 1;
     string addr = 2;
     google.protobuf.Duration timeout = 3;
+    Cors cors=4;
+
   }
   message GRPC {
     string network = 1;

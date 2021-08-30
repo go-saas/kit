@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/gorilla/handlers"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 )
 
 // PatchGrpcOpts Patch grpc options with given service name and configs
-func PatchGrpcOpts(opts []grpc.ServerOption,name string,services *conf.Services) []grpc.ServerOption {
+func PatchGrpcOpts(opts []grpc.ServerOption, name string, services *conf.Services) []grpc.ServerOption {
 	server, ok := services.Servers[name]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v server not found", name)))
@@ -27,7 +28,7 @@ func PatchGrpcOpts(opts []grpc.ServerOption,name string,services *conf.Services)
 }
 
 // PatchHttpOpts Patch http options with given service name and configs
-func PatchHttpOpts(opts []http.ServerOption,name string,services *conf.Services) []http.ServerOption {
+func PatchHttpOpts(opts []http.ServerOption, name string, services *conf.Services) []http.ServerOption {
 	server, ok := services.Servers[name]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v server not found", name)))
@@ -40,6 +41,12 @@ func PatchHttpOpts(opts []http.ServerOption,name string,services *conf.Services)
 	}
 	if server.Http.Timeout != nil {
 		opts = append(opts, http.Timeout(server.Http.Timeout.AsDuration()))
+	}
+	if server.Http.Cors != nil {
+		opts = append(opts, http.Filter(handlers.CORS(
+			handlers.AllowedOrigins(server.Http.Cors.GetAllowedOrigins()),
+			handlers.AllowedMethods(server.Http.Cors.GetAllowedMethods()),
+		)))
 	}
 	return opts
 }

@@ -4,6 +4,9 @@ services:
       http:
         addr: 0.0.0.0:8500
         timeout: 200s
+        cors:
+          allowed_origins: ["*"]
+          allowed_methods: ["GET", "POST", "PUT", "HEAD", "OPTIONS","DELETE","PATCH"]
       grpc:
         addr: 0.0.0.0:8501
         timeout: 200s
