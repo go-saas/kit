@@ -63,17 +63,40 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	return res, nil
 }
 func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {
+	_, ok := current.FromUserContext(ctx)
+	if !ok {
+		return nil, errors.Unauthorized("", "")
+	}
+
 	return &pb.UpdateProfileResponse{}, nil
 }
 func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsRequest) (*pb.GetSettingsResponse, error) {
+	_, ok := current.FromUserContext(ctx)
+	if !ok {
+		return nil, errors.Unauthorized("", "")
+	}
+
 	return &pb.GetSettingsResponse{}, nil
 }
 func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSettingsRequest) (*pb.UpdateSettingsResponse, error) {
+	_, ok := current.FromUserContext(ctx)
+	if !ok {
+		return nil, errors.Unauthorized("", "")
+	}
 	return &pb.UpdateSettingsResponse{}, nil
 }
 func (s *AccountService) GetAddresses(ctx context.Context, req *pb.GetAddressesRequest) (*pb.GetAddressesReply, error) {
+	_, ok := current.FromUserContext(ctx)
+	if !ok {
+		return nil, errors.Unauthorized("", "")
+	}
 	return &pb.GetAddressesReply{}, nil
 }
+
 func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddressesRequest) (*pb.UpdateAddressesReply, error) {
+	_, ok := current.FromUserContext(ctx)
+	if !ok {
+		return nil, errors.Unauthorized("", "")
+	}
 	return &pb.UpdateAddressesReply{}, nil
 }

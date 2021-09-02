@@ -47,10 +47,13 @@ func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.
 	}
 	return &pb.LoginAuthReply{AccessToken: t, Expires: int32(s.config.ExpireDuration.Seconds()), TokenType: "Bearer"}, nil
 }
+
 func (s *AuthService) Token(ctx context.Context, req *pb.LoginAuthRequest) (*pb.LoginAuthReply, error) {
-	return &pb.LoginAuthReply{}, nil
+	return s.Login(ctx,req)
 }
+
 func (s *AuthService) Refresh(ctx context.Context, req *pb.RefreshTokenAuthRequest) (*pb.RefreshTokenAuthReply, error) {
+	//TODO
 	return &pb.RefreshTokenAuthReply{}, nil
 }
 func (s *AuthService) SendPasswordlessToken(ctx context.Context, req *pb.PasswordlessTokenAuthRequest) (*pb.PasswordlessTokenAuthReply, error) {
