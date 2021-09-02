@@ -9,6 +9,7 @@ message Bootstrap {
   Data data = 2;
   conf.Security security=3;
   conf.Services services =4;
+  UserConf user=5;
 }
 
 message Admin{
@@ -19,5 +20,9 @@ message Data {
   conf.Databases databases = 1;
   conf.Redis redis = 2;
   Admin admin =3;
+}
+message UserConf{
+  // Minimum password score. [0-5]
+  int32 password_score_min=1;
 }
 

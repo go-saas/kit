@@ -78,9 +78,14 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := initApp(bc.Services, bc.Data, logger, &biz.PasswordValidatorConfig{
+	pwdValidatorCfg := &biz.PasswordValidatorConfig{
 		MinScore: 1,
-	}, &jwt.TokenizerConfig{
+	}
+	if bc.User!=nil{
+		pwdValidatorCfg.MinScore= int(bc.User.PasswordScoreMin)
+	}
+
+	app, cleanup, err := initApp(bc.Services, bc.Data, logger,pwdValidatorCfg, &jwt.TokenizerConfig{
 		ExpireDuration: bc.Security.Jwt.ExpireIn.AsDuration(),
 		Secret:         bc.Security.Jwt.Secret,
 	}, &uow.Config{

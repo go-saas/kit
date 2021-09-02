@@ -25,6 +25,9 @@ data:
     username: admin
     password: zfe9R23Crbi7DybS
 
+user:
+  password_score_min: 0
+
 security:
   jwt:
     expire_in: 2592000s #    30 days
