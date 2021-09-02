@@ -989,3 +989,141 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ForgetPasswordReplyValidationError{}
+
+// Validate checks the field values on ValidatePasswordRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *ValidatePasswordRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Password
+
+	return nil
+}
+
+// ValidatePasswordRequestValidationError is the validation error returned by
+// ValidatePasswordRequest.Validate if the designated constraints aren't met.
+type ValidatePasswordRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ValidatePasswordRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ValidatePasswordRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ValidatePasswordRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ValidatePasswordRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ValidatePasswordRequestValidationError) ErrorName() string {
+	return "ValidatePasswordRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ValidatePasswordRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sValidatePasswordRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ValidatePasswordRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ValidatePasswordRequestValidationError{}
+
+// Validate checks the field values on ValidatePasswordReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *ValidatePasswordReply) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Ok
+
+	return nil
+}
+
+// ValidatePasswordReplyValidationError is the validation error returned by
+// ValidatePasswordReply.Validate if the designated constraints aren't met.
+type ValidatePasswordReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ValidatePasswordReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ValidatePasswordReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ValidatePasswordReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ValidatePasswordReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ValidatePasswordReplyValidationError) ErrorName() string {
+	return "ValidatePasswordReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ValidatePasswordReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sValidatePasswordReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ValidatePasswordReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ValidatePasswordReplyValidationError{}

@@ -3,9 +3,8 @@ package service
 import (
 	"context"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
-
 	pb "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
+	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 )
 
 type AuthService struct {
@@ -15,10 +14,11 @@ type AuthService struct {
 	rm     *biz.RoleManager
 	token  jwt.Tokenizer
 	config *jwt.TokenizerConfig
+	pwdValidator biz.PasswordValidator
 }
 
-func NewAuthService(um *biz.UserManager, rm *biz.RoleManager, token jwt.Tokenizer, config *jwt.TokenizerConfig) *AuthService {
-	return &AuthService{um: um, rm: rm, token: token, config: config}
+func NewAuthService(um *biz.UserManager, rm *biz.RoleManager, token jwt.Tokenizer, config *jwt.TokenizerConfig,pwdValidator biz.PasswordValidator) *AuthService {
+	return &AuthService{um: um, rm: rm, token: token, config: config,pwdValidator: pwdValidator}
 }
 
 func (s *AuthService) Register(ctx context.Context, req *pb.RegisterAuthRequest) (*pb.RegisterAuthReply, error) {
@@ -62,6 +62,15 @@ func (s *AuthService) LoginPasswordless(ctx context.Context, req *pb.LoginPasswo
 func (s *AuthService) SendForgetPasswordToken(ctx context.Context, req *pb.ForgetPasswordTokenRequest) (*pb.ForgetPasswordTokenReply, error) {
 	return &pb.ForgetPasswordTokenReply{}, nil
 }
+
 func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPasswordRequest) (*pb.ForgetPasswordReply, error) {
 	return &pb.ForgetPasswordReply{}, nil
+}
+
+func (s *AuthService) ValidatePassword(ctx context.Context, req *pb.ValidatePasswordRequest) (*pb.ValidatePasswordReply, error) {
+	err:=s.pwdValidator.Validate(ctx,req.Password)
+	if err!=nil{
+		return nil,err
+	}
+	return &pb.ValidatePasswordReply{Ok: true},nil
 }

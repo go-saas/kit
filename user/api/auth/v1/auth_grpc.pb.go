@@ -26,6 +26,7 @@ type AuthClient interface {
 	LoginPasswordless(ctx context.Context, in *LoginPasswordlessRequest, opts ...grpc.CallOption) (*LoginPasswordlessReply, error)
 	SendForgetPasswordToken(ctx context.Context, in *ForgetPasswordTokenRequest, opts ...grpc.CallOption) (*ForgetPasswordTokenReply, error)
 	ForgetPassword(ctx context.Context, in *ForgetPasswordRequest, opts ...grpc.CallOption) (*ForgetPasswordReply, error)
+	ValidatePassword(ctx context.Context, in *ValidatePasswordRequest, opts ...grpc.CallOption) (*ValidatePasswordReply, error)
 }
 
 type authClient struct {
@@ -108,6 +109,15 @@ func (c *authClient) ForgetPassword(ctx context.Context, in *ForgetPasswordReque
 	return out, nil
 }
 
+func (c *authClient) ValidatePassword(ctx context.Context, in *ValidatePasswordRequest, opts ...grpc.CallOption) (*ValidatePasswordReply, error) {
+	out := new(ValidatePasswordReply)
+	err := c.cc.Invoke(ctx, "/user.api.auth.v1.Auth/ValidatePassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServer is the server API for Auth service.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility
@@ -120,6 +130,7 @@ type AuthServer interface {
 	LoginPasswordless(context.Context, *LoginPasswordlessRequest) (*LoginPasswordlessReply, error)
 	SendForgetPasswordToken(context.Context, *ForgetPasswordTokenRequest) (*ForgetPasswordTokenReply, error)
 	ForgetPassword(context.Context, *ForgetPasswordRequest) (*ForgetPasswordReply, error)
+	ValidatePassword(context.Context, *ValidatePasswordRequest) (*ValidatePasswordReply, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -150,6 +161,9 @@ func (UnimplementedAuthServer) SendForgetPasswordToken(context.Context, *ForgetP
 }
 func (UnimplementedAuthServer) ForgetPassword(context.Context, *ForgetPasswordRequest) (*ForgetPasswordReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ForgetPassword not implemented")
+}
+func (UnimplementedAuthServer) ValidatePassword(context.Context, *ValidatePasswordRequest) (*ValidatePasswordReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidatePassword not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 
@@ -308,6 +322,24 @@ func _Auth_ForgetPassword_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_ValidatePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidatePasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).ValidatePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.auth.v1.Auth/ValidatePassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).ValidatePassword(ctx, req.(*ValidatePasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -346,6 +378,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ForgetPassword",
 			Handler:    _Auth_ForgetPassword_Handler,
+		},
+		{
+			MethodName: "ValidatePassword",
+			Handler:    _Auth_ValidatePassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

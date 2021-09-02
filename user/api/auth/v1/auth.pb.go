@@ -607,6 +607,100 @@ func (*ForgetPasswordReply) Descriptor() ([]byte, []int) {
 	return file_user_api_auth_v1_auth_proto_rawDescGZIP(), []int{13}
 }
 
+type ValidatePasswordRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Password string `protobuf:"bytes,1,opt,name=password,proto3" json:"password,omitempty"`
+}
+
+func (x *ValidatePasswordRequest) Reset() {
+	*x = ValidatePasswordRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_user_api_auth_v1_auth_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ValidatePasswordRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ValidatePasswordRequest) ProtoMessage() {}
+
+func (x *ValidatePasswordRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_api_auth_v1_auth_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ValidatePasswordRequest.ProtoReflect.Descriptor instead.
+func (*ValidatePasswordRequest) Descriptor() ([]byte, []int) {
+	return file_user_api_auth_v1_auth_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ValidatePasswordRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type ValidatePasswordReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Ok bool `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
+}
+
+func (x *ValidatePasswordReply) Reset() {
+	*x = ValidatePasswordReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_user_api_auth_v1_auth_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ValidatePasswordReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ValidatePasswordReply) ProtoMessage() {}
+
+func (x *ValidatePasswordReply) ProtoReflect() protoreflect.Message {
+	mi := &file_user_api_auth_v1_auth_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ValidatePasswordReply.ProtoReflect.Descriptor instead.
+func (*ValidatePasswordReply) Descriptor() ([]byte, []int) {
+	return file_user_api_auth_v1_auth_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ValidatePasswordReply) GetOk() bool {
+	if x != nil {
+		return x.Ok
+	}
+	return false
+}
+
 var File_user_api_auth_v1_auth_proto protoreflect.FileDescriptor
 
 var file_user_api_auth_v1_auth_proto_rawDesc = []byte{
@@ -651,7 +745,13 @@ var file_user_api_auth_v1_auth_proto_rawDesc = []byte{
 	0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x17, 0x0a, 0x15, 0x46, 0x6f, 0x72, 0x67, 0x65, 0x74,
 	0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22,
 	0x15, 0x0a, 0x13, 0x46, 0x6f, 0x72, 0x67, 0x65, 0x74, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72,
-	0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x32, 0xa2, 0x08, 0x0a, 0x04, 0x41, 0x75, 0x74, 0x68, 0x12,
+	0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x35, 0x0a, 0x17, 0x56, 0x61, 0x6c, 0x69, 0x64, 0x61,
+	0x74, 0x65, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x27, 0x0a,
+	0x15, 0x56, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72,
+	0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x0e, 0x0a, 0x02, 0x6f, 0x6b, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x02, 0x6f, 0x6b, 0x32, 0xb2, 0x09, 0x0a, 0x04, 0x41, 0x75, 0x74, 0x68, 0x12,
 	0x74, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x12, 0x25, 0x2e, 0x75, 0x73,
 	0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x76, 0x31, 0x2e, 0x52,
 	0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x41, 0x75, 0x74, 0x68, 0x52, 0x65, 0x71, 0x75, 0x65,
@@ -717,7 +817,16 @@ var file_user_api_auth_v1_auth_proto_rawDesc = []byte{
 	0x76, 0x31, 0x2e, 0x46, 0x6f, 0x72, 0x67, 0x65, 0x74, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72,
 	0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x23, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x1d, 0x22, 0x18,
 	0x2f, 0x76, 0x31, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72,
-	0x64, 0x2f, 0x66, 0x6f, 0x72, 0x67, 0x65, 0x74, 0x3a, 0x01, 0x2a, 0x42, 0x40, 0x0a, 0x08, 0x61,
+	0x64, 0x2f, 0x66, 0x6f, 0x72, 0x67, 0x65, 0x74, 0x3a, 0x01, 0x2a, 0x12, 0x8d, 0x01, 0x0a, 0x10,
+	0x56, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64,
+	0x12, 0x29, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x61, 0x75, 0x74, 0x68,
+	0x2e, 0x76, 0x31, 0x2e, 0x56, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x73, 0x73,
+	0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x27, 0x2e, 0x75, 0x73,
+	0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x76, 0x31, 0x2e, 0x56,
+	0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x25, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x1f, 0x22, 0x1a, 0x2f, 0x76,
+	0x31, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x2f,
+	0x76, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x3a, 0x01, 0x2a, 0x42, 0x40, 0x0a, 0x08, 0x61,
 	0x70, 0x69, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x50, 0x01, 0x5a, 0x32, 0x67, 0x69, 0x74, 0x68, 0x75,
 	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x6f, 0x78, 0x69, 0x61, 0x6f, 0x79, 0x2f, 0x67, 0x6f,
 	0x2d, 0x73, 0x61, 0x61, 0x73, 0x2d, 0x6b, 0x69, 0x74, 0x2f, 0x75, 0x73, 0x65, 0x72, 0x2f, 0x61,
@@ -737,7 +846,7 @@ func file_user_api_auth_v1_auth_proto_rawDescGZIP() []byte {
 	return file_user_api_auth_v1_auth_proto_rawDescData
 }
 
-var file_user_api_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_user_api_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_user_api_auth_v1_auth_proto_goTypes = []interface{}{
 	(*RegisterAuthRequest)(nil),          // 0: user.api.auth.v1.RegisterAuthRequest
 	(*RegisterAuthReply)(nil),            // 1: user.api.auth.v1.RegisterAuthReply
@@ -753,6 +862,8 @@ var file_user_api_auth_v1_auth_proto_goTypes = []interface{}{
 	(*ForgetPasswordTokenReply)(nil),     // 11: user.api.auth.v1.ForgetPasswordTokenReply
 	(*ForgetPasswordRequest)(nil),        // 12: user.api.auth.v1.ForgetPasswordRequest
 	(*ForgetPasswordReply)(nil),          // 13: user.api.auth.v1.ForgetPasswordReply
+	(*ValidatePasswordRequest)(nil),      // 14: user.api.auth.v1.ValidatePasswordRequest
+	(*ValidatePasswordReply)(nil),        // 15: user.api.auth.v1.ValidatePasswordReply
 }
 var file_user_api_auth_v1_auth_proto_depIdxs = []int32{
 	0,  // 0: user.api.auth.v1.Auth.Register:input_type -> user.api.auth.v1.RegisterAuthRequest
@@ -763,16 +874,18 @@ var file_user_api_auth_v1_auth_proto_depIdxs = []int32{
 	8,  // 5: user.api.auth.v1.Auth.LoginPasswordless:input_type -> user.api.auth.v1.LoginPasswordlessRequest
 	10, // 6: user.api.auth.v1.Auth.SendForgetPasswordToken:input_type -> user.api.auth.v1.ForgetPasswordTokenRequest
 	12, // 7: user.api.auth.v1.Auth.ForgetPassword:input_type -> user.api.auth.v1.ForgetPasswordRequest
-	1,  // 8: user.api.auth.v1.Auth.Register:output_type -> user.api.auth.v1.RegisterAuthReply
-	3,  // 9: user.api.auth.v1.Auth.Login:output_type -> user.api.auth.v1.LoginAuthReply
-	3,  // 10: user.api.auth.v1.Auth.Token:output_type -> user.api.auth.v1.LoginAuthReply
-	5,  // 11: user.api.auth.v1.Auth.Refresh:output_type -> user.api.auth.v1.RefreshTokenAuthReply
-	7,  // 12: user.api.auth.v1.Auth.SendPasswordlessToken:output_type -> user.api.auth.v1.PasswordlessTokenAuthReply
-	9,  // 13: user.api.auth.v1.Auth.LoginPasswordless:output_type -> user.api.auth.v1.LoginPasswordlessReply
-	11, // 14: user.api.auth.v1.Auth.SendForgetPasswordToken:output_type -> user.api.auth.v1.ForgetPasswordTokenReply
-	13, // 15: user.api.auth.v1.Auth.ForgetPassword:output_type -> user.api.auth.v1.ForgetPasswordReply
-	8,  // [8:16] is the sub-list for method output_type
-	0,  // [0:8] is the sub-list for method input_type
+	14, // 8: user.api.auth.v1.Auth.ValidatePassword:input_type -> user.api.auth.v1.ValidatePasswordRequest
+	1,  // 9: user.api.auth.v1.Auth.Register:output_type -> user.api.auth.v1.RegisterAuthReply
+	3,  // 10: user.api.auth.v1.Auth.Login:output_type -> user.api.auth.v1.LoginAuthReply
+	3,  // 11: user.api.auth.v1.Auth.Token:output_type -> user.api.auth.v1.LoginAuthReply
+	5,  // 12: user.api.auth.v1.Auth.Refresh:output_type -> user.api.auth.v1.RefreshTokenAuthReply
+	7,  // 13: user.api.auth.v1.Auth.SendPasswordlessToken:output_type -> user.api.auth.v1.PasswordlessTokenAuthReply
+	9,  // 14: user.api.auth.v1.Auth.LoginPasswordless:output_type -> user.api.auth.v1.LoginPasswordlessReply
+	11, // 15: user.api.auth.v1.Auth.SendForgetPasswordToken:output_type -> user.api.auth.v1.ForgetPasswordTokenReply
+	13, // 16: user.api.auth.v1.Auth.ForgetPassword:output_type -> user.api.auth.v1.ForgetPasswordReply
+	15, // 17: user.api.auth.v1.Auth.ValidatePassword:output_type -> user.api.auth.v1.ValidatePasswordReply
+	9,  // [9:18] is the sub-list for method output_type
+	0,  // [0:9] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name
@@ -952,6 +1065,30 @@ func file_user_api_auth_v1_auth_proto_init() {
 				return nil
 			}
 		}
+		file_user_api_auth_v1_auth_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ValidatePasswordRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_user_api_auth_v1_auth_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ValidatePasswordReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -959,7 +1096,7 @@ func file_user_api_auth_v1_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_user_api_auth_v1_auth_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -162,7 +162,7 @@ func (um *UserManager) normalize(_ context.Context, u *User) {
 }
 func (um *UserManager) updatePassword(ctx context.Context, u *User, password *string, validate bool) error {
 	if password != nil && validate {
-		if err := um.pwdValidator.Validate(ctx, u, *password); err != nil {
+		if err := um.pwdValidator.Validate(ctx, *password); err != nil {
 			return err
 		}
 	}

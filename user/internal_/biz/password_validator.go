@@ -12,7 +12,7 @@ var (
 
 type PasswordValidator interface {
 	// Validate password
-	Validate(ctx context.Context, user *User, password string) error
+	Validate(ctx context.Context, password string) error
 }
 
 type PasswordValidatorConfig struct {
@@ -28,7 +28,7 @@ func NewPasswordValidator(c *PasswordValidatorConfig) PasswordValidator {
 	}
 }
 
-func (p *passwordValidator) Validate(ctx context.Context, user *User, password string) (err error) {
+func (p *passwordValidator) Validate(ctx context.Context, password string) (err error) {
 	if len(password) > 100 {
 		password = password[:100]
 	}

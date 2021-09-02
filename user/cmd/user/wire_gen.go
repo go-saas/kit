@@ -46,7 +46,7 @@ func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, p
 	accountService := service.NewAccountService(userManager)
 	roleRepo := data.NewRoleRepo(dataData)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
-	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig)
+	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator)
 	httpServer := server.NewHTTPServer(services, tokenizer, manager, tenantStore, userService, accountService, authService, logger)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, userService, accountService, authService, logger)
 	migrate := data.NewMigrate(dataData)

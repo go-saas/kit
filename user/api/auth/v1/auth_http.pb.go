@@ -26,6 +26,7 @@ type AuthHTTPServer interface {
 	SendForgetPasswordToken(context.Context, *ForgetPasswordTokenRequest) (*ForgetPasswordTokenReply, error)
 	SendPasswordlessToken(context.Context, *PasswordlessTokenAuthRequest) (*PasswordlessTokenAuthReply, error)
 	Token(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
+	ValidatePassword(context.Context, *ValidatePasswordRequest) (*ValidatePasswordReply, error)
 }
 
 func RegisterAuthHTTPServer(s *http.Server, srv AuthHTTPServer) {
@@ -38,6 +39,7 @@ func RegisterAuthHTTPServer(s *http.Server, srv AuthHTTPServer) {
 	r.POST("/v1/auth/login/passwordless", _Auth_LoginPasswordless0_HTTP_Handler(srv))
 	r.POST("/v1/auth/action/forget", _Auth_SendForgetPasswordToken0_HTTP_Handler(srv))
 	r.POST("/v1/auth/password/forget", _Auth_ForgetPassword0_HTTP_Handler(srv))
+	r.POST("/v1/auth/password/validate", _Auth_ValidatePassword0_HTTP_Handler(srv))
 }
 
 func _Auth_Register0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
@@ -192,6 +194,25 @@ func _Auth_ForgetPassword0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Contex
 	}
 }
 
+func _Auth_ValidatePassword0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ValidatePasswordRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.auth.v1.Auth/ValidatePassword")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ValidatePassword(ctx, req.(*ValidatePasswordRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ValidatePasswordReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AuthHTTPClient interface {
 	ForgetPassword(ctx context.Context, req *ForgetPasswordRequest, opts ...http.CallOption) (rsp *ForgetPasswordReply, err error)
 	Login(ctx context.Context, req *LoginAuthRequest, opts ...http.CallOption) (rsp *LoginAuthReply, err error)
@@ -201,6 +222,7 @@ type AuthHTTPClient interface {
 	SendForgetPasswordToken(ctx context.Context, req *ForgetPasswordTokenRequest, opts ...http.CallOption) (rsp *ForgetPasswordTokenReply, err error)
 	SendPasswordlessToken(ctx context.Context, req *PasswordlessTokenAuthRequest, opts ...http.CallOption) (rsp *PasswordlessTokenAuthReply, err error)
 	Token(ctx context.Context, req *LoginAuthRequest, opts ...http.CallOption) (rsp *LoginAuthReply, err error)
+	ValidatePassword(ctx context.Context, req *ValidatePasswordRequest, opts ...http.CallOption) (rsp *ValidatePasswordReply, err error)
 }
 
 type AuthHTTPClientImpl struct {
@@ -307,6 +329,19 @@ func (c *AuthHTTPClientImpl) Token(ctx context.Context, in *LoginAuthRequest, op
 	pattern := "/v1/auth/token"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.auth.v1.Auth/Token"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *AuthHTTPClientImpl) ValidatePassword(ctx context.Context, in *ValidatePasswordRequest, opts ...http.CallOption) (*ValidatePasswordReply, error) {
+	var out ValidatePasswordReply
+	pattern := "/v1/auth/password/validate"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation("/user.api.auth.v1.Auth/ValidatePassword"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

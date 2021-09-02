@@ -338,6 +338,38 @@
         ]
       }
     },
+    "/v1/auth/password/validate": {
+      "post": {
+        "operationId": "Auth_ValidatePassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ValidatePasswordReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ValidatePasswordRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/v1/auth/refresh": {
       "post": {
         "operationId": "Auth_Refresh",
@@ -1127,6 +1159,22 @@
           "items": {
             "$ref": "#/definitions/v1UserFilter"
           }
+        }
+      }
+    },
+    "v1ValidatePasswordReply": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1ValidatePasswordRequest": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
         }
       }
     }

@@ -58,6 +58,13 @@ service Auth {
             body: "*",
         };
     }
+
+    rpc ValidatePassword(ValidatePasswordRequest) returns (ValidatePasswordReply){
+        option (google.api.http) = {
+            post: "/v1/auth/password/validate",
+            body: "*",
+        };
+    }
 }
 
 message RegisterAuthRequest{
@@ -112,4 +119,12 @@ message ForgetPasswordRequest{
 }
 message ForgetPasswordReply{
 
+}
+
+message ValidatePasswordRequest{
+    string password=1;
+}
+
+message ValidatePasswordReply{
+    bool ok =1;
 }
