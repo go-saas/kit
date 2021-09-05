@@ -16,7 +16,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/gorilla/handlers v1.5.1
-	github.com/goxiaoy/go-saas v0.0.10-0.20210905090002-2571347a6693
+	github.com/goxiaoy/go-saas v0.0.10-0.20210905095215-5a4eb8da2153
 	github.com/goxiaoy/gorm-concurrency v1.0.2
 	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
 	github.com/mennanov/fmutils v0.1.1
@@ -42,7 +42,6 @@ require (
 	github.com/go-kratos/grpc-gateway/v2 v2.5.1-0.20210811062259-c92d36e434b1 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
-	github.com/google/subcommands v1.2.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.5.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
@@ -56,11 +55,8 @@ require (
 	go.opentelemetry.io/otel v1.0.0-RC2 // indirect
 	go.opentelemetry.io/otel/trace v1.0.0-RC2 // indirect
 	golang.org/x/crypto v0.0.0-20210813211128-0a44fdfbc16e // indirect
-	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.5 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
