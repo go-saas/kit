@@ -25,7 +25,7 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, tokenizerConfig *jwt.TokenizerConfig, config *uow.Config, gormConfig *gorm.Config) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, userConf *conf2.UserConf, confData *conf2.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, tokenizerConfig *jwt.TokenizerConfig, config *uow.Config, gormConfig *gorm.Config) (*kratos.App, func(), error) {
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbOpener, cleanup := gorm.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
@@ -53,7 +53,7 @@ func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, p
 	roleSeed := biz.NewRoleSeed(roleManager)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	fake := seed.NewFake(userManager)
-	seeder := server.NewSeeder(confData, manager, migrate, roleSeed, userSeed, fake)
+	seeder := server.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, fake)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
 		cleanup2()

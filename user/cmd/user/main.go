@@ -33,7 +33,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+	flag.StringVar(&flagconf, "conf", "../../../configs", "config path, eg: -conf config.yaml")
 }
 
 func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.Seeder) *kratos.App {
@@ -85,7 +85,7 @@ func main() {
 		pwdValidatorCfg.MinScore= int(bc.User.PasswordScoreMin)
 	}
 
-	app, cleanup, err := initApp(bc.Services, bc.Data, logger,pwdValidatorCfg, &jwt.TokenizerConfig{
+	app, cleanup, err := initApp(bc.Services, bc.User, bc.Data, logger,pwdValidatorCfg, &jwt.TokenizerConfig{
 		ExpireDuration: bc.Security.Jwt.ExpireIn.AsDuration(),
 		Secret:         bc.Security.Jwt.Secret,
 	}, &uow.Config{

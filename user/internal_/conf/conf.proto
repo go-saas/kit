@@ -12,17 +12,18 @@ message Bootstrap {
   UserConf user=5;
 }
 
+message Data {
+  conf.Databases databases = 1;
+  conf.Redis redis = 2;
+}
+
 message Admin{
   string username =1;
   string password=2;
 }
-message Data {
-  conf.Databases databases = 1;
-  conf.Redis redis = 2;
-  Admin admin =3;
-}
 message UserConf{
   // Minimum password score. [0-5]
   int32 password_score_min=1;
+  Admin admin =2;
 }
 
