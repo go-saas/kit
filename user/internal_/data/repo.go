@@ -7,8 +7,6 @@ import (
 	g "gorm.io/gorm"
 )
 
-const ConnKey = "User"
-
 type Repo struct {
 	gorm2.Repo
 	DbProvider gorm.DbProvider

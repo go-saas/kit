@@ -25,7 +25,7 @@ type Data struct {
 }
 
 func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
-	db := provider.Get(ctx, ConnKey)
+	db := provider.Get(ctx, ConnName)
 	if err := db.SetupJoinTable(&biz.User{}, "Roles", &biz.UserRole{}); err != nil {
 		panic(err)
 	}
@@ -52,8 +52,8 @@ func NewProvider(c *conf.Data, cfg *gorm.Config, opener gorm.DbOpener, uow uow.M
 	ct := common.ContextCurrentTenant{}
 
 	conn := make(data.ConnStrings, 1)
-	for k,v :=range c.Databases.Databases{
-		conn[k]=v.Source
+	for k, v := range c.Databases.Databases {
+		conn[k] = v.Source
 	}
 	mr := common.NewMultiTenancyConnStrResolver(ct, func() common.TenantStore {
 		return ts
