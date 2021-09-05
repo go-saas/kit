@@ -42,6 +42,6 @@ func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 	srv := http.NewServer(opts...)
 	srv.HandlePrefix("/q/", openAPIhandler)
 
-	v1.RegisterTenantHTTPServer(srv, tenant)
+	v1.RegisterTenantServiceHTTPServer(srv, tenant)
 	return srv
 }

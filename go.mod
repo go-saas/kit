@@ -16,7 +16,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/gorilla/handlers v1.5.1
-	github.com/goxiaoy/go-saas v0.0.10-0.20210905051342-3636164e1d33
+	github.com/goxiaoy/go-saas v0.0.10-0.20210905090002-2571347a6693
 	github.com/goxiaoy/gorm-concurrency v1.0.2
 	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
 	github.com/mennanov/fmutils v0.1.1
@@ -46,7 +46,6 @@ require (
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.5.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
-	github.com/jinzhu/copier v0.3.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.2 // indirect
 	github.com/josharian/intern v1.0.0 // indirect

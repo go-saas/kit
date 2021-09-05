@@ -4,14 +4,20 @@ package api.tenant.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
 option go_package = "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1;v1";
 
 
-service Tenant {
-	rpc CreateTenant (CreateTenantRequest) returns (CreateTenantReply){
-
+service TenantService {
+	rpc CreateTenant (CreateTenantRequest) returns (Tenant){
+		option (google.api.http) = {
+			post: "/v1/saas/tenant"
+			body: "*"
+		};
 	};
-	rpc UpdateTenant (UpdateTenantRequest) returns (UpdateTenantReply){
+	rpc UpdateTenant (UpdateTenantRequest) returns (Tenant){
 		option (google.api.http) = {
 			put: "/v1/saas/tenant/{tenant.id}"
 			body: "*"
@@ -28,7 +34,8 @@ service Tenant {
 			delete: "/v1/saas/tenant/{id}"
 		};
 	}
-	rpc GetTenant (GetTenantRequest) returns (GetTenantReply){
+
+	rpc GetTenant (GetTenantRequest) returns (Tenant){
 		option (google.api.http) = {
 			get: "/v1/saas/tenant/{id}"
 		};
@@ -45,19 +52,23 @@ service Tenant {
 	}
 }
 
-message CreateTenantRequest {}
-message CreateTenantReply {}
+message CreateTenantRequest {
+	string name=2 [(validate.rules).string.min_len=1];
+	string display_name=3;
+	string region = 4;
+}
 
 message UpdateTenantRequest {
-	UpdateTenant tenant=1;
+	UpdateTenant tenant=1  [(validate.rules).message.required=true];
 	google.protobuf.FieldMask update_mask = 2;
 }
 
 
 message UpdateTenant{
-	string id=1;
+	string id=1 [(validate.rules).string.min_len=1];
+	string name =2 [(validate.rules).string.min_len=1];
+	string display_name=3;
 }
-message UpdateTenantReply {}
 
 message DeleteTenantRequest {
 	string id=1;
@@ -69,7 +80,52 @@ message DeleteTenantReply {
 message GetTenantRequest {
 	string id=1;
 }
-message GetTenantReply {}
 
-message ListTenantRequest {}
-message ListTenantReply {}
+
+
+message TenantFilter{
+	repeated string id_in=1;
+	repeated string name_in =2;
+	string name_like=3;
+	repeated string region_in=4;
+
+}
+
+message ListTenantRequest {
+	int32 page_offset =1;
+	int32 page_size = 2;
+	string search = 3;
+	repeated string sort =4;
+	google.protobuf.FieldMask fields=5;
+	TenantFilter filter =6;
+}
+
+message ListTenantReply {
+	int64 total_size =1;
+	int64 filter_size =2;
+
+	repeated Tenant items = 3;
+}
+
+message Tenant{
+	string id=1;
+	string name=2;
+	string display_name=3;
+	string region=4;
+	google.protobuf.Timestamp created_at=5;
+	google.protobuf.Timestamp updated_at=6;
+
+	repeated TenantConnectionString conn=7;
+	repeated TenantFeature features=8;
+
+}
+
+message TenantConnectionString{
+	string key=1;
+	string value=2;
+}
+
+message TenantFeature{
+	string key=1;
+	string value=2;
+}

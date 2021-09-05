@@ -14,232 +14,232 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// TenantClient is the client API for Tenant service.
+// TenantServiceClient is the client API for TenantService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type TenantClient interface {
-	CreateTenant(ctx context.Context, in *CreateTenantRequest, opts ...grpc.CallOption) (*CreateTenantReply, error)
-	UpdateTenant(ctx context.Context, in *UpdateTenantRequest, opts ...grpc.CallOption) (*UpdateTenantReply, error)
+type TenantServiceClient interface {
+	CreateTenant(ctx context.Context, in *CreateTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
+	UpdateTenant(ctx context.Context, in *UpdateTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
 	DeleteTenant(ctx context.Context, in *DeleteTenantRequest, opts ...grpc.CallOption) (*DeleteTenantReply, error)
-	GetTenant(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*GetTenantReply, error)
+	GetTenant(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
 	ListTenant(ctx context.Context, in *ListTenantRequest, opts ...grpc.CallOption) (*ListTenantReply, error)
 }
 
-type tenantClient struct {
+type tenantServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTenantClient(cc grpc.ClientConnInterface) TenantClient {
-	return &tenantClient{cc}
+func NewTenantServiceClient(cc grpc.ClientConnInterface) TenantServiceClient {
+	return &tenantServiceClient{cc}
 }
 
-func (c *tenantClient) CreateTenant(ctx context.Context, in *CreateTenantRequest, opts ...grpc.CallOption) (*CreateTenantReply, error) {
-	out := new(CreateTenantReply)
-	err := c.cc.Invoke(ctx, "/api.tenant.v1.Tenant/CreateTenant", in, out, opts...)
+func (c *tenantServiceClient) CreateTenant(ctx context.Context, in *CreateTenantRequest, opts ...grpc.CallOption) (*Tenant, error) {
+	out := new(Tenant)
+	err := c.cc.Invoke(ctx, "/api.tenant.v1.TenantService/CreateTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tenantClient) UpdateTenant(ctx context.Context, in *UpdateTenantRequest, opts ...grpc.CallOption) (*UpdateTenantReply, error) {
-	out := new(UpdateTenantReply)
-	err := c.cc.Invoke(ctx, "/api.tenant.v1.Tenant/UpdateTenant", in, out, opts...)
+func (c *tenantServiceClient) UpdateTenant(ctx context.Context, in *UpdateTenantRequest, opts ...grpc.CallOption) (*Tenant, error) {
+	out := new(Tenant)
+	err := c.cc.Invoke(ctx, "/api.tenant.v1.TenantService/UpdateTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tenantClient) DeleteTenant(ctx context.Context, in *DeleteTenantRequest, opts ...grpc.CallOption) (*DeleteTenantReply, error) {
+func (c *tenantServiceClient) DeleteTenant(ctx context.Context, in *DeleteTenantRequest, opts ...grpc.CallOption) (*DeleteTenantReply, error) {
 	out := new(DeleteTenantReply)
-	err := c.cc.Invoke(ctx, "/api.tenant.v1.Tenant/DeleteTenant", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.tenant.v1.TenantService/DeleteTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tenantClient) GetTenant(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*GetTenantReply, error) {
-	out := new(GetTenantReply)
-	err := c.cc.Invoke(ctx, "/api.tenant.v1.Tenant/GetTenant", in, out, opts...)
+func (c *tenantServiceClient) GetTenant(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*Tenant, error) {
+	out := new(Tenant)
+	err := c.cc.Invoke(ctx, "/api.tenant.v1.TenantService/GetTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tenantClient) ListTenant(ctx context.Context, in *ListTenantRequest, opts ...grpc.CallOption) (*ListTenantReply, error) {
+func (c *tenantServiceClient) ListTenant(ctx context.Context, in *ListTenantRequest, opts ...grpc.CallOption) (*ListTenantReply, error) {
 	out := new(ListTenantReply)
-	err := c.cc.Invoke(ctx, "/api.tenant.v1.Tenant/ListTenant", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.tenant.v1.TenantService/ListTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TenantServer is the server API for Tenant service.
-// All implementations must embed UnimplementedTenantServer
+// TenantServiceServer is the server API for TenantService service.
+// All implementations must embed UnimplementedTenantServiceServer
 // for forward compatibility
-type TenantServer interface {
-	CreateTenant(context.Context, *CreateTenantRequest) (*CreateTenantReply, error)
-	UpdateTenant(context.Context, *UpdateTenantRequest) (*UpdateTenantReply, error)
+type TenantServiceServer interface {
+	CreateTenant(context.Context, *CreateTenantRequest) (*Tenant, error)
+	UpdateTenant(context.Context, *UpdateTenantRequest) (*Tenant, error)
 	DeleteTenant(context.Context, *DeleteTenantRequest) (*DeleteTenantReply, error)
-	GetTenant(context.Context, *GetTenantRequest) (*GetTenantReply, error)
+	GetTenant(context.Context, *GetTenantRequest) (*Tenant, error)
 	ListTenant(context.Context, *ListTenantRequest) (*ListTenantReply, error)
-	mustEmbedUnimplementedTenantServer()
+	mustEmbedUnimplementedTenantServiceServer()
 }
 
-// UnimplementedTenantServer must be embedded to have forward compatible implementations.
-type UnimplementedTenantServer struct {
+// UnimplementedTenantServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedTenantServiceServer struct {
 }
 
-func (UnimplementedTenantServer) CreateTenant(context.Context, *CreateTenantRequest) (*CreateTenantReply, error) {
+func (UnimplementedTenantServiceServer) CreateTenant(context.Context, *CreateTenantRequest) (*Tenant, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTenant not implemented")
 }
-func (UnimplementedTenantServer) UpdateTenant(context.Context, *UpdateTenantRequest) (*UpdateTenantReply, error) {
+func (UnimplementedTenantServiceServer) UpdateTenant(context.Context, *UpdateTenantRequest) (*Tenant, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTenant not implemented")
 }
-func (UnimplementedTenantServer) DeleteTenant(context.Context, *DeleteTenantRequest) (*DeleteTenantReply, error) {
+func (UnimplementedTenantServiceServer) DeleteTenant(context.Context, *DeleteTenantRequest) (*DeleteTenantReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTenant not implemented")
 }
-func (UnimplementedTenantServer) GetTenant(context.Context, *GetTenantRequest) (*GetTenantReply, error) {
+func (UnimplementedTenantServiceServer) GetTenant(context.Context, *GetTenantRequest) (*Tenant, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTenant not implemented")
 }
-func (UnimplementedTenantServer) ListTenant(context.Context, *ListTenantRequest) (*ListTenantReply, error) {
+func (UnimplementedTenantServiceServer) ListTenant(context.Context, *ListTenantRequest) (*ListTenantReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTenant not implemented")
 }
-func (UnimplementedTenantServer) mustEmbedUnimplementedTenantServer() {}
+func (UnimplementedTenantServiceServer) mustEmbedUnimplementedTenantServiceServer() {}
 
-// UnsafeTenantServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TenantServer will
+// UnsafeTenantServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TenantServiceServer will
 // result in compilation errors.
-type UnsafeTenantServer interface {
-	mustEmbedUnimplementedTenantServer()
+type UnsafeTenantServiceServer interface {
+	mustEmbedUnimplementedTenantServiceServer()
 }
 
-func RegisterTenantServer(s grpc.ServiceRegistrar, srv TenantServer) {
-	s.RegisterService(&Tenant_ServiceDesc, srv)
+func RegisterTenantServiceServer(s grpc.ServiceRegistrar, srv TenantServiceServer) {
+	s.RegisterService(&TenantService_ServiceDesc, srv)
 }
 
-func _Tenant_CreateTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TenantService_CreateTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTenantRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TenantServer).CreateTenant(ctx, in)
+		return srv.(TenantServiceServer).CreateTenant(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.tenant.v1.Tenant/CreateTenant",
+		FullMethod: "/api.tenant.v1.TenantService/CreateTenant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TenantServer).CreateTenant(ctx, req.(*CreateTenantRequest))
+		return srv.(TenantServiceServer).CreateTenant(ctx, req.(*CreateTenantRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Tenant_UpdateTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TenantService_UpdateTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateTenantRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TenantServer).UpdateTenant(ctx, in)
+		return srv.(TenantServiceServer).UpdateTenant(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.tenant.v1.Tenant/UpdateTenant",
+		FullMethod: "/api.tenant.v1.TenantService/UpdateTenant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TenantServer).UpdateTenant(ctx, req.(*UpdateTenantRequest))
+		return srv.(TenantServiceServer).UpdateTenant(ctx, req.(*UpdateTenantRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Tenant_DeleteTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TenantService_DeleteTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteTenantRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TenantServer).DeleteTenant(ctx, in)
+		return srv.(TenantServiceServer).DeleteTenant(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.tenant.v1.Tenant/DeleteTenant",
+		FullMethod: "/api.tenant.v1.TenantService/DeleteTenant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TenantServer).DeleteTenant(ctx, req.(*DeleteTenantRequest))
+		return srv.(TenantServiceServer).DeleteTenant(ctx, req.(*DeleteTenantRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Tenant_GetTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TenantService_GetTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTenantRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TenantServer).GetTenant(ctx, in)
+		return srv.(TenantServiceServer).GetTenant(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.tenant.v1.Tenant/GetTenant",
+		FullMethod: "/api.tenant.v1.TenantService/GetTenant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TenantServer).GetTenant(ctx, req.(*GetTenantRequest))
+		return srv.(TenantServiceServer).GetTenant(ctx, req.(*GetTenantRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Tenant_ListTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TenantService_ListTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTenantRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TenantServer).ListTenant(ctx, in)
+		return srv.(TenantServiceServer).ListTenant(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.tenant.v1.Tenant/ListTenant",
+		FullMethod: "/api.tenant.v1.TenantService/ListTenant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TenantServer).ListTenant(ctx, req.(*ListTenantRequest))
+		return srv.(TenantServiceServer).ListTenant(ctx, req.(*ListTenantRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Tenant_ServiceDesc is the grpc.ServiceDesc for Tenant service.
+// TenantService_ServiceDesc is the grpc.ServiceDesc for TenantService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Tenant_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.tenant.v1.Tenant",
-	HandlerType: (*TenantServer)(nil),
+var TenantService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.tenant.v1.TenantService",
+	HandlerType: (*TenantServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateTenant",
-			Handler:    _Tenant_CreateTenant_Handler,
+			Handler:    _TenantService_CreateTenant_Handler,
 		},
 		{
 			MethodName: "UpdateTenant",
-			Handler:    _Tenant_UpdateTenant_Handler,
+			Handler:    _TenantService_UpdateTenant_Handler,
 		},
 		{
 			MethodName: "DeleteTenant",
-			Handler:    _Tenant_DeleteTenant_Handler,
+			Handler:    _TenantService_DeleteTenant_Handler,
 		},
 		{
 			MethodName: "GetTenant",
-			Handler:    _Tenant_GetTenant_Handler,
+			Handler:    _TenantService_GetTenant_Handler,
 		},
 		{
 			MethodName: "ListTenant",
-			Handler:    _Tenant_ListTenant_Handler,
+			Handler:    _TenantService_ListTenant_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/tenant/v1/tenant.proto",
+	Metadata: "saas/api/tenant/v1/tenant.proto",
 }

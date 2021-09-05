@@ -37,6 +37,6 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 	}
 	opts = server.PatchGrpcOpts(opts, api.ServiceName, c)
 	srv := grpc.NewServer(opts...)
-	v1.RegisterTenantServer(srv, tenant)
+	v1.RegisterTenantServiceServer(srv, tenant)
 	return srv
 }

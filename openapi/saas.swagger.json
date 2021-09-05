@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "saas/api/tenant/v1/tenant.proto",
+    "title": "saas/api/tenant/v1/error_reason.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "Tenant"
+      "name": "TenantService"
     }
   ],
   "consumes": [
@@ -16,9 +16,41 @@
     "application/json"
   ],
   "paths": {
+    "/v1/saas/tenant": {
+      "post": {
+        "operationId": "TenantService_CreateTenant",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Tenant"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateTenantRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      }
+    },
     "/v1/saas/tenant/list": {
       "post": {
-        "operationId": "Tenant_ListTenant2",
+        "operationId": "TenantService_ListTenant2",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -44,18 +76,18 @@
           }
         ],
         "tags": [
-          "Tenant"
+          "TenantService"
         ]
       }
     },
     "/v1/saas/tenant/{id}": {
       "get": {
-        "operationId": "Tenant_GetTenant",
+        "operationId": "TenantService_GetTenant",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetTenantReply"
+              "$ref": "#/definitions/v1Tenant"
             }
           },
           "default": {
@@ -74,11 +106,11 @@
           }
         ],
         "tags": [
-          "Tenant"
+          "TenantService"
         ]
       },
       "delete": {
-        "operationId": "Tenant_DeleteTenant",
+        "operationId": "TenantService_DeleteTenant",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -102,18 +134,18 @@
           }
         ],
         "tags": [
-          "Tenant"
+          "TenantService"
         ]
       }
     },
     "/v1/saas/tenant/{tenant.id}": {
       "put": {
-        "operationId": "Tenant_UpdateTenant",
+        "operationId": "TenantService_UpdateTenant",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1UpdateTenantReply"
+              "$ref": "#/definitions/v1Tenant"
             }
           },
           "default": {
@@ -140,16 +172,16 @@
           }
         ],
         "tags": [
-          "Tenant"
+          "TenantService"
         ]
       },
       "patch": {
-        "operationId": "Tenant_UpdateTenant2",
+        "operationId": "TenantService_UpdateTenant2",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1UpdateTenantReply"
+              "$ref": "#/definitions/v1Tenant"
             }
           },
           "default": {
@@ -176,13 +208,13 @@
           }
         ],
         "tags": [
-          "Tenant"
+          "TenantService"
         ]
       }
     },
     "/v1/saas/tenants": {
       "get": {
-        "operationId": "Tenant_ListTenant",
+        "operationId": "TenantService_ListTenant",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -197,8 +229,82 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "pageOffset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.idIn",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.nameIn",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.nameLike",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.regionIn",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
         "tags": [
-          "Tenant"
+          "TenantService"
         ]
       }
     }
@@ -234,8 +340,19 @@
         }
       }
     },
-    "v1CreateTenantReply": {
-      "type": "object"
+    "v1CreateTenantRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        }
+      }
     },
     "v1DeleteTenantReply": {
       "type": "object",
@@ -245,25 +362,151 @@
         }
       }
     },
-    "v1GetTenantReply": {
-      "type": "object"
-    },
     "v1ListTenantReply": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "totalSize": {
+          "type": "string",
+          "format": "int64"
+        },
+        "filterSize": {
+          "type": "string",
+          "format": "int64"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Tenant"
+          }
+        }
+      }
     },
     "v1ListTenantRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "pageOffset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "search": {
+          "type": "string"
+        },
+        "sort": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fields": {
+          "type": "string"
+        },
+        "filter": {
+          "$ref": "#/definitions/v1TenantFilter"
+        }
+      }
+    },
+    "v1Tenant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "conn": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1TenantConnectionString"
+          }
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1TenantFeature"
+          }
+        }
+      }
+    },
+    "v1TenantConnectionString": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "v1TenantFeature": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "v1TenantFilter": {
+      "type": "object",
+      "properties": {
+        "idIn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nameIn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nameLike": {
+          "type": "string"
+        },
+        "regionIn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     },
     "v1UpdateTenant": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
         }
       }
-    },
-    "v1UpdateTenantReply": {
-      "type": "object"
     },
     "v1UpdateTenantRequest": {
       "type": "object",

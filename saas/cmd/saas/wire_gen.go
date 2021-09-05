@@ -12,6 +12,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
+	"github.com/goxiaoy/go-saas-kit/saas/internal_/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/saas/internal_/conf"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/data"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/server"
@@ -29,7 +30,8 @@ func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, t
 	tenantStore := data.NewTenantStore(tenantRepo)
 	dbOpener, cleanup := gorm.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
-	tenantService := service.NewTenantService(tenantRepo)
+	tenantUseCase := biz.NewTenantUserCase(tenantRepo)
+	tenantService := service.NewTenantService(tenantUseCase)
 	httpServer := server.NewHTTPServer(services, tokenizer, tenantStore, manager, tenantService, logger)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, tenantService, logger)
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, manager, tenantStore, logger)

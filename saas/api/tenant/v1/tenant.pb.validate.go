@@ -41,6 +41,17 @@ func (m *CreateTenantRequest) Validate() error {
 		return nil
 	}
 
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		return CreateTenantRequestValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+	}
+
+	// no validation rules for DisplayName
+
+	// no validation rules for Region
+
 	return nil
 }
 
@@ -100,79 +111,19 @@ var _ interface {
 	ErrorName() string
 } = CreateTenantRequestValidationError{}
 
-// Validate checks the field values on CreateTenantReply with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
-func (m *CreateTenantReply) Validate() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// CreateTenantReplyValidationError is the validation error returned by
-// CreateTenantReply.Validate if the designated constraints aren't met.
-type CreateTenantReplyValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e CreateTenantReplyValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e CreateTenantReplyValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e CreateTenantReplyValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e CreateTenantReplyValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e CreateTenantReplyValidationError) ErrorName() string {
-	return "CreateTenantReplyValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e CreateTenantReplyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCreateTenantReply.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = CreateTenantReplyValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = CreateTenantReplyValidationError{}
-
 // Validate checks the field values on UpdateTenantRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, an error is returned.
 func (m *UpdateTenantRequest) Validate() error {
 	if m == nil {
 		return nil
+	}
+
+	if m.GetTenant() == nil {
+		return UpdateTenantRequestValidationError{
+			field:  "Tenant",
+			reason: "value is required",
+		}
 	}
 
 	if v, ok := interface{}(m.GetTenant()).(interface{ Validate() error }); ok {
@@ -262,7 +213,21 @@ func (m *UpdateTenant) Validate() error {
 		return nil
 	}
 
-	// no validation rules for Id
+	if utf8.RuneCountInString(m.GetId()) < 1 {
+		return UpdateTenantValidationError{
+			field:  "Id",
+			reason: "value length must be at least 1 runes",
+		}
+	}
+
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		return UpdateTenantValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+	}
+
+	// no validation rules for DisplayName
 
 	return nil
 }
@@ -320,73 +285,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateTenantValidationError{}
-
-// Validate checks the field values on UpdateTenantReply with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
-func (m *UpdateTenantReply) Validate() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// UpdateTenantReplyValidationError is the validation error returned by
-// UpdateTenantReply.Validate if the designated constraints aren't met.
-type UpdateTenantReplyValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UpdateTenantReplyValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UpdateTenantReplyValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UpdateTenantReplyValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UpdateTenantReplyValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UpdateTenantReplyValidationError) ErrorName() string {
-	return "UpdateTenantReplyValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UpdateTenantReplyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdateTenantReply.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UpdateTenantReplyValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UpdateTenantReplyValidationError{}
 
 // Validate checks the field values on DeleteTenantRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -593,20 +491,22 @@ var _ interface {
 	ErrorName() string
 } = GetTenantRequestValidationError{}
 
-// Validate checks the field values on GetTenantReply with the rules defined in
+// Validate checks the field values on TenantFilter with the rules defined in
 // the proto definition for this message. If any rules are violated, an error
 // is returned.
-func (m *GetTenantReply) Validate() error {
+func (m *TenantFilter) Validate() error {
 	if m == nil {
 		return nil
 	}
 
+	// no validation rules for NameLike
+
 	return nil
 }
 
-// GetTenantReplyValidationError is the validation error returned by
-// GetTenantReply.Validate if the designated constraints aren't met.
-type GetTenantReplyValidationError struct {
+// TenantFilterValidationError is the validation error returned by
+// TenantFilter.Validate if the designated constraints aren't met.
+type TenantFilterValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -614,22 +514,22 @@ type GetTenantReplyValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetTenantReplyValidationError) Field() string { return e.field }
+func (e TenantFilterValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetTenantReplyValidationError) Reason() string { return e.reason }
+func (e TenantFilterValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetTenantReplyValidationError) Cause() error { return e.cause }
+func (e TenantFilterValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetTenantReplyValidationError) Key() bool { return e.key }
+func (e TenantFilterValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetTenantReplyValidationError) ErrorName() string { return "GetTenantReplyValidationError" }
+func (e TenantFilterValidationError) ErrorName() string { return "TenantFilterValidationError" }
 
 // Error satisfies the builtin error interface
-func (e GetTenantReplyValidationError) Error() string {
+func (e TenantFilterValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -641,14 +541,14 @@ func (e GetTenantReplyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetTenantReply.%s: %s%s",
+		"invalid %sTenantFilter.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetTenantReplyValidationError{}
+var _ error = TenantFilterValidationError{}
 
 var _ interface {
 	Field() string
@@ -656,7 +556,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetTenantReplyValidationError{}
+} = TenantFilterValidationError{}
 
 // Validate checks the field values on ListTenantRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, an
@@ -664,6 +564,32 @@ var _ interface {
 func (m *ListTenantRequest) Validate() error {
 	if m == nil {
 		return nil
+	}
+
+	// no validation rules for PageOffset
+
+	// no validation rules for PageSize
+
+	// no validation rules for Search
+
+	if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListTenantRequestValidationError{
+				field:  "Fields",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListTenantRequestValidationError{
+				field:  "Filter",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	return nil
@@ -733,6 +659,25 @@ func (m *ListTenantReply) Validate() error {
 		return nil
 	}
 
+	// no validation rules for TotalSize
+
+	// no validation rules for FilterSize
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListTenantReplyValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -789,3 +734,265 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListTenantReplyValidationError{}
+
+// Validate checks the field values on Tenant with the rules defined in the
+// proto definition for this message. If any rules are violated, an error is returned.
+func (m *Tenant) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Id
+
+	// no validation rules for Name
+
+	// no validation rules for DisplayName
+
+	// no validation rules for Region
+
+	if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TenantValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TenantValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetConn() {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TenantValidationError{
+					field:  fmt.Sprintf("Conn[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetFeatures() {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TenantValidationError{
+					field:  fmt.Sprintf("Features[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// TenantValidationError is the validation error returned by Tenant.Validate if
+// the designated constraints aren't met.
+type TenantValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TenantValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TenantValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TenantValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TenantValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TenantValidationError) ErrorName() string { return "TenantValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TenantValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTenant.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TenantValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TenantValidationError{}
+
+// Validate checks the field values on TenantConnectionString with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *TenantConnectionString) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Key
+
+	// no validation rules for Value
+
+	return nil
+}
+
+// TenantConnectionStringValidationError is the validation error returned by
+// TenantConnectionString.Validate if the designated constraints aren't met.
+type TenantConnectionStringValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TenantConnectionStringValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TenantConnectionStringValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TenantConnectionStringValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TenantConnectionStringValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TenantConnectionStringValidationError) ErrorName() string {
+	return "TenantConnectionStringValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TenantConnectionStringValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTenantConnectionString.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TenantConnectionStringValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TenantConnectionStringValidationError{}
+
+// Validate checks the field values on TenantFeature with the rules defined in
+// the proto definition for this message. If any rules are violated, an error
+// is returned.
+func (m *TenantFeature) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Key
+
+	// no validation rules for Value
+
+	return nil
+}
+
+// TenantFeatureValidationError is the validation error returned by
+// TenantFeature.Validate if the designated constraints aren't met.
+type TenantFeatureValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TenantFeatureValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TenantFeatureValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TenantFeatureValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TenantFeatureValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TenantFeatureValidationError) ErrorName() string { return "TenantFeatureValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TenantFeatureValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTenantFeature.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TenantFeatureValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TenantFeatureValidationError{}
