@@ -11,17 +11,17 @@ import (
 )
 
 type TenantRepo struct {
-	Repo
+	DbProviderGetter
 }
 
+type DbProviderGetter func() gorm.DbProvider
+
 func NewTenantRepo() biz.TenantRepo {
-	return &TenantRepo{Repo{
-		DbProvider: GlobalData.DbProvider,
-	}}
+	return &TenantRepo{DbProviderGetter: func() gorm.DbProvider{ return GlobalData.DbProvider}}
 }
 
 func (g *TenantRepo) Db(ctx context.Context, preload bool) *gg.DB {
-	ret := GetDb(ctx, g.DbProvider)
+	ret := GetDb(ctx, g.DbProviderGetter())
 	if preload {
 		ret = ret.Preload("Conn").Preload("Features")
 	}
