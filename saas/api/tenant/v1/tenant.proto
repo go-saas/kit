@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package api.tenant.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+option go_package = "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1;v1";
+
+
+service Tenant {
+	rpc CreateTenant (CreateTenantRequest) returns (CreateTenantReply){
+
+	};
+	rpc UpdateTenant (UpdateTenantRequest) returns (UpdateTenantReply){
+		option (google.api.http) = {
+			put: "/v1/saas/tenant/{tenant.id}"
+			body: "*"
+			additional_bindings [
+				{
+					patch: "/v1/saas/tenant/{tenant.id}"
+					body: "*"
+				}
+			]
+		};
+	}
+	rpc DeleteTenant (DeleteTenantRequest) returns (DeleteTenantReply){
+		option (google.api.http) = {
+			delete: "/v1/saas/tenant/{id}"
+		};
+	}
+	rpc GetTenant (GetTenantRequest) returns (GetTenantReply){
+		option (google.api.http) = {
+			get: "/v1/saas/tenant/{id}"
+		};
+	}
+
+	rpc ListTenant (ListTenantRequest) returns (ListTenantReply){
+		option (google.api.http) = {
+			get: "/v1/saas/tenants"
+			additional_bindings:{
+				post: "/v1/saas/tenant/list"
+				body: "*"
+			}
+		};
+	}
+}
+
+message CreateTenantRequest {}
+message CreateTenantReply {}
+
+message UpdateTenantRequest {
+	UpdateTenant tenant=1;
+	google.protobuf.FieldMask update_mask = 2;
+}
+
+
+message UpdateTenant{
+	string id=1;
+}
+message UpdateTenantReply {}
+
+message DeleteTenantRequest {
+	string id=1;
+}
+message DeleteTenantReply {
+	string id=1;
+}
+
+message GetTenantRequest {
+	string id=1;
+}
+message GetTenantReply {}
+
+message ListTenantRequest {}
+message ListTenantReply {}

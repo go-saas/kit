@@ -1,7 +1,12 @@
 package main
 
 import (
+	"context"
 	"flag"
+	"github.com/goxiaoy/go-saas-kit/auth/jwt"
+	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
+	"github.com/goxiaoy/go-saas/seed"
+	"github.com/goxiaoy/uow"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
@@ -11,6 +16,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/conf"
+	"github.com/goxiaoy/go-saas-kit/saas/internal_/data"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
@@ -29,7 +35,10 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.Seeder) *kratos.App {
+	if err := seeder.Seed(context.Background()); err != nil {
+		panic(err)
+	}
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -68,7 +77,12 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := initApp(bc.Server, bc.Data, logger)
+	app, cleanup, err := initApp(bc.Services, bc.Data, logger, &jwt.TokenizerConfig{
+		ExpireDuration: bc.Security.Jwt.ExpireIn.AsDuration(),
+		Secret:         bc.Security.Jwt.Secret,
+	}, &uow.Config{
+		SupportNestedTransaction: false,
+	}, uow2.NewGormConfig(bc.Data.Databases, data.ConnName))
 	if err != nil {
 		panic(err)
 	}

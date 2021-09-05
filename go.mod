@@ -16,7 +16,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/gorilla/handlers v1.5.1
-	github.com/goxiaoy/go-saas v0.0.10-0.20210904113814-5cecf5e5d74c
+	github.com/goxiaoy/go-saas v0.0.10-0.20210905051342-3636164e1d33
 	github.com/goxiaoy/gorm-concurrency v1.0.2
 	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
 	github.com/mennanov/fmutils v0.1.1

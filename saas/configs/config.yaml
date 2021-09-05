@@ -1,15 +1,18 @@
-server:
-  http:
-    addr: 0.0.0.0:8000
-    timeout: 1s
-  grpc:
-    addr: 0.0.0.0:9000
-    timeout: 1s
+services:
+  servers:
+    saas:
+      http:
+        addr: 0.0.0.0:8520
+        timeout: 200s
+        cors:
+          allowed_origins: ["*"]
+          allowed_methods: ["GET", "POST", "PUT", "HEAD", "OPTIONS","DELETE","PATCH"]
+      grpc:
+        addr: 0.0.0.0:8521
+        timeout: 200s
 data:
-  database:
-    driver: mysql
-    source: root:root@tcp(127.0.0.1:3306)/test
-  redis:
-    addr: 127.0.0.1:6379
-    read_timeout: 0.2s
-    write_timeout: 0.2s
+  databases:
+    databases:
+      saas:
+        driver: mysql
+        source: root:rZakvdyjAmz73J8p@tcp(127.0.0.1:3309)/saas?parseTime=true

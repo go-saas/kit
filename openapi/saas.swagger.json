@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "saas/api/helloworld/v1/error_reason.proto",
+    "title": "saas/api/tenant/v1/tenant.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "Greeter"
+      "name": "Tenant"
     }
   ],
   "consumes": [
@@ -16,15 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/helloworld/{name}": {
-      "get": {
-        "summary": "Sends a greeting",
-        "operationId": "Greeter_SayHello",
+    "/v1/saas/tenant/list": {
+      "post": {
+        "operationId": "Tenant_ListTenant2",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1HelloReply"
+              "$ref": "#/definitions/v1ListTenantReply"
             }
           },
           "default": {
@@ -36,14 +35,170 @@
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListTenantRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Tenant"
+        ]
+      }
+    },
+    "/v1/saas/tenant/{id}": {
+      "get": {
+        "operationId": "Tenant_GetTenant",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetTenantReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
           }
         ],
         "tags": [
-          "Greeter"
+          "Tenant"
+        ]
+      },
+      "delete": {
+        "operationId": "Tenant_DeleteTenant",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteTenantReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Tenant"
+        ]
+      }
+    },
+    "/v1/saas/tenant/{tenant.id}": {
+      "put": {
+        "operationId": "Tenant_UpdateTenant",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateTenantReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tenant.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateTenantRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Tenant"
+        ]
+      },
+      "patch": {
+        "operationId": "Tenant_UpdateTenant2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateTenantReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tenant.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateTenantRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Tenant"
+        ]
+      }
+    },
+    "/v1/saas/tenants": {
+      "get": {
+        "operationId": "Tenant_ListTenant",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListTenantReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Tenant"
         ]
       }
     }
@@ -79,14 +234,47 @@
         }
       }
     },
-    "v1HelloReply": {
+    "v1CreateTenantReply": {
+      "type": "object"
+    },
+    "v1DeleteTenantReply": {
       "type": "object",
       "properties": {
-        "message": {
+        "id": {
           "type": "string"
         }
-      },
-      "title": "The response message containing the greetings"
+      }
+    },
+    "v1GetTenantReply": {
+      "type": "object"
+    },
+    "v1ListTenantReply": {
+      "type": "object"
+    },
+    "v1ListTenantRequest": {
+      "type": "object"
+    },
+    "v1UpdateTenant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UpdateTenantReply": {
+      "type": "object"
+    },
+    "v1UpdateTenantRequest": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/definitions/v1UpdateTenant"
+        },
+        "updateMask": {
+          "type": "string"
+        }
+      }
     }
   }
 }
