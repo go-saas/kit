@@ -80,7 +80,7 @@
         ]
       }
     },
-    "/v1/saas/tenant/{id}": {
+    "/v1/saas/tenant/{idOrName}": {
       "get": {
         "operationId": "TenantService_GetTenant",
         "responses": {
@@ -99,7 +99,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "idOrName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -108,7 +108,9 @@
         "tags": [
           "TenantService"
         ]
-      },
+      }
+    },
+    "/v1/saas/tenant/{id}": {
       "delete": {
         "operationId": "TenantService_DeleteTenant",
         "responses": {

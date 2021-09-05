@@ -432,7 +432,7 @@ func (m *GetTenantRequest) Validate() error {
 		return nil
 	}
 
-	// no validation rules for Id
+	// no validation rules for IdOrName
 
 	return nil
 }

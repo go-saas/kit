@@ -59,7 +59,7 @@ func (s *TenantService) DeleteTenant(ctx context.Context, req *pb.DeleteTenantRe
 }
 
 func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest) (*pb.Tenant, error) {
-	t,err:= s.useCase.Get(ctx,req.Id)
+	t,err:= s.useCase.FindByIdOrName(ctx,req.IdOrName)
 	if err!=nil{
 		return nil,err
 	}

@@ -37,7 +37,7 @@ service TenantService {
 
 	rpc GetTenant (GetTenantRequest) returns (Tenant){
 		option (google.api.http) = {
-			get: "/v1/saas/tenant/{id}"
+			get: "/v1/saas/tenant/{id_or_name}"
 		};
 	}
 
@@ -78,7 +78,7 @@ message DeleteTenantReply {
 }
 
 message GetTenantRequest {
-	string id=1;
+	string id_or_name=1;
 }
 
 

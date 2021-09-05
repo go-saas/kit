@@ -31,7 +31,7 @@ func RegisterTenantServiceHTTPServer(s *http.Server, srv TenantServiceHTTPServer
 	r.PATCH("/v1/saas/tenant/{tenant.id}", _TenantService_UpdateTenant0_HTTP_Handler(srv))
 	r.PUT("/v1/saas/tenant/{tenant.id}", _TenantService_UpdateTenant1_HTTP_Handler(srv))
 	r.DELETE("/v1/saas/tenant/{id}", _TenantService_DeleteTenant0_HTTP_Handler(srv))
-	r.GET("/v1/saas/tenant/{id}", _TenantService_GetTenant0_HTTP_Handler(srv))
+	r.GET("/v1/saas/tenant/{id_or_name}", _TenantService_GetTenant0_HTTP_Handler(srv))
 	r.POST("/v1/saas/tenant/list", _TenantService_ListTenant0_HTTP_Handler(srv))
 	r.GET("/v1/saas/tenants", _TenantService_ListTenant1_HTTP_Handler(srv))
 }
@@ -225,7 +225,7 @@ func (c *TenantServiceHTTPClientImpl) DeleteTenant(ctx context.Context, in *Dele
 
 func (c *TenantServiceHTTPClientImpl) GetTenant(ctx context.Context, in *GetTenantRequest, opts ...http.CallOption) (*Tenant, error) {
 	var out Tenant
-	pattern := "/v1/saas/tenant/{id}"
+	pattern := "/v1/saas/tenant/{id_or_name}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation("/api.tenant.v1.TenantService/GetTenant"))
 	opts = append(opts, http.PathTemplate(pattern))
