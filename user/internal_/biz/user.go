@@ -6,12 +6,13 @@ import (
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	gorm3 "github.com/goxiaoy/go-saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
+	"gorm.io/datatypes"
 	gorm2 "gorm.io/gorm"
 	"time"
 )
 
 type User struct {
-	gorm.UIDBase `json:",squash"`
+	gorm.UIDBase        `json:",squash"`
 	concurrency.Version `gorm:"type:char(36)"`
 	gorm.AuditedModel
 	gorm3.MultiTenancy
@@ -52,8 +53,11 @@ type User struct {
 
 	// SecondEmail back up email
 	SecondEmail *string `json:"second_email"`
-}
 
+	Tenants []UserTenant `json:"tenants"`
+
+	Extra datatypes.JSONMap
+}
 
 type UserRepo interface {
 	List(ctx context.Context, query *v1.ListUsersRequest) ([]*User, error)

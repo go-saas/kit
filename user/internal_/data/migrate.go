@@ -30,7 +30,8 @@ func migrateDb(db *gorm.DB) error {
 		&biz.UserLogin{},
 		&biz.UserSetting{},
 		&biz.UserToken{},
-		&biz.RefreshToken{}); err != nil {
+		&biz.RefreshToken{},
+		&biz.UserTenant{}); err != nil {
 		return err
 	}
 
