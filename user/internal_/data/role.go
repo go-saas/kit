@@ -40,7 +40,7 @@ func buildRoleScope( filter *v1.RoleFilter) func (db *gorm.DB) *gorm.DB  {
 
 func (r *RoleRepo) List(ctx context.Context, query *v1.ListRolesRequest) ([]*biz.Role, error) {
 	db := r.GetDb(ctx).Model(&biz.Role{})
-	db = db.Scopes(buildRoleScope(query.Filter),gorm2.SortScope(query),gorm2.PageScope(query))
+	db = db.Scopes(buildRoleScope(query.Filter),gorm2.SortScope(query,[]string{"-created_at"}),gorm2.PageScope(query))
 	var items []*biz.Role
 	res := db.Find(&items)
 	return items, res.Error

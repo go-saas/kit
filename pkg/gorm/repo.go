@@ -32,19 +32,23 @@ func PageScope(page rql.Page) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func SortScope(sort rql.Sort) func(db *gorm.DB) *gorm.DB {
+// SortScope build sorting by sort and default d
+func SortScope(sort rql.Sort,d []string) func(db *gorm.DB) *gorm.DB {
 	return func (db *gorm.DB) *gorm.DB  {
-		if sort==nil{
-			return db
+		var s []string
+		if sort!=nil{
+			s = sort.GetSort()
 		}
-		s := parseSort(sort.GetSort())
+		if len(s)==0{
+			s = d
+		}
+		parsed := parseSort(s)
 		ret := db
-		if s!=""{
-			ret = db.Order(s)
+		if parsed!=""{
+			ret = ret.Order(parsed)
 		}
 		return ret
 	}
-
 }
 
 

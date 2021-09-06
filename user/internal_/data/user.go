@@ -68,7 +68,7 @@ func buildUserScope(filter *v1.UserFilter) func (db *gorm.DB) *gorm.DB  {
 
 func (u *UserRepo) List(ctx context.Context, query *v1.ListUsersRequest) ([]*biz.User, error) {
 	db := u.GetDb(ctx).Model(&biz.User{})
-	db = db.Scopes(buildUserScope(query.Filter),gorm2.SortScope(query),gorm2.PageScope(query))
+	db = db.Scopes(buildUserScope(query.Filter),gorm2.SortScope(query,[]string{"-created_at"}),gorm2.PageScope(query))
 	var items []*biz.User
 	res := db.Find(&items)
 	return items, res.Error

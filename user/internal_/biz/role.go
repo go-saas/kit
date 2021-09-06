@@ -13,6 +13,7 @@ import (
 type Role struct {
 	gorm.UIDBase
 	concurrency.Version `gorm:"type:char(36)"`
+	gorm.AuditedModel
 	gorm2.MultiTenancy
 	Name           string `json:"name" gorm:"index" rql:"filter"`
 	NormalizedName string `json:"normalized_name" gorm:"index"`
