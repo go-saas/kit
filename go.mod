@@ -58,6 +58,7 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gorm.io/datatypes v1.0.1 // indirect
 )
 
 replace github.com/a8m/rql v1.3.1-0.20210621074553-3a40179141a1 => github.com/Goxiaoy/rql v1.3.1-0.20210823140701-2d9807375ca8
