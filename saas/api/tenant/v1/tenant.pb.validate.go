@@ -229,6 +229,36 @@ func (m *UpdateTenant) Validate() error {
 
 	// no validation rules for DisplayName
 
+	for idx, item := range m.GetConn() {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateTenantValidationError{
+					field:  fmt.Sprintf("Conn[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetFeatures() {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateTenantValidationError{
+					field:  fmt.Sprintf("Features[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	return nil
 }
 

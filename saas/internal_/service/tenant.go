@@ -45,6 +45,23 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 	}
 	t.Name = req.Tenant.Name
 	t.DisplayName = req.Tenant.DisplayName
+
+	var tenantConn []biz.TenantConn
+	linq.From(req.Tenant.Conn).SelectT(func(t *pb.TenantConnectionString) biz.TenantConn{
+		return biz.TenantConn{
+		Key: t.Key,
+		Value: t.Value,
+	}}).ToSlice(&tenantConn)
+
+	var tenantFeature []biz.TenantFeature
+	linq.From(req.Tenant.Features).SelectT(func(t *pb.TenantFeature) biz.TenantFeature{
+		return biz.TenantFeature{
+			Key: t.Key,
+			Value: t.Value,
+		}}).ToSlice(&tenantFeature)
+	t.Conn = tenantConn
+	t.Features = tenantFeature
+
 	if err := s.useCase.Update(ctx,t,req.UpdateMask);err!=nil{
 		return nil,err
 	}

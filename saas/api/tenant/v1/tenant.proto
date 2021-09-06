@@ -68,6 +68,9 @@ message UpdateTenant{
 	string id=1 [(validate.rules).string.min_len=1];
 	string name =2 [(validate.rules).string.min_len=1];
 	string display_name=3;
+
+	repeated TenantConnectionString conn=7;
+	repeated TenantFeature features=8;
 }
 
 message DeleteTenantRequest {

@@ -507,6 +507,18 @@
         },
         "displayName": {
           "type": "string"
+        },
+        "conn": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1TenantConnectionString"
+          }
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1TenantFeature"
+          }
         }
       }
     },

@@ -156,15 +156,15 @@ func (g *TenantRepo) Count(ctx context.Context, search string, query *v1.TenantF
 
 func (g *TenantRepo) Get(ctx context.Context, id string) (*biz.Tenant, error) {
 	db := g.GetDb(ctx)
-	var item = Tenant{}
-	if err := db.First(item, id).Error; err != nil {
+	var item = &Tenant{}
+	if err := db.First(item, "id = ?",id).Error; err != nil {
 		if errors.Is(err, gg.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err
 	}
 	var ret = &biz.Tenant{}
-	mapDataTenantToBizTenant(&item,ret)
+	mapDataTenantToBizTenant(item,ret)
 
 	return ret, nil
 }
@@ -184,6 +184,13 @@ func (g *TenantRepo) Update(ctx context.Context, entity *biz.Tenant, p *fieldmas
 	var tDb = &Tenant{}
 	 mapBizTenantToDataTenant(entity,tDb)
 	d := g.GetDb(ctx)
+
+	if tDb.Conn!=nil{
+		d.Model(tDb).Association("Conn").Replace(tDb.Conn)
+	}
+	if tDb.Features!=nil{
+		d.Model(tDb).Association("Features").Replace(tDb.Features)
+	}
 	err:=d.Model(&Tenant{}).Where("id = ?", entity.ID).Updates(tDb).Error
 	if err!=nil{
 		return err
