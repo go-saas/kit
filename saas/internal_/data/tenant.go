@@ -113,7 +113,7 @@ func (g *TenantRepo) FindByIdOrName(ctx context.Context, idOrName string) (*biz.
 
 func (g *TenantRepo) List(ctx context.Context, query *v1.ListTenantRequest) ([]*biz.Tenant, error) {
 	db := g.GetDb(ctx).Model(&Tenant{})
-	db = db.Scopes(buildTenantScope(query.Search,query.Filter),gorm2.SortScope(query),gorm2.PageScope(query))
+	db = db.Scopes(buildTenantScope(query.Search,query.Filter),gorm2.SortScope(query,[]string{"-created_at"}),gorm2.PageScope(query))
 	var items []*Tenant
 	res := db.Find(&items)
 	var rItems []*biz.Tenant
