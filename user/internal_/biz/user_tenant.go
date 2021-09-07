@@ -1,7 +1,7 @@
 package biz
 
 import (
-	"github.com/google/uuid"
+	"context"
 	"gorm.io/datatypes"
 	"time"
 )
@@ -22,7 +22,7 @@ func (p UserTenantStatus) String() string {
 }
 
 type UserTenant struct {
-	UserId    uuid.UUID `gorm:"type:char(36);primaryKey" json:"user_id"`
+	UserId    string `gorm:"type:char(36);primaryKey" json:"user_id"`
 	TenantId  string    `json:"tenant_id" gorm:"type:char(36);primaryKey"`
 	JoinTime time.Time `json:"joint_time"`
 	Status    UserTenantStatus    `json:"status"`
@@ -30,8 +30,8 @@ type UserTenant struct {
 }
 
 type UserTenantRepo interface {
-	JoinTenant(userId string,tenantId string)(*UserTenant,error)
-	RemoveFromTenant(userId string,tenantId string)error
-	Get(userId string,tenantId string)(*UserTenant,error)
-	Update(userTenant *UserTenant)error
+	JoinTenant(ctx context.Context,userId string,tenantId string)(*UserTenant,error)
+	RemoveFromTenant(ctx context.Context,userId string,tenantId string)error
+	Get(ctx context.Context,userId string,tenantId string)(*UserTenant,error)
+	Update(ctx context.Context,userTenant *UserTenant)error
 }
