@@ -89,8 +89,8 @@ func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantReques
 	ret := &pb.ListTenantReply{}
 
 	totalCount, filterCount, err := s.useCase.Count(ctx,req.Search, req.Filter)
-	ret.TotalSize = totalCount
-	ret.FilterSize = filterCount
+	ret.TotalSize = int32(totalCount)
+	ret.FilterSize = int32(filterCount)
 	if err != nil {
 		return ret, err
 	}

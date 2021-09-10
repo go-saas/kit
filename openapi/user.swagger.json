@@ -934,12 +934,12 @@
       "type": "object",
       "properties": {
         "totalSize": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "filterSize": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "items": {
           "type": "array",

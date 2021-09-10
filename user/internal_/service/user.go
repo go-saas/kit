@@ -30,8 +30,8 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 	if err != nil {
 		return nil, err
 	}
-	ret.TotalSize = totalCount
-	ret.FilterSize = filterCount
+	ret.TotalSize = int32(totalCount)
+	ret.FilterSize = int32(filterCount)
 
 	items, err := s.um.List(ctx, req)
 	if err != nil {

@@ -104,8 +104,8 @@ message ListTenantRequest {
 }
 
 message ListTenantReply {
-	int64 total_size =1;
-	int64 filter_size =2;
+	int32 total_size =1;
+	int32 filter_size =2;
 
 	repeated Tenant items = 3;
 }
