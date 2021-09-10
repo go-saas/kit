@@ -1,7 +1,7 @@
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
 INTERNAL_PROTO_FILES=$(shell find internal_ -name *.proto)
-API_PROTO_FILES=$(shell find ../user/api -name *.proto)
+API_PROTO_FILES=$(shell find ../proto/user/api -name *.proto)
 
 .PHONY: init
 # init env
@@ -23,11 +23,10 @@ generate:
 .PHONY: errors
 # generate errors code
 errors:
-	protoc --proto_path=../ \
-               --proto_path=../proto \
-               --go_out=paths=source_relative:../ \
-               --go-errors_out=paths=source_relative:../ \
-               $(API_PROTO_FILES)
+	protoc --proto_path=../proto \
+           --go_out=paths=source_relative:../ \
+           --go-errors_out=paths=source_relative:../ \
+           $(API_PROTO_FILES)
 
 .PHONY: config
 # generate internal proto
@@ -40,8 +39,7 @@ config:
 .PHONY: api
 # generate api proto
 api:
-	protoc --proto_path=../ \
-	       --proto_path=../proto \
+	protoc --proto_path=../proto \
  	       --go_out=paths=source_relative:../ \
  	       --go-http_out=paths=source_relative:../ \
  	       --go-grpc_out=paths=source_relative:../ \
