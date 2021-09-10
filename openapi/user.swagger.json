@@ -1075,6 +1075,13 @@
         },
         "gender": {
           "$ref": "#/definitions/v1Gender"
+        },
+        "password": {
+          "type": "string",
+          "title": "reset password"
+        },
+        "confirmPassword": {
+          "type": "string"
         }
       }
     },

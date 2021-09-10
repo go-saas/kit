@@ -115,6 +115,13 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 }
 
 func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.User, error) {
+	// check confirm password
+	if req.User.Password != "" {
+		if req.User.ConfirmPassword != req.User.Password {
+			return nil, pb.ErrorConfirmPasswordMismatch("", "")
+		}
+	}
+
 	if req.UpdateMask!=nil{
 		fmutils.Filter(req, req.UpdateMask.Paths)
 	}
@@ -124,6 +131,13 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	}
 	if u==nil{
 		return nil,errors2.NotFound("","")
+	}
+
+	if req.User.Password!=""{
+		//reset password
+		if err:=s.um.UpdatePassword(ctx,u,req.User.Password);err!=nil{
+			return nil,err
+		}
 	}
 	if req.GetUser().GetUsername()!=nil{
 		v := req.GetUser().GetUsername().Value
