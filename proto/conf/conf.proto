@@ -44,8 +44,10 @@ message Database {
   bool  debug =3;
 }
 
-message Databases{
+message Endpoints{
   map<string, Database> databases = 1;
+  map<string,Event> events=2;
+  map<string,Redis> redis=3;
 }
 
 message Redis {
@@ -53,6 +55,12 @@ message Redis {
   string addr = 2;
   google.protobuf.Duration read_timeout = 3;
   google.protobuf.Duration write_timeout = 4;
+}
+
+message Event{
+  string addr=1;
+  string topic=2;
+  string group=3;
 }
 
 message Security{
