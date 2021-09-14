@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/event"
+	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	"log"
 
 	"github.com/segmentio/kafka-go"

@@ -58,9 +58,10 @@ message Redis {
 }
 
 message Event{
-  string addr=1;
-  string topic=2;
-  string group=3;
+  string type=1;
+  string addr=2;
+  string topic=3;
+  string group=4;
 }
 
 message Security{
