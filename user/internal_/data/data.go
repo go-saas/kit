@@ -52,7 +52,7 @@ func NewProvider(c *conf.Data, cfg *gorm.Config, opener gorm.DbOpener, uow uow.M
 	ct := common.ContextCurrentTenant{}
 
 	conn := make(data.ConnStrings, 1)
-	for k, v := range c.Databases.Databases {
+	for k, v := range c.Endpoints.Databases {
 		conn[k] = v.Source
 	}
 	mr := common.NewMultiTenancyConnStrResolver(ct, func() common.TenantStore {

@@ -90,7 +90,7 @@ func main() {
 		Secret:         bc.Security.Jwt.Secret,
 	}, &uow.Config{
 		SupportNestedTransaction: false,
-	}, uow2.NewGormConfig(bc.Data.Databases,data.ConnName))
+	}, uow2.NewGormConfig(bc.Data.Endpoints,data.ConnName))
 	if err != nil {
 		panic(err)
 	}

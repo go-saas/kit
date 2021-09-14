@@ -21,7 +21,7 @@ services:
         addr: 0.0.0.0:8521
         timeout: 200s
 data:
-  databases:
+  endpoints:
     databases:
       user:
         debug: false

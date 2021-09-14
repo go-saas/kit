@@ -12,8 +12,7 @@ message Bootstrap {
 }
 
 message Data {
-  conf.Databases databases = 1;
-  conf.Redis redis = 2;
+  conf.Endpoints endpoints = 1;
 }
 
 

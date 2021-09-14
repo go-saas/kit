@@ -16,7 +16,7 @@ import (
 	g "gorm.io/gorm"
 )
 
-func NewGormConfig(databases *conf.Databases,name string) *gorm.Config {
+func NewGormConfig(databases *conf.Endpoints,name string) *gorm.Config {
 	var c *conf.Database
 	var ok bool
 	c,ok = databases.Databases[name]
