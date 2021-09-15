@@ -16,7 +16,7 @@ func NewEventReceiver(cfg *conf.Event, handler event.Handler) (event.Receiver, f
 	if cfg.Type == "kafka" || cfg.Type == "" {
 		var addr []string
 		if cfg.Addr!=""{
-			addr = strings.Split(cfg.Addr, ",")
+			addr = strings.Split(cfg.Addr, ";")
 		}else {
 			addr = []string{"localhost:9092"}
 		}
