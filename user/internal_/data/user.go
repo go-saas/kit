@@ -52,11 +52,11 @@ func buildUserScope(filter *v1.UserFilter) func (db *gorm.DB) *gorm.DB  {
 
 		ret = ret.Scopes(gorm2.WhereIf(func() bool {
 			return filter.BirthdayLte!=nil
-		},"birthday <= ?",filter.BirthdayLte))
+		},"birthday <= ?",filter.BirthdayLte.AsTime()))
 
 		ret = ret.Scopes(gorm2.WhereIf(func() bool {
 			return filter.BirthdayGte!=nil
-		},"birthday >= ?",filter.BirthdayGte))
+		},"birthday >= ?",filter.BirthdayGte.AsTime()))
 		ret = ret.Scopes(gorm2.WhereIf(func() bool {
 			return filter.IdIn!=nil
 		},"id In ?",filter.IdIn))
