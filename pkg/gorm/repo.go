@@ -2,16 +2,11 @@ package gorm
 
 import (
 	"github.com/a8m/rql"
+	"github.com/goxiaoy/go-saas-kit/pkg/data"
 	"gorm.io/gorm"
-	"strings"
 )
 
-var(
-	sortDirection = map[byte]string{
-		'+': "asc",
-		'-': "desc",
-	}
-)
+
 
 type Repo struct {
 }
@@ -42,7 +37,7 @@ func SortScope(sort rql.Sort,d []string) func(db *gorm.DB) *gorm.DB {
 		if len(s)==0{
 			s = d
 		}
-		parsed := parseSort(s)
+		parsed := data.ParseSort(s)
 		ret := db
 		if parsed!=""{
 			ret = ret.Order(parsed)
@@ -52,22 +47,7 @@ func SortScope(sort rql.Sort,d []string) func(db *gorm.DB) *gorm.DB {
 }
 
 
-func parseSort(fields []string) string {
-	sortParams := make([]string, len(fields))
-	for i, field := range fields {
-		var orderBy string
-		if order, ok := sortDirection[field[0]]; ok {
-			orderBy = order
-			field = field[1:]
-		}
-		colName := field
-		if orderBy != "" {
-			colName += " " + orderBy
-		}
-		sortParams[i] = colName
-	}
-	return strings.Join(sortParams, ", ")
-}
+
 
 //func (r *Repo) BuildQuery(db *g.DB, model interface{}, query interface{}) (*g.DB, error) {
 //	if query == nil {
