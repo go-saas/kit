@@ -2,8 +2,10 @@ package kafka
 
 import (
 	"context"
+	"fmt"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
-	"log"
+
 
 	"github.com/segmentio/kafka-go"
 )
@@ -11,32 +13,13 @@ import (
 var (
 	_ event.Sender   = (*kafkaSender)(nil)
 	_ event.Receiver = (*kafkaReceiver)(nil)
-	_ event.Event    = (*Message)(nil)
+
 )
-
-type Message struct {
-	key   string
-	value []byte
-}
-
-func (m *Message) Key() string {
-	return m.key
-}
-
-func (m *Message) Value() []byte {
-	return m.value
-}
-
-func NewMessage(key string, value []byte) event.Event {
-	return &Message{
-		key:   key,
-		value: value,
-	}
-}
 
 type kafkaSender struct {
 	writer *kafka.Writer
 	topic  string
+	logger *log.Helper
 }
 
 func (s *kafkaSender) Send(ctx context.Context, message event.Event) error {
@@ -58,18 +41,19 @@ func (s *kafkaSender) Close() error {
 	return nil
 }
 
-func NewKafkaSender(address []string, topic string) (event.Sender, error) {
+func NewKafkaSender(address []string, topic string,logger log.Logger) (event.Sender, error) {
 	w := &kafka.Writer{
 		Topic:    topic,
 		Addr:     kafka.TCP(address...),
 		Balancer: &kafka.LeastBytes{},
 	}
-	return &kafkaSender{writer: w, topic: topic}, nil
+	return &kafkaSender{writer: w, topic: topic,logger: log.NewHelper(logger)}, nil
 }
 
 type kafkaReceiver struct {
 	reader *kafka.Reader
 	topic  string
+	logger *log.Helper
 }
 
 func (k *kafkaReceiver) Receive(ctx context.Context, handler event.Handler) error {
@@ -79,15 +63,14 @@ func (k *kafkaReceiver) Receive(ctx context.Context, handler event.Handler) erro
 			if err != nil {
 				break
 			}
-			err = handler(context.Background(), &Message{
-				key:   string(m.Key),
-				value: m.Value,
-			})
+			err = handler(context.Background(), event.NewMessage( string(m.Key),m.Value))
 			if err != nil {
-				log.Fatal("message handling exception:", err)
+				//TODO error handling
+				k.logger.Error( fmt.Sprintf("message handling exception: %v",err))
+				continue
 			}
 			if err := k.reader.CommitMessages(ctx, m); err != nil {
-				log.Fatal("failed to commit messages:", err)
+				k.logger.Error( fmt.Sprintf("failed to commit messages: %v",err))
 			}
 		}
 	}()
@@ -102,7 +85,7 @@ func (k *kafkaReceiver) Close() error {
 	return nil
 }
 
-func NewKafkaReceiver(address []string, topic string,group string) (event.Receiver, error) {
+func NewKafkaReceiver(address []string, topic string,group string,logger log.Logger) (event.Receiver, error) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  address,
 		GroupID:  group,
@@ -110,5 +93,5 @@ func NewKafkaReceiver(address []string, topic string,group string) (event.Receiv
 		MinBytes: 10e3, // 10KB
 		MaxBytes: 10e6, // 10MB
 	})
-	return &kafkaReceiver{reader: r, topic: topic}, nil
+	return &kafkaReceiver{reader: r, topic: topic,logger: log.NewHelper(logger)}, nil
 }
