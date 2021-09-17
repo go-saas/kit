@@ -46,20 +46,20 @@ func buildUserScope(filter *v1.UserFilter) func (db *gorm.DB) *gorm.DB  {
 			}
 		}
 
-		ret = ret.Scopes(gorm2.WhereIf(func() bool {
-			return filter.GetGenderIn()!=nil
-		},"gender IN ?",filter.GetGenderIn()))
+		if filter.GenderIn!=nil{
+			ret = ret.Where("gender IN ?",filter.GetGenderIn())
+		}
+		if filter.BirthdayLte!=nil{
+			ret = ret.Where("birthday <= ?",filter.BirthdayLte.AsTime())
+		}
 
-		ret = ret.Scopes(gorm2.WhereIf(func() bool {
-			return filter.BirthdayLte!=nil
-		},"birthday <= ?",filter.BirthdayLte.AsTime()))
+		if filter.BirthdayGte!=nil{
+			ret = ret.Where("birthday >= ?",filter.BirthdayGte.AsTime())
+		}
 
-		ret = ret.Scopes(gorm2.WhereIf(func() bool {
-			return filter.BirthdayGte!=nil
-		},"birthday >= ?",filter.BirthdayGte.AsTime()))
-		ret = ret.Scopes(gorm2.WhereIf(func() bool {
-			return filter.IdIn!=nil
-		},"id In ?",filter.IdIn))
+		if filter.IdIn!=nil{
+			ret = ret.Where("id In ?",filter.IdIn)
+		}
 
 		return ret
 	}

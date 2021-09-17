@@ -67,20 +67,19 @@ func buildTenantScope(search string, filter *v1.TenantFilter) func (db *gg.DB) *
 		if filter==nil {
 			return ret
 		}
-		ret = ret.Scopes(gorm2.WhereIf(func() bool {
-			return filter.IdIn!=nil
-		},"id IN ?",filter.IdIn))
-		ret = ret.Scopes(gorm2.WhereIf(func() bool {
-			return filter.NameIn!=nil
-		},"name IN ?",filter.NameIn))
+		if filter.IdIn!=nil{
+			ret = ret.Where("id IN ?",filter.IdIn)
+		}
+		if filter.NameIn!=nil{
+			ret = ret.Where("name IN ?",filter.NameIn)
+		}
+		if filter.NameLike!=""{
+			ret = ret.Where("name like ?",fmt.Sprintf("%%%v%%",filter.NameLike))
+		}
 
-		ret = ret.Scopes(gorm2.WhereIf(func() bool {
-			return filter.NameLike!=""
-		},"name like ?",fmt.Sprintf("%%%v%%",filter.NameLike)))
-
-		ret = ret.Scopes(gorm2.WhereIf(func() bool {
-			return filter.RegionIn!=nil
-		},"region IN ?",filter.RegionIn))
+		if filter.RegionIn!=nil{
+			ret = ret.Where("region IN ?",filter.RegionIn)
+		}
 
 		return ret
 	}
