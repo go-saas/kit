@@ -11,6 +11,7 @@ message Server {
     message Cors{
       repeated string allowed_origins=1;
       repeated string allowed_methods=2;
+      repeated string allowed_headers=3;
     }
 
     string network = 1;

@@ -46,7 +46,7 @@ func PatchHttpOpts(opts []http.ServerOption, name string, services *conf.Service
 		opts = append(opts, http.Filter(handlers.CORS(
 			handlers.AllowedOrigins(server.Http.Cors.GetAllowedOrigins()),
 			handlers.AllowedMethods(server.Http.Cors.GetAllowedMethods()),
-			handlers.AllowedHeaders([]string{"Content-Type","Authorization"}),
+			handlers.AllowedHeaders(append([]string{"Content-Type", "Authorization"}, server.Http.Cors.AllowedHeaders...)),
 		)))
 	}
 	return opts
