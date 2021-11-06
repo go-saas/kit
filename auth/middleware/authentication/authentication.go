@@ -36,7 +36,7 @@ func ServerAuth(l log.Logger, tokenizer jwt.Tokenizer) middleware.Middleware {
 						uid = claims.Uid
 					}
 					logger.Debugf("Current User: %v", uid)
-					uc := current.NewUserContext(ctx, current.UserInfo{Id: uid})
+					uc := current.NewUserContext(ctx, current.NewUserInfo(uid))
 					return handler(uc, req)
 				}
 			}

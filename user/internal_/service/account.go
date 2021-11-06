@@ -28,7 +28,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	if !ok {
 		return nil, errors.Unauthorized("", "")
 	}
-	u, err := s.um.FindByID(ctx, userinfo.Id)
+	u, err := s.um.FindByID(ctx, userinfo.GetId())
 	if err != nil {
 		return nil, errors.Forbidden("", "")
 	}

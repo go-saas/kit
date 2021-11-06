@@ -65,7 +65,7 @@ func isAuditable(db *gorm.DB) (isAuditable bool) {
 
 func getCurrentUser(db *gorm.DB) (string, bool) {
 	if u, ok := current.FromUserContext(db.Statement.Context); ok {
-		return u.Id, true
+		return u.GetId(), true
 	}
 	return "", false
 }
