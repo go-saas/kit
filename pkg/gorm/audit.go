@@ -20,6 +20,8 @@ type AuditedModel struct {
 	UpdatedAt time.Time
 }
 
+var _ auditableInterface = (*AuditedModel)(nil)
+
 // SetCreatedBy set created by
 func (model *AuditedModel) SetCreatedBy(createdBy interface{}) {
 	if createdBy == nil {
@@ -48,9 +50,9 @@ func (model AuditedModel) GetUpdatedBy() *string {
 
 type auditableInterface interface {
 	SetCreatedBy(createdBy interface{})
-	GetCreatedBy() string
+	GetCreatedBy() *string
 	SetUpdatedBy(updatedBy interface{})
-	GetUpdatedBy() string
+	GetUpdatedBy() *string
 }
 
 func isAuditable(db *gorm.DB) (isAuditable bool) {
