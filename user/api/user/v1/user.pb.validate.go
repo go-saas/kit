@@ -11,6 +11,7 @@ import (
 	"net/mail"
 	"net/url"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -31,16 +32,51 @@ var (
 	_ = (*url.URL)(nil)
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
+	_ = sort.Sort
 )
 
 // Validate checks the field values on UserFilter with the rules defined in the
-// proto definition for this message. If any rules are violated, an error is returned.
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
 func (m *UserFilter) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserFilter with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserFilterMultiError, or
+// nil if none found.
+func (m *UserFilter) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserFilter) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
-	if v, ok := interface{}(m.GetBirthdayGte()).(interface{ Validate() error }); ok {
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetBirthdayGte()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "BirthdayGte",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "BirthdayGte",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBirthdayGte()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserFilterValidationError{
 				field:  "BirthdayGte",
@@ -50,7 +86,26 @@ func (m *UserFilter) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetBirthdayLte()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetBirthdayLte()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "BirthdayLte",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "BirthdayLte",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBirthdayLte()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserFilterValidationError{
 				field:  "BirthdayLte",
@@ -60,7 +115,26 @@ func (m *UserFilter) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetRoles()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetRoles()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "Roles",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "Roles",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRoles()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserFilterValidationError{
 				field:  "Roles",
@@ -73,7 +147,26 @@ func (m *UserFilter) Validate() error {
 	for idx, item := range m.GetAnd() {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserFilterValidationError{
+						field:  fmt.Sprintf("And[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserFilterValidationError{
+						field:  fmt.Sprintf("And[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UserFilterValidationError{
 					field:  fmt.Sprintf("And[%v]", idx),
@@ -88,7 +181,26 @@ func (m *UserFilter) Validate() error {
 	for idx, item := range m.GetOr() {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserFilterValidationError{
+						field:  fmt.Sprintf("Or[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserFilterValidationError{
+						field:  fmt.Sprintf("Or[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UserFilterValidationError{
 					field:  fmt.Sprintf("Or[%v]", idx),
@@ -100,8 +212,27 @@ func (m *UserFilter) Validate() error {
 
 	}
 
+	if len(errors) > 0 {
+		return UserFilterMultiError(errors)
+	}
 	return nil
 }
+
+// UserFilterMultiError is an error wrapping multiple validation errors
+// returned by UserFilter.ValidateAll() if the designated constraints aren't met.
+type UserFilterMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserFilterMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserFilterMultiError) AllErrors() []error { return m }
 
 // UserFilterValidationError is the validation error returned by
 // UserFilter.Validate if the designated constraints aren't met.
@@ -158,14 +289,48 @@ var _ interface {
 } = UserFilterValidationError{}
 
 // Validate checks the field values on RoleFilter with the rules defined in the
-// proto definition for this message. If any rules are violated, an error is returned.
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
 func (m *RoleFilter) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RoleFilter with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RoleFilterMultiError, or
+// nil if none found.
+func (m *RoleFilter) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RoleFilter) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return RoleFilterMultiError(errors)
+	}
 	return nil
 }
+
+// RoleFilterMultiError is an error wrapping multiple validation errors
+// returned by RoleFilter.ValidateAll() if the designated constraints aren't met.
+type RoleFilterMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RoleFilterMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RoleFilterMultiError) AllErrors() []error { return m }
 
 // RoleFilterValidationError is the validation error returned by
 // RoleFilter.Validate if the designated constraints aren't met.
@@ -222,12 +387,26 @@ var _ interface {
 } = RoleFilterValidationError{}
 
 // Validate checks the field values on ListRolesRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *ListRolesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListRolesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListRolesRequestMultiError, or nil if none found.
+func (m *ListRolesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListRolesRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
+
+	var errors []error
 
 	// no validation rules for PageOffset
 
@@ -235,7 +414,26 @@ func (m *ListRolesRequest) Validate() error {
 
 	// no validation rules for Search
 
-	if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetFields()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListRolesRequestValidationError{
+					field:  "Fields",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListRolesRequestValidationError{
+					field:  "Fields",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return ListRolesRequestValidationError{
 				field:  "Fields",
@@ -245,7 +443,26 @@ func (m *ListRolesRequest) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetFilter()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListRolesRequestValidationError{
+					field:  "Filter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListRolesRequestValidationError{
+					field:  "Filter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return ListRolesRequestValidationError{
 				field:  "Filter",
@@ -255,8 +472,28 @@ func (m *ListRolesRequest) Validate() error {
 		}
 	}
 
+	if len(errors) > 0 {
+		return ListRolesRequestMultiError(errors)
+	}
 	return nil
 }
+
+// ListRolesRequestMultiError is an error wrapping multiple validation errors
+// returned by ListRolesRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ListRolesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListRolesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListRolesRequestMultiError) AllErrors() []error { return m }
 
 // ListRolesRequestValidationError is the validation error returned by
 // ListRolesRequest.Validate if the designated constraints aren't met.
@@ -313,12 +550,26 @@ var _ interface {
 } = ListRolesRequestValidationError{}
 
 // Validate checks the field values on ListUsersRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *ListUsersRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListUsersRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListUsersRequestMultiError, or nil if none found.
+func (m *ListUsersRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListUsersRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
+
+	var errors []error
 
 	// no validation rules for PageOffset
 
@@ -326,7 +577,26 @@ func (m *ListUsersRequest) Validate() error {
 
 	// no validation rules for Search
 
-	if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetFields()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListUsersRequestValidationError{
+					field:  "Fields",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListUsersRequestValidationError{
+					field:  "Fields",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return ListUsersRequestValidationError{
 				field:  "Fields",
@@ -336,7 +606,26 @@ func (m *ListUsersRequest) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetFilter()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListUsersRequestValidationError{
+					field:  "Filter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListUsersRequestValidationError{
+					field:  "Filter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return ListUsersRequestValidationError{
 				field:  "Filter",
@@ -346,8 +635,28 @@ func (m *ListUsersRequest) Validate() error {
 		}
 	}
 
+	if len(errors) > 0 {
+		return ListUsersRequestMultiError(errors)
+	}
 	return nil
 }
+
+// ListUsersRequestMultiError is an error wrapping multiple validation errors
+// returned by ListUsersRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ListUsersRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListUsersRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListUsersRequestMultiError) AllErrors() []error { return m }
 
 // ListUsersRequestValidationError is the validation error returned by
 // ListUsersRequest.Validate if the designated constraints aren't met.
@@ -404,22 +713,60 @@ var _ interface {
 } = ListUsersRequestValidationError{}
 
 // Validate checks the field values on GetUserRequest with the rules defined in
-// the proto definition for this message. If any rules are violated, an error
-// is returned.
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
 func (m *GetUserRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUserRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GetUserRequestMultiError,
+// or nil if none found.
+func (m *GetUserRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUserRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	if utf8.RuneCountInString(m.GetId()) < 1 {
-		return GetUserRequestValidationError{
+		err := GetUserRequestValidationError{
 			field:  "Id",
 			reason: "value length must be at least 1 runes",
 		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
+	if len(errors) > 0 {
+		return GetUserRequestMultiError(errors)
+	}
 	return nil
 }
+
+// GetUserRequestMultiError is an error wrapping multiple validation errors
+// returned by GetUserRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetUserRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUserRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUserRequestMultiError) AllErrors() []error { return m }
 
 // GetUserRequestValidationError is the validation error returned by
 // GetUserRequest.Validate if the designated constraints aren't met.
@@ -476,15 +823,48 @@ var _ interface {
 } = GetUserRequestValidationError{}
 
 // Validate checks the field values on User with the rules defined in the proto
-// definition for this message. If any rules are violated, an error is returned.
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
 func (m *User) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on User with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in UserMultiError, or nil if none found.
+func (m *User) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *User) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	// no validation rules for Id
 
-	if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetUsername()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserValidationError{
+					field:  "Username",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserValidationError{
+					field:  "Username",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserValidationError{
 				field:  "Username",
@@ -494,7 +874,26 @@ func (m *User) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetName()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserValidationError{
 				field:  "Name",
@@ -504,7 +903,26 @@ func (m *User) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetPhone()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserValidationError{
 				field:  "Phone",
@@ -514,7 +932,26 @@ func (m *User) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetEmail()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserValidationError{
 				field:  "Email",
@@ -524,7 +961,26 @@ func (m *User) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetBirthday()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserValidationError{
+					field:  "Birthday",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserValidationError{
+					field:  "Birthday",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserValidationError{
 				field:  "Birthday",
@@ -539,7 +995,26 @@ func (m *User) Validate() error {
 	for idx, item := range m.GetRoles() {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserValidationError{
+						field:  fmt.Sprintf("Roles[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserValidationError{
+						field:  fmt.Sprintf("Roles[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UserValidationError{
 					field:  fmt.Sprintf("Roles[%v]", idx),
@@ -551,8 +1026,27 @@ func (m *User) Validate() error {
 
 	}
 
+	if len(errors) > 0 {
+		return UserMultiError(errors)
+	}
 	return nil
 }
+
+// UserMultiError is an error wrapping multiple validation errors returned by
+// User.ValidateAll() if the designated constraints aren't met.
+type UserMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserMultiError) AllErrors() []error { return m }
 
 // UserValidationError is the validation error returned by User.Validate if the
 // designated constraints aren't met.
@@ -609,18 +1103,51 @@ var _ interface {
 } = UserValidationError{}
 
 // Validate checks the field values on Role with the rules defined in the proto
-// definition for this message. If any rules are violated, an error is returned.
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
 func (m *Role) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Role with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in RoleMultiError, or nil if none found.
+func (m *Role) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Role) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
+
+	var errors []error
 
 	// no validation rules for Id
 
 	// no validation rules for Name
 
+	if len(errors) > 0 {
+		return RoleMultiError(errors)
+	}
 	return nil
 }
+
+// RoleMultiError is an error wrapping multiple validation errors returned by
+// Role.ValidateAll() if the designated constraints aren't met.
+type RoleMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RoleMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RoleMultiError) AllErrors() []error { return m }
 
 // RoleValidationError is the validation error returned by Role.Validate if the
 // designated constraints aren't met.
@@ -677,12 +1204,26 @@ var _ interface {
 } = RoleValidationError{}
 
 // Validate checks the field values on ListUsersResponse with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *ListUsersResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListUsersResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListUsersResponseMultiError, or nil if none found.
+func (m *ListUsersResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListUsersResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
+
+	var errors []error
 
 	// no validation rules for TotalSize
 
@@ -691,7 +1232,26 @@ func (m *ListUsersResponse) Validate() error {
 	for idx, item := range m.GetItems() {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListUsersResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListUsersResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ListUsersResponseValidationError{
 					field:  fmt.Sprintf("Items[%v]", idx),
@@ -703,8 +1263,28 @@ func (m *ListUsersResponse) Validate() error {
 
 	}
 
+	if len(errors) > 0 {
+		return ListUsersResponseMultiError(errors)
+	}
 	return nil
 }
+
+// ListUsersResponseMultiError is an error wrapping multiple validation errors
+// returned by ListUsersResponse.ValidateAll() if the designated constraints
+// aren't met.
+type ListUsersResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListUsersResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListUsersResponseMultiError) AllErrors() []error { return m }
 
 // ListUsersResponseValidationError is the validation error returned by
 // ListUsersResponse.Validate if the designated constraints aren't met.
@@ -763,25 +1343,62 @@ var _ interface {
 } = ListUsersResponseValidationError{}
 
 // Validate checks the field values on CreateUserRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *CreateUserRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateUserRequestMultiError, or nil if none found.
+func (m *CreateUserRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateUserRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	if wrapper := m.GetUsername(); wrapper != nil {
 
 		if utf8.RuneCountInString(wrapper.GetValue()) < 1 {
-			return CreateUserRequestValidationError{
+			err := CreateUserRequestValidationError{
 				field:  "Username",
 				reason: "value length must be at least 1 runes",
 			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}
 
-	if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetName()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateUserRequestValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateUserRequestValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateUserRequestValidationError{
 				field:  "Name",
@@ -791,7 +1408,26 @@ func (m *CreateUserRequest) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetPhone()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateUserRequestValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateUserRequestValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateUserRequestValidationError{
 				field:  "Phone",
@@ -804,11 +1440,15 @@ func (m *CreateUserRequest) Validate() error {
 	if wrapper := m.GetEmail(); wrapper != nil {
 
 		if err := m._validateEmail(wrapper.GetValue()); err != nil {
-			return CreateUserRequestValidationError{
+			err = CreateUserRequestValidationError{
 				field:  "Email",
 				reason: "value must be a valid email address",
 				cause:  err,
 			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}
@@ -817,7 +1457,26 @@ func (m *CreateUserRequest) Validate() error {
 
 	// no validation rules for ConfirmPassword
 
-	if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetBirthday()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateUserRequestValidationError{
+					field:  "Birthday",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateUserRequestValidationError{
+					field:  "Birthday",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateUserRequestValidationError{
 				field:  "Birthday",
@@ -829,6 +1488,9 @@ func (m *CreateUserRequest) Validate() error {
 
 	// no validation rules for Gender
 
+	if len(errors) > 0 {
+		return CreateUserRequestMultiError(errors)
+	}
 	return nil
 }
 
@@ -881,6 +1543,23 @@ func (m *CreateUserRequest) _validateEmail(addr string) error {
 
 	return m._validateHostname(parts[1])
 }
+
+// CreateUserRequestMultiError is an error wrapping multiple validation errors
+// returned by CreateUserRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CreateUserRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateUserRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateUserRequestMultiError) AllErrors() []error { return m }
 
 // CreateUserRequestValidationError is the validation error returned by
 // CreateUserRequest.Validate if the designated constraints aren't met.
@@ -940,15 +1619,48 @@ var _ interface {
 
 // Validate checks the field values on CreateUserResponse with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *CreateUserResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateUserResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateUserResponseMultiError, or nil if none found.
+func (m *CreateUserResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateUserResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	// no validation rules for Id
 
-	if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetUsername()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateUserResponseValidationError{
+					field:  "Username",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateUserResponseValidationError{
+					field:  "Username",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateUserResponseValidationError{
 				field:  "Username",
@@ -958,7 +1670,26 @@ func (m *CreateUserResponse) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetName()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateUserResponseValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateUserResponseValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateUserResponseValidationError{
 				field:  "Name",
@@ -968,7 +1699,26 @@ func (m *CreateUserResponse) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetPhone()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateUserResponseValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateUserResponseValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateUserResponseValidationError{
 				field:  "Phone",
@@ -978,7 +1728,26 @@ func (m *CreateUserResponse) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetEmail()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateUserResponseValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateUserResponseValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateUserResponseValidationError{
 				field:  "Email",
@@ -988,7 +1757,26 @@ func (m *CreateUserResponse) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetBirthday()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateUserResponseValidationError{
+					field:  "Birthday",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateUserResponseValidationError{
+					field:  "Birthday",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateUserResponseValidationError{
 				field:  "Birthday",
@@ -1000,8 +1788,28 @@ func (m *CreateUserResponse) Validate() error {
 
 	// no validation rules for Gender
 
+	if len(errors) > 0 {
+		return CreateUserResponseMultiError(errors)
+	}
 	return nil
 }
+
+// CreateUserResponseMultiError is an error wrapping multiple validation errors
+// returned by CreateUserResponse.ValidateAll() if the designated constraints
+// aren't met.
+type CreateUserResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateUserResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateUserResponseMultiError) AllErrors() []error { return m }
 
 // CreateUserResponseValidationError is the validation error returned by
 // CreateUserResponse.Validate if the designated constraints aren't met.
@@ -1060,21 +1868,58 @@ var _ interface {
 } = CreateUserResponseValidationError{}
 
 // Validate checks the field values on UpdateUserRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *UpdateUserRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateUserRequestMultiError, or nil if none found.
+func (m *UpdateUserRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateUserRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	if m.GetUser() == nil {
-		return UpdateUserRequestValidationError{
+		err := UpdateUserRequestValidationError{
 			field:  "User",
 			reason: "value is required",
 		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
-	if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateUserRequestValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateUserRequestValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateUserRequestValidationError{
 				field:  "User",
@@ -1084,7 +1929,26 @@ func (m *UpdateUserRequest) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetUpdateMask()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetUpdateMask()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateUserRequestValidationError{
+					field:  "UpdateMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateUserRequestValidationError{
+					field:  "UpdateMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdateMask()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateUserRequestValidationError{
 				field:  "UpdateMask",
@@ -1094,8 +1958,28 @@ func (m *UpdateUserRequest) Validate() error {
 		}
 	}
 
+	if len(errors) > 0 {
+		return UpdateUserRequestMultiError(errors)
+	}
 	return nil
 }
+
+// UpdateUserRequestMultiError is an error wrapping multiple validation errors
+// returned by UpdateUserRequest.ValidateAll() if the designated constraints
+// aren't met.
+type UpdateUserRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateUserRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateUserRequestMultiError) AllErrors() []error { return m }
 
 // UpdateUserRequestValidationError is the validation error returned by
 // UpdateUserRequest.Validate if the designated constraints aren't met.
@@ -1154,20 +2038,58 @@ var _ interface {
 } = UpdateUserRequestValidationError{}
 
 // Validate checks the field values on UpdateUser with the rules defined in the
-// proto definition for this message. If any rules are violated, an error is returned.
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
 func (m *UpdateUser) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateUser with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UpdateUserMultiError, or
+// nil if none found.
+func (m *UpdateUser) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateUser) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	if utf8.RuneCountInString(m.GetId()) < 1 {
-		return UpdateUserValidationError{
+		err := UpdateUserValidationError{
 			field:  "Id",
 			reason: "value length must be at least 1 runes",
 		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
-	if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetUsername()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateUserValidationError{
+					field:  "Username",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateUserValidationError{
+					field:  "Username",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateUserValidationError{
 				field:  "Username",
@@ -1177,7 +2099,26 @@ func (m *UpdateUser) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetName()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateUserValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateUserValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateUserValidationError{
 				field:  "Name",
@@ -1187,7 +2128,26 @@ func (m *UpdateUser) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetPhone()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateUserValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateUserValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateUserValidationError{
 				field:  "Phone",
@@ -1197,7 +2157,26 @@ func (m *UpdateUser) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetEmail()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateUserValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateUserValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateUserValidationError{
 				field:  "Email",
@@ -1207,7 +2186,26 @@ func (m *UpdateUser) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetBirthday()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateUserValidationError{
+					field:  "Birthday",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateUserValidationError{
+					field:  "Birthday",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateUserValidationError{
 				field:  "Birthday",
@@ -1223,8 +2221,27 @@ func (m *UpdateUser) Validate() error {
 
 	// no validation rules for ConfirmPassword
 
+	if len(errors) > 0 {
+		return UpdateUserMultiError(errors)
+	}
 	return nil
 }
+
+// UpdateUserMultiError is an error wrapping multiple validation errors
+// returned by UpdateUser.ValidateAll() if the designated constraints aren't met.
+type UpdateUserMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateUserMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateUserMultiError) AllErrors() []error { return m }
 
 // UpdateUserValidationError is the validation error returned by
 // UpdateUser.Validate if the designated constraints aren't met.
@@ -1281,17 +2298,51 @@ var _ interface {
 } = UpdateUserValidationError{}
 
 // Validate checks the field values on DeleteUserRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *DeleteUserRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteUserRequestMultiError, or nil if none found.
+func (m *DeleteUserRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteUserRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	// no validation rules for Id
 
+	if len(errors) > 0 {
+		return DeleteUserRequestMultiError(errors)
+	}
 	return nil
 }
+
+// DeleteUserRequestMultiError is an error wrapping multiple validation errors
+// returned by DeleteUserRequest.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteUserRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteUserRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteUserRequestMultiError) AllErrors() []error { return m }
 
 // DeleteUserRequestValidationError is the validation error returned by
 // DeleteUserRequest.Validate if the designated constraints aren't met.
@@ -1351,14 +2402,48 @@ var _ interface {
 
 // Validate checks the field values on DeleteUserResponse with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *DeleteUserResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteUserResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteUserResponseMultiError, or nil if none found.
+func (m *DeleteUserResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteUserResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteUserResponseMultiError(errors)
+	}
 	return nil
 }
+
+// DeleteUserResponseMultiError is an error wrapping multiple validation errors
+// returned by DeleteUserResponse.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteUserResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteUserResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteUserResponseMultiError) AllErrors() []error { return m }
 
 // DeleteUserResponseValidationError is the validation error returned by
 // DeleteUserResponse.Validate if the designated constraints aren't met.

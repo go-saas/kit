@@ -11,6 +11,7 @@ import (
 	"net/mail"
 	"net/url"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -31,18 +32,53 @@ var (
 	_ = (*url.URL)(nil)
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
+	_ = sort.Sort
 )
 
 // Validate checks the field values on RegisterAuthRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *RegisterAuthRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RegisterAuthRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RegisterAuthRequestMultiError, or nil if none found.
+func (m *RegisterAuthRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RegisterAuthRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return RegisterAuthRequestMultiError(errors)
+	}
 	return nil
 }
+
+// RegisterAuthRequestMultiError is an error wrapping multiple validation
+// errors returned by RegisterAuthRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RegisterAuthRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RegisterAuthRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RegisterAuthRequestMultiError) AllErrors() []error { return m }
 
 // RegisterAuthRequestValidationError is the validation error returned by
 // RegisterAuthRequest.Validate if the designated constraints aren't met.
@@ -101,15 +137,49 @@ var _ interface {
 } = RegisterAuthRequestValidationError{}
 
 // Validate checks the field values on RegisterAuthReply with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *RegisterAuthReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RegisterAuthReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RegisterAuthReplyMultiError, or nil if none found.
+func (m *RegisterAuthReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RegisterAuthReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return RegisterAuthReplyMultiError(errors)
+	}
 	return nil
 }
+
+// RegisterAuthReplyMultiError is an error wrapping multiple validation errors
+// returned by RegisterAuthReply.ValidateAll() if the designated constraints
+// aren't met.
+type RegisterAuthReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RegisterAuthReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RegisterAuthReplyMultiError) AllErrors() []error { return m }
 
 // RegisterAuthReplyValidationError is the validation error returned by
 // RegisterAuthReply.Validate if the designated constraints aren't met.
@@ -168,29 +238,71 @@ var _ interface {
 } = RegisterAuthReplyValidationError{}
 
 // Validate checks the field values on LoginAuthRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *LoginAuthRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LoginAuthRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// LoginAuthRequestMultiError, or nil if none found.
+func (m *LoginAuthRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LoginAuthRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	if utf8.RuneCountInString(m.GetUsername()) < 1 {
-		return LoginAuthRequestValidationError{
+		err := LoginAuthRequestValidationError{
 			field:  "Username",
 			reason: "value length must be at least 1 runes",
 		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if utf8.RuneCountInString(m.GetPassword()) < 1 {
-		return LoginAuthRequestValidationError{
+		err := LoginAuthRequestValidationError{
 			field:  "Password",
 			reason: "value length must be at least 1 runes",
 		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
+	if len(errors) > 0 {
+		return LoginAuthRequestMultiError(errors)
+	}
 	return nil
 }
+
+// LoginAuthRequestMultiError is an error wrapping multiple validation errors
+// returned by LoginAuthRequest.ValidateAll() if the designated constraints
+// aren't met.
+type LoginAuthRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LoginAuthRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LoginAuthRequestMultiError) AllErrors() []error { return m }
 
 // LoginAuthRequestValidationError is the validation error returned by
 // LoginAuthRequest.Validate if the designated constraints aren't met.
@@ -247,12 +359,26 @@ var _ interface {
 } = LoginAuthRequestValidationError{}
 
 // Validate checks the field values on LoginAuthReply with the rules defined in
-// the proto definition for this message. If any rules are violated, an error
-// is returned.
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
 func (m *LoginAuthReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LoginAuthReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in LoginAuthReplyMultiError,
+// or nil if none found.
+func (m *LoginAuthReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LoginAuthReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
+
+	var errors []error
 
 	// no validation rules for AccessToken
 
@@ -262,8 +388,28 @@ func (m *LoginAuthReply) Validate() error {
 
 	// no validation rules for RefreshToken
 
+	if len(errors) > 0 {
+		return LoginAuthReplyMultiError(errors)
+	}
 	return nil
 }
+
+// LoginAuthReplyMultiError is an error wrapping multiple validation errors
+// returned by LoginAuthReply.ValidateAll() if the designated constraints
+// aren't met.
+type LoginAuthReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LoginAuthReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LoginAuthReplyMultiError) AllErrors() []error { return m }
 
 // LoginAuthReplyValidationError is the validation error returned by
 // LoginAuthReply.Validate if the designated constraints aren't met.
@@ -321,14 +467,48 @@ var _ interface {
 
 // Validate checks the field values on RefreshTokenAuthRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *RefreshTokenAuthRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RefreshTokenAuthRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RefreshTokenAuthRequestMultiError, or nil if none found.
+func (m *RefreshTokenAuthRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RefreshTokenAuthRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return RefreshTokenAuthRequestMultiError(errors)
+	}
 	return nil
 }
+
+// RefreshTokenAuthRequestMultiError is an error wrapping multiple validation
+// errors returned by RefreshTokenAuthRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RefreshTokenAuthRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RefreshTokenAuthRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RefreshTokenAuthRequestMultiError) AllErrors() []error { return m }
 
 // RefreshTokenAuthRequestValidationError is the validation error returned by
 // RefreshTokenAuthRequest.Validate if the designated constraints aren't met.
@@ -388,14 +568,48 @@ var _ interface {
 
 // Validate checks the field values on RefreshTokenAuthReply with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *RefreshTokenAuthReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RefreshTokenAuthReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RefreshTokenAuthReplyMultiError, or nil if none found.
+func (m *RefreshTokenAuthReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RefreshTokenAuthReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return RefreshTokenAuthReplyMultiError(errors)
+	}
 	return nil
 }
+
+// RefreshTokenAuthReplyMultiError is an error wrapping multiple validation
+// errors returned by RefreshTokenAuthReply.ValidateAll() if the designated
+// constraints aren't met.
+type RefreshTokenAuthReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RefreshTokenAuthReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RefreshTokenAuthReplyMultiError) AllErrors() []error { return m }
 
 // RefreshTokenAuthReplyValidationError is the validation error returned by
 // RefreshTokenAuthReply.Validate if the designated constraints aren't met.
@@ -455,14 +669,48 @@ var _ interface {
 
 // Validate checks the field values on PasswordlessTokenAuthRequest with the
 // rules defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *PasswordlessTokenAuthRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PasswordlessTokenAuthRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PasswordlessTokenAuthRequestMultiError, or nil if none found.
+func (m *PasswordlessTokenAuthRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PasswordlessTokenAuthRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return PasswordlessTokenAuthRequestMultiError(errors)
+	}
 	return nil
 }
+
+// PasswordlessTokenAuthRequestMultiError is an error wrapping multiple
+// validation errors returned by PasswordlessTokenAuthRequest.ValidateAll() if
+// the designated constraints aren't met.
+type PasswordlessTokenAuthRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PasswordlessTokenAuthRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PasswordlessTokenAuthRequestMultiError) AllErrors() []error { return m }
 
 // PasswordlessTokenAuthRequestValidationError is the validation error returned
 // by PasswordlessTokenAuthRequest.Validate if the designated constraints
@@ -523,14 +771,48 @@ var _ interface {
 
 // Validate checks the field values on PasswordlessTokenAuthReply with the
 // rules defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *PasswordlessTokenAuthReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PasswordlessTokenAuthReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PasswordlessTokenAuthReplyMultiError, or nil if none found.
+func (m *PasswordlessTokenAuthReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PasswordlessTokenAuthReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return PasswordlessTokenAuthReplyMultiError(errors)
+	}
 	return nil
 }
+
+// PasswordlessTokenAuthReplyMultiError is an error wrapping multiple
+// validation errors returned by PasswordlessTokenAuthReply.ValidateAll() if
+// the designated constraints aren't met.
+type PasswordlessTokenAuthReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PasswordlessTokenAuthReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PasswordlessTokenAuthReplyMultiError) AllErrors() []error { return m }
 
 // PasswordlessTokenAuthReplyValidationError is the validation error returned
 // by PasswordlessTokenAuthReply.Validate if the designated constraints aren't met.
@@ -590,14 +872,48 @@ var _ interface {
 
 // Validate checks the field values on LoginPasswordlessRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *LoginPasswordlessRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LoginPasswordlessRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// LoginPasswordlessRequestMultiError, or nil if none found.
+func (m *LoginPasswordlessRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LoginPasswordlessRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return LoginPasswordlessRequestMultiError(errors)
+	}
 	return nil
 }
+
+// LoginPasswordlessRequestMultiError is an error wrapping multiple validation
+// errors returned by LoginPasswordlessRequest.ValidateAll() if the designated
+// constraints aren't met.
+type LoginPasswordlessRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LoginPasswordlessRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LoginPasswordlessRequestMultiError) AllErrors() []error { return m }
 
 // LoginPasswordlessRequestValidationError is the validation error returned by
 // LoginPasswordlessRequest.Validate if the designated constraints aren't met.
@@ -657,14 +973,48 @@ var _ interface {
 
 // Validate checks the field values on LoginPasswordlessReply with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *LoginPasswordlessReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LoginPasswordlessReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// LoginPasswordlessReplyMultiError, or nil if none found.
+func (m *LoginPasswordlessReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LoginPasswordlessReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return LoginPasswordlessReplyMultiError(errors)
+	}
 	return nil
 }
+
+// LoginPasswordlessReplyMultiError is an error wrapping multiple validation
+// errors returned by LoginPasswordlessReply.ValidateAll() if the designated
+// constraints aren't met.
+type LoginPasswordlessReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LoginPasswordlessReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LoginPasswordlessReplyMultiError) AllErrors() []error { return m }
 
 // LoginPasswordlessReplyValidationError is the validation error returned by
 // LoginPasswordlessReply.Validate if the designated constraints aren't met.
@@ -724,14 +1074,48 @@ var _ interface {
 
 // Validate checks the field values on ForgetPasswordTokenRequest with the
 // rules defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *ForgetPasswordTokenRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ForgetPasswordTokenRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ForgetPasswordTokenRequestMultiError, or nil if none found.
+func (m *ForgetPasswordTokenRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ForgetPasswordTokenRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return ForgetPasswordTokenRequestMultiError(errors)
+	}
 	return nil
 }
+
+// ForgetPasswordTokenRequestMultiError is an error wrapping multiple
+// validation errors returned by ForgetPasswordTokenRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ForgetPasswordTokenRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ForgetPasswordTokenRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ForgetPasswordTokenRequestMultiError) AllErrors() []error { return m }
 
 // ForgetPasswordTokenRequestValidationError is the validation error returned
 // by ForgetPasswordTokenRequest.Validate if the designated constraints aren't met.
@@ -791,14 +1175,48 @@ var _ interface {
 
 // Validate checks the field values on ForgetPasswordTokenReply with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *ForgetPasswordTokenReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ForgetPasswordTokenReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ForgetPasswordTokenReplyMultiError, or nil if none found.
+func (m *ForgetPasswordTokenReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ForgetPasswordTokenReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return ForgetPasswordTokenReplyMultiError(errors)
+	}
 	return nil
 }
+
+// ForgetPasswordTokenReplyMultiError is an error wrapping multiple validation
+// errors returned by ForgetPasswordTokenReply.ValidateAll() if the designated
+// constraints aren't met.
+type ForgetPasswordTokenReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ForgetPasswordTokenReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ForgetPasswordTokenReplyMultiError) AllErrors() []error { return m }
 
 // ForgetPasswordTokenReplyValidationError is the validation error returned by
 // ForgetPasswordTokenReply.Validate if the designated constraints aren't met.
@@ -858,14 +1276,48 @@ var _ interface {
 
 // Validate checks the field values on ForgetPasswordRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *ForgetPasswordRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ForgetPasswordRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ForgetPasswordRequestMultiError, or nil if none found.
+func (m *ForgetPasswordRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ForgetPasswordRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return ForgetPasswordRequestMultiError(errors)
+	}
 	return nil
 }
+
+// ForgetPasswordRequestMultiError is an error wrapping multiple validation
+// errors returned by ForgetPasswordRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ForgetPasswordRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ForgetPasswordRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ForgetPasswordRequestMultiError) AllErrors() []error { return m }
 
 // ForgetPasswordRequestValidationError is the validation error returned by
 // ForgetPasswordRequest.Validate if the designated constraints aren't met.
@@ -925,14 +1377,48 @@ var _ interface {
 
 // Validate checks the field values on ForgetPasswordReply with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *ForgetPasswordReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ForgetPasswordReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ForgetPasswordReplyMultiError, or nil if none found.
+func (m *ForgetPasswordReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ForgetPasswordReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
+	if len(errors) > 0 {
+		return ForgetPasswordReplyMultiError(errors)
+	}
 	return nil
 }
+
+// ForgetPasswordReplyMultiError is an error wrapping multiple validation
+// errors returned by ForgetPasswordReply.ValidateAll() if the designated
+// constraints aren't met.
+type ForgetPasswordReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ForgetPasswordReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ForgetPasswordReplyMultiError) AllErrors() []error { return m }
 
 // ForgetPasswordReplyValidationError is the validation error returned by
 // ForgetPasswordReply.Validate if the designated constraints aren't met.
@@ -992,16 +1478,50 @@ var _ interface {
 
 // Validate checks the field values on ValidatePasswordRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *ValidatePasswordRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ValidatePasswordRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ValidatePasswordRequestMultiError, or nil if none found.
+func (m *ValidatePasswordRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ValidatePasswordRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	// no validation rules for Password
 
+	if len(errors) > 0 {
+		return ValidatePasswordRequestMultiError(errors)
+	}
 	return nil
 }
+
+// ValidatePasswordRequestMultiError is an error wrapping multiple validation
+// errors returned by ValidatePasswordRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ValidatePasswordRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ValidatePasswordRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ValidatePasswordRequestMultiError) AllErrors() []error { return m }
 
 // ValidatePasswordRequestValidationError is the validation error returned by
 // ValidatePasswordRequest.Validate if the designated constraints aren't met.
@@ -1061,16 +1581,50 @@ var _ interface {
 
 // Validate checks the field values on ValidatePasswordReply with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *ValidatePasswordReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ValidatePasswordReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ValidatePasswordReplyMultiError, or nil if none found.
+func (m *ValidatePasswordReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ValidatePasswordReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	// no validation rules for Ok
 
+	if len(errors) > 0 {
+		return ValidatePasswordReplyMultiError(errors)
+	}
 	return nil
 }
+
+// ValidatePasswordReplyMultiError is an error wrapping multiple validation
+// errors returned by ValidatePasswordReply.ValidateAll() if the designated
+// constraints aren't met.
+type ValidatePasswordReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ValidatePasswordReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ValidatePasswordReplyMultiError) AllErrors() []error { return m }
 
 // ValidatePasswordReplyValidationError is the validation error returned by
 // ValidatePasswordReply.Validate if the designated constraints aren't met.

@@ -11,6 +11,7 @@ import (
 	"net/mail"
 	"net/url"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -31,29 +32,68 @@ var (
 	_ = (*url.URL)(nil)
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
+	_ = sort.Sort
 )
 
 // Validate checks the field values on CreateTenantRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *CreateTenantRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateTenantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateTenantRequestMultiError, or nil if none found.
+func (m *CreateTenantRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateTenantRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	if utf8.RuneCountInString(m.GetName()) < 1 {
-		return CreateTenantRequestValidationError{
+		err := CreateTenantRequestValidationError{
 			field:  "Name",
 			reason: "value length must be at least 1 runes",
 		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	// no validation rules for DisplayName
 
 	// no validation rules for Region
 
+	if len(errors) > 0 {
+		return CreateTenantRequestMultiError(errors)
+	}
 	return nil
 }
+
+// CreateTenantRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateTenantRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateTenantRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateTenantRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateTenantRequestMultiError) AllErrors() []error { return m }
 
 // CreateTenantRequestValidationError is the validation error returned by
 // CreateTenantRequest.Validate if the designated constraints aren't met.
@@ -113,20 +153,57 @@ var _ interface {
 
 // Validate checks the field values on UpdateTenantRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *UpdateTenantRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateTenantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateTenantRequestMultiError, or nil if none found.
+func (m *UpdateTenantRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateTenantRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	if m.GetTenant() == nil {
-		return UpdateTenantRequestValidationError{
+		err := UpdateTenantRequestValidationError{
 			field:  "Tenant",
 			reason: "value is required",
 		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
-	if v, ok := interface{}(m.GetTenant()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetTenant()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateTenantRequestValidationError{
+					field:  "Tenant",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateTenantRequestValidationError{
+					field:  "Tenant",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTenant()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateTenantRequestValidationError{
 				field:  "Tenant",
@@ -136,7 +213,26 @@ func (m *UpdateTenantRequest) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetUpdateMask()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetUpdateMask()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateTenantRequestValidationError{
+					field:  "UpdateMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateTenantRequestValidationError{
+					field:  "UpdateMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdateMask()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateTenantRequestValidationError{
 				field:  "UpdateMask",
@@ -146,8 +242,28 @@ func (m *UpdateTenantRequest) Validate() error {
 		}
 	}
 
+	if len(errors) > 0 {
+		return UpdateTenantRequestMultiError(errors)
+	}
 	return nil
 }
+
+// UpdateTenantRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateTenantRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateTenantRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateTenantRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateTenantRequestMultiError) AllErrors() []error { return m }
 
 // UpdateTenantRequestValidationError is the validation error returned by
 // UpdateTenantRequest.Validate if the designated constraints aren't met.
@@ -206,25 +322,47 @@ var _ interface {
 } = UpdateTenantRequestValidationError{}
 
 // Validate checks the field values on UpdateTenant with the rules defined in
-// the proto definition for this message. If any rules are violated, an error
-// is returned.
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
 func (m *UpdateTenant) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateTenant with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UpdateTenantMultiError, or
+// nil if none found.
+func (m *UpdateTenant) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateTenant) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	if utf8.RuneCountInString(m.GetId()) < 1 {
-		return UpdateTenantValidationError{
+		err := UpdateTenantValidationError{
 			field:  "Id",
 			reason: "value length must be at least 1 runes",
 		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if utf8.RuneCountInString(m.GetName()) < 1 {
-		return UpdateTenantValidationError{
+		err := UpdateTenantValidationError{
 			field:  "Name",
 			reason: "value length must be at least 1 runes",
 		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	// no validation rules for DisplayName
@@ -232,7 +370,26 @@ func (m *UpdateTenant) Validate() error {
 	for idx, item := range m.GetConn() {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateTenantValidationError{
+						field:  fmt.Sprintf("Conn[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateTenantValidationError{
+						field:  fmt.Sprintf("Conn[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UpdateTenantValidationError{
 					field:  fmt.Sprintf("Conn[%v]", idx),
@@ -247,7 +404,26 @@ func (m *UpdateTenant) Validate() error {
 	for idx, item := range m.GetFeatures() {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateTenantValidationError{
+						field:  fmt.Sprintf("Features[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateTenantValidationError{
+						field:  fmt.Sprintf("Features[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UpdateTenantValidationError{
 					field:  fmt.Sprintf("Features[%v]", idx),
@@ -259,8 +435,27 @@ func (m *UpdateTenant) Validate() error {
 
 	}
 
+	if len(errors) > 0 {
+		return UpdateTenantMultiError(errors)
+	}
 	return nil
 }
+
+// UpdateTenantMultiError is an error wrapping multiple validation errors
+// returned by UpdateTenant.ValidateAll() if the designated constraints aren't met.
+type UpdateTenantMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateTenantMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateTenantMultiError) AllErrors() []error { return m }
 
 // UpdateTenantValidationError is the validation error returned by
 // UpdateTenant.Validate if the designated constraints aren't met.
@@ -318,16 +513,50 @@ var _ interface {
 
 // Validate checks the field values on DeleteTenantRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *DeleteTenantRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteTenantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteTenantRequestMultiError, or nil if none found.
+func (m *DeleteTenantRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteTenantRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	// no validation rules for Id
 
+	if len(errors) > 0 {
+		return DeleteTenantRequestMultiError(errors)
+	}
 	return nil
 }
+
+// DeleteTenantRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteTenantRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteTenantRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteTenantRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteTenantRequestMultiError) AllErrors() []error { return m }
 
 // DeleteTenantRequestValidationError is the validation error returned by
 // DeleteTenantRequest.Validate if the designated constraints aren't met.
@@ -386,17 +615,51 @@ var _ interface {
 } = DeleteTenantRequestValidationError{}
 
 // Validate checks the field values on DeleteTenantReply with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *DeleteTenantReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteTenantReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteTenantReplyMultiError, or nil if none found.
+func (m *DeleteTenantReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteTenantReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	// no validation rules for Id
 
+	if len(errors) > 0 {
+		return DeleteTenantReplyMultiError(errors)
+	}
 	return nil
 }
+
+// DeleteTenantReplyMultiError is an error wrapping multiple validation errors
+// returned by DeleteTenantReply.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteTenantReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteTenantReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteTenantReplyMultiError) AllErrors() []error { return m }
 
 // DeleteTenantReplyValidationError is the validation error returned by
 // DeleteTenantReply.Validate if the designated constraints aren't met.
@@ -455,17 +718,51 @@ var _ interface {
 } = DeleteTenantReplyValidationError{}
 
 // Validate checks the field values on GetTenantRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *GetTenantRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetTenantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetTenantRequestMultiError, or nil if none found.
+func (m *GetTenantRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetTenantRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	// no validation rules for IdOrName
 
+	if len(errors) > 0 {
+		return GetTenantRequestMultiError(errors)
+	}
 	return nil
 }
+
+// GetTenantRequestMultiError is an error wrapping multiple validation errors
+// returned by GetTenantRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetTenantRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetTenantRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetTenantRequestMultiError) AllErrors() []error { return m }
 
 // GetTenantRequestValidationError is the validation error returned by
 // GetTenantRequest.Validate if the designated constraints aren't met.
@@ -522,17 +819,50 @@ var _ interface {
 } = GetTenantRequestValidationError{}
 
 // Validate checks the field values on TenantFilter with the rules defined in
-// the proto definition for this message. If any rules are violated, an error
-// is returned.
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
 func (m *TenantFilter) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TenantFilter with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TenantFilterMultiError, or
+// nil if none found.
+func (m *TenantFilter) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TenantFilter) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
+	var errors []error
+
 	// no validation rules for NameLike
 
+	if len(errors) > 0 {
+		return TenantFilterMultiError(errors)
+	}
 	return nil
 }
+
+// TenantFilterMultiError is an error wrapping multiple validation errors
+// returned by TenantFilter.ValidateAll() if the designated constraints aren't met.
+type TenantFilterMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TenantFilterMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TenantFilterMultiError) AllErrors() []error { return m }
 
 // TenantFilterValidationError is the validation error returned by
 // TenantFilter.Validate if the designated constraints aren't met.
@@ -589,12 +919,26 @@ var _ interface {
 } = TenantFilterValidationError{}
 
 // Validate checks the field values on ListTenantRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *ListTenantRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListTenantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListTenantRequestMultiError, or nil if none found.
+func (m *ListTenantRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListTenantRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
+
+	var errors []error
 
 	// no validation rules for PageOffset
 
@@ -602,7 +946,26 @@ func (m *ListTenantRequest) Validate() error {
 
 	// no validation rules for Search
 
-	if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetFields()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListTenantRequestValidationError{
+					field:  "Fields",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListTenantRequestValidationError{
+					field:  "Fields",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return ListTenantRequestValidationError{
 				field:  "Fields",
@@ -612,7 +975,26 @@ func (m *ListTenantRequest) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetFilter()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListTenantRequestValidationError{
+					field:  "Filter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListTenantRequestValidationError{
+					field:  "Filter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return ListTenantRequestValidationError{
 				field:  "Filter",
@@ -622,8 +1004,28 @@ func (m *ListTenantRequest) Validate() error {
 		}
 	}
 
+	if len(errors) > 0 {
+		return ListTenantRequestMultiError(errors)
+	}
 	return nil
 }
+
+// ListTenantRequestMultiError is an error wrapping multiple validation errors
+// returned by ListTenantRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ListTenantRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListTenantRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListTenantRequestMultiError) AllErrors() []error { return m }
 
 // ListTenantRequestValidationError is the validation error returned by
 // ListTenantRequest.Validate if the designated constraints aren't met.
@@ -682,12 +1084,26 @@ var _ interface {
 } = ListTenantRequestValidationError{}
 
 // Validate checks the field values on ListTenantReply with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
 func (m *ListTenantReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListTenantReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListTenantReplyMultiError, or nil if none found.
+func (m *ListTenantReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListTenantReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
+
+	var errors []error
 
 	// no validation rules for TotalSize
 
@@ -696,7 +1112,26 @@ func (m *ListTenantReply) Validate() error {
 	for idx, item := range m.GetItems() {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListTenantReplyValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListTenantReplyValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ListTenantReplyValidationError{
 					field:  fmt.Sprintf("Items[%v]", idx),
@@ -708,8 +1143,28 @@ func (m *ListTenantReply) Validate() error {
 
 	}
 
+	if len(errors) > 0 {
+		return ListTenantReplyMultiError(errors)
+	}
 	return nil
 }
+
+// ListTenantReplyMultiError is an error wrapping multiple validation errors
+// returned by ListTenantReply.ValidateAll() if the designated constraints
+// aren't met.
+type ListTenantReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListTenantReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListTenantReplyMultiError) AllErrors() []error { return m }
 
 // ListTenantReplyValidationError is the validation error returned by
 // ListTenantReply.Validate if the designated constraints aren't met.
@@ -766,11 +1221,25 @@ var _ interface {
 } = ListTenantReplyValidationError{}
 
 // Validate checks the field values on Tenant with the rules defined in the
-// proto definition for this message. If any rules are violated, an error is returned.
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
 func (m *Tenant) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Tenant with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in TenantMultiError, or nil if none found.
+func (m *Tenant) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Tenant) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
+
+	var errors []error
 
 	// no validation rules for Id
 
@@ -780,7 +1249,26 @@ func (m *Tenant) Validate() error {
 
 	// no validation rules for Region
 
-	if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TenantValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TenantValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return TenantValidationError{
 				field:  "CreatedAt",
@@ -790,7 +1278,26 @@ func (m *Tenant) Validate() error {
 		}
 	}
 
-	if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TenantValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TenantValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return TenantValidationError{
 				field:  "UpdatedAt",
@@ -803,7 +1310,26 @@ func (m *Tenant) Validate() error {
 	for idx, item := range m.GetConn() {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TenantValidationError{
+						field:  fmt.Sprintf("Conn[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TenantValidationError{
+						field:  fmt.Sprintf("Conn[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return TenantValidationError{
 					field:  fmt.Sprintf("Conn[%v]", idx),
@@ -818,7 +1344,26 @@ func (m *Tenant) Validate() error {
 	for idx, item := range m.GetFeatures() {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TenantValidationError{
+						field:  fmt.Sprintf("Features[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TenantValidationError{
+						field:  fmt.Sprintf("Features[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return TenantValidationError{
 					field:  fmt.Sprintf("Features[%v]", idx),
@@ -830,8 +1375,27 @@ func (m *Tenant) Validate() error {
 
 	}
 
+	if len(errors) > 0 {
+		return TenantMultiError(errors)
+	}
 	return nil
 }
+
+// TenantMultiError is an error wrapping multiple validation errors returned by
+// Tenant.ValidateAll() if the designated constraints aren't met.
+type TenantMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TenantMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TenantMultiError) AllErrors() []error { return m }
 
 // TenantValidationError is the validation error returned by Tenant.Validate if
 // the designated constraints aren't met.
@@ -889,18 +1453,52 @@ var _ interface {
 
 // Validate checks the field values on TenantConnectionString with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *TenantConnectionString) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TenantConnectionString with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TenantConnectionStringMultiError, or nil if none found.
+func (m *TenantConnectionString) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TenantConnectionString) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
+
+	var errors []error
 
 	// no validation rules for Key
 
 	// no validation rules for Value
 
+	if len(errors) > 0 {
+		return TenantConnectionStringMultiError(errors)
+	}
 	return nil
 }
+
+// TenantConnectionStringMultiError is an error wrapping multiple validation
+// errors returned by TenantConnectionString.ValidateAll() if the designated
+// constraints aren't met.
+type TenantConnectionStringMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TenantConnectionStringMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TenantConnectionStringMultiError) AllErrors() []error { return m }
 
 // TenantConnectionStringValidationError is the validation error returned by
 // TenantConnectionString.Validate if the designated constraints aren't met.
@@ -959,19 +1557,53 @@ var _ interface {
 } = TenantConnectionStringValidationError{}
 
 // Validate checks the field values on TenantFeature with the rules defined in
-// the proto definition for this message. If any rules are violated, an error
-// is returned.
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
 func (m *TenantFeature) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TenantFeature with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TenantFeatureMultiError, or
+// nil if none found.
+func (m *TenantFeature) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TenantFeature) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
+
+	var errors []error
 
 	// no validation rules for Key
 
 	// no validation rules for Value
 
+	if len(errors) > 0 {
+		return TenantFeatureMultiError(errors)
+	}
 	return nil
 }
+
+// TenantFeatureMultiError is an error wrapping multiple validation errors
+// returned by TenantFeature.ValidateAll() if the designated constraints
+// aren't met.
+type TenantFeatureMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TenantFeatureMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TenantFeatureMultiError) AllErrors() []error { return m }
 
 // TenantFeatureValidationError is the validation error returned by
 // TenantFeature.Validate if the designated constraints aren't met.
