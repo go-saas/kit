@@ -24,8 +24,8 @@ func (g TenantStore) GetByNameOrId(_ context.Context, nameOrId string) (*common.
 	if err != nil {
 		return nil, err
 	}
-	if t==nil{
-		return nil,common.ErrTenantNotFound
+	if t == nil {
+		return nil, common.ErrTenantNotFound
 	}
 	ret := common.NewTenantConfig(t.ID, t.Name, t.Region)
 	for _, conn := range t.Conn {

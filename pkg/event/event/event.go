@@ -2,8 +2,8 @@ package event
 
 import "context"
 
-var(
-	_ Event    = (*Message)(nil)
+var (
+	_ Event = (*Message)(nil)
 )
 
 type Event interface {

@@ -22,6 +22,6 @@ func NewSeeder(c *conf.UserConf, uow uow.Manager, migrate *data.Migrate, roleSee
 	return seed.NewDefaultSeeder(opt, uow, map[string]interface{}{
 		biz.AdminUsernameKey: c.Admin.GetUsername(),
 		biz.AdminPasswordKey: c.Admin.GetPassword(),
-		seed2.FakeSeedKey: true,
+		seed2.FakeSeedKey:    true,
 	})
 }

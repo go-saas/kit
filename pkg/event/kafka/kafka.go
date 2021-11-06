@@ -6,14 +6,12 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 
-
 	"github.com/segmentio/kafka-go"
 )
 
 var (
 	_ event.Sender   = (*kafkaSender)(nil)
 	_ event.Receiver = (*kafkaReceiver)(nil)
-
 )
 
 type kafkaSender struct {
@@ -41,13 +39,13 @@ func (s *kafkaSender) Close() error {
 	return nil
 }
 
-func NewKafkaSender(address []string, topic string,logger log.Logger) (event.Sender, error) {
+func NewKafkaSender(address []string, topic string, logger log.Logger) (event.Sender, error) {
 	w := &kafka.Writer{
 		Topic:    topic,
 		Addr:     kafka.TCP(address...),
 		Balancer: &kafka.LeastBytes{},
 	}
-	return &kafkaSender{writer: w, topic: topic,logger: log.NewHelper(logger)}, nil
+	return &kafkaSender{writer: w, topic: topic, logger: log.NewHelper(logger)}, nil
 }
 
 type kafkaReceiver struct {
@@ -63,14 +61,14 @@ func (k *kafkaReceiver) Receive(ctx context.Context, handler event.Handler) erro
 			if err != nil {
 				break
 			}
-			err = handler(context.Background(), event.NewMessage( string(m.Key),m.Value))
+			err = handler(context.Background(), event.NewMessage(string(m.Key), m.Value))
 			if err != nil {
 				//TODO error handling
-				k.logger.Error( fmt.Sprintf("message handling exception: %v",err))
+				k.logger.Error(fmt.Sprintf("message handling exception: %v", err))
 				continue
 			}
 			if err := k.reader.CommitMessages(ctx, m); err != nil {
-				k.logger.Error( fmt.Sprintf("failed to commit messages: %v",err))
+				k.logger.Error(fmt.Sprintf("failed to commit messages: %v", err))
 			}
 		}
 	}()
@@ -85,7 +83,7 @@ func (k *kafkaReceiver) Close() error {
 	return nil
 }
 
-func NewKafkaReceiver(address []string, topic string,group string,logger log.Logger) (event.Receiver, error) {
+func NewKafkaReceiver(address []string, topic string, group string, logger log.Logger) (event.Receiver, error) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  address,
 		GroupID:  group,
@@ -93,5 +91,5 @@ func NewKafkaReceiver(address []string, topic string,group string,logger log.Log
 		MinBytes: 10e3, // 10KB
 		MaxBytes: 10e6, // 10MB
 	})
-	return &kafkaReceiver{reader: r, topic: topic,logger: log.NewHelper(logger)}, nil
+	return &kafkaReceiver{reader: r, topic: topic, logger: log.NewHelper(logger)}, nil
 }

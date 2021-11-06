@@ -81,16 +81,16 @@ func main() {
 	pwdValidatorCfg := &biz.PasswordValidatorConfig{
 		MinScore: 1,
 	}
-	if bc.User!=nil{
-		pwdValidatorCfg.MinScore= int(bc.User.PasswordScoreMin)
+	if bc.User != nil {
+		pwdValidatorCfg.MinScore = int(bc.User.PasswordScoreMin)
 	}
 
-	app, cleanup, err := initApp(bc.Services, bc.User, bc.Data, logger,pwdValidatorCfg, &jwt.TokenizerConfig{
+	app, cleanup, err := initApp(bc.Services, bc.User, bc.Data, logger, pwdValidatorCfg, &jwt.TokenizerConfig{
 		ExpireDuration: bc.Security.Jwt.ExpireIn.AsDuration(),
 		Secret:         bc.Security.Jwt.Secret,
 	}, &uow.Config{
 		SupportNestedTransaction: false,
-	}, uow2.NewGormConfig(bc.Data.Endpoints,data.ConnName))
+	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName))
 	if err != nil {
 		panic(err)
 	}

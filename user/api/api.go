@@ -18,7 +18,7 @@ type HttpClient *http.Client
 const ServiceName = "user"
 
 func NewGrpcConn(services *conf.Services, opts ...grpc2.ClientOption) (GrpcConn, func()) {
-	return  api.NewGrpcConn(ServiceName, services, true, opts...)
+	return api.NewGrpcConn(ServiceName, services, true, opts...)
 }
 
 func NewHttpClient(services *conf.Services, opts ...http.ClientOption) (HttpClient, func()) {

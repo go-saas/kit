@@ -40,7 +40,7 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 	rItems := make([]*pb.User, len(items))
 	for index, u := range items {
 		res := MapBizUserToApi(u)
-		if req.Fields!=nil{
+		if req.Fields != nil {
 			fmutils.Filter(res, req.Fields.Paths)
 		}
 		rItems[index] = res
@@ -52,11 +52,11 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 
 func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User, error) {
 	u, err := s.um.FindByID(ctx, req.Id)
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
-	if u==nil{
-		return nil,errors2.NotFound("","")
+	if u == nil {
+		return nil, errors2.NotFound("", "")
 	}
 	res := MapBizUserToApi(u)
 	return res, nil
@@ -122,61 +122,61 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 		}
 	}
 
-	if req.UpdateMask!=nil{
+	if req.UpdateMask != nil {
 		fmutils.Filter(req, req.UpdateMask.Paths)
 	}
-	u,err:=s.um.FindByID(ctx,req.User.Id)
-	if err!=nil{
-		return nil,err
+	u, err := s.um.FindByID(ctx, req.User.Id)
+	if err != nil {
+		return nil, err
 	}
-	if u==nil{
-		return nil,errors2.NotFound("","")
+	if u == nil {
+		return nil, errors2.NotFound("", "")
 	}
 
-	if req.User.Password!=""{
+	if req.User.Password != "" {
 		//reset password
-		if err:=s.um.UpdatePassword(ctx,u,req.User.Password);err!=nil{
-			return nil,err
+		if err := s.um.UpdatePassword(ctx, u, req.User.Password); err != nil {
+			return nil, err
 		}
 	}
-	if req.GetUser().GetUsername()!=nil{
+	if req.GetUser().GetUsername() != nil {
 		v := req.GetUser().GetUsername().Value
 		u.Username = &v
 	}
 
-	if req.GetUser().GetName()!=nil{
+	if req.GetUser().GetName() != nil {
 		v := req.GetUser().GetName().Value
 		u.Name = &v
 	}
-	if req.GetUser().GetPhone()!=nil{
+	if req.GetUser().GetPhone() != nil {
 		v := req.GetUser().GetPhone().Value
 		u.Phone = &v
 	}
-	if req.GetUser().GetEmail()!=nil{
+	if req.GetUser().GetEmail() != nil {
 		v := req.GetUser().GetEmail().Value
 		u.Email = &v
 	}
-	if req.GetUser().GetBirthday()!=nil{
+	if req.GetUser().GetBirthday() != nil {
 		v := req.GetUser().GetBirthday().AsTime()
 		u.Birthday = &v
 	}
 
-	g:=req.GetUser().Gender.Enum().String()
-	u.Gender =  &g
-	if err := s.um.Update(ctx,u);err!=nil{
-		return nil,err
+	g := req.GetUser().Gender.Enum().String()
+	u.Gender = &g
+	if err := s.um.Update(ctx, u); err != nil {
+		return nil, err
 	}
-	res :=MapBizUserToApi(u)
+	res := MapBizUserToApi(u)
 	return res, nil
 }
 func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
 	return &pb.DeleteUserResponse{}, nil
 }
 
-func MapBizUserToApi(u *biz.User ) *pb.User  {
+func MapBizUserToApi(u *biz.User) *pb.User {
 	res := &pb.User{
-		Id:       u.ID.String(),
-		Roles:    nil,
+		Id:    u.ID.String(),
+		Roles: nil,
 	}
 	if u.Username != nil {
 		res.Username = &wrappers.StringValue{Value: *u.Username}
@@ -198,9 +198,9 @@ func MapBizUserToApi(u *biz.User ) *pb.User  {
 			res.Gender = pb.Gender(v)
 		}
 	}
-	if u.Roles!=nil{
+	if u.Roles != nil {
 		var returnRoles []*pb.Role
-		linq.From(u.Roles).SelectT(func(i biz.Role) *pb.Role{
+		linq.From(u.Roles).SelectT(func(i biz.Role) *pb.Role {
 			return &pb.Role{
 				Id:   i.ID.String(),
 				Name: i.Name,

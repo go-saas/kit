@@ -38,7 +38,7 @@ func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manage
 			middleware.MultiTenancy(nil, nil, ts),
 		),
 	}
-	opts = server.PatchHttpOpts(opts,api.ServiceName,c)
+	opts = server.PatchHttpOpts(opts, api.ServiceName, c)
 
 	openAPIhandler := openapiv2.NewHandler()
 	srv := http.NewServer(opts...)

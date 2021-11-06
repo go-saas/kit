@@ -10,15 +10,15 @@ import (
 type AuthService struct {
 	pb.UnimplementedAuthServer
 
-	um     *biz.UserManager
-	rm     *biz.RoleManager
-	token  jwt.Tokenizer
-	config *jwt.TokenizerConfig
+	um           *biz.UserManager
+	rm           *biz.RoleManager
+	token        jwt.Tokenizer
+	config       *jwt.TokenizerConfig
 	pwdValidator biz.PasswordValidator
 }
 
-func NewAuthService(um *biz.UserManager, rm *biz.RoleManager, token jwt.Tokenizer, config *jwt.TokenizerConfig,pwdValidator biz.PasswordValidator) *AuthService {
-	return &AuthService{um: um, rm: rm, token: token, config: config,pwdValidator: pwdValidator}
+func NewAuthService(um *biz.UserManager, rm *biz.RoleManager, token jwt.Tokenizer, config *jwt.TokenizerConfig, pwdValidator biz.PasswordValidator) *AuthService {
+	return &AuthService{um: um, rm: rm, token: token, config: config, pwdValidator: pwdValidator}
 }
 
 func (s *AuthService) Register(ctx context.Context, req *pb.RegisterAuthRequest) (*pb.RegisterAuthReply, error) {
@@ -49,7 +49,7 @@ func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.
 }
 
 func (s *AuthService) Token(ctx context.Context, req *pb.LoginAuthRequest) (*pb.LoginAuthReply, error) {
-	return s.Login(ctx,req)
+	return s.Login(ctx, req)
 }
 
 func (s *AuthService) Refresh(ctx context.Context, req *pb.RefreshTokenAuthRequest) (*pb.RefreshTokenAuthReply, error) {
@@ -71,9 +71,9 @@ func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPassword
 }
 
 func (s *AuthService) ValidatePassword(ctx context.Context, req *pb.ValidatePasswordRequest) (*pb.ValidatePasswordReply, error) {
-	err:=s.pwdValidator.Validate(ctx,req.Password)
-	if err!=nil{
-		return nil,err
+	err := s.pwdValidator.Validate(ctx, req.Password)
+	if err != nil {
+		return nil, err
 	}
-	return &pb.ValidatePasswordReply{Ok: true},nil
+	return &pb.ValidatePasswordReply{Ok: true}, nil
 }

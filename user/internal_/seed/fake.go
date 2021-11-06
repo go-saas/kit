@@ -13,6 +13,8 @@ import (
 	"reflect"
 )
 
+//TODO configurable faked data
+
 //go:embed fake.yaml
 var fake []byte
 
@@ -29,14 +31,14 @@ func NewFake(um *biz.UserManager) *Fake {
 }
 
 func (f Fake) Seed(ctx context.Context, sCtx *seed.Context) error {
-	if v,ok:= sCtx.Extra[FakeSeedKey];ok {
-		if b,ok:=v.(bool);ok{
-			if b{
+	if v, ok := sCtx.Extra[FakeSeedKey]; ok {
+		if b, ok := v.(bool); ok {
+			if b {
 				var v = make(map[string]interface{})
 				dec := yaml.NewDecoder(bytes.NewReader(fake))
 				for dec.Decode(v) == nil {
 					// find users
-					if users,ok:= v["users"];ok{
+					if users, ok := v["users"]; ok {
 						v := reflect.ValueOf(users)
 						switch v.Kind() {
 						case reflect.Slice:
@@ -52,17 +54,17 @@ func (f Fake) Seed(ctx context.Context, sCtx *seed.Context) error {
 									TagName:  "json",
 								}
 								decoder, _ := mapstructure.NewDecoder(cfg)
-								if err := decoder.Decode(v.Index(i).Interface());err!=nil{
+								if err := decoder.Decode(v.Index(i).Interface()); err != nil {
 									return err
 								}
-								dbUser,err:= f.um.FindByID(ctx,actual.ID.String())
-								if err!=nil{
+								dbUser, err := f.um.FindByID(ctx, actual.ID.String())
+								if err != nil {
 									return err
 								}
-								if dbUser!=nil{
+								if dbUser != nil {
 									continue
 								}
-								if  err:=f.um.Create(ctx,actual);err!=nil{
+								if err := f.um.Create(ctx, actual); err != nil {
 									return err
 								}
 							}
@@ -78,4 +80,3 @@ func (f Fake) Seed(ctx context.Context, sCtx *seed.Context) error {
 
 	return nil
 }
-

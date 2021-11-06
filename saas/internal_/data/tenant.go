@@ -33,7 +33,6 @@ type Tenant struct {
 	Features []TenantFeature `gorm:"foreignKey:TenantId"`
 }
 
-
 type TenantRepo struct {
 	DbProviderGetter
 }
@@ -41,7 +40,7 @@ type TenantRepo struct {
 type DbProviderGetter func() gorm.DbProvider
 
 func NewTenantRepo() biz.TenantRepo {
-	return &TenantRepo{DbProviderGetter: func() gorm.DbProvider{ return GlobalData.DbProvider}}
+	return &TenantRepo{DbProviderGetter: func() gorm.DbProvider { return GlobalData.DbProvider }}
 }
 
 func (g *TenantRepo) GetDb(ctx context.Context) *gg.DB {
@@ -58,27 +57,27 @@ func preloadUserScope(withDetail bool) func(db *gg.DB) *gg.DB {
 	}
 }
 
-func buildTenantScope(search string, filter *v1.TenantFilter) func (db *gg.DB) *gg.DB  {
-	return func (db *gg.DB) *gg.DB {
+func buildTenantScope(search string, filter *v1.TenantFilter) func(db *gg.DB) *gg.DB {
+	return func(db *gg.DB) *gg.DB {
 		ret := db
-		if search!=""{
-			ret = ret.Where("name like ?",fmt.Sprintf("%%%v%%",search))
+		if search != "" {
+			ret = ret.Where("name like ?", fmt.Sprintf("%%%v%%", search))
 		}
-		if filter==nil {
+		if filter == nil {
 			return ret
 		}
-		if filter.IdIn!=nil{
-			ret = ret.Where("id IN ?",filter.IdIn)
+		if filter.IdIn != nil {
+			ret = ret.Where("id IN ?", filter.IdIn)
 		}
-		if filter.NameIn!=nil{
-			ret = ret.Where("name IN ?",filter.NameIn)
+		if filter.NameIn != nil {
+			ret = ret.Where("name IN ?", filter.NameIn)
 		}
-		if filter.NameLike!=""{
-			ret = ret.Where("name like ?",fmt.Sprintf("%%%v%%",filter.NameLike))
+		if filter.NameLike != "" {
+			ret = ret.Where("name like ?", fmt.Sprintf("%%%v%%", filter.NameLike))
 		}
 
-		if filter.RegionIn!=nil{
-			ret = ret.Where("region IN ?",filter.RegionIn)
+		if filter.RegionIn != nil {
+			ret = ret.Where("region IN ?", filter.RegionIn)
 		}
 
 		return ret
@@ -106,19 +105,19 @@ func (g *TenantRepo) FindByIdOrName(ctx context.Context, idOrName string) (*biz.
 		return nil, err
 	}
 	var ret = &biz.Tenant{}
-	mapDataTenantToBizTenant(&tDb,ret)
+	mapDataTenantToBizTenant(&tDb, ret)
 	return ret, err
 }
 
 func (g *TenantRepo) List(ctx context.Context, query *v1.ListTenantRequest) ([]*biz.Tenant, error) {
 	db := g.GetDb(ctx).Model(&Tenant{})
-	db = db.Scopes(buildTenantScope(query.Search,query.Filter),gorm2.SortScope(query,[]string{"-created_at"}),gorm2.PageScope(query))
+	db = db.Scopes(buildTenantScope(query.Search, query.Filter), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
 	var items []*Tenant
 	res := db.Find(&items)
 	var rItems []*biz.Tenant
-	linq.From(items).SelectT(func(t *Tenant) *biz.Tenant{
+	linq.From(items).SelectT(func(t *Tenant) *biz.Tenant {
 		res := &biz.Tenant{}
-		mapDataTenantToBizTenant(t,res)
+		mapDataTenantToBizTenant(t, res)
 		return res
 	}).ToSlice(&rItems)
 	return rItems, res.Error
@@ -126,7 +125,7 @@ func (g *TenantRepo) List(ctx context.Context, query *v1.ListTenantRequest) ([]*
 
 func (g *TenantRepo) First(ctx context.Context, search string, query *v1.TenantFilter) (*biz.Tenant, error) {
 	db := g.GetDb(ctx).Model(&Tenant{})
-	db =  db.Scopes(buildTenantScope(search,query))
+	db = db.Scopes(buildTenantScope(search, query))
 	var item = Tenant{}
 	if err := db.First(&item).Error; err != nil {
 		if errors.Is(err, gg.ErrRecordNotFound) {
@@ -135,7 +134,7 @@ func (g *TenantRepo) First(ctx context.Context, search string, query *v1.TenantF
 		return nil, err
 	}
 	var ret = &biz.Tenant{}
-	mapDataTenantToBizTenant(&item,ret)
+	mapDataTenantToBizTenant(&item, ret)
 	return ret, nil
 }
 
@@ -145,7 +144,7 @@ func (g *TenantRepo) Count(ctx context.Context, search string, query *v1.TenantF
 	if err != nil {
 		return
 	}
-	db =  db.Scopes(buildTenantScope(search,query))
+	db = db.Scopes(buildTenantScope(search, query))
 	if err != nil {
 		return
 	}
@@ -156,53 +155,53 @@ func (g *TenantRepo) Count(ctx context.Context, search string, query *v1.TenantF
 func (g *TenantRepo) Get(ctx context.Context, id string) (*biz.Tenant, error) {
 	db := g.GetDb(ctx)
 	var item = &Tenant{}
-	if err := db.First(item, "id = ?",id).Error; err != nil {
+	if err := db.First(item, "id = ?", id).Error; err != nil {
 		if errors.Is(err, gg.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err
 	}
 	var ret = &biz.Tenant{}
-	mapDataTenantToBizTenant(item,ret)
+	mapDataTenantToBizTenant(item, ret)
 
 	return ret, nil
 }
 
 func (g *TenantRepo) Create(ctx context.Context, entity *biz.Tenant) error {
 	var tDb = &Tenant{}
-	mapBizTenantToDataTenant(entity,tDb)
+	mapBizTenantToDataTenant(entity, tDb)
 	d := g.GetDb(ctx)
-	if err := d.Create(tDb).Error;err!=nil{
+	if err := d.Create(tDb).Error; err != nil {
 		return err
 	}
-	mapDataTenantToBizTenant(tDb,entity)
+	mapDataTenantToBizTenant(tDb, entity)
 	return nil
 }
 
 func (g *TenantRepo) Update(ctx context.Context, entity *biz.Tenant, p *fieldmaskpb.FieldMask) error {
 	var tDb = &Tenant{}
-	 mapBizTenantToDataTenant(entity,tDb)
+	mapBizTenantToDataTenant(entity, tDb)
 	d := g.GetDb(ctx)
 
-	if tDb.Conn!=nil{
+	if tDb.Conn != nil {
 		d.Model(tDb).Association("Conn").Replace(tDb.Conn)
 	}
-	if tDb.Features!=nil{
+	if tDb.Features != nil {
 		d.Model(tDb).Association("Features").Replace(tDb.Features)
 	}
-	err:=d.Model(&Tenant{}).Where("id = ?", entity.ID).Updates(tDb).Error
-	if err!=nil{
+	err := d.Model(&Tenant{}).Where("id = ?", entity.ID).Updates(tDb).Error
+	if err != nil {
 		return err
 	}
-	mapDataTenantToBizTenant(tDb,entity)
+	mapDataTenantToBizTenant(tDb, entity)
 	return nil
 }
 
 func (g *TenantRepo) Delete(ctx context.Context, id string) error {
-	return g.GetDb(ctx).Delete(&Tenant{},"id = ?",id).Error
+	return g.GetDb(ctx).Delete(&Tenant{}, "id = ?", id).Error
 }
 
-func mapBizTenantToDataTenant(a *biz.Tenant,b *Tenant)  {
+func mapBizTenantToDataTenant(a *biz.Tenant, b *Tenant) {
 	var conn []TenantConn
 	linq.From(a.Conn).SelectT(func(c biz.TenantConn) TenantConn {
 		return TenantConn{
@@ -226,21 +225,21 @@ func mapBizTenantToDataTenant(a *biz.Tenant,b *Tenant)  {
 		}
 	}).ToSlice(&features)
 	var id uuid.UUID
-	if a.ID!=""{
+	if a.ID != "" {
 		id = uuid.MustParse(a.ID)
 	}
-	b.UIDBase = gorm2.UIDBase{ID: id }
+	b.UIDBase = gorm2.UIDBase{ID: id}
 	b.Name = a.Name
 	b.DisplayName = a.DisplayName
 	b.Region = a.Region
-	b.CreatedAt= a.CreatedAt
-	b.UpdatedAt=  a.UpdatedAt
-	b.DeletedAt= a.DeletedAt
-	b.Conn=    conn
-	b.Features=  features
+	b.CreatedAt = a.CreatedAt
+	b.UpdatedAt = a.UpdatedAt
+	b.DeletedAt = a.DeletedAt
+	b.Conn = conn
+	b.Features = features
 }
 
-func mapDataTenantToBizTenant(a *Tenant ,b *biz.Tenant){
+func mapDataTenantToBizTenant(a *Tenant, b *biz.Tenant) {
 	var conn []biz.TenantConn
 	linq.From(a.Conn).SelectT(func(c TenantConn) biz.TenantConn {
 		return biz.TenantConn{
@@ -267,9 +266,9 @@ func mapDataTenantToBizTenant(a *Tenant ,b *biz.Tenant){
 	b.Name = a.Name
 	b.DisplayName = a.DisplayName
 	b.Region = a.Region
-	b.CreatedAt= a.CreatedAt
-	b.UpdatedAt=  a.UpdatedAt
-	b.DeletedAt= a.DeletedAt
-	b.Conn=    conn
-	b.Features=  features
+	b.CreatedAt = a.CreatedAt
+	b.UpdatedAt = a.UpdatedAt
+	b.DeletedAt = a.DeletedAt
+	b.Conn = conn
+	b.Features = features
 }

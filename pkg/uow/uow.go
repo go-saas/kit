@@ -16,12 +16,12 @@ import (
 	g "gorm.io/gorm"
 )
 
-func NewGormConfig(databases *conf.Endpoints,name string) *gorm.Config {
+func NewGormConfig(databases *conf.Endpoints, name string) *gorm.Config {
 	var c *conf.Database
 	var ok bool
-	c,ok = databases.Databases[name]
-	if !ok{
-		c,ok = databases.Databases[data.Default]
+	c, ok = databases.Databases[name]
+	if !ok {
+		c, ok = databases.Databases[data.Default]
 	}
 	cfg := &gorm.Config{
 		Debug: c.Debug,

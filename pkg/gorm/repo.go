@@ -6,48 +6,43 @@ import (
 	"gorm.io/gorm"
 )
 
-
-
 type Repo struct {
 }
 
 func PageScope(page rql.Page) func(db *gorm.DB) *gorm.DB {
-	return func (db *gorm.DB) *gorm.DB {
-		if page==nil{
+	return func(db *gorm.DB) *gorm.DB {
+		if page == nil {
 			return db
 		}
 		ret := db
-		if page.GetPageOffset()>0{
-			ret=db.Offset(int(page.GetPageOffset()))
+		if page.GetPageOffset() > 0 {
+			ret = db.Offset(int(page.GetPageOffset()))
 		}
-		if page.GetPageSize()>0{
-			ret=db.Limit(int(page.GetPageSize()))
+		if page.GetPageSize() > 0 {
+			ret = db.Limit(int(page.GetPageSize()))
 		}
 		return ret
 	}
 }
 
 // SortScope build sorting by sort and default d
-func SortScope(sort rql.Sort,d []string) func(db *gorm.DB) *gorm.DB {
-	return func (db *gorm.DB) *gorm.DB  {
+func SortScope(sort rql.Sort, d []string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
 		var s []string
-		if sort!=nil{
+		if sort != nil {
 			s = sort.GetSort()
 		}
-		if len(s)==0{
+		if len(s) == 0 {
 			s = d
 		}
 		parsed := data.ParseSort(s)
 		ret := db
-		if parsed!=""{
+		if parsed != "" {
 			ret = ret.Order(parsed)
 		}
 		return ret
 	}
 }
-
-
-
 
 //func (r *Repo) BuildQuery(db *g.DB, model interface{}, query interface{}) (*g.DB, error) {
 //	if query == nil {
@@ -122,5 +117,3 @@ func SortScope(sort rql.Sort,d []string) func(db *gorm.DB) *gorm.DB {
 //	}
 //	return ret, nil
 //}
-
-

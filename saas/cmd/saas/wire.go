@@ -22,5 +22,5 @@ import (
 
 // initApp init kratos application.
 func initApp(*conf2.Services, *conf.Data, log.Logger, *jwt.TokenizerConfig, *uow.Config, *gorm.Config) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet,biz.ProviderSet, service.ProviderSet, newApp))
+	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }

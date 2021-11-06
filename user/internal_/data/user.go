@@ -28,47 +28,46 @@ func (u *UserRepo) GetDb(ctx context.Context) *gorm.DB {
 	return GetDb(ctx, u.DbProvider)
 }
 
-func buildUserScope(filter *v1.UserFilter) func (db *gorm.DB) *gorm.DB  {
-	return func (db *gorm.DB) *gorm.DB {
-		ret:= db
-		if filter==nil{
+func buildUserScope(filter *v1.UserFilter) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		ret := db
+		if filter == nil {
 			return ret
 		}
 
-		if len(filter.And)>0{
+		if len(filter.And) > 0 {
 			for _, filter := range filter.And {
 				ret = ret.Where(buildUserScope(filter)(db.Session(&gorm.Session{NewDB: true})))
 			}
 		}
-		if len(filter.Or)>0{
+		if len(filter.Or) > 0 {
 			for _, filter := range filter.Or {
 				ret = ret.Or(buildUserScope(filter)(db.Session(&gorm.Session{NewDB: true})))
 			}
 		}
 
-		if filter.GenderIn!=nil{
-			ret = ret.Where("gender IN ?",filter.GetGenderIn())
+		if filter.GenderIn != nil {
+			ret = ret.Where("gender IN ?", filter.GetGenderIn())
 		}
-		if filter.BirthdayLte!=nil{
-			ret = ret.Where("birthday <= ?",filter.BirthdayLte.AsTime())
-		}
-
-		if filter.BirthdayGte!=nil{
-			ret = ret.Where("birthday >= ?",filter.BirthdayGte.AsTime())
+		if filter.BirthdayLte != nil {
+			ret = ret.Where("birthday <= ?", filter.BirthdayLte.AsTime())
 		}
 
-		if filter.IdIn!=nil{
-			ret = ret.Where("id In ?",filter.IdIn)
+		if filter.BirthdayGte != nil {
+			ret = ret.Where("birthday >= ?", filter.BirthdayGte.AsTime())
+		}
+
+		if filter.IdIn != nil {
+			ret = ret.Where("id In ?", filter.IdIn)
 		}
 
 		return ret
 	}
 }
 
-
 func (u *UserRepo) List(ctx context.Context, query *v1.ListUsersRequest) ([]*biz.User, error) {
 	db := u.GetDb(ctx).Model(&biz.User{})
-	db = db.Scopes(buildUserScope(query.Filter),gorm2.SortScope(query,[]string{"-created_at"}),gorm2.PageScope(query))
+	db = db.Scopes(buildUserScope(query.Filter), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
 	var items []*biz.User
 	res := db.Find(&items)
 	return items, res.Error
@@ -80,7 +79,7 @@ func (u *UserRepo) Count(ctx context.Context, query *v1.UserFilter) (total int64
 	if err != nil {
 		return
 	}
-	db =  db.Scopes(buildUserScope(query))
+	db = db.Scopes(buildUserScope(query))
 	if err != nil {
 		return
 	}

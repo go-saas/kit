@@ -15,7 +15,7 @@ import (
 //	Delete(ctx context.Context, id string) error
 //}
 
-var(
+var (
 	sortDirection = map[byte]string{
 		'+': "asc",
 		'-': "desc",
@@ -27,9 +27,9 @@ func ParseSort(fields []string) string {
 	sortParams := make([]string, len(fields))
 	linq.From(opts).SelectT(func(s *SortOpt) string {
 		colName := s.Field
-		if s.IsDesc{
+		if s.IsDesc {
 			colName += " " + "desc"
-		}else{
+		} else {
 			colName += " " + "asc"
 		}
 		return colName
@@ -37,7 +37,7 @@ func ParseSort(fields []string) string {
 	return strings.Join(sortParams, ", ")
 }
 
-func ParseSortIntoOpt(fields []string)[]*SortOpt  {
+func ParseSortIntoOpt(fields []string) []*SortOpt {
 	sortParams := make([]*SortOpt, len(fields))
 	for i, field := range fields {
 		var orderBy string
@@ -47,7 +47,7 @@ func ParseSortIntoOpt(fields []string)[]*SortOpt  {
 		}
 		opt := &SortOpt{
 			Field:  field,
-			IsDesc: orderBy=="desc",
+			IsDesc: orderBy == "desc",
 		}
 		sortParams[i] = opt
 	}
@@ -55,6 +55,6 @@ func ParseSortIntoOpt(fields []string)[]*SortOpt  {
 }
 
 type SortOpt struct {
-	Field string
+	Field  string
 	IsDesc bool
 }

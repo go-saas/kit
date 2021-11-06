@@ -22,17 +22,17 @@ func NewRoleRepo(data *Data) biz.RoleRepo {
 	}
 }
 
-func buildRoleScope( filter *v1.RoleFilter) func (db *gorm.DB) *gorm.DB  {
-	return func (db *gorm.DB) *gorm.DB {
-		if filter==nil {
+func buildRoleScope(filter *v1.RoleFilter) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if filter == nil {
 			return db
 		}
 		ret := db
-		if filter.IdIn!=nil{
-			ret = ret.Where("id IN ?",filter.IdIn)
+		if filter.IdIn != nil {
+			ret = ret.Where("id IN ?", filter.IdIn)
 		}
-		if filter.NameIn!=nil{
-			ret = ret.Where("name IN ?",filter.NameIn)
+		if filter.NameIn != nil {
+			ret = ret.Where("name IN ?", filter.NameIn)
 		}
 		return ret
 	}
@@ -40,7 +40,7 @@ func buildRoleScope( filter *v1.RoleFilter) func (db *gorm.DB) *gorm.DB  {
 
 func (r *RoleRepo) List(ctx context.Context, query *v1.ListRolesRequest) ([]*biz.Role, error) {
 	db := r.GetDb(ctx).Model(&biz.Role{})
-	db = db.Scopes(buildRoleScope(query.Filter),gorm2.SortScope(query,[]string{"-created_at"}),gorm2.PageScope(query))
+	db = db.Scopes(buildRoleScope(query.Filter), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
 	var items []*biz.Role
 	res := db.Find(&items)
 	return items, res.Error
@@ -48,7 +48,7 @@ func (r *RoleRepo) List(ctx context.Context, query *v1.ListRolesRequest) ([]*biz
 
 func (r *RoleRepo) First(ctx context.Context, query *v1.RoleFilter) (*biz.Role, error) {
 	db := r.GetDb(ctx).Model(&biz.Role{})
-	db =  db.Scopes(buildRoleScope(query))
+	db = db.Scopes(buildRoleScope(query))
 	var item = biz.Role{}
 	if err := db.First(&item).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -77,7 +77,7 @@ func (r *RoleRepo) Count(ctx context.Context, query *v1.RoleFilter) (total int64
 	if err != nil {
 		return
 	}
-	db =  db.Scopes(buildRoleScope(query))
+	db = db.Scopes(buildRoleScope(query))
 	if err != nil {
 		return
 	}

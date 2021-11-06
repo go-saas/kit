@@ -24,8 +24,8 @@ func NewHttpClient(services *conf.Services, opts ...http.ClientOption) (HttpClie
 	return api.NewHttpClient(ServiceName, services, opts...)
 }
 
-var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewTenantGrpcClient,NewRemoteGrpcTenantStore)
-var HttpProviderSet = wire.NewSet(NewHttpClient, NewTenantHttpClient,NewRemoteHttpTenantStore)
+var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewTenantGrpcClient, NewRemoteGrpcTenantStore)
+var HttpProviderSet = wire.NewSet(NewHttpClient, NewTenantHttpClient, NewRemoteHttpTenantStore)
 
 func NewTenantGrpcClient(conn GrpcConn) v1.TenantServiceClient {
 	return v1.NewTenantServiceClient(conn)
