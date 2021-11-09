@@ -10,6 +10,8 @@ type RemoteGrpcTenantStore struct {
 	client v1.TenantServiceClient
 }
 
+var _ common.TenantStore = (*RemoteGrpcTenantStore)(nil)
+
 func NewRemoteGrpcTenantStore(client v1.TenantServiceClient) common.TenantStore {
 	return &RemoteGrpcTenantStore{client: client}
 }
