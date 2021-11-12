@@ -18,6 +18,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/internal_/seed"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/server"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/service"
+	"github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
 )
@@ -25,7 +26,7 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, userConf *conf2.UserConf, confData *conf2.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, tokenizerConfig *jwt.TokenizerConfig, config *uow.Config, gormConfig *gorm.Config) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, userConf *conf2.UserConf, confData *conf2.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, tokenizerConfig *jwt.TokenizerConfig, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption) (*kratos.App, func(), error) {
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbOpener, cleanup := gorm.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
@@ -47,8 +48,8 @@ func initApp(services *conf.Services, userConf *conf2.UserConf, confData *conf2.
 	roleRepo := data.NewRoleRepo(dataData)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator)
-	httpServer := server.NewHTTPServer(services, tokenizer, manager, tenantStore, userService, accountService, authService, logger)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, userService, accountService, authService, logger)
+	httpServer := server.NewHTTPServer(services, tokenizer, manager, webMultiTenancyOption, tenantStore, userService, accountService, authService, logger)
+	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, userService, accountService, authService, logger)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager)
 	userSeed := biz.NewUserSeed(userManager, roleManager)

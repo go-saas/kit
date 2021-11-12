@@ -18,12 +18,13 @@ import (
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/service"
 	"github.com/goxiaoy/go-saas/common"
+	http2 "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/kratos/middleware"
 	uow2 "github.com/goxiaoy/uow"
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, tenant *service.TenantService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, tenant *service.TenantService,mOpt *http2.WebMultiTenancyOption, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -33,7 +34,7 @@ func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			validate.Validator(),
 			authentication.ServerExtractAndAuth(logger, tokenizer),
 			uow.Uow(logger, uowMgr),
-			middleware.MultiTenancy(nil, nil, ts),
+			middleware.Server(mOpt, nil, ts),
 		),
 	}
 	opts = server.PatchHttpOpts(opts, api.ServiceName, c)

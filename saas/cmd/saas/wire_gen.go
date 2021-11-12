@@ -17,6 +17,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/data"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/server"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/service"
+	"github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
 )
@@ -24,7 +25,7 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, tokenizerConfig *jwt.TokenizerConfig, config *uow.Config, gormConfig *gorm.Config) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, tokenizerConfig *jwt.TokenizerConfig, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption) (*kratos.App, func(), error) {
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	tenantRepo := data.NewTenantRepo()
 	tenantStore := data.NewTenantStore(tenantRepo)
@@ -32,8 +33,8 @@ func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, t
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
 	tenantUseCase := biz.NewTenantUserCase(tenantRepo)
 	tenantService := service.NewTenantService(tenantUseCase)
-	httpServer := server.NewHTTPServer(services, tokenizer, tenantStore, manager, tenantService, logger)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, tenantService, logger)
+	httpServer := server.NewHTTPServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, logger)
+	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, logger)
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, manager, tenantStore, logger)
 	dataData, cleanup2, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {

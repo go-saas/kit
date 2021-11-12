@@ -8,6 +8,7 @@ import (
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/data"
+	http2 "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
 	"os"
@@ -91,7 +92,7 @@ func main() {
 		Secret:         bc.Security.Jwt.Secret,
 	}, &uow.Config{
 		SupportNestedTransaction: false,
-	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName))
+	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName),http2.NewDefaultWebMultiTenancyOption())
 	if err != nil {
 		panic(err)
 	}

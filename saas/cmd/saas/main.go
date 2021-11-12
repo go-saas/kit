@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
+	http2 "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
 	"os"
@@ -83,7 +84,7 @@ func main() {
 		Secret:         bc.Security.Jwt.Secret,
 	}, &uow.Config{
 		SupportNestedTransaction: false,
-	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName))
+	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName),http2.NewDefaultWebMultiTenancyOption())
 	if err != nil {
 		panic(err)
 	}

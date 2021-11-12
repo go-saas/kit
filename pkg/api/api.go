@@ -7,11 +7,13 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	shttp "github.com/goxiaoy/go-saas/common/http"
+	"github.com/goxiaoy/go-saas/kratos/middleware"
 	grpc2 "google.golang.org/grpc"
 )
 
 // NewGrpcConn create new grpc client from name
-func NewGrpcConn(name string, services *conf.Services, insecure bool, opts ...grpc.ClientOption) (grpc2.ClientConnInterface, func()) {
+func NewGrpcConn(name string, services *conf.Services, insecure bool,hmtOpt *shttp.WebMultiTenancyOption, opts ...grpc.ClientOption) (grpc2.ClientConnInterface, func()) {
 	endpoint, ok := services.Services[name]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", name)))
@@ -20,6 +22,7 @@ func NewGrpcConn(name string, services *conf.Services, insecure bool, opts ...gr
 	var err error
 	fOpts := []grpc.ClientOption{
 		grpc.WithEndpoint(endpoint.GrpcEndpoint),
+		grpc.WithMiddleware(middleware.Client(hmtOpt)),
 	}
 	if insecure {
 		fOpts = append(fOpts, opts...)
@@ -37,13 +40,14 @@ func NewGrpcConn(name string, services *conf.Services, insecure bool, opts ...gr
 }
 
 // NewHttpClient create new http client from name
-func NewHttpClient(name string, services *conf.Services, opts ...http.ClientOption) (*http.Client, func()) {
+func NewHttpClient(name string, services *conf.Services,hmtOpt *shttp.WebMultiTenancyOption, opts ...http.ClientOption) (*http.Client, func()) {
 	endpoint, ok := services.Services[name]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", name)))
 	}
 	fOpts := []http.ClientOption{
 		http.WithEndpoint(endpoint.HttpEndpoint),
+		http.WithMiddleware(middleware.Client(hmtOpt)),
 	}
 	fOpts = append(fOpts, opts...)
 	fOpts = append(fOpts, http.WithBlock())
