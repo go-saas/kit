@@ -5,7 +5,9 @@ import (
 	"errors"
 	"github.com/ahmetb/go-linq/v3"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
-	"github.com/golang/protobuf/ptypes/wrappers"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
+
 	pb "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"github.com/mennanov/fmutils"
@@ -179,16 +181,16 @@ func MapBizUserToApi(u *biz.User) *pb.User {
 		Roles: nil,
 	}
 	if u.Username != nil {
-		res.Username = &wrappers.StringValue{Value: *u.Username}
+		res.Username = &wrapperspb.StringValue{Value: *u.Username}
 	}
 	if u.Name != nil {
-		res.Name = &wrappers.StringValue{Value: *u.Name}
+		res.Name = &wrapperspb.StringValue{Value: *u.Name}
 	}
 	if u.Phone != nil {
-		res.Phone = &wrappers.StringValue{Value: *u.Phone}
+		res.Phone = &wrapperspb.StringValue{Value: *u.Phone}
 	}
 	if u.Email != nil {
-		res.Email = &wrappers.StringValue{Value: *u.Email}
+		res.Email = &wrapperspb.StringValue{Value: *u.Email}
 	}
 	if u.Birthday != nil {
 		res.Birthday = timestamppb.New(*u.Birthday)

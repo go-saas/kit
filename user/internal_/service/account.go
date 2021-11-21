@@ -3,11 +3,11 @@ package service
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/goxiaoy/go-saas-kit/auth/current"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	pb "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 )
@@ -34,16 +34,16 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	}
 	res := &pb.GetProfileResponse{
 		Id:       u.ID.String(),
-		Username: &wrappers.StringValue{Value: *u.Username},
+		Username: &wrapperspb.StringValue{Value: *u.Username},
 	}
 	if u.Name != nil {
-		res.Name = &wrappers.StringValue{Value: *u.Name}
+		res.Name = &wrapperspb.StringValue{Value: *u.Name}
 	}
 	if u.Phone != nil {
-		res.Phone = &wrappers.StringValue{Value: *u.Phone}
+		res.Phone = &wrapperspb.StringValue{Value: *u.Phone}
 	}
 	if u.Email != nil {
-		res.Email = &wrappers.StringValue{Value: *u.Email}
+		res.Email = &wrapperspb.StringValue{Value: *u.Email}
 	}
 	if u.Birthday != nil {
 		res.Birthday = timestamppb.New(*u.Birthday)
