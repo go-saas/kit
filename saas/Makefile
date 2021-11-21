@@ -11,7 +11,6 @@ init:
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	go get -u github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2
 	go get -u github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2
-	go get -u github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
 	go get -u github.com/envoyproxy/protoc-gen-validate
 
 .PHONY: generate
@@ -19,14 +18,6 @@ init:
 generate:
 	go get -u github.com/google/wire/cmd/wire@v0.5.0
 	go generate ./...
-
-.PHONY: errors
-# generate errors code
-errors:
-	protoc --proto_path=../proto \
-               --go_out=paths=source_relative:../ \
-               --go-errors_out=paths=source_relative:../ \
-               $(API_PROTO_FILES)
 
 .PHONY: config
 # generate internal proto
@@ -39,13 +30,7 @@ config:
 .PHONY: api
 # generate api proto
 api:
-	protoc --proto_path=../proto \
- 	       --go_out=paths=source_relative:../ \
- 	       --go-http_out=paths=source_relative:../ \
- 	       --go-grpc_out=paths=source_relative:../ \
-               --validate_out=paths=source_relative,lang=go:../ \
-               --openapiv2_out=allow_merge=true,merge_file_name=saas:../openapi/ \
-	       $(API_PROTO_FILES)
+	buf generate ../proto --path ../proto/saas
 
 .PHONY: build
 # build
@@ -57,7 +42,6 @@ build:
 all:
 	make generate
 	make api;
-	make errors;
 	make config;
 
 # show help

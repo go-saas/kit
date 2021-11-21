@@ -1,18 +1,18 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "user/api/account/v1/account.proto",
+    "title": "user/api/user/v1/user.proto",
     "version": "version not set"
   },
   "tags": [
+    {
+      "name": "UserService"
+    },
     {
       "name": "Account"
     },
     {
       "name": "Auth"
-    },
-    {
-      "name": "UserService"
     }
   ],
   "consumes": [
@@ -781,14 +781,11 @@
     "protobufAny": {
       "type": "object",
       "properties": {
-        "typeUrl": {
+        "@type": {
           "type": "string"
-        },
-        "value": {
-          "type": "string",
-          "format": "byte"
         }
-      }
+      },
+      "additionalProperties": {}
     },
     "rpcStatus": {
       "type": "object",
