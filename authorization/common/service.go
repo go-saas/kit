@@ -2,6 +2,7 @@ package common
 
 import (
 	"context"
+	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/auth/current"
 )
 
@@ -58,3 +59,5 @@ func (a *AuthenticationAuthorizationService) CheckCurrentUser(ctx context.Contex
 	}
 	return a.Check(ctx, namespace, resource, action, NewUserSubject(userId))
 }
+
+var ProviderSet = wire.NewSet(wire.Bind(new(AuthorizationService), new(*AuthenticationAuthorizationService)) )

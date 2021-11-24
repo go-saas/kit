@@ -21,6 +21,7 @@ require (
 	github.com/mennanov/fmutils v0.1.1
 	github.com/mitchellh/mapstructure v1.4.1
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354
+	github.com/ory/keto/proto/ory/keto/acl/v1alpha1 v0.0.0-20210616104402-80e043246cf9
 	github.com/segmentio/kafka-go v0.4.18
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
