@@ -15,13 +15,12 @@ const ServiceName = "keto"
 
 type GrpcConn grpc.ClientConnInterface
 
-func NewGrpcConn(services *conf.Services,hmtOpt *shttp.WebMultiTenancyOption, opts ...grpc2.ClientOption) (GrpcConn, func()) {
-	return api.NewGrpcConn(ServiceName, services, true,hmtOpt, opts...)
+func NewGrpcConn(services *conf.Services, hmtOpt *shttp.WebMultiTenancyOption, opts ...grpc2.ClientOption) (GrpcConn, func()) {
+	return api.NewGrpcConn(ServiceName, services, true, hmtOpt, opts...)
 }
 
-func NewCheckServiceClient(conn GrpcConn) acl.CheckServiceClient{
+func NewCheckServiceClient(conn GrpcConn) acl.CheckServiceClient {
 	return NewCheckServiceClient(conn)
 }
 
-var ProviderSet = wire.NewSet(NewGrpcConn,NewCheckServiceClient, wire.Bind(new(common.AuthorizationService), new(*KetoAuthorizationService)) )
-
+var ProviderSet = wire.NewSet(NewGrpcConn, NewCheckServiceClient, NewAuthorizationService, wire.Bind(new(common.AuthorizationService), new(*AuthorizationService)))
