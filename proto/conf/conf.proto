@@ -56,6 +56,13 @@ message Redis {
   string addr = 2;
   google.protobuf.Duration read_timeout = 3;
   google.protobuf.Duration write_timeout = 4;
+  string username = 5;
+  string password = 6;
+  int32  db = 7;
+  int32 max_retries = 8;
+  google.protobuf.Duration min_retry_backoff = 9;
+  google.protobuf.Duration max_retry_backoff = 10;
+  google.protobuf.Duration dial_timeout = 11;
 }
 
 message Event{
