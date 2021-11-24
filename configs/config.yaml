@@ -6,7 +6,6 @@ services:
         timeout: 200s
         cors:
           allowed_origins: ["*"]
-          allowed_methods: ["GET", "POST", "PUT", "HEAD", "OPTIONS","DELETE","PATCH"]
       grpc:
         addr: 0.0.0.0:8501
         timeout: 200s
@@ -16,7 +15,6 @@ services:
         timeout: 200s
         cors:
           allowed_origins: ["*"]
-          allowed_methods: ["GET", "POST", "PUT", "HEAD", "OPTIONS","DELETE","PATCH"]
       grpc:
         addr: 0.0.0.0:8521
         timeout: 200s
