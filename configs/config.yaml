@@ -36,12 +36,11 @@ data:
     read_timeout: 0.2s
     write_timeout: 0.2s
 
+user:
+  password_score_min: 0
   admin:
     username: admin
     password: zfe9R23Crbi7DybS
-
-user:
-  password_score_min: 0
 
 security:
   jwt:
