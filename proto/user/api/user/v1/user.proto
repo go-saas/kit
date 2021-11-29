@@ -37,7 +37,7 @@ service UserService{
     option (google.api.http) = {
       put: "/v1/user/{user.id}"
       body: "*"
-      additional_bindings [
+      additional_bindings: [
         {
           patch: "/v1/user/{user.id}"
           body: "*"

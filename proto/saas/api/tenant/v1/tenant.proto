@@ -21,7 +21,7 @@ service TenantService {
 		option (google.api.http) = {
 			put: "/v1/saas/tenant/{tenant.id}"
 			body: "*"
-			additional_bindings [
+			additional_bindings: [
 				{
 					patch: "/v1/saas/tenant/{tenant.id}"
 					body: "*"
