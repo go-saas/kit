@@ -37,8 +37,7 @@ func (k AuthorizationService) Check(ctx context.Context, resource common.Resourc
 	if resp.Allowed {
 		return common.NewAllowAuthorizationResult(), nil
 	} else {
-		return common.NewDisallowAuthorizationResult([]common.Requirement{
-			common.NewRequirement(resource, action, subject, ""),
-		}), nil
+		//TODO requirement
+		return common.NewDisallowAuthorizationResult(nil), nil
 	}
 }

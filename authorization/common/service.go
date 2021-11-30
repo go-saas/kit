@@ -46,7 +46,7 @@ func (a *AuthenticationAuthorizationService) Check(ctx context.Context, resource
 		userId = us.GetIdentity()
 	}
 	if userId == "" {
-		return NewDisallowAuthorizationResult([]Requirement{NewRequirement(resource, action, subject, AuthenticationRequirement)}), nil
+		return NewDisallowAuthorizationResult([]Requirement{AuthenticationRequirement}), nil
 	} else {
 		return NewAllowAuthorizationResult(), nil
 	}
