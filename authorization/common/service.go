@@ -8,7 +8,7 @@ import (
 
 type AuthorizationService interface {
 	Check(ctx context.Context, resource Resource, action Action, subject ...Subject) (AuthorizationResult, error)
-	CheckCurrentUser(ctx context.Context, resource Resource, action Action) (AuthorizationResult, error)
+	CheckCurrent(ctx context.Context, resource Resource, action Action) (AuthorizationResult, error)
 }
 
 type SubjectContributor interface {
@@ -19,6 +19,10 @@ type AuthorizationOption struct {
 	SubjectContributorList []SubjectContributor
 }
 
+func NewAuthorizationOption(subjectContributorList []SubjectContributor) *AuthorizationOption {
+	return &AuthorizationOption{SubjectContributorList: subjectContributorList}
+}
+
 type DefaultAuthorizationService struct {
 	opt     *AuthorizationOption
 	checker PermissionChecker
@@ -26,7 +30,7 @@ type DefaultAuthorizationService struct {
 
 var _ AuthorizationService = (*DefaultAuthorizationService)(nil)
 
-func NewAuthenticationAuthorizationService(opt *AuthorizationOption, checker PermissionChecker) *DefaultAuthorizationService {
+func NewDefaultAuthorizationService(opt *AuthorizationOption, checker PermissionChecker) *DefaultAuthorizationService {
 	return &DefaultAuthorizationService{opt: opt, checker: checker}
 }
 
@@ -79,7 +83,7 @@ func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resour
 	return NewDisallowAuthorizationResult(nil), nil
 }
 
-func (a *DefaultAuthorizationService) CheckCurrentUser(ctx context.Context, resource Resource, action Action) (AuthorizationResult, error) {
+func (a *DefaultAuthorizationService) CheckCurrent(ctx context.Context, resource Resource, action Action) (AuthorizationResult, error) {
 	var userId string
 	if userInfo, ok := current.FromUserContext(ctx); ok {
 		userId = userInfo.GetId()
@@ -87,4 +91,5 @@ func (a *DefaultAuthorizationService) CheckCurrentUser(ctx context.Context, reso
 	return a.Check(ctx, resource, action, NewUserSubject(userId))
 }
 
-var ProviderSet = wire.NewSet(wire.Bind(new(AuthorizationService), new(*DefaultAuthorizationService)))
+var ProviderSet = wire.NewSet(NewDefaultAuthorizationService, wire.Bind(new(AuthorizationService), new(*DefaultAuthorizationService)), NewPermissionService,
+	wire.Bind(new(PermissionManagementService), new(*PermissionService)), wire.Bind(new(PermissionChecker), new(*PermissionService)))

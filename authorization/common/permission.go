@@ -14,11 +14,6 @@ type PermissionChecker interface {
 	IsGrant(ctx context.Context, resource Resource, action Action, subject Subject) (GrantType, error)
 }
 
-type PermissionService struct {
-	v   []permissionBean
-	mux sync.Mutex
-}
-
 type permissionBean struct {
 	namespace string
 	resource  string
@@ -37,8 +32,17 @@ func newPermissionBean(resource Resource, action Action, subject Subject, grantT
 	}
 }
 
+type PermissionService struct {
+	v   []permissionBean
+	mux sync.Mutex
+}
+
 var _ PermissionManagementService = (*PermissionService)(nil)
 var _ PermissionChecker = (*PermissionService)(nil)
+
+func NewPermissionService() *PermissionService {
+	return &PermissionService{}
+}
 
 func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, action Action, subject Subject) (GrantType, error) {
 	p.mux.Lock()
