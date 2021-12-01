@@ -23,4 +23,4 @@ func NewCheckServiceClient(conn GrpcConn) acl.CheckServiceClient {
 	return NewCheckServiceClient(conn)
 }
 
-var ProviderSet = wire.NewSet(NewGrpcConn, NewCheckServiceClient, NewAuthorizationService, wire.Bind(new(common.AuthorizationService), new(*AuthorizationService)))
+var ProviderSet = wire.NewSet(NewGrpcConn, NewCheckServiceClient, NewPermissionChecker, wire.Bind(new(common.PermissionChecker), new(*PermissionChecker)))

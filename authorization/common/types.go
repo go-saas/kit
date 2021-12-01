@@ -17,3 +17,11 @@ type Subject interface {
 	HasIdentity
 	GetName() string
 }
+
+type GrantType int32
+
+const (
+	GrantTypeUnknown GrantType = iota
+	GrantTypeAllow
+	GrantTypeDisallow
+)

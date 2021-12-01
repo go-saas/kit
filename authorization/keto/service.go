@@ -2,22 +2,22 @@ package keto
 
 import (
 	"context"
+	"fmt"
 	"github.com/goxiaoy/go-saas-kit/authorization/common"
 	"github.com/ory/keto/proto/ory/keto/acl/v1alpha1"
 )
 
-type AuthorizationService struct {
-	*common.AuthenticationAuthorizationService
+type PermissionChecker struct {
 	client acl.CheckServiceClient
 }
 
-var _ common.AuthorizationService = (*AuthorizationService)(nil)
+var _ common.PermissionChecker = (*PermissionChecker)(nil)
 
-func NewAuthorizationService(client acl.CheckServiceClient) *AuthorizationService {
-	return &AuthorizationService{common.NewAuthenticationAuthorizationService(), client}
+func NewPermissionChecker(client acl.CheckServiceClient) *PermissionChecker {
+	return &PermissionChecker{client}
 }
 
-func (k AuthorizationService) Check(ctx context.Context, resource common.Resource, action common.Action, subject common.Subject) (common.AuthorizationResult, error) {
+func (k *PermissionChecker) IsGrant(ctx context.Context, resource common.Resource, action common.Action, subject common.Subject) (common.GrantType, error) {
 	req := &acl.CheckRequest{}
 
 	req.Namespace = resource.GetNamespace()
@@ -27,17 +27,16 @@ func (k AuthorizationService) Check(ctx context.Context, resource common.Resourc
 		req.Relation = action.GetIdentity()
 	}
 	if subject != nil {
-		req.Subject = &acl.Subject{Ref: &acl.Subject_Id{Id: subject.GetIdentity()}}
+		req.Subject = &acl.Subject{Ref: &acl.Subject_Id{Id: fmt.Sprintf("%s/%s", subject.GetName(), subject.GetIdentity())}}
 	}
 	//TODO get snaptoken from context
 	resp, err := k.client.Check(ctx, req)
 	if err != nil {
-		return common.NewDisallowAuthorizationResult(nil), err
+		return common.GrantTypeUnknown, err
 	}
 	if resp.Allowed {
-		return common.NewAllowAuthorizationResult(), nil
+		return common.GrantTypeAllow, nil
 	} else {
-		//TODO requirement
-		return common.NewDisallowAuthorizationResult(nil), nil
+		return common.GrantTypeUnknown, nil
 	}
 }

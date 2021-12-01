@@ -5,7 +5,7 @@ type UserSubject struct {
 }
 
 func (u *UserSubject) GetName() string {
-	return "User"
+	return "user"
 }
 
 var _ Subject = (*UserSubject)(nil)
@@ -16,4 +16,22 @@ func NewUserSubject(userId string) *UserSubject {
 
 func (u *UserSubject) GetIdentity() string {
 	return u.userId
+}
+
+type TokenSubject struct {
+	token string
+}
+
+var _ Subject = (*TokenSubject)(nil)
+
+func NewTokenSubject(token string) *TokenSubject {
+	return &TokenSubject{token: token}
+}
+
+func (t *TokenSubject) GetIdentity() string {
+	return t.token
+}
+
+func (t *TokenSubject) GetName() string {
+	return "token"
 }
