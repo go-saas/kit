@@ -1,4 +1,4 @@
-package common
+package authorization
 
 type HasIdentity interface {
 	GetIdentity() string
@@ -18,10 +18,10 @@ type Subject interface {
 	GetName() string
 }
 
-type GrantType int32
+type Effect int32
 
 const (
-	GrantTypeUnknown GrantType = iota
-	GrantTypeAllow
-	GrantTypeDisallow
+	EffectUnknown Effect = iota
+	EffectGrant
+	EffectForbidden
 )

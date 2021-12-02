@@ -1,4 +1,4 @@
-package common
+package authorization
 
 type EntityResource struct {
 	Namespace string

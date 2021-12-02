@@ -3,7 +3,7 @@ package keto
 import (
 	grpc2 "github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/authorization/common"
+	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	shttp "github.com/goxiaoy/go-saas/common/http"
@@ -23,4 +23,4 @@ func NewCheckServiceClient(conn GrpcConn) acl.CheckServiceClient {
 	return NewCheckServiceClient(conn)
 }
 
-var ProviderSet = wire.NewSet(NewGrpcConn, NewCheckServiceClient, NewPermissionChecker, wire.Bind(new(common.PermissionChecker), new(*PermissionChecker)))
+var ProviderSet = wire.NewSet(NewGrpcConn, NewCheckServiceClient, NewPermissionChecker, wire.Bind(new(authorization.PermissionChecker), new(*PermissionChecker)))

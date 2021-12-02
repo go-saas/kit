@@ -1,4 +1,4 @@
-package common
+package authorization
 
 import (
 	"context"
@@ -6,35 +6,35 @@ import (
 	"github.com/goxiaoy/go-saas-kit/auth/current"
 )
 
-type AuthorizationService interface {
-	Check(ctx context.Context, resource Resource, action Action, subject ...Subject) (AuthorizationResult, error)
-	CheckCurrent(ctx context.Context, resource Resource, action Action) (AuthorizationResult, error)
+type Service interface {
+	Check(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error)
+	CheckCurrent(ctx context.Context, resource Resource, action Action) (Result, error)
 }
 
 type SubjectContributor interface {
 	Process(subject Subject) ([]Subject, error)
 }
 
-type AuthorizationOption struct {
+type Option struct {
 	SubjectContributorList []SubjectContributor
 }
 
-func NewAuthorizationOption(subjectContributorList []SubjectContributor) *AuthorizationOption {
-	return &AuthorizationOption{SubjectContributorList: subjectContributorList}
+func NewAuthorizationOption(subjectContributorList []SubjectContributor) *Option {
+	return &Option{SubjectContributorList: subjectContributorList}
 }
 
 type DefaultAuthorizationService struct {
-	opt     *AuthorizationOption
+	opt     *Option
 	checker PermissionChecker
 }
 
-var _ AuthorizationService = (*DefaultAuthorizationService)(nil)
+var _ Service = (*DefaultAuthorizationService)(nil)
 
-func NewDefaultAuthorizationService(opt *AuthorizationOption, checker PermissionChecker) *DefaultAuthorizationService {
+func NewDefaultAuthorizationService(opt *Option, checker PermissionChecker) *DefaultAuthorizationService {
 	return &DefaultAuthorizationService{opt: opt, checker: checker}
 }
 
-func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action, subject ...Subject) (AuthorizationResult, error) {
+func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error) {
 	if always, ok := FromAlwaysAuthorizationContext(ctx); ok {
 		if always {
 			return NewAllowAuthorizationResult(), nil
@@ -70,10 +70,10 @@ func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resour
 		if err != nil {
 			return NewDisallowAuthorizationResult(nil), err
 		}
-		if grantType == GrantTypeDisallow {
+		if grantType == EffectForbidden {
 			return NewDisallowAuthorizationResult(nil), err
 		}
-		if grantType == GrantTypeAllow {
+		if grantType == EffectGrant {
 			anyAllow = true
 		}
 	}
@@ -83,7 +83,7 @@ func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resour
 	return NewDisallowAuthorizationResult(nil), nil
 }
 
-func (a *DefaultAuthorizationService) CheckCurrent(ctx context.Context, resource Resource, action Action) (AuthorizationResult, error) {
+func (a *DefaultAuthorizationService) CheckCurrent(ctx context.Context, resource Resource, action Action) (Result, error) {
 	var userId string
 	if userInfo, ok := current.FromUserContext(ctx); ok {
 		userId = userInfo.GetId()
@@ -91,5 +91,5 @@ func (a *DefaultAuthorizationService) CheckCurrent(ctx context.Context, resource
 	return a.Check(ctx, resource, action, NewUserSubject(userId))
 }
 
-var ProviderSet = wire.NewSet(NewDefaultAuthorizationService, wire.Bind(new(AuthorizationService), new(*DefaultAuthorizationService)), NewPermissionService,
+var ProviderSet = wire.NewSet(NewDefaultAuthorizationService, wire.Bind(new(Service), new(*DefaultAuthorizationService)), NewPermissionService,
 	wire.Bind(new(PermissionManagementService), new(*PermissionService)), wire.Bind(new(PermissionChecker), new(*PermissionService)))

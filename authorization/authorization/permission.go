@@ -1,4 +1,4 @@
-package common
+package authorization
 
 import (
 	"context"
@@ -7,11 +7,11 @@ import (
 )
 
 type PermissionManagementService interface {
-	AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, grantType GrantType) error
+	AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, effect Effect) error
 }
 
 type PermissionChecker interface {
-	IsGrant(ctx context.Context, resource Resource, action Action, subject Subject) (GrantType, error)
+	IsGrant(ctx context.Context, resource Resource, action Action, subject Subject) (Effect, error)
 }
 
 type permissionBean struct {
@@ -19,16 +19,16 @@ type permissionBean struct {
 	resource  string
 	action    string
 	subject   string
-	grantType GrantType
+	effect    Effect
 }
 
-func newPermissionBean(resource Resource, action Action, subject Subject, grantType GrantType) permissionBean {
+func newPermissionBean(resource Resource, action Action, subject Subject, effect Effect) permissionBean {
 	return permissionBean{
 		namespace: resource.GetNamespace(),
 		resource:  resource.GetIdentity(),
 		action:    action.GetIdentity(),
 		subject:   fmt.Sprintf("%s/%s", subject.GetName(), subject.GetIdentity()),
-		grantType: grantType,
+		effect:    effect,
 	}
 }
 
@@ -44,30 +44,30 @@ func NewPermissionService() *PermissionService {
 	return &PermissionService{}
 }
 
-func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, action Action, subject Subject) (GrantType, error) {
+func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, action Action, subject Subject) (Effect, error) {
 	p.mux.Lock()
 	defer p.mux.Unlock()
 	var anyAllow bool
 	for _, bean := range p.v {
 		//TODO regex match
 		if bean.namespace == resource.GetNamespace() && bean.resource == resource.GetIdentity() && bean.action == action.GetIdentity() && bean.subject == subject.GetIdentity() {
-			if bean.grantType == GrantTypeDisallow {
-				return GrantTypeDisallow, nil
+			if bean.effect == EffectForbidden {
+				return EffectForbidden, nil
 			}
-			if bean.grantType == GrantTypeAllow {
+			if bean.effect == EffectGrant {
 				anyAllow = true
 			}
 		}
 	}
 	if anyAllow {
-		return GrantTypeAllow, nil
+		return EffectGrant, nil
 	}
-	return GrantTypeUnknown, nil
+	return EffectUnknown, nil
 }
 
-func (p *PermissionService) AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, grantType GrantType) error {
+func (p *PermissionService) AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, effect Effect) error {
 	p.mux.Lock()
 	defer p.mux.Unlock()
-	p.v = append(p.v, newPermissionBean(resource, action, subject, grantType))
+	p.v = append(p.v, newPermissionBean(resource, action, subject, effect))
 	return nil
 }
