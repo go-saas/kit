@@ -2,21 +2,25 @@ GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
 INTERNAL_PROTO_FILES=$(shell find internal_ -name *.proto)
 API_PROTO_FILES=$(shell find ../proto/saas/api -name *.proto)
+BUF_VERSION=v1.0.0-rc8
 
 .PHONY: init
 # init env
 init:
-	go get -u github.com/go-kratos/kratos/cmd/kratos/v2
-	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
-	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
-	go get -u github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2
-	go get -u github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2
-	go get -u github.com/envoyproxy/protoc-gen-validate
+	go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
+	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2@latest
+	go install github.com/envoyproxy/protoc-gen-validate@latest
+	go install github.com/bufbuild/buf/cmd/buf@$(BUF_VERSION)
+	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@$(BUF_VERSION)
+	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-lint@$(BUF_VERSION)
 
 .PHONY: generate
 # generate
 generate:
-	go get -u github.com/google/wire/cmd/wire@v0.5.0
+	go install github.com/google/wire/cmd/wire@v0.5.0
 	go generate ./...
 
 .PHONY: config

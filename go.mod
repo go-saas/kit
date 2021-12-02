@@ -7,8 +7,8 @@ require (
 	github.com/a8m/rql v1.3.1-0.20210621074553-3a40179141a1
 	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/alexedwards/argon2id v0.0.0-20210511081203-7d35d68092b8
-	github.com/envoyproxy/protoc-gen-validate v0.6.1
-	github.com/go-kratos/kratos/v2 v2.1.1
+	github.com/envoyproxy/protoc-gen-validate v0.6.2
+	github.com/go-kratos/kratos/v2 v2.1.2
 	github.com/go-kratos/swagger-api v1.0.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/glog v1.0.0 // indirect
@@ -24,10 +24,10 @@ require (
 	github.com/ory/keto/proto/ory/keto/acl/v1alpha1 v0.0.0-20210616104402-80e043246cf9
 	github.com/segmentio/kafka-go v0.4.18
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
+	golang.org/x/net v0.0.0-20211108170745-6635138e15ea // indirect
 	golang.org/x/sys v0.0.0-20211117180635-dee7805ff2e1 // indirect
-	google.golang.org/genproto v0.0.0-20211104193956-4c6863e31247
-	google.golang.org/grpc v1.40.0
+	google.golang.org/genproto v0.0.0-20211129164237-f09f9a12af12
+	google.golang.org/grpc v1.43.0-dev.0.20211108191124-79e9c9571a19
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/datatypes v1.0.1
@@ -52,7 +52,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.2 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/klauspost/compress v1.9.8 // indirect
+	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-sqlite3 v1.14.8 // indirect
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
