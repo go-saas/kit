@@ -67,7 +67,7 @@ func (t TenantUseCase) Get(ctx context.Context, id string) (*Tenant, error) {
 
 func (t TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
 	// check duplicate
-	dbEntity, err := t.repo.FindByIdOrName(ctx, entity.ID)
+	dbEntity, err := t.repo.FindByIdOrName(ctx, entity.Name)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func (t TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
 
 func (t TenantUseCase) Update(ctx context.Context, entity *Tenant, p *fieldmaskpb.FieldMask) error {
 	// check duplicate
-	dbEntity, err := t.repo.FindByIdOrName(ctx, entity.ID)
+	dbEntity, err := t.repo.FindByIdOrName(ctx, entity.Name)
 	if err != nil {
 		return err
 	}
