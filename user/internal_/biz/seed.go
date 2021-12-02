@@ -3,6 +3,7 @@ package biz
 import (
 	"context"
 	"github.com/ahmetb/go-linq/v3"
+	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 	"github.com/goxiaoy/go-saas/seed"
 )
 
@@ -11,11 +12,12 @@ const AdminUsernameKey = "admin_username"
 const AdminPasswordKey = "admin_password"
 
 type RoleSeed struct {
-	rm *RoleManager
+	rm         *RoleManager
+	permission authorization.PermissionManagementService
 }
 
-func NewRoleSeed(roleMgr *RoleManager) *RoleSeed {
-	return &RoleSeed{rm: roleMgr}
+func NewRoleSeed(roleMgr *RoleManager, permission authorization.PermissionManagementService) *RoleSeed {
+	return &RoleSeed{rm: roleMgr, permission: permission}
 }
 
 func (r *RoleSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
@@ -33,6 +35,9 @@ func (r *RoleSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 			if err := r.rm.Create(ctx, sr); err != nil {
 				return err
 			}
+		}
+		if role.Name == Admin {
+			r.permission.AddGrant(ctx, authorization.NewEntityResource("*", "*"), authorization.ActionStr("*"), authorization.NewRoleSubject(role.ID.String()), authorization.EffectGrant)
 		}
 	}
 	return nil

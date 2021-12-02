@@ -2,7 +2,8 @@ package authorization
 
 import (
 	"context"
-	"fmt"
+	"regexp"
+	"strings"
 	"sync"
 )
 
@@ -27,7 +28,7 @@ func newPermissionBean(resource Resource, action Action, subject Subject, effect
 		namespace: resource.GetNamespace(),
 		resource:  resource.GetIdentity(),
 		action:    action.GetIdentity(),
-		subject:   fmt.Sprintf("%s/%s", subject.GetName(), subject.GetIdentity()),
+		subject:   subject.GetIdentity(),
 		effect:    effect,
 	}
 }
@@ -50,7 +51,7 @@ func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, acti
 	var anyAllow bool
 	for _, bean := range p.v {
 		//TODO regex match
-		if bean.namespace == resource.GetNamespace() && bean.resource == resource.GetIdentity() && bean.action == action.GetIdentity() && bean.subject == subject.GetIdentity() {
+		if match(bean.namespace, resource.GetNamespace()) && match(bean.subject, subject.GetIdentity()) && match(bean.resource, resource.GetIdentity()) && match(bean.action, action.GetIdentity()) {
 			if bean.effect == EffectForbidden {
 				return EffectForbidden, nil
 			}
@@ -70,4 +71,26 @@ func (p *PermissionService) AddGrant(ctx context.Context, resource Resource, act
 	defer p.mux.Unlock()
 	p.v = append(p.v, newPermissionBean(resource, action, subject, effect))
 	return nil
+}
+
+// wildCardToRegexp converts a wildcard pattern to a regular expression pattern.
+func wildCardToRegexp(pattern string) string {
+	var result strings.Builder
+	for i, literal := range strings.Split(pattern, "*") {
+
+		// Replace * with .*
+		if i > 0 {
+			result.WriteString(".*")
+		}
+
+		// Quote any regular expression meta characters in the
+		// literal text.
+		result.WriteString(regexp.QuoteMeta(literal))
+	}
+	return result.String()
+}
+
+func match(pattern string, value string) bool {
+	result, _ := regexp.MatchString(wildCardToRegexp(pattern), value)
+	return result
 }

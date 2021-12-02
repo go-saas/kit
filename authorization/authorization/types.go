@@ -15,7 +15,6 @@ type Resource interface {
 
 type Subject interface {
 	HasIdentity
-	GetName() string
 }
 
 type Effect int32

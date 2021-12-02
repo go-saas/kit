@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ahmetb/go-linq/v3"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
+	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
@@ -16,18 +17,24 @@ import (
 
 type UserService struct {
 	pb.UnimplementedUserServiceServer
-	um *biz.UserManager
+	um   *biz.UserManager
+	auth authorization.Service
 }
 
-func NewUserService(um *biz.UserManager) *UserService {
+func NewUserService(um *biz.UserManager, auth authorization.Service) *UserService {
 	return &UserService{
-		um: um,
+		um:   um,
+		auth: auth,
 	}
 }
 
 func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", "*"), authorization.ListAction); err != nil {
+		return nil, err
+	} else if !authResult.Allowed {
+		return nil, errors2.Forbidden("", "")
+	}
 	ret := &pb.ListUsersResponse{}
-
 	totalCount, filterCount, err := s.um.Count(ctx, req.Filter)
 	if err != nil {
 		return nil, err
@@ -53,6 +60,11 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 }
 
 func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User, error) {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", req.Id), authorization.GetAction); err != nil {
+		return nil, err
+	} else if !authResult.Allowed {
+		return nil, errors2.Forbidden("", "")
+	}
 	u, err := s.um.FindByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
@@ -65,6 +77,11 @@ func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 }
 
 func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", "*"), authorization.CreateAction); err != nil {
+		return nil, err
+	} else if !authResult.Allowed {
+		return nil, errors2.Forbidden("", "")
+	}
 	// check confirm password
 	if req.Password != "" {
 		if req.ConfirmPassword != req.Password {
@@ -117,6 +134,13 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 }
 
 func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.User, error) {
+
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", req.User.Id), authorization.UpdateAction); err != nil {
+		return nil, err
+	} else if !authResult.Allowed {
+		return nil, errors2.Forbidden("", "")
+	}
+
 	// check confirm password
 	if req.User.Password != "" {
 		if req.User.ConfirmPassword != req.User.Password {
@@ -171,7 +195,14 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	res := MapBizUserToApi(u)
 	return res, nil
 }
+
 func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", req.Id), authorization.DeleteAction); err != nil {
+		return nil, err
+	} else if !authResult.Allowed {
+		return nil, errors2.Forbidden("", "")
+	}
+
 	return &pb.DeleteUserResponse{}, nil
 }
 

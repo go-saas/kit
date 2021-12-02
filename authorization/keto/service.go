@@ -2,7 +2,6 @@ package keto
 
 import (
 	"context"
-	"fmt"
 	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 	"github.com/ory/keto/proto/ory/keto/acl/v1alpha1"
 )
@@ -27,7 +26,7 @@ func (k *PermissionChecker) IsGrant(ctx context.Context, resource authorization.
 		req.Relation = action.GetIdentity()
 	}
 	if subject != nil {
-		req.Subject = &acl.Subject{Ref: &acl.Subject_Id{Id: fmt.Sprintf("%s/%s", subject.GetName(), subject.GetIdentity())}}
+		req.Subject = &acl.Subject{Ref: &acl.Subject_Id{Id: subject.GetIdentity()}}
 	}
 	//TODO get snaptoken from context
 	resp, err := k.client.Check(ctx, req)

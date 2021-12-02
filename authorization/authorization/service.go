@@ -7,19 +7,19 @@ import (
 )
 
 type Service interface {
-	Check(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error)
-	CheckCurrent(ctx context.Context, resource Resource, action Action) (Result, error)
+	CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error)
+	Check(ctx context.Context, resource Resource, action Action) (Result, error)
 }
 
 type SubjectContributor interface {
-	Process(subject Subject) ([]Subject, error)
+	Process(ctx context.Context, subject Subject) ([]Subject, error)
 }
 
 type Option struct {
 	SubjectContributorList []SubjectContributor
 }
 
-func NewAuthorizationOption(subjectContributorList []SubjectContributor) *Option {
+func NewAuthorizationOption(subjectContributorList ...SubjectContributor) *Option {
 	return &Option{SubjectContributorList: subjectContributorList}
 }
 
@@ -34,7 +34,7 @@ func NewDefaultAuthorizationService(opt *Option, checker PermissionChecker) *Def
 	return &DefaultAuthorizationService{opt: opt, checker: checker}
 }
 
-func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error) {
+func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error) {
 	if always, ok := FromAlwaysAuthorizationContext(ctx); ok {
 		if always {
 			return NewAllowAuthorizationResult(), nil
@@ -46,7 +46,7 @@ func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resour
 
 	addIfNotPresent := func(subject Subject) {
 		for _, s := range subjectList {
-			if s.GetName() == subject.GetName() && s.GetIdentity() == subject.GetIdentity() {
+			if s.GetIdentity() == subject.GetIdentity() {
 				return
 			}
 		}
@@ -55,7 +55,7 @@ func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resour
 	for _, s := range subject {
 		addIfNotPresent(s)
 		for _, contributor := range a.opt.SubjectContributorList {
-			if subjects, err := contributor.Process(s); err != nil {
+			if subjects, err := contributor.Process(ctx, s); err != nil {
 				return NewDisallowAuthorizationResult(nil), err
 			} else {
 				for _, s2 := range subjects {
@@ -83,12 +83,12 @@ func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resour
 	return NewDisallowAuthorizationResult(nil), nil
 }
 
-func (a *DefaultAuthorizationService) CheckCurrent(ctx context.Context, resource Resource, action Action) (Result, error) {
+func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action) (Result, error) {
 	var userId string
 	if userInfo, ok := current.FromUserContext(ctx); ok {
 		userId = userInfo.GetId()
 	}
-	return a.Check(ctx, resource, action, NewUserSubject(userId))
+	return a.CheckForSubjects(ctx, resource, action, NewUserSubject(userId))
 }
 
 var ProviderSet = wire.NewSet(NewDefaultAuthorizationService, wire.Bind(new(Service), new(*DefaultAuthorizationService)), NewPermissionService,

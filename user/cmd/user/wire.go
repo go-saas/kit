@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
+	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/conf"
@@ -22,6 +23,6 @@ import (
 )
 
 // initApp init kratos application.
-func initApp(*conf2.Services, *conf.UserConf, *conf.Data, log.Logger, *biz.PasswordValidatorConfig, *jwt.TokenizerConfig, *uow.Config, *gorm.Config,*http.WebMultiTenancyOption) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+func initApp(*conf2.Services, *conf.UserConf, *conf.Data, log.Logger, *biz.PasswordValidatorConfig, *jwt.TokenizerConfig, *uow.Config, *gorm.Config, *http.WebMultiTenancyOption) (*kratos.App, func(), error) {
+	panic(wire.Build(authorization.ProviderSet, server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }
