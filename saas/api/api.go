@@ -12,6 +12,9 @@ import (
 	"google.golang.org/grpc"
 )
 
+// depend on user to prevent circle dependency
+import _ "github.com/goxiaoy/go-saas-kit/user/api"
+
 type GrpcConn grpc.ClientConnInterface
 type HttpClient *http.Client
 

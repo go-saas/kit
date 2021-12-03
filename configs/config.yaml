@@ -18,6 +18,12 @@ services:
       grpc:
         addr: 0.0.0.0:8521
         timeout: 200s
+  services:
+    user:
+      grpc_endpoint: localhost:8501
+    saas:
+      grpc_endpoint: localhost:8521
+
 data:
   endpoints:
     databases:
