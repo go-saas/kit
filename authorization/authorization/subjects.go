@@ -66,3 +66,19 @@ func (r *RoleSubject) GetName() string {
 func (r *RoleSubject) GetRoleId() string {
 	return r.id
 }
+
+type ClientSubject struct {
+	clientId string
+}
+
+var _ Subject = (*ClientSubject)(nil)
+
+func NewClientSubject(clientId string) *ClientSubject {
+	return &ClientSubject{clientId: clientId}
+}
+func (c *ClientSubject) GetIdentity() string {
+	return fmt.Sprintf("%s/%s", "client", c.clientId)
+}
+func (c *ClientSubject) GetClientId() string {
+	return c.clientId
+}

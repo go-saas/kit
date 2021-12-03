@@ -59,7 +59,8 @@ func initApp(services *conf.Services, userConf *conf2.UserConf, confData *conf2.
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	fake := seed.NewFake(userManager)
-	seeder := server.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, fake)
+	permissionSeeder := biz.NewPermissionSeeder(permissionService)
+	seeder := server.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, fake, permissionSeeder)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
 		cleanup2()

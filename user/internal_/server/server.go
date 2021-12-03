@@ -14,8 +14,8 @@ import (
 // ProviderSet is server providers.
 var ProviderSet = wire.NewSet(jwt.NewTokenizer, NewHTTPServer, NewGRPCServer, seed2.NewFake, NewSeeder)
 
-func NewSeeder(c *conf.UserConf, uow uow.Manager, migrate *data.Migrate, roleSeed *biz.RoleSeed, userSeed *biz.UserSeed, fake *seed2.Fake) seed.Seeder {
-	var opt = seed.NewSeedOption(migrate, roleSeed, userSeed, fake)
+func NewSeeder(c *conf.UserConf, uow uow.Manager, migrate *data.Migrate, roleSeed *biz.RoleSeed, userSeed *biz.UserSeed, fake *seed2.Fake, p *biz.PermissionSeeder) seed.Seeder {
+	var opt = seed.NewSeedOption(migrate, roleSeed, userSeed, fake, p)
 	// seed host
 	opt.TenantIds = []string{""}
 
