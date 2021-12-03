@@ -588,6 +588,36 @@
         ]
       }
     },
+    "/v1/user/{id}/roles": {
+      "get": {
+        "operationId": "UserService_GetUserRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetUserRoleReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/v1/user/{user.id}": {
       "put": {
         "operationId": "UserService_UpdateUser",
@@ -899,6 +929,17 @@
     "v1GetSettingsResponse": {
       "type": "object"
     },
+    "v1GetUserRoleReply": {
+      "type": "object",
+      "properties": {
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1UserRole"
+          }
+        }
+      }
+    },
     "v1ListUsersRequest": {
       "type": "object",
       "properties": {
@@ -1163,6 +1204,17 @@
           "items": {
             "$ref": "#/definitions/v1UserFilter"
           }
+        }
+      }
+    },
+    "v1UserRole": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
         }
       }
     },

@@ -50,6 +50,11 @@ service UserService{
       delete: "/v1/user/{id}"
     };
   }
+  rpc GetUserRoles(GetUserRoleRequest) returns(GetUserRoleReply){
+    option (google.api.http) = {
+      get: "/v1/user/{id}/roles"
+    };
+  }
 }
 
 message UserFilter{
@@ -175,4 +180,16 @@ message DeleteUserRequest{
 }
 message DeleteUserResponse{
 
+}
+
+message GetUserRoleRequest{
+  string id =1;
+}
+message GetUserRoleReply{
+  repeated UserRole roles=1;
+}
+
+message UserRole{
+  string  id=1;
+  string name =2;
 }

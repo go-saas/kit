@@ -26,8 +26,8 @@ func NewHttpClient(services *conf.Services,hmtOpt *shttp.WebMultiTenancyOption, 
 	return api.NewHttpClient(ServiceName, services,hmtOpt, opts...)
 }
 
-var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient)
-var HttpProviderSet = wire.NewSet(NewHttpClient, NewUserHttpClient, NewAuthHttpClient, NewAccountHttpClient)
+var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient,NewRemoteRoleContributor)
+var HttpProviderSet = wire.NewSet(NewHttpClient, NewUserHttpClient, NewAuthHttpClient, NewAccountHttpClient,NewRemoteRoleContributor)
 
 func NewUserGrpcClient(conn GrpcConn) v1.UserServiceClient {
 	return v1.NewUserServiceClient(conn)

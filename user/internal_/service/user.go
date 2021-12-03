@@ -6,7 +6,6 @@ import (
 	"github.com/ahmetb/go-linq/v3"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
-
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	pb "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
@@ -206,6 +205,35 @@ func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 	return &pb.DeleteUserResponse{}, nil
 }
 
+func (s *UserService) GetUserRoles(ctx context.Context,req *pb.GetUserRoleRequest) (*pb.GetUserRoleReply, error) {
+	//TODO frequency call. use cache
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", req.Id), authorization.GetAction); err != nil {
+		return nil, err
+	} else if !authResult.Allowed {
+		return nil, errors2.Forbidden("", "")
+	}
+	u, err := s.um.FindByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if u == nil {
+		return nil, errors2.NotFound("", "")
+	}
+	roles,err:=s.um.GetRoles(ctx,u)
+	if err != nil {
+		return nil, err
+	}
+	resp:=&pb.GetUserRoleReply{}
+	resp.Roles=make([]*pb.UserRole, len(roles))
+	for i := range roles {
+		resp.Roles[i]=&pb.UserRole{
+			Id:   roles[i].ID.String(),
+			Name: roles[i].Name,
+		}
+	}
+	return resp, nil
+}
+
 func MapBizUserToApi(u *biz.User) *pb.User {
 	res := &pb.User{
 		Id:    u.ID.String(),
@@ -243,3 +271,4 @@ func MapBizUserToApi(u *biz.User) *pb.User {
 	}
 	return res
 }
+
