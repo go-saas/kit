@@ -38,6 +38,7 @@ message Client{
   string client_id=1;
   // server clients use secret
   string client_secret=2;
+  google.protobuf.Duration timeout = 3;
 }
 
 message Services{

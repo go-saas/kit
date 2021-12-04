@@ -27,7 +27,9 @@ func NewGrpcConn(clientName string, serviceName string, services *conf.Services,
 		grpc.WithEndpoint(endpoint.GrpcEndpoint),
 		grpc.WithMiddleware(ClientMiddleware(clientCfg, opt, tokenMgr)),
 	}
-
+	if clientCfg.Timeout != nil {
+		fOpts = append(fOpts, grpc.WithTimeout(clientCfg.Timeout.AsDuration()))
+	}
 	if insecure {
 		fOpts = append(fOpts, opts...)
 		conn, err = grpc.DialInsecure(context.Background(), fOpts...)
@@ -58,6 +60,9 @@ func NewHttpClient(clientName string, serviceName string, services *conf.Service
 	fOpts := []http.ClientOption{
 		http.WithEndpoint(endpoint.HttpEndpoint),
 		http.WithMiddleware(ClientMiddleware(clientCfg, opt, tokenMgr)),
+	}
+	if clientCfg.Timeout != nil {
+		fOpts = append(fOpts, http.WithTimeout(clientCfg.Timeout.AsDuration()))
 	}
 	fOpts = append(fOpts, opts...)
 	fOpts = append(fOpts, http.WithBlock())

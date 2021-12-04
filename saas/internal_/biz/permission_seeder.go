@@ -21,5 +21,15 @@ func (p *PermissionSeeder) Seed(ctx context.Context, sCtx *seed.Context) error {
 	if err != nil {
 		return err
 	}
-	return p.permission.AddGrant(ctx, authorization.NewEntityResource("*", admin.Id), authorization.ActionStr("*"), authorization.NewClientSubject("*"), authorization.EffectGrant)
+	if err := p.permission.AddGrant(ctx, authorization.NewEntityResource("*", "*"),
+		authorization.ActionStr("*"), authorization.NewClientSubject("*"), authorization.EffectGrant); err != nil {
+		return err
+	}
+
+	if err := p.permission.AddGrant(ctx, authorization.NewEntityResource("*", "*"),
+		authorization.ActionStr("*"), authorization.NewRoleSubject(admin.Id), authorization.EffectGrant); err != nil {
+		return err
+	}
+
+	return nil
 }
