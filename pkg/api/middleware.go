@@ -31,6 +31,7 @@ type Header interface {
 	Get(key string) string
 	Set(key string, value string)
 	Keys() []string
+	HasKey(key string) bool
 }
 
 type headerCarrier map[string]string
@@ -49,6 +50,11 @@ func (h headerCarrier) Keys() []string {
 		keys = append(keys, k)
 	}
 	return keys
+}
+
+func (h headerCarrier) HasKey(key string) bool {
+	_, ok := h[key]
+	return ok
 }
 
 type Contributor interface {

@@ -11,6 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
@@ -31,6 +32,9 @@ func initApp(services *conf.Services, userConf *conf2.UserConf, confData *conf2.
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbOpener, cleanup := gorm.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
+	saasContributor := api.NewSaasContributor(webMultiTenancyOption)
+	userContributor := api.NewUserContributor()
+	option := api.NewDefaultOption(saasContributor, userContributor)
 	tenantStore := data.NewTenantStore()
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, manager, tenantStore, logger)
 	dataData, cleanup2, err := data.NewData(confData, dbProvider, logger)
@@ -45,16 +49,16 @@ func initApp(services *conf.Services, userConf *conf2.UserConf, confData *conf2.
 	lookupNormalizer := biz.NewLookupNormalizer()
 	userManager := biz.NewUserManager(userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, logger)
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
-	option := service.NewAuthorizationOption(userRoleContributor)
+	authorizationOption := service.NewAuthorizationOption(userRoleContributor)
 	permissionService := authorization.NewPermissionService()
-	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(option, permissionService)
+	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(authorizationOption, permissionService)
 	userService := service.NewUserService(userManager, defaultAuthorizationService)
 	accountService := service.NewAccountService(userManager)
 	roleRepo := data.NewRoleRepo(dataData)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator)
-	httpServer := server.NewHTTPServer(services, tokenizer, manager, webMultiTenancyOption, tenantStore, userService, accountService, authService, logger)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, userService, accountService, authService, logger)
+	httpServer := server.NewHTTPServer(services, tokenizer, manager, webMultiTenancyOption, option, tenantStore, userService, accountService, authService, logger)
+	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, userService, accountService, authService, logger)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)

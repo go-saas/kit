@@ -47,8 +47,8 @@ func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, t
 	permissionService := authorization.NewPermissionService()
 	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(authorizationOption, permissionService)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService)
-	httpServer := server.NewHTTPServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, logger)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, logger)
+	httpServer := server.NewHTTPServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, logger)
+	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, logger)
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, manager, tenantStore, logger)
 	dataData, cleanup3, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {

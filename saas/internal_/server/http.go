@@ -11,6 +11,7 @@ import (
 	"github.com/go-kratos/swagger-api/openapiv2"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/auth/middleware/authentication"
+	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -24,7 +25,7 @@ import (
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, tenant *service.TenantService, mOpt *http2.WebMultiTenancyOption, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, tenant *service.TenantService, mOpt *http2.WebMultiTenancyOption, apiOpt *api2.Option, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -33,8 +34,9 @@ func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			metrics.Server(),
 			validate.Validator(),
 			authentication.ServerExtractAndAuth(tokenizer),
-			uow.Uow(logger, uowMgr),
 			middleware.Server(mOpt, nil, ts),
+			api2.ServerMiddleware(apiOpt),
+			uow.Uow(logger, uowMgr),
 		),
 	}
 	opts = server.PatchHttpOpts(opts, api.ServiceName, c)

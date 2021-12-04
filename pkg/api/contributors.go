@@ -20,6 +20,9 @@ func NewSaasContributor(hmtOpt *shttp.WebMultiTenancyOption) *SaasContributor {
 }
 
 func (s *SaasContributor) RecoverContext(ctx context.Context, headers Header) (context.Context, error) {
+	if !headers.HasKey(s.hmtOpt.TenantKey) {
+		return ctx, nil
+	}
 	tenantId := headers.Get(s.hmtOpt.TenantKey)
 	return common.NewCurrentTenant(ctx, tenantId, ""), nil
 }
@@ -41,8 +44,11 @@ func NewUserContributor() *UserContributor {
 }
 
 func (u *UserContributor) RecoverContext(ctx context.Context, headers Header) (context.Context, error) {
-	tenantId := headers.Get("user")
-	return common.NewCurrentTenant(ctx, tenantId, ""), nil
+	if !headers.HasKey("user") {
+		return ctx, nil
+	}
+	user := headers.Get("user")
+	return current.NewUserContext(ctx, current.NewUserInfo(user)), nil
 }
 
 func (u *UserContributor) CreateHeader(ctx context.Context) map[string]string {
