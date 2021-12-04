@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/a8m/rql"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"gorm.io/gorm"
 )
@@ -22,7 +22,7 @@ func NewRoleRepo(data *Data) biz.RoleRepo {
 	}
 }
 
-func buildRoleScope(filter *v1.RoleFilter) func(db *gorm.DB) *gorm.DB {
+func buildRoleScope(filter *v12.RoleFilter) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if filter == nil {
 			return db
@@ -38,7 +38,7 @@ func buildRoleScope(filter *v1.RoleFilter) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func (r *RoleRepo) List(ctx context.Context, query *v1.ListRolesRequest) ([]*biz.Role, error) {
+func (r *RoleRepo) List(ctx context.Context, query *v12.ListRolesRequest) ([]*biz.Role, error) {
 	db := r.GetDb(ctx).Model(&biz.Role{})
 	db = db.Scopes(buildRoleScope(query.Filter), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
 	var items []*biz.Role
@@ -46,11 +46,23 @@ func (r *RoleRepo) List(ctx context.Context, query *v1.ListRolesRequest) ([]*biz
 	return items, res.Error
 }
 
-func (r *RoleRepo) First(ctx context.Context, query *v1.RoleFilter) (*biz.Role, error) {
+func (r *RoleRepo) First(ctx context.Context, query *v12.RoleFilter) (*biz.Role, error) {
 	db := r.GetDb(ctx).Model(&biz.Role{})
 	db = db.Scopes(buildRoleScope(query))
 	var item = biz.Role{}
 	if err := db.First(&item).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &item, nil
+}
+
+func (r *RoleRepo) FindById(ctx context.Context, id string) (*biz.Role, error) {
+	db := r.GetDb(ctx).Model(&biz.Role{})
+	var item = biz.Role{}
+	if err := db.First(&item, "id = ?", id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
@@ -71,7 +83,7 @@ func (r *RoleRepo) FindByName(ctx context.Context, name string) (*biz.Role, erro
 	return item, nil
 }
 
-func (r *RoleRepo) Count(ctx context.Context, query *v1.RoleFilter) (total int64, filtered int64, err error) {
+func (r *RoleRepo) Count(ctx context.Context, query *v12.RoleFilter) (total int64, filtered int64, err error) {
 	db := r.GetDb(ctx).Model(&biz.Role{})
 	err = db.Count(&total).Error
 	if err != nil {

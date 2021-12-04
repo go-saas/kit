@@ -10,4 +10,4 @@ func NewAuthorizationOption(userRole *UserRoleContributor) *authorization.Option
 }
 
 // ProviderSet is service providers.
-var ProviderSet = wire.NewSet(NewUserRoleContributor, NewAuthorizationOption, NewUserService, NewAccountService, NewAuthService)
+var ProviderSet = wire.NewSet(NewUserRoleContributor, NewAuthorizationOption, NewUserService, NewAccountService, NewAuthService, NewRoleServiceService)

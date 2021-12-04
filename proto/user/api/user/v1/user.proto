@@ -6,12 +6,19 @@ import "google/api/annotations.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
-
+import "protoc-gen-openapiv2/options/annotations.proto";
 import "validate/validate.proto";
 
+import "user/api/role/v1/role.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/user/v1;v1";
 
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "User Service";
+    version: "1.0";
+  };
+};
 service UserService{
   rpc ListUsers(ListUsersRequest)returns(ListUsersResponse){
     option (google.api.http) = {
@@ -64,26 +71,13 @@ message UserFilter{
   google.protobuf.Timestamp birthday_gte=3;
   google.protobuf.Timestamp birthday_lte=4;
 
-  RoleFilter roles =5;
+  .user.api.role.v1.RoleFilter roles =5;
 
   repeated UserFilter and =7;
   repeated UserFilter or =8;
 
 }
 
-message RoleFilter{
-  repeated string id_in=1;
-  repeated string name_in =2;
-}
-
-message ListRolesRequest{
-  int32 page_offset =1;
-  int32 page_size = 2;
-  string search = 3;
-  repeated string sort =4;
-  google.protobuf.FieldMask fields=5;
-  RoleFilter filter =6;
-}
 
 
 message ListUsersRequest{
@@ -109,13 +103,10 @@ message User{
   google.protobuf.Timestamp birthday=6;
   //
   Gender gender=7;
-  repeated Role roles=8;
+  repeated .user.api.role.v1.Role roles=8;
 }
 
-message Role{
-  string  id=1;
-  string name =2;
-}
+
 
 message ListUsersResponse{
   int32 total_size =1;

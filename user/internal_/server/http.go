@@ -18,6 +18,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/api"
 	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 	v14 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
+	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/service"
 	"github.com/goxiaoy/go-saas/common"
@@ -27,7 +28,8 @@ import (
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manager, mOpt *http2.WebMultiTenancyOption, apiOpt *api2.Option, ts common.TenantStore, user *service.UserService, account *service.AccountService, auth *service.AuthService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manager, mOpt *http2.WebMultiTenancyOption, apiOpt *api2.Option, ts common.TenantStore, logger log.Logger,
+	user *service.UserService, account *service.AccountService, auth *service.AuthService, role *service.RoleService) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -49,5 +51,6 @@ func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manage
 	v12.RegisterUserServiceHTTPServer(srv, user)
 	v13.RegisterAccountHTTPServer(srv, account)
 	v14.RegisterAuthHTTPServer(srv, auth)
+	v1.RegisterRoleServiceHTTPServer(srv, role)
 	return srv
 }

@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package user.api.role.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+import "validate/validate.proto";
+
+
+option go_package = "github.com/goxiaoy/go-saas-kit/user/api/role/v1;v1";
+
+service RoleService{
+  rpc ListRoles(ListRolesRequest)returns(ListRolesResponse){
+    option (google.api.http) = {
+      get: "/v1/roles"
+      additional_bindings:{
+        post: "/v1/role/list"
+        body: "*"
+      }
+    };
+  }
+  rpc GetRole (GetRoleRequest) returns (Role){
+    option (google.api.http) = {
+      get: "/v1/role/{id}"
+    };
+  }
+  rpc CreateRole(CreateRoleRequest) returns(Role){
+    option (google.api.http) = {
+      post: "/v1/role"
+      body:"*"
+    };
+  }
+  rpc UpdateRole(UpdateRoleRequest) returns(Role){
+    option (google.api.http) = {
+      put: "/v1/role/{role.id}"
+      body: "*"
+      additional_bindings: [
+        {
+          patch: "/v1/role/{role.id}"
+          body: "*"
+        }
+      ]
+    };
+  }
+  rpc DeleteRole(DeleteRoleRequest) returns(DeleteRoleResponse){
+    option (google.api.http) = {
+      delete: "/v1/role/{id}"
+    };
+  }
+}
+
+message RoleFilter{
+  repeated string id_in=1;
+  repeated string name_in =2;
+}
+
+message ListRolesRequest{
+  int32 page_offset =1;
+  int32 page_size = 2;
+  string search = 3;
+  repeated string sort =4;
+  google.protobuf.FieldMask fields=5;
+  RoleFilter filter =6;
+}
+
+message ListRolesResponse{
+  int32 total_size =1;
+  int32 filter_size =2;
+
+  repeated Role items = 3;
+
+}
+
+message Role{
+  string id=1;
+  string name =2;
+}
+
+message GetRoleRequest{
+  string  id=1;
+  string name =2;
+}
+
+message CreateRoleRequest{
+  string  id=1;
+  string name =2;
+}
+
+message UpdateRoleRequest{
+  UpdateRole role=2 [(validate.rules).message.required=true];
+  google.protobuf.FieldMask update_mask = 3;
+}
+
+message UpdateRole{
+  string id=1;
+  string name =2;
+}
+
+message DeleteRoleRequest{
+  string id =1;
+}
+message DeleteRoleResponse{
+
+}

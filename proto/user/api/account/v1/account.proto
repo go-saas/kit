@@ -3,9 +3,13 @@ syntax = "proto3";
 package user.api.account.v1;
 
 import "google/api/annotations.proto";
-import "user/api/user/v1/user.proto";
+
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
+
+import "user/api/role/v1/role.proto";
+import "user/api/user/v1/user.proto";
+
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/account/v1;v1";
 
 service Account{
@@ -56,7 +60,7 @@ message GetProfileResponse{
   google.protobuf.Timestamp birthday=6;
   //
   .user.api.user.v1.Gender gender=7;
-  repeated .user.api.user.v1.Role roles=8;
+  repeated .user.api.role.v1.Role roles=8;
 }
 message UpdateProfileRequest{
 

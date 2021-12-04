@@ -6,6 +6,7 @@ import (
 	"github.com/ahmetb/go-linq/v3"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
+	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	pb "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
@@ -205,7 +206,7 @@ func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 	return &pb.DeleteUserResponse{}, nil
 }
 
-func (s *UserService) GetUserRoles(ctx context.Context,req *pb.GetUserRoleRequest) (*pb.GetUserRoleReply, error) {
+func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleRequest) (*pb.GetUserRoleReply, error) {
 	//TODO frequency call. use cache
 	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", req.Id), authorization.GetAction); err != nil {
 		return nil, err
@@ -219,14 +220,14 @@ func (s *UserService) GetUserRoles(ctx context.Context,req *pb.GetUserRoleReques
 	if u == nil {
 		return nil, errors2.NotFound("", "")
 	}
-	roles,err:=s.um.GetRoles(ctx,u)
+	roles, err := s.um.GetRoles(ctx, u)
 	if err != nil {
 		return nil, err
 	}
-	resp:=&pb.GetUserRoleReply{}
-	resp.Roles=make([]*pb.UserRole, len(roles))
+	resp := &pb.GetUserRoleReply{}
+	resp.Roles = make([]*pb.UserRole, len(roles))
 	for i := range roles {
-		resp.Roles[i]=&pb.UserRole{
+		resp.Roles[i] = &pb.UserRole{
 			Id:   roles[i].ID.String(),
 			Name: roles[i].Name,
 		}
@@ -260,9 +261,9 @@ func MapBizUserToApi(u *biz.User) *pb.User {
 		}
 	}
 	if u.Roles != nil {
-		var returnRoles []*pb.Role
-		linq.From(u.Roles).SelectT(func(i biz.Role) *pb.Role {
-			return &pb.Role{
+		var returnRoles []*v1.Role
+		linq.From(u.Roles).SelectT(func(i biz.Role) *v1.Role {
+			return &v1.Role{
 				Id:   i.ID.String(),
 				Name: i.Name,
 			}
@@ -271,4 +272,3 @@ func MapBizUserToApi(u *biz.User) *pb.User {
 	}
 	return res
 }
-

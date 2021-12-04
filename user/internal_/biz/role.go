@@ -5,7 +5,7 @@ import (
 	"github.com/a8m/rql"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	gorm2 "github.com/goxiaoy/go-saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 )
@@ -21,10 +21,11 @@ type Role struct {
 
 // RoleRepo crud role
 type RoleRepo interface {
-	List(ctx context.Context, query *v1.ListRolesRequest) ([]*Role, error)
-	First(ctx context.Context, query *v1.RoleFilter) (*Role, error)
+	List(ctx context.Context, query *v12.ListRolesRequest) ([]*Role, error)
+	First(ctx context.Context, query *v12.RoleFilter) (*Role, error)
+	FindById(ctx context.Context, id string) (*Role, error)
 	FindByName(ctx context.Context, name string) (*Role, error)
-	Count(ctx context.Context, query *v1.RoleFilter) (total int64, filtered int64, err error)
+	Count(ctx context.Context, query *v12.RoleFilter) (total int64, filtered int64, err error)
 	Get(ctx context.Context, id string) (*Role, error)
 	Create(ctx context.Context, role *Role) error
 	Update(ctx context.Context, id string, role *Role, p rql.Select) error
@@ -45,7 +46,7 @@ func NewRoleManager(repo RoleRepo, lookupNormalizer LookupNormalizer) *RoleManag
 	}
 }
 
-func (r *RoleManager) First(ctx context.Context, query *v1.RoleFilter) (*Role, error) {
+func (r *RoleManager) First(ctx context.Context, query *v12.RoleFilter) (*Role, error) {
 	return r.repo.First(ctx, query)
 }
 
@@ -54,11 +55,14 @@ func (r *RoleManager) FindByName(ctx context.Context, name string) (*Role, error
 	return r.repo.FindByName(ctx, nn)
 }
 
-func (r *RoleManager) List(ctx context.Context, query *v1.ListRolesRequest) ([]*Role, error) {
+func (r *RoleManager) FindById(ctx context.Context, id string) (*Role, error) {
+	return r.repo.FindById(ctx, id)
+}
+func (r *RoleManager) List(ctx context.Context, query *v12.ListRolesRequest) ([]*Role, error) {
 	return r.repo.List(ctx, query)
 }
 
-func (r *RoleManager) Count(ctx context.Context, query *v1.RoleFilter) (total int64, filtered int64, err error) {
+func (r *RoleManager) Count(ctx context.Context, query *v12.RoleFilter) (total int64, filtered int64, err error) {
 	return r.repo.Count(ctx, query)
 }
 
