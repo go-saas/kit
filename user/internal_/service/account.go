@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/auth/current"
+	"github.com/goxiaoy/go-saas-kit/auth"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -24,11 +24,11 @@ func NewAccountService(um *biz.UserManager) *AccountService {
 }
 
 func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileRequest) (*pb.GetProfileResponse, error) {
-	userinfo, ok := current.FromUserContext(ctx)
-	if !ok {
-		return nil, errors.Unauthorized("", "")
+	userInfo, err := auth.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
 	}
-	u, err := s.um.FindByID(ctx, userinfo.GetId())
+	u, err := s.um.FindByID(ctx, userInfo.GetId())
 	if err != nil {
 		return nil, errors.Forbidden("", "")
 	}
@@ -63,40 +63,40 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	return res, nil
 }
 func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {
-	_, ok := current.FromUserContext(ctx)
-	if !ok {
-		return nil, errors.Unauthorized("", "")
+	_, err := auth.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	return &pb.UpdateProfileResponse{}, nil
 }
 func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsRequest) (*pb.GetSettingsResponse, error) {
-	_, ok := current.FromUserContext(ctx)
-	if !ok {
-		return nil, errors.Unauthorized("", "")
+	_, err := auth.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	return &pb.GetSettingsResponse{}, nil
 }
 func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSettingsRequest) (*pb.UpdateSettingsResponse, error) {
-	_, ok := current.FromUserContext(ctx)
-	if !ok {
-		return nil, errors.Unauthorized("", "")
+	_, err := auth.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return &pb.UpdateSettingsResponse{}, nil
 }
 func (s *AccountService) GetAddresses(ctx context.Context, req *pb.GetAddressesRequest) (*pb.GetAddressesReply, error) {
-	_, ok := current.FromUserContext(ctx)
-	if !ok {
-		return nil, errors.Unauthorized("", "")
+	_, err := auth.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return &pb.GetAddressesReply{}, nil
 }
 
 func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddressesRequest) (*pb.UpdateAddressesReply, error) {
-	_, ok := current.FromUserContext(ctx)
-	if !ok {
-		return nil, errors.Unauthorized("", "")
+	_, err := auth.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return &pb.UpdateAddressesReply{}, nil
 }

@@ -23,6 +23,11 @@ services:
       grpc_endpoint: localhost:8501
     saas:
       grpc_endpoint: localhost:8521
+  clients:
+    user:
+      client_id: user-golang
+    saas:
+      client_id: saas-golang
 
 data:
   endpoints:

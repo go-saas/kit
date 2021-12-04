@@ -12,6 +12,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/biz"
@@ -19,7 +20,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/data"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/server"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/service"
-	"github.com/goxiaoy/go-saas-kit/user/api"
+	api2 "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
@@ -35,12 +36,16 @@ func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, t
 	dbOpener, cleanup := gorm.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
 	tenantUseCase := biz.NewTenantUserCase(tenantRepo)
-	grpcConn, cleanup2 := api.NewGrpcConn(services, webMultiTenancyOption, arg...)
-	userServiceClient := api.NewUserGrpcClient(grpcConn)
-	remoteRoleContributor := api.NewRemoteRoleContributor(userServiceClient)
-	option := service.NewAuthorizationOption(remoteRoleContributor)
+	saasContributor := api.NewSaasContributor(webMultiTenancyOption)
+	userContributor := api.NewUserContributor()
+	option := api.NewDefaultOption(saasContributor, userContributor)
+	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer)
+	grpcConn, cleanup2 := api2.NewGrpcConn(services, option, inMemoryTokenManager, arg...)
+	userServiceClient := api2.NewUserGrpcClient(grpcConn)
+	remoteRoleContributor := api2.NewRemoteRoleContributor(userServiceClient)
+	authorizationOption := service.NewAuthorizationOption(remoteRoleContributor)
 	permissionService := authorization.NewPermissionService()
-	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(option, permissionService)
+	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(authorizationOption, permissionService)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService)
 	httpServer := server.NewHTTPServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, logger)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, logger)

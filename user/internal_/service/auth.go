@@ -41,7 +41,7 @@ func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.
 		return nil, err
 	}
 	//login success
-	t, err := s.token.Issue(user.ID.String())
+	t, err := s.token.Issue(jwt.NewUserClaim(user.ID.String()), 0)
 	if err != nil {
 		return nil, err
 	}

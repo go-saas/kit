@@ -26,7 +26,7 @@ import (
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manager,mOpt *http2.WebMultiTenancyOption, ts common.TenantStore, user *service.UserService, account *service.AccountService, auth *service.AuthService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manager, mOpt *http2.WebMultiTenancyOption, ts common.TenantStore, user *service.UserService, account *service.AccountService, auth *service.AuthService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -34,7 +34,7 @@ func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manage
 			logging.Server(logger),
 			metrics.Server(),
 			validate.Validator(),
-			authentication.ServerExtractAndAuth(logger, tokenizer),
+			authentication.ServerExtractAndAuth(tokenizer),
 			uow.Uow(logger, uowMgr),
 			middleware.Server(mOpt, nil, ts),
 		),
