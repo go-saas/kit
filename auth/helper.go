@@ -6,10 +6,10 @@ import (
 	"github.com/goxiaoy/go-saas-kit/auth/current"
 )
 
-func ErrIfUnauthorized(ctx context.Context) error {
+func ErrIfUnauthenticated(ctx context.Context) (current.UserInfo, error) {
 	user, ok := current.FromUserContext(ctx)
-	if !ok || user.Id == "" {
-		return errors.Unauthorized("", "")
+	if !ok || user.GetId() == "" {
+		return user, errors.Unauthorized("", "")
 	}
-	return nil
+	return user, nil
 }

@@ -34,9 +34,16 @@ message Service{
   string http_endpoint=2;
 }
 
+message Client{
+  string client_id=1;
+  // server clients use secret
+  string client_secret=2;
+}
+
 message Services{
   map<string, Service> services = 1;
   map<string,Server> servers =2;
+  map<string,Client> clients =3;
 }
 
 message Database {

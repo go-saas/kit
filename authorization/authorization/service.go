@@ -84,11 +84,16 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 }
 
 func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action) (Result, error) {
+	var subjects []Subject
 	var userId string
 	if userInfo, ok := current.FromUserContext(ctx); ok {
 		userId = userInfo.GetId()
+		subjects = append(subjects, NewUserSubject(userId))
 	}
-	return a.CheckForSubjects(ctx, resource, action, NewUserSubject(userId))
+	if clientId, ok := current.FromClientContext(ctx); ok {
+		subjects = append(subjects, NewClientSubject(clientId))
+	}
+	return a.CheckForSubjects(ctx, resource, action, subjects...)
 }
 
 var ProviderSet = wire.NewSet(NewDefaultAuthorizationService, wire.Bind(new(Service), new(*DefaultAuthorizationService)), NewPermissionService,

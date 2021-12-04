@@ -6,12 +6,29 @@ import (
 )
 
 type Claims struct {
-	Uid string `json:"id,omitempty"`
+	Uid      string `json:"id,omitempty"`
+	ClientId string `json:"clientId,omitempty"`
 	jwt.StandardClaims
 }
 
+func NewUserClaim(userId string) *Claims {
+	return &Claims{
+		Uid: userId,
+		StandardClaims: jwt.StandardClaims{
+			Id:      userId,
+			Subject: userId,
+		},
+	}
+}
+
+func NewClientClaim(clientId string) *Claims {
+	return &Claims{
+		ClientId: clientId,
+	}
+}
+
 type Tokenizer interface {
-	Issue(userId string) (token string, err error)
+	Issue(claims *Claims, duration time.Duration) (token string, err error)
 	Parse(token string) (claims *Claims, err error)
 }
 
@@ -30,16 +47,13 @@ func NewTokenizer(c *TokenizerConfig) Tokenizer {
 
 var _ Tokenizer = (*tokenizer)(nil)
 
-func (t tokenizer) Issue(userId string) (token string, err error) {
-	claims := Claims{
-		userId,
-		jwt.StandardClaims{
-			Id:        userId,
-			Subject:   userId,
-			NotBefore: time.Now().Unix(),
-			IssuedAt:  time.Now().Unix(),
-			ExpiresAt: time.Now().Add(t.config.ExpireDuration).Unix(),
-		},
+func (t tokenizer) Issue(claims *Claims, duration time.Duration) (token string, err error) {
+	claims.StandardClaims.NotBefore = time.Now().Unix()
+	claims.StandardClaims.IssuedAt = time.Now().Unix()
+	if duration == 0 {
+		claims.StandardClaims.ExpiresAt = time.Now().Add(duration).Unix()
+	} else {
+		claims.StandardClaims.ExpiresAt = time.Now().Add(t.config.ExpireDuration).Unix()
 	}
 	token, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(t.config.Secret))
 	return

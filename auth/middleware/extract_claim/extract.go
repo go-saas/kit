@@ -1,4 +1,4 @@
-package extract_jwt
+package extract_claim
 
 import (
 	"context"
@@ -9,14 +9,14 @@ import (
 	"strings"
 )
 
-func ServerExtract() middleware.Middleware {
+func ServerExtract(tokenizer jwt.Tokenizer) middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
 			t := ""
 			if info, ok := transport.FromServerContext(ctx); ok {
-				auth := info.RequestHeader().Get("Authorization")
+				auth := info.RequestHeader().Get(jwt.AuthorizationHeader)
 				if auth != "" {
-					splitToken := strings.Split(auth, "Bearer")
+					splitToken := strings.Split(auth, jwt.BearerTokenType)
 					if len(splitToken) == 2 {
 						t = strings.TrimSpace(splitToken[1])
 					}
@@ -28,7 +28,16 @@ func ServerExtract() middleware.Middleware {
 				}
 			}
 			if t != "" {
-				return handler(jwt.NewJWTContext(ctx, t), req)
+				//
+				if claims, err := tokenizer.Parse(t); err != nil {
+					//errors
+					return handler(ctx, req)
+				} else {
+					if err := claims.Valid(); err != nil {
+						return handler(ctx, req)
+					}
+					return handler(jwt.NewClaimsContext(jwt.NewJWTContext(ctx, t), claims), req)
+				}
 			}
 			return handler(ctx, req)
 		}
