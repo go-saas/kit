@@ -57,7 +57,9 @@ func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, t
 		return nil, nil, err
 	}
 	migrate := data.NewMigrate(dataData)
-	seeder := server.NewSeeder(confData, manager, migrate)
+	roleServiceClient := api2.NewRoleGrpcClient(grpcConn)
+	permissionSeeder := biz.NewPermissionSeeder(permissionService, roleServiceClient)
+	seeder := server.NewSeeder(confData, manager, migrate, permissionSeeder)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
 		cleanup3()

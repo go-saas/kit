@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/auth"
+	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -55,7 +56,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		}
 	}
 	for _, role := range u.Roles {
-		res.Roles = append(res.Roles, &v1.Role{
+		res.Roles = append(res.Roles, &v12.Role{
 			Id:   role.ID.String(),
 			Name: role.Name,
 		})
