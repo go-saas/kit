@@ -21,7 +21,7 @@ func NewRoleServiceService(repo biz.RoleRepo, auth authorization.Service) *RoleS
 }
 
 func (s *RoleService) ListRoles(ctx context.Context, req *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
-	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("role", "*"), authorization.ListAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.role", "*"), authorization.ListAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -72,7 +72,7 @@ func (s *RoleService) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.
 	if u == nil {
 		return nil, errors2.Forbidden("", "")
 	}
-	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("role", u.ID.String()), authorization.GetAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.role", u.ID.String()), authorization.GetAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")

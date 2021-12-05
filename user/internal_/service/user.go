@@ -29,7 +29,7 @@ func NewUserService(um *biz.UserManager, auth authorization.Service) *UserServic
 }
 
 func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
-	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", "*"), authorization.ListAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", "*"), authorization.ListAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -60,7 +60,7 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 }
 
 func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User, error) {
-	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", req.Id), authorization.GetAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", req.Id), authorization.GetAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -77,7 +77,7 @@ func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 }
 
 func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
-	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", "*"), authorization.CreateAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", "*"), authorization.CreateAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -135,7 +135,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 
 func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.User, error) {
 
-	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", req.User.Id), authorization.UpdateAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", req.User.Id), authorization.UpdateAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -197,7 +197,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 }
 
 func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
-	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", req.Id), authorization.DeleteAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", req.Id), authorization.DeleteAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -208,7 +208,7 @@ func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 
 func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleRequest) (*pb.GetUserRoleReply, error) {
 	//TODO frequency call. use cache
-	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user", req.Id), authorization.GetAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", req.Id), authorization.GetAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
