@@ -4,7 +4,7 @@ package rql.operation;
 
 import "google/protobuf/wrappers.proto";
 
-option go_package = "github.com/a8m/rql;rql";
+option go_package = "github.com/goxiaoy/go-saas-kit/pkg/query;query";
 
 message StringFilterOperation{
   google.protobuf.StringValue eq =1 [json_name="$eq"];

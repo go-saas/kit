@@ -1,15 +1,15 @@
 package gorm
 
 import (
-	"github.com/a8m/rql"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
+	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	"gorm.io/gorm"
 )
 
 type Repo struct {
 }
 
-func PageScope(page rql.Page) func(db *gorm.DB) *gorm.DB {
+func PageScope(page query.Page) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if page == nil {
 			return db
@@ -26,7 +26,7 @@ func PageScope(page rql.Page) func(db *gorm.DB) *gorm.DB {
 }
 
 // SortScope build sorting by sort and default d
-func SortScope(sort rql.Sort, d []string) func(db *gorm.DB) *gorm.DB {
+func SortScope(sort query.Sort, d []string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		var s []string
 		if sort != nil {

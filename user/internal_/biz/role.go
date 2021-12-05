@@ -2,9 +2,9 @@ package biz
 
 import (
 	"context"
-	"github.com/a8m/rql"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	gorm2 "github.com/goxiaoy/go-saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
@@ -28,7 +28,7 @@ type RoleRepo interface {
 	Count(ctx context.Context, query *v12.RoleFilter) (total int64, filtered int64, err error)
 	Get(ctx context.Context, id string) (*Role, error)
 	Create(ctx context.Context, role *Role) error
-	Update(ctx context.Context, id string, role *Role, p rql.Select) error
+	Update(ctx context.Context, id string, role *Role, p query.Select) error
 	Delete(ctx context.Context, id string) error
 }
 
@@ -85,7 +85,7 @@ func (r *RoleManager) Create(ctx context.Context, role *Role) error {
 	return r.repo.Create(ctx, role)
 }
 
-func (r *RoleManager) Update(ctx context.Context, id string, role *Role, p rql.Select) error {
+func (r *RoleManager) Update(ctx context.Context, id string, role *Role, p query.Select) error {
 	nn := r.lookupNormalizer.Name(role.Name)
 	role.NormalizedName = nn
 	dbRole, err := r.repo.FindByName(ctx, nn)

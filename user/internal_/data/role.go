@@ -3,8 +3,8 @@ package data
 import (
 	"context"
 	"errors"
-	"github.com/a8m/rql"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"gorm.io/gorm"
@@ -114,7 +114,7 @@ func (r *RoleRepo) Create(ctx context.Context, role *biz.Role) error {
 	return db.Create(role).Error
 }
 
-func (r *RoleRepo) Update(ctx context.Context, id string, role *biz.Role, p rql.Select) error {
+func (r *RoleRepo) Update(ctx context.Context, id string, role *biz.Role, p query.Select) error {
 	db := r.GetDb(ctx)
 	return db.Where("id=?", id).Updates(role).Error
 }
