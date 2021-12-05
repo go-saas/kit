@@ -14,7 +14,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/gorilla/handlers v1.5.1
-	github.com/goxiaoy/go-saas v0.0.10-0.20211112043352-57ebc170b313
+	github.com/goxiaoy/go-saas v0.0.10-0.20211205050554-3d5cba75a66a
 	github.com/goxiaoy/gorm-concurrency v1.0.2
 	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.5.0
@@ -46,14 +46,11 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/google/subcommands v1.0.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.2 // indirect
-	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
-	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-sqlite3 v1.14.8 // indirect
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -61,10 +58,7 @@ require (
 	go.opentelemetry.io/otel v1.0.0 // indirect
 	go.opentelemetry.io/otel/trace v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20210813211128-0a44fdfbc16e // indirect
-	golang.org/x/mod v0.5.0 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.5 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

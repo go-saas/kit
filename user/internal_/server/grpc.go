@@ -22,7 +22,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/internal_/service"
 	"github.com/goxiaoy/go-saas/common"
 	http2 "github.com/goxiaoy/go-saas/common/http"
-	"github.com/goxiaoy/go-saas/kratos/middleware"
+	"github.com/goxiaoy/go-saas/kratos/saas"
 	uow2 "github.com/goxiaoy/uow"
 )
 
@@ -37,7 +37,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			metrics.Server(),
 			validate.Validator(),
 			authentication.ServerExtractAndAuth(tokenizer),
-			middleware.Server(mOpt, nil, ts),
+			saas.Server(mOpt, nil, ts),
 			api2.ServerMiddleware(apiOpt),
 			uow.Uow(logger, uowMgr),
 		),
