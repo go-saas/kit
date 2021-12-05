@@ -18,6 +18,7 @@ require (
 	github.com/goxiaoy/go-saas v0.0.10-0.20211112043352-57ebc170b313
 	github.com/goxiaoy/gorm-concurrency v1.0.2
 	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.5.0
 	github.com/mennanov/fmutils v0.1.1
 	github.com/mitchellh/mapstructure v1.4.1
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354
@@ -48,7 +49,6 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/subcommands v1.0.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.5.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.2 // indirect
