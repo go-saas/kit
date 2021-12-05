@@ -11,13 +11,15 @@ import (
 	grpc2 "google.golang.org/grpc"
 )
 
+type ClientName string
+
 // NewGrpcConn create new grpc client from name
-func NewGrpcConn(clientName string, serviceName string, services *conf.Services, insecure bool, opt *Option, tokenMgr TokenManager, opts ...grpc.ClientOption) (grpc2.ClientConnInterface, func()) {
+func NewGrpcConn(clientName ClientName, serviceName string, services *conf.Services, insecure bool, opt *Option, tokenMgr TokenManager, opts ...grpc.ClientOption) (grpc2.ClientConnInterface, func()) {
 	endpoint, ok := services.Services[serviceName]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", serviceName)))
 	}
-	clientCfg, ok := services.Clients[clientName]
+	clientCfg, ok := services.Clients[string(clientName)]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v client not found", clientName)))
 	}
@@ -46,13 +48,13 @@ func NewGrpcConn(clientName string, serviceName string, services *conf.Services,
 }
 
 // NewHttpClient create new http client from name
-func NewHttpClient(clientName string, serviceName string, services *conf.Services, opt *Option, tokenMgr TokenManager, opts ...http.ClientOption) (*http.Client, func()) {
+func NewHttpClient(clientName ClientName, serviceName string, services *conf.Services, opt *Option, tokenMgr TokenManager, opts ...http.ClientOption) (*http.Client, func()) {
 	endpoint, ok := services.Services[serviceName]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", serviceName)))
 	}
 
-	clientCfg, ok := services.Clients[clientName]
+	clientCfg, ok := services.Clients[string(clientName)]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v client not found", clientName)))
 	}
