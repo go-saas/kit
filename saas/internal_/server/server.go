@@ -4,6 +4,7 @@ import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
+	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/biz"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/conf"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/data"
@@ -15,7 +16,7 @@ import (
 var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, jwt.NewTokenizer, NewSeeder, NewClientName)
 
 func NewClientName() api.ClientName {
-	return "saas"
+	return api2.ServiceName
 }
 
 func NewSeeder(c *conf.Data, uow uow.Manager, migrate *data.Migrate, permission *biz.PermissionSeeder) seed.Seeder {
