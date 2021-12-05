@@ -15,7 +15,7 @@ type Role struct {
 	concurrency.Version `gorm:"type:char(36)"`
 	gorm.AuditedModel
 	gorm2.MultiTenancy
-	Name           string `json:"name" gorm:"index" rql:"filter"`
+	Name           string `json:"name" gorm:"index"`
 	NormalizedName string `json:"normalized_name" gorm:"index"`
 }
 

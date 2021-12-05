@@ -49,7 +49,7 @@ type User struct {
 	// Avatar could be an id of asset or simple url
 	Avatar   *string    `json:"avatar"`
 	Birthday *time.Time `json:"birthday"`
-	Gender   *string    `json:"gender" rql:"filter"`
+	Gender   *string    `json:"gender"`
 
 	// SecondEmail back up email
 	SecondEmail *string `json:"second_email"`

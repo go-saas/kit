@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package rql.operation;
+package query.operation;
 
 import "google/protobuf/wrappers.proto";
 
