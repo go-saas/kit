@@ -13,11 +13,9 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, jwt.NewTokenizer, NewSeeder, NewClientName)
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, jwt.NewTokenizer, NewSeeder, wire.Value(ClientName))
 
-func NewClientName() api.ClientName {
-	return api2.ServiceName
-}
+var ClientName api.ClientName = api2.ServiceName
 
 func NewSeeder(c *conf.Data, uow uow.Manager, migrate *data.Migrate, permission *biz.PermissionSeeder) seed.Seeder {
 	var opt = seed.NewSeedOption(migrate, permission)

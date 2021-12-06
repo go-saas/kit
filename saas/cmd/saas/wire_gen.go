@@ -36,7 +36,7 @@ func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, t
 	dbOpener, cleanup := gorm.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
 	tenantUseCase := biz.NewTenantUserCase(tenantRepo)
-	clientName := server.NewClientName()
+	clientName := _wireClientNameValue
 	saasContributor := api.NewSaasContributor(webMultiTenancyOption)
 	userContributor := api.NewUserContributor()
 	option := api.NewDefaultOption(saasContributor, userContributor)
@@ -68,3 +68,7 @@ func initApp(services *conf.Services, confData *conf2.Data, logger log.Logger, t
 		cleanup()
 	}, nil
 }
+
+var (
+	_wireClientNameValue = server.ClientName
+)
