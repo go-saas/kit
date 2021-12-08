@@ -50,7 +50,7 @@ var _ Tokenizer = (*tokenizer)(nil)
 func (t tokenizer) Issue(claims *Claims, duration time.Duration) (token string, err error) {
 	claims.StandardClaims.NotBefore = time.Now().Unix()
 	claims.StandardClaims.IssuedAt = time.Now().Unix()
-	if duration == 0 {
+	if duration > 0 {
 		claims.StandardClaims.ExpiresAt = time.Now().Add(duration).Unix()
 	} else {
 		claims.StandardClaims.ExpiresAt = time.Now().Add(t.config.ExpireDuration).Unix()
