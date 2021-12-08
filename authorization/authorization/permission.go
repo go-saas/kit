@@ -2,6 +2,7 @@ package authorization
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"regexp"
 	"strings"
@@ -55,7 +56,7 @@ func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, acti
 		//TODO regex match
 		if match(bean.namespace, resource.GetNamespace()) && match(bean.subject, subject.GetIdentity()) && match(bean.resource, resource.GetIdentity()) && match(bean.action, action.GetIdentity()) {
 			if bean.effect == EffectForbidden {
-				p.log.Debugf("subject %s action %s to resource %s forbidden", subject.GetIdentity(), action.GetIdentity(), resource.GetIdentity())
+				p.log.Debugf("subject %s action %s to resource %s forbidden", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 				return EffectForbidden, nil
 			}
 			if bean.effect == EffectGrant {
@@ -64,10 +65,10 @@ func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, acti
 		}
 	}
 	if anyAllow {
-		p.log.Debugf("subject %s action %s to resource %s grant", subject.GetIdentity(), action.GetIdentity(), resource.GetIdentity())
+		p.log.Debugf("subject %s action %s to resource %s grant", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 		return EffectGrant, nil
 	}
-	p.log.Debugf("subject %s action %s to resource %s unknown", subject.GetIdentity(), action.GetIdentity(), resource.GetIdentity())
+	p.log.Debugf("subject %s action %s to resource %s unknown", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 	return EffectUnknown, nil
 }
 
@@ -75,7 +76,7 @@ func (p *PermissionService) AddGrant(ctx context.Context, resource Resource, act
 	p.mux.Lock()
 	defer p.mux.Unlock()
 	p.v = append(p.v, newPermissionBean(resource, action, subject, effect))
-	p.log.Debugf("add resource %s action %s grant %v to subject %s", resource.GetIdentity(), action.GetIdentity(), effect, subject.GetIdentity())
+	p.log.Debugf("add resource %s action %s grant %v to subject %s", fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()), action.GetIdentity(), effect, subject.GetIdentity())
 	return nil
 }
 

@@ -2,6 +2,7 @@ package authorization
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/auth/current"
@@ -44,10 +45,10 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 			subjectStr = append(subjectStr, s.GetIdentity())
 		}
 		if always {
-			a.log.Debugf("check permission for subject %s action %s to resource %s granted", strings.Join(subjectStr, ","), action.GetIdentity(), resource.GetIdentity())
+			a.log.Debugf("check permission for subject %s action %s to resource %s granted", strings.Join(subjectStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 			return NewAllowAuthorizationResult(), nil
 		} else {
-			a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(subjectStr, ","), action.GetIdentity(), resource.GetIdentity())
+			a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(subjectStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 			return NewDisallowAuthorizationResult(nil), nil
 		}
 	}
@@ -77,7 +78,7 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 	for _, s := range subjectList {
 		logStr = append(logStr, s.GetIdentity())
 	}
-	a.log.Debugf("check permission for subject %s action %s to resource %s ", strings.Join(logStr, ","), action.GetIdentity(), resource.GetIdentity())
+	a.log.Debugf("check permission for subject %s action %s to resource %s ", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 	var anyAllow bool
 	for _, s := range subjectList {
 		grantType, err := a.checker.IsGrant(ctx, resource, action, s)
@@ -85,7 +86,7 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 			return NewDisallowAuthorizationResult(nil), err
 		}
 		if grantType == EffectForbidden {
-			a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), resource.GetIdentity())
+			a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 			return NewDisallowAuthorizationResult(nil), err
 		}
 		if grantType == EffectGrant {
@@ -93,10 +94,10 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 		}
 	}
 	if anyAllow {
-		a.log.Debugf("check permission for subject %s action %s to resource %s granted", strings.Join(logStr, ","), action.GetIdentity(), resource.GetIdentity())
+		a.log.Debugf("check permission for subject %s action %s to resource %s granted", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 		return NewAllowAuthorizationResult(), nil
 	}
-	a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), resource.GetIdentity())
+	a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 	return NewDisallowAuthorizationResult(nil), nil
 }
 
