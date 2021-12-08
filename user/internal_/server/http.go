@@ -37,7 +37,7 @@ func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manage
 			logging.Server(logger),
 			metrics.Server(),
 			validate.Validator(),
-			authentication.ServerExtractAndAuth(tokenizer),
+			authentication.ServerExtractAndAuth(tokenizer, logger),
 			saas.Server(mOpt, nil, ts),
 			api2.ServerMiddleware(apiOpt),
 			uow.Uow(logger, uowMgr),

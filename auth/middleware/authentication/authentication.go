@@ -2,14 +2,15 @@ package authentication
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/goxiaoy/go-saas-kit/auth/current"
 	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/auth/middleware/extract_claim"
 )
 
-func ServerExtractAndAuth(tokenizer jwt.Tokenizer) middleware.Middleware {
-	return middleware.Chain(extract_claim.ServerExtract(tokenizer), ServerAuth())
+func ServerExtractAndAuth(tokenizer jwt.Tokenizer, logger log.Logger) middleware.Middleware {
+	return middleware.Chain(extract_claim.ServerExtract(tokenizer, logger), ServerAuth())
 }
 
 func ServerAuth() middleware.Middleware {
