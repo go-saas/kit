@@ -11,7 +11,7 @@ import (
 )
 
 func ServerExtract(tokenizer jwt.Tokenizer, logger log.Logger) middleware.Middleware {
-	log := log.NewHelper(logger)
+	log := log.NewHelper(log.With(logger, "module", "auth.extract_claim"))
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
 			t := ""

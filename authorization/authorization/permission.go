@@ -45,7 +45,7 @@ var _ PermissionManagementService = (*PermissionService)(nil)
 var _ PermissionChecker = (*PermissionService)(nil)
 
 func NewPermissionService(logger log.Logger) *PermissionService {
-	return &PermissionService{log: log.NewHelper(logger)}
+	return &PermissionService{log: log.NewHelper(log.With(logger, "module", "authorization.permission"))}
 }
 
 func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, action Action, subject Subject) (Effect, error) {

@@ -57,7 +57,7 @@ func NewUowManager(cfg *gorm.Config, config *uow.Config, opener gorm.DbOpener) u
 }
 
 func Uow(l log.Logger, um uow.Manager) middleware.Middleware {
-	logger := log.NewHelper(l)
+	logger := log.NewHelper(log.With(l, "module", "uow"))
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
 			var res interface{}

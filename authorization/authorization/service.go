@@ -35,7 +35,7 @@ type DefaultAuthorizationService struct {
 var _ Service = (*DefaultAuthorizationService)(nil)
 
 func NewDefaultAuthorizationService(opt *Option, checker PermissionChecker, logger log.Logger) *DefaultAuthorizationService {
-	return &DefaultAuthorizationService{opt: opt, checker: checker, log: log.NewHelper(logger)}
+	return &DefaultAuthorizationService{opt: opt, checker: checker, log: log.NewHelper(log.With(logger, "module", "authorization.service"))}
 }
 
 func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error) {

@@ -45,7 +45,7 @@ func NewKafkaSender(address []string, topic string, logger log.Logger) (event.Se
 		Addr:     kafka.TCP(address...),
 		Balancer: &kafka.LeastBytes{},
 	}
-	return &kafkaSender{writer: w, topic: topic, logger: log.NewHelper(logger)}, nil
+	return &kafkaSender{writer: w, topic: topic, logger: log.NewHelper(log.With(logger, "module", "kafka.kafkaSender"))}, nil
 }
 
 type kafkaReceiver struct {
@@ -91,5 +91,5 @@ func NewKafkaReceiver(address []string, topic string, group string, logger log.L
 		MinBytes: 10e3, // 10KB
 		MaxBytes: 10e6, // 10MB
 	})
-	return &kafkaReceiver{reader: r, topic: topic, logger: log.NewHelper(logger)}, nil
+	return &kafkaReceiver{reader: r, topic: topic, logger: log.NewHelper(log.With(logger, "module", "kafka.kafkaReceiver"))}, nil
 }
