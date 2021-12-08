@@ -2,6 +2,7 @@ package authorization
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/log"
 	"regexp"
 	"strings"
 	"sync"
@@ -36,13 +37,14 @@ func newPermissionBean(resource Resource, action Action, subject Subject, effect
 type PermissionService struct {
 	v   []permissionBean
 	mux sync.Mutex
+	log *log.Helper
 }
 
 var _ PermissionManagementService = (*PermissionService)(nil)
 var _ PermissionChecker = (*PermissionService)(nil)
 
-func NewPermissionService() *PermissionService {
-	return &PermissionService{}
+func NewPermissionService(logger log.Logger) *PermissionService {
+	return &PermissionService{log: log.NewHelper(logger)}
 }
 
 func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, action Action, subject Subject) (Effect, error) {
@@ -53,6 +55,7 @@ func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, acti
 		//TODO regex match
 		if match(bean.namespace, resource.GetNamespace()) && match(bean.subject, subject.GetIdentity()) && match(bean.resource, resource.GetIdentity()) && match(bean.action, action.GetIdentity()) {
 			if bean.effect == EffectForbidden {
+				p.log.Debugf("subject %s action %s to resource %s forbidden", subject.GetIdentity(), action.GetIdentity(), resource.GetIdentity())
 				return EffectForbidden, nil
 			}
 			if bean.effect == EffectGrant {
@@ -61,8 +64,10 @@ func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, acti
 		}
 	}
 	if anyAllow {
+		p.log.Debugf("subject %s action %s to resource %s grant", subject.GetIdentity(), action.GetIdentity(), resource.GetIdentity())
 		return EffectGrant, nil
 	}
+	p.log.Debugf("subject %s action %s to resource %s unknown", subject.GetIdentity(), action.GetIdentity(), resource.GetIdentity())
 	return EffectUnknown, nil
 }
 
@@ -70,6 +75,7 @@ func (p *PermissionService) AddGrant(ctx context.Context, resource Resource, act
 	p.mux.Lock()
 	defer p.mux.Unlock()
 	p.v = append(p.v, newPermissionBean(resource, action, subject, effect))
+	p.log.Debugf("add resource %s action %s grant %v to subject %s", resource.GetIdentity(), action.GetIdentity(), effect, subject.GetIdentity())
 	return nil
 }
 
