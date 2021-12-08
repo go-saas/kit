@@ -49,7 +49,8 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 			return NewAllowAuthorizationResult(), nil
 		} else {
 			a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(subjectStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-			return NewDisallowAuthorizationResult(nil), nil
+			r := NewDisallowAuthorizationResult(nil)
+			return r, FormatError(ctx, r)
 		}
 	}
 	var subjectList []Subject
@@ -87,7 +88,8 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 		}
 		if grantType == EffectForbidden {
 			a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-			return NewDisallowAuthorizationResult(nil), err
+			r := NewDisallowAuthorizationResult(nil)
+			return r, FormatError(ctx, r)
 		}
 		if grantType == EffectGrant {
 			anyAllow = true
@@ -98,7 +100,8 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 		return NewAllowAuthorizationResult(), nil
 	}
 	a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-	return NewDisallowAuthorizationResult(nil), nil
+	r := NewDisallowAuthorizationResult(nil)
+	return r, FormatError(ctx, r)
 }
 
 func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action) (Result, error) {
