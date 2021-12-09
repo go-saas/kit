@@ -2,7 +2,6 @@ package server
 
 import (
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/biz"
@@ -13,7 +12,7 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, jwt.NewTokenizer, NewSeeder, wire.Value(ClientName))
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewSeeder, wire.Value(ClientName))
 
 var ClientName api.ClientName = api2.ServiceName
 

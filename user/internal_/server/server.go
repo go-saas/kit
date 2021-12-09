@@ -2,7 +2,6 @@ package server
 
 import (
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/conf"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/data"
@@ -12,7 +11,7 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(jwt.NewTokenizer, NewHTTPServer, NewGRPCServer, seed2.NewFake, NewSeeder)
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, seed2.NewFake, NewSeeder)
 
 func NewSeeder(c *conf.UserConf, uow uow.Manager, migrate *data.Migrate, roleSeed *biz.RoleSeed, userSeed *biz.UserSeed, fake *seed2.Fake, p *biz.PermissionSeeder) seed.Seeder {
 	var opt = seed.NewSeedOption(migrate, roleSeed, userSeed, fake, p)
