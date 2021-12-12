@@ -444,7 +444,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1LoginAuthReply"
+              "$ref": "#/definitions/v1TokenReply"
             }
           },
           "default": {
@@ -460,7 +460,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1LoginAuthRequest"
+              "$ref": "#/definitions/v1TokenRequest"
             }
           }
         ],
@@ -1351,6 +1351,11 @@
         "refreshToken": {
           "type": "string",
           "title": "Refresh token to keep login state"
+        },
+        "expiresIn": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Expires time in seconds"
         }
       }
     },
@@ -1378,10 +1383,33 @@
       "type": "object"
     },
     "v1RefreshTokenAuthReply": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "tokenType": {
+          "type": "string",
+          "title": "Bearer"
+        },
+        "refreshToken": {
+          "type": "string",
+          "title": "Refresh token to keep login state"
+        },
+        "expiresIn": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Expires time in seconds"
+        }
+      }
     },
     "v1RefreshTokenAuthRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "type": "string"
+        }
+      }
     },
     "v1RegisterAuthReply": {
       "type": "object"
@@ -1414,6 +1442,44 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "v1TokenReply": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "tokenType": {
+          "type": "string",
+          "title": "Bearer"
+        },
+        "refreshToken": {
+          "type": "string",
+          "title": "Refresh token to keep login state"
+        },
+        "expiresIn": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Expires time in seconds"
+        }
+      }
+    },
+    "v1TokenRequest": {
+      "type": "object",
+      "properties": {
+        "grantType": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
         }
       }
     },

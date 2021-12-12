@@ -84,6 +84,7 @@ message Security{
   message Jwt{
     google.protobuf.Duration expire_in=1;
     string secret=2;
+    google.protobuf.Duration refresh_token_expire_in=3;
   }
   Jwt jwt=1;
 }

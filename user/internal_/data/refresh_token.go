@@ -2,7 +2,10 @@ package data
 
 import (
 	"context"
+	"errors"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"gorm.io/gorm"
+	"time"
 )
 
 type RefreshTokenRepo struct {
@@ -22,23 +25,25 @@ func (r *RefreshTokenRepo) Create(ctx context.Context, t *biz.RefreshToken) (err
 	return
 }
 
-func (r *RefreshTokenRepo) FindUser(ctx context.Context, token string) (uId string, err error) {
+func (r *RefreshTokenRepo) Find(ctx context.Context, token string, validOnly bool) (*biz.RefreshToken, error) {
 	var t biz.RefreshToken
-	err = r.GetDb(ctx).Model(&biz.RefreshToken{}).First(&t, "token=?", token).Error
-	uId = t.UserId.String()
-	return
-}
+	q := r.GetDb(ctx).Model(&biz.RefreshToken{}).Where("token = ?", token)
 
-func (r *RefreshTokenRepo) Refresh(ctx context.Context, pre *biz.RefreshToken, now *biz.RefreshToken) (err error) {
-	err = r.GetDb(ctx).Model(&biz.RefreshToken{}).Delete(pre).Error
-	if err != nil {
-		return
+	if validOnly {
+		nowTime := time.Now()
+		q = q.Where("expires is NULL or expires < ?", nowTime)
 	}
-	err = r.Create(ctx, now)
-	return
+	err := q.First(&t).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &t, nil
 }
 
 func (r *RefreshTokenRepo) Revoke(ctx context.Context, token string) (err error) {
-	err = r.GetDb(ctx).Delete(&biz.RefreshToken{}, token).Error
+	err = r.GetDb(ctx).Delete(&biz.RefreshToken{}, "token = ? ", token).Error
 	return
 }

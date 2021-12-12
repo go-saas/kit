@@ -26,7 +26,6 @@ func migrateDb(db *gorm.DB) error {
 		&biz.User{},
 		&biz.Role{},
 		&biz.UserRole{},
-		&biz.UserInfo{},
 		&biz.UserLogin{},
 		&biz.UserSetting{},
 		&biz.UserToken{},

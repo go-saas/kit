@@ -22,7 +22,7 @@ service Auth {
             body: "*",
         };
     }
-    rpc Token(LoginAuthRequest) returns (LoginAuthReply){
+    rpc Token(TokenRequest) returns (TokenReply){
         option (google.api.http) = {
             post: "/v1/auth/token",
             body: "*",
@@ -75,8 +75,26 @@ message RegisterAuthReply{
 }
 
 message LoginAuthRequest{
-    string username =1 [(validate.rules).string.min_len = 1];;
-    string password =2 [(validate.rules).string.min_len = 1];;
+    string username =1 [(validate.rules).string.min_len = 1];
+    string password =2 [(validate.rules).string.min_len = 1];
+}
+
+
+message TokenRequest{
+    string grant_type =1 [(validate.rules).string = {in:["","password","refresh_token","authorization_code"]}];
+    string username =2;
+    string password =3;
+    string refresh_token=4;
+}
+
+message TokenReply{
+    string access_token=1;
+    // Bearer
+    string token_type=2;
+    // Refresh token to keep login state
+    string refresh_token=4;
+    // Expires time in seconds
+    int32 expires_in=5;
 }
 
 message LoginAuthReply{
@@ -87,13 +105,21 @@ message LoginAuthReply{
     int32 expires=3;
     // Refresh token to keep login state
     string refresh_token=4;
+    // Expires time in seconds
+    int32 expires_in=5;
 }
 
 message RefreshTokenAuthRequest{
-
+    string refresh_token=4 [(validate.rules).string.min_len = 1];
 }
 message RefreshTokenAuthReply{
-
+    string access_token=1;
+    // Bearer
+    string token_type=2;
+    // Refresh token to keep login state
+    string refresh_token=4;
+    // Expires time in seconds
+    int32 expires_in=5;
 }
 message PasswordlessTokenAuthRequest{
 

@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type AuthClient interface {
 	Register(ctx context.Context, in *RegisterAuthRequest, opts ...grpc.CallOption) (*RegisterAuthReply, error)
 	Login(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthReply, error)
-	Token(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthReply, error)
+	Token(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenReply, error)
 	Refresh(ctx context.Context, in *RefreshTokenAuthRequest, opts ...grpc.CallOption) (*RefreshTokenAuthReply, error)
 	SendPasswordlessToken(ctx context.Context, in *PasswordlessTokenAuthRequest, opts ...grpc.CallOption) (*PasswordlessTokenAuthReply, error)
 	LoginPasswordless(ctx context.Context, in *LoginPasswordlessRequest, opts ...grpc.CallOption) (*LoginPasswordlessReply, error)
@@ -55,8 +55,8 @@ func (c *authClient) Login(ctx context.Context, in *LoginAuthRequest, opts ...gr
 	return out, nil
 }
 
-func (c *authClient) Token(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthReply, error) {
-	out := new(LoginAuthReply)
+func (c *authClient) Token(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenReply, error) {
+	out := new(TokenReply)
 	err := c.cc.Invoke(ctx, "/user.api.auth.v1.Auth/Token", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -124,7 +124,7 @@ func (c *authClient) ValidatePassword(ctx context.Context, in *ValidatePasswordR
 type AuthServer interface {
 	Register(context.Context, *RegisterAuthRequest) (*RegisterAuthReply, error)
 	Login(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
-	Token(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
+	Token(context.Context, *TokenRequest) (*TokenReply, error)
 	Refresh(context.Context, *RefreshTokenAuthRequest) (*RefreshTokenAuthReply, error)
 	SendPasswordlessToken(context.Context, *PasswordlessTokenAuthRequest) (*PasswordlessTokenAuthReply, error)
 	LoginPasswordless(context.Context, *LoginPasswordlessRequest) (*LoginPasswordlessReply, error)
@@ -144,7 +144,7 @@ func (UnimplementedAuthServer) Register(context.Context, *RegisterAuthRequest) (
 func (UnimplementedAuthServer) Login(context.Context, *LoginAuthRequest) (*LoginAuthReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthServer) Token(context.Context, *LoginAuthRequest) (*LoginAuthReply, error) {
+func (UnimplementedAuthServer) Token(context.Context, *TokenRequest) (*TokenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Token not implemented")
 }
 func (UnimplementedAuthServer) Refresh(context.Context, *RefreshTokenAuthRequest) (*RefreshTokenAuthReply, error) {
@@ -215,7 +215,7 @@ func _Auth_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 }
 
 func _Auth_Token_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginAuthRequest)
+	in := new(TokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -227,7 +227,7 @@ func _Auth_Token_Handler(srv interface{}, ctx context.Context, dec func(interfac
 		FullMethod: "/user.api.auth.v1.Auth/Token",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).Token(ctx, req.(*LoginAuthRequest))
+		return srv.(AuthServer).Token(ctx, req.(*TokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -25,7 +25,7 @@ type AuthHTTPServer interface {
 	Register(context.Context, *RegisterAuthRequest) (*RegisterAuthReply, error)
 	SendForgetPasswordToken(context.Context, *ForgetPasswordTokenRequest) (*ForgetPasswordTokenReply, error)
 	SendPasswordlessToken(context.Context, *PasswordlessTokenAuthRequest) (*PasswordlessTokenAuthReply, error)
-	Token(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
+	Token(context.Context, *TokenRequest) (*TokenReply, error)
 	ValidatePassword(context.Context, *ValidatePasswordRequest) (*ValidatePasswordReply, error)
 }
 
@@ -82,19 +82,19 @@ func _Auth_Login0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error 
 
 func _Auth_Token0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in LoginAuthRequest
+		var in TokenRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, "/user.api.auth.v1.Auth/Token")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Token(ctx, req.(*LoginAuthRequest))
+			return srv.Token(ctx, req.(*TokenRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*LoginAuthReply)
+		reply := out.(*TokenReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -221,7 +221,7 @@ type AuthHTTPClient interface {
 	Register(ctx context.Context, req *RegisterAuthRequest, opts ...http.CallOption) (rsp *RegisterAuthReply, err error)
 	SendForgetPasswordToken(ctx context.Context, req *ForgetPasswordTokenRequest, opts ...http.CallOption) (rsp *ForgetPasswordTokenReply, err error)
 	SendPasswordlessToken(ctx context.Context, req *PasswordlessTokenAuthRequest, opts ...http.CallOption) (rsp *PasswordlessTokenAuthReply, err error)
-	Token(ctx context.Context, req *LoginAuthRequest, opts ...http.CallOption) (rsp *LoginAuthReply, err error)
+	Token(ctx context.Context, req *TokenRequest, opts ...http.CallOption) (rsp *TokenReply, err error)
 	ValidatePassword(ctx context.Context, req *ValidatePasswordRequest, opts ...http.CallOption) (rsp *ValidatePasswordReply, err error)
 }
 
@@ -324,8 +324,8 @@ func (c *AuthHTTPClientImpl) SendPasswordlessToken(ctx context.Context, in *Pass
 	return &out, err
 }
 
-func (c *AuthHTTPClientImpl) Token(ctx context.Context, in *LoginAuthRequest, opts ...http.CallOption) (*LoginAuthReply, error) {
-	var out LoginAuthReply
+func (c *AuthHTTPClientImpl) Token(ctx context.Context, in *TokenRequest, opts ...http.CallOption) (*TokenReply, error) {
+	var out TokenReply
 	pattern := "/v1/auth/token"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.auth.v1.Auth/Token"))

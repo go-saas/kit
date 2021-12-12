@@ -1,12 +1,16 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gorilla/handlers"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"net"
+	"strings"
 )
 
 // PatchGrpcOpts Patch grpc options with given service name and configs
@@ -52,4 +56,35 @@ func PatchHttpOpts(opts []http.ServerOption, name string, services *conf.Service
 		)))
 	}
 	return opts
+}
+
+func ClientIP(ctx context.Context) string {
+	if t, ok := transport.FromServerContext(ctx); ok {
+		if ht, ok := t.(*http.Transport); ok {
+			xForwardedFor := ht.Request().Header.Get("X-Forwarded-For")
+			ip := strings.TrimSpace(strings.Split(xForwardedFor, ",")[0])
+			if ip != "" {
+				return ip
+			}
+
+			ip = strings.TrimSpace(ht.Request().Header.Get("X-Real-Ip"))
+			if ip != "" {
+				return ip
+			}
+
+			if ip, _, err := net.SplitHostPort(strings.TrimSpace(ht.Request().RemoteAddr)); err == nil {
+				return ip
+			}
+		}
+	}
+	return ""
+}
+
+func ClientUserAgent(ctx context.Context) string {
+	if t, ok := transport.FromServerContext(ctx); ok {
+		if ht, ok := t.(*http.Transport); ok {
+			return ht.Request().UserAgent()
+		}
+	}
+	return ""
 }

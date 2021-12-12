@@ -87,12 +87,12 @@ func main() {
 		pwdValidatorCfg.MinScore = int(bc.User.PasswordScoreMin)
 	}
 
-	app, cleanup, err := initApp(bc.Services, bc.User, bc.Data, logger, pwdValidatorCfg, &jwt.TokenizerConfig{
+	app, cleanup, err := initApp(bc.Services, bc.Security, bc.User, bc.Data, logger, pwdValidatorCfg, &jwt.TokenizerConfig{
 		ExpireDuration: bc.Security.Jwt.ExpireIn.AsDuration(),
 		Secret:         bc.Security.Jwt.Secret,
 	}, &uow.Config{
 		SupportNestedTransaction: false,
-	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName),http2.NewDefaultWebMultiTenancyOption())
+	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName), http2.NewDefaultWebMultiTenancyOption())
 	if err != nil {
 		panic(err)
 	}

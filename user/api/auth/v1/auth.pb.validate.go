@@ -358,6 +358,234 @@ var _ interface {
 	ErrorName() string
 } = LoginAuthRequestValidationError{}
 
+// Validate checks the field values on TokenRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *TokenRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TokenRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TokenRequestMultiError, or
+// nil if none found.
+func (m *TokenRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TokenRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if _, ok := _TokenRequest_GrantType_InLookup[m.GetGrantType()]; !ok {
+		err := TokenRequestValidationError{
+			field:  "GrantType",
+			reason: "value must be in list [ password refresh_token authorization_code]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Username
+
+	// no validation rules for Password
+
+	// no validation rules for RefreshToken
+
+	if len(errors) > 0 {
+		return TokenRequestMultiError(errors)
+	}
+	return nil
+}
+
+// TokenRequestMultiError is an error wrapping multiple validation errors
+// returned by TokenRequest.ValidateAll() if the designated constraints aren't met.
+type TokenRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TokenRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TokenRequestMultiError) AllErrors() []error { return m }
+
+// TokenRequestValidationError is the validation error returned by
+// TokenRequest.Validate if the designated constraints aren't met.
+type TokenRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TokenRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TokenRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TokenRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TokenRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TokenRequestValidationError) ErrorName() string { return "TokenRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TokenRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTokenRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TokenRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TokenRequestValidationError{}
+
+var _TokenRequest_GrantType_InLookup = map[string]struct{}{
+	"":                   {},
+	"password":           {},
+	"refresh_token":      {},
+	"authorization_code": {},
+}
+
+// Validate checks the field values on TokenReply with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *TokenReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TokenReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TokenReplyMultiError, or
+// nil if none found.
+func (m *TokenReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TokenReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for AccessToken
+
+	// no validation rules for TokenType
+
+	// no validation rules for RefreshToken
+
+	// no validation rules for ExpiresIn
+
+	if len(errors) > 0 {
+		return TokenReplyMultiError(errors)
+	}
+	return nil
+}
+
+// TokenReplyMultiError is an error wrapping multiple validation errors
+// returned by TokenReply.ValidateAll() if the designated constraints aren't met.
+type TokenReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TokenReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TokenReplyMultiError) AllErrors() []error { return m }
+
+// TokenReplyValidationError is the validation error returned by
+// TokenReply.Validate if the designated constraints aren't met.
+type TokenReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TokenReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TokenReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TokenReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TokenReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TokenReplyValidationError) ErrorName() string { return "TokenReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TokenReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTokenReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TokenReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TokenReplyValidationError{}
+
 // Validate checks the field values on LoginAuthReply with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -387,6 +615,8 @@ func (m *LoginAuthReply) validate(all bool) error {
 	// no validation rules for Expires
 
 	// no validation rules for RefreshToken
+
+	// no validation rules for ExpiresIn
 
 	if len(errors) > 0 {
 		return LoginAuthReplyMultiError(errors)
@@ -486,6 +716,17 @@ func (m *RefreshTokenAuthRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if utf8.RuneCountInString(m.GetRefreshToken()) < 1 {
+		err := RefreshTokenAuthRequestValidationError{
+			field:  "RefreshToken",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return RefreshTokenAuthRequestMultiError(errors)
@@ -587,6 +828,14 @@ func (m *RefreshTokenAuthReply) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for AccessToken
+
+	// no validation rules for TokenType
+
+	// no validation rules for RefreshToken
+
+	// no validation rules for ExpiresIn
 
 	if len(errors) > 0 {
 		return RefreshTokenAuthReplyMultiError(errors)
