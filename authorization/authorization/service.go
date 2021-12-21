@@ -14,6 +14,7 @@ type Service interface {
 	Check(ctx context.Context, resource Resource, action Action) (Result, error)
 }
 
+// SubjectContributor receive one subject and retrieve as list of subjects
 type SubjectContributor interface {
 	Process(ctx context.Context, subject Subject) ([]Subject, error)
 }
@@ -55,18 +56,25 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 	}
 	var subjectList []Subject
 
-	addIfNotPresent := func(subject Subject) {
+	addIfNotPresent := func(subject Subject) bool {
 		for _, s := range subjectList {
 			if s.GetIdentity() == subject.GetIdentity() {
-				return
+				return false
 			}
 		}
 		subjectList = append(subjectList, subject)
+		return true
 	}
 	for _, s := range subject {
 		addIfNotPresent(s)
+	}
+	i := 0
+	for {
+		if i == len(subjectList) {
+			break
+		}
 		for _, contributor := range a.opt.SubjectContributorList {
-			if subjects, err := contributor.Process(ctx, s); err != nil {
+			if subjects, err := contributor.Process(ctx, subjectList[i]); err != nil {
 				return NewDisallowAuthorizationResult(nil), err
 			} else {
 				for _, s2 := range subjects {
@@ -74,28 +82,24 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 				}
 			}
 		}
+		i++
 	}
 	var logStr []string
 	for _, s := range subjectList {
 		logStr = append(logStr, s.GetIdentity())
 	}
 	a.log.Debugf("check permission for subject %s action %s to resource %s ", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-	var anyAllow bool
-	for _, s := range subjectList {
-		grantType, err := a.checker.IsGrant(ctx, resource, action, s)
-		if err != nil {
-			return NewDisallowAuthorizationResult(nil), err
-		}
-		if grantType == EffectForbidden {
-			a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-			r := NewDisallowAuthorizationResult(nil)
-			return r, FormatError(ctx, r)
-		}
-		if grantType == EffectGrant {
-			anyAllow = true
-		}
+
+	grantType, err := a.checker.IsGrant(ctx, resource, action, subjectList...)
+	if err != nil {
+		return NewDisallowAuthorizationResult(nil), err
 	}
-	if anyAllow {
+	if grantType == EffectForbidden {
+		a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+		r := NewDisallowAuthorizationResult(nil)
+		return r, FormatError(ctx, r)
+	}
+	if grantType == EffectGrant {
 		a.log.Debugf("check permission for subject %s action %s to resource %s granted", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 		return NewAllowAuthorizationResult(), nil
 	}

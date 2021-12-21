@@ -14,7 +14,7 @@ type PermissionManagementService interface {
 }
 
 type PermissionChecker interface {
-	IsGrant(ctx context.Context, resource Resource, action Action, subject Subject) (Effect, error)
+	IsGrant(ctx context.Context, resource Resource, action Action, subjects ...Subject) (Effect, error)
 }
 
 type permissionBean struct {
@@ -48,27 +48,29 @@ func NewPermissionService(logger log.Logger) *PermissionService {
 	return &PermissionService{log: log.NewHelper(log.With(logger, "module", "authorization.permission"))}
 }
 
-func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, action Action, subject Subject) (Effect, error) {
+func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, action Action, subjects ...Subject) (Effect, error) {
 	p.mux.Lock()
 	defer p.mux.Unlock()
 	var anyAllow bool
-	for _, bean := range p.v {
-		//TODO regex match
-		if match(bean.namespace, resource.GetNamespace()) && match(bean.subject, subject.GetIdentity()) && match(bean.resource, resource.GetIdentity()) && match(bean.action, action.GetIdentity()) {
-			if bean.effect == EffectForbidden {
-				p.log.Debugf("subject %s action %s to resource %s forbidden", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-				return EffectForbidden, nil
-			}
-			if bean.effect == EffectGrant {
-				anyAllow = true
+
+	for _, subject := range subjects {
+		for _, bean := range p.v {
+			if match(bean.namespace, resource.GetNamespace()) && match(bean.subject, subject.GetIdentity()) && match(bean.resource, resource.GetIdentity()) && match(bean.action, action.GetIdentity()) {
+				if bean.effect == EffectForbidden {
+					p.log.Debugf("subject %s action %s to resource %s forbidden", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+					return EffectForbidden, nil
+				}
+				if bean.effect == EffectGrant {
+					anyAllow = true
+				}
 			}
 		}
+		if anyAllow {
+			p.log.Debugf("subject %s action %s to resource %s grant", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+			return EffectGrant, nil
+		}
+		p.log.Debugf("subject %s action %s to resource %s unknown", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 	}
-	if anyAllow {
-		p.log.Debugf("subject %s action %s to resource %s grant", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-		return EffectGrant, nil
-	}
-	p.log.Debugf("subject %s action %s to resource %s unknown", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 	return EffectUnknown, nil
 }
 

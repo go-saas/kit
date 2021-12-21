@@ -6,7 +6,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	shttp "github.com/goxiaoy/go-saas/common/http"
 	acl "github.com/ory/keto/proto/ory/keto/acl/v1alpha1"
 	"google.golang.org/grpc"
 )
@@ -15,8 +14,8 @@ const ServiceName = "keto"
 
 type GrpcConn grpc.ClientConnInterface
 
-func NewGrpcConn(services *conf.Services, hmtOpt *shttp.WebMultiTenancyOption, opts ...grpc2.ClientOption) (GrpcConn, func()) {
-	return api.NewGrpcConn(ServiceName, services, true, hmtOpt, opts...)
+func NewGrpcConn(clientName api.ClientName, services *conf.Services, opt *api.Option, tokenMgr api.TokenManager, opts ...grpc2.ClientOption) (GrpcConn, func()) {
+	return api.NewGrpcConn(clientName, ServiceName, services, true, opt, tokenMgr, opts...)
 }
 
 func NewCheckServiceClient(conn GrpcConn) acl.CheckServiceClient {

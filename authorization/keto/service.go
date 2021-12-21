@@ -16,7 +16,7 @@ func NewPermissionChecker(client acl.CheckServiceClient) *PermissionChecker {
 	return &PermissionChecker{client}
 }
 
-func (k *PermissionChecker) IsGrant(ctx context.Context, resource authorization.Resource, action authorization.Action, subject authorization.Subject) (authorization.Effect, error) {
+func (k *PermissionChecker) IsGrant(ctx context.Context, resource authorization.Resource, action authorization.Action, subjects ...authorization.Subject) (authorization.Effect, error) {
 	req := &acl.CheckRequest{}
 
 	req.Namespace = resource.GetNamespace()
@@ -25,17 +25,18 @@ func (k *PermissionChecker) IsGrant(ctx context.Context, resource authorization.
 	if action != nil {
 		req.Relation = action.GetIdentity()
 	}
-	if subject != nil {
+	for _, subject := range subjects {
 		req.Subject = &acl.Subject{Ref: &acl.Subject_Id{Id: subject.GetIdentity()}}
+		//TODO get snaptoken from context
+		resp, err := k.client.Check(ctx, req)
+		if err != nil {
+			return authorization.EffectUnknown, err
+		}
+		//TODO keto do not support multiple subjects
+		if !resp.Allowed {
+			return authorization.EffectForbidden, nil
+		}
+
 	}
-	//TODO get snaptoken from context
-	resp, err := k.client.Check(ctx, req)
-	if err != nil {
-		return authorization.EffectUnknown, err
-	}
-	if resp.Allowed {
-		return authorization.EffectGrant, nil
-	} else {
-		return authorization.EffectForbidden, nil
-	}
+	return authorization.EffectGrant, nil
 }
