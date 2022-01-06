@@ -17,6 +17,7 @@ type Role struct {
 	gorm2.MultiTenancy
 	Name           string `json:"name" gorm:"index"`
 	NormalizedName string `json:"normalized_name" gorm:"index"`
+	IsPreserved bool `json:"is_preserved"`
 }
 
 // RoleRepo crud role

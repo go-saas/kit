@@ -24,6 +24,7 @@ func (r *RoleSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	seedRoles := []*Role{
 		{
 			Name: Admin,
+			IsPreserved: true,
 		},
 	}
 	for _, sr := range seedRoles {

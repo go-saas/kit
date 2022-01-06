@@ -12,6 +12,9 @@ import (
 const _ = errors.SupportPackageIsVersion1
 
 func IsInvalidCredentials(err error) bool {
+	if err == nil {
+		return false
+	}
 	e := errors.FromError(err)
 	return e.Reason == ErrorReason_INVALID_CREDENTIALS.String() && e.Code == 400
 }

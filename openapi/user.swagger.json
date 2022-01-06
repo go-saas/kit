@@ -1425,6 +1425,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "isPreserved": {
+          "type": "boolean"
         }
       }
     },

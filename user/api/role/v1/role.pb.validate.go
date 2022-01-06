@@ -460,6 +460,8 @@ func (m *Role) validate(all bool) error {
 
 	// no validation rules for Name
 
+	// no validation rules for IsPreserved
+
 	if len(errors) > 0 {
 		return RoleMultiError(errors)
 	}
