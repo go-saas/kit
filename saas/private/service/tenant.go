@@ -6,18 +6,18 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
-	"github.com/goxiaoy/go-saas-kit/saas/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type TenantService struct {
 	pb.UnimplementedTenantServiceServer
 	useCase *biz.TenantUseCase
-	auth authorization.Service
+	auth    authorization.Service
 }
 
-func NewTenantService(useCase *biz.TenantUseCase,auth authorization.Service) *TenantService {
-	return &TenantService{useCase: useCase,auth: auth}
+func NewTenantService(useCase *biz.TenantUseCase, auth authorization.Service) *TenantService {
+	return &TenantService{useCase: useCase, auth: auth}
 }
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {
@@ -25,7 +25,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("tenant", "*"), authorization.CreateAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
-		return nil, errors.Forbidden("","")
+		return nil, errors.Forbidden("", "")
 	}
 
 	disPlayName := req.Name
@@ -48,7 +48,7 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("tenant", req.Tenant.Id), authorization.UpdateAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
-		return nil, errors.Forbidden("","")
+		return nil, errors.Forbidden("", "")
 	}
 
 	t, err := s.useCase.Get(ctx, req.Tenant.Id)
@@ -89,7 +89,7 @@ func (s *TenantService) DeleteTenant(ctx context.Context, req *pb.DeleteTenantRe
 	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("tenant", req.Id), authorization.DeleteAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
-		return nil, errors.Forbidden("","")
+		return nil, errors.Forbidden("", "")
 	}
 
 	if err := s.useCase.Delete(ctx, req.Id); err != nil {
@@ -107,13 +107,13 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 
 	if t == nil {
 		//align with later auth check
-		return nil, errors.Forbidden("","")
+		return nil, errors.Forbidden("", "")
 	}
 
 	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("tenant", t.ID), authorization.GetAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
-		return nil, errors.Forbidden("","")
+		return nil, errors.Forbidden("", "")
 	}
 
 	return mapBizTenantToApi(t), nil
@@ -123,7 +123,7 @@ func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantReques
 	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("tenant", "*"), authorization.ListAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
-		return nil, errors.Forbidden("","")
+		return nil, errors.Forbidden("", "")
 	}
 
 	ret := &pb.ListTenantReply{}

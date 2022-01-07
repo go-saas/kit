@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	pb "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/mennanov/fmutils"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

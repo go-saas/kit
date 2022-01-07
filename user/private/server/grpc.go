@@ -19,7 +19,7 @@ import (
 	v14 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/service"
+	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common"
 	http2 "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/kratos/saas"

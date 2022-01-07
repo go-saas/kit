@@ -6,7 +6,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/auth"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 

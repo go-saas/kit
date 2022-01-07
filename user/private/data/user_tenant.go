@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 	"errors"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"gorm.io/gorm"
 	"time"
 )

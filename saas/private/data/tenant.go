@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
-	"github.com/goxiaoy/go-saas-kit/saas/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"github.com/goxiaoy/go-saas/gorm"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	gg "gorm.io/gorm"

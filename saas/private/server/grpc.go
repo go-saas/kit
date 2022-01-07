@@ -16,7 +16,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/api"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
-	"github.com/goxiaoy/go-saas-kit/saas/internal_/service"
+	"github.com/goxiaoy/go-saas-kit/saas/private/service"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/kratos/saas"

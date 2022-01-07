@@ -4,9 +4,9 @@ import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
-	"github.com/goxiaoy/go-saas-kit/saas/internal_/biz"
-	"github.com/goxiaoy/go-saas-kit/saas/internal_/conf"
-	"github.com/goxiaoy/go-saas-kit/saas/internal_/data"
+	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
+	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
+	"github.com/goxiaoy/go-saas-kit/saas/private/data"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
 )

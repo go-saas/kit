@@ -8,7 +8,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 

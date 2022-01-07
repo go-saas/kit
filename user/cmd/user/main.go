@@ -5,8 +5,8 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/data"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
+	"github.com/goxiaoy/go-saas-kit/user/private/data"
 	http2 "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
@@ -18,7 +18,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/conf"
+	"github.com/goxiaoy/go-saas-kit/user/private/conf"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"

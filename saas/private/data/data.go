@@ -5,7 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
-	"github.com/goxiaoy/go-saas-kit/saas/internal_/conf"
+	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"

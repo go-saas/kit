@@ -4,7 +4,7 @@ import (
 	"errors"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"gorm.io/gorm"
 )

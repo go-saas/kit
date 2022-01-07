@@ -4,7 +4,7 @@ import (
 	"context"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/mennanov/fmutils"
 
 	pb "github.com/goxiaoy/go-saas-kit/user/api/role/v1"

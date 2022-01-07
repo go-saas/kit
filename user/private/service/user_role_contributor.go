@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 )
 
 type UserRoleContributor struct {

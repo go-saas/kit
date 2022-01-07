@@ -2,10 +2,10 @@ package server
 
 import (
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/conf"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/data"
-	seed2 "github.com/goxiaoy/go-saas-kit/user/internal_/seed"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
+	"github.com/goxiaoy/go-saas-kit/user/private/conf"
+	"github.com/goxiaoy/go-saas-kit/user/private/data"
+	seed2 "github.com/goxiaoy/go-saas-kit/user/private/seed"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
 )

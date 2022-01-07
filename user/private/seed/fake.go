@@ -6,7 +6,7 @@ import (
 	_ "embed"
 	"errors"
 	mapstructure2 "github.com/goxiaoy/go-saas-kit/pkg/mapstructure"
-	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v2"

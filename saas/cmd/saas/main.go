@@ -16,8 +16,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/goxiaoy/go-saas-kit/saas/internal_/conf"
-	"github.com/goxiaoy/go-saas-kit/saas/internal_/data"
+	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
+	"github.com/goxiaoy/go-saas-kit/saas/private/data"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
