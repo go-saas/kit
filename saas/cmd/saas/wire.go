@@ -26,6 +26,6 @@ import (
 )
 
 // initApp init kratos application.
-func initApp(*conf2.Services, *conf.Data, log.Logger, *jwt2.TokenizerConfig, *uow.Config, *gorm.Config, *http.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(*conf2.Services, *conf2.Security, *conf.Data, log.Logger, *uow.Config, *gorm.Config, *http.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
 	panic(wire.Build(authorization.ProviderSet, jwt2.ProviderSet, server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, api.GrpcProviderSet, api2.DefaultProviderSet, newApp))
 }

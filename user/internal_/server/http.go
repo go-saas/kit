@@ -8,10 +8,9 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/go-kratos/swagger-api/openapiv2"
-	"github.com/goxiaoy/go-saas-kit/auth/jwt"
-	"github.com/goxiaoy/go-saas-kit/auth/middleware/authentication"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth/middleware/authentication"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -28,8 +27,17 @@ import (
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manager, mOpt *http2.WebMultiTenancyOption, apiOpt *api2.Option, ts common.TenantStore, logger log.Logger,
-	user *service.UserService, account *service.AccountService, auth *service.AuthService, role *service.RoleService) *http.Server {
+func NewHTTPServer(c *conf.Services,
+	tokenizer jwt.Tokenizer,
+	uowMgr uow2.Manager,
+	mOpt *http2.WebMultiTenancyOption,
+	apiOpt *api2.Option,
+	ts common.TenantStore,
+	logger log.Logger,
+	user *service.UserService,
+	account *service.AccountService,
+	auth *service.AuthService,
+	role *service.RoleService) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -45,9 +53,20 @@ func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, uowMgr uow2.Manage
 	}
 	opts = server.PatchHttpOpts(opts, api.ServiceName, c)
 
-	openAPIhandler := openapiv2.NewHandler()
 	srv := http.NewServer(opts...)
-	srv.HandlePrefix("/q/", openAPIhandler)
+
+	//config := &op.Config{
+	//	Issuer:    "http://localhost:9998/",
+	//	CryptoKey: sha256.Sum256([]byte("test")),
+	//}
+	//ctx := context.Background()
+	//storage := mock.NewAuthStorage()
+	//handler, err := op.NewOpenIDProvider(ctx, config, storage, op.WithCustomTokenEndpoint(op.NewEndpoint("test")))
+	//if err != nil {
+	//	panic(err)
+	//}
+	//router := handler.HttpHandler().(*mux.Router)
+	//srv.HandlePrefix("/", router)
 	v12.RegisterUserServiceHTTPServer(srv, user)
 	v13.RegisterAccountHTTPServer(srv, account)
 	v14.RegisterAuthHTTPServer(srv, auth)

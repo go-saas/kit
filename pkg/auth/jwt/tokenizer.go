@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"github.com/golang-jwt/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"time"
 )
 
@@ -42,13 +43,21 @@ type TokenizerConfig struct {
 	Secret         string
 }
 
+func NewTokenizerConfig(c *conf.Security) *TokenizerConfig {
+	return &TokenizerConfig{
+		Issuer:         c.Jwt.Issuer,
+		ExpireDuration: c.Jwt.ExpireIn.AsDuration(),
+		Secret:         c.Jwt.Secret,
+	}
+}
+
 func NewTokenizer(c *TokenizerConfig) Tokenizer {
-	return tokenizer{config: c}
+	return &tokenizer{config: c}
 }
 
 var _ Tokenizer = (*tokenizer)(nil)
 
-func (t tokenizer) Issue(claims *Claims, duration time.Duration) (token string, err error) {
+func (t *tokenizer) Issue(claims *Claims, duration time.Duration) (token string, err error) {
 	claims.StandardClaims.NotBefore = time.Now().Unix()
 	claims.StandardClaims.IssuedAt = time.Now().Unix()
 	if duration > 0 {
@@ -56,17 +65,18 @@ func (t tokenizer) Issue(claims *Claims, duration time.Duration) (token string, 
 	} else {
 		claims.StandardClaims.ExpiresAt = time.Now().Add(t.config.ExpireDuration).Unix()
 	}
+	claims.Issuer = t.config.Issuer
 	token, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(t.config.Secret))
 	return
 }
 
-func (t tokenizer) Parse(token string) (claims *Claims, err error) {
+func (t *tokenizer) Parse(token string) (claims *Claims, err error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(t.config.Secret), nil
 	})
 
 	if tokenClaims != nil {
-		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid && claims.VerifyIssuer(t.config.Issuer, false) {
 			return claims, nil
 		}
 	}
