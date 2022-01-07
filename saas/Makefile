@@ -1,6 +1,6 @@
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
-INTERNAL_PROTO_FILES=$(shell find internal_ -name *.proto)
+INTERNAL_PROTO_FILES=$(shell find private -name *.proto)
 API_PROTO_FILES=$(shell find ../proto/saas/api -name *.proto)
 BUF_VERSION=v1.0.0-rc10
 
