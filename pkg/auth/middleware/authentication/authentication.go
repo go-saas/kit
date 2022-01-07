@@ -4,19 +4,19 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/goxiaoy/go-saas-kit/auth/current"
-	"github.com/goxiaoy/go-saas-kit/auth/jwt"
-	"github.com/goxiaoy/go-saas-kit/auth/middleware/extract_claim"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth"
+	jwt2 "github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth/middleware/extract_claim"
 )
 
-func ServerExtractAndAuth(tokenizer jwt.Tokenizer, logger log.Logger) middleware.Middleware {
+func ServerExtractAndAuth(tokenizer jwt2.Tokenizer, logger log.Logger) middleware.Middleware {
 	return middleware.Chain(extract_claim.ServerExtract(tokenizer, logger), ServerAuth())
 }
 
 func ServerAuth() middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
-			if claims, ok := jwt.FromClaimsContext(ctx); !ok {
+			if claims, ok := jwt2.FromClaimsContext(ctx); !ok {
 				//no jwt
 				return handler(ctx, req)
 			} else {
@@ -27,11 +27,11 @@ func ServerAuth() middleware.Middleware {
 				} else {
 					uid = claims.Uid
 				}
-				uc := current.NewUserContext(ctx, current.NewUserInfo(uid))
+				uc := auth.NewUserContext(ctx, auth.NewUserInfo(uid))
 				// set client id context
 				clientId := claims.ClientId
 				if clientId != "" {
-					uc = current.NewClientContext(uc, clientId)
+					uc = auth.NewClientContext(uc, clientId)
 				}
 				return handler(uc, req)
 			}

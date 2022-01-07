@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/auth/current"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
 )
@@ -48,12 +48,12 @@ func (u *UserContributor) RecoverContext(ctx context.Context, headers Header) (c
 		return ctx, nil
 	}
 	user := headers.Get("user")
-	return current.NewUserContext(ctx, current.NewUserInfo(user)), nil
+	return auth.NewUserContext(ctx, auth.NewUserInfo(user)), nil
 }
 
 func (u *UserContributor) CreateHeader(ctx context.Context) map[string]string {
 	res := map[string]string{}
-	if userInfo, ok := current.FromUserContext(ctx); ok {
+	if userInfo, ok := auth.FromUserContext(ctx); ok {
 		res["user"] = userInfo.GetId()
 	}
 	return res

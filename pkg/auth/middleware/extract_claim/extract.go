@@ -6,19 +6,19 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/goxiaoy/go-saas-kit/auth/jwt"
+	jwt2 "github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
 	"strings"
 )
 
-func ServerExtract(tokenizer jwt.Tokenizer, logger log.Logger) middleware.Middleware {
+func ServerExtract(tokenizer jwt2.Tokenizer, logger log.Logger) middleware.Middleware {
 	log := log.NewHelper(log.With(logger, "module", "auth.extract_claim"))
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
 			t := ""
 			if info, ok := transport.FromServerContext(ctx); ok {
-				auth := info.RequestHeader().Get(jwt.AuthorizationHeader)
+				auth := info.RequestHeader().Get(jwt2.AuthorizationHeader)
 				if auth != "" {
-					splitToken := strings.Split(auth, jwt.BearerTokenType)
+					splitToken := strings.Split(auth, jwt2.BearerTokenType)
 					if len(splitToken) == 2 {
 						t = strings.TrimSpace(splitToken[1])
 					}
@@ -40,7 +40,7 @@ func ServerExtract(tokenizer jwt.Tokenizer, logger log.Logger) middleware.Middle
 						log.Error(err)
 						return handler(ctx, req)
 					}
-					return handler(jwt.NewClaimsContext(jwt.NewJWTContext(ctx, t), claims), req)
+					return handler(jwt2.NewClaimsContext(jwt2.NewJWTContext(ctx, t), claims), req)
 				}
 			}
 			return handler(ctx, req)

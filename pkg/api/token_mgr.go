@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/auth/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"time"
 )

@@ -2,7 +2,7 @@ package gorm
 
 import (
 	"fmt"
-	"github.com/goxiaoy/go-saas-kit/auth/current"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth"
 	"gorm.io/gorm"
 	"reflect"
 	"time"
@@ -64,7 +64,7 @@ func isAuditable(db *gorm.DB) (isAuditable bool) {
 }
 
 func getCurrentUser(db *gorm.DB) (string, bool) {
-	if u, ok := current.FromUserContext(db.Statement.Context); ok {
+	if u, ok := auth.FromUserContext(db.Statement.Context); ok {
 		return u.GetId(), true
 	}
 	return "", false

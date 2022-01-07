@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/google/uuid"
-	"github.com/goxiaoy/go-saas-kit/auth/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"

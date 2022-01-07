@@ -3,7 +3,7 @@ package authorization
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/auth/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
 )
 
 type Result struct {

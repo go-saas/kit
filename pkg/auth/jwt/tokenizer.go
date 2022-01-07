@@ -37,6 +37,7 @@ type tokenizer struct {
 }
 
 type TokenizerConfig struct {
+	Issuer         string
 	ExpireDuration time.Duration
 	Secret         string
 }

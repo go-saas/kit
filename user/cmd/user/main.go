@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"github.com/goxiaoy/go-saas-kit/auth/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/data"

@@ -1,4 +1,4 @@
-package current
+package auth
 
 import "context"
 

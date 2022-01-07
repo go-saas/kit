@@ -10,9 +10,9 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/auth/jwt"
 	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
+	jwt2 "github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/biz"
 	"github.com/goxiaoy/go-saas-kit/saas/internal_/conf"
@@ -26,6 +26,6 @@ import (
 )
 
 // initApp init kratos application.
-func initApp(*conf2.Services, *conf.Data, log.Logger, *jwt.TokenizerConfig, *uow.Config, *gorm.Config, *http.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
-	panic(wire.Build(authorization.ProviderSet, jwt.ProviderSet, server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, api.GrpcProviderSet, api2.DefaultProviderSet, newApp))
+func initApp(*conf2.Services, *conf.Data, log.Logger, *jwt2.TokenizerConfig, *uow.Config, *gorm.Config, *http.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
+	panic(wire.Build(authorization.ProviderSet, jwt2.ProviderSet, server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, api.GrpcProviderSet, api2.DefaultProviderSet, newApp))
 }

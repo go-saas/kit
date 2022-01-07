@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/auth"
+	"github.com/goxiaoy/go-saas-kit/pkg/auth"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/internal_/biz"
