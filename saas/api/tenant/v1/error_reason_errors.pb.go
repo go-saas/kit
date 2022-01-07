@@ -12,6 +12,9 @@ import (
 const _ = errors.SupportPackageIsVersion1
 
 func IsDuplicateTenantName(err error) bool {
+	if err == nil {
+		return false
+	}
 	e := errors.FromError(err)
 	return e.Reason == ErrorReason_DUPLICATE_TENANT_NAME.String() && e.Code == 400
 }
