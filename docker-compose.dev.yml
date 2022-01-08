@@ -13,4 +13,4 @@ services:
   saas:
     build:
       context: .
-      dockerfile: ./user/Dockerfile
+      dockerfile: ./saas/Dockerfile
