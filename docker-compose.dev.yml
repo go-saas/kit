@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  api_docs:
+    build:
+      context: .
+      dockerfile: ./openapi/Dockerfile
+
+  user:
+    build:
+      context: .
+      dockerfile: ./user/Dockerfile
+
+  saas:
+    build:
+      context: .
+      dockerfile: ./user/Dockerfile

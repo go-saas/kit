@@ -35,12 +35,13 @@ data:
   endpoints:
     databases:
       user:
-        debug: false
         driver: mysql
-        source: root:rZakvdyjAmz73J8p@tcp(127.0.0.1:3309)/user?parseTime=true
+        source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true
+        table_prefix: kit_user_
       saas:
         driver: mysql
-        source: root:rZakvdyjAmz73J8p@tcp(127.0.0.1:3309)/saas?parseTime=true
+        source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true
+        table_prefix: kit_saas_
 
   redis:
     addr: 127.0.0.1:6379
@@ -51,7 +52,7 @@ user:
   password_score_min: 0
   admin:
     username: admin
-    password: zfe9R23Crbi7DybS
+    password: youShouldChangeThis@123
 
 security:
   jwt:
