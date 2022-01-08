@@ -20,9 +20,9 @@ services:
         timeout: 200s
   services:
     user:
-      grpc_endpoint: localhost:8501
+      grpc_endpoint: user:8501
     saas:
-      grpc_endpoint: localhost:8521
+      grpc_endpoint: saas:8521
   clients:
     user:
       client_id: user-golang
