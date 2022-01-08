@@ -29,7 +29,7 @@
     "test:gzip": "npx http-server dist --cors --gzip -c-1",
     "test:br": "npx http-server dist --cors --brotli -c-1",
     "reinstall": "rimraf yarn.lock && rimraf package.lock.json && rimraf node_modules && npm run bootstrap",
-    "prepare": "husky install",
+    "prepare": "cd .. && husky install web/.husky",
     "gen:icon": "esno ./build/generate/icon/index.ts"
   },
   "dependencies": {
@@ -133,8 +133,8 @@
     "vue-tsc": "^0.28.10"
   },
   "resolutions": {
-    "//": "Used to install imagemin dependencies, because imagemin may not be installed in China. If it is abroad, you can delete it",
-    "bin-wrapper": "npm:bin-wrapper-china",
+    "bin-wrapper": "npm:bin-wrapper-china@0.1.0",
+    "gifsicle": "5.2.0",
     "rollup": "^2.56.3"
   },
   "repository": {
