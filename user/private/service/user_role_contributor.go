@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
+	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 )
 
@@ -14,8 +14,8 @@ func NewUserRoleContributor(userRepo biz.UserRepo) *UserRoleContributor {
 	return &UserRoleContributor{userRepo: userRepo}
 }
 
-func (u *UserRoleContributor) Process(ctx context.Context, subject authorization.Subject) ([]authorization.Subject, error) {
-	if us, ok := subject.(*authorization.UserSubject); ok {
+func (u *UserRoleContributor) Process(ctx context.Context, subject authorization2.Subject) ([]authorization2.Subject, error) {
+	if us, ok := subject.(*authorization2.UserSubject); ok {
 		if us.GetUserId() != "" {
 			user, err := u.userRepo.FindByID(ctx, us.GetUserId())
 			if err != nil {
@@ -28,9 +28,9 @@ func (u *UserRoleContributor) Process(ctx context.Context, subject authorization
 			if err != nil {
 				return nil, err
 			}
-			roleSubjects := make([]authorization.Subject, len(roles))
+			roleSubjects := make([]authorization2.Subject, len(roles))
 			for i := range roles {
-				roleSubjects[i] = authorization.NewRoleSubject(roles[i].ID.String())
+				roleSubjects[i] = authorization2.NewRoleSubject(roles[i].ID.String())
 			}
 			return roleSubjects, nil
 		}
@@ -38,4 +38,4 @@ func (u *UserRoleContributor) Process(ctx context.Context, subject authorization
 	return nil, nil
 }
 
-var _ authorization.SubjectContributor = (*UserRoleContributor)(nil)
+var _ authorization2.SubjectContributor = (*UserRoleContributor)(nil)

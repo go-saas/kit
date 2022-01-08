@@ -3,7 +3,7 @@ package biz
 import (
 	"context"
 	"github.com/ahmetb/go-linq/v3"
-	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
+	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas/seed"
 )
 
@@ -13,17 +13,17 @@ const AdminPasswordKey = "admin_password"
 
 type RoleSeed struct {
 	rm         *RoleManager
-	permission authorization.PermissionManagementService
+	permission authorization2.PermissionManagementService
 }
 
-func NewRoleSeed(roleMgr *RoleManager, permission authorization.PermissionManagementService) *RoleSeed {
+func NewRoleSeed(roleMgr *RoleManager, permission authorization2.PermissionManagementService) *RoleSeed {
 	return &RoleSeed{rm: roleMgr, permission: permission}
 }
 
 func (r *RoleSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	seedRoles := []*Role{
 		{
-			Name: Admin,
+			Name:        Admin,
 			IsPreserved: true,
 		},
 	}
@@ -38,7 +38,7 @@ func (r *RoleSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 			}
 		}
 		if role.Name == Admin {
-			r.permission.AddGrant(ctx, authorization.NewEntityResource("*", "*"), authorization.ActionStr("*"), authorization.NewRoleSubject(role.ID.String()), authorization.EffectGrant)
+			r.permission.AddGrant(ctx, authorization2.NewEntityResource("*", "*"), authorization2.ActionStr("*"), authorization2.NewRoleSubject(role.ID.String()), authorization2.EffectGrant)
 		}
 	}
 	return nil

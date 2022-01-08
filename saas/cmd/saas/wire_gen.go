@@ -10,9 +10,9 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
@@ -46,8 +46,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	userServiceClient := api2.NewUserGrpcClient(grpcConn)
 	remoteRoleContributor := api2.NewRemoteRoleContributor(userServiceClient)
 	authorizationOption := service.NewAuthorizationOption(remoteRoleContributor)
-	permissionService := authorization.NewPermissionService(logger)
-	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(authorizationOption, permissionService, logger)
+	permissionService := authorization2.NewPermissionService(logger)
+	defaultAuthorizationService := authorization2.NewDefaultAuthorizationService(authorizationOption, permissionService, logger)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService)
 	httpServer := server.NewHTTPServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, logger)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, logger)

@@ -1,4 +1,4 @@
-package auth
+package authn
 
 type UserInfo interface {
 	GetId() string

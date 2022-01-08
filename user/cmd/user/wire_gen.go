@@ -9,9 +9,9 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -51,8 +51,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userManager := biz.NewUserManager(userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, logger)
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
 	authorizationOption := service.NewAuthorizationOption(userRoleContributor)
-	permissionService := authorization.NewPermissionService(logger)
-	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(authorizationOption, permissionService, logger)
+	permissionService := authorization2.NewPermissionService(logger)
+	defaultAuthorizationService := authorization2.NewDefaultAuthorizationService(authorizationOption, permissionService, logger)
 	userService := service.NewUserService(userManager, defaultAuthorizationService)
 	accountService := service.NewAccountService(userManager)
 	roleRepo := data.NewRoleRepo(dataData)

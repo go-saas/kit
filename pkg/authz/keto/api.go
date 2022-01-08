@@ -3,8 +3,8 @@ package keto
 import (
 	grpc2 "github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	acl "github.com/ory/keto/proto/ory/keto/acl/v1alpha1"
 	"google.golang.org/grpc"

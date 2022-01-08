@@ -2,7 +2,7 @@ package keto
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
+	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/ory/keto/proto/ory/keto/acl/v1alpha1"
 )
 
@@ -10,13 +10,13 @@ type PermissionChecker struct {
 	client acl.CheckServiceClient
 }
 
-var _ authorization.PermissionChecker = (*PermissionChecker)(nil)
+var _ authorization2.PermissionChecker = (*PermissionChecker)(nil)
 
 func NewPermissionChecker(client acl.CheckServiceClient) *PermissionChecker {
 	return &PermissionChecker{client}
 }
 
-func (k *PermissionChecker) IsGrant(ctx context.Context, resource authorization.Resource, action authorization.Action, subjects ...authorization.Subject) (authorization.Effect, error) {
+func (k *PermissionChecker) IsGrant(ctx context.Context, resource authorization2.Resource, action authorization2.Action, subjects ...authorization2.Subject) (authorization2.Effect, error) {
 	req := &acl.CheckRequest{}
 
 	req.Namespace = resource.GetNamespace()
@@ -30,13 +30,13 @@ func (k *PermissionChecker) IsGrant(ctx context.Context, resource authorization.
 		//TODO get snaptoken from context
 		resp, err := k.client.Check(ctx, req)
 		if err != nil {
-			return authorization.EffectUnknown, err
+			return authorization2.EffectUnknown, err
 		}
 		//TODO keto do not support multiple subjects
 		if !resp.Allowed {
-			return authorization.EffectForbidden, nil
+			return authorization2.EffectForbidden, nil
 		}
 
 	}
-	return authorization.EffectGrant, nil
+	return authorization2.EffectGrant, nil
 }

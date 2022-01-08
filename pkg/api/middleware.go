@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
-	jwt2 "github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
+	jwt2 "github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"strings"
 )

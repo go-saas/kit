@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/pkg/auth"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -25,7 +25,7 @@ func NewAccountService(um *biz.UserManager) *AccountService {
 }
 
 func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileRequest) (*pb.GetProfileResponse, error) {
-	userInfo, err := auth.ErrIfUnauthenticated(ctx)
+	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	return res, nil
 }
 func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {
-	_, err := auth.ErrIfUnauthenticated(ctx)
+	_, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfil
 	return &pb.UpdateProfileResponse{}, nil
 }
 func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsRequest) (*pb.GetSettingsResponse, error) {
-	_, err := auth.ErrIfUnauthenticated(ctx)
+	_, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -80,14 +80,14 @@ func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsReq
 	return &pb.GetSettingsResponse{}, nil
 }
 func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSettingsRequest) (*pb.UpdateSettingsResponse, error) {
-	_, err := auth.ErrIfUnauthenticated(ctx)
+	_, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.UpdateSettingsResponse{}, nil
 }
 func (s *AccountService) GetAddresses(ctx context.Context, req *pb.GetAddressesRequest) (*pb.GetAddressesReply, error) {
-	_, err := auth.ErrIfUnauthenticated(ctx)
+	_, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (s *AccountService) GetAddresses(ctx context.Context, req *pb.GetAddressesR
 }
 
 func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddressesRequest) (*pb.UpdateAddressesReply, error) {
-	_, err := auth.ErrIfUnauthenticated(ctx)
+	_, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}

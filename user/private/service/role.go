@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/authorization/authorization"
+	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/mennanov/fmutils"
 
@@ -12,16 +12,16 @@ import (
 
 type RoleService struct {
 	repo biz.RoleRepo
-	auth authorization.Service
+	auth authorization2.Service
 	pb.UnimplementedRoleServiceServer
 }
 
-func NewRoleServiceService(repo biz.RoleRepo, auth authorization.Service) *RoleService {
+func NewRoleServiceService(repo biz.RoleRepo, auth authorization2.Service) *RoleService {
 	return &RoleService{repo: repo, auth: auth}
 }
 
 func (s *RoleService) ListRoles(ctx context.Context, req *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
-	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.role", "*"), authorization.ListAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization2.NewEntityResource("user.role", "*"), authorization2.ListAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -72,7 +72,7 @@ func (s *RoleService) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.
 	if u == nil {
 		return nil, errors2.Forbidden("", "")
 	}
-	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.role", u.ID.String()), authorization.GetAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization2.NewEntityResource("user.role", u.ID.String()), authorization2.GetAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")

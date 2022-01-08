@@ -9,8 +9,8 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/auth/middleware/authentication"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/authentication"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -55,18 +55,6 @@ func NewHTTPServer(c *conf.Services,
 
 	srv := http.NewServer(opts...)
 
-	//config := &op.Config{
-	//	Issuer:    "http://localhost:9998/",
-	//	CryptoKey: sha256.Sum256([]byte("test")),
-	//}
-	//ctx := context.Background()
-	//storage := mock.NewAuthStorage()
-	//handler, err := op.NewOpenIDProvider(ctx, config, storage, op.WithCustomTokenEndpoint(op.NewEndpoint("test")))
-	//if err != nil {
-	//	panic(err)
-	//}
-	//router := handler.HttpHandler().(*mux.Router)
-	//srv.HandlePrefix("/", router)
 	v12.RegisterUserServiceHTTPServer(srv, user)
 	v13.RegisterAccountHTTPServer(srv, account)
 	v14.RegisterAuthHTTPServer(srv, auth)

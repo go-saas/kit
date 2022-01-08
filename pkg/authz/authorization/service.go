@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/pkg/auth"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"strings"
 )
 
@@ -111,11 +111,11 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action) (Result, error) {
 	var subjects []Subject
 	var userId string
-	if userInfo, ok := auth.FromUserContext(ctx); ok {
+	if userInfo, ok := authn.FromUserContext(ctx); ok {
 		userId = userInfo.GetId()
 		subjects = append(subjects, NewUserSubject(userId))
 	}
-	if clientId, ok := auth.FromClientContext(ctx); ok {
+	if clientId, ok := authn.FromClientContext(ctx); ok {
 		subjects = append(subjects, NewClientSubject(clientId))
 	}
 	return a.CheckForSubjects(ctx, resource, action, subjects...)

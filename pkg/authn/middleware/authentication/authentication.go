@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/goxiaoy/go-saas-kit/pkg/auth"
-	jwt2 "github.com/goxiaoy/go-saas-kit/pkg/auth/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/auth/middleware/extract_claim"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn"
+	jwt2 "github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/extract_claim"
 )
 
 func ServerExtractAndAuth(tokenizer jwt2.Tokenizer, logger log.Logger) middleware.Middleware {
@@ -27,11 +27,11 @@ func ServerAuth() middleware.Middleware {
 				} else {
 					uid = claims.Uid
 				}
-				uc := auth.NewUserContext(ctx, auth.NewUserInfo(uid))
+				uc := authn.NewUserContext(ctx, authn.NewUserInfo(uid))
 				// set client id context
 				clientId := claims.ClientId
 				if clientId != "" {
-					uc = auth.NewClientContext(uc, clientId)
+					uc = authn.NewClientContext(uc, clientId)
 				}
 				return handler(uc, req)
 			}
