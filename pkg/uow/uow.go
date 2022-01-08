@@ -14,6 +14,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	g "gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 func NewGormConfig(databases *conf.Endpoints, name string) *gorm.Config {
@@ -25,7 +26,9 @@ func NewGormConfig(databases *conf.Endpoints, name string) *gorm.Config {
 	}
 	cfg := &gorm.Config{
 		Debug: c.Debug,
-		Cfg:   &g.Config{},
+		Cfg: &g.Config{NamingStrategy: schema.NamingStrategy{
+			TablePrefix: c.TablePrefix,
+		}},
 	}
 	if c.Driver == "mysql" {
 		cfg.Dialect = func(s string) g.Dialector {

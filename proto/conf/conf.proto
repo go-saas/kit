@@ -50,7 +50,8 @@ message Services{
 message Database {
   string driver = 1;
   string source = 2;
-  bool  debug =3;
+  bool  debug = 3;
+  string table_prefix = 4;
 }
 
 message Endpoints{
