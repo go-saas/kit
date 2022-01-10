@@ -3,6 +3,7 @@ syntax = "proto3";
 package conf;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
 option go_package = "github.com/goxiaoy/go-saas-kit/pkg/conf;conf";
 
 message Server {
@@ -14,10 +15,18 @@ message Server {
       repeated string allowed_headers=3;
     }
 
+    message Csrf{
+      Cookie cookie=10;
+      google.protobuf.StringValue request_header=17;
+      google.protobuf.StringValue field_name =18;
+      repeated string trusted_origins=20;
+    }
+
     string network = 1;
     string addr = 2;
     google.protobuf.Duration timeout = 3;
     Cors cors=4;
+    Csrf csrf=5;
 
   }
   message GRPC {
@@ -88,5 +97,27 @@ message Security{
     google.protobuf.Duration refresh_token_expire_in=3;
     string issuer=4;
   }
+  message CookieKey{
+    string hash_key=1;
+    google.protobuf.StringValue block_key=2;
+  }
   Jwt jwt=1;
+  CookieKey security_cookie=2;
+}
+
+enum SameSiteMode{
+  SameSiteDefault =0;
+  SameSiteLax=1;
+  SameSiteStrict=2;
+  SameSiteNone=3;
+}
+
+message Cookie{
+  google.protobuf.StringValue name=10;
+  google.protobuf.Int32Value max_age=11;
+  google.protobuf.StringValue domain=12;
+  google.protobuf.StringValue path=13;
+  google.protobuf.BoolValue http_only =14;
+  google.protobuf.BoolValue secure =15;
+  SameSiteMode same_site=16;
 }
