@@ -10,7 +10,7 @@ services:
     command:
       serve -c /etc/config/hydra/hydra.yml all --dangerous-force-http
     volumes:
-      - ./configs/hydra:/etc/config/hydra
+      - ./quickstart/configs/hydra:/etc/config/hydra
 
     environment:
       - DSN=mysql://root:youShouldChangeThis@tcp(mysqld:3306)/mysql?max_conns=20&max_idle_conns=4
@@ -25,7 +25,7 @@ services:
     command:
       migrate -c /etc/config/hydra/hydra.yml sql -e --yes
     volumes:
-      - ./configs/hydra:/etc/config/hydra
+      - ./quickstart/configs/hydra:/etc/config/hydra
     restart: on-failure
 
   consent:

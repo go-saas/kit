@@ -21,7 +21,7 @@ services:
     depends_on:
       - mysqld
     volumes:
-      - ./configs:/data/conf
+      - ./quickstart/configs:/data/conf
 
   saas:
     image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
@@ -32,7 +32,7 @@ services:
       - mysqld
       - user
     volumes:
-      - ./configs:/data/conf
+      - ./quickstart/configs:/data/conf
 
   mysqld:
     image: mysql:5.7

@@ -6,6 +6,8 @@ services:
         timeout: 200s
         cors:
           allowed_origins: ["*"]
+        csrf:
+          secure: false
       grpc:
         addr: 0.0.0.0:8501
         timeout: 200s

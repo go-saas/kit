@@ -35,3 +35,6 @@ bin/
 .idea/
 .run/
 *.swp
+
+
+/configs
