@@ -245,6 +245,28 @@
         ]
       }
     },
+    "/v1/auth/csrf": {
+      "get": {
+        "operationId": "Auth_GetCsrfToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetCsrfTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/v1/auth/login": {
       "post": {
         "operationId": "Auth_Login",
@@ -1192,6 +1214,14 @@
     "v1GetAddressesReply": {
       "type": "object"
     },
+    "v1GetCsrfTokenResponse": {
+      "type": "object",
+      "properties": {
+        "csrfToken": {
+          "type": "string"
+        }
+      }
+    },
     "v1GetProfileResponse": {
       "type": "object",
       "properties": {
@@ -1238,6 +1268,9 @@
           }
         }
       }
+    },
+    "v1GetWebLoginFormResponse": {
+      "type": "object"
     },
     "v1ListRolesRequest": {
       "type": "object",

@@ -22,6 +22,12 @@ service Auth {
             body: "*",
         };
     }
+
+    rpc GetWebLoginForm(GetWebLoginFormRequest) returns(GetWebLoginFormResponse){
+
+    }
+
+
     rpc Token(TokenRequest) returns (TokenReply){
         option (google.api.http) = {
             post: "/v1/auth/token",
@@ -63,6 +69,12 @@ service Auth {
         option (google.api.http) = {
             post: "/v1/auth/password/validate",
             body: "*",
+        };
+    }
+
+    rpc GetCsrfToken(GetCsrfTokenRequest) returns(GetCsrfTokenResponse){
+        option (google.api.http) = {
+            get: "/v1/auth/csrf",
         };
     }
 }
@@ -153,4 +165,20 @@ message ValidatePasswordRequest{
 
 message ValidatePasswordReply{
     bool ok =1;
+}
+
+message GetWebLoginFormRequest{
+
+}
+
+message GetWebLoginFormResponse{
+
+}
+
+message GetCsrfTokenRequest{
+
+}
+
+message GetCsrfTokenResponse{
+    string csrf_token=1;
 }

@@ -10,5 +10,6 @@ enum ErrorReason {
   option (errors.default_code) = 500;
 
   INVALID_CREDENTIALS = 0 [(errors.code) = 400];
+  INVALID_OPERATION = 1 [(errors.code) = 400];
 
 }
