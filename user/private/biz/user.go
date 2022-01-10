@@ -41,6 +41,24 @@ type User struct {
 	Password         *string `json:"password"`
 	TwoFactorEnabled bool    `json:"two_factor_enabled"`
 
+	//Security
+	ConfirmSelector string `json:"confirmSelector"`
+	ConfirmVerifier string `json:"confirmVerifier"`
+
+	AccessFailedCount int       `json:"accessFailedCount"`
+	LastLoginAttempt  time.Time `json:"lastLoginAttempt"`
+	LockoutEndDateUtc time.Time `json:"lockoutEndDateUtc"`
+
+	// Recover
+	RecoverSelector    string
+	RecoverVerifier    string
+	RecoverTokenExpiry time.Time
+
+	//2FA
+	TOTPSecretKey      string
+	SMSSeedPhoneNumber string
+	RecoveryCodes      string
+
 	Roles []Role `gorm:"many2many:user_roles"`
 
 	Location *string `json:"location"`
@@ -68,6 +86,8 @@ type UserRepo interface {
 	FindByID(ctx context.Context, id string) (*User, error)
 	FindByName(ctx context.Context, name string) (*User, error)
 	FindByPhone(ctx context.Context, phone string) (*User, error)
+	FindByRecoverSelector(ctx context.Context, r string) (*User, error)
+	FindByConfirmSelector(ctx context.Context, c string) (*User, error)
 	AddLogin(ctx context.Context, user *User, userLogin *UserLogin) error
 	RemoveLogin(ctx context.Context, user *User, loginProvider string, providerKey string) error
 	ListLogin(ctx context.Context, user *User) ([]*UserLogin, error)

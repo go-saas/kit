@@ -1930,3 +1930,409 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ValidatePasswordReplyValidationError{}
+
+// Validate checks the field values on GetWebLoginFormRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetWebLoginFormRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetWebLoginFormRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetWebLoginFormRequestMultiError, or nil if none found.
+func (m *GetWebLoginFormRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetWebLoginFormRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetWebLoginFormRequestMultiError(errors)
+	}
+	return nil
+}
+
+// GetWebLoginFormRequestMultiError is an error wrapping multiple validation
+// errors returned by GetWebLoginFormRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetWebLoginFormRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetWebLoginFormRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetWebLoginFormRequestMultiError) AllErrors() []error { return m }
+
+// GetWebLoginFormRequestValidationError is the validation error returned by
+// GetWebLoginFormRequest.Validate if the designated constraints aren't met.
+type GetWebLoginFormRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetWebLoginFormRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetWebLoginFormRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetWebLoginFormRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetWebLoginFormRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetWebLoginFormRequestValidationError) ErrorName() string {
+	return "GetWebLoginFormRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetWebLoginFormRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetWebLoginFormRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetWebLoginFormRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetWebLoginFormRequestValidationError{}
+
+// Validate checks the field values on GetWebLoginFormResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetWebLoginFormResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetWebLoginFormResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetWebLoginFormResponseMultiError, or nil if none found.
+func (m *GetWebLoginFormResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetWebLoginFormResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetWebLoginFormResponseMultiError(errors)
+	}
+	return nil
+}
+
+// GetWebLoginFormResponseMultiError is an error wrapping multiple validation
+// errors returned by GetWebLoginFormResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetWebLoginFormResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetWebLoginFormResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetWebLoginFormResponseMultiError) AllErrors() []error { return m }
+
+// GetWebLoginFormResponseValidationError is the validation error returned by
+// GetWebLoginFormResponse.Validate if the designated constraints aren't met.
+type GetWebLoginFormResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetWebLoginFormResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetWebLoginFormResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetWebLoginFormResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetWebLoginFormResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetWebLoginFormResponseValidationError) ErrorName() string {
+	return "GetWebLoginFormResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetWebLoginFormResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetWebLoginFormResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetWebLoginFormResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetWebLoginFormResponseValidationError{}
+
+// Validate checks the field values on GetCsrfTokenRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCsrfTokenRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCsrfTokenRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCsrfTokenRequestMultiError, or nil if none found.
+func (m *GetCsrfTokenRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCsrfTokenRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetCsrfTokenRequestMultiError(errors)
+	}
+	return nil
+}
+
+// GetCsrfTokenRequestMultiError is an error wrapping multiple validation
+// errors returned by GetCsrfTokenRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetCsrfTokenRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCsrfTokenRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCsrfTokenRequestMultiError) AllErrors() []error { return m }
+
+// GetCsrfTokenRequestValidationError is the validation error returned by
+// GetCsrfTokenRequest.Validate if the designated constraints aren't met.
+type GetCsrfTokenRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCsrfTokenRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCsrfTokenRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCsrfTokenRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCsrfTokenRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCsrfTokenRequestValidationError) ErrorName() string {
+	return "GetCsrfTokenRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCsrfTokenRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCsrfTokenRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCsrfTokenRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCsrfTokenRequestValidationError{}
+
+// Validate checks the field values on GetCsrfTokenResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCsrfTokenResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCsrfTokenResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCsrfTokenResponseMultiError, or nil if none found.
+func (m *GetCsrfTokenResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCsrfTokenResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CsrfToken
+
+	if len(errors) > 0 {
+		return GetCsrfTokenResponseMultiError(errors)
+	}
+	return nil
+}
+
+// GetCsrfTokenResponseMultiError is an error wrapping multiple validation
+// errors returned by GetCsrfTokenResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetCsrfTokenResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCsrfTokenResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCsrfTokenResponseMultiError) AllErrors() []error { return m }
+
+// GetCsrfTokenResponseValidationError is the validation error returned by
+// GetCsrfTokenResponse.Validate if the designated constraints aren't met.
+type GetCsrfTokenResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCsrfTokenResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCsrfTokenResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCsrfTokenResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCsrfTokenResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCsrfTokenResponseValidationError) ErrorName() string {
+	return "GetCsrfTokenResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCsrfTokenResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCsrfTokenResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCsrfTokenResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCsrfTokenResponseValidationError{}

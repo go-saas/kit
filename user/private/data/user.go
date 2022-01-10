@@ -135,6 +135,30 @@ func (u *UserRepo) FindByPhone(ctx context.Context, phone string) (*biz.User, er
 	return user, nil
 }
 
+func (u *UserRepo) FindByRecoverSelector(ctx context.Context, r string) (*biz.User, error) {
+	user := &biz.User{}
+	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "recover_selector = ?", r).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return user, nil
+}
+
+func (u *UserRepo) FindByConfirmSelector(ctx context.Context, c string) (*biz.User, error) {
+	user := &biz.User{}
+	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "confirm_selector = ?", c).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return user, nil
+}
+
 func (u *UserRepo) AddLogin(ctx context.Context, user *biz.User, userLogin *biz.UserLogin) error {
 	userLogin.UserId = user.ID
 	err := u.GetDb(ctx).Create(userLogin).Error

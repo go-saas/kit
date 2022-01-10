@@ -22,3 +22,15 @@ func IsInvalidCredentials(err error) bool {
 func ErrorInvalidCredentials(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_INVALID_CREDENTIALS.String(), fmt.Sprintf(format, args...))
 }
+
+func IsInvalidOperation(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_INVALID_OPERATION.String() && e.Code == 400
+}
+
+func ErrorInvalidOperation(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_INVALID_OPERATION.String(), fmt.Sprintf(format, args...))
+}

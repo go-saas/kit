@@ -84,6 +84,13 @@ func (um *UserManager) FindByEmail(ctx context.Context, email string) (user *Use
 	return um.userRepo.FindByEmail(ctx, email)
 }
 
+func (um *UserManager) FindByRecoverSelector(ctx context.Context, r string) (user *User, err error) {
+	return um.userRepo.FindByRecoverSelector(ctx, r)
+}
+func (um *UserManager) FindByConfirmSelector(ctx context.Context, c string) (user *User, err error) {
+	return um.userRepo.FindByConfirmSelector(ctx, c)
+}
+
 func (um *UserManager) Update(ctx context.Context, user *User) (err error) {
 	um.normalize(ctx, user)
 	if err = um.validateUser(ctx, user); err != nil {

@@ -4,6 +4,7 @@ package kratos.api;
 option go_package = "github.com/goxiaoy/go-saas-kit/user/internal_/conf;conf";
 
 import "conf/conf.proto";
+import "google/protobuf/wrappers.proto";
 
 message Bootstrap {
   Data data = 2;
@@ -20,9 +21,18 @@ message Admin{
   string username =1;
   string password=2;
 }
+
 message UserConf{
   // Minimum password score. [0-5]
   int32 password_score_min=1;
   Admin admin =2;
+  Auth auth=3;
+  string root_url=4;
 }
 
+message Auth{
+  conf.Cookie cookie=4;
+  google.protobuf.StringValue session_name=5;
+  conf.Cookie session_cookie=6;
+  google.protobuf.StringValue totp_2fa_issuer=7;
+}

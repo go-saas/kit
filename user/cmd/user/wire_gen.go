@@ -11,7 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -37,6 +37,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userContributor := api.NewUserContributor()
 	option := api.NewDefaultOption(saasContributor, userContributor)
 	tenantStore := data.NewTenantStore()
+	sessionStorer := server.NewSessionStorer(security, userConf)
+	cookieStorer := server.NewCookieStorer(security, userConf)
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, manager, tenantStore, logger)
 	dataData, cleanup2, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
@@ -49,10 +51,18 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	passwordValidator := biz.NewPasswordValidator(passwordValidatorConfig)
 	lookupNormalizer := biz.NewLookupNormalizer()
 	userManager := biz.NewUserManager(userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, logger)
+	userTokenRepo := data.NewUserTokenRepo(dataData)
+	authbossStoreWrapper := biz.NewAuthbossStoreWrapper(userManager, userTokenRepo)
+	authboss, err := server.NewAuthboss(logger, userConf, sessionStorer, cookieStorer, authbossStoreWrapper)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
 	authorizationOption := service.NewAuthorizationOption(userRoleContributor)
-	permissionService := authorization2.NewPermissionService(logger)
-	defaultAuthorizationService := authorization2.NewDefaultAuthorizationService(authorizationOption, permissionService, logger)
+	permissionService := authorization.NewPermissionService(logger)
+	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(authorizationOption, permissionService, logger)
 	userService := service.NewUserService(userManager, defaultAuthorizationService)
 	accountService := service.NewAccountService(userManager)
 	roleRepo := data.NewRoleRepo(dataData)
@@ -60,7 +70,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	refreshTokenRepo := data.NewRefreshTokenRepo(dataData)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, security)
 	roleService := service.NewRoleServiceService(roleRepo, defaultAuthorizationService)
-	httpServer := server.NewHTTPServer(services, tokenizer, manager, webMultiTenancyOption, option, tenantStore, logger, userService, accountService, authService, roleService)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, logger, authboss, userService, accountService, authService, roleService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, userService, accountService, authService, roleService)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)

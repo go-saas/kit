@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func NewCsrf(l log.Logger, cfg *conf.Server_HTTP_Csrf) func(http.Handler) http.Handler {
+func NewCsrf(l log.Logger, sCfg *conf.Security, cfg *conf.Server_HTTP_Csrf) func(http.Handler) http.Handler {
 	logger := log.NewHelper(l)
 
 	var csrfOpt []csrf.Option
@@ -71,7 +71,7 @@ func NewCsrf(l log.Logger, cfg *conf.Server_HTTP_Csrf) func(http.Handler) http.H
 		return
 	}
 	csrfOpt = append(csrfOpt, csrf.ErrorHandler(http.HandlerFunc(unauthorizedHandler)))
-	CSRF := csrf.Protect([]byte(cfg.AuthKey), csrfOpt...)
+	CSRF := csrf.Protect([]byte(sCfg.SecurityCookie.HashKey), csrfOpt...)
 
 	return CSRF
 }

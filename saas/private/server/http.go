@@ -8,7 +8,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/go-kratos/swagger-api/openapiv2"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/authentication"
@@ -25,8 +24,10 @@ import (
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, tenant *service.TenantService, mOpt *http2.WebMultiTenancyOption, apiOpt *api2.Option, logger log.Logger) *http.Server {
-	var opts = []http.ServerOption{
+func NewHTTPServer(c *conf.Services, sCfg *conf.Security, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, tenant *service.TenantService, mOpt *http2.WebMultiTenancyOption, apiOpt *api2.Option, logger log.Logger) *http.Server {
+	var opts []http.ServerOption
+	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg)
+	opts = append(opts, []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
 			tracing.Server(),
@@ -38,12 +39,8 @@ func NewHTTPServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			api2.ServerMiddleware(apiOpt),
 			uow.Uow(logger, uowMgr),
 		),
-	}
-	opts = server.PatchHttpOpts(opts, api.ServiceName, c)
-
-	openAPIhandler := openapiv2.NewHandler()
+	}...)
 	srv := http.NewServer(opts...)
-	srv.HandlePrefix("/q/", openAPIhandler)
 
 	v1.RegisterTenantServiceHTTPServer(srv, tenant)
 	return srv

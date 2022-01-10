@@ -39,11 +39,9 @@ data:
       user:
         driver: mysql
         source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true
-        table_prefix: kit_user_
       saas:
         driver: mysql
         source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true
-        table_prefix: kit_saas_
 
   redis:
     addr: 127.0.0.1:6379

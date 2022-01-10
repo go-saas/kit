@@ -4,17 +4,19 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gorilla/handlers"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/go-saas-kit/pkg/csrf"
+	"github.com/goxiaoy/go-saas-kit/pkg/kratos"
 	"net"
 	"strings"
 )
 
 // PatchGrpcOpts Patch grpc options with given service name and configs
-func PatchGrpcOpts(opts []grpc.ServerOption, name string, services *conf.Services) []grpc.ServerOption {
+func PatchGrpcOpts(l log.Logger, opts []grpc.ServerOption, name string, services *conf.Services) []grpc.ServerOption {
 	server, ok := services.Servers[name]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v server not found", name)))
@@ -31,8 +33,8 @@ func PatchGrpcOpts(opts []grpc.ServerOption, name string, services *conf.Service
 	return opts
 }
 
-// PatchHttpOpts Patch http options with given service name and configs
-func PatchHttpOpts(opts []http.ServerOption, name string, services *conf.Services) []http.ServerOption {
+// PatchHttpOpts Patch http options with given service name and configs. f use global filters
+func PatchHttpOpts(l log.Logger, opts []http.ServerOption, name string, services *conf.Services, sCfg *conf.Security, f ...http.FilterFunc) []http.ServerOption {
 	server, ok := services.Servers[name]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v server not found", name)))
@@ -46,45 +48,49 @@ func PatchHttpOpts(opts []http.ServerOption, name string, services *conf.Service
 	if server.Http.Timeout != nil {
 		opts = append(opts, http.Timeout(server.Http.Timeout.AsDuration()))
 	}
+
+	var filters []http.FilterFunc
+
 	if server.Http.Cors != nil {
 		allowMethods := []string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "DELETE", "PATCH"}
 		allowMethods = append(allowMethods, server.Http.Cors.GetAllowedMethods()...)
-		opts = append(opts, http.Filter(handlers.CORS(
+		filters = append(filters, handlers.CORS(
 			handlers.AllowedOrigins(server.Http.Cors.GetAllowedOrigins()),
 			handlers.AllowedMethods(allowMethods),
 			handlers.AllowedHeaders(append([]string{"Content-Type", "Authorization"}, server.Http.Cors.AllowedHeaders...)),
-		)))
+		))
 	}
+	if server.Http.Csrf != nil {
+		filters = append(filters, csrf.NewCsrf(l, sCfg, server.Http.Csrf))
+	}
+	filters = append(filters, f...)
+	opts = append(opts, http.Filter(filters...))
 	return opts
 }
 
 func ClientIP(ctx context.Context) string {
-	if t, ok := transport.FromServerContext(ctx); ok {
-		if ht, ok := t.(*http.Transport); ok {
-			xForwardedFor := ht.Request().Header.Get("X-Forwarded-For")
-			ip := strings.TrimSpace(strings.Split(xForwardedFor, ",")[0])
-			if ip != "" {
-				return ip
-			}
+	if r, ok := kratos.ResolveHttpRequest(ctx); ok {
+		xForwardedFor := r.Header.Get("X-Forwarded-For")
+		ip := strings.TrimSpace(strings.Split(xForwardedFor, ",")[0])
+		if ip != "" {
+			return ip
+		}
 
-			ip = strings.TrimSpace(ht.Request().Header.Get("X-Real-Ip"))
-			if ip != "" {
-				return ip
-			}
+		ip = strings.TrimSpace(r.Header.Get("X-Real-Ip"))
+		if ip != "" {
+			return ip
+		}
 
-			if ip, _, err := net.SplitHostPort(strings.TrimSpace(ht.Request().RemoteAddr)); err == nil {
-				return ip
-			}
+		if ip, _, err := net.SplitHostPort(strings.TrimSpace(r.RemoteAddr)); err == nil {
+			return ip
 		}
 	}
 	return ""
 }
 
 func ClientUserAgent(ctx context.Context) string {
-	if t, ok := transport.FromServerContext(ctx); ok {
-		if ht, ok := t.(*http.Transport); ok {
-			return ht.Request().UserAgent()
-		}
+	if r, ok := kratos.ResolveHttpRequest(ctx); ok {
+		return r.UserAgent()
 	}
 	return ""
 }

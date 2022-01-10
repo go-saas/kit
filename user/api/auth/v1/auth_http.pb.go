@@ -19,6 +19,7 @@ const _ = http.SupportPackageIsVersion1
 
 type AuthHTTPServer interface {
 	ForgetPassword(context.Context, *ForgetPasswordRequest) (*ForgetPasswordReply, error)
+	GetCsrfToken(context.Context, *GetCsrfTokenRequest) (*GetCsrfTokenResponse, error)
 	Login(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
 	LoginPasswordless(context.Context, *LoginPasswordlessRequest) (*LoginPasswordlessReply, error)
 	Refresh(context.Context, *RefreshTokenAuthRequest) (*RefreshTokenAuthReply, error)
@@ -40,6 +41,7 @@ func RegisterAuthHTTPServer(s *http.Server, srv AuthHTTPServer) {
 	r.POST("/v1/auth/action/forget", _Auth_SendForgetPasswordToken0_HTTP_Handler(srv))
 	r.POST("/v1/auth/password/forget", _Auth_ForgetPassword0_HTTP_Handler(srv))
 	r.POST("/v1/auth/password/validate", _Auth_ValidatePassword0_HTTP_Handler(srv))
+	r.GET("/v1/auth/csrf", _Auth_GetCsrfToken0_HTTP_Handler(srv))
 }
 
 func _Auth_Register0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
@@ -213,8 +215,28 @@ func _Auth_ValidatePassword0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Cont
 	}
 }
 
+func _Auth_GetCsrfToken0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetCsrfTokenRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.auth.v1.Auth/GetCsrfToken")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetCsrfToken(ctx, req.(*GetCsrfTokenRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetCsrfTokenResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AuthHTTPClient interface {
 	ForgetPassword(ctx context.Context, req *ForgetPasswordRequest, opts ...http.CallOption) (rsp *ForgetPasswordReply, err error)
+	GetCsrfToken(ctx context.Context, req *GetCsrfTokenRequest, opts ...http.CallOption) (rsp *GetCsrfTokenResponse, err error)
 	Login(ctx context.Context, req *LoginAuthRequest, opts ...http.CallOption) (rsp *LoginAuthReply, err error)
 	LoginPasswordless(ctx context.Context, req *LoginPasswordlessRequest, opts ...http.CallOption) (rsp *LoginPasswordlessReply, err error)
 	Refresh(ctx context.Context, req *RefreshTokenAuthRequest, opts ...http.CallOption) (rsp *RefreshTokenAuthReply, err error)
@@ -240,6 +262,19 @@ func (c *AuthHTTPClientImpl) ForgetPassword(ctx context.Context, in *ForgetPassw
 	opts = append(opts, http.Operation("/user.api.auth.v1.Auth/ForgetPassword"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *AuthHTTPClientImpl) GetCsrfToken(ctx context.Context, in *GetCsrfTokenRequest, opts ...http.CallOption) (*GetCsrfTokenResponse, error) {
+	var out GetCsrfTokenResponse
+	pattern := "/v1/auth/csrf"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation("/user.api.auth.v1.Auth/GetCsrfToken"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

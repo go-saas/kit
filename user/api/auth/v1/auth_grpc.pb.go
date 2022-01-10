@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type AuthClient interface {
 	Register(ctx context.Context, in *RegisterAuthRequest, opts ...grpc.CallOption) (*RegisterAuthReply, error)
 	Login(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthReply, error)
+	GetWebLoginForm(ctx context.Context, in *GetWebLoginFormRequest, opts ...grpc.CallOption) (*GetWebLoginFormResponse, error)
 	Token(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenReply, error)
 	Refresh(ctx context.Context, in *RefreshTokenAuthRequest, opts ...grpc.CallOption) (*RefreshTokenAuthReply, error)
 	SendPasswordlessToken(ctx context.Context, in *PasswordlessTokenAuthRequest, opts ...grpc.CallOption) (*PasswordlessTokenAuthReply, error)
@@ -31,6 +32,7 @@ type AuthClient interface {
 	SendForgetPasswordToken(ctx context.Context, in *ForgetPasswordTokenRequest, opts ...grpc.CallOption) (*ForgetPasswordTokenReply, error)
 	ForgetPassword(ctx context.Context, in *ForgetPasswordRequest, opts ...grpc.CallOption) (*ForgetPasswordReply, error)
 	ValidatePassword(ctx context.Context, in *ValidatePasswordRequest, opts ...grpc.CallOption) (*ValidatePasswordReply, error)
+	GetCsrfToken(ctx context.Context, in *GetCsrfTokenRequest, opts ...grpc.CallOption) (*GetCsrfTokenResponse, error)
 }
 
 type authClient struct {
@@ -53,6 +55,15 @@ func (c *authClient) Register(ctx context.Context, in *RegisterAuthRequest, opts
 func (c *authClient) Login(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthReply, error) {
 	out := new(LoginAuthReply)
 	err := c.cc.Invoke(ctx, "/user.api.auth.v1.Auth/Login", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) GetWebLoginForm(ctx context.Context, in *GetWebLoginFormRequest, opts ...grpc.CallOption) (*GetWebLoginFormResponse, error) {
+	out := new(GetWebLoginFormResponse)
+	err := c.cc.Invoke(ctx, "/user.api.auth.v1.Auth/GetWebLoginForm", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -122,12 +133,22 @@ func (c *authClient) ValidatePassword(ctx context.Context, in *ValidatePasswordR
 	return out, nil
 }
 
+func (c *authClient) GetCsrfToken(ctx context.Context, in *GetCsrfTokenRequest, opts ...grpc.CallOption) (*GetCsrfTokenResponse, error) {
+	out := new(GetCsrfTokenResponse)
+	err := c.cc.Invoke(ctx, "/user.api.auth.v1.Auth/GetCsrfToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServer is the server API for Auth service.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility
 type AuthServer interface {
 	Register(context.Context, *RegisterAuthRequest) (*RegisterAuthReply, error)
 	Login(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
+	GetWebLoginForm(context.Context, *GetWebLoginFormRequest) (*GetWebLoginFormResponse, error)
 	Token(context.Context, *TokenRequest) (*TokenReply, error)
 	Refresh(context.Context, *RefreshTokenAuthRequest) (*RefreshTokenAuthReply, error)
 	SendPasswordlessToken(context.Context, *PasswordlessTokenAuthRequest) (*PasswordlessTokenAuthReply, error)
@@ -135,6 +156,7 @@ type AuthServer interface {
 	SendForgetPasswordToken(context.Context, *ForgetPasswordTokenRequest) (*ForgetPasswordTokenReply, error)
 	ForgetPassword(context.Context, *ForgetPasswordRequest) (*ForgetPasswordReply, error)
 	ValidatePassword(context.Context, *ValidatePasswordRequest) (*ValidatePasswordReply, error)
+	GetCsrfToken(context.Context, *GetCsrfTokenRequest) (*GetCsrfTokenResponse, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -147,6 +169,9 @@ func (UnimplementedAuthServer) Register(context.Context, *RegisterAuthRequest) (
 }
 func (UnimplementedAuthServer) Login(context.Context, *LoginAuthRequest) (*LoginAuthReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedAuthServer) GetWebLoginForm(context.Context, *GetWebLoginFormRequest) (*GetWebLoginFormResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWebLoginForm not implemented")
 }
 func (UnimplementedAuthServer) Token(context.Context, *TokenRequest) (*TokenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Token not implemented")
@@ -168,6 +193,9 @@ func (UnimplementedAuthServer) ForgetPassword(context.Context, *ForgetPasswordRe
 }
 func (UnimplementedAuthServer) ValidatePassword(context.Context, *ValidatePasswordRequest) (*ValidatePasswordReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidatePassword not implemented")
+}
+func (UnimplementedAuthServer) GetCsrfToken(context.Context, *GetCsrfTokenRequest) (*GetCsrfTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCsrfToken not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 
@@ -214,6 +242,24 @@ func _Auth_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServer).Login(ctx, req.(*LoginAuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_GetWebLoginForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWebLoginFormRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GetWebLoginForm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.auth.v1.Auth/GetWebLoginForm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GetWebLoginForm(ctx, req.(*GetWebLoginFormRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -344,6 +390,24 @@ func _Auth_ValidatePassword_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_GetCsrfToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCsrfTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GetCsrfToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.auth.v1.Auth/GetCsrfToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GetCsrfToken(ctx, req.(*GetCsrfTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -358,6 +422,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _Auth_Login_Handler,
+		},
+		{
+			MethodName: "GetWebLoginForm",
+			Handler:    _Auth_GetWebLoginForm_Handler,
 		},
 		{
 			MethodName: "Token",
@@ -386,6 +454,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ValidatePassword",
 			Handler:    _Auth_ValidatePassword_Handler,
+		},
+		{
+			MethodName: "GetCsrfToken",
+			Handler:    _Auth_GetCsrfToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

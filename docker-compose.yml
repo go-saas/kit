@@ -16,8 +16,8 @@ services:
   user:
     image: ${DOCKER_REGISTRY}go-saas-kit-user:${DOCKER_TAG:-latest}
     ports:
-      - "8500:8500"
-      - "8501:8501"
+      - "8500"
+      - "8501"
     depends_on:
       - mysqld
     volumes:
@@ -26,8 +26,8 @@ services:
   saas:
     image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
     ports:
-      - "8520:8520"
-      - "8521:8521"
+      - "8520"
+      - "8521"
     depends_on:
       - mysqld
       - user
