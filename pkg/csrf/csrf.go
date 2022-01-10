@@ -18,6 +18,8 @@ func NewCsrf(l log.Logger, cfg *conf.Server_HTTP_Csrf) func(http.Handler) http.H
 	if cfg.Cookie != nil {
 		if cfg.Cookie.Name != nil {
 			csrfOpt = append(csrfOpt, csrf.CookieName(cfg.Cookie.Name.Value))
+		} else {
+			csrfOpt = append(csrfOpt, csrf.CookieName("kit_csrf"))
 		}
 		if cfg.Cookie.MaxAge != nil {
 			csrfOpt = append(csrfOpt, csrf.MaxAge(int(cfg.Cookie.MaxAge.Value)))
