@@ -1,10 +1,30 @@
 package biz
 
-import "github.com/google/uuid"
+import (
+	"context"
+	"github.com/google/uuid"
+	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	gorm2 "gorm.io/gorm"
+)
+
+const (
+	InternalLoginProvider     string = "internal"
+	InternalRememberTokenName string = "remember"
+)
 
 type UserToken struct {
-	UserId        uuid.UUID `gorm:"type:char(36);primaryKey" json:"user_id"`
-	LoginProvider string    `gorm:"primaryKey" json:"login_provider"`
-	Name          string    `gorm:"primaryKey" json:"name"`
-	Value         string    `json:"value"`
+	gorm.AuditedModel
+	DeletedAt     gorm2.DeletedAt `gorm:"index"`
+	UserId        uuid.UUID       `gorm:"type:char(36);primaryKey" json:"user_id"`
+	LoginProvider string          `gorm:"primaryKey" json:"login_provider"`
+	Name          string          `gorm:"primaryKey" json:"name"`
+	Value         string          `json:"value"`
+}
+
+type UserTokenRepo interface {
+	FindByUserIdAndLoginProvider(ctx context.Context, userId, loginProvider string) ([]*UserToken, error)
+	FindByUserIdAndLoginProviderAndName(ctx context.Context, userId, loginProvider, name string) (*UserToken, error)
+	DeleteByUserIdAndLoginProvider(ctx context.Context, userId, loginProvider string) error
+	DeleteByUserIdAndLoginProviderAndName(ctx context.Context, userId, loginProvider, name string) error
+	Create(ctx context.Context, userId, loginProvider, name, value string) (*UserToken, error)
 }

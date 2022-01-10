@@ -15,7 +15,18 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, gorm.NewDbOpener, uow2.NewUowManager, NewTenantStore, NewProvider, NewUserRepo, NewRefreshTokenRepo, NewRoleRepo, NewUserTenantRepo, NewMigrate)
+var ProviderSet = wire.NewSet(
+	NewData,
+	gorm.NewDbOpener,
+	uow2.NewUowManager,
+	NewTenantStore,
+	NewProvider,
+	NewUserRepo,
+	NewRefreshTokenRepo,
+	NewRoleRepo,
+	NewUserTenantRepo,
+	NewMigrate,
+	NewUserTokenRepo)
 
 const ConnName = "user"
 
