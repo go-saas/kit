@@ -24,10 +24,14 @@ func NewGormConfig(databases *conf.Endpoints, name string) *gorm.Config {
 	if !ok {
 		c, ok = databases.Databases[data.Default]
 	}
+	tp := c.TablePrefix
+	if len(tp) == 0 {
+		tp = fmt.Sprintf("kit_%s_", name)
+	}
 	cfg := &gorm.Config{
 		Debug: c.Debug,
 		Cfg: &g.Config{NamingStrategy: schema.NamingStrategy{
-			TablePrefix: c.TablePrefix,
+			TablePrefix: tp,
 		}},
 	}
 	if c.Driver == "mysql" {
