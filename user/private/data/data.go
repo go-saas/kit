@@ -10,7 +10,6 @@ import (
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
-	"github.com/goxiaoy/uow"
 	g "gorm.io/gorm"
 )
 
@@ -59,16 +58,14 @@ func NewTenantStore() common.TenantStore {
 		[]common.TenantConfig{})
 }
 
-func NewProvider(c *conf.Data, cfg *gorm.Config, opener gorm.DbOpener, uow uow.Manager, ts common.TenantStore, logger log.Logger) gorm.DbProvider {
-	ct := common.ContextCurrentTenant{}
-
+func NewProvider(c *conf.Data, cfg *gorm.Config, opener gorm.DbOpener, ts common.TenantStore, logger log.Logger) gorm.DbProvider {
 	conn := make(data.ConnStrings, 1)
 	for k, v := range c.Endpoints.Databases {
 		conn[k] = v.Source
 	}
-	mr := common.NewMultiTenancyConnStrResolver(ct, func() common.TenantStore {
+	mr := common.NewMultiTenancyConnStrResolver(func() common.TenantStore {
 		return ts
 	}, data.NewConnStrOption(conn))
-	r := gorm.NewDefaultDbProvider(mr, cfg, uow, opener)
+	r := gorm.NewDefaultDbProvider(mr, cfg, opener)
 	return r
 }

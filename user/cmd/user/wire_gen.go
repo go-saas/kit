@@ -39,7 +39,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	tenantStore := data.NewTenantStore()
 	sessionStorer := server.NewSessionStorer(security, userConf)
 	cookieStorer := server.NewCookieStorer(security, userConf)
-	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, manager, tenantStore, logger)
+	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, tenantStore, logger)
 	dataData, cleanup2, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup()

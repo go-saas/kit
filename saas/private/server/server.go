@@ -21,5 +21,5 @@ func NewSeeder(c *conf.Data, uow uow.Manager, migrate *data.Migrate, permission 
 	// seed host
 	opt.TenantIds = []string{""}
 
-	return seed.NewDefaultSeeder(opt, uow, map[string]interface{}{})
+	return seed.NewDefaultSeeder(opt.WithUow(uow), map[string]interface{}{})
 }
