@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package user.api.permission.v1;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+import "validate/validate.proto";
+
+
+option go_package = "github.com/goxiaoy/go-saas-kit/user/api/permission/v1;v1";
+
+service PermissionService{
+
+  // Get current permission
+  rpc GetCurrent(GetCurrentPermissionRequest)returns(GetCurrentPermissionReply){
+    option (google.api.http) = {
+      get: "/v1/permission/current"
+    };
+  }
+
+  rpc CheckCurrent(CheckPermissionRequest)returns(CheckPermissionReply){
+    option (google.api.http) = {
+      post: "/v1/permission/check"
+      body: "*"
+    };
+  }
+
+  rpc CheckForSubjects(CheckSubjectsPermissionRequest)returns(CheckSubjectsPermissionReply){
+    option (google.api.http) = {
+      post: "/v1/permission/check-subjects"
+      body: "*"
+    };
+  }
+
+  rpc UpdateSubjectPermission(UpdateSubjectPermissionRequest)returns(UpdateSubjectPermissionResponse){
+    option (google.api.http) = {
+      put: "/v1/permission/subject"
+      body: "*"
+    };
+  }
+
+}
+
+message GetCurrentPermissionRequest{
+
+}
+
+message GetCurrentPermissionReply{
+  repeated Permission acl = 1;
+}
+
+
+message CheckPermissionRequest{
+  string namespace = 1 [(google.api.field_behavior) = REQUIRED];
+  string resource = 2 [(google.api.field_behavior) = REQUIRED];
+  string action = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+message CheckPermissionReply{
+  Effect effect = 1;
+}
+
+
+message CheckSubjectsPermissionRequest{
+  string namespace = 1 [(google.api.field_behavior) = REQUIRED];
+  string resource = 2 [(google.api.field_behavior) = REQUIRED];
+  string action = 3 [(google.api.field_behavior) = REQUIRED];
+  repeated string subjects =4;
+}
+
+message CheckSubjectsPermissionReply{
+  Effect effect = 1;
+}
+
+
+enum Effect{
+  UNKNOWN = 0;
+  GRANT = 1;
+  FORBIDDEN = 2;
+}
+
+message Permission{
+  string namespace = 1;
+  string resource = 2;
+  string action = 3;
+  string subject = 4;
+  Effect effect =5;
+}
+
+message UpdateSubjectPermissionRequest{
+  string subject = 1 [(google.api.field_behavior) = REQUIRED];
+  repeated UpdateSubjectPermissionAcl acl = 2;
+}
+
+message UpdateSubjectPermissionAcl{
+  string namespace = 1 [(google.api.field_behavior) = REQUIRED];
+  string resource = 2 [(google.api.field_behavior) = REQUIRED];
+  string action = 3 [(google.api.field_behavior) = REQUIRED];
+  Effect effect =5 [(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdateSubjectPermissionResponse{
+  repeated Permission acl = 1;
+}

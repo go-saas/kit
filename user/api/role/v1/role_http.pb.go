@@ -21,8 +21,11 @@ type RoleServiceHTTPServer interface {
 	CreateRole(context.Context, *CreateRoleRequest) (*Role, error)
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
 	GetRole(context.Context, *GetRoleRequest) (*Role, error)
+	GetRolePermission(context.Context, *GetRolePermissionRequest) (*GetRolePermissionResponse, error)
 	ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error)
+	PatchRolePermission(context.Context, *PatchRolePermissionRequest) (*PatchRolePermissionResponse, error)
 	UpdateRole(context.Context, *UpdateRoleRequest) (*Role, error)
+	UpdateRolePermission(context.Context, *UpdateRolePermissionRequest) (*UpdateRolePermissionResponse, error)
 }
 
 func RegisterRoleServiceHTTPServer(s *http.Server, srv RoleServiceHTTPServer) {
@@ -34,6 +37,9 @@ func RegisterRoleServiceHTTPServer(s *http.Server, srv RoleServiceHTTPServer) {
 	r.PATCH("/v1/role/{role.id}", _RoleService_UpdateRole0_HTTP_Handler(srv))
 	r.PUT("/v1/role/{role.id}", _RoleService_UpdateRole1_HTTP_Handler(srv))
 	r.DELETE("/v1/role/{id}", _RoleService_DeleteRole0_HTTP_Handler(srv))
+	r.GET("/v1/role/{id}/permission", _RoleService_GetRolePermission0_HTTP_Handler(srv))
+	r.PUT("/v1/role/{id}/permission", _RoleService_UpdateRolePermission0_HTTP_Handler(srv))
+	r.PATCH("/v1/role/{id}/permission", _RoleService_PatchRolePermission0_HTTP_Handler(srv))
 }
 
 func _RoleService_ListRoles0_HTTP_Handler(srv RoleServiceHTTPServer) func(ctx http.Context) error {
@@ -181,12 +187,81 @@ func _RoleService_DeleteRole0_HTTP_Handler(srv RoleServiceHTTPServer) func(ctx h
 	}
 }
 
+func _RoleService_GetRolePermission0_HTTP_Handler(srv RoleServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetRolePermissionRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.role.v1.RoleService/GetRolePermission")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetRolePermission(ctx, req.(*GetRolePermissionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetRolePermissionResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _RoleService_UpdateRolePermission0_HTTP_Handler(srv RoleServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateRolePermissionRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.role.v1.RoleService/UpdateRolePermission")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateRolePermission(ctx, req.(*UpdateRolePermissionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdateRolePermissionResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _RoleService_PatchRolePermission0_HTTP_Handler(srv RoleServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in PatchRolePermissionRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.role.v1.RoleService/PatchRolePermission")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.PatchRolePermission(ctx, req.(*PatchRolePermissionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*PatchRolePermissionResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type RoleServiceHTTPClient interface {
 	CreateRole(ctx context.Context, req *CreateRoleRequest, opts ...http.CallOption) (rsp *Role, err error)
 	DeleteRole(ctx context.Context, req *DeleteRoleRequest, opts ...http.CallOption) (rsp *DeleteRoleResponse, err error)
 	GetRole(ctx context.Context, req *GetRoleRequest, opts ...http.CallOption) (rsp *Role, err error)
+	GetRolePermission(ctx context.Context, req *GetRolePermissionRequest, opts ...http.CallOption) (rsp *GetRolePermissionResponse, err error)
 	ListRoles(ctx context.Context, req *ListRolesRequest, opts ...http.CallOption) (rsp *ListRolesResponse, err error)
+	PatchRolePermission(ctx context.Context, req *PatchRolePermissionRequest, opts ...http.CallOption) (rsp *PatchRolePermissionResponse, err error)
 	UpdateRole(ctx context.Context, req *UpdateRoleRequest, opts ...http.CallOption) (rsp *Role, err error)
+	UpdateRolePermission(ctx context.Context, req *UpdateRolePermissionRequest, opts ...http.CallOption) (rsp *UpdateRolePermissionResponse, err error)
 }
 
 type RoleServiceHTTPClientImpl struct {
@@ -236,6 +311,19 @@ func (c *RoleServiceHTTPClientImpl) GetRole(ctx context.Context, in *GetRoleRequ
 	return &out, err
 }
 
+func (c *RoleServiceHTTPClientImpl) GetRolePermission(ctx context.Context, in *GetRolePermissionRequest, opts ...http.CallOption) (*GetRolePermissionResponse, error) {
+	var out GetRolePermissionResponse
+	pattern := "/v1/role/{id}/permission"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation("/user.api.role.v1.RoleService/GetRolePermission"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
 func (c *RoleServiceHTTPClientImpl) ListRoles(ctx context.Context, in *ListRolesRequest, opts ...http.CallOption) (*ListRolesResponse, error) {
 	var out ListRolesResponse
 	pattern := "/v1/roles"
@@ -249,11 +337,37 @@ func (c *RoleServiceHTTPClientImpl) ListRoles(ctx context.Context, in *ListRoles
 	return &out, err
 }
 
+func (c *RoleServiceHTTPClientImpl) PatchRolePermission(ctx context.Context, in *PatchRolePermissionRequest, opts ...http.CallOption) (*PatchRolePermissionResponse, error) {
+	var out PatchRolePermissionResponse
+	pattern := "/v1/role/{id}/permission"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation("/user.api.role.v1.RoleService/PatchRolePermission"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PATCH", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
 func (c *RoleServiceHTTPClientImpl) UpdateRole(ctx context.Context, in *UpdateRoleRequest, opts ...http.CallOption) (*Role, error) {
 	var out Role
 	pattern := "/v1/role/{role.id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.role.v1.RoleService/UpdateRole"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *RoleServiceHTTPClientImpl) UpdateRolePermission(ctx context.Context, in *UpdateRolePermissionRequest, opts ...http.CallOption) (*UpdateRolePermissionResponse, error) {
+	var out UpdateRolePermissionResponse
+	pattern := "/v1/role/{id}/permission"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation("/user.api.role.v1.RoleService/UpdateRolePermission"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {

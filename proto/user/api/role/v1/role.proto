@@ -6,9 +6,9 @@ import "google/api/annotations.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
-
+import "user/api/permission/v1/permission.proto";
 import "validate/validate.proto";
-
+import "google/api/field_behavior.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/role/v1;v1";
 
@@ -50,6 +50,27 @@ service RoleService{
       delete: "/v1/role/{id}"
     };
   }
+
+  rpc GetRolePermission(GetRolePermissionRequest) returns(GetRolePermissionResponse){
+    option (google.api.http) = {
+      get: "/v1/role/{id}/permission"
+    };
+  }
+
+  rpc UpdateRolePermission(UpdateRolePermissionRequest) returns(UpdateRolePermissionResponse){
+    option (google.api.http) = {
+      put: "/v1/role/{id}/permission"
+      body: "*"
+    };
+  }
+
+  rpc PatchRolePermission(PatchRolePermissionRequest) returns(PatchRolePermissionResponse){
+    option (google.api.http) = {
+      patch: "/v1/role/{id}/permission"
+      body: "*"
+    };
+  }
+
 }
 
 message RoleFilter{
@@ -104,5 +125,42 @@ message DeleteRoleRequest{
   string id =1;
 }
 message DeleteRoleResponse{
+
+}
+
+message GetRolePermissionRequest{
+  string id =1;
+}
+
+message GetRolePermissionResponse{
+  repeated .user.api.permission.v1.Permission acl = 1;
+}
+
+message UpdateRolePermissionRequest{
+  string id =1 [(google.api.field_behavior) = REQUIRED];
+  repeated UpdateRolePermissionAcl alc =2;
+}
+
+message UpdateRolePermissionAcl{
+  string namespace = 1 ;
+  string resource = 2;
+  string action = 3;
+  .user.api.permission.v1.Effect effect =5;
+}
+
+message UpdateRolePermissionResponse{
+
+}
+
+message PatchRolePermissionRequest{
+  string id =1 [(google.api.field_behavior) = REQUIRED];
+  repeated UpdateRolePermissionAcl add_acl =2;
+  repeated RemoveRRolePermissionAcl remove_acl=3;
+}
+
+message RemoveRRolePermissionAcl{
+  string id=1;
+}
+message PatchRolePermissionResponse{
 
 }

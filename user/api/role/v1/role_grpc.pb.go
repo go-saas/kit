@@ -27,6 +27,9 @@ type RoleServiceClient interface {
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*Role, error)
 	UpdateRole(ctx context.Context, in *UpdateRoleRequest, opts ...grpc.CallOption) (*Role, error)
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
+	GetRolePermission(ctx context.Context, in *GetRolePermissionRequest, opts ...grpc.CallOption) (*GetRolePermissionResponse, error)
+	UpdateRolePermission(ctx context.Context, in *UpdateRolePermissionRequest, opts ...grpc.CallOption) (*UpdateRolePermissionResponse, error)
+	PatchRolePermission(ctx context.Context, in *PatchRolePermissionRequest, opts ...grpc.CallOption) (*PatchRolePermissionResponse, error)
 }
 
 type roleServiceClient struct {
@@ -82,6 +85,33 @@ func (c *roleServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleReques
 	return out, nil
 }
 
+func (c *roleServiceClient) GetRolePermission(ctx context.Context, in *GetRolePermissionRequest, opts ...grpc.CallOption) (*GetRolePermissionResponse, error) {
+	out := new(GetRolePermissionResponse)
+	err := c.cc.Invoke(ctx, "/user.api.role.v1.RoleService/GetRolePermission", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleServiceClient) UpdateRolePermission(ctx context.Context, in *UpdateRolePermissionRequest, opts ...grpc.CallOption) (*UpdateRolePermissionResponse, error) {
+	out := new(UpdateRolePermissionResponse)
+	err := c.cc.Invoke(ctx, "/user.api.role.v1.RoleService/UpdateRolePermission", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleServiceClient) PatchRolePermission(ctx context.Context, in *PatchRolePermissionRequest, opts ...grpc.CallOption) (*PatchRolePermissionResponse, error) {
+	out := new(PatchRolePermissionResponse)
+	err := c.cc.Invoke(ctx, "/user.api.role.v1.RoleService/PatchRolePermission", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RoleServiceServer is the server API for RoleService service.
 // All implementations must embed UnimplementedRoleServiceServer
 // for forward compatibility
@@ -91,6 +121,9 @@ type RoleServiceServer interface {
 	CreateRole(context.Context, *CreateRoleRequest) (*Role, error)
 	UpdateRole(context.Context, *UpdateRoleRequest) (*Role, error)
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
+	GetRolePermission(context.Context, *GetRolePermissionRequest) (*GetRolePermissionResponse, error)
+	UpdateRolePermission(context.Context, *UpdateRolePermissionRequest) (*UpdateRolePermissionResponse, error)
+	PatchRolePermission(context.Context, *PatchRolePermissionRequest) (*PatchRolePermissionResponse, error)
 	mustEmbedUnimplementedRoleServiceServer()
 }
 
@@ -112,6 +145,15 @@ func (UnimplementedRoleServiceServer) UpdateRole(context.Context, *UpdateRoleReq
 }
 func (UnimplementedRoleServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
+}
+func (UnimplementedRoleServiceServer) GetRolePermission(context.Context, *GetRolePermissionRequest) (*GetRolePermissionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRolePermission not implemented")
+}
+func (UnimplementedRoleServiceServer) UpdateRolePermission(context.Context, *UpdateRolePermissionRequest) (*UpdateRolePermissionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRolePermission not implemented")
+}
+func (UnimplementedRoleServiceServer) PatchRolePermission(context.Context, *PatchRolePermissionRequest) (*PatchRolePermissionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PatchRolePermission not implemented")
 }
 func (UnimplementedRoleServiceServer) mustEmbedUnimplementedRoleServiceServer() {}
 
@@ -216,6 +258,60 @@ func _RoleService_DeleteRole_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RoleService_GetRolePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRolePermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServiceServer).GetRolePermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.role.v1.RoleService/GetRolePermission",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServiceServer).GetRolePermission(ctx, req.(*GetRolePermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoleService_UpdateRolePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRolePermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServiceServer).UpdateRolePermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.role.v1.RoleService/UpdateRolePermission",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServiceServer).UpdateRolePermission(ctx, req.(*UpdateRolePermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoleService_PatchRolePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PatchRolePermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServiceServer).PatchRolePermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.role.v1.RoleService/PatchRolePermission",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServiceServer).PatchRolePermission(ctx, req.(*PatchRolePermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RoleService_ServiceDesc is the grpc.ServiceDesc for RoleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +338,18 @@ var RoleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteRole",
 			Handler:    _RoleService_DeleteRole_Handler,
+		},
+		{
+			MethodName: "GetRolePermission",
+			Handler:    _RoleService_GetRolePermission_Handler,
+		},
+		{
+			MethodName: "UpdateRolePermission",
+			Handler:    _RoleService_UpdateRolePermission_Handler,
+		},
+		{
+			MethodName: "PatchRolePermission",
+			Handler:    _RoleService_PatchRolePermission_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

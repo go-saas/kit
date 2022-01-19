@@ -9,6 +9,9 @@
       "name": "UserService"
     },
     {
+      "name": "PermissionService"
+    },
+    {
       "name": "RoleService"
     },
     {
@@ -491,6 +494,125 @@
         ]
       }
     },
+    "/v1/permission/check": {
+      "post": {
+        "operationId": "PermissionService_CheckCurrent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CheckPermissionReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CheckPermissionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PermissionService"
+        ]
+      }
+    },
+    "/v1/permission/check-subjects": {
+      "post": {
+        "operationId": "PermissionService_CheckForSubjects",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CheckSubjectsPermissionReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CheckSubjectsPermissionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PermissionService"
+        ]
+      }
+    },
+    "/v1/permission/current": {
+      "get": {
+        "summary": "Get current permission",
+        "operationId": "PermissionService_GetCurrent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetCurrentPermissionReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "PermissionService"
+        ]
+      }
+    },
+    "/v1/permission/subject": {
+      "put": {
+        "operationId": "PermissionService_UpdateSubjectPermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateSubjectPermissionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateSubjectPermissionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PermissionService"
+        ]
+      }
+    },
     "/v1/role": {
       "post": {
         "operationId": "RoleService_CreateRole",
@@ -612,6 +734,130 @@
             "in": "path",
             "required": true,
             "type": "string"
+          }
+        ],
+        "tags": [
+          "RoleService"
+        ]
+      }
+    },
+    "/v1/role/{id}/permission": {
+      "get": {
+        "operationId": "RoleService_GetRolePermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetRolePermissionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RoleService"
+        ]
+      },
+      "put": {
+        "operationId": "RoleService_UpdateRolePermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateRolePermissionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "alc": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/v1UpdateRolePermissionAcl"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "RoleService"
+        ]
+      },
+      "patch": {
+        "operationId": "RoleService_PatchRolePermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1PatchRolePermissionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "addAcl": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/v1UpdateRolePermissionAcl"
+                  }
+                },
+                "removeAcl": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/v1RemoveRRolePermissionAcl"
+                  }
+                }
+              }
+            }
           }
         ],
         "tags": [
@@ -1142,6 +1388,84 @@
         }
       }
     },
+    "v1CheckPermissionReply": {
+      "type": "object",
+      "properties": {
+        "effect": {
+          "$ref": "#/definitions/v1Effect"
+        }
+      }
+    },
+    "v1CheckPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "required": [
+            "namespace"
+          ]
+        },
+        "resource": {
+          "type": "string",
+          "required": [
+            "resource"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "required": [
+            "action"
+          ]
+        }
+      },
+      "required": [
+        "namespace",
+        "resource",
+        "action"
+      ]
+    },
+    "v1CheckSubjectsPermissionReply": {
+      "type": "object",
+      "properties": {
+        "effect": {
+          "$ref": "#/definitions/v1Effect"
+        }
+      }
+    },
+    "v1CheckSubjectsPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "required": [
+            "namespace"
+          ]
+        },
+        "resource": {
+          "type": "string",
+          "required": [
+            "resource"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "required": [
+            "action"
+          ]
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "namespace",
+        "resource",
+        "action"
+      ]
+    },
     "v1CreateRoleRequest": {
       "type": "object",
       "properties": {
@@ -1189,6 +1513,15 @@
     "v1DeleteUserResponse": {
       "type": "object"
     },
+    "v1Effect": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "GRANT",
+        "FORBIDDEN"
+      ],
+      "default": "UNKNOWN"
+    },
     "v1ForgetPasswordReply": {
       "type": "object"
     },
@@ -1222,6 +1555,17 @@
         }
       }
     },
+    "v1GetCurrentPermissionReply": {
+      "type": "object",
+      "properties": {
+        "acl": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Permission"
+          }
+        }
+      }
+    },
     "v1GetProfileResponse": {
       "type": "object",
       "properties": {
@@ -1251,6 +1595,17 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1Role"
+          }
+        }
+      }
+    },
+    "v1GetRolePermissionResponse": {
+      "type": "object",
+      "properties": {
+        "acl": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Permission"
           }
         }
       }
@@ -1415,6 +1770,29 @@
     "v1PasswordlessTokenAuthRequest": {
       "type": "object"
     },
+    "v1PatchRolePermissionResponse": {
+      "type": "object"
+    },
+    "v1Permission": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "effect": {
+          "$ref": "#/definitions/v1Effect"
+        }
+      }
+    },
     "v1RefreshTokenAuthReply": {
       "type": "object",
       "properties": {
@@ -1449,6 +1827,14 @@
     },
     "v1RegisterAuthRequest": {
       "type": "object"
+    },
+    "v1RemoveRRolePermissionAcl": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "v1Role": {
       "type": "object",
@@ -1542,6 +1928,26 @@
         }
       }
     },
+    "v1UpdateRolePermissionAcl": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "effect": {
+          "$ref": "#/definitions/v1Effect"
+        }
+      }
+    },
+    "v1UpdateRolePermissionResponse": {
+      "type": "object"
+    },
     "v1UpdateRoleRequest": {
       "type": "object",
       "properties": {
@@ -1558,6 +1964,68 @@
     },
     "v1UpdateSettingsResponse": {
       "type": "object"
+    },
+    "v1UpdateSubjectPermissionAcl": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "required": [
+            "namespace"
+          ]
+        },
+        "resource": {
+          "type": "string",
+          "required": [
+            "resource"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "required": [
+            "action"
+          ]
+        },
+        "effect": {
+          "$ref": "#/definitions/v1Effect"
+        }
+      },
+      "required": [
+        "namespace",
+        "resource",
+        "action"
+      ]
+    },
+    "v1UpdateSubjectPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "required": [
+            "subject"
+          ]
+        },
+        "acl": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1UpdateSubjectPermissionAcl"
+          }
+        }
+      },
+      "required": [
+        "subject"
+      ]
+    },
+    "v1UpdateSubjectPermissionResponse": {
+      "type": "object",
+      "properties": {
+        "acl": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Permission"
+          }
+        }
+      }
     },
     "v1UpdateUser": {
       "type": "object",
