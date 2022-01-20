@@ -17,6 +17,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/api"
 	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 	v14 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
+	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
@@ -28,7 +29,11 @@ import (
 
 // NewGRPCServer new a gRPC server.
 func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, mOpt *http2.WebMultiTenancyOption, apiOpt *api2.Option, logger log.Logger,
-	user *service.UserService, account *service.AccountService, auth *service.AuthService, role *service.RoleService) *grpc.Server {
+	user *service.UserService,
+	account *service.AccountService,
+	auth *service.AuthService,
+	role *service.RoleService,
+	permission *service.PermissionService) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -48,5 +53,6 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 	v13.RegisterAccountServer(srv, account)
 	v14.RegisterAuthServer(srv, auth)
 	v1.RegisterRoleServiceServer(srv, role)
+	v15.RegisterPermissionServiceServer(srv, permission)
 	return srv
 }

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/ahmetb/go-linq/v3"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
-	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
@@ -18,10 +18,10 @@ import (
 type UserService struct {
 	pb.UnimplementedUserServiceServer
 	um   *biz.UserManager
-	auth authorization2.Service
+	auth authorization.Service
 }
 
-func NewUserService(um *biz.UserManager, auth authorization2.Service) *UserService {
+func NewUserService(um *biz.UserManager, auth authorization.Service) *UserService {
 	return &UserService{
 		um:   um,
 		auth: auth,
@@ -29,7 +29,7 @@ func NewUserService(um *biz.UserManager, auth authorization2.Service) *UserServi
 }
 
 func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
-	if authResult, err := s.auth.Check(ctx, authorization2.NewEntityResource("user.user", "*"), authorization2.ListAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", "*"), authorization.ListAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -60,7 +60,7 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 }
 
 func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User, error) {
-	if authResult, err := s.auth.Check(ctx, authorization2.NewEntityResource("user.user", req.Id), authorization2.GetAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", req.Id), authorization.GetAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -77,7 +77,7 @@ func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 }
 
 func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
-	if authResult, err := s.auth.Check(ctx, authorization2.NewEntityResource("user.user", "*"), authorization2.CreateAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", "*"), authorization.CreateAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -135,7 +135,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 
 func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.User, error) {
 
-	if authResult, err := s.auth.Check(ctx, authorization2.NewEntityResource("user.user", req.User.Id), authorization2.UpdateAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", req.User.Id), authorization.UpdateAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -197,7 +197,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 }
 
 func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
-	if authResult, err := s.auth.Check(ctx, authorization2.NewEntityResource("user.user", req.Id), authorization2.DeleteAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", req.Id), authorization.DeleteAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")
@@ -208,7 +208,7 @@ func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 
 func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleRequest) (*pb.GetUserRoleReply, error) {
 	//TODO frequency call. use cache
-	if authResult, err := s.auth.Check(ctx, authorization2.NewEntityResource("user.user", req.Id), authorization2.GetAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authorization.NewEntityResource("user.user", req.Id), authorization.GetAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors2.Forbidden("", "")

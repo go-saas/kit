@@ -20,6 +20,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/api"
 	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 	v14 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
+	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
@@ -44,7 +45,8 @@ func NewHTTPServer(c *conf.Services,
 	user *service.UserService,
 	account *service.AccountService,
 	auth *service.AuthService,
-	role *service.RoleService) *http.Server {
+	role *service.RoleService,
+	permission *service.PermissionService) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg)
 
@@ -92,6 +94,6 @@ func NewHTTPServer(c *conf.Services,
 	v13.RegisterAccountHTTPServer(srv, account)
 	v14.RegisterAuthHTTPServer(srv, auth)
 	v1.RegisterRoleServiceHTTPServer(srv, role)
-
+	v15.RegisterPermissionServiceHTTPServer(srv, permission)
 	return srv
 }
