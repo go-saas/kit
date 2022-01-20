@@ -82,3 +82,11 @@ func (c *ClientSubject) GetIdentity() string {
 func (c *ClientSubject) GetClientId() string {
 	return c.clientId
 }
+
+type SubjectStr string
+
+var _ Subject = (*SubjectStr)(nil)
+
+func (s SubjectStr) GetIdentity() string {
+	return string(s)
+}

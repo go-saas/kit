@@ -14,9 +14,34 @@ type Service interface {
 	Check(ctx context.Context, resource Resource, action Action) (Result, error)
 }
 
-// SubjectContributor receive one subject and retrieve as list of subjects
+// SubjectContributor receive one Subject and retrieve as list of subjects
 type SubjectContributor interface {
 	Process(ctx context.Context, subject Subject) ([]Subject, error)
+}
+
+type SubjectResolver interface {
+	//Resolve subjects from context
+	Resolve(ctx context.Context) ([]Subject, error)
+}
+
+type SubjectResolverImpl struct {
+}
+
+func NewSubjectResolver() *SubjectResolverImpl {
+	return &SubjectResolverImpl{}
+}
+
+func (s *SubjectResolverImpl) Resolve(ctx context.Context) ([]Subject, error) {
+	var subjects []Subject
+	var userId string
+	if userInfo, ok := authn.FromUserContext(ctx); ok {
+		userId = userInfo.GetId()
+		subjects = append(subjects, NewUserSubject(userId))
+	}
+	if clientId, ok := authn.FromClientContext(ctx); ok {
+		subjects = append(subjects, NewClientSubject(clientId))
+	}
+	return subjects, nil
 }
 
 type Option struct {
@@ -30,13 +55,14 @@ func NewAuthorizationOption(subjectContributorList ...SubjectContributor) *Optio
 type DefaultAuthorizationService struct {
 	opt     *Option
 	checker PermissionChecker
+	sr      SubjectResolver
 	log     *log.Helper
 }
 
 var _ Service = (*DefaultAuthorizationService)(nil)
 
-func NewDefaultAuthorizationService(opt *Option, checker PermissionChecker, logger log.Logger) *DefaultAuthorizationService {
-	return &DefaultAuthorizationService{opt: opt, checker: checker, log: log.NewHelper(log.With(logger, "module", "authorization.service"))}
+func NewDefaultAuthorizationService(opt *Option, checker PermissionChecker, sr SubjectResolver, logger log.Logger) *DefaultAuthorizationService {
+	return &DefaultAuthorizationService{opt: opt, checker: checker, sr: sr, log: log.NewHelper(log.With(logger, "module", "authorization.service"))}
 }
 
 func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error) {
@@ -46,10 +72,10 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 			subjectStr = append(subjectStr, s.GetIdentity())
 		}
 		if always {
-			a.log.Debugf("check permission for subject %s action %s to resource %s granted", strings.Join(subjectStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+			a.log.Debugf("check permission for Subject %s Action %s to Resource %s granted", strings.Join(subjectStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 			return NewAllowAuthorizationResult(), nil
 		} else {
-			a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(subjectStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+			a.log.Debugf("check permission for Subject %s Action %s to Resource %s forbidden", strings.Join(subjectStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 			r := NewDisallowAuthorizationResult(nil)
 			return r, FormatError(ctx, r)
 		}
@@ -88,38 +114,34 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 	for _, s := range subjectList {
 		logStr = append(logStr, s.GetIdentity())
 	}
-	a.log.Debugf("check permission for subject %s action %s to resource %s ", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+	a.log.Debugf("check permission for Subject %s Action %s to Resource %s ", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 
 	grantType, err := a.checker.IsGrant(ctx, resource, action, subjectList...)
 	if err != nil {
 		return NewDisallowAuthorizationResult(nil), err
 	}
 	if grantType == EffectForbidden {
-		a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+		a.log.Debugf("check permission for Subject %s Action %s to Resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 		r := NewDisallowAuthorizationResult(nil)
 		return r, FormatError(ctx, r)
 	}
 	if grantType == EffectGrant {
-		a.log.Debugf("check permission for subject %s action %s to resource %s granted", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+		a.log.Debugf("check permission for Subject %s Action %s to Resource %s granted", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 		return NewAllowAuthorizationResult(), nil
 	}
-	a.log.Debugf("check permission for subject %s action %s to resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+	a.log.Debugf("check permission for Subject %s Action %s to Resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 	r := NewDisallowAuthorizationResult(nil)
 	return r, FormatError(ctx, r)
 }
 
 func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action) (Result, error) {
-	var subjects []Subject
-	var userId string
-	if userInfo, ok := authn.FromUserContext(ctx); ok {
-		userId = userInfo.GetId()
-		subjects = append(subjects, NewUserSubject(userId))
-	}
-	if clientId, ok := authn.FromClientContext(ctx); ok {
-		subjects = append(subjects, NewClientSubject(clientId))
+	subjects, err := a.sr.Resolve(ctx)
+	if err != nil {
+		return NewDisallowAuthorizationResult(nil), err
 	}
 	return a.CheckForSubjects(ctx, resource, action, subjects...)
 }
 
-var ProviderSet = wire.NewSet(NewDefaultAuthorizationService, wire.Bind(new(Service), new(*DefaultAuthorizationService)), NewPermissionService,
-	wire.Bind(new(PermissionManagementService), new(*PermissionService)), wire.Bind(new(PermissionChecker), new(*PermissionService)))
+var ProviderSet = wire.NewSet(NewDefaultAuthorizationService,
+	wire.Bind(new(Service), new(*DefaultAuthorizationService)),
+	NewSubjectResolver, wire.Bind(new(SubjectResolver), new(*SubjectResolverImpl)))

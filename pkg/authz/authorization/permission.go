@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/google/wire"
 	"regexp"
 	"strings"
 	"sync"
@@ -11,32 +12,16 @@ import (
 
 type PermissionManagementService interface {
 	AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, effect Effect) error
+	ListAcl(ctx context.Context, subjects ...Subject) ([]PermissionBean, error)
+	UpdateGrant(ctx context.Context, subject Subject, acl []UpdateSubjectPermission) error
 }
 
 type PermissionChecker interface {
 	IsGrant(ctx context.Context, resource Resource, action Action, subjects ...Subject) (Effect, error)
 }
 
-type permissionBean struct {
-	namespace string
-	resource  string
-	action    string
-	subject   string
-	effect    Effect
-}
-
-func newPermissionBean(resource Resource, action Action, subject Subject, effect Effect) permissionBean {
-	return permissionBean{
-		namespace: resource.GetNamespace(),
-		resource:  resource.GetIdentity(),
-		action:    action.GetIdentity(),
-		subject:   subject.GetIdentity(),
-		effect:    effect,
-	}
-}
-
 type PermissionService struct {
-	v   []permissionBean
+	v   []PermissionBean
 	mux sync.Mutex
 	log *log.Helper
 }
@@ -55,30 +40,59 @@ func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, acti
 
 	for _, subject := range subjects {
 		for _, bean := range p.v {
-			if match(bean.namespace, resource.GetNamespace()) && match(bean.subject, subject.GetIdentity()) && match(bean.resource, resource.GetIdentity()) && match(bean.action, action.GetIdentity()) {
-				if bean.effect == EffectForbidden {
-					p.log.Debugf("subject %s action %s to resource %s forbidden", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+			if match(bean.Namespace, resource.GetNamespace()) && match(bean.Subject, subject.GetIdentity()) && match(bean.Resource, resource.GetIdentity()) && match(bean.Action, action.GetIdentity()) {
+				if bean.Effect == EffectForbidden {
+					p.log.Debugf("Subject %s Action %s to Resource %s forbidden", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 					return EffectForbidden, nil
 				}
-				if bean.effect == EffectGrant {
+				if bean.Effect == EffectGrant {
 					anyAllow = true
 				}
 			}
 		}
 		if anyAllow {
-			p.log.Debugf("subject %s action %s to resource %s grant", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+			p.log.Debugf("Subject %s Action %s to Resource %s grant", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 			return EffectGrant, nil
 		}
-		p.log.Debugf("subject %s action %s to resource %s unknown", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+		p.log.Debugf("Subject %s Action %s to Resource %s unknown", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 	}
 	return EffectUnknown, nil
+}
+
+func (p *PermissionService) ListAcl(ctx context.Context, subjects ...Subject) ([]PermissionBean, error) {
+	p.mux.Lock()
+	defer p.mux.Unlock()
+	var ret []PermissionBean
+	for _, bean := range p.v {
+		for _, subject := range subjects {
+			if match(bean.Subject, subject.GetIdentity()) || match(bean.Subject, "") {
+				ret = append(ret, bean)
+			}
+		}
+	}
+	return ret, nil
+}
+
+func (p *PermissionService) UpdateGrant(ctx context.Context, subject Subject, acl []UpdateSubjectPermission) error {
+	p.mux.Lock()
+	defer p.mux.Unlock()
+	//remove previous
+	for i := len(p.v) - 1; i >= 0; i-- {
+		if subject.GetIdentity() == p.v[i].Subject {
+			p.v = append(p.v[:i], p.v[i+1:]...)
+		}
+	}
+	for _, permission := range acl {
+		p.v = append(p.v, NewPermissionBean(permission.Resource, permission.Action, subject, permission.Effect))
+	}
+	return nil
 }
 
 func (p *PermissionService) AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, effect Effect) error {
 	p.mux.Lock()
 	defer p.mux.Unlock()
-	p.v = append(p.v, newPermissionBean(resource, action, subject, effect))
-	p.log.Debugf("add resource %s action %s grant %v to subject %s", fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()), action.GetIdentity(), effect, subject.GetIdentity())
+	p.v = append(p.v, NewPermissionBean(resource, action, subject, effect))
+	p.log.Debugf("add Resource %s Action %s grant %v to Subject %s", fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()), action.GetIdentity(), effect, subject.GetIdentity())
 	return nil
 }
 
@@ -103,3 +117,9 @@ func match(pattern string, value string) bool {
 	result, _ := regexp.MatchString(wildCardToRegexp(pattern), value)
 	return result
 }
+
+var MemoryManagerProviderSet = wire.NewSet(
+	NewPermissionService,
+	wire.Bind(new(PermissionManagementService), new(*PermissionService)),
+	wire.Bind(new(PermissionChecker), new(*PermissionService)),
+)

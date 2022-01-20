@@ -24,3 +24,27 @@ const (
 	EffectGrant
 	EffectForbidden
 )
+
+type PermissionBean struct {
+	Namespace string
+	Resource  string
+	Action    string
+	Subject   string
+	Effect    Effect
+}
+
+func NewPermissionBean(resource Resource, action Action, subject Subject, effect Effect) PermissionBean {
+	return PermissionBean{
+		Namespace: resource.GetNamespace(),
+		Resource:  resource.GetIdentity(),
+		Action:    action.GetIdentity(),
+		Subject:   subject.GetIdentity(),
+		Effect:    effect,
+	}
+}
+
+type UpdateSubjectPermission struct {
+	Resource Resource
+	Action   Action
+	Effect   Effect
+}
