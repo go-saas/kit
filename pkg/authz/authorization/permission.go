@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/goxiaoy/go-saas/common"
 	"regexp"
 	"strings"
 	"sync"
 )
 
 type PermissionManagementService interface {
-	AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, effect Effect) error
+	AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, tenantID string, effect Effect) error
 	ListAcl(ctx context.Context, subjects ...Subject) ([]PermissionBean, error)
 	UpdateGrant(ctx context.Context, subject Subject, acl []UpdateSubjectPermission) error
 }
@@ -37,10 +38,15 @@ func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, acti
 	p.mux.Lock()
 	defer p.mux.Unlock()
 	var anyAllow bool
-
+	//TODO host side?
+	tenantInfo := common.FromCurrentTenant(ctx)
 	for _, subject := range subjects {
 		for _, bean := range p.v {
-			if match(bean.Namespace, resource.GetNamespace()) && match(bean.Subject, subject.GetIdentity()) && match(bean.Resource, resource.GetIdentity()) && match(bean.Action, action.GetIdentity()) {
+			if match(bean.Namespace, resource.GetNamespace()) &&
+				match(bean.Subject, subject.GetIdentity()) &&
+				match(bean.Resource, resource.GetIdentity()) &&
+				match(bean.Action, action.GetIdentity()) &&
+				match(bean.TenantID, tenantInfo.GetId()) {
 				if bean.Effect == EffectForbidden {
 					p.log.Debugf("Subject %s Action %s to Resource %s forbidden", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 					return EffectForbidden, nil
@@ -62,10 +68,12 @@ func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, acti
 func (p *PermissionService) ListAcl(ctx context.Context, subjects ...Subject) ([]PermissionBean, error) {
 	p.mux.Lock()
 	defer p.mux.Unlock()
+	//TODO host side?
+	tenantInfo := common.FromCurrentTenant(ctx)
 	var ret []PermissionBean
 	for _, bean := range p.v {
 		for _, subject := range subjects {
-			if match(bean.Subject, subject.GetIdentity()) || match(bean.Subject, "") {
+			if (match(bean.Subject, subject.GetIdentity()) || match(bean.Subject, "")) && match(bean.TenantID, tenantInfo.GetId()) {
 				ret = append(ret, bean)
 			}
 		}
@@ -83,15 +91,15 @@ func (p *PermissionService) UpdateGrant(ctx context.Context, subject Subject, ac
 		}
 	}
 	for _, permission := range acl {
-		p.v = append(p.v, NewPermissionBean(permission.Resource, permission.Action, subject, permission.Effect))
+		p.v = append(p.v, NewPermissionBean(permission.Resource, permission.Action, subject, permission.TenantID, permission.Effect))
 	}
 	return nil
 }
 
-func (p *PermissionService) AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, effect Effect) error {
+func (p *PermissionService) AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, tenantID string, effect Effect) error {
 	p.mux.Lock()
 	defer p.mux.Unlock()
-	p.v = append(p.v, NewPermissionBean(resource, action, subject, effect))
+	p.v = append(p.v, NewPermissionBean(resource, action, subject, tenantID, effect))
 	p.log.Debugf("add Resource %s Action %s grant %v to Subject %s", fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()), action.GetIdentity(), effect, subject.GetIdentity())
 	return nil
 }

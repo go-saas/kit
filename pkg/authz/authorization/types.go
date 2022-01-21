@@ -30,15 +30,17 @@ type PermissionBean struct {
 	Resource  string
 	Action    string
 	Subject   string
+	TenantID  string
 	Effect    Effect
 }
 
-func NewPermissionBean(resource Resource, action Action, subject Subject, effect Effect) PermissionBean {
+func NewPermissionBean(resource Resource, action Action, subject Subject, tenantID string, effect Effect) PermissionBean {
 	return PermissionBean{
 		Namespace: resource.GetNamespace(),
 		Resource:  resource.GetIdentity(),
 		Action:    action.GetIdentity(),
 		Subject:   subject.GetIdentity(),
+		TenantID:  tenantID,
 		Effect:    effect,
 	}
 }
@@ -47,4 +49,14 @@ type UpdateSubjectPermission struct {
 	Resource Resource
 	Action   Action
 	Effect   Effect
+	TenantID string
+}
+
+func NewUpdateSubjectPermission(resource Resource, action Action, tenantID string, effect Effect) *UpdateSubjectPermission {
+	return &UpdateSubjectPermission{
+		Resource: resource,
+		Action:   action,
+		TenantID: tenantID,
+		Effect:   effect,
+	}
 }
