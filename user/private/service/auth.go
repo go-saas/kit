@@ -3,11 +3,12 @@ package service
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
 	"github.com/gorilla/csrf"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/kratos"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -125,9 +126,12 @@ func (s *AuthService) ValidatePassword(ctx context.Context, req *pb.ValidatePass
 }
 
 func (s *AuthService) GetCsrfToken(ctx context.Context, req *pb.GetCsrfTokenRequest) (*pb.GetCsrfTokenResponse, error) {
-	if r, ok := kratos.ResolveHttpRequest(ctx); ok {
-		token := csrf.Token(r)
-		return &pb.GetCsrfTokenResponse{CsrfToken: token}, nil
+	if t, ok := transport.FromServerContext(ctx); ok {
+		if ht, ok := t.(*http.Transport); ok {
+			token := csrf.Token(ht.Request())
+			t.ReplyHeader().Set("X-CSRF-Token", token)
+			return &pb.GetCsrfTokenResponse{CsrfToken: token}, nil
+		}
 	}
 	return nil, pb.ErrorInvalidOperation("csrf only supports http")
 }
