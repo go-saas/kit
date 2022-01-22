@@ -43,11 +43,11 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	option := api.NewDefaultOption(saasContributor, userContributor)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, arg...)
-	userServiceClient := api2.NewUserGrpcClient(grpcConn)
-	remoteRoleContributor := api2.NewRemoteRoleContributor(userServiceClient)
-	authorizationOption := service.NewAuthorizationOption(remoteRoleContributor)
-	permissionService := authorization.NewPermissionService(logger)
-	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(authorizationOption, permissionService, logger)
+	permissionServiceClient := api2.NewPermissionGrpcClient(grpcConn)
+	permissionChecker := api2.NewRemotePermissionChecker(permissionServiceClient)
+	authorizationOption := service.NewAuthorizationOption()
+	subjectResolverImpl := authorization.NewSubjectResolver(authorizationOption)
+	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, logger)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, logger)
@@ -59,9 +59,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 		return nil, nil, err
 	}
 	migrate := data.NewMigrate(dataData)
-	roleServiceClient := api2.NewRoleGrpcClient(grpcConn)
-	permissionSeeder := biz.NewPermissionSeeder(permissionService, roleServiceClient)
-	seeder := server.NewSeeder(confData, manager, migrate, permissionSeeder)
+	seeder := server.NewSeeder(confData, manager, migrate)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
 		cleanup3()

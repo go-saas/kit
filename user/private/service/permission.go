@@ -21,7 +21,7 @@ func NewPermissionService(auth authorization.Service, permissionMgr authorizatio
 }
 
 func (s *PermissionService) GetCurrent(ctx context.Context, req *pb.GetCurrentPermissionRequest) (*pb.GetCurrentPermissionReply, error) {
-	subjects, err := s.sr.Resolve(ctx)
+	subjects, err := s.sr.ResolveFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -51,8 +51,24 @@ func (s *PermissionService) CheckCurrent(ctx context.Context, req *pb.CheckPermi
 }
 
 func (s *PermissionService) CheckForSubjects(ctx context.Context, req *pb.CheckSubjectsPermissionRequest) (*pb.CheckSubjectsPermissionReply, error) {
-	//TODO
-	return &pb.CheckSubjectsPermissionReply{}, nil
+	if grant, err := s.auth.Check(ctx, authorization.NewEntityResource("permission", "*"), authorization.GetAction); err != nil {
+		return nil, err
+	} else if !grant.Allowed {
+		return nil, errors.Forbidden("", "")
+	}
+	subjects := make([]authorization.Subject, len(req.Subjects))
+	for i, subject := range req.Subjects {
+		subjects[i] = authorization.SubjectStr(subject)
+	}
+	grant, err := s.auth.CheckForSubjects(ctx, authorization.NewEntityResource(req.Namespace, req.Resource), authorization.ActionStr(req.Action), subjects...)
+	if err != nil {
+		return nil, err
+	}
+	effect := pb.Effect_FORBIDDEN
+	if grant.Allowed {
+		effect = pb.Effect_GRANT
+	}
+	return &pb.CheckSubjectsPermissionReply{Effect: effect}, nil
 }
 func (s *PermissionService) UpdateSubjectPermission(ctx context.Context, req *pb.UpdateSubjectPermissionRequest) (*pb.UpdateSubjectPermissionResponse, error) {
 	//check update permission

@@ -59,11 +59,11 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 		cleanup()
 		return nil, nil, err
 	}
+	permissionService := authorization.NewPermissionService(logger)
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
 	authorizationOption := service.NewAuthorizationOption(userRoleContributor)
-	permissionService := authorization.NewPermissionService(logger)
-	subjectResolverImpl := authorization.NewSubjectResolver()
-	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(authorizationOption, permissionService, subjectResolverImpl, logger)
+	subjectResolverImpl := authorization.NewSubjectResolver(authorizationOption)
+	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(permissionService, subjectResolverImpl, logger)
 	userService := service.NewUserService(userManager, defaultAuthorizationService)
 	accountService := service.NewAccountService(userManager)
 	roleRepo := data.NewRoleRepo(dataData)

@@ -8,6 +8,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
+	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	v14 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"google.golang.org/grpc"
@@ -26,8 +27,8 @@ func NewHttpClient(clientName api.ClientName, services *conf.Services, opt *api.
 	return api.NewHttpClient(clientName, ServiceName, services, opt, tokenMgr, opts...)
 }
 
-var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRemoteRoleContributor, NewRoleGrpcClient)
-var HttpProviderSet = wire.NewSet(NewHttpClient, NewUserHttpClient, NewAuthHttpClient, NewAccountHttpClient, NewRemoteRoleContributor, NewRoleHttpClient)
+var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient, NewRemotePermissionChecker)
+var HttpProviderSet = wire.NewSet(NewHttpClient, NewUserHttpClient, NewAuthHttpClient, NewAccountHttpClient, NewRoleHttpClient, NewPermissionHttpClient, NewRemotePermissionChecker)
 
 func NewUserGrpcClient(conn GrpcConn) v1.UserServiceClient {
 	return v1.NewUserServiceClient(conn)
@@ -59,4 +60,11 @@ func NewRoleGrpcClient(conn GrpcConn) v14.RoleServiceClient {
 
 func NewRoleHttpClient(http HttpClient) v14.RoleServiceHTTPClient {
 	return v14.NewRoleServiceHTTPClient(http)
+}
+
+func NewPermissionGrpcClient(conn GrpcConn) v15.PermissionServiceClient {
+	return v15.NewPermissionServiceClient(conn)
+}
+func NewPermissionHttpClient(http HttpClient) v15.PermissionServiceHTTPClient {
+	return v15.NewPermissionServiceHTTPClient(http)
 }
