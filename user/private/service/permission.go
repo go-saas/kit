@@ -25,7 +25,11 @@ func (s *PermissionService) GetCurrent(ctx context.Context, req *pb.GetCurrentPe
 	if err != nil {
 		return nil, err
 	}
-	beans, err := s.permissionMgr.ListAcl(ctx, subjects...)
+	newSubjects, err := s.sr.ResolveProcessed(ctx, subjects...)
+	if err != nil {
+		return nil, err
+	}
+	beans, err := s.permissionMgr.ListAcl(ctx, newSubjects...)
 	if err != nil {
 		return nil, err
 	}
