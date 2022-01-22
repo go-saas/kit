@@ -37,9 +37,6 @@ func (r *RoleSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 				return err
 			}
 		}
-		if role.Name == Admin {
-			r.permission.AddGrant(ctx, authorization2.NewEntityResource("*", "*"), authorization2.ActionStr("*"), authorization2.NewRoleSubject(role.ID.String()), authorization2.EffectGrant)
-		}
 	}
 	return nil
 }
