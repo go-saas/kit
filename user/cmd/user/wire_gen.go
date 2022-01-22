@@ -12,6 +12,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -59,7 +60,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 		cleanup()
 		return nil, nil, err
 	}
-	permissionService := authorization.NewPermissionService(logger)
+	enforcerProvider := data.NewEnforcerProvider(dbProvider)
+	permissionService := casbin.NewPermissionService(enforcerProvider)
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
 	authorizationOption := service.NewAuthorizationOption(userRoleContributor)
 	subjectResolverImpl := authorization.NewSubjectResolver(authorizationOption)
@@ -78,7 +80,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	fake := seed.NewFake(userManager)
-	permissionSeeder := biz.NewPermissionSeeder(permissionService, roleManager)
+	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
 	seeder := server.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, fake, permissionSeeder)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {

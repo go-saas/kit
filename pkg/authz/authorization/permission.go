@@ -19,6 +19,35 @@ type PermissionManagementService interface {
 
 type PermissionChecker interface {
 	IsGrant(ctx context.Context, resource Resource, action Action, subjects ...Subject) (Effect, error)
+	IsGrantTenant(ctx context.Context, resource Resource, action Action, tenantID string, subjects ...Subject) (Effect, error)
+}
+
+func EnsureGrant(ctx context.Context, mgr PermissionManagementService, checker PermissionChecker, resource Resource, action Action, subject Subject, tenantID string) error {
+	eff, err := checker.IsGrantTenant(ctx, resource, action, tenantID, subject)
+	if err != nil {
+		return err
+	}
+	if eff != EffectGrant {
+		err = mgr.AddGrant(ctx, resource, action, subject, tenantID, EffectGrant)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func EnsureForbidden(ctx context.Context, mgr PermissionManagementService, checker PermissionChecker, resource Resource, action Action, subject Subject, tenantID string) error {
+	eff, err := checker.IsGrantTenant(ctx, resource, action, tenantID, subject)
+	if err != nil {
+		return err
+	}
+	if eff != EffectForbidden {
+		err = mgr.AddGrant(ctx, resource, action, subject, tenantID, EffectForbidden)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 type PermissionService struct {
@@ -35,18 +64,23 @@ func NewPermissionService(logger log.Logger) *PermissionService {
 }
 
 func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, action Action, subjects ...Subject) (Effect, error) {
+	tenantInfo := common.FromCurrentTenant(ctx)
+	return p.IsGrantTenant(ctx, resource, action, tenantInfo.GetId(), subjects...)
+}
+
+func (p *PermissionService) IsGrantTenant(ctx context.Context, resource Resource, action Action, tenantID string, subjects ...Subject) (Effect, error) {
 	p.mux.Lock()
 	defer p.mux.Unlock()
 	var anyAllow bool
 	//TODO host side?
-	tenantInfo := common.FromCurrentTenant(ctx)
+
 	for _, subject := range subjects {
 		for _, bean := range p.v {
 			if match(bean.Namespace, resource.GetNamespace()) &&
 				match(bean.Subject, subject.GetIdentity()) &&
 				match(bean.Resource, resource.GetIdentity()) &&
 				match(bean.Action, action.GetIdentity()) &&
-				match(bean.TenantID, tenantInfo.GetId()) {
+				match(bean.TenantID, tenantID) {
 				if bean.Effect == EffectForbidden {
 					p.log.Debugf("Subject %s Action %s to Resource %s forbidden", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 					return EffectForbidden, nil
@@ -126,7 +160,7 @@ func match(pattern string, value string) bool {
 	return result
 }
 
-var MemoryManagerProviderSet = wire.NewSet(
+var PermissionProviderSet = wire.NewSet(
 	NewPermissionService,
 	wire.Bind(new(PermissionManagementService), new(*PermissionService)),
 	wire.Bind(new(PermissionChecker), new(*PermissionService)),

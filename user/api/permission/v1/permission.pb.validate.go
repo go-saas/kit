@@ -510,6 +510,8 @@ func (m *CheckSubjectsPermissionRequest) validate(all bool) error {
 
 	// no validation rules for Action
 
+	// no validation rules for TenantId
+
 	if len(errors) > 0 {
 		return CheckSubjectsPermissionRequestMultiError(errors)
 	}

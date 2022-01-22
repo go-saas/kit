@@ -1458,6 +1458,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "tenantId": {
+          "type": "string"
         }
       },
       "required": [

@@ -70,6 +70,7 @@ message CheckSubjectsPermissionRequest{
   string resource = 2 [(google.api.field_behavior) = REQUIRED];
   string action = 3 [(google.api.field_behavior) = REQUIRED];
   repeated string subjects =4;
+  string tenant_id =5;
 }
 
 message CheckSubjectsPermissionReply{

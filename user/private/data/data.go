@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
@@ -20,6 +21,7 @@ var ProviderSet = wire.NewSet(
 	uow2.NewUowManager,
 	NewTenantStore,
 	NewProvider,
+	NewEnforcerProvider,
 	NewUserRepo,
 	NewRefreshTokenRepo,
 	NewRoleRepo,
@@ -68,4 +70,8 @@ func NewProvider(c *conf.Data, cfg *gorm.Config, opener gorm.DbOpener, ts common
 	}, data.NewConnStrOption(conn))
 	r := gorm.NewDefaultDbProvider(mr, cfg, opener)
 	return r
+}
+
+func NewEnforcerProvider(dbProvider gorm.DbProvider) *casbin.EnforcerProvider {
+	return casbin.NewEnforcerProvider(dbProvider, ConnName)
 }

@@ -10,22 +10,22 @@ import (
 
 type PermissionSeeder struct {
 	permission authorization.PermissionManagementService
+	checker    authorization.PermissionChecker
 	rm         *RoleManager
 }
 
-func NewPermissionSeeder(permission authorization.PermissionManagementService, rm *RoleManager) *PermissionSeeder {
-	return &PermissionSeeder{permission: permission, rm: rm}
+func NewPermissionSeeder(permission authorization.PermissionManagementService, checker authorization.PermissionChecker, rm *RoleManager) *PermissionSeeder {
+	return &PermissionSeeder{permission: permission, checker: checker, rm: rm}
 }
 
 func (p *PermissionSeeder) Seed(ctx context.Context, sCtx *seed.Context) error {
 
 	tenantInfo := common.FromCurrentTenant(ctx)
-	err := p.permission.AddGrant(ctx,
+	err := authorization.EnsureGrant(ctx, p.permission, p.checker,
 		authorization.NewEntityResource("*", "*"),
 		authorization.ActionStr("*"),
 		authorization.NewClientSubject("*"),
-		"*",
-		authorization.EffectGrant)
+		"*")
 	if err != nil {
 		return err
 	}
@@ -37,12 +37,11 @@ func (p *PermissionSeeder) Seed(ctx context.Context, sCtx *seed.Context) error {
 	if adminRole == nil {
 		return errors.New("admin role not found")
 	}
-	err = p.permission.AddGrant(ctx,
+	err = authorization.EnsureGrant(ctx, p.permission, p.checker,
 		authorization.NewEntityResource("*", "*"),
 		authorization.ActionStr("*"),
 		authorization.NewRoleSubject(adminRole.ID.String()),
-		tenantInfo.GetId(),
-		authorization.EffectGrant)
+		tenantInfo.GetId())
 	if err != nil {
 		return err
 	}
