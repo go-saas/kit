@@ -25,10 +25,11 @@ type SubjectResolver interface {
 }
 
 type SubjectResolverImpl struct {
+	opt *Option
 }
 
-func NewSubjectResolver() *SubjectResolverImpl {
-	return &SubjectResolverImpl{}
+func NewSubjectResolver(opt *Option) *SubjectResolverImpl {
+	return &SubjectResolverImpl{opt: opt}
 }
 
 func (s *SubjectResolverImpl) Resolve(ctx context.Context) ([]Subject, error) {
@@ -41,7 +42,39 @@ func (s *SubjectResolverImpl) Resolve(ctx context.Context) ([]Subject, error) {
 	if clientId, ok := authn.FromClientContext(ctx); ok {
 		subjects = append(subjects, NewClientSubject(clientId))
 	}
-	return subjects, nil
+
+	//use contributor
+	var subjectList []Subject
+
+	addIfNotPresent := func(subject Subject) bool {
+		for _, s := range subjectList {
+			if s.GetIdentity() == subject.GetIdentity() {
+				return false
+			}
+		}
+		subjectList = append(subjectList, subject)
+		return true
+	}
+	for _, s := range subjects {
+		addIfNotPresent(s)
+	}
+	i := 0
+	for {
+		if i == len(subjectList) {
+			break
+		}
+		for _, contributor := range s.opt.SubjectContributorList {
+			if subjects, err := contributor.Process(ctx, subjectList[i]); err != nil {
+				return nil, err
+			} else {
+				for _, s2 := range subjects {
+					addIfNotPresent(s2)
+				}
+			}
+		}
+		i++
+	}
+	return subjectList, nil
 }
 
 type Option struct {
@@ -53,7 +86,6 @@ func NewAuthorizationOption(subjectContributorList ...SubjectContributor) *Optio
 }
 
 type DefaultAuthorizationService struct {
-	opt     *Option
 	checker PermissionChecker
 	sr      SubjectResolver
 	log     *log.Helper
@@ -61,8 +93,8 @@ type DefaultAuthorizationService struct {
 
 var _ Service = (*DefaultAuthorizationService)(nil)
 
-func NewDefaultAuthorizationService(opt *Option, checker PermissionChecker, sr SubjectResolver, logger log.Logger) *DefaultAuthorizationService {
-	return &DefaultAuthorizationService{opt: opt, checker: checker, sr: sr, log: log.NewHelper(log.With(logger, "module", "authorization.service"))}
+func NewDefaultAuthorizationService(checker PermissionChecker, sr SubjectResolver, logger log.Logger) *DefaultAuthorizationService {
+	return &DefaultAuthorizationService{checker: checker, sr: sr, log: log.NewHelper(log.With(logger, "module", "authorization.service"))}
 }
 
 func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error) {
@@ -80,43 +112,13 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 			return r, FormatError(ctx, r)
 		}
 	}
-	var subjectList []Subject
-
-	addIfNotPresent := func(subject Subject) bool {
-		for _, s := range subjectList {
-			if s.GetIdentity() == subject.GetIdentity() {
-				return false
-			}
-		}
-		subjectList = append(subjectList, subject)
-		return true
-	}
-	for _, s := range subject {
-		addIfNotPresent(s)
-	}
-	i := 0
-	for {
-		if i == len(subjectList) {
-			break
-		}
-		for _, contributor := range a.opt.SubjectContributorList {
-			if subjects, err := contributor.Process(ctx, subjectList[i]); err != nil {
-				return NewDisallowAuthorizationResult(nil), err
-			} else {
-				for _, s2 := range subjects {
-					addIfNotPresent(s2)
-				}
-			}
-		}
-		i++
-	}
 	var logStr []string
-	for _, s := range subjectList {
+	for _, s := range subject {
 		logStr = append(logStr, s.GetIdentity())
 	}
 	a.log.Debugf("check permission for Subject %s Action %s to Resource %s ", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
 
-	grantType, err := a.checker.IsGrant(ctx, resource, action, subjectList...)
+	grantType, err := a.checker.IsGrant(ctx, resource, action, subject...)
 	if err != nil {
 		return NewDisallowAuthorizationResult(nil), err
 	}
