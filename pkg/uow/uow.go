@@ -15,6 +15,7 @@ import (
 	"gorm.io/driver/sqlite"
 	g "gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"strings"
 )
 
 func NewGormConfig(databases *conf.Endpoints, name string) *gorm.Config {
@@ -79,4 +80,11 @@ func Uow(l log.Logger, um uow.Manager) middleware.Middleware {
 			return res, err
 		}
 	}
+}
+
+//DefaultUseOperation return true if operation action not start with "get" and "list" (case-insensitive)
+func DefaultUseOperation(operation string) bool {
+	s := strings.Split(operation, "/")
+	act := strings.ToLower(s[len(s)-1])
+	return !strings.HasPrefix(act, "get") && !strings.HasPrefix(act, "list")
 }
