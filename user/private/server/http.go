@@ -13,7 +13,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	authboss2 "github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/authboss"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/authentication"
-	chi2 "github.com/goxiaoy/go-saas-kit/pkg/chi"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -68,13 +67,13 @@ func NewHTTPServer(c *conf.Services,
 
 	//global filter
 	router.Use(
-		chi2.MiddlewareConvert(recovery.Recovery(),
+		server.MiddlewareConvert(recovery.Recovery(),
 			tracing.Server(),
 			logging.Server(logger),
 			metrics.Server(), validate.Validator(),
 			authentication.ServerExtractAndAuth(tokenizer, logger)),
 		authboss2.PathFilter(ab),
-		chi2.MiddlewareConvert(
+		server.MiddlewareConvert(
 			saas.Server(mOpt, nil, ts),
 			api2.ServerMiddleware(apiOpt),
 			uow.Uow(logger, uowMgr),

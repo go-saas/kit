@@ -1,4 +1,4 @@
-package chi
+package server
 
 import (
 	"context"
