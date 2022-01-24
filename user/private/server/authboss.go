@@ -20,7 +20,6 @@ import (
 	_ "github.com/volatiletech/authboss/v3/register"
 	"net/http"
 	"regexp"
-	"time"
 )
 
 //TODO config
@@ -69,9 +68,6 @@ func NewSessionStorer(sCfg *conf2.Security, u *conf.UserConf) *abclientstate.Ses
 			}
 		}
 	}
-	cstore.Options.HttpOnly = false
-	cstore.Options.Secure = false
-	cstore.MaxAge(int((30 * 24 * time.Hour) / time.Second))
 	return &sessionStore
 }
 

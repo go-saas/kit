@@ -71,7 +71,8 @@ func NewHTTPServer(c *conf.Services,
 		server.MiddlewareConvert(recovery.Recovery(),
 			tracing.Server(),
 			logging.Server(logger),
-			metrics.Server(), validate.Validator(),
+			metrics.Server(),
+			validate.Validator(),
 			authentication.ServerExtractAndAuth(tokenizer, logger)),
 		authboss2.PathFilter(ab),
 		server.MiddlewareConvert(
@@ -82,7 +83,6 @@ func NewHTTPServer(c *conf.Services,
 		authboss.ModuleListMiddleware(ab))
 
 	router.Group(func(router chi.Router) {
-		router.Use(authboss.ModuleListMiddleware(ab))
 		router.Mount("/", http3.StripPrefix("/auth", ab.Config.Core.Router))
 	})
 
