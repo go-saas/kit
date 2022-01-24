@@ -17,7 +17,7 @@ func MiddlewareConvert(m ...middleware.Middleware) func(http.Handler) http.Handl
 			}
 			a := chain(next)
 			_, _ = a(r.Context(), &req)
-			return
+			handler.ServeHTTP(w, r)
 		}
 		return http.HandlerFunc(handleFunc)
 	}
