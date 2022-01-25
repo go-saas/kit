@@ -14,6 +14,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
@@ -26,5 +27,5 @@ import (
 
 // initApp init kratos application.
 func initApp(*conf2.Services, *conf2.Security, *conf.UserConf, *conf.Data, log.Logger, *biz.PasswordValidatorConfig, *uow.Config, *gorm.Config, *http.WebMultiTenancyOption) (*kratos.App, func(), error) {
-	panic(wire.Build(authorization.ProviderSet, casbin.PermissionProviderSet, jwt2.ProviderSet, api.DefaultProviderSet, server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+	panic(wire.Build(authorization.ProviderSet, casbin.PermissionProviderSet, server2.DefaultCodecProviderSet, jwt2.ProviderSet, api.DefaultProviderSet, server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }

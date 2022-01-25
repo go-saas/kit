@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func NewCsrf(l log.Logger, sCfg *conf.Security, cfg *conf.Server_HTTP_Csrf) func(http.Handler) http.Handler {
+func NewCsrf(l log.Logger, sCfg *conf.Security, cfg *conf.Server_HTTP_Csrf, errEncoder http2.EncodeErrorFunc) func(http.Handler) http.Handler {
 	logger := log.NewHelper(l)
 
 	var csrfOpt []csrf.Option
@@ -65,8 +65,7 @@ func NewCsrf(l log.Logger, sCfg *conf.Security, cfg *conf.Server_HTTP_Csrf) func
 		logger.Debugf(fmt.Sprintf("%s - %s",
 			http.StatusText(http.StatusForbidden), csrf.FailureReason(r)))
 
-		//TODO possible replacement of error encoder
-		http2.DefaultErrorEncoder(w, r, errors.New(http.StatusForbidden, "CSRF_INVALID", csrf.FailureReason(r).Error()))
+		errEncoder(w, r, errors.New(http.StatusForbidden, "CSRF_INVALID", csrf.FailureReason(r).Error()))
 
 		return
 	}

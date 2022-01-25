@@ -14,6 +14,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
@@ -38,6 +39,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userContributor := api.NewUserContributor()
 	option := api.NewDefaultOption(saasContributor, userContributor)
 	tenantStore := data.NewTenantStore()
+	decodeRequestFunc := _wireDecodeRequestFuncValue
+	encodeResponseFunc := _wireEncodeResponseFuncValue
+	encodeErrorFunc := _wireEncodeErrorFuncValue
 	sessionStorer := server.NewSessionStorer(security, userConf)
 	cookieStorer := server.NewCookieStorer(security, userConf)
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, tenantStore, logger)
@@ -74,7 +78,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, security)
 	roleService := service.NewRoleServiceService(roleRepo, defaultAuthorizationService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, logger, authboss, userService, accountService, authService, roleService, servicePermissionService)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, authboss, userService, accountService, authService, roleService, servicePermissionService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, userService, accountService, authService, roleService, servicePermissionService)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
@@ -88,3 +92,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 		cleanup()
 	}, nil
 }
+
+var (
+	_wireDecodeRequestFuncValue  = server2.ReqDecode
+	_wireEncodeResponseFuncValue = server2.ResEncoder
+	_wireEncodeErrorFuncValue    = server2.ErrEncoder
+)

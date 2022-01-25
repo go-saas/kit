@@ -25,9 +25,20 @@ import (
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Services, sCfg *conf.Security, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, tenant *service.TenantService, mOpt *http2.WebMultiTenancyOption, apiOpt *api2.Option, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Services,
+	sCfg *conf.Security,
+	tokenizer jwt.Tokenizer,
+	ts common.TenantStore,
+	uowMgr uow2.Manager,
+	tenant *service.TenantService,
+	mOpt *http2.WebMultiTenancyOption,
+	apiOpt *api2.Option,
+	reqDecoder http.DecodeRequestFunc,
+	resEncoder http.EncodeResponseFunc,
+	errEncoder http.EncodeErrorFunc,
+	logger log.Logger) *http.Server {
 	var opts []http.ServerOption
-	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg)
+	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
 	opts = append(opts, []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),

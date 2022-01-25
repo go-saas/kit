@@ -14,6 +14,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/saas/private/conf"
@@ -49,7 +50,10 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	subjectResolverImpl := authorization.NewSubjectResolver(authorizationOption)
 	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, logger)
+	decodeRequestFunc := _wireDecodeRequestFuncValue
+	encodeResponseFunc := _wireEncodeResponseFuncValue
+	encodeErrorFunc := _wireEncodeErrorFuncValue
+	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, logger)
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, tenantStore, logger)
 	dataData, cleanup3, err := data.NewData(confData, dbProvider, logger)
@@ -69,5 +73,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 }
 
 var (
-	_wireClientNameValue = server.ClientName
+	_wireClientNameValue         = server.ClientName
+	_wireDecodeRequestFuncValue  = server2.ReqDecode
+	_wireEncodeResponseFuncValue = server2.ResEncoder
+	_wireEncodeErrorFuncValue    = server2.ErrEncoder
 )

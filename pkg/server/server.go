@@ -34,7 +34,15 @@ func PatchGrpcOpts(l log.Logger, opts []grpc.ServerOption, name string, services
 }
 
 // PatchHttpOpts Patch http options with given service name and configs. f use global filters
-func PatchHttpOpts(l log.Logger, opts []http.ServerOption, name string, services *conf.Services, sCfg *conf.Security, f ...http.FilterFunc) []http.ServerOption {
+func PatchHttpOpts(l log.Logger,
+	opts []http.ServerOption,
+	name string,
+	services *conf.Services,
+	sCfg *conf.Security,
+	reqDecoder http.DecodeRequestFunc,
+	resEncoder http.EncodeResponseFunc,
+	errEncoder http.EncodeErrorFunc,
+	f ...http.FilterFunc) []http.ServerOption {
 	server, ok := services.Servers[name]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v server not found", name)))
@@ -48,7 +56,15 @@ func PatchHttpOpts(l log.Logger, opts []http.ServerOption, name string, services
 	if server.Http.Timeout != nil {
 		opts = append(opts, http.Timeout(server.Http.Timeout.AsDuration()))
 	}
-
+	if reqDecoder != nil {
+		opts = append(opts, http.RequestDecoder(reqDecoder))
+	}
+	if resEncoder != nil {
+		opts = append(opts, http.ResponseEncoder(resEncoder))
+	}
+	if errEncoder != nil {
+		opts = append(opts, http.ErrorEncoder(errEncoder))
+	}
 	var filters []http.FilterFunc
 
 	if server.Http.Cors != nil {
@@ -61,7 +77,7 @@ func PatchHttpOpts(l log.Logger, opts []http.ServerOption, name string, services
 		))
 	}
 	if server.Http.Csrf != nil {
-		filters = append(filters, csrf.NewCsrf(l, sCfg, server.Http.Csrf))
+		filters = append(filters, csrf.NewCsrf(l, sCfg, server.Http.Csrf, errEncoder))
 	}
 	filters = append(filters, f...)
 	opts = append(opts, http.Filter(filters...))

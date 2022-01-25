@@ -40,6 +40,9 @@ func NewHTTPServer(c *conf.Services,
 	mOpt *http2.WebMultiTenancyOption,
 	apiOpt *api2.Option,
 	ts common.TenantStore,
+	reqDecoder http.DecodeRequestFunc,
+	resEncoder http.EncodeResponseFunc,
+	errEncoder http.EncodeErrorFunc,
 	logger log.Logger,
 	ab *authboss.Authboss,
 	user *service.UserService,
@@ -48,7 +51,7 @@ func NewHTTPServer(c *conf.Services,
 	role *service.RoleService,
 	permission *service.PermissionService) *http.Server {
 	var opts []http.ServerOption
-	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg)
+	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
 
 	opts = append(opts, []http.ServerOption{
 		http.Middleware(
