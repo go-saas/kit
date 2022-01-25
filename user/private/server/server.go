@@ -6,12 +6,14 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
 	seed2 "github.com/goxiaoy/go-saas-kit/user/private/seed"
+	"github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, seed2.NewFake, NewSeeder, NewSessionStorer, NewCookieStorer, NewAuthboss)
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, seed2.NewFake, NewSeeder,
+	NewSessionStorer, NewCookieStorer, NewAuthboss, http.NewAuth)
 
 func NewSeeder(c *conf.UserConf, uow uow.Manager, migrate *data.Migrate, roleSeed *biz.RoleSeed, userSeed *biz.UserSeed, fake *seed2.Fake, p *biz.PermissionSeeder) seed.Seeder {
 	var opt = seed.NewSeedOption(migrate, roleSeed, userSeed, fake, p)

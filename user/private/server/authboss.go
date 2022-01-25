@@ -10,7 +10,6 @@ import (
 	abclientstate "github.com/volatiletech/authboss-clientstate"
 	"github.com/volatiletech/authboss-renderer"
 	"github.com/volatiletech/authboss/v3"
-	_ "github.com/volatiletech/authboss/v3/auth"
 	"github.com/volatiletech/authboss/v3/defaults"
 	_ "github.com/volatiletech/authboss/v3/logout"
 	"github.com/volatiletech/authboss/v3/otp/twofactor"
@@ -22,7 +21,6 @@ import (
 	"regexp"
 )
 
-//TODO config
 const (
 	sessionCookieName = "kit_user"
 	totp2FAIssuer     = "kit_user"
@@ -128,7 +126,7 @@ func NewAuthboss(l log.Logger, u *conf.UserConf, session *abclientstate.SessionS
 	ab.Config.Storage.Server = store
 	ab.Config.Storage.SessionState = session
 	ab.Config.Storage.CookieState = cookie
-	ab.Config.Paths.Mount = "/auth"
+	ab.Config.Paths.Mount = "/v1/auth/web"
 	ab.Config.Paths.RootURL = u.RootUrl
 
 	logger := log.NewHelper(l)

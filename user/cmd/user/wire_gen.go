@@ -21,6 +21,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
 	"github.com/goxiaoy/go-saas-kit/user/private/seed"
 	"github.com/goxiaoy/go-saas-kit/user/private/server"
+	http2 "github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/gorm"
@@ -78,7 +79,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, security)
 	roleService := service.NewRoleServiceService(roleRepo, defaultAuthorizationService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, authboss, userService, accountService, authService, roleService, servicePermissionService)
+	auth := http2.NewAuth(authboss, decodeRequestFunc, encodeResponseFunc)
+	defaultErrorHandler := server2.NewDefaultErrorHandler(encodeErrorFunc)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, authboss, userService, accountService, authService, roleService, servicePermissionService, auth, defaultErrorHandler)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, userService, accountService, authService, roleService, servicePermissionService)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)

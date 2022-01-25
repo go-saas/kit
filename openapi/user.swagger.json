@@ -19,6 +19,9 @@
     },
     {
       "name": "Auth"
+    },
+    {
+      "name": "AuthWeb"
     }
   ],
   "consumes": [
@@ -271,6 +274,35 @@
       }
     },
     "/v1/auth/login": {
+      "get": {
+        "operationId": "Auth_GetLoginForm",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetLoginFormResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "redirect",
+            "description": "redirect url.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      },
       "post": {
         "operationId": "Auth_Login",
         "responses": {
@@ -491,6 +523,67 @@
         ],
         "tags": [
           "Auth"
+        ]
+      }
+    },
+    "/v1/auth/web/login": {
+      "get": {
+        "operationId": "AuthWeb_GetWebLoginForm",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetLoginFormResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "redirect",
+            "description": "redirect url.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AuthWeb"
+        ]
+      },
+      "post": {
+        "operationId": "AuthWeb_WebLogin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1LoginAuthReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1LoginAuthRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthWeb"
         ]
       }
     },
@@ -1569,6 +1662,21 @@
         }
       }
     },
+    "v1GetLoginFormResponse": {
+      "type": "object",
+      "properties": {
+        "redirect": {
+          "type": "string",
+          "title": "normalized redirect url"
+        },
+        "oauth": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1OAuthProvider"
+          }
+        }
+      }
+    },
     "v1GetProfileResponse": {
       "type": "object",
       "properties": {
@@ -1626,9 +1734,6 @@
           }
         }
       }
-    },
-    "v1GetWebLoginFormResponse": {
-      "type": "object"
     },
     "v1ListRolesRequest": {
       "type": "object",
@@ -1766,6 +1871,14 @@
     },
     "v1LoginPasswordlessRequest": {
       "type": "object"
+    },
+    "v1OAuthProvider": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "v1PasswordlessTokenAuthReply": {
       "type": "object"

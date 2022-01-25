@@ -44,21 +44,7 @@ func (s *AuthService) Register(ctx context.Context, req *pb.RegisterAuthRequest)
 	return &pb.RegisterAuthReply{}, nil
 }
 func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.LoginAuthReply, error) {
-	user, err := s.um.FindByName(ctx, req.GetUsername())
-	if err != nil {
-		return nil, err
-	}
-	if user == nil {
-		return nil, pb.ErrorInvalidCredentials("")
-	}
-	// check password
-	ok, err := s.um.CheckPassword(ctx, user, req.Password)
-	if !ok {
-		return nil, pb.ErrorInvalidCredentials("")
-	}
-	if err != nil {
-		return nil, err
-	}
+	user, err := FindUserByUsernameAndValidatePwd(ctx, s.um, req.Username, req.Password)
 	//login success
 	t, err := s.generateToken(ctx, user.ID)
 	if err != nil {
@@ -66,6 +52,11 @@ func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.
 	}
 	return &pb.LoginAuthReply{AccessToken: t.accessToken, Expires: t.expiresIn, ExpiresIn: t.expiresIn, TokenType: "Bearer", RefreshToken: t.refreshToken}, nil
 }
+
+//
+//func (s *AuthService) GetLoginForm(ctx context.Context, req *pb.GetLoginFormRequest) (*pb.GetLoginFormResponse, error) {
+//
+//}
 
 func (s *AuthService) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenReply, error) {
 	if req.GrantType == "" || req.GrantType == "password" {
@@ -197,4 +188,23 @@ func (s *AuthService) refresh(ctx context.Context, refreshToken string) (*tokenM
 		return &tokenModel{accessToken: t.accessToken, expiresIn: t.expiresIn, refreshToken: t.refreshToken}, nil
 	}
 	return nil, errors.BadRequest("", "refreshToken invalid")
+}
+
+func FindUserByUsernameAndValidatePwd(ctx context.Context, um *biz.UserManager, username, password string) (*biz.User, error) {
+	user, err := um.FindByName(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, pb.ErrorInvalidCredentials("")
+	}
+	// check password
+	ok, err := um.CheckPassword(ctx, user, password)
+	if !ok {
+		return nil, pb.ErrorInvalidCredentials("")
+	}
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

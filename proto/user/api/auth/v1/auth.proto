@@ -10,12 +10,14 @@ option java_multiple_files = true;
 option java_package = "api.auth";
 
 service Auth {
+
     rpc Register(RegisterAuthRequest) returns (RegisterAuthReply){
         option (google.api.http) = {
             post: "/v1/auth/register"
             body:"*"
         };
     }
+
     rpc Login(LoginAuthRequest) returns (LoginAuthReply){
         option (google.api.http) = {
             post: "/v1/auth/login",
@@ -23,9 +25,12 @@ service Auth {
         };
     }
 
-    rpc GetWebLoginForm(GetWebLoginFormRequest) returns(GetWebLoginFormResponse){
-
+    rpc GetLoginForm(GetLoginFormRequest) returns(GetLoginFormResponse){
+        option (google.api.http) = {
+            get: "/v1/auth/login",
+        };
     }
+
 
 
     rpc Token(TokenRequest) returns (TokenReply){
@@ -167,12 +172,19 @@ message ValidatePasswordReply{
     bool ok =1;
 }
 
-message GetWebLoginFormRequest{
-
+message GetLoginFormRequest{
+    //redirect url
+    string redirect = 1;
 }
 
-message GetWebLoginFormResponse{
+message GetLoginFormResponse{
+    //normalized redirect url
+    string redirect = 1;
+    repeated OAuthProvider oauth = 2;
+}
 
+message OAuthProvider{
+    string name=1;
 }
 
 message GetCsrfTokenRequest{
@@ -182,3 +194,4 @@ message GetCsrfTokenRequest{
 message GetCsrfTokenResponse{
     string csrf_token=1;
 }
+

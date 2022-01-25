@@ -1931,41 +1931,43 @@ var _ interface {
 	ErrorName() string
 } = ValidatePasswordReplyValidationError{}
 
-// Validate checks the field values on GetWebLoginFormRequest with the rules
+// Validate checks the field values on GetLoginFormRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetWebLoginFormRequest) Validate() error {
+func (m *GetLoginFormRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetWebLoginFormRequest with the rules
+// ValidateAll checks the field values on GetLoginFormRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetWebLoginFormRequestMultiError, or nil if none found.
-func (m *GetWebLoginFormRequest) ValidateAll() error {
+// GetLoginFormRequestMultiError, or nil if none found.
+func (m *GetLoginFormRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetWebLoginFormRequest) validate(all bool) error {
+func (m *GetLoginFormRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for Redirect
+
 	if len(errors) > 0 {
-		return GetWebLoginFormRequestMultiError(errors)
+		return GetLoginFormRequestMultiError(errors)
 	}
 	return nil
 }
 
-// GetWebLoginFormRequestMultiError is an error wrapping multiple validation
-// errors returned by GetWebLoginFormRequest.ValidateAll() if the designated
+// GetLoginFormRequestMultiError is an error wrapping multiple validation
+// errors returned by GetLoginFormRequest.ValidateAll() if the designated
 // constraints aren't met.
-type GetWebLoginFormRequestMultiError []error
+type GetLoginFormRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetWebLoginFormRequestMultiError) Error() string {
+func (m GetLoginFormRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1974,11 +1976,11 @@ func (m GetWebLoginFormRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetWebLoginFormRequestMultiError) AllErrors() []error { return m }
+func (m GetLoginFormRequestMultiError) AllErrors() []error { return m }
 
-// GetWebLoginFormRequestValidationError is the validation error returned by
-// GetWebLoginFormRequest.Validate if the designated constraints aren't met.
-type GetWebLoginFormRequestValidationError struct {
+// GetLoginFormRequestValidationError is the validation error returned by
+// GetLoginFormRequest.Validate if the designated constraints aren't met.
+type GetLoginFormRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1986,24 +1988,24 @@ type GetWebLoginFormRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetWebLoginFormRequestValidationError) Field() string { return e.field }
+func (e GetLoginFormRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetWebLoginFormRequestValidationError) Reason() string { return e.reason }
+func (e GetLoginFormRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetWebLoginFormRequestValidationError) Cause() error { return e.cause }
+func (e GetLoginFormRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetWebLoginFormRequestValidationError) Key() bool { return e.key }
+func (e GetLoginFormRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetWebLoginFormRequestValidationError) ErrorName() string {
-	return "GetWebLoginFormRequestValidationError"
+func (e GetLoginFormRequestValidationError) ErrorName() string {
+	return "GetLoginFormRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetWebLoginFormRequestValidationError) Error() string {
+func (e GetLoginFormRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2015,14 +2017,14 @@ func (e GetWebLoginFormRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetWebLoginFormRequest.%s: %s%s",
+		"invalid %sGetLoginFormRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetWebLoginFormRequestValidationError{}
+var _ error = GetLoginFormRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -2030,43 +2032,79 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetWebLoginFormRequestValidationError{}
+} = GetLoginFormRequestValidationError{}
 
-// Validate checks the field values on GetWebLoginFormResponse with the rules
+// Validate checks the field values on GetLoginFormResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetWebLoginFormResponse) Validate() error {
+func (m *GetLoginFormResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetWebLoginFormResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on GetLoginFormResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetWebLoginFormResponseMultiError, or nil if none found.
-func (m *GetWebLoginFormResponse) ValidateAll() error {
+// GetLoginFormResponseMultiError, or nil if none found.
+func (m *GetLoginFormResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetWebLoginFormResponse) validate(all bool) error {
+func (m *GetLoginFormResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for Redirect
+
+	for idx, item := range m.GetOauth() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetLoginFormResponseValidationError{
+						field:  fmt.Sprintf("Oauth[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetLoginFormResponseValidationError{
+						field:  fmt.Sprintf("Oauth[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetLoginFormResponseValidationError{
+					field:  fmt.Sprintf("Oauth[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
-		return GetWebLoginFormResponseMultiError(errors)
+		return GetLoginFormResponseMultiError(errors)
 	}
 	return nil
 }
 
-// GetWebLoginFormResponseMultiError is an error wrapping multiple validation
-// errors returned by GetWebLoginFormResponse.ValidateAll() if the designated
+// GetLoginFormResponseMultiError is an error wrapping multiple validation
+// errors returned by GetLoginFormResponse.ValidateAll() if the designated
 // constraints aren't met.
-type GetWebLoginFormResponseMultiError []error
+type GetLoginFormResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetWebLoginFormResponseMultiError) Error() string {
+func (m GetLoginFormResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -2075,11 +2113,11 @@ func (m GetWebLoginFormResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetWebLoginFormResponseMultiError) AllErrors() []error { return m }
+func (m GetLoginFormResponseMultiError) AllErrors() []error { return m }
 
-// GetWebLoginFormResponseValidationError is the validation error returned by
-// GetWebLoginFormResponse.Validate if the designated constraints aren't met.
-type GetWebLoginFormResponseValidationError struct {
+// GetLoginFormResponseValidationError is the validation error returned by
+// GetLoginFormResponse.Validate if the designated constraints aren't met.
+type GetLoginFormResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -2087,24 +2125,24 @@ type GetWebLoginFormResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetWebLoginFormResponseValidationError) Field() string { return e.field }
+func (e GetLoginFormResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetWebLoginFormResponseValidationError) Reason() string { return e.reason }
+func (e GetLoginFormResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetWebLoginFormResponseValidationError) Cause() error { return e.cause }
+func (e GetLoginFormResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetWebLoginFormResponseValidationError) Key() bool { return e.key }
+func (e GetLoginFormResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetWebLoginFormResponseValidationError) ErrorName() string {
-	return "GetWebLoginFormResponseValidationError"
+func (e GetLoginFormResponseValidationError) ErrorName() string {
+	return "GetLoginFormResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetWebLoginFormResponseValidationError) Error() string {
+func (e GetLoginFormResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2116,14 +2154,14 @@ func (e GetWebLoginFormResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetWebLoginFormResponse.%s: %s%s",
+		"invalid %sGetLoginFormResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetWebLoginFormResponseValidationError{}
+var _ error = GetLoginFormResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -2131,7 +2169,108 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetWebLoginFormResponseValidationError{}
+} = GetLoginFormResponseValidationError{}
+
+// Validate checks the field values on OAuthProvider with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *OAuthProvider) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OAuthProvider with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in OAuthProviderMultiError, or
+// nil if none found.
+func (m *OAuthProvider) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OAuthProvider) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	if len(errors) > 0 {
+		return OAuthProviderMultiError(errors)
+	}
+	return nil
+}
+
+// OAuthProviderMultiError is an error wrapping multiple validation errors
+// returned by OAuthProvider.ValidateAll() if the designated constraints
+// aren't met.
+type OAuthProviderMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OAuthProviderMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OAuthProviderMultiError) AllErrors() []error { return m }
+
+// OAuthProviderValidationError is the validation error returned by
+// OAuthProvider.Validate if the designated constraints aren't met.
+type OAuthProviderValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OAuthProviderValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OAuthProviderValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OAuthProviderValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OAuthProviderValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OAuthProviderValidationError) ErrorName() string { return "OAuthProviderValidationError" }
+
+// Error satisfies the builtin error interface
+func (e OAuthProviderValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOAuthProvider.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OAuthProviderValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OAuthProviderValidationError{}
 
 // Validate checks the field values on GetCsrfTokenRequest with the rules
 // defined in the proto definition for this message. If any rules are

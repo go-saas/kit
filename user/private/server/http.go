@@ -23,6 +23,7 @@ import (
 	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	http4 "github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common"
 	http2 "github.com/goxiaoy/go-saas/common/http"
@@ -49,7 +50,10 @@ func NewHTTPServer(c *conf.Services,
 	account *service.AccountService,
 	auth *service.AuthService,
 	role *service.RoleService,
-	permission *service.PermissionService) *http.Server {
+	permission *service.PermissionService,
+	authHttp *http4.Auth,
+	errorHandler server.ErrorHandler,
+) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
 
@@ -86,12 +90,13 @@ func NewHTTPServer(c *conf.Services,
 		authboss.ModuleListMiddleware(ab))
 
 	router.Group(func(router chi.Router) {
-		router.Mount("/", http3.StripPrefix("/auth", ab.Config.Core.Router))
+		ab.Config.Core.Router.Get("/login", errorHandler.Wrap(authHttp.LoginGet))
+		router.Mount("/", http3.StripPrefix("/v1/auth/web", ab.Config.Core.Router))
 	})
 
 	srv := http.NewServer(opts...)
 
-	srv.HandlePrefix("/auth", router)
+	srv.HandlePrefix("/v1/auth/web", router)
 
 	v12.RegisterUserServiceHTTPServer(srv, user)
 	v13.RegisterAccountHTTPServer(srv, account)

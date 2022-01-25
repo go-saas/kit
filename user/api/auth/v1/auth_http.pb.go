@@ -20,6 +20,7 @@ const _ = http.SupportPackageIsVersion1
 type AuthHTTPServer interface {
 	ForgetPassword(context.Context, *ForgetPasswordRequest) (*ForgetPasswordReply, error)
 	GetCsrfToken(context.Context, *GetCsrfTokenRequest) (*GetCsrfTokenResponse, error)
+	GetLoginForm(context.Context, *GetLoginFormRequest) (*GetLoginFormResponse, error)
 	Login(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
 	LoginPasswordless(context.Context, *LoginPasswordlessRequest) (*LoginPasswordlessReply, error)
 	Refresh(context.Context, *RefreshTokenAuthRequest) (*RefreshTokenAuthReply, error)
@@ -34,6 +35,7 @@ func RegisterAuthHTTPServer(s *http.Server, srv AuthHTTPServer) {
 	r := s.Route("/")
 	r.POST("/v1/auth/register", _Auth_Register0_HTTP_Handler(srv))
 	r.POST("/v1/auth/login", _Auth_Login0_HTTP_Handler(srv))
+	r.GET("/v1/auth/login", _Auth_GetLoginForm0_HTTP_Handler(srv))
 	r.POST("/v1/auth/token", _Auth_Token0_HTTP_Handler(srv))
 	r.POST("/v1/auth/refresh", _Auth_Refresh0_HTTP_Handler(srv))
 	r.POST("/v1/auth/action/passwordless", _Auth_SendPasswordlessToken0_HTTP_Handler(srv))
@@ -78,6 +80,25 @@ func _Auth_Login0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error 
 			return err
 		}
 		reply := out.(*LoginAuthReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Auth_GetLoginForm0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetLoginFormRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.auth.v1.Auth/GetLoginForm")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetLoginForm(ctx, req.(*GetLoginFormRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetLoginFormResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -237,6 +258,7 @@ func _Auth_GetCsrfToken0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context)
 type AuthHTTPClient interface {
 	ForgetPassword(ctx context.Context, req *ForgetPasswordRequest, opts ...http.CallOption) (rsp *ForgetPasswordReply, err error)
 	GetCsrfToken(ctx context.Context, req *GetCsrfTokenRequest, opts ...http.CallOption) (rsp *GetCsrfTokenResponse, err error)
+	GetLoginForm(ctx context.Context, req *GetLoginFormRequest, opts ...http.CallOption) (rsp *GetLoginFormResponse, err error)
 	Login(ctx context.Context, req *LoginAuthRequest, opts ...http.CallOption) (rsp *LoginAuthReply, err error)
 	LoginPasswordless(ctx context.Context, req *LoginPasswordlessRequest, opts ...http.CallOption) (rsp *LoginPasswordlessReply, err error)
 	Refresh(ctx context.Context, req *RefreshTokenAuthRequest, opts ...http.CallOption) (rsp *RefreshTokenAuthReply, err error)
@@ -273,6 +295,19 @@ func (c *AuthHTTPClientImpl) GetCsrfToken(ctx context.Context, in *GetCsrfTokenR
 	pattern := "/v1/auth/csrf"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation("/user.api.auth.v1.Auth/GetCsrfToken"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *AuthHTTPClientImpl) GetLoginForm(ctx context.Context, in *GetLoginFormRequest, opts ...http.CallOption) (*GetLoginFormResponse, error) {
+	var out GetLoginFormResponse
+	pattern := "/v1/auth/login"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation("/user.api.auth.v1.Auth/GetLoginForm"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
