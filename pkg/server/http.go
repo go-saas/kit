@@ -5,67 +5,49 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-kratos/kratos/v2/transport/http"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gorilla/handlers"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/csrf"
 	"github.com/goxiaoy/go-saas-kit/pkg/kratos"
 	"net"
+	"net/http"
 	"strings"
 )
 
-// PatchGrpcOpts Patch grpc options with given service name and configs
-func PatchGrpcOpts(l log.Logger, opts []grpc.ServerOption, name string, services *conf.Services) []grpc.ServerOption {
-	server, ok := services.Servers[name]
-	if !ok {
-		panic(errors.New(fmt.Sprintf(" %v server not found", name)))
-	}
-	if server.Grpc.Network != "" {
-		opts = append(opts, grpc.Network(server.Grpc.Network))
-	}
-	if server.Grpc.Addr != "" {
-		opts = append(opts, grpc.Address(server.Grpc.Addr))
-	}
-	if server.Grpc.Timeout != nil {
-		opts = append(opts, grpc.Timeout(server.Grpc.Timeout.AsDuration()))
-	}
-	return opts
-}
-
-// PatchHttpOpts Patch http options with given service name and configs. f use global filters
+// PatchHttpOpts Patch khttp options with given service name and configs. f use global filters
 func PatchHttpOpts(l log.Logger,
-	opts []http.ServerOption,
+	opts []khttp.ServerOption,
 	name string,
 	services *conf.Services,
 	sCfg *conf.Security,
-	reqDecoder http.DecodeRequestFunc,
-	resEncoder http.EncodeResponseFunc,
-	errEncoder http.EncodeErrorFunc,
-	f ...http.FilterFunc) []http.ServerOption {
+	reqDecoder khttp.DecodeRequestFunc,
+	resEncoder khttp.EncodeResponseFunc,
+	errEncoder khttp.EncodeErrorFunc,
+	f ...khttp.FilterFunc) []khttp.ServerOption {
 	server, ok := services.Servers[name]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v server not found", name)))
 	}
 	if server.Http.Network != "" {
-		opts = append(opts, http.Network(server.Http.Network))
+		opts = append(opts, khttp.Network(server.Http.Network))
 	}
 	if server.Http.Addr != "" {
-		opts = append(opts, http.Address(server.Http.Addr))
+		opts = append(opts, khttp.Address(server.Http.Addr))
 	}
 	if server.Http.Timeout != nil {
-		opts = append(opts, http.Timeout(server.Http.Timeout.AsDuration()))
+		opts = append(opts, khttp.Timeout(server.Http.Timeout.AsDuration()))
 	}
 	if reqDecoder != nil {
-		opts = append(opts, http.RequestDecoder(reqDecoder))
+		opts = append(opts, khttp.RequestDecoder(reqDecoder))
 	}
 	if resEncoder != nil {
-		opts = append(opts, http.ResponseEncoder(resEncoder))
+		opts = append(opts, khttp.ResponseEncoder(resEncoder))
 	}
 	if errEncoder != nil {
-		opts = append(opts, http.ErrorEncoder(errEncoder))
+		opts = append(opts, khttp.ErrorEncoder(errEncoder))
 	}
-	var filters []http.FilterFunc
+	var filters []khttp.FilterFunc
 
 	if server.Http.Cors != nil {
 		allowMethods := []string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "DELETE", "PATCH"}
@@ -80,7 +62,7 @@ func PatchHttpOpts(l log.Logger,
 		filters = append(filters, csrf.NewCsrf(l, sCfg, server.Http.Csrf, errEncoder))
 	}
 	filters = append(filters, f...)
-	opts = append(opts, http.Filter(filters...))
+	opts = append(opts, khttp.Filter(filters...))
 	return opts
 }
 
@@ -109,4 +91,27 @@ func ClientUserAgent(ctx context.Context) string {
 		return r.UserAgent()
 	}
 	return ""
+}
+
+type ErrorHandler interface {
+	Wrap(func(w http.ResponseWriter, r *http.Request) error) http.Handler
+}
+
+type DefaultErrorHandler struct {
+	errEncoder khttp.EncodeErrorFunc
+}
+
+var _ ErrorHandler = (*DefaultErrorHandler)(nil)
+
+func NewDefaultErrorHandler(errEncoder khttp.EncodeErrorFunc) *DefaultErrorHandler {
+	return &DefaultErrorHandler{errEncoder: errEncoder}
+}
+
+func (e *DefaultErrorHandler) Wrap(f func(w http.ResponseWriter, r *http.Request) error) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if err := f(w, r); err != nil {
+			e.errEncoder(w, r, err)
+			return
+		}
+	})
 }
