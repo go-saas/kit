@@ -5,15 +5,24 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gorilla/handlers"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/csrf"
-	"github.com/goxiaoy/go-saas-kit/pkg/kratos"
 	"net"
 	"net/http"
 	"strings"
 )
+
+func ResolveHttpRequest(ctx context.Context) (*http.Request, bool) {
+	if t, ok := transport.FromServerContext(ctx); ok {
+		if ht, ok := t.(*khttp.Transport); ok {
+			return ht.Request(), true
+		}
+	}
+	return nil, false
+}
 
 // PatchHttpOpts Patch khttp options with given service name and configs. f use global filters
 func PatchHttpOpts(l log.Logger,
@@ -67,7 +76,7 @@ func PatchHttpOpts(l log.Logger,
 }
 
 func ClientIP(ctx context.Context) string {
-	if r, ok := kratos.ResolveHttpRequest(ctx); ok {
+	if r, ok := ResolveHttpRequest(ctx); ok {
 		xForwardedFor := r.Header.Get("X-Forwarded-For")
 		ip := strings.TrimSpace(strings.Split(xForwardedFor, ",")[0])
 		if ip != "" {
@@ -87,10 +96,33 @@ func ClientIP(ctx context.Context) string {
 }
 
 func ClientUserAgent(ctx context.Context) string {
-	if r, ok := kratos.ResolveHttpRequest(ctx); ok {
+	if r, ok := ResolveHttpRequest(ctx); ok {
 		return r.UserAgent()
 	}
 	return ""
+}
+
+func IsSecure(ctx context.Context) bool {
+	if r, ok := ResolveHttpRequest(ctx); ok {
+		return r.URL.Scheme == "https"
+	}
+	return false
+}
+
+func IsWebsocket(ctx context.Context) bool {
+	if r, ok := ResolveHttpRequest(ctx); ok {
+		h := r.Header["Upgrade"]
+		return len(h) > 0 && h[0] == "websocket"
+	}
+	return false
+}
+
+func IsAjax(ctx context.Context) bool {
+	if r, ok := ResolveHttpRequest(ctx); ok {
+		h := r.Header["X-Requested-With"]
+		return len(h) > 0 && h[0] == "XMLHttpRequest"
+	}
+	return false
 }
 
 type ErrorHandler interface {
