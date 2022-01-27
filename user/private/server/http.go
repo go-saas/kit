@@ -12,7 +12,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	authboss2 "github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/authboss"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/authentication"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
@@ -29,8 +28,6 @@ import (
 	http2 "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/kratos/saas"
 	uow2 "github.com/goxiaoy/uow"
-	"github.com/volatiletech/authboss/v3"
-	http3 "net/http"
 )
 
 // NewHTTPServer new a HTTP server.
@@ -45,7 +42,6 @@ func NewHTTPServer(c *conf.Services,
 	resEncoder http.EncodeResponseFunc,
 	errEncoder http.EncodeErrorFunc,
 	logger log.Logger,
-	ab *authboss.Authboss,
 	user *service.UserService,
 	account *service.AccountService,
 	auth *service.AuthService,
@@ -81,17 +77,14 @@ func NewHTTPServer(c *conf.Services,
 			metrics.Server(),
 			validate.Validator(),
 			authentication.ServerExtractAndAuth(tokenizer, logger)),
-		authboss2.PathFilter(ab),
 		server.MiddlewareConvert(
 			saas.Server(mOpt, nil, ts),
 			api2.ServerMiddleware(apiOpt),
 			uow.Uow(logger, uowMgr),
-		),
-		authboss.ModuleListMiddleware(ab))
+		))
 
 	router.Group(func(router chi.Router) {
-		ab.Config.Core.Router.Get("/login", errorHandler.Wrap(authHttp.LoginGet))
-		router.Mount("/", http3.StripPrefix("/v1/auth/web", ab.Config.Core.Router))
+		router.Get("/login", errorHandler.Wrap(authHttp.LoginGet).ServeHTTP)
 	})
 
 	srv := http.NewServer(opts...)

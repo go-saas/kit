@@ -14,5 +14,4 @@ var ProviderSet = wire.NewSet(
 	NewPasswordValidator,
 	NewRoleSeed,
 	NewUserSeed,
-	NewPermissionSeeder,
-	NewAuthbossStoreWrapper)
+	NewPermissionSeeder)

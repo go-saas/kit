@@ -38,8 +38,7 @@ type User struct {
 	EmailConfirmed  bool    `json:"email_confirmed"`
 
 	// Password hashed
-	Password         *string `json:"password"`
-	TwoFactorEnabled bool    `json:"two_factor_enabled"`
+	Password *string `json:"password"`
 
 	//Security
 	ConfirmSelector string `json:"confirmSelector"`
@@ -55,9 +54,9 @@ type User struct {
 	RecoverTokenExpiry time.Time
 
 	//2FA
-	TOTPSecretKey      string
-	SMSSeedPhoneNumber string
-	RecoveryCodes      string
+	TwoFactorEnabled bool `json:"two_factor_enabled"`
+	TOTPSecretKey    string
+	RecoveryCodes    string
 
 	Roles []Role `gorm:"many2many:user_roles"`
 

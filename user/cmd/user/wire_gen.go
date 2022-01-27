@@ -14,13 +14,13 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
+	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
 	"github.com/goxiaoy/go-saas-kit/user/private/seed"
-	"github.com/goxiaoy/go-saas-kit/user/private/server"
+	server2 "github.com/goxiaoy/go-saas-kit/user/private/server"
 	http2 "github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common/http"
@@ -43,8 +43,6 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
-	sessionStorer := server.NewSessionStorer(security, userConf)
-	cookieStorer := server.NewCookieStorer(security, userConf)
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, tenantStore, logger)
 	dataData, cleanup2, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
@@ -57,14 +55,6 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	passwordValidator := biz.NewPasswordValidator(passwordValidatorConfig)
 	lookupNormalizer := biz.NewLookupNormalizer()
 	userManager := biz.NewUserManager(userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, logger)
-	userTokenRepo := data.NewUserTokenRepo(dataData)
-	authbossStoreWrapper := biz.NewAuthbossStoreWrapper(userManager, userTokenRepo)
-	authboss, err := server.NewAuthboss(logger, userConf, sessionStorer, cookieStorer, authbossStoreWrapper)
-	if err != nil {
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
 	enforcerProvider := data.NewEnforcerProvider(dbProvider)
 	permissionService := casbin.NewPermissionService(enforcerProvider)
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
@@ -79,16 +69,16 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, security)
 	roleService := service.NewRoleServiceService(roleRepo, defaultAuthorizationService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl)
-	auth := http2.NewAuth(authboss, decodeRequestFunc, encodeResponseFunc)
-	defaultErrorHandler := server2.NewDefaultErrorHandler(encodeErrorFunc)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, authboss, userService, accountService, authService, roleService, servicePermissionService, auth, defaultErrorHandler)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, userService, accountService, authService, roleService, servicePermissionService)
+	auth := http2.NewAuth(decodeRequestFunc, encodeResponseFunc, userManager, logger)
+	defaultErrorHandler := server.NewDefaultErrorHandler(encodeErrorFunc)
+	httpServer := server2.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userService, accountService, authService, roleService, servicePermissionService, auth, defaultErrorHandler)
+	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, userService, accountService, authService, roleService, servicePermissionService)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	fake := seed.NewFake(userManager)
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
-	seeder := server.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, fake, permissionSeeder)
+	seeder := server2.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, fake, permissionSeeder)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
 		cleanup2()
@@ -97,7 +87,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 }
 
 var (
-	_wireDecodeRequestFuncValue  = server2.ReqDecode
-	_wireEncodeResponseFuncValue = server2.ResEncoder
-	_wireEncodeErrorFuncValue    = server2.ErrEncoder
+	_wireDecodeRequestFuncValue  = server.ReqDecode
+	_wireEncodeResponseFuncValue = server.ResEncoder
+	_wireEncodeErrorFuncValue    = server.ErrEncoder
 )
