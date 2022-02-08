@@ -5,10 +5,11 @@ import (
 	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	"time"
 )
 
 var (
-	ErrInvalidPassword = errors.New("invalid password")
+	ErrInvalidCredential = errors.New("invalid credential")
 )
 
 type UserManager struct {
@@ -103,26 +104,26 @@ func (um *UserManager) Delete(ctx context.Context, user *User) error {
 	return um.userRepo.Delete(ctx, user)
 }
 
-func (um *UserManager) CheckPassword(ctx context.Context, user *User, password string) (ok bool, err error) {
+func (um *UserManager) CheckPassword(ctx context.Context, user *User, password string) error {
 
 	v := um.checkPassword(ctx, user, password)
 	if v == PasswordVerificationSuccess {
-		return true, nil
+		return nil
 	}
 	if v == PasswordVerificationSuccessRehashNeeded {
-		if err = um.updatePassword(ctx, user, &password, false); err != nil {
-			return ok, err
+		if err := um.updatePassword(ctx, user, &password, false); err != nil {
+			return err
 		}
-		err = um.userRepo.Update(ctx, user)
-		return true, err
+		err := um.userRepo.Update(ctx, user)
+		return err
 	}
 	//fail
-	return false, ErrInvalidPassword
+	return ErrInvalidCredential
 }
 
 func (um *UserManager) ChangePassword(ctx context.Context, user *User, current string, newPwd string) error {
 	if v := um.checkPassword(ctx, user, current); v == PasswordVerificationFail {
-		return ErrInvalidPassword
+		return ErrInvalidCredential
 	}
 	if err := um.updatePassword(ctx, user, &newPwd, true); err != nil {
 		return err
@@ -149,6 +150,19 @@ func (um *UserManager) AddToRole(ctx context.Context, user *User, role *Role) er
 }
 func (um *UserManager) RemoveFromRole(ctx context.Context, user *User, role *Role) error {
 	return um.userRepo.RemoveFromRole(ctx, user, role)
+}
+func (um *UserManager) CheckDeleted(ctx context.Context, u *User) (bool, error) {
+	if u.DeletedAt.Valid && u.DeletedAt.Time.Before(time.Now()) {
+		return true, nil
+	}
+	return false, nil
+}
+
+func (um *UserManager) CheckLocked(ctx context.Context, u *User) (bool, error) {
+	if u.LockoutEndDateUtc.After(time.Now()) {
+		return true, nil
+	}
+	return false, nil
 }
 
 func (um *UserManager) validateUser(ctx context.Context, u *User) (err error) {

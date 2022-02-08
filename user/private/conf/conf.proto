@@ -32,7 +32,6 @@ message UserConf{
 
 message Auth{
   conf.Cookie cookie=4;
-  google.protobuf.StringValue session_name=5;
   conf.Cookie session_cookie=6;
   google.protobuf.StringValue totp_2fa_issuer=7;
 }

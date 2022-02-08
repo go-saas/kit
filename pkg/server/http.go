@@ -125,6 +125,16 @@ func IsAjax(ctx context.Context) bool {
 	return false
 }
 
+func SetCookie(ctx context.Context, value string) bool {
+	if t, ok := transport.FromServerContext(ctx); ok {
+		if ht, ok := t.(*khttp.Transport); ok {
+			ht.ReplyHeader().Set("Set-Cookie", value)
+			return true
+		}
+	}
+	return false
+}
+
 type ErrorHandler interface {
 	Wrap(func(w http.ResponseWriter, r *http.Request) error) http.Handler
 }

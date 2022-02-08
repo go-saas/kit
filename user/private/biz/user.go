@@ -68,9 +68,6 @@ type User struct {
 	Birthday *time.Time `json:"birthday"`
 	Gender   *string    `json:"gender"`
 
-	// SecondEmail back up email
-	SecondEmail *string `json:"second_email"`
-
 	Tenants []UserTenant `json:"tenants"`
 
 	Extra datatypes.JSONMap

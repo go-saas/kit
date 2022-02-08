@@ -51,7 +51,7 @@ func NewHTTPServer(c *conf.Services,
 	errorHandler server.ErrorHandler,
 ) *http.Server {
 	var opts []http.ServerOption
-	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
+	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder, server.Writer())
 
 	opts = append(opts, []http.ServerOption{
 		http.Middleware(

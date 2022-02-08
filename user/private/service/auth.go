@@ -199,11 +199,11 @@ func FindUserByUsernameAndValidatePwd(ctx context.Context, um *biz.UserManager, 
 		return nil, pb.ErrorInvalidCredentials("")
 	}
 	// check password
-	ok, err := um.CheckPassword(ctx, user, password)
-	if !ok {
-		return nil, pb.ErrorInvalidCredentials("")
-	}
+	err = um.CheckPassword(ctx, user, password)
 	if err != nil {
+		if err == biz.ErrInvalidCredential {
+			return nil, pb.ErrorInvalidCredentials("")
+		}
 		return nil, err
 	}
 	return user, nil
