@@ -58,3 +58,5 @@ security:
   jwt:
     expire_in: 2592000s #    30 days
     secret: 6efa4458-b245-40a3-9685-6b30d5dcda49
+  security_cookie:
+    hash: gt35ofggk07kdt7ief99bl51avd7pbhe

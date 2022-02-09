@@ -4,14 +4,20 @@ services:
   nginx:
     image: nginx:alpine
     volumes:
-     - ./nginx.conf:/etc/nginx/nginx.conf
+     - ./quickstart/nginx.conf:/etc/nginx/nginx.conf
     ports:
      - "8600:8600"
+    depends_on:
+      - user
+      - saas
+      - api_docs
 
   api_docs:
     image: ${DOCKER_REGISTRY}go-saas-kit-swagger:${DOCKER_TAG:-latest}
     ports:
       - "8080"
+    environment:
+      - BASE_URL="/swagger"
 
   user:
     image: ${DOCKER_REGISTRY}go-saas-kit-user:${DOCKER_TAG:-latest}

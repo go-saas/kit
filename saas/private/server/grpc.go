@@ -5,7 +5,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
-	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
@@ -35,7 +34,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 			saas.Server(mOpt, nil, ts),
 			api2.ServerMiddleware(apiOpt),
-			selector.Server(uow.Uow(logger, uowMgr)).Match(uow.DefaultUseOperation).Build(),
+			uow.Uow(logger, uowMgr),
 		),
 	}
 	opts = server.PatchGrpcOpts(logger, opts, api.ServiceName, c)
