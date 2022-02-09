@@ -7,7 +7,7 @@
     "url": "https://github.com/anncwb"
   },
   "scripts": {
-    "bootstrap": "yarn install",
+    "bootstrap": "pnpm install",
     "serve": "npm run dev",
     "dev": "vite",
     "build": "cross-env NODE_ENV=production vite build && esno ./build/script/postBuild.ts",
@@ -62,6 +62,7 @@
     "@commitlint/cli": "^14.1.0",
     "@commitlint/config-conventional": "^14.1.0",
     "@iconify/json": "^1.1.422",
+    "@openapitools/openapi-generator-cli": "^2.4.26",
     "@purge-icons/generated": "^0.7.0",
     "@types/codemirror": "^5.60.5",
     "@types/crypto-js": "^4.0.2",
