@@ -1,22 +1,20 @@
-package authentication
+package jwt
 
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
-	jwt2 "github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/extract_claim"
 )
 
-func ServerExtractAndAuth(tokenizer jwt2.Tokenizer, logger log.Logger) middleware.Middleware {
-	return middleware.Chain(extract_claim.ServerExtract(tokenizer, logger), ServerAuth())
+func ServerExtractAndAuth(tokenizer Tokenizer, logger log.Logger) middleware.Middleware {
+	return middleware.Chain(ServerExtract(tokenizer, logger), ServerAuth())
 }
 
 func ServerAuth() middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
-			if claims, ok := jwt2.FromClaimsContext(ctx); !ok {
+			if claims, ok := FromClaimsContext(ctx); !ok {
 				//no jwt
 				return handler(ctx, req)
 			} else {
