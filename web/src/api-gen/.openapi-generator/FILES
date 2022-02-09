@@ -1,6 +1,5 @@
 .gitignore
 .npmignore
-.openapi-generator-ignore
 api.ts
 api/account-api.ts
 api/auth-api.ts
@@ -9,7 +8,6 @@ api/permission-service-api.ts
 api/role-service-api.ts
 api/tenant-service-api.ts
 api/user-service-api.ts
-base.ts
 common.ts
 configuration.ts
 git_push.sh
