@@ -196,3 +196,10 @@ message GetCsrfTokenResponse{
     string csrf_token=1;
 }
 
+message LogoutRequest{
+
+}
+
+message LogoutResponse{
+
+}

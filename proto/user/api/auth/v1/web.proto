@@ -26,4 +26,10 @@ service AuthWeb {
     };
   }
 
+  rpc WebLogout(LogoutRequest)returns(LogoutResponse){
+    option (google.api.http) = {
+      post: "/v1/auth/web/logout",
+      body: "*",
+    };
+  }
 }

@@ -20,12 +20,14 @@ const _ = http.SupportPackageIsVersion1
 type AuthWebHTTPServer interface {
 	GetWebLoginForm(context.Context, *GetLoginFormRequest) (*GetLoginFormResponse, error)
 	WebLogin(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
+	WebLogout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 }
 
 func RegisterAuthWebHTTPServer(s *http.Server, srv AuthWebHTTPServer) {
 	r := s.Route("/")
 	r.GET("/v1/auth/web/login", _AuthWeb_GetWebLoginForm0_HTTP_Handler(srv))
 	r.POST("/v1/auth/web/login", _AuthWeb_WebLogin0_HTTP_Handler(srv))
+	r.POST("/v1/auth/web/logout", _AuthWeb_WebLogout0_HTTP_Handler(srv))
 }
 
 func _AuthWeb_GetWebLoginForm0_HTTP_Handler(srv AuthWebHTTPServer) func(ctx http.Context) error {
@@ -66,9 +68,29 @@ func _AuthWeb_WebLogin0_HTTP_Handler(srv AuthWebHTTPServer) func(ctx http.Contex
 	}
 }
 
+func _AuthWeb_WebLogout0_HTTP_Handler(srv AuthWebHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in LogoutRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.auth.v1.AuthWeb/WebLogout")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.WebLogout(ctx, req.(*LogoutRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*LogoutResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AuthWebHTTPClient interface {
 	GetWebLoginForm(ctx context.Context, req *GetLoginFormRequest, opts ...http.CallOption) (rsp *GetLoginFormResponse, err error)
 	WebLogin(ctx context.Context, req *LoginAuthRequest, opts ...http.CallOption) (rsp *LoginAuthReply, err error)
+	WebLogout(ctx context.Context, req *LogoutRequest, opts ...http.CallOption) (rsp *LogoutResponse, err error)
 }
 
 type AuthWebHTTPClientImpl struct {
@@ -97,6 +119,19 @@ func (c *AuthWebHTTPClientImpl) WebLogin(ctx context.Context, in *LoginAuthReque
 	pattern := "/v1/auth/web/login"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.auth.v1.AuthWeb/WebLogin"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *AuthWebHTTPClientImpl) WebLogout(ctx context.Context, in *LogoutRequest, opts ...http.CallOption) (*LogoutResponse, error) {
+	var out LogoutResponse
+	pattern := "/v1/auth/web/logout"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation("/user.api.auth.v1.AuthWeb/WebLogout"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

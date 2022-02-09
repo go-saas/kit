@@ -587,6 +587,38 @@
         ]
       }
     },
+    "/v1/auth/web/logout": {
+      "post": {
+        "operationId": "AuthWeb_WebLogout",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1LogoutResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1LogoutRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthWeb"
+        ]
+      }
+    },
     "/v1/permission/check": {
       "post": {
         "operationId": "PermissionService_CheckCurrent",
@@ -1873,6 +1905,12 @@
       "type": "object"
     },
     "v1LoginPasswordlessRequest": {
+      "type": "object"
+    },
+    "v1LogoutRequest": {
+      "type": "object"
+    },
+    "v1LogoutResponse": {
       "type": "object"
     },
     "v1OAuthProvider": {

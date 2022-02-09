@@ -59,11 +59,18 @@ func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (a *Auth) LoginPost(w http.ResponseWriter, r *http.Request) error {
-	//find user
 	var req v1.LoginAuthRequest
 	if err := a.reqDecoder(r, &req); err != nil {
 		return err
 	}
 	err := a.signIn.PasswordSignInWithUsername(r.Context(), req.Username, req.Password, req.Remember, true)
+	return service.ConvertError(err)
+}
+func (a *Auth) LoginOut(w http.ResponseWriter, r *http.Request) error {
+	var req v1.LogoutRequest
+	if err := a.reqDecoder(r, &req); err != nil {
+		return err
+	}
+	err := a.signIn.SignOut(r.Context())
 	return service.ConvertError(err)
 }

@@ -89,6 +89,7 @@ func NewHTTPServer(c *conf.Services,
 	router.Group(func(router chi.Router) {
 		router.Get("/login", errorHandler.Wrap(authHttp.LoginGet).ServeHTTP)
 		router.Post("/login", errorHandler.Wrap(authHttp.LoginPost).ServeHTTP)
+		router.Post("/logout", errorHandler.Wrap(authHttp.LoginOut).ServeHTTP)
 	})
 
 	srv := khttp.NewServer(opts...)
