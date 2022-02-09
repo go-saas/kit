@@ -11,7 +11,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/authentication"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -33,7 +32,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			logging.Server(logger),
 			metrics.Server(),
 			validate.Validator(),
-			authentication.ServerExtractAndAuth(tokenizer, logger),
+			jwt.ServerExtractAndAuth(tokenizer, logger),
 			saas.Server(mOpt, nil, ts),
 			api2.ServerMiddleware(apiOpt),
 			selector.Server(uow.Uow(logger, uowMgr)).Match(uow.DefaultUseOperation).Build(),

@@ -33,11 +33,14 @@ type TFAInfo struct {
 }
 
 type ClientStateImpl struct {
+	//s user info session
 	s *sessions.Session
+	//rs remember session
+	rs *sessions.Session
 }
 
-func NewClientState(s *sessions.Session) ClientState {
-	return &ClientStateImpl{s: s}
+func NewClientState(s *sessions.Session, rs *sessions.Session) ClientState {
+	return &ClientStateImpl{s: s, rs: rs}
 }
 
 func (c *ClientStateImpl) GetUid() string {
@@ -77,7 +80,7 @@ func (c *ClientStateImpl) GetTFAInfo() TFAInfo {
 }
 
 func (c *ClientStateImpl) GetRememberToken() string {
-	if v, ok := c.s.Values[sessionNameRememberToken].(string); ok {
+	if v, ok := c.rs.Values[sessionNameRememberToken].(string); ok {
 		return v
 	} else {
 		return ""
@@ -102,102 +105,108 @@ type ClientStateWriter interface {
 	SignOutRememberToken(ctx context.Context) error
 
 	Clear(ctx context.Context) error
-	//Save TODO should we keep this?
+
 	Save(ctx context.Context) error
 }
 
 type ClientStateWriterImpl struct {
-	s       *sessions.Session
-	w       http.ResponseWriter
-	r       *http.Request
-	changed bool
+	//s user info session
+	s *sessions.Session
+	//rs remember session
+	rs *sessions.Session
+
+	w         http.ResponseWriter
+	r         *http.Request
+	sChanged  bool
+	rsChanged bool
 }
 
 var _ ClientStateWriter = (*ClientStateWriterImpl)(nil)
 
-func NewClientStateWriter(s *sessions.Session, w http.ResponseWriter, r *http.Request) ClientStateWriter {
-	return &ClientStateWriterImpl{s: s, w: w, r: r}
+func NewClientStateWriter(s *sessions.Session, rs *sessions.Session, w http.ResponseWriter, r *http.Request) ClientStateWriter {
+	return &ClientStateWriterImpl{s: s, rs: rs, w: w, r: r}
 }
 
 func (c *ClientStateWriterImpl) SetUid(ctx context.Context, uid string) error {
 	c.s.Values[sessionNameUserId] = uid
-	c.changed = true
+	c.sChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) SetSecurityStamp(ctx context.Context, s string) error {
 	c.s.Values[sessionNameSecurityStamp] = s
-	c.changed = true
+	c.sChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) SetTwoFactorClientRemembered(ctx context.Context) error {
 	c.s.Values[sessionNameTwoFactorRememberMe] = true
-	c.changed = true
+	c.sChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) SetTFAInfo(ctx context.Context, t TFAInfo) error {
 	c.s.Values[sessionNameTwoFactorUserId] = t.UserId
 	c.s.Values[sessionNameTwoFactorProvider] = t.LoginProvider
-	c.changed = true
+	c.sChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) SetRememberToken(ctx context.Context, r string) error {
-	c.s.Values[sessionNameRememberToken] = r
-	c.changed = true
+	c.rs.Values[sessionNameRememberToken] = r
+	c.rsChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) SignOutUid(ctx context.Context) error {
 	delete(c.s.Values, sessionNameUserId)
-	c.changed = true
+	c.sChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) SignOutSecurityStamp(ctx context.Context) error {
 	delete(c.s.Values, sessionNameSecurityStamp)
-	c.changed = true
+	c.sChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) SignOutTwoFactorClientRemembered(ctx context.Context) error {
 	delete(c.s.Values, sessionNameTwoFactorRememberMe)
-	c.changed = true
+	c.sChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) SignOutTFAInfo(ctx context.Context) error {
 	delete(c.s.Values, sessionNameTwoFactorUserId)
 	delete(c.s.Values, sessionNameTwoFactorProvider)
-	c.changed = true
+	c.sChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) SignOutRememberToken(ctx context.Context) error {
-	delete(c.s.Values, sessionNameRememberToken)
-	c.changed = true
+	c.rs.Options.MaxAge = -1
+	c.rsChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) Clear(ctx context.Context) error {
-	keys := make([]interface{}, len(c.s.Values))
-	i := 0
-	for k := range c.s.Values {
-		keys[i] = k
-		i++
-	}
-	for k := range keys {
-		delete(c.s.Values, k)
-	}
-	c.changed = true
+	c.s.Options.MaxAge = -1
+	c.rs.Options.MaxAge = -1
+	c.rsChanged = true
+	c.sChanged = true
 	return nil
 }
 
 func (c *ClientStateWriterImpl) Save(ctx context.Context) error {
-	if c.changed {
-		return c.s.Save(c.r, c.w)
+	if c.sChanged {
+		if err := c.s.Save(c.r, c.w); err != nil {
+			return err
+		}
+	}
+	if c.rsChanged {
+		if err := c.rs.Save(c.r, c.w); err != nil {
+			return err
+		}
 	}
 	return nil
 }

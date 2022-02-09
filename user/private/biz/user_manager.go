@@ -4,12 +4,15 @@ import (
 	"context"
 	"errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/google/uuid"
+	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"time"
 )
 
 var (
-	ErrInvalidCredential = errors.New("invalid credential")
+	ErrInvalidCredential     = errors.New("invalid credential")
+	ErrRememberTokenNotFound = errors.New("remember token not found")
 )
 
 type UserManager struct {
@@ -19,6 +22,8 @@ type UserManager struct {
 	userValidator    UserValidator
 	pwdValidator     PasswordValidator
 	lookupNormalizer LookupNormalizer
+	userTokenRepo    UserTokenRepo
+	refreshTokenRepo RefreshTokenRepo
 	tokenFactory     UserTwoFactorTokenProviderFactory
 	log              log.Logger
 }
@@ -30,6 +35,8 @@ func NewUserManager(
 	userValidator UserValidator,
 	pwdValidator PasswordValidator,
 	lookupNormalizer LookupNormalizer,
+	userTokenRepo UserTokenRepo,
+	refreshTokenRepo RefreshTokenRepo,
 	//tokenFactory UserTwoFactorTokenProviderFactory,
 	logger log.Logger) *UserManager {
 	return &UserManager{
@@ -39,6 +46,8 @@ func NewUserManager(
 		userValidator:    userValidator,
 		pwdValidator:     pwdValidator,
 		lookupNormalizer: lookupNormalizer,
+		userTokenRepo:    userTokenRepo,
+		refreshTokenRepo: refreshTokenRepo,
 		//tokenFactory: tokenFactory,
 		log: log.With(logger, "module", "/biz/user_manager")}
 }
@@ -163,6 +172,37 @@ func (um *UserManager) CheckLocked(ctx context.Context, u *User) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+func (um *UserManager) GenerateRememberToken(ctx context.Context, uid uuid.UUID) (string, error) {
+	//TODO? use refresh token?
+	token := NewRefreshToken(uid, 0, server.ClientUserAgent(ctx), server.ClientIP(ctx))
+	if err := um.refreshTokenRepo.Create(ctx, token); err != nil {
+		return "", err
+	} else {
+		return token.Token, nil
+	}
+}
+
+func (um *UserManager) RefreshRememberToken(ctx context.Context, uid uuid.UUID, token string) (string, error) {
+	//find token
+	if t, err := um.refreshTokenRepo.Find(ctx, token, true); err != nil {
+		return "", err
+	} else {
+		if t == nil || t.UserId != uid {
+			return "", ErrRememberTokenNotFound
+		}
+		//refresh token
+		newToken, err := um.GenerateRememberToken(ctx, uid)
+		if err != nil {
+			return "", err
+		}
+		err = um.refreshTokenRepo.Revoke(ctx, token)
+		if err != nil {
+			return "", err
+		}
+		return newToken, nil
+	}
 }
 
 func (um *UserManager) validateUser(ctx context.Context, u *User) (err error) {

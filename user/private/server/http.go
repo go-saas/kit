@@ -9,10 +9,8 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/gorilla/sessions"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/authentication"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
@@ -51,12 +49,11 @@ func NewHTTPServer(c *conf.Services,
 	permission *service.PermissionService,
 	authHttp *uhttp.Auth,
 	errorHandler server.ErrorHandler,
-	sessionStore sessions.Store,
 ) *khttp.Server {
 	var opts []khttp.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
 		//extract from session cookie
-		session.Auth(sessionStore, sCfg))
+		session.Auth(sCfg))
 
 	opts = append(opts, []khttp.ServerOption{
 		khttp.Middleware(
@@ -65,7 +62,7 @@ func NewHTTPServer(c *conf.Services,
 			logging.Server(logger),
 			metrics.Server(),
 			validate.Validator(),
-			authentication.ServerExtractAndAuth(tokenizer, logger),
+			jwt.ServerExtractAndAuth(tokenizer, logger),
 			saas.Server(mOpt, nil, ts),
 			api2.ServerMiddleware(apiOpt),
 			uow.Uow(logger, uowMgr),
@@ -81,7 +78,7 @@ func NewHTTPServer(c *conf.Services,
 			logging.Server(logger),
 			metrics.Server(),
 			validate.Validator(),
-			authentication.ServerExtractAndAuth(tokenizer, logger)),
+			jwt.ServerExtractAndAuth(tokenizer, logger)),
 
 		server.MiddlewareConvert(
 			saas.Server(mOpt, nil, ts),

@@ -11,7 +11,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
@@ -55,7 +54,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userValidator := biz.NewUserValidator()
 	passwordValidator := biz.NewPasswordValidator(passwordValidatorConfig)
 	lookupNormalizer := biz.NewLookupNormalizer()
-	userManager := biz.NewUserManager(userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, logger)
+	userTokenRepo := data.NewUserTokenRepo(dataData)
+	refreshTokenRepo := data.NewRefreshTokenRepo(dataData)
+	userManager := biz.NewUserManager(userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, userTokenRepo, refreshTokenRepo, logger)
 	enforcerProvider := data.NewEnforcerProvider(dbProvider)
 	permissionService := casbin.NewPermissionService(enforcerProvider)
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
@@ -66,15 +67,13 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	accountService := service.NewAccountService(userManager)
 	roleRepo := data.NewRoleRepo(dataData)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
-	refreshTokenRepo := data.NewRefreshTokenRepo(dataData)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, security)
 	roleService := service.NewRoleServiceService(roleRepo, defaultAuthorizationService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl)
 	signInManager := biz.NewSignInManager(userManager)
 	auth := http2.NewAuth(decodeRequestFunc, encodeResponseFunc, userManager, logger, signInManager)
 	defaultErrorHandler := server.NewDefaultErrorHandler(encodeErrorFunc)
-	store := session.NewCookieStore(security)
-	httpServer := server2.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userService, accountService, authService, roleService, servicePermissionService, auth, defaultErrorHandler, store)
+	httpServer := server2.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userService, accountService, authService, roleService, servicePermissionService, auth, defaultErrorHandler)
 	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, userService, accountService, authService, roleService, servicePermissionService)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)

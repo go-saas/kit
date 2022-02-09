@@ -52,7 +52,14 @@ func (s *SignInManager) SignIn(ctx context.Context, u *User, isPersistent bool) 
 			return err
 		}
 		if isPersistent {
-			//TODO generate remember me token and set in writer
+			rememberToken, err := s.um.GenerateRememberToken(ctx, u.ID)
+			if err != nil {
+				return err
+			}
+			err = writer.SetRememberToken(ctx, rememberToken)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	} else {
@@ -62,10 +69,7 @@ func (s *SignInManager) SignIn(ctx context.Context, u *User, isPersistent bool) 
 
 func (s *SignInManager) SignOut(ctx context.Context) error {
 	if writer, ok := session.FromClientStateWriterContext(ctx); ok {
-		if err := writer.SignOutUid(ctx); err != nil {
-			return err
-		}
-		if err := writer.SignOutTFAInfo(ctx); err != nil {
+		if err := writer.Clear(ctx); err != nil {
 			return err
 		}
 		return nil

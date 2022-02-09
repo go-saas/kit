@@ -103,8 +103,9 @@ message Security{
   }
   Jwt jwt=1;
   CookieKey security_cookie=2;
-  google.protobuf.StringValue session_name=5;
+
   Cookie session_cookie=6;
+  Cookie remember_cookie=7;
 }
 
 enum SameSiteMode{
