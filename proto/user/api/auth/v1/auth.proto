@@ -94,6 +94,7 @@ message RegisterAuthReply{
 message LoginAuthRequest{
     string username =1 [(validate.rules).string.min_len = 1];
     string password =2 [(validate.rules).string.min_len = 1];
+    bool remember =3;
 }
 
 

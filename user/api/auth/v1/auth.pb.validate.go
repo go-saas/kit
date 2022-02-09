@@ -281,6 +281,8 @@ func (m *LoginAuthRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Remember
+
 	if len(errors) > 0 {
 		return LoginAuthRequestMultiError(errors)
 	}

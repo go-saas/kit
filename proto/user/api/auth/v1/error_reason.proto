@@ -11,5 +11,5 @@ enum ErrorReason {
 
   INVALID_CREDENTIALS = 0 [(errors.code) = 400];
   INVALID_OPERATION = 1 [(errors.code) = 400];
-
+  USER_LOCKED = 2 [(errors.code) = 403];
 }

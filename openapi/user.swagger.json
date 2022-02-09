@@ -1863,6 +1863,9 @@
         },
         "password": {
           "type": "string"
+        },
+        "remember": {
+          "type": "boolean"
         }
       }
     },

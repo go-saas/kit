@@ -34,3 +34,15 @@ func IsInvalidOperation(err error) bool {
 func ErrorInvalidOperation(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_INVALID_OPERATION.String(), fmt.Sprintf(format, args...))
 }
+
+func IsUserLocked(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_USER_LOCKED.String() && e.Code == 403
+}
+
+func ErrorUserLocked(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_USER_LOCKED.String(), fmt.Sprintf(format, args...))
+}
