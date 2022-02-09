@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
+	"github.com/go-kratos/kratos/v2/transport"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
@@ -64,12 +66,44 @@ func NewUowManager(cfg *gorm.Config, config *uow.Config, opener gorm.DbOpener) u
 	})
 }
 
+var (
+	safeMethods = []string{"GET", "HEAD", "OPTIONS", "TRACE"}
+)
+
+func contains(vals []string, s string) bool {
+	for _, v := range vals {
+		if v == s {
+			return true
+		}
+	}
+
+	return false
+}
+
 func Uow(l log.Logger, um uow.Manager) middleware.Middleware {
 	logger := log.NewHelper(log.With(l, "module", "uow"))
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
 			var res interface{}
 			var err error
+
+			if t, ok := transport.FromServerContext(ctx); ok {
+				if ht, ok := t.(*khttp.Transport); ok {
+					if contains(safeMethods, ht.Request().Method) {
+						//safe method skip unit of work
+						logger.Debugf("safe method %s. skip uow", ht.Request().Method)
+						return res, err
+					}
+				} else {
+					//resolve by operation
+					if !useOperation(t.Operation()) {
+						//skip unit of work
+						logger.Debugf("safe operation %s. skip uow", t.Operation())
+						return res, err
+					}
+				}
+			}
+
 			// wrap into new unit of work
 			logger.Debugf("run into unit of work")
 			err = um.WithNew(ctx, func(ctx context.Context) error {
@@ -82,8 +116,8 @@ func Uow(l log.Logger, um uow.Manager) middleware.Middleware {
 	}
 }
 
-//DefaultUseOperation return true if operation action not start with "get" and "list" (case-insensitive)
-func DefaultUseOperation(operation string) bool {
+//useOperation return true if operation action not start with "get" and "list" (case-insensitive)
+func useOperation(operation string) bool {
 	s := strings.Split(operation, "/")
 	act := strings.ToLower(s[len(s)-1])
 	return !strings.HasPrefix(act, "get") && !strings.HasPrefix(act, "list")
