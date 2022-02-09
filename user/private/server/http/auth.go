@@ -4,6 +4,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	http2 "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/kratos/v2/transport/http/binding"
+	"github.com/gorilla/csrf"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
@@ -15,18 +16,21 @@ type Auth struct {
 	resEncoder http2.EncodeResponseFunc
 	um         *biz.UserManager
 	logger     *log.Helper
+	signIn     *biz.SignInManager
 }
 
 func NewAuth(
 	reqDecoder http2.DecodeRequestFunc,
 	resEncoder http2.EncodeResponseFunc,
 	um *biz.UserManager,
-	l log.Logger) *Auth {
+	l log.Logger,
+	signIn *biz.SignInManager) *Auth {
 	return &Auth{
 		reqDecoder,
 		resEncoder,
 		um,
 		log.NewHelper(l),
+		signIn,
 	}
 }
 
@@ -35,6 +39,11 @@ func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) error {
 	if err := binding.BindQuery(r.URL.Query(), &req); err != nil {
 		return err
 	}
+
+	//csrf
+	token := csrf.Token(r)
+	w.Header().Set("X-CSRF-Token", token)
+
 	var resp v1.GetLoginFormResponse
 	//TODO validate url
 	resp.Redirect = req.Redirect
@@ -55,20 +64,6 @@ func (a *Auth) LoginPost(w http.ResponseWriter, r *http.Request) error {
 	if err := a.reqDecoder(r, &req); err != nil {
 		return err
 	}
-	var handled bool
-	_, err := service.FindUserByUsernameAndValidatePwd(r.Context(), a.um, req.Username, req.Password)
-
-	if err != nil {
-		if err != nil {
-			return err
-		} else if handled {
-			return nil
-		}
-		a.logger.Infof("user with username %s failed to log in", req.Username)
-		return err
-	}
-
-	//TODO
-	panic("not implementd")
-
+	err := a.signIn.PasswordSignInWithUsername(r.Context(), req.Username, req.Password, req.Remember, true)
+	return service.ConvertError(err)
 }

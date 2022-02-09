@@ -2,14 +2,18 @@ package session
 
 import (
 	"context"
+	"github.com/google/wire"
 	"github.com/gorilla/sessions"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"net/http"
 )
 
 const (
-	defaultSessionName = "kit-user"
+	defaultSessionName = "kit_user"
 )
+
+var ProviderSet = wire.NewSet(NewCookieStore)
 
 func Auth(store sessions.Store, cfg *conf.Security) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -22,15 +26,11 @@ func Auth(store sessions.Store, cfg *conf.Security) func(http.Handler) http.Hand
 			stateWriter := NewClientStateWriter(s, w, r)
 			defer func() { stateWriter.Save(context.Background()) }()
 			newCtx := NewClientStateWriterContext(r.Context(), stateWriter)
+			state := NewClientState(s)
+			newCtx = NewClientStateContext(newCtx, state)
+			newCtx = authn.NewUserContext(newCtx, authn.NewUserInfo(state.GetUid()))
 
-			if s != nil {
-				state := NewClientState(s)
-
-				newCtx = NewClientStateContext(newCtx, state)
-				next.ServeHTTP(w, r.WithContext(newCtx))
-			} else {
-				next.ServeHTTP(w, r.WithContext(newCtx))
-			}
+			next.ServeHTTP(w, r.WithContext(newCtx))
 
 		})
 	}

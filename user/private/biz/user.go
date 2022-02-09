@@ -41,8 +41,6 @@ type User struct {
 	Password *string `json:"password"`
 
 	//Security
-	ConfirmSelector string `json:"confirmSelector"`
-	ConfirmVerifier string `json:"confirmVerifier"`
 
 	AccessFailedCount int       `json:"accessFailedCount"`
 	LastLoginAttempt  time.Time `json:"lastLoginAttempt"`
@@ -55,8 +53,6 @@ type User struct {
 
 	//2FA
 	TwoFactorEnabled bool `json:"two_factor_enabled"`
-	TOTPSecretKey    string
-	RecoveryCodes    string
 
 	Roles []Role `gorm:"many2many:user_roles"`
 

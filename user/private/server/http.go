@@ -6,13 +6,14 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
-	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
-	"github.com/go-kratos/kratos/v2/transport/http"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/gorilla/sessions"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/middleware/authentication"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -22,12 +23,13 @@ import (
 	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
-	http4 "github.com/goxiaoy/go-saas-kit/user/private/server/http"
+	uhttp "github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common"
-	http2 "github.com/goxiaoy/go-saas/common/http"
+	shttp "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/kratos/saas"
 	uow2 "github.com/goxiaoy/uow"
+	"net/http"
 )
 
 // NewHTTPServer new a HTTP server.
@@ -35,26 +37,29 @@ func NewHTTPServer(c *conf.Services,
 	sCfg *conf.Security,
 	tokenizer jwt.Tokenizer,
 	uowMgr uow2.Manager,
-	mOpt *http2.WebMultiTenancyOption,
+	mOpt *shttp.WebMultiTenancyOption,
 	apiOpt *api2.Option,
 	ts common.TenantStore,
-	reqDecoder http.DecodeRequestFunc,
-	resEncoder http.EncodeResponseFunc,
-	errEncoder http.EncodeErrorFunc,
+	reqDecoder khttp.DecodeRequestFunc,
+	resEncoder khttp.EncodeResponseFunc,
+	errEncoder khttp.EncodeErrorFunc,
 	logger log.Logger,
 	user *service.UserService,
 	account *service.AccountService,
 	auth *service.AuthService,
 	role *service.RoleService,
 	permission *service.PermissionService,
-	authHttp *http4.Auth,
+	authHttp *uhttp.Auth,
 	errorHandler server.ErrorHandler,
-) *http.Server {
-	var opts []http.ServerOption
-	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder, server.Writer())
+	sessionStore sessions.Store,
+) *khttp.Server {
+	var opts []khttp.ServerOption
+	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
+		//extract from session cookie
+		session.Auth(sessionStore, sCfg))
 
-	opts = append(opts, []http.ServerOption{
-		http.Middleware(
+	opts = append(opts, []khttp.ServerOption{
+		khttp.Middleware(
 			recovery.Recovery(),
 			tracing.Server(),
 			logging.Server(logger),
@@ -63,7 +68,7 @@ func NewHTTPServer(c *conf.Services,
 			authentication.ServerExtractAndAuth(tokenizer, logger),
 			saas.Server(mOpt, nil, ts),
 			api2.ServerMiddleware(apiOpt),
-			selector.Server(uow.Uow(logger, uowMgr)).Match(uow.DefaultUseOperation).Build(),
+			uow.Uow(logger, uowMgr),
 		),
 	}...)
 
@@ -77,6 +82,7 @@ func NewHTTPServer(c *conf.Services,
 			metrics.Server(),
 			validate.Validator(),
 			authentication.ServerExtractAndAuth(tokenizer, logger)),
+
 		server.MiddlewareConvert(
 			saas.Server(mOpt, nil, ts),
 			api2.ServerMiddleware(apiOpt),
@@ -85,11 +91,12 @@ func NewHTTPServer(c *conf.Services,
 
 	router.Group(func(router chi.Router) {
 		router.Get("/login", errorHandler.Wrap(authHttp.LoginGet).ServeHTTP)
+		router.Post("/login", errorHandler.Wrap(authHttp.LoginPost).ServeHTTP)
 	})
 
-	srv := http.NewServer(opts...)
+	srv := khttp.NewServer(opts...)
 
-	srv.HandlePrefix("/v1/auth/web", router)
+	srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", router))
 
 	v12.RegisterUserServiceHTTPServer(srv, user)
 	v13.RegisterAccountHTTPServer(srv, account)

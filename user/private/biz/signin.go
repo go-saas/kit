@@ -46,12 +46,33 @@ func (s *SignInManager) RefreshSignIn(ctx context.Context, u *User) error {
 	panic("")
 }
 
-func (s *SignInManager) SignIn(ctx context.Context, u *User, isPersistent bool) {
-	panic("")
+func (s *SignInManager) SignIn(ctx context.Context, u *User, isPersistent bool) error {
+	if writer, ok := session.FromClientStateWriterContext(ctx); ok {
+		if err := writer.SetUid(ctx, u.ID.String()); err != nil {
+			return err
+		}
+		if isPersistent {
+			//TODO generate remember me token and set in writer
+		}
+		return nil
+	} else {
+		return ErrWriterNotFound
+	}
 }
 
-func (s *SignInManager) SignOut(ctx context.Context) {
-	panic("")
+func (s *SignInManager) SignOut(ctx context.Context) error {
+	if writer, ok := session.FromClientStateWriterContext(ctx); ok {
+		if err := writer.SignOutUid(ctx); err != nil {
+			return err
+		}
+		if err := writer.SignOutTFAInfo(ctx); err != nil {
+			return err
+		}
+		return nil
+	} else {
+		return ErrWriterNotFound
+	}
+
 }
 
 func (s *SignInManager) ValidateSecurityStamp(ctx context.Context, u *User, securityStamp string) {
@@ -72,15 +93,7 @@ func (s *SignInManager) PasswordSignIn(ctx context.Context, u *User, pwd string,
 		return err
 	}
 	//password correct
-	if writer, ok := session.FromClientStateWriterContext(ctx); ok {
-		if err := writer.SetUid(ctx, u.ID.String()); err != nil {
-			return err
-		}
-		if isPersistent {
-			//TODO generate remember me token and set in writer
-		}
-	}
-	return ErrWriterNotFound
+	return s.SignIn(ctx, u, isPersistent)
 }
 func (s *SignInManager) PasswordSignInWithUsername(ctx context.Context, username, pwd string, isPersistent bool, tryLockoutOnFailure bool) error {
 	u, err := s.um.FindByName(ctx, username)

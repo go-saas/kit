@@ -92,14 +92,14 @@ func Uow(l log.Logger, um uow.Manager) middleware.Middleware {
 					if contains(safeMethods, ht.Request().Method) {
 						//safe method skip unit of work
 						logger.Debugf("safe method %s. skip uow", ht.Request().Method)
-						return res, err
+						return handler(ctx, req)
 					}
 				} else {
 					//resolve by operation
 					if !useOperation(t.Operation()) {
 						//skip unit of work
 						logger.Debugf("safe operation %s. skip uow", t.Operation())
-						return res, err
+						return handler(ctx, req)
 					}
 				}
 			}
