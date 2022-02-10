@@ -64,6 +64,7 @@ func PatchHttpOpts(l log.Logger,
 		filters = append(filters, handlers.CORS(
 			handlers.AllowedOrigins(server.Http.Cors.GetAllowedOrigins()),
 			handlers.AllowedMethods(allowMethods),
+			handlers.AllowCredentials(),
 			handlers.AllowedHeaders(append([]string{"Content-Type", "Authorization"}, server.Http.Cors.AllowedHeaders...)),
 		))
 	}

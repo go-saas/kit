@@ -4,7 +4,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	http2 "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/kratos/v2/transport/http/binding"
-	"github.com/gorilla/csrf"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
@@ -39,10 +38,6 @@ func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) error {
 	if err := binding.BindQuery(r.URL.Query(), &req); err != nil {
 		return err
 	}
-
-	//csrf
-	token := csrf.Token(r)
-	w.Header().Set("X-CSRF-Token", token)
 
 	var resp v1.GetLoginFormResponse
 	//TODO validate url
