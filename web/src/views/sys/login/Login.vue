@@ -50,6 +50,7 @@
               enter-x
             "
           >
+            <Loading :loading="loading" :absolute="true" />
             <LoginForm />
             <ForgetPasswordForm />
             <RegisterForm />
@@ -62,7 +63,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import { AppLogo } from '/@/components/Application';
   import { AppLocalePicker, AppDarkModeToggle } from '/@/components/Application';
   import LoginForm from './LoginForm.vue';
@@ -74,6 +75,11 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useLocaleStore } from '/@/store/modules/locale';
+  import { useRoute } from 'vue-router';
+  import { AuthWebApi } from '/@/api-gen';
+  import { router } from '/@/router';
+  import { PageEnum } from '/@/enums/pageEnum';
+  import { Loading } from '/@/components/Loading';
 
   defineProps({
     sessionTimeout: {
@@ -87,6 +93,31 @@
   const localeStore = useLocaleStore();
   const showLocale = localeStore.getShowPicker;
   const title = computed(() => globSetting?.title ?? '');
+
+  const { query } = useRoute();
+  const { redirect: redirectUrl } = query;
+  const loading = ref(false);
+  onMounted(() => {
+    loading.value = true;
+    //TODO retry
+    new AuthWebApi()
+      .authWebGetWebLoginForm({ redirect: redirectUrl?.toString() ?? '/' })
+      .then(async (data) => {
+        if (
+          redirectUrl != null &&
+          data?.data?.redirect != null &&
+          redirectUrl != data.data.redirect
+        ) {
+          await router.replace({
+            path: PageEnum.BASE_LOGIN,
+            query: { redirect: data.data.redirect },
+          });
+        }
+        loading.value = false;
+        //TODO oauth
+        console.log(data.data);
+      });
+  });
 </script>
 <style lang="less">
   @prefix-cls: ~'@{namespace}-login';
@@ -99,7 +130,7 @@
       background-color: @dark-bg;
 
       &::before {
-        background-image: url(/@/assets/svg/login-bg-dark.svg);
+        background-image: url('/@/assets/svg/login-bg-dark.svg');
       }
 
       .ant-input,
@@ -145,7 +176,7 @@
       width: 100%;
       height: 100%;
       margin-left: -48%;
-      background-image: url(/@/assets/svg/login-bg.svg);
+      background-image: url('/@/assets/svg/login-bg.svg');
       background-position: 100%;
       background-repeat: no-repeat;
       background-size: auto 100%;

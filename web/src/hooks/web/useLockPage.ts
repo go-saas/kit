@@ -21,7 +21,7 @@ export function useLockPage() {
 
   function resetCalcLockTimeout(): void {
     // not login
-    if (!userStore.getToken) {
+    if (!userStore.getIsLogin) {
       clear();
       return;
     }
@@ -45,7 +45,7 @@ export function useLockPage() {
   }
 
   watchEffect((onClean) => {
-    if (userStore.getToken) {
+    if (userStore.getIsLogin) {
       resetCalcLockTimeout();
     } else {
       clear();

@@ -13,16 +13,16 @@ const stp = projectSetting.sessionTimeoutProcessing;
 
 export function checkStatus(
   status: number,
+  errorCode: string | undefined,
   msg: string,
   errorMessageMode: ErrorMessageMode = 'message',
 ): void {
   const { t } = useI18n();
   const userStore = useUserStoreWithOut();
-  let errMessage = '';
-
+  let errMessage = `${msg}`;
+  console.log(errorCode);
   switch (status) {
     case 400:
-      errMessage = `${msg}`;
       break;
     // 401: Not logged in
     // Jump to the login page if not logged in, and carry the path of the current page
@@ -37,7 +37,6 @@ export function checkStatus(
       }
       break;
     case 403:
-      errMessage = t('sys.api.errMsg403');
       break;
     // 404请求不存在
     case 404:

@@ -89,7 +89,7 @@
 
       listenerRouteChange((route) => {
         const { name } = route;
-        if (name === REDIRECT_NAME || !route || !userStore.getToken) {
+        if (name === REDIRECT_NAME || !route || !userStore.getIsLogin) {
           return;
         }
 

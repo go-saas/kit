@@ -11,10 +11,16 @@
   import { AppProvider } from '/@/components/Application';
   import { useTitle } from '/@/hooks/web/useTitle';
   import { useLocale } from '/@/locales/useLocale';
+  import { onMounted } from 'vue';
+  import { AuthApi } from '/@/api-gen/api/auth-api';
 
   // support Multi-language
   const { getAntdLocale } = useLocale();
 
   // Listening to page changes and dynamically changing site titles
   useTitle();
+
+  onMounted(() => {
+    new AuthApi().authGetCsrfToken();
+  });
 </script>

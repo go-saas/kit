@@ -1,6 +1,8 @@
 // token key
 export const TOKEN_KEY = 'TOKEN__';
 
+export const CSRF_KEY = 'CSRF_TOKEN__';
+
 export const LOCALE_KEY = 'LOCALE__';
 
 // user info key

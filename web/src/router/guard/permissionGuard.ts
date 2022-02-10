@@ -29,11 +29,11 @@ export function createPermissionGuard(router: Router) {
       return;
     }
 
-    const token = userStore.getToken;
+    const isLogin = userStore.getIsLogin;
 
     // Whitelist can be directly entered
     if (whitePathList.includes(to.path as PageEnum)) {
-      if (to.path === LOGIN_PATH && token) {
+      if (to.path === LOGIN_PATH && isLogin) {
         const isSessionTimeout = userStore.getSessionTimeout;
         try {
           await userStore.afterLoginAction();
@@ -47,8 +47,7 @@ export function createPermissionGuard(router: Router) {
       return;
     }
 
-    // token does not exist
-    if (!token) {
+    if (!isLogin) {
       // You can access without permission. You need to set the routing meta.ignoreAuth to true
       if (to.meta.ignoreAuth) {
         next();

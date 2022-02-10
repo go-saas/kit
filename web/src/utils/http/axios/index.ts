@@ -10,7 +10,7 @@ import { useGlobSetting } from '/@/hooks/setting';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { RequestEnum, ResultEnum, ContentTypeEnum } from '/@/enums/httpEnum';
 import { isString } from '/@/utils/is';
-import { getToken } from '/@/utils/auth';
+import { getToken, getCsrfToken, setCsrfToken } from '/@/utils/auth';
 import { setObjToUrlParams, deepMerge } from '/@/utils';
 import { useErrorLogStoreWithOut } from '/@/store/modules/errorLog';
 import { useI18n } from '/@/hooks/web/useI18n';
@@ -20,6 +20,13 @@ import { useUserStoreWithOut } from '/@/store/modules/user';
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
 const { createMessage, createErrorModal } = useMessage();
+
+interface ErrorMessage {
+  code: number;
+  message: string;
+  reason: string;
+  metadata: any;
+}
 
 /**
  * @description: 数据处理，方便区分多种处理方式
@@ -144,6 +151,11 @@ const transform: AxiosTransform = {
         ? `${options.authenticationScheme} ${token}`
         : token;
     }
+
+    const csrf = getCsrfToken();
+    if (csrf) {
+      (config as Recordable).headers['x-csrf-token'] = csrf;
+    }
     return config;
   },
 
@@ -151,6 +163,10 @@ const transform: AxiosTransform = {
    * @description: 响应拦截器处理
    */
   responseInterceptors: (res: AxiosResponse<any>) => {
+    if (res.headers['x-csrf-token']) {
+      setCsrfToken(res.headers['x-csrf-token']);
+    }
+
     return res;
   },
 
@@ -162,11 +178,15 @@ const transform: AxiosTransform = {
     const errorLogStore = useErrorLogStoreWithOut();
     errorLogStore.addAjaxErrorInfo(error);
     const { response, code, message, config } = error || {};
+    console.log(config);
     const errorMessageMode = config?.requestOptions?.errorMessageMode || 'none';
-    const msg: string = response?.data?.error?.message ?? '';
-    const err: string = error?.toString?.() ?? '';
-    let errMessage = '';
 
+    const errorBody = response?.data as ErrorMessage;
+
+    const msg: string = errorBody?.message ?? '';
+    const err: string = error?.toString?.() ?? '';
+
+    let errMessage = msg;
     try {
       if (code === 'ECONNABORTED' && message.indexOf('timeout') !== -1) {
         errMessage = t('sys.api.apiTimeoutMessage');
@@ -181,13 +201,13 @@ const transform: AxiosTransform = {
         } else if (errorMessageMode === 'message') {
           createMessage.error(errMessage);
         }
-        return Promise.reject(error);
+        return Promise.reject(new Error(errMessage));
       }
     } catch (error) {
       throw new Error(error as unknown as string);
     }
 
-    checkStatus(error?.response?.status, msg, errorMessageMode);
+    checkStatus(error?.response?.status, errorBody?.reason ?? '', msg, errorMessageMode);
     return Promise.reject(error);
   },
 };
@@ -199,10 +219,10 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
         // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#authentication_schemes
         // authentication schemes，e.g: Bearer
         // authenticationScheme: 'Bearer',
-        authenticationScheme: '',
+        authenticationScheme: 'Bearer',
         timeout: 10 * 1000,
         // 基础接口地址
-        // baseURL: globSetting.apiUrl,
+        baseURL: globSetting.apiUrl,
 
         headers: { 'Content-Type': ContentTypeEnum.JSON },
         // 如果是form-data格式
@@ -234,6 +254,9 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 是否携带token
           withToken: true,
         },
+        withCredentials: true,
+        xsrfCookieName: 'kit_csrf',
+        xsrfHeaderName: 'x-csrf-token',
       },
       opt || {},
     ),
