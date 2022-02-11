@@ -4,6 +4,7 @@ export default {
   cancelText: 'Cancel',
   loadingText: 'Loading...',
   saveText: 'Save',
+  createText: 'Create',
   delText: 'Delete',
   resetText: 'Reset',
   searchText: 'Search',

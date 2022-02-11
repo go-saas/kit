@@ -4,6 +4,7 @@ export default {
   cancelText: '取消',
   loadingText: '加载中...',
   saveText: '保存',
+  createText: '创建',
   delText: '删除',
   resetText: '重置',
   searchText: '搜索',
