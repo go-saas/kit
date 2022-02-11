@@ -1,4 +1,4 @@
-package api
+package permission
 
 import (
 	"context"
@@ -7,11 +7,13 @@ import (
 	"github.com/goxiaoy/go-saas/common"
 )
 
+type RemotePermissionServiceClient v1.PermissionServiceClient
+
 type RemotePermissionChecker struct {
 	client v1.PermissionServiceClient
 }
 
-func NewRemotePermissionChecker(client v1.PermissionServiceClient) authorization.PermissionChecker {
+func NewRemotePermissionChecker(client RemotePermissionServiceClient) authorization.PermissionChecker {
 	return &RemotePermissionChecker{
 		client: client,
 	}

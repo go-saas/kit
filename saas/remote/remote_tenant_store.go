@@ -1,4 +1,4 @@
-package api
+package tenant
 
 import (
 	"context"
@@ -6,13 +6,15 @@ import (
 	"github.com/goxiaoy/go-saas/common"
 )
 
+type RemoteTenantServiceClient v1.TenantServiceClient
+
 type RemoteGrpcTenantStore struct {
 	client v1.TenantServiceClient
 }
 
 var _ common.TenantStore = (*RemoteGrpcTenantStore)(nil)
 
-func NewRemoteGrpcTenantStore(client v1.TenantServiceClient) common.TenantStore {
+func NewRemoteGrpcTenantStore(client RemoteTenantServiceClient) common.TenantStore {
 	return &RemoteGrpcTenantStore{client: client}
 }
 

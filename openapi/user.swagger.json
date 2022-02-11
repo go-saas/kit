@@ -1739,6 +1739,13 @@
           "items": {
             "$ref": "#/definitions/v1Role"
           }
+        },
+        "tenants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1UserTenant"
+          },
+          "title": "user available tenants"
         }
       }
     },
@@ -2309,6 +2316,37 @@
           "type": "string"
         },
         "name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UserTenant": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "tenant": {
+          "$ref": "#/definitions/v1UserTenantTenant"
+        }
+      }
+    },
+    "v1UserTenantTenant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "region": {
           "type": "string"
         }
       }

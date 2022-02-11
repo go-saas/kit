@@ -48,7 +48,7 @@ func (g *TenantRepo) GetDb(ctx context.Context) *gg.DB {
 	return ret
 }
 
-func preloadUserScope(withDetail bool) func(db *gg.DB) *gg.DB {
+func preloadTenantScope(withDetail bool) func(db *gg.DB) *gg.DB {
 	return func(db *gg.DB) *gg.DB {
 		if withDetail {
 			return db.Preload("Conn").Preload("Features")
@@ -94,9 +94,9 @@ func (g *TenantRepo) FindByIdOrName(ctx context.Context, idOrName string) (*biz.
 	var tDb Tenant
 	if err == nil {
 		//id
-		err = g.GetDb(ctx).Model(&Tenant{}).Scopes(preloadUserScope(true)).Where("id = ?", id.String()).First(&tDb).Error
+		err = g.GetDb(ctx).Model(&Tenant{}).Scopes(preloadTenantScope(true)).Where("id = ?", id.String()).First(&tDb).Error
 	} else {
-		err = g.GetDb(ctx).Model(&Tenant{}).Scopes(preloadUserScope(true)).Where("name = ?", idOrName).First(&tDb).Error
+		err = g.GetDb(ctx).Model(&Tenant{}).Scopes(preloadTenantScope(true)).Where("name = ?", idOrName).First(&tDb).Error
 	}
 	if err != nil {
 		if errors.Is(err, gg.ErrRecordNotFound) {

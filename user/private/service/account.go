@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
+	v13 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -15,12 +17,14 @@ import (
 
 type AccountService struct {
 	pb.UnimplementedAccountServer
-	um *biz.UserManager
+	um            *biz.UserManager
+	tenantService v13.TenantServiceClient
 }
 
-func NewAccountService(um *biz.UserManager) *AccountService {
+func NewAccountService(um *biz.UserManager, tenantService v13.TenantServiceClient) *AccountService {
 	return &AccountService{
-		um: um,
+		um:            um,
+		tenantService: tenantService,
 	}
 }
 
@@ -61,6 +65,32 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 			Name: role.Name,
 		})
 	}
+
+	tenantIds := make([]string, len(u.Tenants))
+	linq.From(u.Tenants).SelectT(func(t biz.UserTenant) string { return t.TenantId }).ToSlice(&tenantIds)
+	if len(tenantIds) > 0 {
+		tenants, err := s.tenantService.ListTenant(ctx, &v13.ListTenantRequest{Filter: &v13.TenantFilter{IdIn: tenantIds}})
+		if err != nil {
+			return nil, err
+		}
+
+		reTenants := make([]*pb.UserTenant, len(u.Tenants))
+		linq.From(u.Tenants).SelectT(func(ut biz.UserTenant) *pb.UserTenant {
+			//get tenant info
+			t := linq.From(tenants.Items).FirstWithT(func(t *v13.Tenant) bool { return t.Id == ut.TenantId }).(*v13.Tenant)
+			if t==nil{
+				return nil
+			}
+			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId, Tenant: &pb.UserTenant_Tenant{
+				Id:          t.Id,
+				Name:        t.Name,
+				DisplayName: t.DisplayName,
+				Region:      t.Region,
+			}}
+		}).ToSlice(&reTenants)
+		res.Tenants = reTenants
+	}
+
 	return res, nil
 }
 func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {

@@ -9,6 +9,7 @@ import "google/protobuf/timestamp.proto";
 
 import "user/api/role/v1/role.proto";
 import "user/api/user/v1/user.proto";
+import "saas/api/tenant/v1/tenant.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/account/v1;v1";
 
@@ -61,6 +62,8 @@ message GetProfileResponse{
   //
   .user.api.user.v1.Gender gender=7;
   repeated .user.api.role.v1.Role roles=8;
+  // user available tenants
+  repeated UserTenant tenants=9;
 }
 message UpdateProfileRequest{
 
@@ -93,4 +96,16 @@ message UpdateAddressesRequest{
 
 message UpdateAddressesReply{
 
+}
+
+message UserTenant{
+  string user_id=1;
+  string tenant_id=2;
+  message Tenant{
+    string id=1;
+    string name=2;
+    string display_name=3;
+    string region=4;
+  }
+  Tenant tenant=3;
 }

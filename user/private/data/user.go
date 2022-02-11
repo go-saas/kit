@@ -28,6 +28,15 @@ func (u *UserRepo) GetDb(ctx context.Context) *gorm.DB {
 	return GetDb(ctx, u.DbProvider)
 }
 
+func preloadUserScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if withDetail {
+			return db.Preload("Roles").Preload("Tenants")
+		}
+		return db
+	}
+}
+
 func buildUserScope(filter *v1.UserFilter) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		ret := db
@@ -101,7 +110,7 @@ func (u *UserRepo) Delete(ctx context.Context, user *biz.User) error {
 
 func (u *UserRepo) FindByID(ctx context.Context, id string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "id=?", id).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(preloadUserScope(true)).First(user, "id=?", id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -113,7 +122,7 @@ func (u *UserRepo) FindByID(ctx context.Context, id string) (*biz.User, error) {
 
 func (u *UserRepo) FindByName(ctx context.Context, name string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "normalized_username = ?", name).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(preloadUserScope(true)).First(user, "normalized_username = ?", name).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -125,7 +134,7 @@ func (u *UserRepo) FindByName(ctx context.Context, name string) (*biz.User, erro
 
 func (u *UserRepo) FindByPhone(ctx context.Context, phone string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "phone = ?", phone).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(preloadUserScope(true)).First(user, "phone = ?", phone).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -137,7 +146,7 @@ func (u *UserRepo) FindByPhone(ctx context.Context, phone string) (*biz.User, er
 
 func (u *UserRepo) FindByRecoverSelector(ctx context.Context, r string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "recover_selector = ?", r).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(preloadUserScope(true)).First(user, "recover_selector = ?", r).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -149,7 +158,7 @@ func (u *UserRepo) FindByRecoverSelector(ctx context.Context, r string) (*biz.Us
 
 func (u *UserRepo) FindByConfirmSelector(ctx context.Context, c string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "confirm_selector = ?", c).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(preloadUserScope(true)).First(user, "confirm_selector = ?", c).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -183,7 +192,7 @@ func (u *UserRepo) FindByLogin(ctx context.Context, loginProvider string, provid
 
 func (u *UserRepo) FindByEmail(ctx context.Context, email string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles").First(user, "normalized_email = ?", email).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(preloadUserScope(true)).First(user, "normalized_email = ?", email).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -220,9 +229,9 @@ func (u *UserRepo) GetToken(ctx context.Context, user *biz.User, loginProvider s
 }
 
 func (u *UserRepo) GetRoles(ctx context.Context, user *biz.User) ([]*biz.Role, error) {
-	db := u.GetDb(ctx).Preload("Roles")
+	db := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles")
 	dbUser := &biz.User{}
-	if err := db.Model(&biz.User{}).Preload("Roles").Where("id=?", user.ID).Find(dbUser).Error; err != nil {
+	if err := db.Where("id=?", user.ID).Find(dbUser).Error; err != nil {
 		return nil, err
 	}
 	var ret []*biz.Role
