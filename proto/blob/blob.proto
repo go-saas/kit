@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package blob;
+
+option go_package = "github.com/goxiaoy/go-saas-kit/pkg/blob;blob";
+
+
+message BlobConfig{
+  string provider =1;
+  string base_path =2;
+  bool read_only = 3;
+  string regex_filter = 4;
+  BlobProviderS3 s3=100;
+}
+
+message BlobProviderS3{
+  string region=1;
+  string key=2;
+  string secret=3;
+  string bucket=4;
+}
