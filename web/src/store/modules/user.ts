@@ -2,11 +2,9 @@ import type { UserInfo } from '/#/store';
 import type { ErrorMessageMode } from '/#/axios';
 import { defineStore } from 'pinia';
 import { store } from '/@/store';
-import { RoleEnum } from '/@/enums/roleEnum';
 import { PageEnum } from '/@/enums/pageEnum';
-import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
+import { TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
-import { GetUserInfoModel } from '/@/api/sys/model/userModel';
 import { AuthWebApi, AccountApi } from '/@/api-gen/api';
 import { V1LoginAuthRequest } from '/@/api-gen/models';
 import { useI18n } from '/@/hooks/web/useI18n';
@@ -15,12 +13,10 @@ import { router } from '/@/router';
 import { usePermissionStore } from '/@/store/modules/permission';
 import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
-import { isArray } from '/@/utils/is';
 import { h } from 'vue';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
-  roleList: RoleEnum[];
   sessionTimeout?: boolean;
   lastUpdateTime: number;
 }
@@ -30,8 +26,6 @@ export const useUserStore = defineStore({
   state: (): UserState => ({
     // user info
     userInfo: null,
-    // roleList
-    roleList: [],
     // Whether the login expired
     sessionTimeout: false,
     // Last fetch time
@@ -42,11 +36,9 @@ export const useUserStore = defineStore({
       return this.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {};
     },
     getIsLogin(): boolean {
-      return (this.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {})?.userId != null;
+      return (this.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {})?.id != null;
     },
-    getRoleList(): RoleEnum[] {
-      return this.roleList.length > 0 ? this.roleList : getAuthCache<RoleEnum[]>(ROLES_KEY);
-    },
+
     getSessionTimeout(): boolean {
       return !!this.sessionTimeout;
     },
@@ -58,10 +50,7 @@ export const useUserStore = defineStore({
     setToken(info: string | undefined) {
       setAuthCache(TOKEN_KEY, info);
     },
-    setRoleList(roleList: RoleEnum[]) {
-      this.roleList = roleList;
-      setAuthCache(ROLES_KEY, roleList);
-    },
+
     setUserInfo(info: UserInfo | null) {
       this.userInfo = info;
       this.lastUpdateTime = new Date().getTime();
@@ -72,7 +61,7 @@ export const useUserStore = defineStore({
     },
     resetState() {
       this.userInfo = null;
-      this.roleList = [];
+
       this.sessionTimeout = false;
     },
     /**
@@ -83,7 +72,7 @@ export const useUserStore = defineStore({
         redirect?: string;
         mode?: ErrorMessageMode;
       },
-    ): Promise<GetUserInfoModel | null> {
+    ): Promise<Nullable<UserInfo>> {
       try {
         const { redirect = '/', mode, ...loginParams } = params;
         const data = await new AuthWebApi().authWebWebLogin(
@@ -92,15 +81,16 @@ export const useUserStore = defineStore({
         );
 
         const { accessToken } = data.data;
-
-        // save token
-        this.setToken(accessToken);
+        if (accessToken) {
+          // save token
+          this.setToken(accessToken);
+        }
         return this.afterLoginAction(redirect);
       } catch (error) {
         return Promise.reject(error);
       }
     },
-    async afterLoginAction(redirect = '/'): Promise<GetUserInfoModel | null> {
+    async afterLoginAction(redirect = '/'): Promise<Nullable<UserInfo>> {
       // get user info
       const userInfo = await this.getUserInfoAction();
 
@@ -124,22 +114,15 @@ export const useUserStore = defineStore({
     async getUserInfoAction(): Promise<UserInfo | null> {
       const userInfo = (await new AccountApi().accountGetProfile()).data;
       const { roles = [] } = userInfo;
-      if (isArray(roles)) {
-        const roleList = roles.map((item) => item.name) as RoleEnum[];
-        this.setRoleList(roleList);
-      } else {
-        userInfo.roles = [];
-        this.setRoleList([]);
-      }
-      //TODO clean
-      //convert
+
       const converted: UserInfo = {
-        userId: userInfo.id!,
+        id: userInfo.id!,
         username: userInfo.username ?? '',
-        realName: userInfo.name ?? '',
+        name: userInfo.name ?? '',
+        //TODO avatar
         avatar: '',
         roles: roles.map((item) => {
-          return { roleName: item.name ?? '', value: item.name ?? '' };
+          return { name: item.name ?? '', isPreserved: item.isPreserved ?? false, id: item.id! };
         }),
       };
       this.setUserInfo(converted);
@@ -150,11 +133,7 @@ export const useUserStore = defineStore({
      */
     async logout(goLogin = false) {
       if (this.getIsLogin) {
-        try {
-          await new AuthWebApi().authWebWebLogout({ body: {} });
-        } catch {
-          console.log('注销Token失败');
-        }
+        await new AuthWebApi().authWebWebLogout({ body: {} });
       }
       this.setToken(undefined);
       this.setSessionTimeout(false);

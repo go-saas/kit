@@ -1,7 +1,7 @@
 import { ErrorTypeEnum } from '/@/enums/exceptionEnum';
 import { MenuModeEnum, MenuTypeEnum } from '/@/enums/menuEnum';
 import { RoleInfo } from '/@/api/sys/model/userModel';
-
+import { PermissionEffect } from '/@/enums/permissionEnum';
 // Lock screen information
 export interface LockInfo {
   // Password required
@@ -31,13 +31,24 @@ export interface ErrorLogInfo {
 }
 
 export interface UserInfo {
-  userId: string | number;
+  id: string | number;
   username: string;
-  realName: string;
+  name: string;
   avatar: string;
-  desc?: string;
-  homePath?: string;
   roles: RoleInfo[];
+}
+
+export interface PermissionAcl {
+  namespace: string;
+  resource: string;
+  action: string;
+  effect: PermissionEffect;
+}
+
+export interface PermissionRequirement {
+  namespace: string;
+  resource: string;
+  action: string;
 }
 
 export interface BeforeMiniState {

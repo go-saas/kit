@@ -1,4 +1,4 @@
-import type { LockInfo, UserInfo } from '/#/store';
+import type { LockInfo, UserInfo, PermissionAcl } from '/#/store';
 import type { ProjectConfig } from '/#/config';
 import type { RouteLocationNormalized } from 'vue-router';
 
@@ -8,7 +8,7 @@ import {
   TOKEN_KEY,
   CSRF_KEY,
   USER_INFO_KEY,
-  ROLES_KEY,
+  PERMISSION_KEY,
   LOCK_INFO_KEY,
   PROJ_CFG_KEY,
   APP_LOCAL_CACHE_KEY,
@@ -23,7 +23,7 @@ interface BasicStore {
   [TOKEN_KEY]: string | number | null | undefined;
   [CSRF_KEY]: string | undefined;
   [USER_INFO_KEY]: UserInfo;
-  [ROLES_KEY]: string[];
+  [PERMISSION_KEY]: PermissionAcl[];
   [LOCK_INFO_KEY]: LockInfo;
   [PROJ_CFG_KEY]: ProjectConfig;
   [MULTIPLE_TABS_KEY]: RouteLocationNormalized[];

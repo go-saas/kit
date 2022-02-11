@@ -3,7 +3,6 @@ import { MenuTypeEnum, MenuModeEnum, TriggerEnum, MixSidebarTriggerEnum } from '
 import { CacheTypeEnum } from '/@/enums/cacheEnum';
 import {
   ContentEnum,
-  PermissionModeEnum,
   ThemeEnum,
   RouterTransitionEnum,
   SettingButtonPositionEnum,
@@ -22,9 +21,6 @@ const setting: ProjectConfig = {
 
   // `Settings` button position
   settingButtonPosition: SettingButtonPositionEnum.AUTO,
-
-  // Permission mode
-  permissionMode: PermissionModeEnum.ROUTE_MAPPING,
 
   // Permission-related cache is stored in sessionStorage or localStorage
   permissionCacheType: CacheTypeEnum.LOCAL,

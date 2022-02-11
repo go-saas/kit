@@ -1,7 +1,6 @@
 import type { RouteRecordRaw, RouteMeta } from 'vue-router';
-import { RoleEnum } from '/@/enums/roleEnum';
 import { defineComponent } from 'vue';
-
+import { PermissionRequirement } from '/#/store';
 export type Component<T = any> =
   | ReturnType<typeof defineComponent>
   | (() => Promise<typeof import('*.vue')>)
@@ -40,7 +39,7 @@ export interface Menu {
 
   orderNo?: number;
 
-  roles?: RoleEnum[];
+  requirement?: PermissionRequirement | PermissionRequirement[];
 
   meta?: Partial<RouteMeta>;
 

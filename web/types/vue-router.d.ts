@@ -1,5 +1,5 @@
 export {};
-
+import { PermissionRequirement } from '/#/store';
 declare module 'vue-router' {
   interface RouteMeta extends Record<string | number | symbol, unknown> {
     orderNo?: number;
@@ -11,8 +11,8 @@ declare module 'vue-router' {
     realPath?: string;
     // Whether to ignore permissions
     ignoreAuth?: boolean;
-    // role info
-    roles?: RoleEnum[];
+
+    requirement?: PermissionRequirement | PermissionRequirement[];
     // Whether not to cache
     ignoreKeepAlive?: boolean;
     // Is it fixed on tab

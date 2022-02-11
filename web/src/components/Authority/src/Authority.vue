@@ -4,10 +4,9 @@
 <script lang="ts">
   import type { PropType } from 'vue';
   import { defineComponent } from 'vue';
-  import { RoleEnum } from '/@/enums/roleEnum';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { getSlot } from '/@/utils/helper/tsxHelper';
-
+  import { PermissionRequirement } from '/#/store';
   export default defineComponent({
     name: 'Authority',
     props: {
@@ -18,8 +17,8 @@
        * @default ''
        */
       value: {
-        type: [Number, Array, String] as PropType<RoleEnum | RoleEnum[] | string | string[]>,
-        default: '',
+        type: Object as PropType<Nullable<PermissionRequirement>>,
+        default: null,
       },
     },
     setup(props, { slots }) {

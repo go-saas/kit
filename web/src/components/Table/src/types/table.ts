@@ -8,7 +8,7 @@ import type {
 
 import { ComponentType } from './componentType';
 import { VueNode } from '/@/utils/propTypes';
-import { RoleEnum } from '/@/enums/roleEnum';
+import { PermissionRequirement } from '/#/store';
 
 export declare type SortOrder = 'ascend' | 'descend';
 
@@ -443,8 +443,7 @@ export interface BasicColumn extends ColumnProps {
   editRule?: boolean | ((text: string, record: Recordable) => Promise<string>);
   editValueMap?: (value: any) => string;
   onEditRow?: () => void;
-  // 权限编码控制是否显示
-  auth?: RoleEnum | RoleEnum[] | string | string[];
+  requirement: PermissionRequirement | PermissionRequirement[];
   // 业务控制是否显示
   ifShow?: boolean | ((column: BasicColumn) => boolean);
 }
