@@ -22,6 +22,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/saas/private/server"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
 	api2 "github.com/goxiaoy/go-saas-kit/user/api"
+	"github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
@@ -45,7 +46,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, arg...)
 	permissionServiceClient := api2.NewPermissionGrpcClient(grpcConn)
-	permissionChecker := api2.NewRemotePermissionChecker(permissionServiceClient)
+	permissionChecker := remote.NewRemotePermissionChecker(permissionServiceClient)
 	authorizationOption := service.NewAuthorizationOption()
 	subjectResolverImpl := authorization.NewSubjectResolver(authorizationOption)
 	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)

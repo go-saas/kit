@@ -1519,6 +1519,8 @@ func (m *UserTenant) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for IsHost
+
 	if len(errors) > 0 {
 		return UserTenantMultiError(errors)
 	}

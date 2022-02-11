@@ -36,6 +36,6 @@ type UserTenantRepo interface {
 	JoinTenant(ctx context.Context, userId string, tenantId string) (*UserTenant, error)
 	RemoveFromTenant(ctx context.Context, userId string, tenantId string) error
 	Get(ctx context.Context, userId string, tenantId string) (*UserTenant, error)
-	IsIn(ctx context.Context, userId string, tenantId string)(bool,error)
+	IsIn(ctx context.Context, userId string, tenantId string) (bool, error)
 	Update(ctx context.Context, userTenant *UserTenant) error
 }

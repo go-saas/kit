@@ -108,4 +108,5 @@ message UserTenant{
     string region=4;
   }
   Tenant tenant=3;
+  bool is_host=4;
 }

@@ -77,15 +77,21 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		reTenants := make([]*pb.UserTenant, len(u.Tenants))
 		linq.From(u.Tenants).SelectT(func(ut biz.UserTenant) *pb.UserTenant {
 			//get tenant info
-			t := linq.From(tenants.Items).FirstWithT(func(t *v13.Tenant) bool { return t.Id == ut.TenantId }).(*v13.Tenant)
-			if t==nil{
+			if ut.TenantId == ""{
+				//host
+				return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId, IsHost: true}
+			}
+
+			t := linq.From(tenants.Items).FirstWithT(func(t *v13.Tenant) bool { return t.Id == ut.TenantId })
+			if t == nil {
 				return nil
 			}
+			tt := t.(*v13.Tenant)
 			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId, Tenant: &pb.UserTenant_Tenant{
-				Id:          t.Id,
-				Name:        t.Name,
-				DisplayName: t.DisplayName,
-				Region:      t.Region,
+				Id:          tt.Id,
+				Name:        tt.Name,
+				DisplayName: tt.DisplayName,
+				Region:      tt.Region,
 			}}
 		}).ToSlice(&reTenants)
 		res.Tenants = reTenants

@@ -9,6 +9,7 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
@@ -16,6 +17,8 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
+	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
+	"github.com/goxiaoy/go-saas-kit/saas/remote"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
@@ -31,7 +34,7 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, security *conf.Security, userConf *conf2.UserConf, confData *conf2.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, security *conf.Security, userConf *conf2.UserConf, confData *conf2.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbOpener, cleanup := gorm.NewDbOpener()
@@ -39,13 +42,17 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	saasContributor := api.NewSaasContributor(webMultiTenancyOption)
 	userContributor := api.NewUserContributor()
 	option := api.NewDefaultOption(saasContributor, userContributor)
-	tenantStore := data.NewTenantStore()
+	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer)
+	grpcConn, cleanup2 := api2.NewGrpcConn(services, option, inMemoryTokenManager, arg...)
+	tenantServiceClient := api2.NewTenantGrpcClient(grpcConn)
+	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceClient)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, tenantStore, logger)
-	dataData, cleanup2, err := data.NewData(confData, dbProvider, logger)
+	dataData, cleanup3, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
+		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
@@ -65,7 +72,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	subjectResolverImpl := authorization.NewSubjectResolver(authorizationOption)
 	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(permissionService, subjectResolverImpl, logger)
 	userService := service.NewUserService(userManager, defaultAuthorizationService)
-	accountService := service.NewAccountService(userManager)
+	accountService := service.NewAccountService(userManager, tenantServiceClient)
 	roleRepo := data.NewRoleRepo(dataData)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, security)
@@ -84,6 +91,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	seeder := server2.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, fake, permissionSeeder)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
+		cleanup3()
 		cleanup2()
 		cleanup()
 	}, nil

@@ -19,7 +19,6 @@ var ProviderSet = wire.NewSet(
 	NewData,
 	gorm.NewDbOpener,
 	uow2.NewUowManager,
-	NewTenantStore,
 	NewProvider,
 	NewEnforcerProvider,
 	NewUserRepo,
@@ -52,12 +51,6 @@ func NewData(c *conf.Data, dbProvider gorm.DbProvider, logger log.Logger) (*Data
 	return &Data{
 		DbProvider: dbProvider,
 	}, cleanup, nil
-}
-
-// NewTenantStore TODO replace with correct tenant store
-func NewTenantStore() common.TenantStore {
-	return common.NewMemoryTenantStore(
-		[]common.TenantConfig{})
 }
 
 func NewProvider(c *conf.Data, cfg *gorm.Config, opener gorm.DbOpener, ts common.TenantStore, logger log.Logger) gorm.DbProvider {

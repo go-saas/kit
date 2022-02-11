@@ -1,4 +1,4 @@
-package permission
+package remote
 
 import (
 	"context"
@@ -7,19 +7,17 @@ import (
 	"github.com/goxiaoy/go-saas/common"
 )
 
-type RemotePermissionServiceClient v1.PermissionServiceClient
-
-type RemotePermissionChecker struct {
+type PermissionChecker struct {
 	client v1.PermissionServiceClient
 }
 
-func NewRemotePermissionChecker(client RemotePermissionServiceClient) authorization.PermissionChecker {
-	return &RemotePermissionChecker{
+func NewRemotePermissionChecker(client v1.PermissionServiceClient) authorization.PermissionChecker {
+	return &PermissionChecker{
 		client: client,
 	}
 }
 
-func (r *RemotePermissionChecker) IsGrantTenant(ctx context.Context, resource authorization.Resource, action authorization.Action, tenantID string, subjects ...authorization.Subject) (authorization.Effect, error) {
+func (r *PermissionChecker) IsGrantTenant(ctx context.Context, resource authorization.Resource, action authorization.Action, tenantID string, subjects ...authorization.Subject) (authorization.Effect, error) {
 	var protoSubs = make([]string, len(subjects))
 	for i, subject := range subjects {
 		protoSubs[i] = subject.GetIdentity()
@@ -40,7 +38,7 @@ func (r *RemotePermissionChecker) IsGrantTenant(ctx context.Context, resource au
 	return authorization.EffectForbidden, nil
 }
 
-func (r *RemotePermissionChecker) IsGrant(ctx context.Context, resource authorization.Resource, action authorization.Action, subjects ...authorization.Subject) (authorization.Effect, error) {
+func (r *PermissionChecker) IsGrant(ctx context.Context, resource authorization.Resource, action authorization.Action, subjects ...authorization.Subject) (authorization.Effect, error) {
 	tenantInfo := common.FromCurrentTenant(ctx)
 	return r.IsGrantTenant(ctx, resource, action, tenantInfo.GetId(), subjects...)
 }

@@ -10,9 +10,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-// depend on user to prevent circle dependency
-import _ "github.com/goxiaoy/go-saas-kit/user/api"
-
 type GrpcConn grpc.ClientConnInterface
 type HttpClient *http.Client
 
@@ -26,8 +23,8 @@ func NewHttpClient(services *conf.Services, opt *api.Option, tokenMgr api.TokenM
 	return api.NewHttpClient(ServiceName, ServiceName, services, opt, tokenMgr, opts...)
 }
 
-var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewTenantGrpcClient, NewRemoteGrpcTenantStore)
-var HttpProviderSet = wire.NewSet(NewHttpClient, NewTenantHttpClient, NewRemoteHttpTenantStore)
+var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewTenantGrpcClient)
+var HttpProviderSet = wire.NewSet(NewHttpClient, NewTenantHttpClient)
 
 func NewTenantGrpcClient(conn GrpcConn) v1.TenantServiceClient {
 	return v1.NewTenantServiceClient(conn)

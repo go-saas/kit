@@ -27,11 +27,19 @@ func NewHttpClient(clientName api.ClientName, services *conf.Services, opt *api.
 	return api.NewHttpClient(clientName, ServiceName, services, opt, tokenMgr, opts...)
 }
 
-var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient, NewRemotePermissionChecker)
-var HttpProviderSet = wire.NewSet(NewHttpClient, NewUserHttpClient, NewAuthHttpClient, NewAccountHttpClient, NewRoleHttpClient, NewPermissionHttpClient, NewRemotePermissionChecker)
+var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient)
+var HttpProviderSet = wire.NewSet(NewHttpClient, NewUserHttpClient, NewAuthHttpClient, NewAccountHttpClient, NewRoleHttpClient, NewPermissionHttpClient)
 
 func NewUserGrpcClient(conn GrpcConn) v1.UserServiceClient {
 	return v1.NewUserServiceClient(conn)
+}
+
+func NewPermissionGrpcClient(conn GrpcConn) v15.PermissionServiceClient {
+	return v15.NewPermissionServiceClient(conn)
+}
+
+func NewPermissionHttpClient(http HttpClient) v15.PermissionServiceHTTPClient {
+	return v15.NewPermissionServiceHTTPClient(http)
 }
 
 func NewUserHttpClient(http HttpClient) v1.UserServiceHTTPClient {
@@ -60,11 +68,4 @@ func NewRoleGrpcClient(conn GrpcConn) v14.RoleServiceClient {
 
 func NewRoleHttpClient(http HttpClient) v14.RoleServiceHTTPClient {
 	return v14.NewRoleServiceHTTPClient(http)
-}
-
-func NewPermissionGrpcClient(conn GrpcConn) v15.PermissionServiceClient {
-	return v15.NewPermissionServiceClient(conn)
-}
-func NewPermissionHttpClient(http HttpClient) v15.PermissionServiceHTTPClient {
-	return v15.NewPermissionServiceHTTPClient(http)
 }

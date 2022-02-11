@@ -2331,6 +2331,9 @@
         },
         "tenant": {
           "$ref": "#/definitions/v1UserTenantTenant"
+        },
+        "isHost": {
+          "type": "boolean"
         }
       }
     },

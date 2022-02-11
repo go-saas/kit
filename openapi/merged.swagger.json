@@ -1154,7 +1154,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Tenant"
+              "$ref": "#/definitions/tenantv1Tenant"
             }
           },
           "default": {
@@ -1218,7 +1218,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Tenant"
+              "$ref": "#/definitions/tenantv1Tenant"
             }
           },
           "default": {
@@ -1278,7 +1278,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Tenant"
+              "$ref": "#/definitions/tenantv1Tenant"
             }
           },
           "default": {
@@ -1314,7 +1314,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Tenant"
+              "$ref": "#/definitions/tenantv1Tenant"
             }
           },
           "default": {
@@ -1816,6 +1816,43 @@
       },
       "description": "The `Status` type defines a logical error model that is suitable for\ndifferent programming environments, including REST APIs and RPC APIs. It is\nused by [gRPC](https://github.com/grpc). Each `Status` message contains\nthree pieces of data: error code, error message, and error details.\n\nYou can find out more about this error model and how to work with it in the\n[API Design Guide](https://cloud.google.com/apis/design/errors)."
     },
+    "tenantv1Tenant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "conn": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1TenantConnectionString"
+          }
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1TenantFeature"
+          }
+        }
+      }
+    },
     "v1CheckPermissionReply": {
       "type": "object",
       "properties": {
@@ -2064,6 +2101,13 @@
           "items": {
             "$ref": "#/definitions/v1Role"
           }
+        },
+        "tenants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1UserTenant"
+          },
+          "title": "user available tenants"
         }
       }
     },
@@ -2153,7 +2197,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/v1Tenant"
+            "$ref": "#/definitions/tenantv1Tenant"
           }
         }
       }
@@ -2392,43 +2436,6 @@
           "type": "array",
           "items": {
             "type": "string"
-          }
-        }
-      }
-    },
-    "v1Tenant": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "conn": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1TenantConnectionString"
-          }
-        },
-        "features": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1TenantFeature"
           }
         }
       }
@@ -2803,6 +2810,40 @@
           "type": "string"
         },
         "name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UserTenant": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "tenant": {
+          "$ref": "#/definitions/v1UserTenantTenant"
+        },
+        "isHost": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1UserTenantTenant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "region": {
           "type": "string"
         }
       }
