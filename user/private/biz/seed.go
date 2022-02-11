@@ -87,5 +87,11 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 			return err
 		}
 	}
+
+	//add into host tenant
+	if err:=u.um.JoinTenant(ctx,admin.UIDBase.ID.String(),sCtx.TenantId);err!=nil{
+		return err
+	}
+
 	return nil
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	"github.com/goxiaoy/go-saas/common"
 	"time"
 )
 
@@ -24,6 +25,7 @@ type UserManager struct {
 	lookupNormalizer LookupNormalizer
 	userTokenRepo    UserTokenRepo
 	refreshTokenRepo RefreshTokenRepo
+	userTenantRepo UserTenantRepo
 	tokenFactory     UserTwoFactorTokenProviderFactory
 	log              log.Logger
 }
@@ -37,6 +39,7 @@ func NewUserManager(
 	lookupNormalizer LookupNormalizer,
 	userTokenRepo UserTokenRepo,
 	refreshTokenRepo RefreshTokenRepo,
+	userTenantRepo UserTenantRepo,
 	//tokenFactory UserTwoFactorTokenProviderFactory,
 	logger log.Logger) *UserManager {
 	return &UserManager{
@@ -48,6 +51,7 @@ func NewUserManager(
 		lookupNormalizer: lookupNormalizer,
 		userTokenRepo:    userTokenRepo,
 		refreshTokenRepo: refreshTokenRepo,
+		userTenantRepo: userTenantRepo,
 		//tokenFactory: tokenFactory,
 		log: log.With(logger, "module", "/biz/user_manager")}
 }
@@ -68,7 +72,14 @@ func (um *UserManager) Create(ctx context.Context, u *User) (err error) {
 	if err = um.validateUser(ctx, u); err != nil {
 		return
 	}
-	return um.userRepo.Create(ctx, u)
+	if err:= um.userRepo.Create(ctx, u);err!=nil{
+		return err
+	}
+	ct:=common.FromCurrentTenant(ctx)
+	if err:=um.JoinTenant(ctx,u.UIDBase.ID.String(),ct.GetId());err!=nil{
+		return err
+	}
+	return nil
 }
 
 func (um *UserManager) CreateWithPassword(ctx context.Context, u *User, pwd string) (err error) {
@@ -204,6 +215,23 @@ func (um *UserManager) RefreshRememberToken(ctx context.Context, uid uuid.UUID, 
 		return newToken, nil
 	}
 }
+
+//JoinTenant add user into tenant. safe to call when user already in
+func (um *UserManager) JoinTenant(ctx context.Context, uid ,tenantId string)error{
+	if in,err:= um.userTenantRepo.IsIn(ctx,uid,tenantId);err!=nil{
+		return err
+	}else if in{
+		return nil
+	}
+	_,err:=um.userTenantRepo.JoinTenant(ctx,uid,tenantId)
+	return err
+}
+
+func (um *UserManager) RemoveFromTenant(ctx context.Context, uid,tenantId string)error{
+	err:=um.userTenantRepo.RemoveFromTenant(ctx,uid,tenantId)
+	return err
+}
+
 
 func (um *UserManager) validateUser(ctx context.Context, u *User) (err error) {
 	err = um.userValidator.Validate(ctx, um, u)

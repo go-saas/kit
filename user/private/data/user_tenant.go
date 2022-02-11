@@ -12,6 +12,8 @@ type UserTenantRepo struct {
 	Repo
 }
 
+
+
 func NewUserTenantRepo(data *Data) biz.UserTenantRepo {
 	return &UserTenantRepo{
 		Repo{
@@ -32,6 +34,14 @@ func (u *UserTenantRepo) JoinTenant(ctx context.Context, userId string, tenantId
 		return nil, err
 	}
 	return t, nil
+}
+
+func (u *UserTenantRepo) IsIn(ctx context.Context, userId string, tenantId string) (bool, error) {
+	ut,err:= u.Get(ctx,userId,tenantId)
+	if err!=nil{
+		return false,err
+	}
+	return ut!=nil,nil
 }
 
 func (u *UserTenantRepo) RemoveFromTenant(ctx context.Context, userId string, tenantId string) error {
