@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	blob.Register("memory", func(cfg *blob.BlobConfig) blob.Blob {
+	blob.Register("memory", func(cfg blob.BlobConfig) blob.Blob {
 		// Initialize the file system
 		mm := afero.NewMemMapFs()
 		return &blob.FileBlob{

@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	blob.Register("s3", func(cfg *blob.BlobConfig) blob.Blob {
+	blob.Register("s3", func(cfg blob.BlobConfig) blob.Blob {
 		// You create a session
 		sess, _ := session.NewSession(&aws.Config{
 			Region:      aws.String(cfg.S3.Region),

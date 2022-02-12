@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	blob.Register("os", func(cfg *blob.BlobConfig) blob.Blob {
+	blob.Register("os", func(cfg blob.BlobConfig) blob.Blob {
 		// Initialize the file system
 		appfs := afero.NewOsFs()
 		return &blob.FileBlob{
