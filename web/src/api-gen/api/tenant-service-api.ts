@@ -33,6 +33,8 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 // @ts-ignore
 import { RpcStatus } from '../models';
 // @ts-ignore
+import { Tenantv1Tenant } from '../models';
+// @ts-ignore
 import { V1CreateTenantRequest } from '../models';
 // @ts-ignore
 import { V1DeleteTenantReply } from '../models';
@@ -40,8 +42,6 @@ import { V1DeleteTenantReply } from '../models';
 import { V1ListTenantReply } from '../models';
 // @ts-ignore
 import { V1ListTenantRequest } from '../models';
-// @ts-ignore
-import { V1Tenant } from '../models';
 // @ts-ignore
 import { V1UpdateTenantRequest } from '../models';
 /**
@@ -426,7 +426,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     async tenantServiceCreateTenant(
       body: V1CreateTenantRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Tenant>> {
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceCreateTenant(
         body,
         options,
@@ -458,7 +458,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     async tenantServiceGetTenant(
       idOrName: string,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Tenant>> {
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceGetTenant(
         idOrName,
         options,
@@ -532,7 +532,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
       tenantId: string,
       body: V1UpdateTenantRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Tenant>> {
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceUpdateTenant(
         tenantId,
         body,
@@ -551,7 +551,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
       tenantId: string,
       body: V1UpdateTenantRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Tenant>> {
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceUpdateTenant2(
         tenantId,
         body,
@@ -579,7 +579,10 @@ export const TenantServiceApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceCreateTenant(body: V1CreateTenantRequest, options?: any): AxiosPromise<V1Tenant> {
+    tenantServiceCreateTenant(
+      body: V1CreateTenantRequest,
+      options?: any,
+    ): AxiosPromise<Tenantv1Tenant> {
       return localVarFp
         .tenantServiceCreateTenant(body, options)
         .then((request) => request(axios, basePath));
@@ -601,7 +604,7 @@ export const TenantServiceApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceGetTenant(idOrName: string, options?: any): AxiosPromise<V1Tenant> {
+    tenantServiceGetTenant(idOrName: string, options?: any): AxiosPromise<Tenantv1Tenant> {
       return localVarFp
         .tenantServiceGetTenant(idOrName, options)
         .then((request) => request(axios, basePath));
@@ -672,7 +675,7 @@ export const TenantServiceApiFactory = function (
       tenantId: string,
       body: V1UpdateTenantRequest,
       options?: any,
-    ): AxiosPromise<V1Tenant> {
+    ): AxiosPromise<Tenantv1Tenant> {
       return localVarFp
         .tenantServiceUpdateTenant(tenantId, body, options)
         .then((request) => request(axios, basePath));
@@ -688,7 +691,7 @@ export const TenantServiceApiFactory = function (
       tenantId: string,
       body: V1UpdateTenantRequest,
       options?: any,
-    ): AxiosPromise<V1Tenant> {
+    ): AxiosPromise<Tenantv1Tenant> {
       return localVarFp
         .tenantServiceUpdateTenant2(tenantId, body, options)
         .then((request) => request(axios, basePath));

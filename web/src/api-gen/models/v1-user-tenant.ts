@@ -12,30 +12,36 @@
  * Do not edit the class manually.
  */
 
-import { Tenantv1Tenant } from './tenantv1-tenant';
+import { V1UserTenantTenant } from './v1-user-tenant-tenant';
 
 /**
  *
  * @export
- * @interface V1ListTenantReply
+ * @interface V1UserTenant
  */
-export interface V1ListTenantReply {
+export interface V1UserTenant {
   /**
    *
-   * @type {number}
-   * @memberof V1ListTenantReply
+   * @type {string}
+   * @memberof V1UserTenant
    */
-  totalSize?: number;
+  userId?: string;
   /**
    *
-   * @type {number}
-   * @memberof V1ListTenantReply
+   * @type {string}
+   * @memberof V1UserTenant
    */
-  filterSize?: number;
+  tenantId?: string;
   /**
    *
-   * @type {Array<Tenantv1Tenant>}
-   * @memberof V1ListTenantReply
+   * @type {V1UserTenantTenant}
+   * @memberof V1UserTenant
    */
-  items?: Array<Tenantv1Tenant>;
+  tenant?: V1UserTenantTenant;
+  /**
+   *
+   * @type {boolean}
+   * @memberof V1UserTenant
+   */
+  isHost?: boolean;
 }

@@ -12,11 +12,14 @@ common.ts
 configuration.ts
 git_push.sh
 index.ts
+models/blob-blob-file.ts
 models/index.ts
 models/inline-object.ts
 models/inline-object1.ts
 models/protobuf-any.ts
+models/protobuf-null-value.ts
 models/rpc-status.ts
+models/tenantv1-tenant.ts
 models/v1-check-permission-reply.ts
 models/v1-check-permission-request.ts
 models/v1-check-subjects-permission-reply.ts
@@ -51,7 +54,6 @@ models/v1-role.ts
 models/v1-tenant-connection-string.ts
 models/v1-tenant-feature.ts
 models/v1-tenant-filter.ts
-models/v1-tenant.ts
 models/v1-token-reply.ts
 models/v1-token-request.ts
 models/v1-update-role-permission-acl.ts
@@ -66,6 +68,8 @@ models/v1-update-user-request.ts
 models/v1-update-user.ts
 models/v1-user-filter.ts
 models/v1-user-role.ts
+models/v1-user-tenant-tenant.ts
+models/v1-user-tenant.ts
 models/v1-user.ts
 models/v1-validate-password-reply.ts
 models/v1-validate-password-request.ts

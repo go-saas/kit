@@ -12,8 +12,10 @@
  * Do not edit the class manually.
  */
 
+import { BlobBlobFile } from './blob-blob-file';
 import { V1Gender } from './v1-gender';
 import { V1Role } from './v1-role';
+import { V1UserTenant } from './v1-user-tenant';
 
 /**
  *
@@ -69,4 +71,16 @@ export interface V1GetProfileResponse {
    * @memberof V1GetProfileResponse
    */
   roles?: Array<V1Role>;
+  /**
+   *
+   * @type {Array<V1UserTenant>}
+   * @memberof V1GetProfileResponse
+   */
+  tenants?: Array<V1UserTenant>;
+  /**
+   *
+   * @type {BlobBlobFile}
+   * @memberof V1GetProfileResponse
+   */
+  avatar?: BlobBlobFile;
 }

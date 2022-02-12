@@ -30,7 +30,8 @@
     "test:br": "npx http-server dist --cors --brotli -c-1",
     "reinstall": "rimraf yarn.lock && rimraf package.lock.json && rimraf node_modules && npm run bootstrap",
     "prepare": "cd .. && husky install web/.husky",
-    "gen:icon": "esno ./build/generate/icon/index.ts"
+    "gen:icon": "esno ./build/generate/icon/index.ts",
+    "openapi": "openapi-generator-cli generate -i ../openapi/merged.swagger.json -g typescript-axios -o ./src/api-gen/ -c ./tools/config.json"
   },
   "dependencies": {
     "@ant-design/colors": "^6.0.0",
