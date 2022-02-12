@@ -59,6 +59,9 @@ func (f *FactoryImpl) Get(ctx context.Context, name string, tenancy bool) Blob {
 		panic(fmt.Sprintf("blob %s config  not found", name))
 	}
 	factory, ok := providerFactory[cfg.Provider]
+	if !ok {
+		panic(fmt.Sprintf("blob provider %s not registered", cfg.Provider))
+	}
 	opt := *cfg
 	if tenancy {
 		ti := common.FromCurrentTenant(ctx)
