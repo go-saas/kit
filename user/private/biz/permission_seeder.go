@@ -3,28 +3,28 @@ package biz
 import (
 	"context"
 	"errors"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/seed"
 )
 
 type PermissionSeeder struct {
-	permission authorization.PermissionManagementService
-	checker    authorization.PermissionChecker
+	permission authz.PermissionManagementService
+	checker    authz.PermissionChecker
 	rm         *RoleManager
 }
 
-func NewPermissionSeeder(permission authorization.PermissionManagementService, checker authorization.PermissionChecker, rm *RoleManager) *PermissionSeeder {
+func NewPermissionSeeder(permission authz.PermissionManagementService, checker authz.PermissionChecker, rm *RoleManager) *PermissionSeeder {
 	return &PermissionSeeder{permission: permission, checker: checker, rm: rm}
 }
 
 func (p *PermissionSeeder) Seed(ctx context.Context, sCtx *seed.Context) error {
 
 	tenantInfo := common.FromCurrentTenant(ctx)
-	err := authorization.EnsureGrant(ctx, p.permission, p.checker,
-		authorization.NewEntityResource("*", "*"),
-		authorization.ActionStr("*"),
-		authorization.NewClientSubject("*"),
+	err := authz.EnsureGrant(ctx, p.permission, p.checker,
+		authz.NewEntityResource("*", "*"),
+		authz.ActionStr("*"),
+		authz.NewClientSubject("*"),
 		"*")
 	if err != nil {
 		return err
@@ -37,10 +37,10 @@ func (p *PermissionSeeder) Seed(ctx context.Context, sCtx *seed.Context) error {
 	if adminRole == nil {
 		return errors.New("admin role not found")
 	}
-	err = authorization.EnsureGrant(ctx, p.permission, p.checker,
-		authorization.NewEntityResource("*", "*"),
-		authorization.ActionStr("*"),
-		authorization.NewRoleSubject(adminRole.ID.String()),
+	err = authz.EnsureGrant(ctx, p.permission, p.checker,
+		authz.NewEntityResource("*", "*"),
+		authz.ActionStr("*"),
+		authz.NewRoleSubject(adminRole.ID.String()),
 		tenantInfo.GetId())
 	if err != nil {
 		return err

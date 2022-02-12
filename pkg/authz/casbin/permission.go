@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/casbin/casbin/v2/util"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas/common"
 )
 
@@ -20,18 +20,18 @@ func NewPermissionService(enforcer *EnforcerProvider) *PermissionService {
 	}
 }
 
-var _ authorization.PermissionManagementService = (*PermissionService)(nil)
-var _ authorization.PermissionChecker = (*PermissionService)(nil)
+var _ authz.PermissionManagementService = (*PermissionService)(nil)
+var _ authz.PermissionChecker = (*PermissionService)(nil)
 
-func (p *PermissionService) IsGrant(ctx context.Context, resource authorization.Resource, action authorization.Action, subjects ...authorization.Subject) (authorization.Effect, error) {
+func (p *PermissionService) IsGrant(ctx context.Context, resource authz.Resource, action authz.Action, subjects ...authz.Subject) (authz.Effect, error) {
 	tenantInfo := common.FromCurrentTenant(ctx)
 	return p.IsGrantTenant(ctx, resource, action, tenantInfo.GetId(), subjects...)
 }
 
-func (p *PermissionService) IsGrantTenant(ctx context.Context, resource authorization.Resource, action authorization.Action, tenantID string, subjects ...authorization.Subject) (authorization.Effect, error) {
+func (p *PermissionService) IsGrantTenant(ctx context.Context, resource authz.Resource, action authz.Action, tenantID string, subjects ...authz.Subject) (authz.Effect, error) {
 	enforcer, err := p.enforcer.Get(ctx)
 	if err != nil {
-		return authorization.EffectForbidden, err
+		return authz.EffectForbidden, err
 	}
 	subs := make([][]interface{}, len(subjects))
 	for i, subject := range subjects {
@@ -39,7 +39,7 @@ func (p *PermissionService) IsGrantTenant(ctx context.Context, resource authoriz
 	}
 	results, err := enforcer.BatchEnforce(subs)
 	if err != nil {
-		return authorization.EffectForbidden, err
+		return authz.EffectForbidden, err
 	}
 	var grant bool
 	for i := range results {
@@ -48,12 +48,12 @@ func (p *PermissionService) IsGrantTenant(ctx context.Context, resource authoriz
 		}
 	}
 	if grant {
-		return authorization.EffectGrant, nil
+		return authz.EffectGrant, nil
 	}
-	return authorization.EffectForbidden, nil
+	return authz.EffectForbidden, nil
 }
 
-func (p *PermissionService) AddGrant(ctx context.Context, resource authorization.Resource, action authorization.Action, subject authorization.Subject, tenantID string, effect authorization.Effect) error {
+func (p *PermissionService) AddGrant(ctx context.Context, resource authz.Resource, action authz.Action, subject authz.Subject, tenantID string, effect authz.Effect) error {
 	enforcer, err := p.enforcer.Get(ctx)
 	if err != nil {
 		return err
@@ -70,20 +70,20 @@ func (p *PermissionService) AddGrant(ctx context.Context, resource authorization
 	return nil
 }
 
-func (p *PermissionService) ListAcl(ctx context.Context, subjects ...authorization.Subject) ([]authorization.PermissionBean, error) {
+func (p *PermissionService) ListAcl(ctx context.Context, subjects ...authz.Subject) ([]authz.PermissionBean, error) {
 	//list
 	enforcer, err := p.enforcer.Get(ctx)
 	if err != nil {
 		return nil, err
 	}
 	policies := enforcer.GetPolicy()
-	var ret []authorization.PermissionBean
+	var ret []authz.PermissionBean
 	for _, policy := range policies {
 		for _, subject := range subjects {
 			if util.KeyMatch(policy[0], subject.GetIdentity()) {
-				ret = append(ret, authorization.NewPermissionBean(authorization.NewEntityResource(policy[1], policy[2]),
-					authorization.ActionStr(policy[3]),
-					authorization.SubjectStr(policy[0]),
+				ret = append(ret, authz.NewPermissionBean(authz.NewEntityResource(policy[1], policy[2]),
+					authz.ActionStr(policy[3]),
+					authz.SubjectStr(policy[0]),
 					policy[4], mapToAuthEffect(policy[5]),
 				))
 			}
@@ -93,7 +93,7 @@ func (p *PermissionService) ListAcl(ctx context.Context, subjects ...authorizati
 	return ret, nil
 }
 
-func (p *PermissionService) UpdateGrant(ctx context.Context, subject authorization.Subject, acl []authorization.UpdateSubjectPermission) error {
+func (p *PermissionService) UpdateGrant(ctx context.Context, subject authz.Subject, acl []authz.UpdateSubjectPermission) error {
 	enforcer, err := p.enforcer.Get(ctx)
 	if err != nil {
 		return err
@@ -123,11 +123,11 @@ func (p *PermissionService) UpdateGrant(ctx context.Context, subject authorizati
 	return nil
 }
 
-func mapToEffect(effect authorization.Effect) (string, error) {
+func mapToEffect(effect authz.Effect) (string, error) {
 	eff := "allow"
-	if effect == authorization.EffectGrant {
+	if effect == authz.EffectGrant {
 		eff = "allow"
-	} else if effect == authorization.EffectForbidden {
+	} else if effect == authz.EffectForbidden {
 		eff = "deny"
 	} else {
 		return "", errors.New(fmt.Sprintf("effect should be one of %s,%s", "grant", "forbidden"))
@@ -135,17 +135,17 @@ func mapToEffect(effect authorization.Effect) (string, error) {
 	return eff, nil
 }
 
-func mapToAuthEffect(eff string) authorization.Effect {
+func mapToAuthEffect(eff string) authz.Effect {
 	if eff == "allow" {
-		return authorization.EffectGrant
+		return authz.EffectGrant
 	} else if eff == "deny" {
-		return authorization.EffectForbidden
+		return authz.EffectForbidden
 	}
-	return authorization.EffectUnknown
+	return authz.EffectUnknown
 }
 
 var PermissionProviderSet = wire.NewSet(
 	NewPermissionService,
-	wire.Bind(new(authorization.PermissionManagementService), new(*PermissionService)),
-	wire.Bind(new(authorization.PermissionChecker), new(*PermissionService)),
+	wire.Bind(new(authz.PermissionManagementService), new(*PermissionService)),
+	wire.Bind(new(authz.PermissionChecker), new(*PermissionService)),
 )

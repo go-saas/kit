@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	errors2 "github.com/go-kratos/kratos/v2/errors"
-	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/mennanov/fmutils"
 
@@ -12,19 +12,19 @@ import (
 
 type RoleService struct {
 	repo biz.RoleRepo
-	auth authorization2.Service
+	auth authz.Service
 	pb.UnimplementedRoleServiceServer
 }
 
-func NewRoleServiceService(repo biz.RoleRepo, auth authorization2.Service) *RoleService {
+func NewRoleServiceService(repo biz.RoleRepo, auth authz.Service) *RoleService {
 	return &RoleService{repo: repo, auth: auth}
 }
 
 func (s *RoleService) ListRoles(ctx context.Context, req *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
-	if authResult, err := s.auth.Check(ctx, authorization2.NewEntityResource("user.role", "*"), authorization2.ListAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", "*"), authz.ListAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
-		return nil, errors2.Forbidden("", "")
+		return nil, errors.Forbidden("", "")
 	}
 	ret := &pb.ListRolesResponse{}
 	totalCount, filterCount, err := s.repo.Count(ctx, req.Filter)
@@ -53,7 +53,7 @@ func (s *RoleService) ListRoles(ctx context.Context, req *pb.ListRolesRequest) (
 
 func (s *RoleService) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.Role, error) {
 	if req.Id == "" && req.Name == "" {
-		return nil, errors2.BadRequest("", "id or name can not be empty")
+		return nil, errors.BadRequest("", "id or name can not be empty")
 	}
 	var u *biz.Role
 	var err error
@@ -70,12 +70,12 @@ func (s *RoleService) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.
 		}
 	}
 	if u == nil {
-		return nil, errors2.Forbidden("", "")
+		return nil, errors.Forbidden("", "")
 	}
-	if authResult, err := s.auth.Check(ctx, authorization2.NewEntityResource("user.role", u.ID.String()), authorization2.GetAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", u.ID.String()), authz.GetAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
-		return nil, errors2.Forbidden("", "")
+		return nil, errors.Forbidden("", "")
 	}
 	res := &pb.Role{}
 	MapBizRoleToApi(u, res)

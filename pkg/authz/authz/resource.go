@@ -1,4 +1,4 @@
-package authorization
+package authz
 
 type EntityResource struct {
 	Namespace string

@@ -3,7 +3,7 @@ package biz
 import (
 	"context"
 	"github.com/ahmetb/go-linq/v3"
-	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas/seed"
 )
 
@@ -13,10 +13,10 @@ const AdminPasswordKey = "admin_password"
 
 type RoleSeed struct {
 	rm         *RoleManager
-	permission authorization2.PermissionManagementService
+	permission authz.PermissionManagementService
 }
 
-func NewRoleSeed(roleMgr *RoleManager, permission authorization2.PermissionManagementService) *RoleSeed {
+func NewRoleSeed(roleMgr *RoleManager, permission authz.PermissionManagementService) *RoleSeed {
 	return &RoleSeed{rm: roleMgr, permission: permission}
 }
 

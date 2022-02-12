@@ -12,7 +12,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -47,9 +47,9 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, arg...)
 	permissionServiceClient := api2.NewPermissionGrpcClient(grpcConn)
 	permissionChecker := remote.NewRemotePermissionChecker(permissionServiceClient)
-	authorizationOption := service.NewAuthorizationOption()
-	subjectResolverImpl := authorization.NewSubjectResolver(authorizationOption)
-	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
+	authzOption := service.NewAuthorizationOption()
+	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
+	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
 	factory := data.NewBlobFactory(confData)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService, factory)
 	decodeRequestFunc := _wireDecodeRequestFuncValue

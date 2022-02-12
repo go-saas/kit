@@ -1,4 +1,4 @@
-package authorization
+package authz
 
 type HasIdentity interface {
 	GetIdentity() string

@@ -12,7 +12,7 @@ import (
 	"github.com/google/wire"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	sconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
@@ -29,7 +29,7 @@ import (
 
 // initApp init kratos application.
 func initApp(*sconf.Services, *sconf.Security, *conf.Data, log.Logger, *uow.Config, *gorm.Config, *shttp.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
-	panic(wire.Build(authorization.ProviderSet, jwt.ProviderSet, server2.DefaultCodecProviderSet, api2.DefaultProviderSet,
+	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, server2.DefaultCodecProviderSet, api2.DefaultProviderSet,
 		uapi.GrpcProviderSet, uremote.GrpcProviderSet,
 		server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }

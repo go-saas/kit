@@ -12,7 +12,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
@@ -69,8 +69,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	permissionService := casbin.NewPermissionService(enforcerProvider)
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
 	authorizationOption := service.NewAuthorizationOption(userRoleContributor)
-	subjectResolverImpl := authorization.NewSubjectResolver(authorizationOption)
-	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(permissionService, subjectResolverImpl, logger)
+	subjectResolverImpl := authz.NewSubjectResolver(authorizationOption)
+	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionService, subjectResolverImpl, logger)
 	userService := service.NewUserService(userManager, defaultAuthorizationService)
 	factory := data.NewBlobFactory(confData)
 	accountService := service.NewAccountService(userManager, factory, tenantServiceClient)
