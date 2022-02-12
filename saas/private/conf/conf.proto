@@ -1,7 +1,7 @@
 syntax = "proto3";
 package kratos.api;
 
-option go_package = "github.com/goxiaoy/go-saas-kit/saas/internal_/conf;conf";
+option go_package = "github.com/goxiaoy/go-saas-kit/saas/private/conf;conf";
 
 import "conf/conf.proto";
 import "blob/blob.proto";
