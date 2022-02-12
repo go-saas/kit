@@ -9,6 +9,7 @@ import (
 	as3 "github.com/fclairamb/afero-s3"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	"github.com/spf13/afero"
+	"path"
 	"strings"
 	"time"
 )
@@ -45,11 +46,11 @@ type Blob struct {
 }
 
 func (b *Blob) GeneratePublicUrl(name string) (string, error) {
-	return fmt.Sprintf("%s/%s/%s", b.publicUrl, b.basePath, strings.TrimPrefix(name, "/")), nil
+	return path.Join(b.publicUrl, b.basePath, name), nil
 }
 
 func (b *Blob) GenerateInternalUrl(name string) (string, error) {
-	return fmt.Sprintf("%s/%s/%s", b.internalUrl, b.basePath, strings.TrimPrefix(name, "/")), nil
+	return path.Join(b.internalUrl, b.basePath, name), nil
 }
 
 func (b *Blob) GetAfero() *afero.Afero {

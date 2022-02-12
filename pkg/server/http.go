@@ -8,8 +8,11 @@ import (
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/csrf"
+	"github.com/spf13/afero"
 	"net"
 	"net/http"
 	"strings"
@@ -74,6 +77,29 @@ func PatchHttpOpts(l log.Logger,
 	filters = append(filters, f...)
 	opts = append(opts, khttp.Filter(filters...))
 	return opts
+}
+
+func HandleBlobs(basePath string, cfg blob.Config, srv *khttp.Server, factory blob.Factory) {
+	router := mux.NewRouter()
+	for s, config := range cfg {
+		//local file
+		handleBlob(s, config, factory, router)
+	}
+	if basePath == "" {
+		basePath = "/assets"
+	}
+	if !strings.HasPrefix(basePath, "/") {
+		basePath = fmt.Sprintf("/%s", basePath)
+	}
+	srv.HandlePrefix(basePath, router)
+}
+func handleBlob(name string, config *blob.BlobConfig, factory blob.Factory, router *mux.Router) {
+	a := factory.Get(context.Background(), name, false).GetAfero()
+	basePath := fmt.Sprintf("/%s", strings.TrimPrefix(config.BasePath, "/"))
+	router.
+		PathPrefix(basePath).
+		Handler(http.StripPrefix(basePath, http.FileServer(http.FS(afero.NewIOFS(a.Fs)))))
+
 }
 
 func ClientIP(ctx context.Context) string {
