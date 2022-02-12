@@ -50,7 +50,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	authorizationOption := service.NewAuthorizationOption()
 	subjectResolverImpl := authorization.NewSubjectResolver(authorizationOption)
 	defaultAuthorizationService := authorization.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
-	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService)
+	factory := data.NewBlobFactory(confData)
+	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService, factory)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue

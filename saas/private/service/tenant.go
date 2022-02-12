@@ -5,6 +5,7 @@ import (
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
 	authorization2 "github.com/goxiaoy/go-saas-kit/pkg/authz/authorization"
+	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -14,10 +15,11 @@ type TenantService struct {
 	pb.UnimplementedTenantServiceServer
 	useCase *biz.TenantUseCase
 	auth    authorization2.Service
+	blob    blob.Factory
 }
 
-func NewTenantService(useCase *biz.TenantUseCase, auth authorization2.Service) *TenantService {
-	return &TenantService{useCase: useCase, auth: auth}
+func NewTenantService(useCase *biz.TenantUseCase, auth authorization2.Service, blob blob.Factory) *TenantService {
+	return &TenantService{useCase: useCase, auth: auth, blob: blob}
 }
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {

@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/afero"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"sync"
 	"time"
 )
@@ -39,6 +40,7 @@ var _ Factory = (*FactoryImpl)(nil)
 
 func NewFactory(cfg Config) Factory {
 	return &FactoryImpl{
+		m:   map[string]Blob{},
 		cfg: cfg,
 	}
 }
@@ -65,6 +67,9 @@ func (f *FactoryImpl) Get(ctx context.Context, name string, tenancy bool) Blob {
 		}
 		opt.BasePath = filepath.Join(t, opt.BasePath)
 	}
+	opt.BasePath = strings.Trim(opt.BasePath, "/")
+	opt.PublicUrl = strings.TrimSuffix(opt.PublicUrl, "/")
+	opt.InternalUrl = strings.TrimSuffix(opt.InternalUrl, "/")
 	r := factory(opt)
 	f.m[name] = r
 
@@ -79,11 +84,24 @@ func NewAfs(fs afero.Fs) *afero.Afero {
 type Blob interface {
 	GetAfero() *afero.Afero
 	GeneratePreSignedURL(name string, expire time.Duration) (string, error)
+	GeneratePublicUrl(name string) (string, error)
+	GenerateInternalUrl(name string) (string, error)
 }
 
 type FileBlob struct {
 	*afero.Afero
-	Prefix string
+	BasePath  string
+	PublicUrl string
+}
+
+var _ Blob = (*FileBlob)(nil)
+
+func NewFileBlob(a *afero.Afero, basePath, publicUrl string) *FileBlob {
+	return &FileBlob{
+		Afero:     a,
+		BasePath:  basePath,
+		PublicUrl: publicUrl,
+	}
 }
 
 func (f *FileBlob) GetAfero() *afero.Afero {
@@ -91,7 +109,15 @@ func (f *FileBlob) GetAfero() *afero.Afero {
 }
 
 func (f *FileBlob) GeneratePreSignedURL(name string, expire time.Duration) (string, error) {
-	return fmt.Sprintf("%s%s", f.Prefix, name), nil
+	return fmt.Sprintf("%s/%s/%s", f.PublicUrl, f.BasePath, strings.TrimPrefix(name, "/")), nil
+}
+
+func (f *FileBlob) GeneratePublicUrl(name string) (string, error) {
+	return fmt.Sprintf("%s/%s/%s", f.PublicUrl, f.BasePath, strings.TrimPrefix(name, "/")), nil
+}
+
+func (f *FileBlob) GenerateInternalUrl(name string) (string, error) {
+	return fmt.Sprintf("%s/%s", f.BasePath, strings.TrimPrefix(name, "/")), nil
 }
 
 func PatchOpt(cfg BlobConfig, fs afero.Fs) afero.Fs {

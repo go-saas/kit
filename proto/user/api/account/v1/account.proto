@@ -10,6 +10,7 @@ import "google/protobuf/timestamp.proto";
 import "user/api/role/v1/role.proto";
 import "user/api/user/v1/user.proto";
 import "saas/api/tenant/v1/tenant.proto";
+import "blob/blob.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/account/v1;v1";
 
@@ -64,6 +65,7 @@ message GetProfileResponse{
   repeated .user.api.role.v1.Role roles=8;
   // user available tenants
   repeated UserTenant tenants=9;
+  blob.BlobFile avatar=10;
 }
 message UpdateProfileRequest{
 

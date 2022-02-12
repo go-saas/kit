@@ -9,9 +9,6 @@ func init() {
 	blob.Register("os", func(cfg blob.BlobConfig) blob.Blob {
 		// Initialize the file system
 		appfs := afero.NewOsFs()
-		return &blob.FileBlob{
-			Afero:  blob.NewAfs(blob.PatchOpt(cfg, appfs)),
-			Prefix: cfg.BasePath,
-		}
+		return blob.NewFileBlob(blob.NewAfs(blob.PatchOpt(cfg, appfs)), cfg.BasePath, cfg.PublicUrl)
 	})
 }

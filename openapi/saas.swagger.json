@@ -312,6 +312,30 @@
     }
   },
   "definitions": {
+    "blobBlobFile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "mime": {
+          "type": "string"
+        },
+        "size": {
+          "type": "string",
+          "format": "int64"
+        },
+        "url": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -320,6 +344,14 @@
         }
       },
       "additionalProperties": {}
+    },
+    "protobufNullValue": {
+      "type": "string",
+      "enum": [
+        "NULL_VALUE"
+      ],
+      "default": "NULL_VALUE",
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
     },
     "rpcStatus": {
       "type": "object",
@@ -442,6 +474,9 @@
           "items": {
             "$ref": "#/definitions/v1TenantFeature"
           }
+        },
+        "logo": {
+          "$ref": "#/definitions/blobBlobFile"
         }
       }
     },

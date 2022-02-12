@@ -3,13 +3,17 @@ syntax = "proto3";
 package blob;
 
 option go_package = "github.com/goxiaoy/go-saas-kit/pkg/blob;blob";
-
+import "google/protobuf/struct.proto";
 
 message BlobConfig{
   string provider =1;
   string base_path =2;
   bool read_only = 3;
   string regex_filter = 4;
+
+  string public_url=5;
+  string internal_url=6;
+
   BlobProviderS3 s3=100;
 }
 
@@ -18,4 +22,13 @@ message BlobProviderS3{
   string key=2;
   string secret=3;
   string bucket=4;
+}
+
+message BlobFile{
+  string id=1;
+  string name=2;
+  string mime=3;
+  int64 size=4;
+  string url =5;
+  google.protobuf.Struct metadata=6;
 }

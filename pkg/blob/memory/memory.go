@@ -9,9 +9,6 @@ func init() {
 	blob.Register("memory", func(cfg blob.BlobConfig) blob.Blob {
 		// Initialize the file system
 		mm := afero.NewMemMapFs()
-		return &blob.FileBlob{
-			Afero:  blob.NewAfs(blob.PatchOpt(cfg, mm)),
-			Prefix: "",
-		}
+		return blob.NewFileBlob(blob.NewAfs(blob.PatchOpt(cfg, mm)), cfg.BasePath, cfg.PublicUrl)
 	})
 }

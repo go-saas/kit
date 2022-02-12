@@ -5,6 +5,7 @@ option go_package = "github.com/goxiaoy/go-saas-kit/user/internal_/conf;conf";
 
 import "conf/conf.proto";
 import "google/protobuf/wrappers.proto";
+import "blob/blob.proto";
 
 message Bootstrap {
   Data data = 2;
@@ -15,6 +16,7 @@ message Bootstrap {
 
 message Data {
   conf.Endpoints endpoints = 1;
+  map<string,blob.BlobConfig> blobs=2;
 }
 
 message Admin{

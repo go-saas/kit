@@ -101,7 +101,7 @@ func (u *UserRepo) Create(ctx context.Context, user *biz.User) error {
 }
 
 func (u *UserRepo) Update(ctx context.Context, user *biz.User) error {
-	return concurrency.ConcurrentUpdates(u.GetDb(ctx), user).Error
+	return concurrency.ConcurrentUpdates(u.GetDb(ctx).Model(user), *user).Error
 }
 
 func (u *UserRepo) Delete(ctx context.Context, user *biz.User) error {

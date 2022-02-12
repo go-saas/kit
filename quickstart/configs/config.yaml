@@ -48,6 +48,14 @@ data:
     read_timeout: 0.2s
     write_timeout: 0.2s
 
+  blobs:
+    user:
+      provider: os
+      base_path: "./.temp"
+    saas:
+      provider: os
+      base_path: "./.temp"
+
 user:
   password_score_min: 0
   admin:

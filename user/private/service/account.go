@@ -2,15 +2,22 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/google/uuid"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
+	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	v13 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
+	"io"
+	"os"
+	"path/filepath"
 
 	pb "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 )
@@ -19,11 +26,13 @@ type AccountService struct {
 	pb.UnimplementedAccountServer
 	um            *biz.UserManager
 	tenantService v13.TenantServiceClient
+	blob          blob.Factory
 }
 
-func NewAccountService(um *biz.UserManager, tenantService v13.TenantServiceClient) *AccountService {
+func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13.TenantServiceClient) *AccountService {
 	return &AccountService{
 		um:            um,
+		blob:          blob,
 		tenantService: tenantService,
 	}
 }
@@ -77,7 +86,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		reTenants := make([]*pb.UserTenant, len(u.Tenants))
 		linq.From(u.Tenants).SelectT(func(ut biz.UserTenant) *pb.UserTenant {
 			//get tenant info
-			if ut.TenantId == ""{
+			if ut.TenantId == "" {
 				//host
 				return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId, IsHost: true}
 			}
@@ -96,6 +105,8 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		}).ToSlice(&reTenants)
 		res.Tenants = reTenants
 	}
+	//avatar
+	res.Avatar = mapAvatar(ctx, s.blob, u)
 
 	return res, nil
 }
@@ -136,4 +147,60 @@ func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddr
 		return nil, err
 	}
 	return &pb.UpdateAddressesReply{}, nil
+}
+
+func (s *AccountService) UpdateAvatar(ctx http.Context) error {
+	user, err := authn.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return err
+	}
+	req := ctx.Request()
+	file, handle, err := req.FormFile("file")
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	fileName := handle.Filename
+	ext := filepath.Ext(fileName)
+	normalizedName := fmt.Sprintf("avatar/%s%s", uuid.New().String(), ext)
+	profileBlob := biz.ProfileBlob(ctx, s.blob)
+	a := profileBlob.GetAfero()
+	err = a.MkdirAll("avatar", 0755)
+	if err != nil {
+		return err
+	}
+	f, err := a.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = io.Copy(f, file)
+	if err != nil {
+		return err
+	}
+	//update avatar field
+	u, err := s.um.FindByID(ctx, user.GetId())
+	if err != nil {
+		return err
+	}
+	u.Avatar = &normalizedName
+	err = s.um.Update(ctx, u)
+	if err != nil {
+		return err
+	}
+	return ctx.Returns(201, nil)
+}
+
+func mapAvatar(ctx context.Context, factory blob.Factory, user *biz.User) *blob.BlobFile {
+	if user.Avatar == nil {
+		return nil
+	}
+	profile := biz.ProfileBlob(ctx, factory)
+
+	url, _ := profile.GeneratePublicUrl(*user.Avatar)
+	return &blob.BlobFile{
+		Id:   *user.Avatar,
+		Name: "",
+		Url:  url,
+	}
 }

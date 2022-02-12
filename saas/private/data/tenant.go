@@ -22,7 +22,8 @@ type Tenant struct {
 	//localed display name
 	DisplayName string `gorm:"column:display_name;index;size:255;"`
 	//region of this tenant
-	Region    string     `gorm:"column:region;index;size:255;"`
+	Region    string `gorm:"column:region;index;size:255;"`
+	Logo      string
 	CreatedAt time.Time  `gorm:"column:created_at;index;"`
 	UpdatedAt time.Time  `gorm:"column:updated_at;index;"`
 	DeletedAt *time.Time `gorm:"column:deleted_at;index;"`
@@ -237,6 +238,7 @@ func mapBizTenantToDataTenant(a *biz.Tenant, b *Tenant) {
 	b.DeletedAt = a.DeletedAt
 	b.Conn = conn
 	b.Features = features
+	b.Logo = a.Logo
 }
 
 func mapDataTenantToBizTenant(a *Tenant, b *biz.Tenant) {
@@ -271,4 +273,5 @@ func mapDataTenantToBizTenant(a *Tenant, b *biz.Tenant) {
 	b.DeletedAt = a.DeletedAt
 	b.Conn = conn
 	b.Features = features
+	b.Logo = a.Logo
 }

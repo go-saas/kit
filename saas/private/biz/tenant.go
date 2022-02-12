@@ -15,7 +15,10 @@ type Tenant struct {
 	//localed display name
 	DisplayName string
 	//region of this tenant. Useful for data storage location
-	Region    string
+	Region string
+	//url or asset id
+	Logo string
+
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	//should apply soft delete

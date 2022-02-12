@@ -97,7 +97,12 @@ func NewHTTPServer(c *conf.Services,
 	srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", router))
 
 	v12.RegisterUserServiceHTTPServer(srv, user)
+
 	v13.RegisterAccountHTTPServer(srv, account)
+	route := srv.Route("/")
+
+	route.POST("/v1/account/avatar", account.UpdateAvatar)
+
 	v14.RegisterAuthHTTPServer(srv, auth)
 	v1.RegisterRoleServiceHTTPServer(srv, role)
 	v15.RegisterPermissionServiceHTTPServer(srv, permission)
