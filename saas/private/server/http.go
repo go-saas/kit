@@ -10,11 +10,13 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/api"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	conf2 "github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
 	"github.com/goxiaoy/go-saas/common"
 	http2 "github.com/goxiaoy/go-saas/common/http"
@@ -34,6 +36,8 @@ func NewHTTPServer(c *conf.Services,
 	reqDecoder http.DecodeRequestFunc,
 	resEncoder http.EncodeResponseFunc,
 	errEncoder http.EncodeErrorFunc,
+	factory blob.Factory,
+	dataCfg *conf2.Data,
 	logger log.Logger) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
@@ -52,6 +56,7 @@ func NewHTTPServer(c *conf.Services,
 	}...)
 	srv := http.NewServer(opts...)
 
+	server.HandleBlobs("", dataCfg.Blobs, srv, factory)
 	v1.RegisterTenantServiceHTTPServer(srv, tenant)
 	return srv
 }

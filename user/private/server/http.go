@@ -12,6 +12,7 @@ import (
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
+	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -21,6 +22,7 @@ import (
 	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	uhttp "github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common"
@@ -49,6 +51,8 @@ func NewHTTPServer(c *conf.Services,
 	permission *service.PermissionService,
 	authHttp *uhttp.Auth,
 	errorHandler server.ErrorHandler,
+	dataCfg *conf2.Data,
+	factory blob.Factory,
 ) *khttp.Server {
 	var opts []khttp.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
@@ -93,7 +97,7 @@ func NewHTTPServer(c *conf.Services,
 	})
 
 	srv := khttp.NewServer(opts...)
-
+	server.HandleBlobs("", dataCfg.Blobs, srv, factory)
 	srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", router))
 
 	v12.RegisterUserServiceHTTPServer(srv, user)

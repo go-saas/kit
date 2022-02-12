@@ -1,25 +1,23 @@
 services:
   servers:
+    default:
+      http:
+        timeout: 200s
+        cors:
+          allowed_origins: [ "*" ]
     user:
       http:
         addr: 0.0.0.0:8500
-        timeout: 200s
-        cors:
-          allowed_origins: ["*"]
         csrf:
           secure: false
       grpc:
         addr: 0.0.0.0:8501
-        timeout: 200s
     saas:
       http:
         addr: 0.0.0.0:8520
-        timeout: 200s
-        cors:
-          allowed_origins: ["*"]
       grpc:
         addr: 0.0.0.0:8521
-        timeout: 200s
+
   services:
     user:
       grpc_endpoint: user:8501
@@ -51,10 +49,16 @@ data:
   blobs:
     user:
       provider: os
-      base_path: "./.temp"
+      public_url: http://localhost:8600
+      base_path: "assets/user"
+      os:
+        dir: ".assets"
     saas:
       provider: os
-      base_path: "./.temp"
+      public_url: http://localhost:8600
+      base_path: "assets/saas"
+      os:
+        dir: ".assets"
 
 user:
   password_score_min: 0

@@ -28,6 +28,7 @@ services:
       - mysqld
     volumes:
       - ./quickstart/configs:/data/conf
+      - ./quickstart/.assets:/app/.assets
 
   saas:
     image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
@@ -39,6 +40,7 @@ services:
       - user
     volumes:
       - ./quickstart/configs:/data/conf
+      - ./quickstart/.assets:/app/.assets
 
   mysqld:
     image: mysql:5.7

@@ -13,6 +13,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/csrf"
 	"github.com/spf13/afero"
+	"google.golang.org/protobuf/proto"
 	"net"
 	"net/http"
 	"strings"
@@ -26,6 +27,8 @@ func ResolveHttpRequest(ctx context.Context) (*http.Request, bool) {
 	}
 	return nil, false
 }
+
+const defaultSrvName = "default"
 
 // PatchHttpOpts Patch khttp options with given service name and configs. f use global filters
 func PatchHttpOpts(l log.Logger,
@@ -41,6 +44,11 @@ func PatchHttpOpts(l log.Logger,
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v server not found", name)))
 	}
+
+	if def, ok := services.Servers[defaultSrvName]; ok {
+		proto.Merge(server, def)
+	}
+
 	if server.Http.Network != "" {
 		opts = append(opts, khttp.Network(server.Http.Network))
 	}
@@ -80,6 +88,9 @@ func PatchHttpOpts(l log.Logger,
 }
 
 func HandleBlobs(basePath string, cfg blob.Config, srv *khttp.Server, factory blob.Factory) {
+	if cfg == nil {
+		return
+	}
 	router := mux.NewRouter()
 	for s, config := range cfg {
 		//local file
