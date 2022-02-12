@@ -23,7 +23,10 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, tenant *service.TenantService, mOpt *http.WebMultiTenancyOption, apiOpt *api2.Option, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager,
+	mOpt *http.WebMultiTenancyOption, apiOpt *api2.Option,
+	tenant *service.TenantService,
+	logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),

@@ -5,7 +5,7 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
-	http2 "github.com/goxiaoy/go-saas/common/http"
+	shttp "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
 	"os"
@@ -80,7 +80,7 @@ func main() {
 
 	app, cleanup, err := initApp(bc.Services, bc.Security, bc.Data, logger, &uow.Config{
 		SupportNestedTransaction: false,
-	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName), http2.NewDefaultWebMultiTenancyOption())
+	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName), shttp.NewDefaultWebMultiTenancyOption())
 	if err != nil {
 		panic(err)
 	}
