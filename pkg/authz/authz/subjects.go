@@ -1,6 +1,9 @@
 package authz
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type UserSubject struct {
 	userId string
@@ -10,6 +13,14 @@ var _ Subject = (*UserSubject)(nil)
 
 func NewUserSubject(userId string) *UserSubject {
 	return &UserSubject{userId: userId}
+}
+
+func ParseUserSubject(subject Subject) (*UserSubject, bool) {
+	if strings.HasPrefix(subject.GetIdentity(), "user/") {
+		return NewUserSubject(strings.TrimPrefix(subject.GetIdentity(), "user/")), true
+	}
+	return nil, false
+
 }
 
 func (u *UserSubject) GetName() string {
@@ -32,7 +43,12 @@ var _ Subject = (*TokenSubject)(nil)
 func NewTokenSubject(token string) *TokenSubject {
 	return &TokenSubject{token: token}
 }
-
+func ParseTokenSubject(subject Subject) (*TokenSubject, bool) {
+	if strings.HasPrefix(subject.GetIdentity(), "token/") {
+		return NewTokenSubject(strings.TrimPrefix(subject.GetIdentity(), "token/")), true
+	}
+	return nil, false
+}
 func (t *TokenSubject) GetIdentity() string {
 	return fmt.Sprintf("%s/%s", t.GetName(), t.token)
 }
@@ -50,6 +66,13 @@ type RoleSubject struct {
 }
 
 var _ Subject = (*RoleSubject)(nil)
+
+func ParseRoleSubject(subject Subject) (*RoleSubject, bool) {
+	if strings.HasPrefix(subject.GetIdentity(), "role/") {
+		return NewRoleSubject(strings.TrimPrefix(subject.GetIdentity(), "role/")), true
+	}
+	return nil, false
+}
 
 func NewRoleSubject(id string) *RoleSubject {
 	return &RoleSubject{id: id}

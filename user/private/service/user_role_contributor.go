@@ -15,7 +15,7 @@ func NewUserRoleContributor(userRepo biz.UserRepo) *UserRoleContributor {
 }
 
 func (u *UserRoleContributor) Process(ctx context.Context, subject authz.Subject) ([]authz.Subject, error) {
-	if us, ok := subject.(*authz.UserSubject); ok {
+	if us, ok := authz.ParseUserSubject(subject); ok {
 		if us.GetUserId() != "" {
 			user, err := u.userRepo.FindByID(ctx, us.GetUserId())
 			if err != nil {

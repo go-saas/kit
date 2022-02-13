@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
-	jwt2 "github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"strings"
 )
@@ -67,7 +67,7 @@ func ServerMiddleware(opt *Option) middleware.Middleware {
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
 			if tr, ok := transport.FromServerContext(ctx); ok {
 				//find client claims
-				if claims, ok := jwt2.FromClaimsContext(ctx); ok {
+				if claims, ok := jwt.FromClaimsContext(ctx); ok {
 					//TODO trusted server to server communication
 					if claims.ClientId != "" {
 						//preserve all request header
@@ -106,9 +106,9 @@ func ClientMiddleware(client *conf.Client, opt *Option, tokenMgr TokenManager) m
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
 			if tr, ok := transport.FromClientContext(ctx); ok {
 				if opt.BypassToken {
-					if rawToken, ok := jwt2.FromJWTContext(ctx); ok {
+					if rawToken, ok := jwt.FromJWTContext(ctx); ok {
 						//bypass raw token
-						tr.RequestHeader().Set(jwt2.AuthorizationHeader, fmt.Sprintf("%s %s", jwt2.BearerTokenType, rawToken))
+						tr.RequestHeader().Set(jwt.AuthorizationHeader, fmt.Sprintf("%s %s", jwt.BearerTokenType, rawToken))
 					}
 				} else if client != nil && client.ClientId != "" {
 					//use token mgr
@@ -116,7 +116,7 @@ func ClientMiddleware(client *conf.Client, opt *Option, tokenMgr TokenManager) m
 					if err != nil {
 						return nil, err
 					}
-					tr.RequestHeader().Set(jwt2.AuthorizationHeader, fmt.Sprintf("%s %s", jwt2.BearerTokenType, token))
+					tr.RequestHeader().Set(jwt.AuthorizationHeader, fmt.Sprintf("%s %s", jwt.BearerTokenType, token))
 				}
 				//contributor create header
 				for _, contributor := range opt.Contributor {
