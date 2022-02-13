@@ -96,6 +96,13 @@ type ClientSubject struct {
 
 var _ Subject = (*ClientSubject)(nil)
 
+func ParseClientSubject(subject Subject) (*ClientSubject, bool) {
+	if strings.HasPrefix(subject.GetIdentity(), "client/") {
+		return NewClientSubject(strings.TrimPrefix(subject.GetIdentity(), "client/")), true
+	}
+	return nil, false
+}
+
 func NewClientSubject(clientId string) *ClientSubject {
 	return &ClientSubject{clientId: clientId}
 }

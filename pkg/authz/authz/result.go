@@ -24,12 +24,12 @@ func FormatError(ctx context.Context, result Result, subjects ...Subject) error 
 	}
 	var authed bool
 	for _, sub := range subjects {
-		if s, ok := sub.(*UserSubject); ok {
+		if s, ok := ParseUserSubject(sub); ok {
 			if len(s.GetUserId()) > 0 {
 				authed = true
 			}
 		}
-		if s, ok := sub.(*ClientSubject); ok {
+		if s, ok := ParseClientSubject(sub); ok {
 			if len(s.GetClientId()) > 0 {
 				authed = true
 			}
