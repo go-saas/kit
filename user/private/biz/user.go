@@ -49,7 +49,7 @@ type User struct {
 	// Recover
 	RecoverSelector    string
 	RecoverVerifier    string
-	RecoverTokenExpiry time.Time
+	RecoverTokenExpiry *time.Time
 
 	//2FA
 	TwoFactorEnabled bool `json:"two_factor_enabled"`
