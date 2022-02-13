@@ -42,8 +42,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	saasContributor := api.NewSaasContributor(webMultiTenancyOption)
 	userContributor := api.NewUserContributor()
 	option := api.NewDefaultOption(saasContributor, userContributor)
+	clientName := _wireClientNameValue
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer)
-	grpcConn, cleanup2 := api2.NewGrpcConn(services, option, inMemoryTokenManager, arg...)
+	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, arg...)
 	tenantServiceClient := api2.NewTenantGrpcClient(grpcConn)
 	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceClient)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
@@ -68,8 +69,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	enforcerProvider := data.NewEnforcerProvider(dbProvider)
 	permissionService := casbin.NewPermissionService(enforcerProvider)
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
-	authorizationOption := service.NewAuthorizationOption(userRoleContributor)
-	subjectResolverImpl := authz.NewSubjectResolver(authorizationOption)
+	authzOption := service.NewAuthorizationOption(userRoleContributor)
+	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionService, subjectResolverImpl, logger)
 	userService := service.NewUserService(userManager, defaultAuthorizationService)
 	factory := data.NewBlobFactory(confData)
@@ -99,6 +100,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 }
 
 var (
+	_wireClientNameValue         = server2.ClientName
 	_wireDecodeRequestFuncValue  = server.ReqDecode
 	_wireEncodeResponseFuncValue = server.ResEncoder
 	_wireEncodeErrorFuncValue    = server.ErrEncoder

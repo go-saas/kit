@@ -2,6 +2,8 @@ package server
 
 import (
 	"github.com/google/wire"
+	"github.com/goxiaoy/go-saas-kit/pkg/api"
+	api2 "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
@@ -12,7 +14,9 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, seed2.NewFake, NewSeeder, http.NewAuth)
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, wire.Value(ClientName), seed2.NewFake, NewSeeder, http.NewAuth)
+
+var ClientName api.ClientName = api2.ServiceName
 
 func NewSeeder(c *conf.UserConf,
 	uow uow.Manager,
