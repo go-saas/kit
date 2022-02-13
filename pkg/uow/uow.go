@@ -27,9 +27,11 @@ func NewGormConfig(databases *conf.Endpoints, name string) *gorm.Config {
 	if !ok {
 		c, ok = databases.Databases[data.Default]
 	}
-	tp := c.TablePrefix
-	if len(tp) == 0 {
+	tp := ""
+	if c.TablePrefix == nil {
 		tp = fmt.Sprintf("kit_%s_", name)
+	} else {
+		tp = c.TablePrefix.Value
 	}
 	cfg := &gorm.Config{
 		Debug: c.Debug,
