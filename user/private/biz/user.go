@@ -42,9 +42,9 @@ type User struct {
 
 	//Security
 
-	AccessFailedCount int       `json:"accessFailedCount"`
-	LastLoginAttempt  time.Time `json:"lastLoginAttempt"`
-	LockoutEndDateUtc time.Time `json:"lockoutEndDateUtc"`
+	AccessFailedCount int        `json:"accessFailedCount"`
+	LastLoginAttempt  *time.Time `json:"lastLoginAttempt"`
+	LockoutEndDateUtc *time.Time `json:"lockoutEndDateUtc"`
 
 	// Recover
 	RecoverSelector    string
