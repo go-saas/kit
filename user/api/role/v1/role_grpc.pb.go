@@ -22,10 +22,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RoleServiceClient interface {
+	// authz: user.role,*,list
 	ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error)
+	// authz: user.role,id,get
 	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*Role, error)
+	// authz: user.role,*,create
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*Role, error)
+	// authz: user.role,id,update
 	UpdateRole(ctx context.Context, in *UpdateRoleRequest, opts ...grpc.CallOption) (*Role, error)
+	// authz: user.role,id,delete
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
 	GetRolePermission(ctx context.Context, in *GetRolePermissionRequest, opts ...grpc.CallOption) (*GetRolePermissionResponse, error)
 	UpdateRolePermission(ctx context.Context, in *UpdateRolePermissionRequest, opts ...grpc.CallOption) (*UpdateRolePermissionResponse, error)
@@ -116,10 +121,15 @@ func (c *roleServiceClient) PatchRolePermission(ctx context.Context, in *PatchRo
 // All implementations must embed UnimplementedRoleServiceServer
 // for forward compatibility
 type RoleServiceServer interface {
+	// authz: user.role,*,list
 	ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error)
+	// authz: user.role,id,get
 	GetRole(context.Context, *GetRoleRequest) (*Role, error)
+	// authz: user.role,*,create
 	CreateRole(context.Context, *CreateRoleRequest) (*Role, error)
+	// authz: user.role,id,update
 	UpdateRole(context.Context, *UpdateRoleRequest) (*Role, error)
+	// authz: user.role,id,delete
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
 	GetRolePermission(context.Context, *GetRolePermissionRequest) (*GetRolePermissionResponse, error)
 	UpdateRolePermission(context.Context, *UpdateRolePermissionRequest) (*UpdateRolePermissionResponse, error)

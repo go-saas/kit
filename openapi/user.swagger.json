@@ -740,6 +740,7 @@
     },
     "/v1/role": {
       "post": {
+        "summary": "authz: user.role,*,create",
         "operationId": "RoleService_CreateRole",
         "responses": {
           "200": {
@@ -772,6 +773,7 @@
     },
     "/v1/role/list": {
       "post": {
+        "summary": "authz: user.role,*,list",
         "operationId": "RoleService_ListRoles2",
         "responses": {
           "200": {
@@ -804,6 +806,7 @@
     },
     "/v1/role/{id}": {
       "get": {
+        "summary": "authz: user.role,id,get",
         "operationId": "RoleService_GetRole",
         "responses": {
           "200": {
@@ -838,6 +841,7 @@
         ]
       },
       "delete": {
+        "summary": "authz: user.role,id,delete",
         "operationId": "RoleService_DeleteRole",
         "responses": {
           "200": {
@@ -992,6 +996,7 @@
     },
     "/v1/role/{role.id}": {
       "put": {
+        "summary": "authz: user.role,id,update",
         "operationId": "RoleService_UpdateRole",
         "responses": {
           "200": {
@@ -1028,6 +1033,7 @@
         ]
       },
       "patch": {
+        "summary": "authz: user.role,id,update",
         "operationId": "RoleService_UpdateRole2",
         "responses": {
           "200": {
@@ -1066,6 +1072,7 @@
     },
     "/v1/roles": {
       "get": {
+        "summary": "authz: user.role,*,list",
         "operationId": "RoleService_ListRoles",
         "responses": {
           "200": {
@@ -1146,6 +1153,7 @@
     },
     "/v1/user": {
       "post": {
+        "summary": "authz: user.user,*,create",
         "operationId": "UserService_CreateUser",
         "responses": {
           "200": {
@@ -1178,6 +1186,7 @@
     },
     "/v1/user/list": {
       "post": {
+        "summary": "authz: user.user,*,list",
         "operationId": "UserService_ListUsers2",
         "responses": {
           "200": {
@@ -1210,6 +1219,7 @@
     },
     "/v1/user/{id}": {
       "get": {
+        "summary": "authz: user.user,id,get",
         "operationId": "UserService_GetUser",
         "responses": {
           "200": {
@@ -1238,6 +1248,7 @@
         ]
       },
       "delete": {
+        "summary": "authz: user.user,id,delete",
         "operationId": "UserService_DeleteUser",
         "responses": {
           "200": {
@@ -1268,6 +1279,7 @@
     },
     "/v1/user/{id}/roles": {
       "get": {
+        "summary": "authz: user.user,id,get",
         "operationId": "UserService_GetUserRoles",
         "responses": {
           "200": {
@@ -1298,6 +1310,7 @@
     },
     "/v1/user/{user.id}": {
       "put": {
+        "summary": "authz: user.user,id,update",
         "operationId": "UserService_UpdateUser",
         "responses": {
           "200": {
@@ -1334,6 +1347,7 @@
         ]
       },
       "patch": {
+        "summary": "authz: user.user,id,update",
         "operationId": "UserService_UpdateUser2",
         "responses": {
           "200": {
@@ -1372,6 +1386,7 @@
     },
     "/v1/users": {
       "get": {
+        "summary": "authz: user.user,*,list",
         "operationId": "UserService_ListUsers",
         "responses": {
           "200": {

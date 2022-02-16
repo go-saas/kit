@@ -22,11 +22,17 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
+	// authz: user.user,*,list
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
+	// authz: user.user,id,get
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
+	// authz: user.user,*,create
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
+	// authz: user.user,id,update
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
+	// authz: user.user,id,delete
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
+	// authz: user.user,id,get
 	GetUserRoles(ctx context.Context, in *GetUserRoleRequest, opts ...grpc.CallOption) (*GetUserRoleReply, error)
 }
 
@@ -96,11 +102,17 @@ func (c *userServiceClient) GetUserRoles(ctx context.Context, in *GetUserRoleReq
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
+	// authz: user.user,*,list
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
+	// authz: user.user,id,get
 	GetUser(context.Context, *GetUserRequest) (*User, error)
+	// authz: user.user,*,create
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
+	// authz: user.user,id,update
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
+	// authz: user.user,id,delete
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
+	// authz: user.user,id,get
 	GetUserRoles(context.Context, *GetUserRoleRequest) (*GetUserRoleReply, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
