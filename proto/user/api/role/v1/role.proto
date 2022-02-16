@@ -13,6 +13,7 @@ import "google/api/field_behavior.proto";
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/role/v1;v1";
 
 service RoleService{
+  // authz: user.role,*,list
   rpc ListRoles(ListRolesRequest)returns(ListRolesResponse){
     option (google.api.http) = {
       get: "/v1/roles"
@@ -22,17 +23,20 @@ service RoleService{
       }
     };
   }
+  // authz: user.role,id,get
   rpc GetRole (GetRoleRequest) returns (Role){
     option (google.api.http) = {
       get: "/v1/role/{id}"
     };
   }
+  // authz: user.role,*,create
   rpc CreateRole(CreateRoleRequest) returns(Role){
     option (google.api.http) = {
       post: "/v1/role"
       body:"*"
     };
   }
+  // authz: user.role,id,update
   rpc UpdateRole(UpdateRoleRequest) returns(Role){
     option (google.api.http) = {
       put: "/v1/role/{role.id}"
@@ -45,6 +49,7 @@ service RoleService{
       ]
     };
   }
+  // authz: user.role,id,delete
   rpc DeleteRole(DeleteRoleRequest) returns(DeleteRoleResponse){
     option (google.api.http) = {
       delete: "/v1/role/{id}"

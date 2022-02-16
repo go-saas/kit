@@ -20,6 +20,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   };
 };
 service UserService{
+  // authz: user.user,*,list
   rpc ListUsers(ListUsersRequest)returns(ListUsersResponse){
     option (google.api.http) = {
       get: "/v1/users"
@@ -29,17 +30,20 @@ service UserService{
       }
     };
   }
+  // authz: user.user,id,get
   rpc GetUser (GetUserRequest) returns (User){
     option (google.api.http) = {
       get: "/v1/user/{id}"
     };
   }
+  // authz: user.user,*,create
   rpc CreateUser(CreateUserRequest) returns(User){
     option (google.api.http) = {
       post: "/v1/user"
       body:"*"
     };
   }
+  // authz: user.user,id,update
   rpc UpdateUser(UpdateUserRequest) returns(User){
     option (google.api.http) = {
       put: "/v1/user/{user.id}"
@@ -52,11 +56,13 @@ service UserService{
       ]
     };
   }
+  // authz: user.user,id,delete
   rpc DeleteUser(DeleteUserRequest) returns(DeleteUserResponse){
     option (google.api.http) = {
       delete: "/v1/user/{id}"
     };
   }
+  // authz: user.user,id,get
   rpc GetUserRoles(GetUserRoleRequest) returns(GetUserRoleReply){
     option (google.api.http) = {
       get: "/v1/user/{id}/roles"
