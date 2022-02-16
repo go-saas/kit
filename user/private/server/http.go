@@ -67,7 +67,7 @@ func NewHTTPServer(c *conf.Services,
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			saas.Server(mOpt, nil, ts),
+			saas.Server(mOpt, ts),
 			api2.ServerMiddleware(apiOpt),
 			uow.Uow(logger, uowMgr),
 		),
@@ -85,7 +85,7 @@ func NewHTTPServer(c *conf.Services,
 			jwt.ServerExtractAndAuth(tokenizer, logger)),
 
 		server.MiddlewareConvert(
-			saas.Server(mOpt, nil, ts),
+			saas.Server(mOpt, ts),
 			api2.ServerMiddleware(apiOpt),
 			uow.Uow(logger, uowMgr),
 		))

@@ -10,16 +10,25 @@ import (
 	"strings"
 )
 
+const defaultPrefix Prefix = "internal."
+
 type Option struct {
-	HeaderPrefix string
+	HeaderPrefix Prefix
 	Contributor  []Contributor
 	BypassToken  bool
 }
 
-func NewOption(prefix string, bypassToken bool, contributor ...Contributor) *Option {
+type Prefix string
+
+func PrefixOrDefault(prefix Prefix) Prefix {
 	if prefix == "" {
-		prefix = "internal."
+		return defaultPrefix
 	}
+	return prefix
+}
+
+func NewOption(prefix Prefix, bypassToken bool, contributor ...Contributor) *Option {
+	prefix = PrefixOrDefault(prefix)
 	return &Option{HeaderPrefix: prefix, BypassToken: bypassToken, Contributor: contributor}
 }
 
@@ -29,27 +38,21 @@ func NewDefaultOption(saas *SaasContributor, user *UserContributor) *Option {
 
 type Header interface {
 	Get(key string) string
-	Set(key string, value string)
-	Keys() []string
-	HasKey(key string) bool
+	Set(key, value string)
 }
 
 type headerCarrier map[string]string
 
 func (h headerCarrier) Get(key string) string {
-	return h[key]
-}
-
-func (h headerCarrier) Set(key string, value string) {
-	h[key] = value
-}
-
-func (h headerCarrier) Keys() []string {
-	keys := make([]string, 0, len(h))
-	for k := range h {
-		keys = append(keys, k)
+	if r, ok := h[key]; ok {
+		return r
+	} else {
+		return ""
 	}
-	return keys
+}
+
+func (h headerCarrier) Set(key, value string) {
+	h[key] = value
 }
 
 func (h headerCarrier) HasKey(key string) bool {
@@ -76,8 +79,8 @@ func ServerMiddleware(opt *Option) middleware.Middleware {
 						var err error
 						cleanHeaders := headerCarrier(map[string]string{})
 						for _, key := range tr.RequestHeader().Keys() {
-							if strings.HasPrefix(key, opt.HeaderPrefix) {
-								cleanHeaders.Set(strings.TrimPrefix(key, opt.HeaderPrefix), tr.RequestHeader().Get(key))
+							if strings.HasPrefix(key, string(opt.HeaderPrefix)) {
+								cleanHeaders.Set(strings.TrimPrefix(key, string(opt.HeaderPrefix)), tr.RequestHeader().Get(key))
 							}
 						}
 						for i := range opt.Contributor {
@@ -91,7 +94,7 @@ func ServerMiddleware(opt *Option) middleware.Middleware {
 				}
 				//clean internal headers
 				for _, key := range tr.RequestHeader().Keys() {
-					if strings.HasPrefix(key, opt.HeaderPrefix) {
+					if strings.HasPrefix(key, string(opt.HeaderPrefix)) {
 						tr.RequestHeader().Set(key, "")
 					}
 				}

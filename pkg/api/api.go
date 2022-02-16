@@ -77,4 +77,4 @@ func NewHttpClient(clientName ClientName, serviceName string, services *conf.Ser
 	}
 }
 
-var DefaultProviderSet = wire.NewSet(NewSaasContributor, NewUserContributor, NewDefaultOption, NewInMemoryTokenManager, wire.Bind(new(TokenManager), new(*InMemoryTokenManager)))
+var DefaultProviderSet = wire.NewSet(NewSaasContributor, NewUserContributor, wire.Value(Prefix("")), NewOption, NewInMemoryTokenManager, wire.Bind(new(TokenManager), new(*InMemoryTokenManager)))
