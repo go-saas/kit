@@ -215,6 +215,7 @@ func (m *UserFilter) validate(all bool) error {
 	if len(errors) > 0 {
 		return UserFilterMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -377,6 +378,7 @@ func (m *ListUsersRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return ListUsersRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -487,6 +489,7 @@ func (m *GetUserRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetUserRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -768,6 +771,7 @@ func (m *User) validate(all bool) error {
 	if len(errors) > 0 {
 		return UserMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -904,6 +908,7 @@ func (m *ListUsersResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return ListUsersResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1129,6 +1134,7 @@ func (m *CreateUserRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return CreateUserRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1429,6 +1435,7 @@ func (m *CreateUserResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return CreateUserResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1599,6 +1606,7 @@ func (m *UpdateUserRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateUserRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1862,6 +1870,7 @@ func (m *UpdateUser) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateUserMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1962,6 +1971,7 @@ func (m *DeleteUserRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return DeleteUserRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2063,6 +2073,7 @@ func (m *DeleteUserResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return DeleteUserResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2166,6 +2177,7 @@ func (m *GetUserRoleRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetUserRoleRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2301,6 +2313,7 @@ func (m *GetUserRoleReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetUserRoleReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2404,6 +2417,7 @@ func (m *UserRole) validate(all bool) error {
 	if len(errors) > 0 {
 		return UserRoleMultiError(errors)
 	}
+
 	return nil
 }
 
