@@ -42,7 +42,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	clientName := _wireClientNameValue
 	saasContributor := api.NewSaasContributor(webMultiTenancyOption)
 	userContributor := api.NewUserContributor()
-	option := api.NewDefaultOption(saasContributor, userContributor)
+	clientContributor := api.NewClientContributor()
+	option := api.NewDefaultOption(saasContributor, userContributor, clientContributor)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, arg...)
 	permissionServiceClient := api2.NewPermissionGrpcClient(grpcConn)

@@ -12,6 +12,7 @@ services:
       - saas
       - api_docs
 
+
   api_docs:
     image: ${DOCKER_REGISTRY}go-saas-kit-swagger:${DOCKER_TAG:-latest}
     ports:

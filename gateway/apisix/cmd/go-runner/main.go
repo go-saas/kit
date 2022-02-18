@@ -32,6 +32,7 @@ import (
 	"github.com/apache/apisix-go-plugin-runner/pkg/log"
 	"github.com/apache/apisix-go-plugin-runner/pkg/runner"
 
+	_ "github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
 	_ "github.com/goxiaoy/go-saas/gateway/apisix"
 )
 
@@ -92,6 +93,7 @@ func openFileToWrite(name string) (*os.File, error) {
 
 func newRunCommand() *cobra.Command {
 	var mode RunMode
+	var clientName string
 	cmd := &cobra.Command{
 		Use:   "run",
 		Short: "run",
@@ -140,7 +142,7 @@ func newRunCommand() *cobra.Command {
 		enumflag.New(&mode, "mode", RunModeIds, enumflag.EnumCaseInsensitive),
 		"mode", "m",
 		"the runner's run mode; can be 'prod' or 'dev', default to 'dev'")
-
+	cmd.PersistentFlags().StringVarP(&clientName, "client", "n", "apisix", "client name")
 	return cmd
 }
 

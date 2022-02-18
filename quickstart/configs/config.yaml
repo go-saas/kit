@@ -30,6 +30,9 @@ services:
     saas:
       client_id: saas-golang
       timeout: 200s
+    apisix:
+      client_id: apisix-golang
+      timeout: 200s
 
 data:
   endpoints:

@@ -32,8 +32,8 @@ func NewOption(prefix Prefix, bypassToken bool, contributor ...Contributor) *Opt
 	return &Option{HeaderPrefix: prefix, BypassToken: bypassToken, Contributor: contributor}
 }
 
-func NewDefaultOption(saas *SaasContributor, user *UserContributor) *Option {
-	return NewOption("", false, saas, user)
+func NewDefaultOption(saas *SaasContributor, user *UserContributor, client *ClientContributor) *Option {
+	return NewOption("", false, saas, user, client)
 }
 
 type Header interface {

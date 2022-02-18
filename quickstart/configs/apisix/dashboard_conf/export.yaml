@@ -1,0 +1,2965 @@
+components: {}
+info:
+  title: RoutesExport
+  version: 3.0.0
+openapi: 3.0.0
+paths:
+  /assets/saas{params}:
+    connect:
+      operationId: /assets/saas*CONNECT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    delete:
+      operationId: /assets/saas*DELETE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    get:
+      operationId: /assets/saas*GET
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    head:
+      operationId: /assets/saas*HEAD
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    options:
+      operationId: /assets/saas*OPTIONS
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    patch:
+      operationId: /assets/saas*PATCH
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    post:
+      operationId: /assets/saas*POST
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    put:
+      operationId: /assets/saas*PUT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    trace:
+      operationId: /assets/saas*TRACE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+  /assets/user{params}:
+    connect:
+      operationId: /assets/user*CONNECT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    delete:
+      operationId: /assets/user*DELETE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    get:
+      operationId: /assets/user*GET
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    head:
+      operationId: /assets/user*HEAD
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    options:
+      operationId: /assets/user*OPTIONS
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    patch:
+      operationId: /assets/user*PATCH
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    post:
+      operationId: /assets/user*POST
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    put:
+      operationId: /assets/user*PUT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    trace:
+      operationId: /assets/user*TRACE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+  /saas.{params}:
+    connect:
+      operationId: /saas.*CONNECT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-grpc
+        create_time: 1645111243
+        update_time: 1645111315
+        nodes:
+          - host: saas
+            port: 8521
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: saas-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    delete:
+      operationId: /saas.*DELETE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-grpc
+        create_time: 1645111243
+        update_time: 1645111315
+        nodes:
+          - host: saas
+            port: 8521
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: saas-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    get:
+      operationId: /saas.*GET
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-grpc
+        create_time: 1645111243
+        update_time: 1645111315
+        nodes:
+          - host: saas
+            port: 8521
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: saas-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    head:
+      operationId: /saas.*HEAD
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-grpc
+        create_time: 1645111243
+        update_time: 1645111315
+        nodes:
+          - host: saas
+            port: 8521
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: saas-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    options:
+      operationId: /saas.*OPTIONS
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-grpc
+        create_time: 1645111243
+        update_time: 1645111315
+        nodes:
+          - host: saas
+            port: 8521
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: saas-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    patch:
+      operationId: /saas.*PATCH
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-grpc
+        create_time: 1645111243
+        update_time: 1645111315
+        nodes:
+          - host: saas
+            port: 8521
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: saas-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    post:
+      operationId: /saas.*POST
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-grpc
+        create_time: 1645111243
+        update_time: 1645111315
+        nodes:
+          - host: saas
+            port: 8521
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: saas-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    put:
+      operationId: /saas.*PUT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-grpc
+        create_time: 1645111243
+        update_time: 1645111315
+        nodes:
+          - host: saas
+            port: 8521
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: saas-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    trace:
+      operationId: /saas.*TRACE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-grpc
+        create_time: 1645111243
+        update_time: 1645111315
+        nodes:
+          - host: saas
+            port: 8521
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: saas-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+  /swagger{params}:
+    connect:
+      operationId: /swagger*CONNECT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: api_docs
+        create_time: 1645111259
+        update_time: 1645111259
+        nodes:
+          - host: api_docs
+            port: 8080
+            weight: 1
+        type: roundrobin
+        name: api_docs
+    delete:
+      operationId: /swagger*DELETE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: api_docs
+        create_time: 1645111259
+        update_time: 1645111259
+        nodes:
+          - host: api_docs
+            port: 8080
+            weight: 1
+        type: roundrobin
+        name: api_docs
+    get:
+      operationId: /swagger*GET
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: api_docs
+        create_time: 1645111259
+        update_time: 1645111259
+        nodes:
+          - host: api_docs
+            port: 8080
+            weight: 1
+        type: roundrobin
+        name: api_docs
+    head:
+      operationId: /swagger*HEAD
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: api_docs
+        create_time: 1645111259
+        update_time: 1645111259
+        nodes:
+          - host: api_docs
+            port: 8080
+            weight: 1
+        type: roundrobin
+        name: api_docs
+    options:
+      operationId: /swagger*OPTIONS
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: api_docs
+        create_time: 1645111259
+        update_time: 1645111259
+        nodes:
+          - host: api_docs
+            port: 8080
+            weight: 1
+        type: roundrobin
+        name: api_docs
+    patch:
+      operationId: /swagger*PATCH
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: api_docs
+        create_time: 1645111259
+        update_time: 1645111259
+        nodes:
+          - host: api_docs
+            port: 8080
+            weight: 1
+        type: roundrobin
+        name: api_docs
+    post:
+      operationId: /swagger*POST
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: api_docs
+        create_time: 1645111259
+        update_time: 1645111259
+        nodes:
+          - host: api_docs
+            port: 8080
+            weight: 1
+        type: roundrobin
+        name: api_docs
+    put:
+      operationId: /swagger*PUT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: api_docs
+        create_time: 1645111259
+        update_time: 1645111259
+        nodes:
+          - host: api_docs
+            port: 8080
+            weight: 1
+        type: roundrobin
+        name: api_docs
+    trace:
+      operationId: /swagger*TRACE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: api_docs
+        create_time: 1645111259
+        update_time: 1645111259
+        nodes:
+          - host: api_docs
+            port: 8080
+            weight: 1
+        type: roundrobin
+        name: api_docs
+  /user.{params}:
+    connect:
+      operationId: /user.*CONNECT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-grpc
+        create_time: 1645111289
+        update_time: 1645111345
+        nodes:
+          - host: user
+            port: 8501
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: user-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    delete:
+      operationId: /user.*DELETE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-grpc
+        create_time: 1645111289
+        update_time: 1645111345
+        nodes:
+          - host: user
+            port: 8501
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: user-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    get:
+      operationId: /user.*GET
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-grpc
+        create_time: 1645111289
+        update_time: 1645111345
+        nodes:
+          - host: user
+            port: 8501
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: user-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    head:
+      operationId: /user.*HEAD
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-grpc
+        create_time: 1645111289
+        update_time: 1645111345
+        nodes:
+          - host: user
+            port: 8501
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: user-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    options:
+      operationId: /user.*OPTIONS
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-grpc
+        create_time: 1645111289
+        update_time: 1645111345
+        nodes:
+          - host: user
+            port: 8501
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: user-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    patch:
+      operationId: /user.*PATCH
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-grpc
+        create_time: 1645111289
+        update_time: 1645111345
+        nodes:
+          - host: user
+            port: 8501
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: user-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    post:
+      operationId: /user.*POST
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-grpc
+        create_time: 1645111289
+        update_time: 1645111345
+        nodes:
+          - host: user
+            port: 8501
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: user-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    put:
+      operationId: /user.*PUT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-grpc
+        create_time: 1645111289
+        update_time: 1645111345
+        nodes:
+          - host: user
+            port: 8501
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: user-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+    trace:
+      operationId: /user.*TRACE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-grpc
+        create_time: 1645111289
+        update_time: 1645111345
+        nodes:
+          - host: user
+            port: 8501
+            weight: 1
+        timeout:
+          connect: 6
+          send: 6
+          read: 6
+        type: roundrobin
+        scheme: grpc
+        pass_host: pass
+        name: user-grpc
+        keepalive_pool:
+          idle_timeout: 60
+          requests: 1000
+          size: 320
+  /v1/saas{params}:
+    connect:
+      operationId: /v1/saas*CONNECT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    delete:
+      operationId: /v1/saas*DELETE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    get:
+      operationId: /v1/saas*GET
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    head:
+      operationId: /v1/saas*HEAD
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    options:
+      operationId: /v1/saas*OPTIONS
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    patch:
+      operationId: /v1/saas*PATCH
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    post:
+      operationId: /v1/saas*POST
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    put:
+      operationId: /v1/saas*PUT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+    trace:
+      operationId: /v1/saas*TRACE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: saas-http
+        create_time: 1645111231
+        update_time: 1645111231
+        nodes:
+          - host: saas
+            port: 8520
+            weight: 1
+        type: roundrobin
+        name: saas-http
+  /v1{params}:
+    connect:
+      operationId: /v1*CONNECT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    delete:
+      operationId: /v1*DELETE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    get:
+      operationId: /v1*GET
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    head:
+      operationId: /v1*HEAD
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    options:
+      operationId: /v1*OPTIONS
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    patch:
+      operationId: /v1*PATCH
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    post:
+      operationId: /v1*POST
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    put:
+      operationId: /v1*PUT
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http
+    trace:
+      operationId: /v1*TRACE
+      parameters:
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+        - description: params in path
+          in: path
+          name: params
+          required: true
+          schema:
+            type: string
+      requestBody: {}
+      responses:
+        default:
+          description: ''
+      x-apisix-enable_websocket: false
+      x-apisix-priority: 0
+      x-apisix-status: 1
+      x-apisix-upstream:
+        id: user-http
+        create_time: 1645111275
+        update_time: 1645111275
+        nodes:
+          - host: user
+            port: 8500
+            weight: 1
+        type: roundrobin
+        name: user-http

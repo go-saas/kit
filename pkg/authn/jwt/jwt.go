@@ -7,4 +7,5 @@ var ProviderSet = wire.NewSet(NewTokenizer, NewTokenizerConfig)
 const (
 	AuthorizationHeader = "Authorization"
 	BearerTokenType     = "Bearer"
+	AuthorizationQuery  = "access_token"
 )

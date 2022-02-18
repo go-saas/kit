@@ -52,3 +52,25 @@ func (u *UserContributor) CreateHeader(ctx context.Context) map[string]string {
 	}
 	return res
 }
+
+type ClientContributor struct {
+}
+
+var _ Contributor = (*ClientContributor)(nil)
+
+func NewClientContributor() *ClientContributor {
+	return &ClientContributor{}
+}
+
+func (u *ClientContributor) RecoverContext(ctx context.Context, headers Header) (context.Context, error) {
+	client := headers.Get("client")
+	return authn.NewClientContext(ctx, client), nil
+}
+
+func (u *ClientContributor) CreateHeader(ctx context.Context) map[string]string {
+	res := map[string]string{}
+	if client, ok := authn.FromClientContext(ctx); ok {
+		res["client"] = client
+	}
+	return res
+}

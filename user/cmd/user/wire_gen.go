@@ -41,7 +41,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
 	saasContributor := api.NewSaasContributor(webMultiTenancyOption)
 	userContributor := api.NewUserContributor()
-	option := api.NewDefaultOption(saasContributor, userContributor)
+	clientContributor := api.NewClientContributor()
+	option := api.NewDefaultOption(saasContributor, userContributor, clientContributor)
 	clientName := _wireClientNameValue
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, arg...)

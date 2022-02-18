@@ -14,10 +14,10 @@ import (
 	jwt2 "github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
-	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
-	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
-	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
-	"github.com/goxiaoy/go-saas-kit/saas/remote"
+	kconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	kserver "github.com/goxiaoy/go-saas-kit/pkg/server"
+	sapi "github.com/goxiaoy/go-saas-kit/saas/api"
+	sremote "github.com/goxiaoy/go-saas-kit/saas/remote"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
@@ -29,8 +29,8 @@ import (
 )
 
 // initApp init kratos application.
-func initApp(*conf2.Services, *conf2.Security, *conf.UserConf, *conf.Data, log.Logger, *biz.PasswordValidatorConfig, *uow.Config, *gorm.Config, *http.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
-	panic(wire.Build(authz.ProviderSet, casbin.PermissionProviderSet, server2.DefaultCodecProviderSet, jwt2.ProviderSet, api.DefaultProviderSet,
-		api2.GrpcProviderSet, remote.GrpcProviderSet,
+func initApp(*kconf.Services, *kconf.Security, *conf.UserConf, *conf.Data, log.Logger, *biz.PasswordValidatorConfig, *uow.Config, *gorm.Config, *http.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
+	panic(wire.Build(authz.ProviderSet, casbin.PermissionProviderSet, kserver.DefaultCodecProviderSet, jwt2.ProviderSet, api.DefaultProviderSet,
+		sapi.GrpcProviderSet, sremote.GrpcProviderSet,
 		server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }
