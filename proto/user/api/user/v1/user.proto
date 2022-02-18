@@ -8,7 +8,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "validate/validate.proto";
-
+import "google/api/field_behavior.proto";
 import "user/api/role/v1/role.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/user/v1;v1";
@@ -152,12 +152,12 @@ message CreateUserResponse{
   Gender gender=7;
 }
 message UpdateUserRequest{
-  UpdateUser user=2 [(validate.rules).message.required=true];
+  UpdateUser user=2 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
   google.protobuf.FieldMask update_mask = 3;
 }
 
 message UpdateUser{
-  string id =1[(validate.rules).string.min_len=1];
+  string id =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 
   google.protobuf.StringValue username =2;
   google.protobuf.StringValue name=3;

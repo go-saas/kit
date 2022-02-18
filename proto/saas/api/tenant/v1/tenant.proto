@@ -8,6 +8,7 @@ import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "blob/blob.proto";
+import "google/api/field_behavior.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1;v1";
 
@@ -61,20 +62,20 @@ service TenantService {
 }
 
 message CreateTenantRequest {
-	string name=2 [(validate.rules).string.min_len=1];
+	string name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 	string display_name=3;
 	string region = 4;
 }
 
 message UpdateTenantRequest {
-	UpdateTenant tenant=1  [(validate.rules).message.required=true];
+	UpdateTenant tenant=1  [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
 	google.protobuf.FieldMask update_mask = 2;
 }
 
 
 message UpdateTenant{
-	string id=1 [(validate.rules).string.min_len=1];
-	string name =2 [(validate.rules).string.min_len=1];
+	string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+	string name =2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 	string display_name=3;
 
 	repeated TenantConnectionString conn=7;

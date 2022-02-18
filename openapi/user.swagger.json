@@ -2245,7 +2245,10 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "id"
+          ]
         },
         "username": {
           "type": "string"
@@ -2273,7 +2276,10 @@
         "confirmPassword": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "id"
+      ]
     },
     "v1UpdateUserRequest": {
       "type": "object",

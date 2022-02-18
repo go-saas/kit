@@ -375,7 +375,10 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "name"
+          ]
         },
         "displayName": {
           "type": "string"
@@ -383,7 +386,10 @@
         "region": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "name"
+      ]
     },
     "v1DeleteTenantReply": {
       "type": "object",
@@ -532,10 +538,16 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "id"
+          ]
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "name"
+          ]
         },
         "displayName": {
           "type": "string"
@@ -552,7 +564,11 @@
             "$ref": "#/definitions/v1TenantFeature"
           }
         }
-      }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
     },
     "v1UpdateTenantRequest": {
       "type": "object",

@@ -117,7 +117,7 @@ message CreateRoleRequest{
 }
 
 message UpdateRoleRequest{
-  UpdateRole role=2 [(validate.rules).message.required=true];
+  UpdateRole role=2 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
   google.protobuf.FieldMask update_mask = 3;
 }
 
