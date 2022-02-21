@@ -7,7 +7,6 @@ import (
 	"github.com/casbin/casbin/v2/util"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas/common"
 	"strings"
 )
 
@@ -22,37 +21,6 @@ func NewPermissionService(enforcer *EnforcerProvider) *PermissionService {
 }
 
 var _ authz.PermissionManagementService = (*PermissionService)(nil)
-var _ authz.PermissionChecker = (*PermissionService)(nil)
-
-func (p *PermissionService) IsGrant(ctx context.Context, resource authz.Resource, action authz.Action, subjects ...authz.Subject) (authz.Effect, error) {
-	tenantInfo := common.FromCurrentTenant(ctx)
-	return p.IsGrantTenant(ctx, resource, action, tenantInfo.GetId(), subjects...)
-}
-
-func (p *PermissionService) IsGrantTenant(ctx context.Context, resource authz.Resource, action authz.Action, tenantID string, subjects ...authz.Subject) (authz.Effect, error) {
-	enforcer, err := p.enforcer.Get(ctx)
-	if err != nil {
-		return authz.EffectForbidden, err
-	}
-	subs := make([][]interface{}, len(subjects))
-	for i, subject := range subjects {
-		subs[i] = []interface{}{subject.GetIdentity(), resource.GetNamespace(), resource.GetIdentity(), action.GetIdentity(), tenantID}
-	}
-	results, err := enforcer.BatchEnforce(subs)
-	if err != nil {
-		return authz.EffectForbidden, err
-	}
-	var grant bool
-	for i := range results {
-		if results[i] {
-			grant = true
-		}
-	}
-	if grant {
-		return authz.EffectGrant, nil
-	}
-	return authz.EffectForbidden, nil
-}
 
 func (p *PermissionService) AddGrant(ctx context.Context, resource authz.Resource, action authz.Action, subject authz.Subject, tenantID string, effect authz.Effect) error {
 	enforcer, err := p.enforcer.Get(ctx)
@@ -64,6 +32,7 @@ func (p *PermissionService) AddGrant(ctx context.Context, resource authz.Resourc
 	if err != nil {
 		return err
 	}
+	tenantID = authz.NormalizeTenantId(ctx, tenantID)
 	_, err = enforcer.AddPolicy(subject.GetIdentity(), resource.GetNamespace(), resource.GetIdentity(), action.GetIdentity(), tenantID, eff)
 	if err != nil {
 		return err
@@ -114,7 +83,7 @@ func (p *PermissionService) UpdateGrant(ctx context.Context, subject authz.Subje
 			permission.Resource.GetNamespace(),
 			permission.Resource.GetIdentity(),
 			permission.Action.GetIdentity(),
-			permission.TenantID,
+			authz.NormalizeTenantId(ctx, permission.TenantID),
 			eff}
 	}
 	_, err = enforcer.AddPolicies(rules)
@@ -141,7 +110,7 @@ func (p *PermissionService) RemoveGrant(ctx context.Context, resource authz.Reso
 		effectStr = append(effectStr, e)
 	}
 
-	_, err = enforcer.RemoveFilteredPolicy(0, subject.GetIdentity(), resource.GetNamespace(), resource.GetIdentity(), action.GetIdentity(), tenantID, strings.Join(effectStr, ","))
+	_, err = enforcer.RemoveFilteredPolicy(0, subject.GetIdentity(), resource.GetNamespace(), resource.GetIdentity(), action.GetIdentity(), authz.NormalizeTenantId(ctx, tenantID), strings.Join(effectStr, ","))
 	if err != nil {
 		return err
 	}

@@ -18,11 +18,6 @@ type PermissionManagementService interface {
 	RemoveGrant(ctx context.Context, resource Resource, action Action, subject Subject, tenantID string, effects []Effect) error
 }
 
-type PermissionChecker interface {
-	IsGrant(ctx context.Context, resource Resource, action Action, subjects ...Subject) (Effect, error)
-	IsGrantTenant(ctx context.Context, resource Resource, action Action, tenantID string, subjects ...Subject) (Effect, error)
-}
-
 func EnsureGrant(ctx context.Context, mgr PermissionManagementService, checker PermissionChecker, resource Resource, action Action, subject Subject, tenantID string) error {
 	eff, err := checker.IsGrantTenant(ctx, resource, action, tenantID, subject)
 	if err != nil {
@@ -58,46 +53,9 @@ type PermissionService struct {
 }
 
 var _ PermissionManagementService = (*PermissionService)(nil)
-var _ PermissionChecker = (*PermissionService)(nil)
 
 func NewPermissionService(logger log.Logger) *PermissionService {
 	return &PermissionService{log: log.NewHelper(log.With(logger, "module", "authz.permission"))}
-}
-
-func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, action Action, subjects ...Subject) (Effect, error) {
-	tenantInfo := common.FromCurrentTenant(ctx)
-	return p.IsGrantTenant(ctx, resource, action, tenantInfo.GetId(), subjects...)
-}
-
-func (p *PermissionService) IsGrantTenant(ctx context.Context, resource Resource, action Action, tenantID string, subjects ...Subject) (Effect, error) {
-	p.mux.Lock()
-	defer p.mux.Unlock()
-	var anyAllow bool
-	//TODO host side?
-
-	for _, subject := range subjects {
-		for _, bean := range p.v {
-			if match(bean.Namespace, resource.GetNamespace()) &&
-				match(bean.Subject, subject.GetIdentity()) &&
-				match(bean.Resource, resource.GetIdentity()) &&
-				match(bean.Action, action.GetIdentity()) &&
-				match(bean.TenantID, tenantID) {
-				if bean.Effect == EffectForbidden {
-					p.log.Debugf("Subject %s Action %s to Resource %s forbidden", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-					return EffectForbidden, nil
-				}
-				if bean.Effect == EffectGrant {
-					anyAllow = true
-				}
-			}
-		}
-		if anyAllow {
-			p.log.Debugf("Subject %s Action %s to Resource %s grant", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-			return EffectGrant, nil
-		}
-		p.log.Debugf("Subject %s Action %s to Resource %s unknown", subject.GetIdentity(), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-	}
-	return EffectUnknown, nil
 }
 
 func (p *PermissionService) ListAcl(ctx context.Context, subjects ...Subject) ([]PermissionBean, error) {
@@ -126,7 +84,7 @@ func (p *PermissionService) UpdateGrant(ctx context.Context, subject Subject, ac
 		}
 	}
 	for _, permission := range acl {
-		p.v = append(p.v, NewPermissionBean(permission.Resource, permission.Action, subject, permission.TenantID, permission.Effect))
+		p.v = append(p.v, NewPermissionBean(permission.Resource, permission.Action, subject, NormalizeTenantId(ctx, permission.TenantID), permission.Effect))
 	}
 	return nil
 }
@@ -134,6 +92,7 @@ func (p *PermissionService) UpdateGrant(ctx context.Context, subject Subject, ac
 func (p *PermissionService) RemoveGrant(ctx context.Context, resource Resource, action Action, subject Subject, tenantID string, effects []Effect) error {
 	p.mux.Lock()
 	defer p.mux.Unlock()
+	tenantID = NormalizeTenantId(ctx, tenantID)
 	var v []PermissionBean
 	if len(effects) == 0 {
 		effects = []Effect{EffectGrant, EffectForbidden, EffectUnknown}
@@ -162,6 +121,7 @@ func (p *PermissionService) RemoveGrant(ctx context.Context, resource Resource, 
 func (p *PermissionService) AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, tenantID string, effect Effect) error {
 	p.mux.Lock()
 	defer p.mux.Unlock()
+	tenantID = NormalizeTenantId(ctx, tenantID)
 	p.v = append(p.v, NewPermissionBean(resource, action, subject, tenantID, effect))
 	p.log.Debugf("add Resource %s Action %s grant %v to Subject %s", fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()), action.GetIdentity(), effect, subject.GetIdentity())
 	return nil
@@ -187,6 +147,15 @@ func wildCardToRegexp(pattern string) string {
 func match(pattern string, value string) bool {
 	result, _ := regexp.MatchString(wildCardToRegexp(pattern), value)
 	return result
+}
+
+func NormalizeTenantId(ctx context.Context, tenantId string) string {
+	ti := common.FromCurrentTenant(ctx)
+	if ti.GetId() == "" {
+		//host side
+		return tenantId
+	}
+	return ti.GetId()
 }
 
 var PermissionProviderSet = wire.NewSet(

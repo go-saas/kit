@@ -6,7 +6,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	"github.com/goxiaoy/go-saas-kit/user/util"
-	"github.com/goxiaoy/go-saas/common"
 )
 
 type PermissionService struct {
@@ -117,7 +116,7 @@ func (s *PermissionService) UpdateSubjectPermission(ctx context.Context, req *pb
 		return authz.UpdateSubjectPermission{
 			Resource: authz.NewEntityResource(a.Namespace, a.Resource),
 			Action:   authz.ActionStr(a.Action),
-			TenantID: normalizeTenantId(ctx, a.TenantId),
+			TenantID: a.TenantId,
 			Effect:   effect,
 		}
 	}).ToSlice(&acl)
@@ -136,17 +135,9 @@ func (s *PermissionService) RemoveSubjectPermission(ctx context.Context, req *pb
 	for i, effect := range req.Effects {
 		effList[i] = util.MapPbEffect2AuthEffect(effect)
 	}
-	if err := s.permissionMgr.RemoveGrant(ctx, authz.NewEntityResource(req.Namespace, req.Resource), authz.ActionStr(req.Action), authz.SubjectStr(req.Subject), normalizeTenantId(ctx, req.TenantId), effList); err != nil {
+	if err := s.permissionMgr.RemoveGrant(ctx, authz.NewEntityResource(req.Namespace, req.Resource), authz.ActionStr(req.Action), authz.SubjectStr(req.Subject),
+		req.TenantId, effList); err != nil {
 		return nil, err
 	}
 	return &pb.RemoveSubjectPermissionReply{}, nil
-}
-
-func normalizeTenantId(ctx context.Context, tenantId string) string {
-	ti := common.FromCurrentTenant(ctx)
-	if ti.GetId() == "" {
-		//host side
-		return tenantId
-	}
-	return ti.GetId()
 }
