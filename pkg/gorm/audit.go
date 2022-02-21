@@ -74,7 +74,7 @@ func assignCreatedBy(db *gorm.DB) {
 	if isAuditable(db) {
 		if user, ok := getCurrentUser(db); ok {
 			f := db.Statement.Schema.FieldsByName["CreatedBy"]
-			f.Set(db.Statement.ReflectValue, &user)
+			f.Set(db.Statement.Context, db.Statement.ReflectValue, &user)
 		}
 	}
 }
@@ -83,7 +83,7 @@ func assignUpdatedBy(db *gorm.DB) {
 	if isAuditable(db) {
 		if user, ok := getCurrentUser(db); ok {
 			f := db.Statement.Schema.FieldsByName["UpdatedBy"]
-			f.Set(db.Statement.ReflectValue, &user)
+			f.Set(db.Statement.Context, db.Statement.ReflectValue, &user)
 		}
 	}
 }
