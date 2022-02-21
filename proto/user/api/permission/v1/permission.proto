@@ -36,9 +36,37 @@ service PermissionService{
     };
   }
 
+  //management add
+  rpc AddSubjectPermission(AddSubjectPermissionRequest)returns(AddSubjectPermissionResponse){
+    option (google.api.http) = {
+      post: "/v1/permission/subject"
+      body: "*"
+    };
+  }
+
+  //management list
+  rpc ListSubjectPermission(ListSubjectPermissionRequest)returns(ListSubjectPermissionResponse){
+    option (google.api.http) = {
+      get: "/v1/permission/subject"
+      additional_bindings{
+        post : "/v1/permission/subject/list",
+        body:"*"
+      }
+    };
+  }
+
+  //management update
   rpc UpdateSubjectPermission(UpdateSubjectPermissionRequest)returns(UpdateSubjectPermissionResponse){
     option (google.api.http) = {
       put: "/v1/permission/subject"
+      body: "*"
+    };
+  }
+
+  //management remove
+  rpc RemoveSubjectPermission(RemoveSubjectPermissionRequest)returns(RemoveSubjectPermissionReply){
+    option (google.api.http) = {
+      post: "/v1/permission/subject/rm"
       body: "*"
     };
   }
@@ -55,9 +83,9 @@ message GetCurrentPermissionReply{
 
 
 message CheckPermissionRequest{
-  string namespace = 1 [(google.api.field_behavior) = REQUIRED];
-  string resource = 2 [(google.api.field_behavior) = REQUIRED];
-  string action = 3 [(google.api.field_behavior) = REQUIRED];
+  string namespace = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
 
 message CheckPermissionReply{
@@ -66,9 +94,9 @@ message CheckPermissionReply{
 
 
 message CheckSubjectsPermissionRequest{
-  string namespace = 1 [(google.api.field_behavior) = REQUIRED];
-  string resource = 2 [(google.api.field_behavior) = REQUIRED];
-  string action = 3 [(google.api.field_behavior) = REQUIRED];
+  string namespace = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   repeated string subjects =4;
   string tenant_id =5;
 }
@@ -90,20 +118,54 @@ message Permission{
   string action = 3;
   string subject = 4;
   Effect effect =5;
+  string tenant_id =6;
 }
 
 message UpdateSubjectPermissionRequest{
-  string subject = 1 [(google.api.field_behavior) = REQUIRED];
+  string subject = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   repeated UpdateSubjectPermissionAcl acl = 2;
 }
 
 message UpdateSubjectPermissionAcl{
-  string namespace = 1 [(google.api.field_behavior) = REQUIRED];
-  string resource = 2 [(google.api.field_behavior) = REQUIRED];
-  string action = 3 [(google.api.field_behavior) = REQUIRED];
+  string namespace = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   Effect effect =5 [(google.api.field_behavior) = REQUIRED];
+  string tenant_id =6;
 }
 
 message UpdateSubjectPermissionResponse{
+  repeated Permission acl = 1;
+}
+
+message RemoveSubjectPermissionRequest{
+  string namespace = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string subject = 4[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  repeated Effect effects =5;
+  string tenant_id =6;
+}
+message RemoveSubjectPermissionReply{
+
+}
+
+message AddSubjectPermissionRequest{
+  string namespace = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string subject = 4[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  Effect effect =5 [(google.api.field_behavior) = REQUIRED];
+  string tenant_id =6;
+}
+
+message AddSubjectPermissionResponse{
+
+}
+message ListSubjectPermissionRequest{
+  repeated string subjects=1;
+}
+
+message ListSubjectPermissionResponse{
   repeated Permission acl = 1;
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas/common"
+	"strings"
 )
 
 type PermissionService struct {
@@ -117,6 +118,30 @@ func (p *PermissionService) UpdateGrant(ctx context.Context, subject authz.Subje
 			eff}
 	}
 	_, err = enforcer.AddPolicies(rules)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *PermissionService) RemoveGrant(ctx context.Context, resource authz.Resource, action authz.Action, subject authz.Subject, tenantID string, effects []authz.Effect) error {
+	enforcer, err := p.enforcer.Get(ctx)
+	if err != nil {
+		return err
+	}
+	var effectStr []string
+	if len(effects) == 0 {
+		effects = []authz.Effect{authz.EffectGrant, authz.EffectForbidden, authz.EffectUnknown}
+	}
+	for _, eff := range effects {
+		e, err := mapToEffect(eff)
+		if err != nil {
+			return err
+		}
+		effectStr = append(effectStr, e)
+	}
+
+	_, err = enforcer.RemoveFilteredPolicy(0, subject.GetIdentity(), resource.GetNamespace(), resource.GetIdentity(), action.GetIdentity(), tenantID, strings.Join(effectStr, ","))
 	if err != nil {
 		return err
 	}

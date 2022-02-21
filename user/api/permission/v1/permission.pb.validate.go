@@ -60,7 +60,6 @@ func (m *GetCurrentPermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetCurrentPermissionRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -197,7 +196,6 @@ func (m *GetCurrentPermissionReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetCurrentPermissionReplyMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -296,16 +294,42 @@ func (m *CheckPermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Namespace
+	if utf8.RuneCountInString(m.GetNamespace()) < 1 {
+		err := CheckPermissionRequestValidationError{
+			field:  "Namespace",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Resource
+	if utf8.RuneCountInString(m.GetResource()) < 1 {
+		err := CheckPermissionRequestValidationError{
+			field:  "Resource",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Action
+	if utf8.RuneCountInString(m.GetAction()) < 1 {
+		err := CheckPermissionRequestValidationError{
+			field:  "Action",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return CheckPermissionRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -409,7 +433,6 @@ func (m *CheckPermissionReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return CheckPermissionReplyMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -508,18 +531,44 @@ func (m *CheckSubjectsPermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Namespace
+	if utf8.RuneCountInString(m.GetNamespace()) < 1 {
+		err := CheckSubjectsPermissionRequestValidationError{
+			field:  "Namespace",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Resource
+	if utf8.RuneCountInString(m.GetResource()) < 1 {
+		err := CheckSubjectsPermissionRequestValidationError{
+			field:  "Resource",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Action
+	if utf8.RuneCountInString(m.GetAction()) < 1 {
+		err := CheckSubjectsPermissionRequestValidationError{
+			field:  "Action",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for TenantId
 
 	if len(errors) > 0 {
 		return CheckSubjectsPermissionRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -624,7 +673,6 @@ func (m *CheckSubjectsPermissionReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return CheckSubjectsPermissionReplyMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -734,10 +782,11 @@ func (m *Permission) validate(all bool) error {
 
 	// no validation rules for Effect
 
+	// no validation rules for TenantId
+
 	if len(errors) > 0 {
 		return PermissionMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -833,7 +882,16 @@ func (m *UpdateSubjectPermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Subject
+	if utf8.RuneCountInString(m.GetSubject()) < 1 {
+		err := UpdateSubjectPermissionRequestValidationError{
+			field:  "Subject",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetAcl() {
 		_, _ = idx, item
@@ -872,7 +930,6 @@ func (m *UpdateSubjectPermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateSubjectPermissionRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -972,18 +1029,46 @@ func (m *UpdateSubjectPermissionAcl) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Namespace
+	if utf8.RuneCountInString(m.GetNamespace()) < 1 {
+		err := UpdateSubjectPermissionAclValidationError{
+			field:  "Namespace",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Resource
+	if utf8.RuneCountInString(m.GetResource()) < 1 {
+		err := UpdateSubjectPermissionAclValidationError{
+			field:  "Resource",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Action
+	if utf8.RuneCountInString(m.GetAction()) < 1 {
+		err := UpdateSubjectPermissionAclValidationError{
+			field:  "Action",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Effect
+
+	// no validation rules for TenantId
 
 	if len(errors) > 0 {
 		return UpdateSubjectPermissionAclMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -1119,7 +1204,6 @@ func (m *UpdateSubjectPermissionResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateSubjectPermissionResponseMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -1196,3 +1280,743 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateSubjectPermissionResponseValidationError{}
+
+// Validate checks the field values on RemoveSubjectPermissionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RemoveSubjectPermissionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RemoveSubjectPermissionRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// RemoveSubjectPermissionRequestMultiError, or nil if none found.
+func (m *RemoveSubjectPermissionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RemoveSubjectPermissionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetNamespace()) < 1 {
+		err := RemoveSubjectPermissionRequestValidationError{
+			field:  "Namespace",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetResource()) < 1 {
+		err := RemoveSubjectPermissionRequestValidationError{
+			field:  "Resource",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetAction()) < 1 {
+		err := RemoveSubjectPermissionRequestValidationError{
+			field:  "Action",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetSubject()) < 1 {
+		err := RemoveSubjectPermissionRequestValidationError{
+			field:  "Subject",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for TenantId
+
+	if len(errors) > 0 {
+		return RemoveSubjectPermissionRequestMultiError(errors)
+	}
+	return nil
+}
+
+// RemoveSubjectPermissionRequestMultiError is an error wrapping multiple
+// validation errors returned by RemoveSubjectPermissionRequest.ValidateAll()
+// if the designated constraints aren't met.
+type RemoveSubjectPermissionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RemoveSubjectPermissionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RemoveSubjectPermissionRequestMultiError) AllErrors() []error { return m }
+
+// RemoveSubjectPermissionRequestValidationError is the validation error
+// returned by RemoveSubjectPermissionRequest.Validate if the designated
+// constraints aren't met.
+type RemoveSubjectPermissionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RemoveSubjectPermissionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RemoveSubjectPermissionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RemoveSubjectPermissionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RemoveSubjectPermissionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RemoveSubjectPermissionRequestValidationError) ErrorName() string {
+	return "RemoveSubjectPermissionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RemoveSubjectPermissionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRemoveSubjectPermissionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RemoveSubjectPermissionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RemoveSubjectPermissionRequestValidationError{}
+
+// Validate checks the field values on RemoveSubjectPermissionReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RemoveSubjectPermissionReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RemoveSubjectPermissionReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RemoveSubjectPermissionReplyMultiError, or nil if none found.
+func (m *RemoveSubjectPermissionReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RemoveSubjectPermissionReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return RemoveSubjectPermissionReplyMultiError(errors)
+	}
+	return nil
+}
+
+// RemoveSubjectPermissionReplyMultiError is an error wrapping multiple
+// validation errors returned by RemoveSubjectPermissionReply.ValidateAll() if
+// the designated constraints aren't met.
+type RemoveSubjectPermissionReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RemoveSubjectPermissionReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RemoveSubjectPermissionReplyMultiError) AllErrors() []error { return m }
+
+// RemoveSubjectPermissionReplyValidationError is the validation error returned
+// by RemoveSubjectPermissionReply.Validate if the designated constraints
+// aren't met.
+type RemoveSubjectPermissionReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RemoveSubjectPermissionReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RemoveSubjectPermissionReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RemoveSubjectPermissionReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RemoveSubjectPermissionReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RemoveSubjectPermissionReplyValidationError) ErrorName() string {
+	return "RemoveSubjectPermissionReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RemoveSubjectPermissionReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRemoveSubjectPermissionReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RemoveSubjectPermissionReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RemoveSubjectPermissionReplyValidationError{}
+
+// Validate checks the field values on AddSubjectPermissionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AddSubjectPermissionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AddSubjectPermissionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AddSubjectPermissionRequestMultiError, or nil if none found.
+func (m *AddSubjectPermissionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AddSubjectPermissionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetNamespace()) < 1 {
+		err := AddSubjectPermissionRequestValidationError{
+			field:  "Namespace",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetResource()) < 1 {
+		err := AddSubjectPermissionRequestValidationError{
+			field:  "Resource",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetAction()) < 1 {
+		err := AddSubjectPermissionRequestValidationError{
+			field:  "Action",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetSubject()) < 1 {
+		err := AddSubjectPermissionRequestValidationError{
+			field:  "Subject",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Effect
+
+	// no validation rules for TenantId
+
+	if len(errors) > 0 {
+		return AddSubjectPermissionRequestMultiError(errors)
+	}
+	return nil
+}
+
+// AddSubjectPermissionRequestMultiError is an error wrapping multiple
+// validation errors returned by AddSubjectPermissionRequest.ValidateAll() if
+// the designated constraints aren't met.
+type AddSubjectPermissionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AddSubjectPermissionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AddSubjectPermissionRequestMultiError) AllErrors() []error { return m }
+
+// AddSubjectPermissionRequestValidationError is the validation error returned
+// by AddSubjectPermissionRequest.Validate if the designated constraints
+// aren't met.
+type AddSubjectPermissionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AddSubjectPermissionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AddSubjectPermissionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AddSubjectPermissionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AddSubjectPermissionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AddSubjectPermissionRequestValidationError) ErrorName() string {
+	return "AddSubjectPermissionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AddSubjectPermissionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAddSubjectPermissionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AddSubjectPermissionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AddSubjectPermissionRequestValidationError{}
+
+// Validate checks the field values on AddSubjectPermissionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AddSubjectPermissionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AddSubjectPermissionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AddSubjectPermissionResponseMultiError, or nil if none found.
+func (m *AddSubjectPermissionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AddSubjectPermissionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return AddSubjectPermissionResponseMultiError(errors)
+	}
+	return nil
+}
+
+// AddSubjectPermissionResponseMultiError is an error wrapping multiple
+// validation errors returned by AddSubjectPermissionResponse.ValidateAll() if
+// the designated constraints aren't met.
+type AddSubjectPermissionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AddSubjectPermissionResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AddSubjectPermissionResponseMultiError) AllErrors() []error { return m }
+
+// AddSubjectPermissionResponseValidationError is the validation error returned
+// by AddSubjectPermissionResponse.Validate if the designated constraints
+// aren't met.
+type AddSubjectPermissionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AddSubjectPermissionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AddSubjectPermissionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AddSubjectPermissionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AddSubjectPermissionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AddSubjectPermissionResponseValidationError) ErrorName() string {
+	return "AddSubjectPermissionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AddSubjectPermissionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAddSubjectPermissionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AddSubjectPermissionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AddSubjectPermissionResponseValidationError{}
+
+// Validate checks the field values on ListSubjectPermissionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListSubjectPermissionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListSubjectPermissionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListSubjectPermissionRequestMultiError, or nil if none found.
+func (m *ListSubjectPermissionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListSubjectPermissionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ListSubjectPermissionRequestMultiError(errors)
+	}
+	return nil
+}
+
+// ListSubjectPermissionRequestMultiError is an error wrapping multiple
+// validation errors returned by ListSubjectPermissionRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ListSubjectPermissionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListSubjectPermissionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListSubjectPermissionRequestMultiError) AllErrors() []error { return m }
+
+// ListSubjectPermissionRequestValidationError is the validation error returned
+// by ListSubjectPermissionRequest.Validate if the designated constraints
+// aren't met.
+type ListSubjectPermissionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListSubjectPermissionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListSubjectPermissionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListSubjectPermissionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListSubjectPermissionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListSubjectPermissionRequestValidationError) ErrorName() string {
+	return "ListSubjectPermissionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListSubjectPermissionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListSubjectPermissionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListSubjectPermissionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListSubjectPermissionRequestValidationError{}
+
+// Validate checks the field values on ListSubjectPermissionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListSubjectPermissionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListSubjectPermissionResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListSubjectPermissionResponseMultiError, or nil if none found.
+func (m *ListSubjectPermissionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListSubjectPermissionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAcl() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListSubjectPermissionResponseValidationError{
+						field:  fmt.Sprintf("Acl[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListSubjectPermissionResponseValidationError{
+						field:  fmt.Sprintf("Acl[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListSubjectPermissionResponseValidationError{
+					field:  fmt.Sprintf("Acl[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListSubjectPermissionResponseMultiError(errors)
+	}
+	return nil
+}
+
+// ListSubjectPermissionResponseMultiError is an error wrapping multiple
+// validation errors returned by ListSubjectPermissionResponse.ValidateAll()
+// if the designated constraints aren't met.
+type ListSubjectPermissionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListSubjectPermissionResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListSubjectPermissionResponseMultiError) AllErrors() []error { return m }
+
+// ListSubjectPermissionResponseValidationError is the validation error
+// returned by ListSubjectPermissionResponse.Validate if the designated
+// constraints aren't met.
+type ListSubjectPermissionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListSubjectPermissionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListSubjectPermissionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListSubjectPermissionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListSubjectPermissionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListSubjectPermissionResponseValidationError) ErrorName() string {
+	return "ListSubjectPermissionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListSubjectPermissionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListSubjectPermissionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListSubjectPermissionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListSubjectPermissionResponseValidationError{}

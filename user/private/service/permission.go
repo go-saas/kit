@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 	"github.com/ahmetb/go-linq/v3"
-	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-
 	pb "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
+	"github.com/goxiaoy/go-saas-kit/user/util"
+	"github.com/goxiaoy/go-saas/common"
 )
 
 type PermissionService struct {
@@ -36,7 +36,7 @@ func (s *PermissionService) GetCurrent(ctx context.Context, req *pb.GetCurrentPe
 	var acl []*pb.Permission
 	linq.From(beans).SelectT(func(bean authz.PermissionBean) *pb.Permission {
 		t := &pb.Permission{}
-		mapPermissionBeanToPb(bean, t)
+		util.MapPermissionBeanToPb(bean, t)
 		return t
 	}).ToSlice(&acl)
 	return &pb.GetCurrentPermissionReply{Acl: acl}, nil
@@ -55,10 +55,8 @@ func (s *PermissionService) CheckCurrent(ctx context.Context, req *pb.CheckPermi
 }
 
 func (s *PermissionService) CheckForSubjects(ctx context.Context, req *pb.CheckSubjectsPermissionRequest) (*pb.CheckSubjectsPermissionReply, error) {
-	if grant, err := s.auth.Check(ctx, authz.NewEntityResource("permission", "*"), authz.GetAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", "*"), authz.GetAction); err != nil {
 		return nil, err
-	} else if !grant.Allowed {
-		return nil, errors.Forbidden("", "")
 	}
 	subjects := make([]authz.Subject, len(req.Subjects))
 	for i, subject := range req.Subjects {
@@ -74,27 +72,52 @@ func (s *PermissionService) CheckForSubjects(ctx context.Context, req *pb.CheckS
 	}
 	return &pb.CheckSubjectsPermissionReply{Effect: effect}, nil
 }
+
+func (s *PermissionService) AddSubjectPermission(ctx context.Context, req *pb.AddSubjectPermissionRequest) (*pb.AddSubjectPermissionResponse, error) {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", req.Subject), authz.CreateAction); err != nil {
+		return nil, err
+	}
+	if err := s.permissionMgr.AddGrant(ctx, authz.NewEntityResource(req.Namespace, req.Resource),
+		authz.ActionStr(req.Action), authz.SubjectStr(req.Subject), req.TenantId, util.MapPbEffect2AuthEffect(req.Effect)); err != nil {
+		return nil, err
+	}
+	return &pb.AddSubjectPermissionResponse{}, nil
+}
+func (s *PermissionService) ListSubjectPermission(ctx context.Context, req *pb.ListSubjectPermissionRequest) (*pb.ListSubjectPermissionResponse, error) {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", "*"), authz.ListAction); err != nil {
+		return nil, err
+	}
+	subs := make([]authz.Subject, len(req.Subjects))
+	for i, subject := range req.Subjects {
+		subs[i] = authz.SubjectStr(subject)
+	}
+	acl, err := s.permissionMgr.ListAcl(ctx, subs...)
+	if err != nil {
+		return nil, err
+	}
+	resItems := make([]*pb.Permission, len(acl))
+	for i, bean := range acl {
+		r := &pb.Permission{}
+		util.MapPermissionBeanToPb(bean, r)
+		resItems[i] = r
+	}
+	return &pb.ListSubjectPermissionResponse{
+		Acl: resItems,
+	}, nil
+}
+
 func (s *PermissionService) UpdateSubjectPermission(ctx context.Context, req *pb.UpdateSubjectPermissionRequest) (*pb.UpdateSubjectPermissionResponse, error) {
 	//check update permission
-	if grant, err := s.auth.Check(ctx, authz.NewEntityResource("permission", req.Subject), authz.UpdateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", req.Subject), authz.UpdateAction); err != nil {
 		return nil, err
-	} else if !grant.Allowed {
-		return nil, errors.Forbidden("", "")
 	}
 	var acl []authz.UpdateSubjectPermission
 	linq.From(req.Acl).SelectT(func(a *pb.UpdateSubjectPermissionAcl) authz.UpdateSubjectPermission {
-		effect := authz.EffectUnknown
-		switch a.Effect {
-		case pb.Effect_GRANT:
-			effect = authz.EffectGrant
-			break
-		case pb.Effect_FORBIDDEN:
-			effect = authz.EffectForbidden
-			break
-		}
+		effect := util.MapPbEffect2AuthEffect(a.Effect)
 		return authz.UpdateSubjectPermission{
-			Resource: authz.NewEntityResource("", a.Resource),
+			Resource: authz.NewEntityResource(a.Namespace, a.Resource),
 			Action:   authz.ActionStr(a.Action),
+			TenantID: normalizeTenantId(ctx, a.TenantId),
 			Effect:   effect,
 		}
 	}).ToSlice(&acl)
@@ -104,21 +127,26 @@ func (s *PermissionService) UpdateSubjectPermission(ctx context.Context, req *pb
 	return &pb.UpdateSubjectPermissionResponse{}, nil
 }
 
-func mapPermissionBeanToPb(bean authz.PermissionBean, t *pb.Permission) {
-	t.Subject = bean.Subject
-	t.Namespace = bean.Namespace
-	t.Resource = bean.Resource
-	t.Action = bean.Action
-
-	switch bean.Effect {
-	case authz.EffectUnknown:
-		t.Effect = pb.Effect_UNKNOWN
-		break
-	case authz.EffectGrant:
-		t.Effect = pb.Effect_GRANT
-		break
-	case authz.EffectForbidden:
-		t.Effect = pb.Effect_FORBIDDEN
-		break
+func (s *PermissionService) RemoveSubjectPermission(ctx context.Context, req *pb.RemoveSubjectPermissionRequest) (*pb.RemoveSubjectPermissionReply, error) {
+	//check delete permission
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", req.Subject), authz.DeleteAction); err != nil {
+		return nil, err
 	}
+	effList := make([]authz.Effect, len(req.Effects))
+	for i, effect := range req.Effects {
+		effList[i] = util.MapPbEffect2AuthEffect(effect)
+	}
+	if err := s.permissionMgr.RemoveGrant(ctx, authz.NewEntityResource(req.Namespace, req.Resource), authz.ActionStr(req.Action), authz.SubjectStr(req.Subject), normalizeTenantId(ctx, req.TenantId), effList); err != nil {
+		return nil, err
+	}
+	return &pb.RemoveSubjectPermissionReply{}, nil
+}
+
+func normalizeTenantId(ctx context.Context, tenantId string) string {
+	ti := common.FromCurrentTenant(ctx)
+	if ti.GetId() == "" {
+		//host side
+		return tenantId
+	}
+	return ti.GetId()
 }

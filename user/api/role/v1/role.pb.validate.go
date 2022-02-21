@@ -60,7 +60,6 @@ func (m *RoleFilter) validate(all bool) error {
 	if len(errors) > 0 {
 		return RoleFilterMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -223,7 +222,6 @@ func (m *ListRolesRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return ListRolesRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -361,7 +359,6 @@ func (m *ListRolesResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return ListRolesResponseMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -468,7 +465,6 @@ func (m *Role) validate(all bool) error {
 	if len(errors) > 0 {
 		return RoleMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -571,7 +567,6 @@ func (m *GetRoleRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetRoleRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -675,7 +670,6 @@ func (m *CreateRoleRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return CreateRoleRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -846,7 +840,6 @@ func (m *UpdateRoleRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateRoleRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -952,7 +945,6 @@ func (m *UpdateRole) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateRoleMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -1053,7 +1045,6 @@ func (m *DeleteRoleRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return DeleteRoleRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -1155,7 +1146,6 @@ func (m *DeleteRoleResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return DeleteRoleResponseMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -1259,7 +1249,6 @@ func (m *GetRolePermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetRolePermissionRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -1395,7 +1384,6 @@ func (m *GetRolePermissionResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetRolePermissionResponseMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -1494,7 +1482,16 @@ func (m *UpdateRolePermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if utf8.RuneCountInString(m.GetId()) < 1 {
+		err := UpdateRolePermissionRequestValidationError{
+			field:  "Id",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetAlc() {
 		_, _ = idx, item
@@ -1533,7 +1530,6 @@ func (m *UpdateRolePermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateRolePermissionRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -1644,7 +1640,6 @@ func (m *UpdateRolePermissionAcl) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateRolePermissionAclMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -1746,7 +1741,6 @@ func (m *UpdateRolePermissionResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateRolePermissionResponseMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -1846,7 +1840,16 @@ func (m *PatchRolePermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if utf8.RuneCountInString(m.GetId()) < 1 {
+		err := PatchRolePermissionRequestValidationError{
+			field:  "Id",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetAddAcl() {
 		_, _ = idx, item
@@ -1919,7 +1922,6 @@ func (m *PatchRolePermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return PatchRolePermissionRequestMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -2023,7 +2025,6 @@ func (m *RemoveRRolePermissionAcl) validate(all bool) error {
 	if len(errors) > 0 {
 		return RemoveRRolePermissionAclMultiError(errors)
 	}
-
 	return nil
 }
 
@@ -2125,7 +2126,6 @@ func (m *PatchRolePermissionResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return PatchRolePermissionResponseMultiError(errors)
 	}
-
 	return nil
 }
 

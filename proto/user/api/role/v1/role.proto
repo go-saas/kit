@@ -142,7 +142,7 @@ message GetRolePermissionResponse{
 }
 
 message UpdateRolePermissionRequest{
-  string id =1 [(google.api.field_behavior) = REQUIRED];
+  string id =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];;
   repeated UpdateRolePermissionAcl alc =2;
 }
 
@@ -158,7 +158,7 @@ message UpdateRolePermissionResponse{
 }
 
 message PatchRolePermissionRequest{
-  string id =1 [(google.api.field_behavior) = REQUIRED];
+  string id =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];;
   repeated UpdateRolePermissionAcl add_acl =2;
   repeated RemoveRRolePermissionAcl remove_acl=3;
 }

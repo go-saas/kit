@@ -710,7 +710,72 @@
       }
     },
     "/v1/permission/subject": {
+      "get": {
+        "summary": "management list",
+        "operationId": "PermissionService_ListSubjectPermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListSubjectPermissionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "subjects",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "PermissionService"
+        ]
+      },
+      "post": {
+        "summary": "management add",
+        "operationId": "PermissionService_AddSubjectPermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AddSubjectPermissionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AddSubjectPermissionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PermissionService"
+        ]
+      },
       "put": {
+        "summary": "management update",
         "operationId": "PermissionService_UpdateSubjectPermission",
         "responses": {
           "200": {
@@ -733,6 +798,72 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/v1UpdateSubjectPermissionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PermissionService"
+        ]
+      }
+    },
+    "/v1/permission/subject/list": {
+      "post": {
+        "summary": "management list",
+        "operationId": "PermissionService_ListSubjectPermission2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListSubjectPermissionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListSubjectPermissionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PermissionService"
+        ]
+      }
+    },
+    "/v1/permission/subject/rm": {
+      "post": {
+        "summary": "management remove",
+        "operationId": "PermissionService_RemoveSubjectPermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RemoveSubjectPermissionReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RemoveSubjectPermissionRequest"
             }
           }
         ],
@@ -1903,6 +2034,50 @@
         }
       }
     },
+    "v1AddSubjectPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "required": [
+            "namespace"
+          ]
+        },
+        "resource": {
+          "type": "string",
+          "required": [
+            "resource"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "required": [
+            "action"
+          ]
+        },
+        "subject": {
+          "type": "string",
+          "required": [
+            "subject"
+          ]
+        },
+        "effect": {
+          "$ref": "#/definitions/v1Effect"
+        },
+        "tenantId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "resource",
+        "action",
+        "subject"
+      ]
+    },
+    "v1AddSubjectPermissionResponse": {
+      "type": "object"
+    },
     "v1CheckPermissionReply": {
       "type": "object",
       "properties": {
@@ -2242,6 +2417,28 @@
         }
       }
     },
+    "v1ListSubjectPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v1ListSubjectPermissionResponse": {
+      "type": "object",
+      "properties": {
+        "acl": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Permission"
+          }
+        }
+      }
+    },
     "v1ListTenantReply": {
       "type": "object",
       "properties": {
@@ -2422,6 +2619,9 @@
         },
         "effect": {
           "$ref": "#/definitions/v1Effect"
+        },
+        "tenantId": {
+          "type": "string"
         }
       }
     },
@@ -2467,6 +2667,53 @@
           "type": "string"
         }
       }
+    },
+    "v1RemoveSubjectPermissionReply": {
+      "type": "object"
+    },
+    "v1RemoveSubjectPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "required": [
+            "namespace"
+          ]
+        },
+        "resource": {
+          "type": "string",
+          "required": [
+            "resource"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "required": [
+            "action"
+          ]
+        },
+        "subject": {
+          "type": "string",
+          "required": [
+            "subject"
+          ]
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Effect"
+          }
+        },
+        "tenantId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "resource",
+        "action",
+        "subject"
+      ]
     },
     "v1Role": {
       "type": "object",
@@ -2668,6 +2915,9 @@
         },
         "effect": {
           "$ref": "#/definitions/v1Effect"
+        },
+        "tenantId": {
+          "type": "string"
         }
       },
       "required": [

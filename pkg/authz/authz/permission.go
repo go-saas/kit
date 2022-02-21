@@ -15,6 +15,7 @@ type PermissionManagementService interface {
 	AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, tenantID string, effect Effect) error
 	ListAcl(ctx context.Context, subjects ...Subject) ([]PermissionBean, error)
 	UpdateGrant(ctx context.Context, subject Subject, acl []UpdateSubjectPermission) error
+	RemoveGrant(ctx context.Context, resource Resource, action Action, subject Subject, tenantID string, effects []Effect) error
 }
 
 type PermissionChecker interface {
@@ -127,6 +128,34 @@ func (p *PermissionService) UpdateGrant(ctx context.Context, subject Subject, ac
 	for _, permission := range acl {
 		p.v = append(p.v, NewPermissionBean(permission.Resource, permission.Action, subject, permission.TenantID, permission.Effect))
 	}
+	return nil
+}
+
+func (p *PermissionService) RemoveGrant(ctx context.Context, resource Resource, action Action, subject Subject, tenantID string, effects []Effect) error {
+	p.mux.Lock()
+	defer p.mux.Unlock()
+	var v []PermissionBean
+	if len(effects) == 0 {
+		effects = []Effect{EffectGrant, EffectForbidden, EffectUnknown}
+	}
+	for _, bean := range p.v {
+		preserved := true
+		if (bean.Namespace == resource.GetNamespace()) &&
+			(bean.Subject == subject.GetIdentity()) &&
+			(bean.Resource == resource.GetIdentity()) &&
+			(bean.Action == action.GetIdentity()) &&
+			(bean.TenantID == tenantID) {
+			for _, e := range effects {
+				if bean.Effect == e {
+					preserved = false
+				}
+			}
+		}
+		if preserved {
+			v = append(v, bean)
+		}
+	}
+	p.v = v
 	return nil
 }
 

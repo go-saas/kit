@@ -26,7 +26,14 @@ type PermissionServiceClient interface {
 	GetCurrent(ctx context.Context, in *GetCurrentPermissionRequest, opts ...grpc.CallOption) (*GetCurrentPermissionReply, error)
 	CheckCurrent(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*CheckPermissionReply, error)
 	CheckForSubjects(ctx context.Context, in *CheckSubjectsPermissionRequest, opts ...grpc.CallOption) (*CheckSubjectsPermissionReply, error)
+	//management add
+	AddSubjectPermission(ctx context.Context, in *AddSubjectPermissionRequest, opts ...grpc.CallOption) (*AddSubjectPermissionResponse, error)
+	//management list
+	ListSubjectPermission(ctx context.Context, in *ListSubjectPermissionRequest, opts ...grpc.CallOption) (*ListSubjectPermissionResponse, error)
+	//management update
 	UpdateSubjectPermission(ctx context.Context, in *UpdateSubjectPermissionRequest, opts ...grpc.CallOption) (*UpdateSubjectPermissionResponse, error)
+	//management remove
+	RemoveSubjectPermission(ctx context.Context, in *RemoveSubjectPermissionRequest, opts ...grpc.CallOption) (*RemoveSubjectPermissionReply, error)
 }
 
 type permissionServiceClient struct {
@@ -64,9 +71,36 @@ func (c *permissionServiceClient) CheckForSubjects(ctx context.Context, in *Chec
 	return out, nil
 }
 
+func (c *permissionServiceClient) AddSubjectPermission(ctx context.Context, in *AddSubjectPermissionRequest, opts ...grpc.CallOption) (*AddSubjectPermissionResponse, error) {
+	out := new(AddSubjectPermissionResponse)
+	err := c.cc.Invoke(ctx, "/user.api.permission.v1.PermissionService/AddSubjectPermission", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *permissionServiceClient) ListSubjectPermission(ctx context.Context, in *ListSubjectPermissionRequest, opts ...grpc.CallOption) (*ListSubjectPermissionResponse, error) {
+	out := new(ListSubjectPermissionResponse)
+	err := c.cc.Invoke(ctx, "/user.api.permission.v1.PermissionService/ListSubjectPermission", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *permissionServiceClient) UpdateSubjectPermission(ctx context.Context, in *UpdateSubjectPermissionRequest, opts ...grpc.CallOption) (*UpdateSubjectPermissionResponse, error) {
 	out := new(UpdateSubjectPermissionResponse)
 	err := c.cc.Invoke(ctx, "/user.api.permission.v1.PermissionService/UpdateSubjectPermission", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *permissionServiceClient) RemoveSubjectPermission(ctx context.Context, in *RemoveSubjectPermissionRequest, opts ...grpc.CallOption) (*RemoveSubjectPermissionReply, error) {
+	out := new(RemoveSubjectPermissionReply)
+	err := c.cc.Invoke(ctx, "/user.api.permission.v1.PermissionService/RemoveSubjectPermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +115,14 @@ type PermissionServiceServer interface {
 	GetCurrent(context.Context, *GetCurrentPermissionRequest) (*GetCurrentPermissionReply, error)
 	CheckCurrent(context.Context, *CheckPermissionRequest) (*CheckPermissionReply, error)
 	CheckForSubjects(context.Context, *CheckSubjectsPermissionRequest) (*CheckSubjectsPermissionReply, error)
+	//management add
+	AddSubjectPermission(context.Context, *AddSubjectPermissionRequest) (*AddSubjectPermissionResponse, error)
+	//management list
+	ListSubjectPermission(context.Context, *ListSubjectPermissionRequest) (*ListSubjectPermissionResponse, error)
+	//management update
 	UpdateSubjectPermission(context.Context, *UpdateSubjectPermissionRequest) (*UpdateSubjectPermissionResponse, error)
+	//management remove
+	RemoveSubjectPermission(context.Context, *RemoveSubjectPermissionRequest) (*RemoveSubjectPermissionReply, error)
 	mustEmbedUnimplementedPermissionServiceServer()
 }
 
@@ -98,8 +139,17 @@ func (UnimplementedPermissionServiceServer) CheckCurrent(context.Context, *Check
 func (UnimplementedPermissionServiceServer) CheckForSubjects(context.Context, *CheckSubjectsPermissionRequest) (*CheckSubjectsPermissionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckForSubjects not implemented")
 }
+func (UnimplementedPermissionServiceServer) AddSubjectPermission(context.Context, *AddSubjectPermissionRequest) (*AddSubjectPermissionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddSubjectPermission not implemented")
+}
+func (UnimplementedPermissionServiceServer) ListSubjectPermission(context.Context, *ListSubjectPermissionRequest) (*ListSubjectPermissionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSubjectPermission not implemented")
+}
 func (UnimplementedPermissionServiceServer) UpdateSubjectPermission(context.Context, *UpdateSubjectPermissionRequest) (*UpdateSubjectPermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateSubjectPermission not implemented")
+}
+func (UnimplementedPermissionServiceServer) RemoveSubjectPermission(context.Context, *RemoveSubjectPermissionRequest) (*RemoveSubjectPermissionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveSubjectPermission not implemented")
 }
 func (UnimplementedPermissionServiceServer) mustEmbedUnimplementedPermissionServiceServer() {}
 
@@ -168,6 +218,42 @@ func _PermissionService_CheckForSubjects_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PermissionService_AddSubjectPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddSubjectPermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionServiceServer).AddSubjectPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.permission.v1.PermissionService/AddSubjectPermission",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionServiceServer).AddSubjectPermission(ctx, req.(*AddSubjectPermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PermissionService_ListSubjectPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSubjectPermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionServiceServer).ListSubjectPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.permission.v1.PermissionService/ListSubjectPermission",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionServiceServer).ListSubjectPermission(ctx, req.(*ListSubjectPermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PermissionService_UpdateSubjectPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSubjectPermissionRequest)
 	if err := dec(in); err != nil {
@@ -182,6 +268,24 @@ func _PermissionService_UpdateSubjectPermission_Handler(srv interface{}, ctx con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PermissionServiceServer).UpdateSubjectPermission(ctx, req.(*UpdateSubjectPermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PermissionService_RemoveSubjectPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveSubjectPermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionServiceServer).RemoveSubjectPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.permission.v1.PermissionService/RemoveSubjectPermission",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionServiceServer).RemoveSubjectPermission(ctx, req.(*RemoveSubjectPermissionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -206,8 +310,20 @@ var PermissionService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PermissionService_CheckForSubjects_Handler,
 		},
 		{
+			MethodName: "AddSubjectPermission",
+			Handler:    _PermissionService_AddSubjectPermission_Handler,
+		},
+		{
+			MethodName: "ListSubjectPermission",
+			Handler:    _PermissionService_ListSubjectPermission_Handler,
+		},
+		{
 			MethodName: "UpdateSubjectPermission",
 			Handler:    _PermissionService_UpdateSubjectPermission_Handler,
+		},
+		{
+			MethodName: "RemoveSubjectPermission",
+			Handler:    _PermissionService_RemoveSubjectPermission_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
