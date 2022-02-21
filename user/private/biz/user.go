@@ -2,11 +2,11 @@ package biz
 
 import (
 	"context"
+	"github.com/goxiaoy/go-saas-kit/pkg/data"
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	gorm3 "github.com/goxiaoy/go-saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
-	"gorm.io/datatypes"
 	gorm2 "gorm.io/gorm"
 	"time"
 )
@@ -66,7 +66,7 @@ type User struct {
 
 	Tenants []UserTenant `json:"tenants"`
 
-	Extra datatypes.JSONMap
+	Extra data.JSONMap
 }
 
 type UserRepo interface {

@@ -2,7 +2,7 @@ package biz
 
 import (
 	"context"
-	"gorm.io/datatypes"
+	"github.com/goxiaoy/go-saas-kit/pkg/data"
 	"time"
 )
 
@@ -29,7 +29,7 @@ type UserTenant struct {
 	TenantId string           `json:"tenant_id" gorm:"type:char(36);primaryKey"`
 	JoinTime time.Time        `json:"joint_time"`
 	Status   UserTenantStatus `json:"status"`
-	Extra    datatypes.JSONMap
+	Extra    data.JSONMap
 }
 
 type UserTenantRepo interface {
