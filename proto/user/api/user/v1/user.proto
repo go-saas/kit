@@ -10,6 +10,7 @@ import "protoc-gen-openapiv2/options/annotations.proto";
 import "validate/validate.proto";
 import "google/api/field_behavior.proto";
 import "user/api/role/v1/role.proto";
+import "blob/blob.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/user/v1;v1";
 
@@ -110,6 +111,7 @@ message User{
   //
   Gender gender=7;
   repeated .user.api.role.v1.Role roles=8;
+  blob.BlobFile avatar=10;
 }
 
 

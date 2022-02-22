@@ -6,6 +6,7 @@ import (
 	"github.com/ahmetb/go-linq/v3"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
+	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
@@ -19,12 +20,14 @@ type UserService struct {
 	pb.UnimplementedUserServiceServer
 	um   *biz.UserManager
 	auth authz.Service
+	blob blob.Factory
 }
 
-func NewUserService(um *biz.UserManager, auth authz.Service) *UserService {
+func NewUserService(um *biz.UserManager, auth authz.Service, blob blob.Factory) *UserService {
 	return &UserService{
 		um:   um,
 		auth: auth,
+		blob: blob,
 	}
 }
 
@@ -48,7 +51,7 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 	}
 	rItems := make([]*pb.User, len(items))
 	for index, u := range items {
-		res := MapBizUserToApi(u)
+		res := MapBizUserToApi(ctx, u, s.blob)
 		if req.Fields != nil {
 			fmutils.Filter(res, req.Fields.Paths)
 		}
@@ -72,7 +75,7 @@ func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 	if u == nil {
 		return nil, errors2.NotFound("", "")
 	}
-	res := MapBizUserToApi(u)
+	res := MapBizUserToApi(ctx, u, s.blob)
 	return res, nil
 }
 
@@ -129,7 +132,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		}
 		return nil, err
 	}
-	res := MapBizUserToApi(&u)
+	res := MapBizUserToApi(ctx, &u, s.blob)
 	return res, nil
 }
 
@@ -192,7 +195,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	if err := s.um.Update(ctx, u); err != nil {
 		return nil, err
 	}
-	res := MapBizUserToApi(u)
+	res := MapBizUserToApi(ctx, u, s.blob)
 	return res, nil
 }
 
@@ -235,7 +238,7 @@ func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleReque
 	return resp, nil
 }
 
-func MapBizUserToApi(u *biz.User) *pb.User {
+func MapBizUserToApi(ctx context.Context, u *biz.User, b blob.Factory) *pb.User {
 	res := &pb.User{
 		Id:    u.ID.String(),
 		Roles: nil,
@@ -270,5 +273,6 @@ func MapBizUserToApi(u *biz.User) *pb.User {
 		}).ToSlice(&returnRoles)
 		res.Roles = returnRoles
 	}
+	res.Avatar = mapAvatar(ctx, b, u)
 	return res
 }

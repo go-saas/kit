@@ -25,7 +25,7 @@ func NewSeeder(c *conf.UserConf,
 	userSeed *biz.UserSeed,
 	fake *seed2.Fake,
 	p *biz.PermissionSeeder) seed.Seeder {
-	var opt = seed.NewSeedOption(migrate, seed.NewUowContributor(uow, seed.Chain(roleSeed, userSeed, fake)), p)
+	var opt = seed.NewSeedOption(migrate, seed.NewUowContributor(uow, seed.Chain(roleSeed, userSeed, fake, p)))
 	// seed host
 	opt.TenantIds = []string{""}
 

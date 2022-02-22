@@ -90,3 +90,5 @@ require (
 	gorm.io/driver/sqlserver v1.3.1 // indirect
 	gorm.io/plugin/dbresolver v1.1.0 // indirect
 )
+
+replace gorm.io/driver/mysql v1.3.2 => github.com/Goxiaoy/mysql-1 v1.3.3-0.20220222074507-421572c06dbd

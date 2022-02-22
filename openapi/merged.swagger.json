@@ -3085,6 +3085,9 @@
           "items": {
             "$ref": "#/definitions/v1Role"
           }
+        },
+        "avatar": {
+          "$ref": "#/definitions/blobBlobFile"
         }
       }
     },
