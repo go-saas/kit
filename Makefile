@@ -9,6 +9,19 @@ init:
 	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@$(BUF_VERSION)
 	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-lint@$(BUF_VERSION)
 
+.PHONY: user
+user:
+	cd user && $(MAKE) all
+
+.PHONY: saas
+saas:
+	cd saas && $(MAKE) all
+
+all:
+	make user
+	make saas
+	make api
+
 .PHONY: api
 # generate api proto
 api:
