@@ -48,9 +48,10 @@ func NewGormConfig(databases *conf.Endpoints, name string) *gorm.Config {
 		cfg.Dialect = func(s string) g.Dialector {
 			return sqlite.Open(s)
 		}
+		i := 1
 		//https://github.com/go-gorm/gorm/issues/2875
-		cfg.MaxOpenConn = 1
-		cfg.MaxIdleConn = 1
+		cfg.MaxOpenConn = &i
+		cfg.MaxIdleConn = &i
 	}
 	return cfg
 }

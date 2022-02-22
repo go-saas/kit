@@ -25,11 +25,11 @@ func NewSeeder(c *conf.UserConf,
 	userSeed *biz.UserSeed,
 	fake *seed2.Fake,
 	p *biz.PermissionSeeder) seed.Seeder {
-	var opt = seed.NewSeedOption(migrate, roleSeed, userSeed, fake, p)
+	var opt = seed.NewSeedOption(migrate, seed.NewUowContributor(uow, seed.Chain(roleSeed, userSeed, fake)), p)
 	// seed host
 	opt.TenantIds = []string{""}
 
-	return seed.NewDefaultSeeder(opt.WithUow(uow), map[string]interface{}{
+	return seed.NewDefaultSeeder(opt, map[string]interface{}{
 		biz.AdminUsernameKey: c.Admin.GetUsername(),
 		biz.AdminPasswordKey: c.Admin.GetPassword(),
 		seed2.FakeSeedKey:    true,
