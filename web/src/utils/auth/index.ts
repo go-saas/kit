@@ -1,11 +1,15 @@
 import { Persistent, BasicKeys } from '/@/utils/cache/persistent';
 import { CacheTypeEnum } from '/@/enums/cacheEnum';
 import projectSetting from '/@/settings/projectSetting';
-import { TOKEN_KEY, CSRF_KEY } from '/@/enums/cacheEnum';
+import { TOKEN_KEY } from '/@/enums/cacheEnum';
 
 const { permissionCacheType } = projectSetting;
 const isLocal = permissionCacheType === CacheTypeEnum.LOCAL;
 
+interface CsrfItem {
+  value: string | undefined;
+}
+const csrf: CsrfItem = { value: undefined };
 export function getToken() {
   return getAuthCache(TOKEN_KEY);
 }
@@ -26,9 +30,9 @@ export function clearAuthCache(immediate = true) {
 }
 
 export function getCsrfToken() {
-  return getAuthCache<string>(CSRF_KEY);
+  return csrf.value;
 }
 
 export function setCsrfToken(value: string | undefined) {
-  return setAuthCache(CSRF_KEY, value);
+  return (csrf.value = value);
 }
