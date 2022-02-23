@@ -23,10 +23,15 @@ user:
 saas:
 	cd saas && $(MAKE) all
 
+.PHONY: sys
+sys:
+	cd sys && $(MAKE) all
+
 all:
 	make user
 	make saas
 	make api
+	make sys
 
 .PHONY: api
 # generate api proto
