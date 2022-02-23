@@ -17,6 +17,7 @@ import (
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	sapi "github.com/goxiaoy/go-saas-kit/saas/api"
 	sremote "github.com/goxiaoy/go-saas-kit/saas/remote"
+	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	"github.com/goxiaoy/go-saas-kit/sys/private/conf"
 	"github.com/goxiaoy/go-saas-kit/sys/private/data"
 	"github.com/goxiaoy/go-saas-kit/sys/private/server"
@@ -33,5 +34,5 @@ func initApp(*sconf.Services, *sconf.Security, *uow.Config, *gorm.Config, *shttp
 	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, server2.DefaultCodecProviderSet, api2.DefaultProviderSet,
 		uapi.GrpcProviderSet, uremote.GrpcProviderSet,
 		sapi.GrpcProviderSet, sremote.GrpcProviderSet,
-		server.ProviderSet, data.ProviderSet, service.ProviderSet, newApp))
+		server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }

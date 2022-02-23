@@ -1,0 +1,31 @@
+menus:
+  - name: "saas"
+    component: "LAYOUT"
+    meta:
+      title: "routes.saas.title"
+    icon: "ion:grid-outline"
+    priority: 101
+    children:
+      - name: "tenant"
+        component: "/saas/tenant/index.vue"
+        meta:
+          title: "routes.saas.tenant.management"
+  - name: "system"
+    component: "LAYOUT"
+    meta:
+      title: "routes.system.title"
+    icon: "ion:grid-outline"
+    priority: 101
+    children:
+      - name: "user"
+        component: "/system/user/index.vue"
+        meta:
+          title: "routes.system.user.management"
+      - name: "role"
+        component: "/system/role/index.vue"
+        meta:
+          title: "routes.system.role.management"
+      - name: "permission"
+        component: "/system/role/indexpermission.vue"
+        meta:
+          title: "routes.system.permission.management"

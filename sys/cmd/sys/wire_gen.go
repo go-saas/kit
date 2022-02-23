@@ -18,6 +18,7 @@ import (
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/remote"
+	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/sys/private/conf"
 	"github.com/goxiaoy/go-saas-kit/sys/private/data"
 	"github.com/goxiaoy/go-saas-kit/sys/private/server"
@@ -59,8 +60,8 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, tenantStore, logger)
 	menuRepo := data.NewMenuRepo(dbProvider)
 	menuService := service.NewMenuService(defaultAuthorizationService, menuRepo)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, webMultiTenancyOption, option, logger, menuService)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, menuService)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, option, logger, menuService)
+	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, option, logger, menuService)
 	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup3()
@@ -69,7 +70,8 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 		return nil, nil, err
 	}
 	migrate := data.NewMigrate(dataData)
-	seeder := server.NewSeeder(manager, migrate)
+	menuSeed := biz.NewMenuSeed(dbProvider, menuRepo)
+	seeder := server.NewSeeder(manager, migrate, menuSeed)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
 		cleanup4()

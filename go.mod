@@ -30,8 +30,7 @@ require (
 	google.golang.org/genproto v0.0.0-20220218161850-94dd64e39d7c
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
-	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/mysql v1.3.2
+	gorm.io/driver/mysql v1.3.3-0.20220223060847-68a051989967
 	gorm.io/driver/sqlite v1.3.1
 	gorm.io/gorm v1.23.1
 )
@@ -42,6 +41,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/sessions v1.2.1
 	github.com/spf13/afero v1.8.1
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
 require (
@@ -85,10 +85,7 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.9-0.20211216111533-8d383106f7e7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	gorm.io/driver/postgres v1.3.1 // indirect
 	gorm.io/driver/sqlserver v1.3.1 // indirect
 	gorm.io/plugin/dbresolver v1.1.0 // indirect
 )
-
-replace gorm.io/driver/mysql v1.3.2 => github.com/Goxiaoy/mysql-1 v1.3.3-0.20220222074507-421572c06dbd

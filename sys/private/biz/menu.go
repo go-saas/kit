@@ -10,31 +10,36 @@ import (
 )
 
 type Menu struct {
-	gorm.UIDBase
+	gorm.UIDBase `json:",squash"`
 	gorm.AuditedModel
-	Name        string
-	Desc        string
-	Component   string
-	Requirement []MenuPermissionRequirement `gorm:"foreignKey:MenuID"`
-	Parent      string
-	Props       data.JSONMap
-	FullPath    string
-	Priority    int32
-	IgnoreAuth  bool
-	Icon        string
+	Name        string                      `json:"name"`
+	Desc        string                      `json:"desc"`
+	Component   string                      `json:"component"`
+	Requirement []MenuPermissionRequirement `gorm:"foreignKey:MenuID" json:"requirement"`
+	Parent      string                      `json:"parent"`
+	Props       data.JSONMap                `json:"props"`
+	FullPath    string                      `json:"full_path"`
+	Priority    int32                       `json:"priority"`
+	IgnoreAuth  bool                        `json:"ignore_auth"`
+	Icon        string                      `json:"icon"`
+	Iframe      string                      `json:"iframe"`
+	MicroApp    string                      `json:"micro_app"`
+	Meta        data.JSONMap                `json:"meta"`
+	Title       string                      `json:"title"`
 }
 
 type MenuPermissionRequirement struct {
-	gorm.UIDBase
-	MenuID    uuid.UUID `gorm:"type:char(36)"`
-	Namespace string
-	Resource  string
-	Action    string
+	gorm.UIDBase `json:",squash"`
+	MenuID       uuid.UUID `gorm:"type:char(36)" json:"menu_id"`
+	Namespace    string    `json:"namespace"`
+	Resource     string    `json:"resource"`
+	Action       string    `json:"action"`
 }
 
 type MenuRepo interface {
 	List(ctx context.Context, query *v1.ListMenuRequest) ([]*Menu, error)
 	First(ctx context.Context, search string, query *v1.MenuFilter) (*Menu, error)
+	FindByName(ctx context.Context, name string) (*Menu, error)
 	Count(ctx context.Context, search string, query *v1.MenuFilter) (total int64, filtered int64, err error)
 	Get(ctx context.Context, id string) (*Menu, error)
 	Create(ctx context.Context, entity *Menu) error

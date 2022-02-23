@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package api.menu.v1;
+package sys.api.menu.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/field_mask.proto";
@@ -73,6 +73,10 @@ message CreateMenuRequest {
   int32 priority=11;
   bool ignore_auth=12;
   string icon=13;
+  string iframe=14;
+  string micro_app=15;
+  google.protobuf.Struct meta=16;
+  string title=17;
 }
 
 message UpdateMenuRequest {
@@ -94,6 +98,10 @@ message UpdateMenu{
   int32 priority=11;
   bool ignore_auth=12;
   string icon=13;
+  string iframe=14;
+  string micro_app=15;
+  google.protobuf.Struct meta=16;
+  string title=17;
 }
 
 
@@ -142,4 +150,8 @@ message Menu{
   int32 priority=11;
   bool ignore_auth=12;
   string icon=13;
+  string iframe=14;
+  string micro_app=15;
+  google.protobuf.Struct meta=16;
+  string title=17;
 }

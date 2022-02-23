@@ -12,6 +12,9 @@
       "name": "PermissionService"
     },
     {
+      "name": "MenuService"
+    },
+    {
       "name": "RoleService"
     },
     {
@@ -1579,6 +1582,292 @@
         ]
       }
     },
+    "/v1/sys/menu": {
+      "post": {
+        "operationId": "MenuService_CreateMenu",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Menu"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateMenuRequest"
+            }
+          }
+        ],
+        "tags": [
+          "MenuService"
+        ]
+      }
+    },
+    "/v1/sys/menu/list": {
+      "post": {
+        "operationId": "MenuService_ListMenu2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListMenuReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ListMenuRequest"
+            }
+          }
+        ],
+        "tags": [
+          "MenuService"
+        ]
+      }
+    },
+    "/v1/sys/menu/{id}": {
+      "get": {
+        "operationId": "MenuService_GetMenu",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Menu"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "MenuService"
+        ]
+      },
+      "delete": {
+        "operationId": "MenuService_DeleteMenu",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteMenuReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "MenuService"
+        ]
+      }
+    },
+    "/v1/sys/menu/{menu.id}": {
+      "put": {
+        "operationId": "MenuService_UpdateMenu",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Menu"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "menu.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateMenuRequest"
+            }
+          }
+        ],
+        "tags": [
+          "MenuService"
+        ]
+      },
+      "patch": {
+        "operationId": "MenuService_UpdateMenu2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Menu"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "menu.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateMenuRequest"
+            }
+          }
+        ],
+        "tags": [
+          "MenuService"
+        ]
+      }
+    },
+    "/v1/sys/menus": {
+      "get": {
+        "operationId": "MenuService_ListMenu",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListMenuReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageOffset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.idIn",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.nameIn",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.parentIn",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "MenuService"
+        ]
+      }
+    },
     "/v1/user": {
       "post": {
         "summary": "authz: user.user,*,create",
@@ -2159,6 +2448,58 @@
         "action"
       ]
     },
+    "v1CreateMenuRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "required": [
+            "name"
+          ]
+        },
+        "desc": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string"
+        },
+        "requirement": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PermissionRequirement"
+          }
+        },
+        "parent": {
+          "type": "string",
+          "title": "parent menu"
+        },
+        "props": {
+          "type": "object"
+        },
+        "fullPath": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ignoreAuth": {
+          "type": "boolean"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "iframe": {
+          "type": "string"
+        },
+        "microApp": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
     "v1CreateRoleRequest": {
       "type": "object",
       "properties": {
@@ -2217,6 +2558,17 @@
         },
         "gender": {
           "$ref": "#/definitions/v1Gender"
+        }
+      }
+    },
+    "v1DeleteMenuReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
         }
       }
     },
@@ -2367,6 +2719,53 @@
           "items": {
             "$ref": "#/definitions/v1UserRole"
           }
+        }
+      }
+    },
+    "v1ListMenuReply": {
+      "type": "object",
+      "properties": {
+        "totalSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "filterSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Menu"
+          }
+        }
+      }
+    },
+    "v1ListMenuRequest": {
+      "type": "object",
+      "properties": {
+        "pageOffset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "search": {
+          "type": "string"
+        },
+        "sort": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fields": {
+          "type": "string"
+        },
+        "filter": {
+          "$ref": "#/definitions/v1MenuFilter"
         }
       }
     },
@@ -2585,6 +2984,82 @@
     "v1LogoutResponse": {
       "type": "object"
     },
+    "v1Menu": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string"
+        },
+        "requirement": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PermissionRequirement"
+          }
+        },
+        "parent": {
+          "type": "string",
+          "title": "parent menu"
+        },
+        "props": {
+          "type": "object"
+        },
+        "fullPath": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ignoreAuth": {
+          "type": "boolean"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "iframe": {
+          "type": "string"
+        },
+        "microApp": {
+          "type": "string"
+        }
+      }
+    },
+    "v1MenuFilter": {
+      "type": "object",
+      "properties": {
+        "idIn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nameIn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parentIn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "v1OAuthProvider": {
       "type": "object",
       "properties": {
@@ -2621,6 +3096,20 @@
           "$ref": "#/definitions/v1Effect"
         },
         "tenantId": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PermissionRequirement": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "action": {
           "type": "string"
         }
       }
@@ -2837,6 +3326,76 @@
     },
     "v1UpdateAddressesRequest": {
       "type": "object"
+    },
+    "v1UpdateMenu": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "required": [
+            "id"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "required": [
+            "name"
+          ]
+        },
+        "desc": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string"
+        },
+        "requirement": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PermissionRequirement"
+          }
+        },
+        "parent": {
+          "type": "string",
+          "title": "parent menu"
+        },
+        "props": {
+          "type": "object"
+        },
+        "fullPath": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ignoreAuth": {
+          "type": "boolean"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "iframe": {
+          "type": "string"
+        },
+        "microApp": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "v1UpdateMenuRequest": {
+      "type": "object",
+      "properties": {
+        "menu": {
+          "$ref": "#/definitions/v1UpdateMenu"
+        },
+        "updateMask": {
+          "type": "string"
+        }
+      }
     },
     "v1UpdateProfileRequest": {
       "type": "object"

@@ -45,9 +45,15 @@ func buildMenuScope(search string, filter *v1.MenuFilter) func(db *g.DB) *g.DB {
 
 }
 
+func preloadMenuScope() func(db *g.DB) *g.DB {
+	return func(db *g.DB) *g.DB {
+		return db.Preload("Requirement")
+	}
+}
+
 func (c *MenuRepo) List(ctx context.Context, query *v1.ListMenuRequest) ([]*biz.Menu, error) {
 	db := c.GetDb(ctx).Model(&biz.Menu{})
-	db = db.Scopes(buildMenuScope(query.Search, query.Filter), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
+	db = db.Scopes(buildMenuScope(query.Search, query.Filter), preloadMenuScope(), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
 	var items []*biz.Menu
 	res := db.Find(&items)
 	return items, res.Error
@@ -55,7 +61,21 @@ func (c *MenuRepo) List(ctx context.Context, query *v1.ListMenuRequest) ([]*biz.
 
 func (c *MenuRepo) First(ctx context.Context, search string, query *v1.MenuFilter) (*biz.Menu, error) {
 	db := c.GetDb(ctx).Model(&biz.Menu{})
-	db = db.Scopes(buildMenuScope(search, query))
+	db = db.Scopes(buildMenuScope(search, query), preloadMenuScope())
+	var item = biz.Menu{}
+	err := db.First(&item).Error
+	if err != nil {
+		if errors.Is(err, g.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &item, nil
+}
+
+func (c *MenuRepo) FindByName(ctx context.Context, name string) (*biz.Menu, error) {
+	db := c.GetDb(ctx).Model(&biz.Menu{})
+	db = db.Scopes(preloadMenuScope()).Where("name = ?", name)
 	var item = biz.Menu{}
 	err := db.First(&item).Error
 	if err != nil {
@@ -80,7 +100,7 @@ func (c *MenuRepo) Count(ctx context.Context, search string, query *v1.MenuFilte
 
 func (c *MenuRepo) Get(ctx context.Context, id string) (*biz.Menu, error) {
 	var entity = &biz.Menu{}
-	err := c.GetDb(ctx).Model(&biz.Menu{}).First(entity, "id = ?", id).Error
+	err := c.GetDb(ctx).Model(&biz.Menu{}).Scopes(preloadMenuScope()).First(entity, "id = ?", id).Error
 	if err != nil {
 		if errors.Is(err, g.ErrRecordNotFound) {
 			return nil, nil

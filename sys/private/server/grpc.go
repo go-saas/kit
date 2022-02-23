@@ -17,14 +17,12 @@ import (
 	v1 "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1"
 	"github.com/goxiaoy/go-saas-kit/sys/private/service"
 	"github.com/goxiaoy/go-saas/common"
-	"github.com/goxiaoy/go-saas/common/http"
-	"github.com/goxiaoy/go-saas/kratos/saas"
 	uow2 "github.com/goxiaoy/uow"
 )
 
 // NewGRPCServer new a gRPC server.
 func NewGRPCServer(c *conf2.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager,
-	mOpt *http.WebMultiTenancyOption, apiOpt *api2.Option, logger log.Logger,
+	apiOpt *api2.Option, logger log.Logger,
 	menu *service.MenuService) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
@@ -34,7 +32,6 @@ func NewGRPCServer(c *conf2.Services, tokenizer jwt.Tokenizer, ts common.TenantS
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			saas.Server(mOpt, ts),
 			api2.ServerMiddleware(apiOpt),
 			uow.Uow(logger, uowMgr),
 		),

@@ -39,7 +39,7 @@ func NewMenuServiceClient(cc grpc.ClientConnInterface) MenuServiceClient {
 
 func (c *menuServiceClient) ListMenu(ctx context.Context, in *ListMenuRequest, opts ...grpc.CallOption) (*ListMenuReply, error) {
 	out := new(ListMenuReply)
-	err := c.cc.Invoke(ctx, "/api.menu.v1.MenuService/ListMenu", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sys.api.menu.v1.MenuService/ListMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *menuServiceClient) ListMenu(ctx context.Context, in *ListMenuRequest, o
 
 func (c *menuServiceClient) GetMenu(ctx context.Context, in *GetMenuRequest, opts ...grpc.CallOption) (*Menu, error) {
 	out := new(Menu)
-	err := c.cc.Invoke(ctx, "/api.menu.v1.MenuService/GetMenu", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sys.api.menu.v1.MenuService/GetMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *menuServiceClient) GetMenu(ctx context.Context, in *GetMenuRequest, opt
 
 func (c *menuServiceClient) CreateMenu(ctx context.Context, in *CreateMenuRequest, opts ...grpc.CallOption) (*Menu, error) {
 	out := new(Menu)
-	err := c.cc.Invoke(ctx, "/api.menu.v1.MenuService/CreateMenu", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sys.api.menu.v1.MenuService/CreateMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c *menuServiceClient) CreateMenu(ctx context.Context, in *CreateMenuReques
 
 func (c *menuServiceClient) UpdateMenu(ctx context.Context, in *UpdateMenuRequest, opts ...grpc.CallOption) (*Menu, error) {
 	out := new(Menu)
-	err := c.cc.Invoke(ctx, "/api.menu.v1.MenuService/UpdateMenu", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sys.api.menu.v1.MenuService/UpdateMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *menuServiceClient) UpdateMenu(ctx context.Context, in *UpdateMenuReques
 
 func (c *menuServiceClient) DeleteMenu(ctx context.Context, in *DeleteMenuRequest, opts ...grpc.CallOption) (*DeleteMenuReply, error) {
 	out := new(DeleteMenuReply)
-	err := c.cc.Invoke(ctx, "/api.menu.v1.MenuService/DeleteMenu", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sys.api.menu.v1.MenuService/DeleteMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func _MenuService_ListMenu_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.menu.v1.MenuService/ListMenu",
+		FullMethod: "/sys.api.menu.v1.MenuService/ListMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MenuServiceServer).ListMenu(ctx, req.(*ListMenuRequest))
@@ -154,7 +154,7 @@ func _MenuService_GetMenu_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.menu.v1.MenuService/GetMenu",
+		FullMethod: "/sys.api.menu.v1.MenuService/GetMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MenuServiceServer).GetMenu(ctx, req.(*GetMenuRequest))
@@ -172,7 +172,7 @@ func _MenuService_CreateMenu_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.menu.v1.MenuService/CreateMenu",
+		FullMethod: "/sys.api.menu.v1.MenuService/CreateMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MenuServiceServer).CreateMenu(ctx, req.(*CreateMenuRequest))
@@ -190,7 +190,7 @@ func _MenuService_UpdateMenu_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.menu.v1.MenuService/UpdateMenu",
+		FullMethod: "/sys.api.menu.v1.MenuService/UpdateMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MenuServiceServer).UpdateMenu(ctx, req.(*UpdateMenuRequest))
@@ -208,7 +208,7 @@ func _MenuService_DeleteMenu_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.menu.v1.MenuService/DeleteMenu",
+		FullMethod: "/sys.api.menu.v1.MenuService/DeleteMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MenuServiceServer).DeleteMenu(ctx, req.(*DeleteMenuRequest))
@@ -220,7 +220,7 @@ func _MenuService_DeleteMenu_Handler(srv interface{}, ctx context.Context, dec f
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var MenuService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.menu.v1.MenuService",
+	ServiceName: "sys.api.menu.v1.MenuService",
 	HandlerType: (*MenuServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
