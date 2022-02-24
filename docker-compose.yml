@@ -10,8 +10,8 @@ services:
     depends_on:
       - user
       - saas
+      - sys
       - api_docs
-
 
   api_docs:
     image: ${DOCKER_REGISTRY}go-saas-kit-swagger:${DOCKER_TAG:-latest}
@@ -36,6 +36,18 @@ services:
     ports:
       - "8520"
       - "8521"
+    depends_on:
+      - mysqld
+      - user
+    volumes:
+      - ./quickstart/configs:/data/conf
+      - ./quickstart/.assets:/app/.assets
+
+  sys:
+    image: ${DOCKER_REGISTRY}go-saas-kit-sys:${DOCKER_TAG:-latest}
+    ports:
+      - "8530"
+      - "8531"
     depends_on:
       - mysqld
       - user

@@ -17,6 +17,11 @@ services:
         addr: 0.0.0.0:8520
       grpc:
         addr: 0.0.0.0:8521
+    sys:
+      http:
+        addr: 0.0.0.0:8530
+      grpc:
+        addr: 0.0.0.0:8531
 
   services:
     user:
@@ -30,6 +35,9 @@ services:
     saas:
       client_id: saas-golang
       timeout: 200s
+    sys:
+      client_id: sys-golang
+      timeout: 200s
     apisix:
       client_id: apisix-golang
       timeout: 200s
@@ -37,10 +45,7 @@ services:
 data:
   endpoints:
     databases:
-      user:
-        driver: mysql
-        source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true
-      saas:
+      default:
         driver: mysql
         source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true
 

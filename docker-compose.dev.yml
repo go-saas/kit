@@ -15,3 +15,8 @@ services:
     build:
       context: .
       dockerfile: ./saas/Dockerfile
+
+  sys:
+    build:
+      context: .
+      dockerfile: ./sys/Dockerfile
