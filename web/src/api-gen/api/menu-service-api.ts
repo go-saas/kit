@@ -33,37 +33,38 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 // @ts-ignore
 import { RpcStatus } from '../models';
 // @ts-ignore
-import { Tenantv1Tenant } from '../models';
+import { V1CreateMenuRequest } from '../models';
 // @ts-ignore
-import { V1CreateTenantRequest } from '../models';
+import { V1DeleteMenuReply } from '../models';
 // @ts-ignore
-import { V1DeleteTenantReply } from '../models';
+import { V1GetAvailableMenusReply } from '../models';
 // @ts-ignore
-import { V1ListTenantReply } from '../models';
+import { V1ListMenuReply } from '../models';
 // @ts-ignore
-import { V1ListTenantRequest } from '../models';
+import { V1ListMenuRequest } from '../models';
 // @ts-ignore
-import { V1UpdateTenantRequest } from '../models';
+import { V1Menu } from '../models';
+// @ts-ignore
+import { V1UpdateMenuRequest } from '../models';
 /**
- * TenantServiceApi - axios parameter creator
+ * MenuServiceApi - axios parameter creator
  * @export
  */
-export const TenantServiceApiAxiosParamCreator = function (configuration?: Configuration) {
+export const MenuServiceApiAxiosParamCreator = function (configuration?: Configuration) {
   return {
     /**
      *
-     * @summary authz: saas.tenant,*,create
-     * @param {V1CreateTenantRequest} body
+     * @param {V1CreateMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceCreateTenant: async (
-      body: V1CreateTenantRequest,
+    menuServiceCreateMenu: async (
+      body: V1CreateMenuRequest,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'body' is not null or undefined
-      assertParamExists('tenantServiceCreateTenant', 'body', body);
-      const localVarPath = `/v1/saas/tenant`;
+      assertParamExists('menuServiceCreateMenu', 'body', body);
+      const localVarPath = `/v1/sys/menu`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -97,21 +98,17 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceDeleteTenant: async (
+    menuServiceDeleteMenu: async (
       id: string,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
-      assertParamExists('tenantServiceDeleteTenant', 'id', id);
-      const localVarPath = `/v1/saas/tenant/{id}`.replace(
-        `{${'id'}}`,
-        encodeURIComponent(String(id)),
-      );
+      assertParamExists('menuServiceDeleteMenu', 'id', id);
+      const localVarPath = `/v1/sys/menu/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)));
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -138,21 +135,13 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},get
-     * @param {string} idOrName
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceGetTenant: async (
-      idOrName: string,
+    menuServiceGetAvailableMenus: async (
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'idOrName' is not null or undefined
-      assertParamExists('tenantServiceGetTenant', 'idOrName', idOrName);
-      const localVarPath = `/v1/saas/tenant/{idOrName}`.replace(
-        `{${'idOrName'}}`,
-        encodeURIComponent(String(idOrName)),
-      );
+      const localVarPath = `/v1/sys/menus/available`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -179,7 +168,43 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
+     * @param {string} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    menuServiceGetMenu: async (
+      id: string,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists('menuServiceGetMenu', 'id', id);
+      const localVarPath = `/v1/sys/menu/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -187,12 +212,11 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
      * @param {string} [fields]
      * @param {Array<string>} [filterIdIn]
      * @param {Array<string>} [filterNameIn]
-     * @param {string} [filterNameLike]
-     * @param {Array<string>} [filterRegionIn]
+     * @param {Array<string>} [filterParentIn]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceListTenant: async (
+    menuServiceListMenu: async (
       pageOffset?: number,
       pageSize?: number,
       search?: string,
@@ -200,11 +224,10 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
       fields?: string,
       filterIdIn?: Array<string>,
       filterNameIn?: Array<string>,
-      filterNameLike?: string,
-      filterRegionIn?: Array<string>,
+      filterParentIn?: Array<string>,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      const localVarPath = `/v1/saas/tenants`;
+      const localVarPath = `/v1/sys/menus`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -244,12 +267,8 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
         localVarQueryParameter['filter.nameIn'] = filterNameIn;
       }
 
-      if (filterNameLike !== undefined) {
-        localVarQueryParameter['filter.nameLike'] = filterNameLike;
-      }
-
-      if (filterRegionIn) {
-        localVarQueryParameter['filter.regionIn'] = filterRegionIn;
+      if (filterParentIn) {
+        localVarQueryParameter['filter.parentIn'] = filterParentIn;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -267,18 +286,17 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
-     * @param {V1ListTenantRequest} body
+     * @param {V1ListMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceListTenant2: async (
-      body: V1ListTenantRequest,
+    menuServiceListMenu2: async (
+      body: V1ListMenuRequest,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'body' is not null or undefined
-      assertParamExists('tenantServiceListTenant2', 'body', body);
-      const localVarPath = `/v1/saas/tenant/list`;
+      assertParamExists('menuServiceListMenu2', 'body', body);
+      const localVarPath = `/v1/sys/menu/list`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -312,24 +330,23 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
-     * @param {string} tenantId
-     * @param {V1UpdateTenantRequest} body
+     * @param {string} menuId
+     * @param {V1UpdateMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceUpdateTenant: async (
-      tenantId: string,
-      body: V1UpdateTenantRequest,
+    menuServiceUpdateMenu: async (
+      menuId: string,
+      body: V1UpdateMenuRequest,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'tenantId' is not null or undefined
-      assertParamExists('tenantServiceUpdateTenant', 'tenantId', tenantId);
+      // verify required parameter 'menuId' is not null or undefined
+      assertParamExists('menuServiceUpdateMenu', 'menuId', menuId);
       // verify required parameter 'body' is not null or undefined
-      assertParamExists('tenantServiceUpdateTenant', 'body', body);
-      const localVarPath = `/v1/saas/tenant/{tenant.id}`.replace(
-        `{${'tenant.id'}}`,
-        encodeURIComponent(String(tenantId)),
+      assertParamExists('menuServiceUpdateMenu', 'body', body);
+      const localVarPath = `/v1/sys/menu/{menu.id}`.replace(
+        `{${'menu.id'}}`,
+        encodeURIComponent(String(menuId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -364,24 +381,23 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
-     * @param {string} tenantId
-     * @param {V1UpdateTenantRequest} body
+     * @param {string} menuId
+     * @param {V1UpdateMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceUpdateTenant2: async (
-      tenantId: string,
-      body: V1UpdateTenantRequest,
+    menuServiceUpdateMenu2: async (
+      menuId: string,
+      body: V1UpdateMenuRequest,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'tenantId' is not null or undefined
-      assertParamExists('tenantServiceUpdateTenant2', 'tenantId', tenantId);
+      // verify required parameter 'menuId' is not null or undefined
+      assertParamExists('menuServiceUpdateMenu2', 'menuId', menuId);
       // verify required parameter 'body' is not null or undefined
-      assertParamExists('tenantServiceUpdateTenant2', 'body', body);
-      const localVarPath = `/v1/saas/tenant/{tenant.id}`.replace(
-        `{${'tenant.id'}}`,
-        encodeURIComponent(String(tenantId)),
+      assertParamExists('menuServiceUpdateMenu2', 'body', body);
+      const localVarPath = `/v1/sys/menu/{menu.id}`.replace(
+        `{${'menu.id'}}`,
+        encodeURIComponent(String(menuId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -418,24 +434,23 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
 };
 
 /**
- * TenantServiceApi - functional programming interface
+ * MenuServiceApi - functional programming interface
  * @export
  */
-export const TenantServiceApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = TenantServiceApiAxiosParamCreator(configuration);
+export const MenuServiceApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = MenuServiceApiAxiosParamCreator(configuration);
   return {
     /**
      *
-     * @summary authz: saas.tenant,*,create
-     * @param {V1CreateTenantRequest} body
+     * @param {V1CreateMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async tenantServiceCreateTenant(
-      body: V1CreateTenantRequest,
+    async menuServiceCreateMenu(
+      body: V1CreateMenuRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceCreateTenant(
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Menu>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.menuServiceCreateMenu(
         body,
         options,
       );
@@ -443,41 +458,47 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async tenantServiceDeleteTenant(
+    async menuServiceDeleteMenu(
       id: string,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1DeleteTenantReply>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceDeleteTenant(
-        id,
-        options,
-      );
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1DeleteMenuReply>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.menuServiceDeleteMenu(id, options);
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},get
-     * @param {string} idOrName
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async tenantServiceGetTenant(
-      idOrName: string,
+    async menuServiceGetAvailableMenus(
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceGetTenant(
-        idOrName,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1GetAvailableMenusReply>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.menuServiceGetAvailableMenus(
         options,
       );
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
+     * @param {string} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async menuServiceGetMenu(
+      id: string,
+      options?: AxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Menu>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.menuServiceGetMenu(id, options);
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -485,12 +506,11 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
      * @param {string} [fields]
      * @param {Array<string>} [filterIdIn]
      * @param {Array<string>} [filterNameIn]
-     * @param {string} [filterNameLike]
-     * @param {Array<string>} [filterRegionIn]
+     * @param {Array<string>} [filterParentIn]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async tenantServiceListTenant(
+    async menuServiceListMenu(
       pageOffset?: number,
       pageSize?: number,
       search?: string,
@@ -498,11 +518,10 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
       fields?: string,
       filterIdIn?: Array<string>,
       filterNameIn?: Array<string>,
-      filterNameLike?: string,
-      filterRegionIn?: Array<string>,
+      filterParentIn?: Array<string>,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1ListTenantReply>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceListTenant(
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1ListMenuReply>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.menuServiceListMenu(
         pageOffset,
         pageSize,
         search,
@@ -510,24 +529,38 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
         fields,
         filterIdIn,
         filterNameIn,
-        filterNameLike,
-        filterRegionIn,
+        filterParentIn,
         options,
       );
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
-     * @param {V1ListTenantRequest} body
+     * @param {V1ListMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async tenantServiceListTenant2(
-      body: V1ListTenantRequest,
+    async menuServiceListMenu2(
+      body: V1ListMenuRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1ListTenantReply>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceListTenant2(
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1ListMenuReply>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.menuServiceListMenu2(body, options);
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
+     * @param {string} menuId
+     * @param {V1UpdateMenuRequest} body
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async menuServiceUpdateMenu(
+      menuId: string,
+      body: V1UpdateMenuRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Menu>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.menuServiceUpdateMenu(
+        menuId,
         body,
         options,
       );
@@ -535,39 +568,18 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
-     * @param {string} tenantId
-     * @param {V1UpdateTenantRequest} body
+     * @param {string} menuId
+     * @param {V1UpdateMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async tenantServiceUpdateTenant(
-      tenantId: string,
-      body: V1UpdateTenantRequest,
+    async menuServiceUpdateMenu2(
+      menuId: string,
+      body: V1UpdateMenuRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceUpdateTenant(
-        tenantId,
-        body,
-        options,
-      );
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @summary authz: saas.tenant,{id},update
-     * @param {string} tenantId
-     * @param {V1UpdateTenantRequest} body
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async tenantServiceUpdateTenant2(
-      tenantId: string,
-      body: V1UpdateTenantRequest,
-      options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceUpdateTenant2(
-        tenantId,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Menu>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.menuServiceUpdateMenu2(
+        menuId,
         body,
         options,
       );
@@ -577,58 +589,59 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
 };
 
 /**
- * TenantServiceApi - factory interface
+ * MenuServiceApi - factory interface
  * @export
  */
-export const TenantServiceApiFactory = function (
+export const MenuServiceApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
   axios?: AxiosInstance,
 ) {
-  const localVarFp = TenantServiceApiFp(configuration);
+  const localVarFp = MenuServiceApiFp(configuration);
   return {
     /**
      *
-     * @summary authz: saas.tenant,*,create
-     * @param {V1CreateTenantRequest} body
+     * @param {V1CreateMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceCreateTenant(
-      body: V1CreateTenantRequest,
-      options?: any,
-    ): AxiosPromise<Tenantv1Tenant> {
+    menuServiceCreateMenu(body: V1CreateMenuRequest, options?: any): AxiosPromise<V1Menu> {
       return localVarFp
-        .tenantServiceCreateTenant(body, options)
+        .menuServiceCreateMenu(body, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceDeleteTenant(id: string, options?: any): AxiosPromise<V1DeleteTenantReply> {
+    menuServiceDeleteMenu(id: string, options?: any): AxiosPromise<V1DeleteMenuReply> {
       return localVarFp
-        .tenantServiceDeleteTenant(id, options)
+        .menuServiceDeleteMenu(id, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},get
-     * @param {string} idOrName
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceGetTenant(idOrName: string, options?: any): AxiosPromise<Tenantv1Tenant> {
+    menuServiceGetAvailableMenus(options?: any): AxiosPromise<V1GetAvailableMenusReply> {
       return localVarFp
-        .tenantServiceGetTenant(idOrName, options)
+        .menuServiceGetAvailableMenus(options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
+     * @param {string} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    menuServiceGetMenu(id: string, options?: any): AxiosPromise<V1Menu> {
+      return localVarFp.menuServiceGetMenu(id, options).then((request) => request(axios, basePath));
+    },
+    /**
+     *
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -636,12 +649,11 @@ export const TenantServiceApiFactory = function (
      * @param {string} [fields]
      * @param {Array<string>} [filterIdIn]
      * @param {Array<string>} [filterNameIn]
-     * @param {string} [filterNameLike]
-     * @param {Array<string>} [filterRegionIn]
+     * @param {Array<string>} [filterParentIn]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceListTenant(
+    menuServiceListMenu(
       pageOffset?: number,
       pageSize?: number,
       search?: string,
@@ -649,12 +661,11 @@ export const TenantServiceApiFactory = function (
       fields?: string,
       filterIdIn?: Array<string>,
       filterNameIn?: Array<string>,
-      filterNameLike?: string,
-      filterRegionIn?: Array<string>,
+      filterParentIn?: Array<string>,
       options?: any,
-    ): AxiosPromise<V1ListTenantReply> {
+    ): AxiosPromise<V1ListMenuReply> {
       return localVarFp
-        .tenantServiceListTenant(
+        .menuServiceListMenu(
           pageOffset,
           pageSize,
           search,
@@ -662,304 +673,298 @@ export const TenantServiceApiFactory = function (
           fields,
           filterIdIn,
           filterNameIn,
-          filterNameLike,
-          filterRegionIn,
+          filterParentIn,
           options,
         )
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
-     * @param {V1ListTenantRequest} body
+     * @param {V1ListMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceListTenant2(
-      body: V1ListTenantRequest,
-      options?: any,
-    ): AxiosPromise<V1ListTenantReply> {
+    menuServiceListMenu2(body: V1ListMenuRequest, options?: any): AxiosPromise<V1ListMenuReply> {
       return localVarFp
-        .tenantServiceListTenant2(body, options)
+        .menuServiceListMenu2(body, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
-     * @param {string} tenantId
-     * @param {V1UpdateTenantRequest} body
+     * @param {string} menuId
+     * @param {V1UpdateMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceUpdateTenant(
-      tenantId: string,
-      body: V1UpdateTenantRequest,
+    menuServiceUpdateMenu(
+      menuId: string,
+      body: V1UpdateMenuRequest,
       options?: any,
-    ): AxiosPromise<Tenantv1Tenant> {
+    ): AxiosPromise<V1Menu> {
       return localVarFp
-        .tenantServiceUpdateTenant(tenantId, body, options)
+        .menuServiceUpdateMenu(menuId, body, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
-     * @param {string} tenantId
-     * @param {V1UpdateTenantRequest} body
+     * @param {string} menuId
+     * @param {V1UpdateMenuRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceUpdateTenant2(
-      tenantId: string,
-      body: V1UpdateTenantRequest,
+    menuServiceUpdateMenu2(
+      menuId: string,
+      body: V1UpdateMenuRequest,
       options?: any,
-    ): AxiosPromise<Tenantv1Tenant> {
+    ): AxiosPromise<V1Menu> {
       return localVarFp
-        .tenantServiceUpdateTenant2(tenantId, body, options)
+        .menuServiceUpdateMenu2(menuId, body, options)
         .then((request) => request(axios, basePath));
     },
   };
 };
 
 /**
- * Request parameters for tenantServiceCreateTenant operation in TenantServiceApi.
+ * Request parameters for menuServiceCreateMenu operation in MenuServiceApi.
  * @export
- * @interface TenantServiceApiTenantServiceCreateTenantRequest
+ * @interface MenuServiceApiMenuServiceCreateMenuRequest
  */
-export interface TenantServiceApiTenantServiceCreateTenantRequest {
+export interface MenuServiceApiMenuServiceCreateMenuRequest {
   /**
    *
-   * @type {V1CreateTenantRequest}
-   * @memberof TenantServiceApiTenantServiceCreateTenant
+   * @type {V1CreateMenuRequest}
+   * @memberof MenuServiceApiMenuServiceCreateMenu
    */
-  readonly body: V1CreateTenantRequest;
+  readonly body: V1CreateMenuRequest;
 }
 
 /**
- * Request parameters for tenantServiceDeleteTenant operation in TenantServiceApi.
+ * Request parameters for menuServiceDeleteMenu operation in MenuServiceApi.
  * @export
- * @interface TenantServiceApiTenantServiceDeleteTenantRequest
+ * @interface MenuServiceApiMenuServiceDeleteMenuRequest
  */
-export interface TenantServiceApiTenantServiceDeleteTenantRequest {
+export interface MenuServiceApiMenuServiceDeleteMenuRequest {
   /**
    *
    * @type {string}
-   * @memberof TenantServiceApiTenantServiceDeleteTenant
+   * @memberof MenuServiceApiMenuServiceDeleteMenu
    */
   readonly id: string;
 }
 
 /**
- * Request parameters for tenantServiceGetTenant operation in TenantServiceApi.
+ * Request parameters for menuServiceGetMenu operation in MenuServiceApi.
  * @export
- * @interface TenantServiceApiTenantServiceGetTenantRequest
+ * @interface MenuServiceApiMenuServiceGetMenuRequest
  */
-export interface TenantServiceApiTenantServiceGetTenantRequest {
+export interface MenuServiceApiMenuServiceGetMenuRequest {
   /**
    *
    * @type {string}
-   * @memberof TenantServiceApiTenantServiceGetTenant
+   * @memberof MenuServiceApiMenuServiceGetMenu
    */
-  readonly idOrName: string;
+  readonly id: string;
 }
 
 /**
- * Request parameters for tenantServiceListTenant operation in TenantServiceApi.
+ * Request parameters for menuServiceListMenu operation in MenuServiceApi.
  * @export
- * @interface TenantServiceApiTenantServiceListTenantRequest
+ * @interface MenuServiceApiMenuServiceListMenuRequest
  */
-export interface TenantServiceApiTenantServiceListTenantRequest {
+export interface MenuServiceApiMenuServiceListMenuRequest {
   /**
    *
    * @type {number}
-   * @memberof TenantServiceApiTenantServiceListTenant
+   * @memberof MenuServiceApiMenuServiceListMenu
    */
   readonly pageOffset?: number;
 
   /**
    *
    * @type {number}
-   * @memberof TenantServiceApiTenantServiceListTenant
+   * @memberof MenuServiceApiMenuServiceListMenu
    */
   readonly pageSize?: number;
 
   /**
    *
    * @type {string}
-   * @memberof TenantServiceApiTenantServiceListTenant
+   * @memberof MenuServiceApiMenuServiceListMenu
    */
   readonly search?: string;
 
   /**
    *
    * @type {Array<string>}
-   * @memberof TenantServiceApiTenantServiceListTenant
+   * @memberof MenuServiceApiMenuServiceListMenu
    */
   readonly sort?: Array<string>;
 
   /**
    *
    * @type {string}
-   * @memberof TenantServiceApiTenantServiceListTenant
+   * @memberof MenuServiceApiMenuServiceListMenu
    */
   readonly fields?: string;
 
   /**
    *
    * @type {Array<string>}
-   * @memberof TenantServiceApiTenantServiceListTenant
+   * @memberof MenuServiceApiMenuServiceListMenu
    */
   readonly filterIdIn?: Array<string>;
 
   /**
    *
    * @type {Array<string>}
-   * @memberof TenantServiceApiTenantServiceListTenant
+   * @memberof MenuServiceApiMenuServiceListMenu
    */
   readonly filterNameIn?: Array<string>;
 
   /**
    *
-   * @type {string}
-   * @memberof TenantServiceApiTenantServiceListTenant
-   */
-  readonly filterNameLike?: string;
-
-  /**
-   *
    * @type {Array<string>}
-   * @memberof TenantServiceApiTenantServiceListTenant
+   * @memberof MenuServiceApiMenuServiceListMenu
    */
-  readonly filterRegionIn?: Array<string>;
+  readonly filterParentIn?: Array<string>;
 }
 
 /**
- * Request parameters for tenantServiceListTenant2 operation in TenantServiceApi.
+ * Request parameters for menuServiceListMenu2 operation in MenuServiceApi.
  * @export
- * @interface TenantServiceApiTenantServiceListTenant2Request
+ * @interface MenuServiceApiMenuServiceListMenu2Request
  */
-export interface TenantServiceApiTenantServiceListTenant2Request {
+export interface MenuServiceApiMenuServiceListMenu2Request {
   /**
    *
-   * @type {V1ListTenantRequest}
-   * @memberof TenantServiceApiTenantServiceListTenant2
+   * @type {V1ListMenuRequest}
+   * @memberof MenuServiceApiMenuServiceListMenu2
    */
-  readonly body: V1ListTenantRequest;
+  readonly body: V1ListMenuRequest;
 }
 
 /**
- * Request parameters for tenantServiceUpdateTenant operation in TenantServiceApi.
+ * Request parameters for menuServiceUpdateMenu operation in MenuServiceApi.
  * @export
- * @interface TenantServiceApiTenantServiceUpdateTenantRequest
+ * @interface MenuServiceApiMenuServiceUpdateMenuRequest
  */
-export interface TenantServiceApiTenantServiceUpdateTenantRequest {
+export interface MenuServiceApiMenuServiceUpdateMenuRequest {
   /**
    *
    * @type {string}
-   * @memberof TenantServiceApiTenantServiceUpdateTenant
+   * @memberof MenuServiceApiMenuServiceUpdateMenu
    */
-  readonly tenantId: string;
+  readonly menuId: string;
 
   /**
    *
-   * @type {V1UpdateTenantRequest}
-   * @memberof TenantServiceApiTenantServiceUpdateTenant
+   * @type {V1UpdateMenuRequest}
+   * @memberof MenuServiceApiMenuServiceUpdateMenu
    */
-  readonly body: V1UpdateTenantRequest;
+  readonly body: V1UpdateMenuRequest;
 }
 
 /**
- * Request parameters for tenantServiceUpdateTenant2 operation in TenantServiceApi.
+ * Request parameters for menuServiceUpdateMenu2 operation in MenuServiceApi.
  * @export
- * @interface TenantServiceApiTenantServiceUpdateTenant2Request
+ * @interface MenuServiceApiMenuServiceUpdateMenu2Request
  */
-export interface TenantServiceApiTenantServiceUpdateTenant2Request {
+export interface MenuServiceApiMenuServiceUpdateMenu2Request {
   /**
    *
    * @type {string}
-   * @memberof TenantServiceApiTenantServiceUpdateTenant2
+   * @memberof MenuServiceApiMenuServiceUpdateMenu2
    */
-  readonly tenantId: string;
+  readonly menuId: string;
 
   /**
    *
-   * @type {V1UpdateTenantRequest}
-   * @memberof TenantServiceApiTenantServiceUpdateTenant2
+   * @type {V1UpdateMenuRequest}
+   * @memberof MenuServiceApiMenuServiceUpdateMenu2
    */
-  readonly body: V1UpdateTenantRequest;
+  readonly body: V1UpdateMenuRequest;
 }
 
 /**
- * TenantServiceApi - object-oriented interface
+ * MenuServiceApi - object-oriented interface
  * @export
- * @class TenantServiceApi
+ * @class MenuServiceApi
  * @extends {BaseAPI}
  */
-export class TenantServiceApi extends BaseAPI {
+export class MenuServiceApi extends BaseAPI {
   /**
    *
-   * @summary authz: saas.tenant,*,create
-   * @param {TenantServiceApiTenantServiceCreateTenantRequest} requestParameters Request parameters.
+   * @param {MenuServiceApiMenuServiceCreateMenuRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof TenantServiceApi
+   * @memberof MenuServiceApi
    */
-  public tenantServiceCreateTenant(
-    requestParameters: TenantServiceApiTenantServiceCreateTenantRequest,
+  public menuServiceCreateMenu(
+    requestParameters: MenuServiceApiMenuServiceCreateMenuRequest,
     options?: AxiosRequestConfig,
   ) {
-    return TenantServiceApiFp(this.configuration)
-      .tenantServiceCreateTenant(requestParameters.body, options)
+    return MenuServiceApiFp(this.configuration)
+      .menuServiceCreateMenu(requestParameters.body, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
-   * @summary authz: saas.tenant,{id},delete
-   * @param {TenantServiceApiTenantServiceDeleteTenantRequest} requestParameters Request parameters.
+   * @param {MenuServiceApiMenuServiceDeleteMenuRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof TenantServiceApi
+   * @memberof MenuServiceApi
    */
-  public tenantServiceDeleteTenant(
-    requestParameters: TenantServiceApiTenantServiceDeleteTenantRequest,
+  public menuServiceDeleteMenu(
+    requestParameters: MenuServiceApiMenuServiceDeleteMenuRequest,
     options?: AxiosRequestConfig,
   ) {
-    return TenantServiceApiFp(this.configuration)
-      .tenantServiceDeleteTenant(requestParameters.id, options)
+    return MenuServiceApiFp(this.configuration)
+      .menuServiceDeleteMenu(requestParameters.id, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
-   * @summary authz: saas.tenant,{id},get
-   * @param {TenantServiceApiTenantServiceGetTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof TenantServiceApi
+   * @memberof MenuServiceApi
    */
-  public tenantServiceGetTenant(
-    requestParameters: TenantServiceApiTenantServiceGetTenantRequest,
-    options?: AxiosRequestConfig,
-  ) {
-    return TenantServiceApiFp(this.configuration)
-      .tenantServiceGetTenant(requestParameters.idOrName, options)
+  public menuServiceGetAvailableMenus(options?: AxiosRequestConfig) {
+    return MenuServiceApiFp(this.configuration)
+      .menuServiceGetAvailableMenus(options)
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
-   * @summary authz: saas.tenant,*,list
-   * @param {TenantServiceApiTenantServiceListTenantRequest} requestParameters Request parameters.
+   * @param {MenuServiceApiMenuServiceGetMenuRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof TenantServiceApi
+   * @memberof MenuServiceApi
    */
-  public tenantServiceListTenant(
-    requestParameters: TenantServiceApiTenantServiceListTenantRequest = {},
+  public menuServiceGetMenu(
+    requestParameters: MenuServiceApiMenuServiceGetMenuRequest,
     options?: AxiosRequestConfig,
   ) {
-    return TenantServiceApiFp(this.configuration)
-      .tenantServiceListTenant(
+    return MenuServiceApiFp(this.configuration)
+      .menuServiceGetMenu(requestParameters.id, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @param {MenuServiceApiMenuServiceListMenuRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof MenuServiceApi
+   */
+  public menuServiceListMenu(
+    requestParameters: MenuServiceApiMenuServiceListMenuRequest = {},
+    options?: AxiosRequestConfig,
+  ) {
+    return MenuServiceApiFp(this.configuration)
+      .menuServiceListMenu(
         requestParameters.pageOffset,
         requestParameters.pageSize,
         requestParameters.search,
@@ -967,8 +972,7 @@ export class TenantServiceApi extends BaseAPI {
         requestParameters.fields,
         requestParameters.filterIdIn,
         requestParameters.filterNameIn,
-        requestParameters.filterNameLike,
-        requestParameters.filterRegionIn,
+        requestParameters.filterParentIn,
         options,
       )
       .then((request) => request(this.axios, this.basePath));
@@ -976,52 +980,49 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: saas.tenant,*,list
-   * @param {TenantServiceApiTenantServiceListTenant2Request} requestParameters Request parameters.
+   * @param {MenuServiceApiMenuServiceListMenu2Request} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof TenantServiceApi
+   * @memberof MenuServiceApi
    */
-  public tenantServiceListTenant2(
-    requestParameters: TenantServiceApiTenantServiceListTenant2Request,
+  public menuServiceListMenu2(
+    requestParameters: MenuServiceApiMenuServiceListMenu2Request,
     options?: AxiosRequestConfig,
   ) {
-    return TenantServiceApiFp(this.configuration)
-      .tenantServiceListTenant2(requestParameters.body, options)
+    return MenuServiceApiFp(this.configuration)
+      .menuServiceListMenu2(requestParameters.body, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
-   * @summary authz: saas.tenant,{id},update
-   * @param {TenantServiceApiTenantServiceUpdateTenantRequest} requestParameters Request parameters.
+   * @param {MenuServiceApiMenuServiceUpdateMenuRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof TenantServiceApi
+   * @memberof MenuServiceApi
    */
-  public tenantServiceUpdateTenant(
-    requestParameters: TenantServiceApiTenantServiceUpdateTenantRequest,
+  public menuServiceUpdateMenu(
+    requestParameters: MenuServiceApiMenuServiceUpdateMenuRequest,
     options?: AxiosRequestConfig,
   ) {
-    return TenantServiceApiFp(this.configuration)
-      .tenantServiceUpdateTenant(requestParameters.tenantId, requestParameters.body, options)
+    return MenuServiceApiFp(this.configuration)
+      .menuServiceUpdateMenu(requestParameters.menuId, requestParameters.body, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
-   * @summary authz: saas.tenant,{id},update
-   * @param {TenantServiceApiTenantServiceUpdateTenant2Request} requestParameters Request parameters.
+   * @param {MenuServiceApiMenuServiceUpdateMenu2Request} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof TenantServiceApi
+   * @memberof MenuServiceApi
    */
-  public tenantServiceUpdateTenant2(
-    requestParameters: TenantServiceApiTenantServiceUpdateTenant2Request,
+  public menuServiceUpdateMenu2(
+    requestParameters: MenuServiceApiMenuServiceUpdateMenu2Request,
     options?: AxiosRequestConfig,
   ) {
-    return TenantServiceApiFp(this.configuration)
-      .tenantServiceUpdateTenant2(requestParameters.tenantId, requestParameters.body, options)
+    return MenuServiceApiFp(this.configuration)
+      .menuServiceUpdateMenu2(requestParameters.menuId, requestParameters.body, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }

@@ -12,11 +12,24 @@
  * Do not edit the class manually.
  */
 
-export * from './api/account-api';
-export * from './api/auth-api';
-export * from './api/auth-web-api';
-export * from './api/menu-service-api';
-export * from './api/permission-service-api';
-export * from './api/role-service-api';
-export * from './api/tenant-service-api';
-export * from './api/user-service-api';
+import { V1UpdateMenu } from './v1-update-menu';
+
+/**
+ *
+ * @export
+ * @interface V1UpdateMenuRequest
+ */
+export interface V1UpdateMenuRequest {
+  /**
+   *
+   * @type {V1UpdateMenu}
+   * @memberof V1UpdateMenuRequest
+   */
+  menu?: V1UpdateMenu;
+  /**
+   *
+   * @type {string}
+   * @memberof V1UpdateMenuRequest
+   */
+  updateMask?: string;
+}

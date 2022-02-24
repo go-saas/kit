@@ -15,25 +15,25 @@
 /**
  *
  * @export
- * @interface V1CreateTenantRequest
+ * @interface V1PermissionRequirement
  */
-export interface V1CreateTenantRequest {
+export interface V1PermissionRequirement {
   /**
    *
    * @type {string}
-   * @memberof V1CreateTenantRequest
+   * @memberof V1PermissionRequirement
    */
-  name: string;
+  namespace?: string;
   /**
    *
    * @type {string}
-   * @memberof V1CreateTenantRequest
+   * @memberof V1PermissionRequirement
    */
-  displayName?: string;
+  resource?: string;
   /**
    *
    * @type {string}
-   * @memberof V1CreateTenantRequest
+   * @memberof V1PermissionRequirement
    */
-  region?: string;
+  action?: string;
 }

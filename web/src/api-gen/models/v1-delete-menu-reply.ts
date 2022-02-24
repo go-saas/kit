@@ -12,11 +12,22 @@
  * Do not edit the class manually.
  */
 
-export * from './api/account-api';
-export * from './api/auth-api';
-export * from './api/auth-web-api';
-export * from './api/menu-service-api';
-export * from './api/permission-service-api';
-export * from './api/role-service-api';
-export * from './api/tenant-service-api';
-export * from './api/user-service-api';
+/**
+ *
+ * @export
+ * @interface V1DeleteMenuReply
+ */
+export interface V1DeleteMenuReply {
+  /**
+   *
+   * @type {string}
+   * @memberof V1DeleteMenuReply
+   */
+  id?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof V1DeleteMenuReply
+   */
+  name?: string;
+}

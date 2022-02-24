@@ -12,11 +12,18 @@
  * Do not edit the class manually.
  */
 
-export * from './api/account-api';
-export * from './api/auth-api';
-export * from './api/auth-web-api';
-export * from './api/menu-service-api';
-export * from './api/permission-service-api';
-export * from './api/role-service-api';
-export * from './api/tenant-service-api';
-export * from './api/user-service-api';
+import { V1Permission } from './v1-permission';
+
+/**
+ *
+ * @export
+ * @interface V1ListSubjectPermissionResponse
+ */
+export interface V1ListSubjectPermissionResponse {
+  /**
+   *
+   * @type {Array<V1Permission>}
+   * @memberof V1ListSubjectPermissionResponse
+   */
+  acl?: Array<V1Permission>;
+}

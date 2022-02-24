@@ -17,43 +17,43 @@ import { V1Effect } from './v1-effect';
 /**
  *
  * @export
- * @interface V1Permission
+ * @interface V1AddSubjectPermissionRequest
  */
-export interface V1Permission {
+export interface V1AddSubjectPermissionRequest {
   /**
    *
    * @type {string}
-   * @memberof V1Permission
+   * @memberof V1AddSubjectPermissionRequest
    */
-  namespace?: string;
+  namespace: string;
   /**
    *
    * @type {string}
-   * @memberof V1Permission
+   * @memberof V1AddSubjectPermissionRequest
    */
-  resource?: string;
+  resource: string;
   /**
    *
    * @type {string}
-   * @memberof V1Permission
+   * @memberof V1AddSubjectPermissionRequest
    */
-  action?: string;
+  action: string;
   /**
    *
    * @type {string}
-   * @memberof V1Permission
+   * @memberof V1AddSubjectPermissionRequest
    */
-  subject?: string;
+  subject: string;
   /**
    *
    * @type {V1Effect}
-   * @memberof V1Permission
+   * @memberof V1AddSubjectPermissionRequest
    */
   effect?: V1Effect;
   /**
    *
    * @type {string}
-   * @memberof V1Permission
+   * @memberof V1AddSubjectPermissionRequest
    */
   tenantId?: string;
 }

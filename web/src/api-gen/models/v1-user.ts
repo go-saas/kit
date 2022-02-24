@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import { BlobBlobFile } from './blob-blob-file';
 import { V1Gender } from './v1-gender';
 import { V1Role } from './v1-role';
 
@@ -69,4 +70,10 @@ export interface V1User {
    * @memberof V1User
    */
   roles?: Array<V1Role>;
+  /**
+   *
+   * @type {BlobBlobFile}
+   * @memberof V1User
+   */
+  avatar?: BlobBlobFile;
 }

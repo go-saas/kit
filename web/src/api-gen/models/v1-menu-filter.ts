@@ -12,11 +12,28 @@
  * Do not edit the class manually.
  */
 
-export * from './api/account-api';
-export * from './api/auth-api';
-export * from './api/auth-web-api';
-export * from './api/menu-service-api';
-export * from './api/permission-service-api';
-export * from './api/role-service-api';
-export * from './api/tenant-service-api';
-export * from './api/user-service-api';
+/**
+ *
+ * @export
+ * @interface V1MenuFilter
+ */
+export interface V1MenuFilter {
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof V1MenuFilter
+   */
+  idIn?: Array<string>;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof V1MenuFilter
+   */
+  nameIn?: Array<string>;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof V1MenuFilter
+   */
+  parentIn?: Array<string>;
+}

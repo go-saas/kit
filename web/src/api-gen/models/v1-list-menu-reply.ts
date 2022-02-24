@@ -12,28 +12,30 @@
  * Do not edit the class manually.
  */
 
+import { V1Menu } from './v1-menu';
+
 /**
  *
  * @export
- * @interface V1CreateTenantRequest
+ * @interface V1ListMenuReply
  */
-export interface V1CreateTenantRequest {
+export interface V1ListMenuReply {
   /**
    *
-   * @type {string}
-   * @memberof V1CreateTenantRequest
+   * @type {number}
+   * @memberof V1ListMenuReply
    */
-  name: string;
+  totalSize?: number;
   /**
    *
-   * @type {string}
-   * @memberof V1CreateTenantRequest
+   * @type {number}
+   * @memberof V1ListMenuReply
    */
-  displayName?: string;
+  filterSize?: number;
   /**
    *
-   * @type {string}
-   * @memberof V1CreateTenantRequest
+   * @type {Array<V1Menu>}
+   * @memberof V1ListMenuReply
    */
-  region?: string;
+  items?: Array<V1Menu>;
 }

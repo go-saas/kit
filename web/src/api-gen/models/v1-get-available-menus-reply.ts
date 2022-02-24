@@ -12,11 +12,18 @@
  * Do not edit the class manually.
  */
 
-export * from './api/account-api';
-export * from './api/auth-api';
-export * from './api/auth-web-api';
-export * from './api/menu-service-api';
-export * from './api/permission-service-api';
-export * from './api/role-service-api';
-export * from './api/tenant-service-api';
-export * from './api/user-service-api';
+import { V1Menu } from './v1-menu';
+
+/**
+ *
+ * @export
+ * @interface V1GetAvailableMenusReply
+ */
+export interface V1GetAvailableMenusReply {
+  /**
+   *
+   * @type {Array<V1Menu>}
+   * @memberof V1GetAvailableMenusReply
+   */
+  items?: Array<V1Menu>;
+}

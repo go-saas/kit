@@ -56,6 +56,7 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
   return {
     /**
      *
+     * @summary authz: user.role,*,create
      * @param {V1CreateRoleRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -100,6 +101,7 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
+     * @summary authz: user.role,id,delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -137,6 +139,7 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
+     * @summary authz: user.role,id,get
      * @param {string} id
      * @param {string} [name]
      * @param {*} [options] Override http request option.
@@ -220,6 +223,7 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
+     * @summary authz: user.role,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -295,6 +299,7 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
+     * @summary authz: user.role,*,list
      * @param {V1ListRolesRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -390,6 +395,7 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
+     * @summary authz: user.role,id,update
      * @param {string} roleId
      * @param {V1UpdateRoleRequest} body
      * @param {*} [options] Override http request option.
@@ -441,6 +447,7 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
+     * @summary authz: user.role,id,update
      * @param {string} roleId
      * @param {V1UpdateRoleRequest} body
      * @param {*} [options] Override http request option.
@@ -553,6 +560,7 @@ export const RoleServiceApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
+     * @summary authz: user.role,*,create
      * @param {V1CreateRoleRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -569,6 +577,7 @@ export const RoleServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: user.role,id,delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -582,6 +591,7 @@ export const RoleServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: user.role,id,get
      * @param {string} id
      * @param {string} [name]
      * @param {*} [options] Override http request option.
@@ -619,6 +629,7 @@ export const RoleServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: user.role,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -653,6 +664,7 @@ export const RoleServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: user.role,*,list
      * @param {V1ListRolesRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -688,6 +700,7 @@ export const RoleServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: user.role,id,update
      * @param {string} roleId
      * @param {V1UpdateRoleRequest} body
      * @param {*} [options] Override http request option.
@@ -707,6 +720,7 @@ export const RoleServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: user.role,id,update
      * @param {string} roleId
      * @param {V1UpdateRoleRequest} body
      * @param {*} [options] Override http request option.
@@ -759,6 +773,7 @@ export const RoleServiceApiFactory = function (
   return {
     /**
      *
+     * @summary authz: user.role,*,create
      * @param {V1CreateRoleRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -770,6 +785,7 @@ export const RoleServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: user.role,id,delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -781,6 +797,7 @@ export const RoleServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: user.role,id,get
      * @param {string} id
      * @param {string} [name]
      * @param {*} [options] Override http request option.
@@ -807,6 +824,7 @@ export const RoleServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: user.role,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -842,6 +860,7 @@ export const RoleServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: user.role,*,list
      * @param {V1ListRolesRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -872,6 +891,7 @@ export const RoleServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: user.role,id,update
      * @param {string} roleId
      * @param {V1UpdateRoleRequest} body
      * @param {*} [options] Override http request option.
@@ -888,6 +908,7 @@ export const RoleServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: user.role,id,update
      * @param {string} roleId
      * @param {V1UpdateRoleRequest} body
      * @param {*} [options] Override http request option.
@@ -1147,6 +1168,7 @@ export interface RoleServiceApiRoleServiceUpdateRolePermissionRequest {
 export class RoleServiceApi extends BaseAPI {
   /**
    *
+   * @summary authz: user.role,*,create
    * @param {RoleServiceApiRoleServiceCreateRoleRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1163,6 +1185,7 @@ export class RoleServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: user.role,id,delete
    * @param {RoleServiceApiRoleServiceDeleteRoleRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1179,6 +1202,7 @@ export class RoleServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: user.role,id,get
    * @param {RoleServiceApiRoleServiceGetRoleRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1211,6 +1235,7 @@ export class RoleServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: user.role,*,list
    * @param {RoleServiceApiRoleServiceListRolesRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1236,6 +1261,7 @@ export class RoleServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: user.role,*,list
    * @param {RoleServiceApiRoleServiceListRoles2Request} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1268,6 +1294,7 @@ export class RoleServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: user.role,id,update
    * @param {RoleServiceApiRoleServiceUpdateRoleRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1284,6 +1311,7 @@ export class RoleServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: user.role,id,update
    * @param {RoleServiceApiRoleServiceUpdateRole2Request} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}

@@ -25,7 +25,7 @@ export interface V1UpdateUser {
    * @type {string}
    * @memberof V1UpdateUser
    */
-  id?: string;
+  id: string;
   /**
    *
    * @type {string}
