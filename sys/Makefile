@@ -19,7 +19,7 @@ init:
 .PHONY: config
 # generate internal proto
 config:
-	 buf generate . --path ../proto --path ./private/conf --template buf.config.gen.yaml
+	 buf generate .  --path ./private/conf --template buf.config.gen.yaml
 
 .PHONY: api
 # generate api proto

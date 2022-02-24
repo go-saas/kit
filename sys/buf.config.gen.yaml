@@ -1,5 +1,5 @@
 version: v1
 plugins:
   - name: go
-    out: ../
+    out: .
     opt: paths=source_relative
