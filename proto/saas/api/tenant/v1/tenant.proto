@@ -20,12 +20,14 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 };
 
 service TenantService {
+	//authz: saas.tenant,*,create
 	rpc CreateTenant (CreateTenantRequest) returns (Tenant){
 		option (google.api.http) = {
 			post: "/v1/saas/tenant"
 			body: "*"
 		};
 	};
+	//authz: saas.tenant,{id},update
 	rpc UpdateTenant (UpdateTenantRequest) returns (Tenant){
 		option (google.api.http) = {
 			put: "/v1/saas/tenant/{tenant.id}"
@@ -38,18 +40,19 @@ service TenantService {
 			]
 		};
 	}
+	//authz: saas.tenant,{id},delete
 	rpc DeleteTenant (DeleteTenantRequest) returns (DeleteTenantReply){
 		option (google.api.http) = {
 			delete: "/v1/saas/tenant/{id}"
 		};
 	}
-
+	//authz: saas.tenant,{id},get
 	rpc GetTenant (GetTenantRequest) returns (Tenant){
 		option (google.api.http) = {
 			get: "/v1/saas/tenant/{id_or_name}"
 		};
 	}
-
+	//authz: saas.tenant,*,list
 	rpc ListTenant (ListTenantRequest) returns (ListTenantReply){
 		option (google.api.http) = {
 			get: "/v1/saas/tenants"

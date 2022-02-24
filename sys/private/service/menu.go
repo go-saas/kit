@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
@@ -134,6 +135,66 @@ func (s *MenuService) DeleteMenu(ctx context.Context, req *pb.DeleteMenuRequest)
 	return &pb.DeleteMenuReply{Id: g.ID.String(), Name: g.Name}, nil
 }
 
+func (s *MenuService) GetAvailableMenus(ctx context.Context, req *pb.GetAvailableMenusRequest) (*pb.GetAvailableMenusReply, error) {
+	//allow public call
+	items, err := s.repo.List(ctx, &pb.ListMenuRequest{
+		PageOffset: 0,
+		PageSize:   -1,
+	})
+	if err != nil {
+		return nil, err
+	}
+	//filter by permission
+	var filter []*biz.Menu
+	var disAllowMenuId []string
+	for _, item := range items {
+		if item.IgnoreAuth {
+			filter = append(filter, item)
+			continue
+		}
+		if len(item.Requirement) > 0 {
+			//TODO batch
+			for _, requirement := range item.Requirement {
+				if _, err := s.auth.Check(ctx, authz.NewEntityResource(requirement.Namespace, requirement.Resource), authz.ActionStr(requirement.Action)); err == nil {
+					filter = append(filter, item)
+				} else {
+					//TODO handle permission error or other error
+					//disallow
+					disAllowMenuId = append(disAllowMenuId, item.ID.String())
+				}
+			}
+		} else {
+			//just check if login
+			if ui, ok := authn.FromUserContext(ctx); ok && len(ui.GetId()) > 0 {
+				filter = append(filter, item)
+			} else {
+				disAllowMenuId = append(disAllowMenuId, item.ID.String())
+			}
+		}
+	}
+
+	var filterChildren []*biz.Menu
+	for _, f := range filter {
+		allow := true
+		for _, dis := range disAllowMenuId {
+			if f.Parent == dis {
+				allow = false
+				break
+			}
+		}
+		if allow {
+			filterChildren = append(filterChildren, f)
+		}
+	}
+
+	var retItems []*pb.Menu
+	linq.From(filterChildren).SelectT(func(a *biz.Menu) *pb.Menu {
+		ret := &pb.Menu{}
+		MapBizMenu2Pb(a, ret)
+		return ret
+	}).ToSlice(&retItems)
+	return &pb.GetAvailableMenusReply{Items: retItems}, nil
+}
 func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
 	b.Id = a.ID.String()
 	b.Name = a.Name
@@ -164,6 +225,8 @@ func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
 		b.Meta, _ = structpb.NewStruct(a.Meta)
 	}
 	b.Title = a.Title
+	b.Path = a.Path
+	b.Redirect = a.Redirect
 }
 
 func MapListBizMenu2Pb(a []biz.Menu, b *[]*pb.Menu) {
@@ -204,6 +267,9 @@ func MapUpdatePbMenu2Biz(a *pb.UpdateMenu, b *biz.Menu) {
 		b.Meta = a.Meta.AsMap()
 	}
 	b.Title = a.Title
+	b.Title = a.Title
+	b.Path = a.Path
+	b.Redirect = a.Redirect
 }
 
 func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
@@ -236,6 +302,9 @@ func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
 		b.Meta = a.Meta.AsMap()
 	}
 	b.Title = a.Title
+	b.Title = a.Title
+	b.Path = a.Path
+	b.Redirect = a.Redirect
 }
 
 func normalizeName(name string) string {

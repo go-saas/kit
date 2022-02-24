@@ -10,8 +10,8 @@ import (
 )
 
 type Service interface {
-	CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error)
-	Check(ctx context.Context, resource Resource, action Action) (Result, error)
+	CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (*Result, error)
+	Check(ctx context.Context, resource Resource, action Action) (*Result, error)
 }
 
 // SubjectContributor receive one Subject and retrieve as list of subjects
@@ -102,7 +102,7 @@ func NewDefaultAuthorizationService(checker PermissionChecker, sr SubjectResolve
 	return &DefaultAuthorizationService{checker: checker, sr: sr, log: log.NewHelper(log.With(logger, "module", "authz.service"))}
 }
 
-func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (Result, error) {
+func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (*Result, error) {
 	if always, ok := FromAlwaysAuthorizationContext(ctx); ok {
 		var subjectStr []string
 		for _, s := range subject {
@@ -120,7 +120,7 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 
 	subjectList, err := a.sr.ResolveProcessed(ctx, subject...)
 	if err != nil {
-		return NewDisallowAuthorizationResult(nil), err
+		return nil, err
 	}
 
 	var logStr []string
@@ -131,7 +131,7 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 
 	grantType, err := a.checker.IsGrant(ctx, resource, action, subjectList...)
 	if err != nil {
-		return NewDisallowAuthorizationResult(nil), err
+		return nil, err
 	}
 	if grantType == EffectForbidden {
 		a.log.Debugf("check permission for Subject %s Action %s to Resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
@@ -147,10 +147,10 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 	return r, FormatError(ctx, r, subjectList...)
 }
 
-func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action) (Result, error) {
+func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action) (*Result, error) {
 	subjects, err := a.sr.ResolveFromContext(ctx)
 	if err != nil {
-		return NewDisallowAuthorizationResult(nil), err
+		return nil, err
 	}
 	return a.CheckForSubjects(ctx, resource, action, subjects...)
 }

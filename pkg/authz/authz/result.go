@@ -10,15 +10,15 @@ type Result struct {
 	Requirements []Requirement
 }
 
-func NewAllowAuthorizationResult() Result {
-	return Result{Allowed: true}
+func NewAllowAuthorizationResult() *Result {
+	return &Result{Allowed: true}
 }
 
-func NewDisallowAuthorizationResult(requirements []Requirement) Result {
-	return Result{Allowed: false, Requirements: requirements}
+func NewDisallowAuthorizationResult(requirements []Requirement) *Result {
+	return &Result{Allowed: false, Requirements: requirements}
 }
 
-func FormatError(ctx context.Context, result Result, subjects ...Subject) error {
+func FormatError(ctx context.Context, result *Result, subjects ...Subject) error {
 	if result.Allowed {
 		return nil
 	}

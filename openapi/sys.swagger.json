@@ -301,6 +301,28 @@
           "MenuService"
         ]
       }
+    },
+    "/v1/sys/menus/available": {
+      "get": {
+        "operationId": "MenuService_GetAvailableMenus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetAvailableMenusReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "MenuService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -391,6 +413,12 @@
         },
         "title": {
           "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "redirect": {
+          "type": "string"
         }
       },
       "required": [
@@ -405,6 +433,17 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "v1GetAvailableMenusReply": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Menu"
+          }
         }
       }
     },
@@ -511,6 +550,12 @@
         },
         "title": {
           "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "redirect": {
+          "type": "string"
         }
       }
     },
@@ -608,6 +653,12 @@
           "type": "object"
         },
         "title": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "redirect": {
           "type": "string"
         }
       },

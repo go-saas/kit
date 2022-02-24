@@ -22,10 +22,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TenantServiceClient interface {
+	//authz: saas.tenant,*,create
 	CreateTenant(ctx context.Context, in *CreateTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
+	//authz: saas.tenant,{id},update
 	UpdateTenant(ctx context.Context, in *UpdateTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
+	//authz: saas.tenant,{id},delete
 	DeleteTenant(ctx context.Context, in *DeleteTenantRequest, opts ...grpc.CallOption) (*DeleteTenantReply, error)
+	//authz: saas.tenant,{id},get
 	GetTenant(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
+	//authz: saas.tenant,*,list
 	ListTenant(ctx context.Context, in *ListTenantRequest, opts ...grpc.CallOption) (*ListTenantReply, error)
 }
 
@@ -86,10 +91,15 @@ func (c *tenantServiceClient) ListTenant(ctx context.Context, in *ListTenantRequ
 // All implementations must embed UnimplementedTenantServiceServer
 // for forward compatibility
 type TenantServiceServer interface {
+	//authz: saas.tenant,*,create
 	CreateTenant(context.Context, *CreateTenantRequest) (*Tenant, error)
+	//authz: saas.tenant,{id},update
 	UpdateTenant(context.Context, *UpdateTenantRequest) (*Tenant, error)
+	//authz: saas.tenant,{id},delete
 	DeleteTenant(context.Context, *DeleteTenantRequest) (*DeleteTenantReply, error)
+	//authz: saas.tenant,{id},get
 	GetTenant(context.Context, *GetTenantRequest) (*Tenant, error)
+	//authz: saas.tenant,*,list
 	ListTenant(context.Context, *ListTenantRequest) (*ListTenantReply, error)
 	mustEmbedUnimplementedTenantServiceServer()
 }

@@ -53,6 +53,7 @@ func (s *PermissionService) CheckCurrent(ctx context.Context, req *pb.CheckPermi
 	return &pb.CheckPermissionReply{Effect: effect}, nil
 }
 
+//CheckForSubjects internal api for remote permission checker
 func (s *PermissionService) CheckForSubjects(ctx context.Context, req *pb.CheckSubjectsPermissionRequest) (*pb.CheckSubjectsPermissionReply, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", "*"), authz.GetAction); err != nil {
 		return nil, err
@@ -62,14 +63,15 @@ func (s *PermissionService) CheckForSubjects(ctx context.Context, req *pb.CheckS
 		subjects[i] = authz.SubjectStr(subject)
 	}
 	grant, err := s.auth.CheckForSubjects(ctx, authz.NewEntityResource(req.Namespace, req.Resource), authz.ActionStr(req.Action), subjects...)
-	if err != nil {
+	if err != nil && grant == nil {
+		//other error
 		return nil, err
 	}
 	effect := pb.Effect_FORBIDDEN
 	if grant.Allowed {
 		effect = pb.Effect_GRANT
 	}
-	return &pb.CheckSubjectsPermissionReply{Effect: effect}, nil
+	return &pb.CheckSubjectsPermissionReply{Effect: effect}, err
 }
 
 func (s *PermissionService) AddSubjectPermission(ctx context.Context, req *pb.AddSubjectPermissionRequest) (*pb.AddSubjectPermissionResponse, error) {

@@ -1290,6 +1290,7 @@
     },
     "/v1/saas/tenant": {
       "post": {
+        "summary": "authz: saas.tenant,*,create",
         "operationId": "TenantService_CreateTenant",
         "responses": {
           "200": {
@@ -1322,6 +1323,7 @@
     },
     "/v1/saas/tenant/list": {
       "post": {
+        "summary": "authz: saas.tenant,*,list",
         "operationId": "TenantService_ListTenant2",
         "responses": {
           "200": {
@@ -1354,6 +1356,7 @@
     },
     "/v1/saas/tenant/{idOrName}": {
       "get": {
+        "summary": "authz: saas.tenant,{id},get",
         "operationId": "TenantService_GetTenant",
         "responses": {
           "200": {
@@ -1384,6 +1387,7 @@
     },
     "/v1/saas/tenant/{id}": {
       "delete": {
+        "summary": "authz: saas.tenant,{id},delete",
         "operationId": "TenantService_DeleteTenant",
         "responses": {
           "200": {
@@ -1414,6 +1418,7 @@
     },
     "/v1/saas/tenant/{tenant.id}": {
       "put": {
+        "summary": "authz: saas.tenant,{id},update",
         "operationId": "TenantService_UpdateTenant",
         "responses": {
           "200": {
@@ -1450,6 +1455,7 @@
         ]
       },
       "patch": {
+        "summary": "authz: saas.tenant,{id},update",
         "operationId": "TenantService_UpdateTenant2",
         "responses": {
           "200": {
@@ -1488,6 +1494,7 @@
     },
     "/v1/saas/tenants": {
       "get": {
+        "summary": "authz: saas.tenant,*,list",
         "operationId": "TenantService_ListTenant",
         "responses": {
           "200": {
@@ -1863,6 +1870,28 @@
             "collectionFormat": "multi"
           }
         ],
+        "tags": [
+          "MenuService"
+        ]
+      }
+    },
+    "/v1/sys/menus/available": {
+      "get": {
+        "operationId": "MenuService_GetAvailableMenus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetAvailableMenusReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
         "tags": [
           "MenuService"
         ]
@@ -2494,6 +2523,18 @@
         },
         "microApp": {
           "type": "string"
+        },
+        "meta": {
+          "type": "object"
+        },
+        "title": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "redirect": {
+          "type": "string"
         }
       },
       "required": [
@@ -2619,6 +2660,17 @@
     },
     "v1GetAddressesReply": {
       "type": "object"
+    },
+    "v1GetAvailableMenusReply": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Menu"
+          }
+        }
+      }
     },
     "v1GetCsrfTokenResponse": {
       "type": "object",
@@ -3034,6 +3086,18 @@
         },
         "microApp": {
           "type": "string"
+        },
+        "meta": {
+          "type": "object"
+        },
+        "title": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "redirect": {
+          "type": "string"
         }
       }
     },
@@ -3378,6 +3442,18 @@
           "type": "string"
         },
         "microApp": {
+          "type": "string"
+        },
+        "meta": {
+          "type": "object"
+        },
+        "title": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "redirect": {
           "type": "string"
         }
       },

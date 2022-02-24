@@ -26,6 +26,8 @@ type Menu struct {
 	MicroApp    string                      `json:"micro_app"`
 	Meta        data.JSONMap                `json:"meta"`
 	Title       string                      `json:"title"`
+	Path        string                      `json:"path"`
+	Redirect    string                      `json:"redirect"`
 }
 
 type MenuPermissionRequirement struct {

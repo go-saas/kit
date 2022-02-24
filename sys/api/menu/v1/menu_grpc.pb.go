@@ -27,6 +27,7 @@ type MenuServiceClient interface {
 	CreateMenu(ctx context.Context, in *CreateMenuRequest, opts ...grpc.CallOption) (*Menu, error)
 	UpdateMenu(ctx context.Context, in *UpdateMenuRequest, opts ...grpc.CallOption) (*Menu, error)
 	DeleteMenu(ctx context.Context, in *DeleteMenuRequest, opts ...grpc.CallOption) (*DeleteMenuReply, error)
+	GetAvailableMenus(ctx context.Context, in *GetAvailableMenusRequest, opts ...grpc.CallOption) (*GetAvailableMenusReply, error)
 }
 
 type menuServiceClient struct {
@@ -82,6 +83,15 @@ func (c *menuServiceClient) DeleteMenu(ctx context.Context, in *DeleteMenuReques
 	return out, nil
 }
 
+func (c *menuServiceClient) GetAvailableMenus(ctx context.Context, in *GetAvailableMenusRequest, opts ...grpc.CallOption) (*GetAvailableMenusReply, error) {
+	out := new(GetAvailableMenusReply)
+	err := c.cc.Invoke(ctx, "/sys.api.menu.v1.MenuService/GetAvailableMenus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MenuServiceServer is the server API for MenuService service.
 // All implementations must embed UnimplementedMenuServiceServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type MenuServiceServer interface {
 	CreateMenu(context.Context, *CreateMenuRequest) (*Menu, error)
 	UpdateMenu(context.Context, *UpdateMenuRequest) (*Menu, error)
 	DeleteMenu(context.Context, *DeleteMenuRequest) (*DeleteMenuReply, error)
+	GetAvailableMenus(context.Context, *GetAvailableMenusRequest) (*GetAvailableMenusReply, error)
 	mustEmbedUnimplementedMenuServiceServer()
 }
 
@@ -112,6 +123,9 @@ func (UnimplementedMenuServiceServer) UpdateMenu(context.Context, *UpdateMenuReq
 }
 func (UnimplementedMenuServiceServer) DeleteMenu(context.Context, *DeleteMenuRequest) (*DeleteMenuReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMenu not implemented")
+}
+func (UnimplementedMenuServiceServer) GetAvailableMenus(context.Context, *GetAvailableMenusRequest) (*GetAvailableMenusReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAvailableMenus not implemented")
 }
 func (UnimplementedMenuServiceServer) mustEmbedUnimplementedMenuServiceServer() {}
 
@@ -216,6 +230,24 @@ func _MenuService_DeleteMenu_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MenuService_GetAvailableMenus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAvailableMenusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MenuServiceServer).GetAvailableMenus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sys.api.menu.v1.MenuService/GetAvailableMenus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MenuServiceServer).GetAvailableMenus(ctx, req.(*GetAvailableMenusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MenuService_ServiceDesc is the grpc.ServiceDesc for MenuService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +274,10 @@ var MenuService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteMenu",
 			Handler:    _MenuService_DeleteMenu_Handler,
+		},
+		{
+			MethodName: "GetAvailableMenus",
+			Handler:    _MenuService_GetAvailableMenus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

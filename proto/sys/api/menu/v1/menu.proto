@@ -58,6 +58,11 @@ service MenuService {
     };
   }
 
+  rpc GetAvailableMenus(GetAvailableMenusRequest)returns(GetAvailableMenusReply){
+    option (google.api.http) = {
+      get: "/v1/sys/menus/available",
+    };
+  }
 }
 
 message CreateMenuRequest {
@@ -77,6 +82,8 @@ message CreateMenuRequest {
   string micro_app=15;
   google.protobuf.Struct meta=16;
   string title=17;
+  string path=18;
+  string redirect=19;
 }
 
 message UpdateMenuRequest {
@@ -102,6 +109,8 @@ message UpdateMenu{
   string micro_app=15;
   google.protobuf.Struct meta=16;
   string title=17;
+  string path=18;
+  string redirect=19;
 }
 
 
@@ -154,4 +163,13 @@ message Menu{
   string micro_app=15;
   google.protobuf.Struct meta=16;
   string title=17;
+  string path=18;
+  string redirect=19;
+}
+
+message GetAvailableMenusRequest{
+
+}
+message GetAvailableMenusReply{
+  repeated Menu items=3;
 }

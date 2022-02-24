@@ -180,6 +180,10 @@ func (m *CreateMenuRequest) validate(all bool) error {
 
 	// no validation rules for Title
 
+	// no validation rules for Path
+
+	// no validation rules for Redirect
+
 	if len(errors) > 0 {
 		return CreateMenuRequestMultiError(errors)
 	}
@@ -584,6 +588,10 @@ func (m *UpdateMenu) validate(all bool) error {
 	}
 
 	// no validation rules for Title
+
+	// no validation rules for Path
+
+	// no validation rules for Redirect
 
 	if len(errors) > 0 {
 		return UpdateMenuMultiError(errors)
@@ -1541,6 +1549,10 @@ func (m *Menu) validate(all bool) error {
 
 	// no validation rules for Title
 
+	// no validation rules for Path
+
+	// no validation rules for Redirect
+
 	if len(errors) > 0 {
 		return MenuMultiError(errors)
 	}
@@ -1616,3 +1628,239 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MenuValidationError{}
+
+// Validate checks the field values on GetAvailableMenusRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetAvailableMenusRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetAvailableMenusRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetAvailableMenusRequestMultiError, or nil if none found.
+func (m *GetAvailableMenusRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetAvailableMenusRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetAvailableMenusRequestMultiError(errors)
+	}
+	return nil
+}
+
+// GetAvailableMenusRequestMultiError is an error wrapping multiple validation
+// errors returned by GetAvailableMenusRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetAvailableMenusRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetAvailableMenusRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetAvailableMenusRequestMultiError) AllErrors() []error { return m }
+
+// GetAvailableMenusRequestValidationError is the validation error returned by
+// GetAvailableMenusRequest.Validate if the designated constraints aren't met.
+type GetAvailableMenusRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetAvailableMenusRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetAvailableMenusRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetAvailableMenusRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetAvailableMenusRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetAvailableMenusRequestValidationError) ErrorName() string {
+	return "GetAvailableMenusRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetAvailableMenusRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetAvailableMenusRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetAvailableMenusRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetAvailableMenusRequestValidationError{}
+
+// Validate checks the field values on GetAvailableMenusReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetAvailableMenusReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetAvailableMenusReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetAvailableMenusReplyMultiError, or nil if none found.
+func (m *GetAvailableMenusReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetAvailableMenusReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetAvailableMenusReplyValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetAvailableMenusReplyValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetAvailableMenusReplyValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetAvailableMenusReplyMultiError(errors)
+	}
+	return nil
+}
+
+// GetAvailableMenusReplyMultiError is an error wrapping multiple validation
+// errors returned by GetAvailableMenusReply.ValidateAll() if the designated
+// constraints aren't met.
+type GetAvailableMenusReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetAvailableMenusReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetAvailableMenusReplyMultiError) AllErrors() []error { return m }
+
+// GetAvailableMenusReplyValidationError is the validation error returned by
+// GetAvailableMenusReply.Validate if the designated constraints aren't met.
+type GetAvailableMenusReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetAvailableMenusReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetAvailableMenusReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetAvailableMenusReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetAvailableMenusReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetAvailableMenusReplyValidationError) ErrorName() string {
+	return "GetAvailableMenusReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetAvailableMenusReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetAvailableMenusReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetAvailableMenusReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetAvailableMenusReplyValidationError{}

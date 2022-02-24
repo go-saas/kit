@@ -20,6 +20,7 @@ const _ = http.SupportPackageIsVersion1
 type MenuServiceHTTPServer interface {
 	CreateMenu(context.Context, *CreateMenuRequest) (*Menu, error)
 	DeleteMenu(context.Context, *DeleteMenuRequest) (*DeleteMenuReply, error)
+	GetAvailableMenus(context.Context, *GetAvailableMenusRequest) (*GetAvailableMenusReply, error)
 	GetMenu(context.Context, *GetMenuRequest) (*Menu, error)
 	ListMenu(context.Context, *ListMenuRequest) (*ListMenuReply, error)
 	UpdateMenu(context.Context, *UpdateMenuRequest) (*Menu, error)
@@ -34,6 +35,7 @@ func RegisterMenuServiceHTTPServer(s *http.Server, srv MenuServiceHTTPServer) {
 	r.PATCH("/v1/sys/menu/{menu.id}", _MenuService_UpdateMenu0_HTTP_Handler(srv))
 	r.PUT("/v1/sys/menu/{menu.id}", _MenuService_UpdateMenu1_HTTP_Handler(srv))
 	r.DELETE("/v1/sys/menu/{id}", _MenuService_DeleteMenu0_HTTP_Handler(srv))
+	r.GET("/v1/sys/menus/available", _MenuService_GetAvailableMenus0_HTTP_Handler(srv))
 }
 
 func _MenuService_ListMenu0_HTTP_Handler(srv MenuServiceHTTPServer) func(ctx http.Context) error {
@@ -181,9 +183,29 @@ func _MenuService_DeleteMenu0_HTTP_Handler(srv MenuServiceHTTPServer) func(ctx h
 	}
 }
 
+func _MenuService_GetAvailableMenus0_HTTP_Handler(srv MenuServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetAvailableMenusRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/sys.api.menu.v1.MenuService/GetAvailableMenus")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetAvailableMenus(ctx, req.(*GetAvailableMenusRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetAvailableMenusReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type MenuServiceHTTPClient interface {
 	CreateMenu(ctx context.Context, req *CreateMenuRequest, opts ...http.CallOption) (rsp *Menu, err error)
 	DeleteMenu(ctx context.Context, req *DeleteMenuRequest, opts ...http.CallOption) (rsp *DeleteMenuReply, err error)
+	GetAvailableMenus(ctx context.Context, req *GetAvailableMenusRequest, opts ...http.CallOption) (rsp *GetAvailableMenusReply, err error)
 	GetMenu(ctx context.Context, req *GetMenuRequest, opts ...http.CallOption) (rsp *Menu, err error)
 	ListMenu(ctx context.Context, req *ListMenuRequest, opts ...http.CallOption) (rsp *ListMenuReply, err error)
 	UpdateMenu(ctx context.Context, req *UpdateMenuRequest, opts ...http.CallOption) (rsp *Menu, err error)
@@ -217,6 +239,19 @@ func (c *MenuServiceHTTPClientImpl) DeleteMenu(ctx context.Context, in *DeleteMe
 	opts = append(opts, http.Operation("/sys.api.menu.v1.MenuService/DeleteMenu"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *MenuServiceHTTPClientImpl) GetAvailableMenus(ctx context.Context, in *GetAvailableMenusRequest, opts ...http.CallOption) (*GetAvailableMenusReply, error) {
+	var out GetAvailableMenusReply
+	pattern := "/v1/sys/menus/available"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation("/sys.api.menu.v1.MenuService/GetAvailableMenus"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

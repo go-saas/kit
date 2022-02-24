@@ -42,7 +42,7 @@ func (m *MenuSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	return nil
 }
 
-func (m *MenuSeed) upsertMenus(ctx context.Context, parent string, menus interface{}) error {
+func (m *MenuSeed) upsertMenus(ctx context.Context, parentId string, menus interface{}) error {
 	v := reflect.ValueOf(menus)
 	switch v.Kind() {
 	case reflect.Slice:
@@ -67,10 +67,11 @@ func (m *MenuSeed) upsertMenus(ctx context.Context, parent string, menus interfa
 			if actual.Name == "" {
 				return errors.New("menu name is required")
 			}
-			actual.Parent = parent
+			actual.Parent = parentId
 			//ensure create
 			actual.Name = strings.ToLower(actual.Name)
 			dbEntity, err := m.menuRepo.FindByName(ctx, actual.Name)
+			pId := ""
 			if err != nil {
 				return err
 			}
@@ -78,10 +79,13 @@ func (m *MenuSeed) upsertMenus(ctx context.Context, parent string, menus interfa
 				if err := m.menuRepo.Create(ctx, actual); err != nil {
 					return err
 				}
+				pId = actual.ID.String()
+			} else {
+				pId = dbEntity.ID.String()
 			}
 
 			if children, ok := raw["children"]; ok {
-				if err := m.upsertMenus(ctx, actual.Name, children); err != nil {
+				if err := m.upsertMenus(ctx, pId, children); err != nil {
 					return err
 				}
 			}
