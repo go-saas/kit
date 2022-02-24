@@ -27,7 +27,13 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
 
   const vitePlugins: (Plugin | Plugin[])[] = [
     // have to
-    vue(),
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => /^micro-app/.test(tag),
+        },
+      },
+    }),
     // have to
     vueJsx(),
     // support name

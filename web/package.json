@@ -37,6 +37,7 @@
     "@ant-design/colors": "^6.0.0",
     "@ant-design/icons-vue": "^6.0.1",
     "@iconify/iconify": "^2.0.4",
+    "@micro-zoe/micro-app": "^0.8.5",
     "@vueuse/core": "^6.7.4",
     "@vueuse/shared": "^6.7.4",
     "@zxcvbn-ts/core": "^1.0.0-beta.0",

@@ -12,6 +12,7 @@ specifiers:
   '@commitlint/config-conventional': ^14.1.0
   '@iconify/iconify': ^2.0.4
   '@iconify/json': ^1.1.422
+  '@micro-zoe/micro-app': ^0.8.5
   '@openapitools/openapi-generator-cli': ^2.4.26
   '@purge-icons/generated': ^0.7.0
   '@types/codemirror': ^5.60.5
@@ -108,6 +109,7 @@ dependencies:
   '@ant-design/colors': 6.0.0
   '@ant-design/icons-vue': 6.0.1_vue@3.2.21
   '@iconify/iconify': 2.0.4
+  '@micro-zoe/micro-app': 0.8.5
   '@vueuse/core': 6.7.4_vue@3.2.21
   '@vueuse/shared': 6.7.4_vue@3.2.21
   '@zxcvbn-ts/core': 1.0.0-beta.0
@@ -1928,6 +1930,10 @@ packages:
       '@types/yargs': 16.0.4
       chalk: 4.1.2
     dev: true
+
+  /@micro-zoe/micro-app/0.8.5:
+    resolution: {integrity: sha512-PFnoAxepT/njBEP1fkavvxVoyWsEexcq/BGq7rcW+3kavOHwrm3yNpDlsLEkVT3FVGA11tCWe0TmbJMsFYTTSg==}
+    dev: false
 
   /@nestjs/common/8.2.6_88a789cb3f20cca25c3f70fe96f41643:
     resolution: {integrity: sha512-flLYSXunxcKyjbYddrhwbc49uE705MxBt85rS3mHyhDbAIPSGGeZEqME44YyAzCg1NTfJSNe7ztmOce5kNkb9A==}

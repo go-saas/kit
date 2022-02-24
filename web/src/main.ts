@@ -22,9 +22,11 @@ if (import.meta.env.DEV) {
   import('ant-design-vue/dist/antd.less');
 }
 
+// Implement MicroApp
+import microApp from '@micro-zoe/micro-app';
+
 async function bootstrap() {
   const app = createApp(App);
-
   // Configure store
   setupStore(app);
 
@@ -54,6 +56,10 @@ async function bootstrap() {
   // await router.isReady();
 
   app.mount('#app');
+
+  microApp.start({
+    shadowDOM: true,
+  });
 }
 
 bootstrap();
