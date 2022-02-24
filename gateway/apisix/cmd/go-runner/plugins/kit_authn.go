@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
@@ -28,9 +27,6 @@ type KitAuthn struct {
 }
 
 type KitAuthConf struct {
-	Security   *conf2.Security
-	Services   *conf2.Services
-	ClientName string
 }
 
 var tokenizer jwt.Tokenizer
@@ -61,11 +57,6 @@ func (p *KitAuthn) ParseConf(in []byte) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	//init all
-	_, _, err = initApp(conf.Services, conf.Security, api.ClientName(conf.ClientName))
-	if err != nil {
-		return nil, err
-	}
 	return conf, err
 }
 
@@ -82,32 +73,32 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	}
 	uid := ""
 	clientId := ""
-
-	if claims, err := jwt.ExtractAndValidate(tokenizer, t); err != nil {
-		log.Fatalf("fail to extract and validate token %s", err)
-	} else {
-		if claims.Subject != "" {
-			uid = claims.Subject
+	if len(t) > 0 {
+		if claims, err := jwt.ExtractAndValidate(tokenizer, t); err != nil {
+			log.Errorf("fail to extract and validate token %s", err)
 		} else {
-			uid = claims.Uid
+			if claims.Subject != "" {
+				uid = claims.Subject
+			} else {
+				uid = claims.Uid
+			}
+			clientId = claims.ClientId
 		}
-		clientId = claims.ClientId
 	}
-
+	log.Infof("resolve user: %s client: %s", uid, clientId)
 	if len(clientId) > 0 {
 		ctx = authn.NewClientContext(ctx, clientId)
 	}
 	ctx = authn.NewUserContext(ctx, authn.NewUserInfo(uid))
 
 	//set auth token
-
 	//use token mgr
 	token, err := tokenManager.GetOrGenerateToken(ctx, &conf2.Client{
 		ClientId:     apiClient.ClientId,
 		ClientSecret: apiClient.ClientSecret,
 	})
 	if err != nil {
-		log.Fatalf("%s", err)
+		log.Errorf("%s", err)
 		w.WriteHeader(500)
 		return
 	}
@@ -119,7 +110,9 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		headers := contributor.CreateHeader(ctx)
 		if headers != nil {
 			for k, v := range headers {
-				w.Header().Set(fmt.Sprintf("%s%s", api.PrefixOrDefault(""), k), v)
+				nh := fmt.Sprintf("%s%s", api.PrefixOrDefault(""), k)
+				log.Infof("set header: %s value: %s", nh, v)
+				w.Header().Set(nh, v)
 			}
 		}
 	}

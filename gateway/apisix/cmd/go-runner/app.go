@@ -1,7 +1,8 @@
-package plugins
+package main
 
 import (
 	"github.com/google/wire"
+	"github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
@@ -25,7 +26,7 @@ func newApp(tenantStore common.TenantStore, t jwt.Tokenizer, tmr api.TokenManage
 
 func (a *App) load() error {
 	sapisix.InitTenantStore(a.tenantStore)
-	if err := Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.ao); err != nil {
+	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.ao); err != nil {
 		return err
 	}
 	return nil

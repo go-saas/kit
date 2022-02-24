@@ -9,6 +9,7 @@ services:
       dockerfile: ./gateway/apisix/Dockerfile
     volumes:
       - ./quickstart/configs/apisix/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - ./quickstart/configs:/usr/local/apisix/kit/conf
     depends_on:
       - etcd
     ports:

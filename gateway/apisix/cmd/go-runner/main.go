@@ -19,12 +19,17 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-kratos/kratos/v2/config"
+	"github.com/go-kratos/kratos/v2/config/file"
+	"github.com/goxiaoy/go-saas-kit/gateway/apisix/internal/conf"
+	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"go.uber.org/zap/zapcore"
 	"io"
 	"os"
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/thediveo/enumflag"
@@ -94,6 +99,7 @@ func openFileToWrite(name string) (*os.File, error) {
 func newRunCommand() *cobra.Command {
 	var mode RunMode
 	var clientName string
+	var flagconf string
 	cmd := &cobra.Command{
 		Use:   "run",
 		Short: "run",
@@ -134,6 +140,26 @@ func newRunCommand() *cobra.Command {
 					}
 				}()
 			}
+			c := config.New(
+				config.WithSource(
+					file.NewSource(strings.TrimSpace(flagconf)),
+				),
+			)
+			if err := c.Load(); err != nil {
+				panic(err)
+			}
+
+			var bc conf.Bootstrap
+			if err := c.Scan(&bc); err != nil {
+				panic(err)
+			}
+
+			//init all
+			_, clean, err := initApp(bc.Services, bc.Security, api.ClientName(clientName))
+			if err != nil {
+				panic(err)
+			}
+			defer clean()
 			runner.Run(cfg)
 		},
 	}
@@ -143,6 +169,7 @@ func newRunCommand() *cobra.Command {
 		"mode", "m",
 		"the runner's run mode; can be 'prod' or 'dev', default to 'dev'")
 	cmd.PersistentFlags().StringVarP(&clientName, "client", "n", "apisix", "client name")
+	cmd.PersistentFlags().StringVarP(&flagconf, "conf", "c", "../../configs", "config path, eg: -conf config.yaml")
 	return cmd
 }
 

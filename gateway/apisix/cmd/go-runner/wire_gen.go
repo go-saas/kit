@@ -4,7 +4,7 @@
 //go:build !wireinject
 // +build !wireinject
 
-package plugins
+package main
 
 import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
@@ -15,17 +15,22 @@ import (
 	"github.com/goxiaoy/go-saas-kit/saas/remote"
 )
 
+import (
+	_ "github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
+	_ "github.com/goxiaoy/go-saas/gateway/apisix"
+)
+
 // Injectors from wire.go:
 
 func initApp(services *conf.Services, security *conf.Security, clientName api.ClientName, arg ...grpc.ClientOption) (*App, func(), error) {
 	option := NewOption()
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
-	jwtTokenizer := jwt.NewTokenizer(tokenizerConfig)
-	inMemoryTokenManager := api.NewInMemoryTokenManager(jwtTokenizer)
+	tokenizer := jwt.NewTokenizer(tokenizerConfig)
+	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer)
 	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, arg...)
 	tenantServiceClient := api2.NewTenantGrpcClient(grpcConn)
 	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceClient)
-	app, err := newApp(tenantStore, jwtTokenizer, inMemoryTokenManager, services, clientName, option)
+	app, err := newApp(tenantStore, tokenizer, inMemoryTokenManager, services, clientName, option)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
