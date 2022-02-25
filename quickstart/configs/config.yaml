@@ -11,7 +11,8 @@ services:
       http:
         addr: 0.0.0.0:8500
         csrf:
-          secure: false
+          cookie:
+            secure: false
       grpc:
         addr: 0.0.0.0:8501
     saas:
