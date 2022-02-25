@@ -53,7 +53,7 @@ func preloadMenuScope() func(db *g.DB) *g.DB {
 
 func (c *MenuRepo) List(ctx context.Context, query *v1.ListMenuRequest) ([]*biz.Menu, error) {
 	db := c.GetDb(ctx).Model(&biz.Menu{})
-	db = db.Scopes(buildMenuScope(query.Search, query.Filter), preloadMenuScope(), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
+	db = db.Scopes(buildMenuScope(query.Search, query.Filter), preloadMenuScope(), gorm2.SortScope(query, []string{"created_at"}), gorm2.PageScope(query))
 	var items []*biz.Menu
 	res := db.Find(&items)
 	return items, res.Error

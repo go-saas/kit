@@ -6,6 +6,7 @@ import { useI18n } from '/@/hooks/web/useI18n';
 import {
   flatMultiLevelRoutes,
   transformObjToAppRouteRecordRaw,
+  transformObjToRoute,
 } from '/@/router/helper/routeHelper';
 import { transformRouteToMenu } from '/@/router/helper/menuHelper';
 import { PermissionAcl } from '/#/store';
@@ -164,8 +165,10 @@ export const usePermissionStore = defineStore({
         console.error(error);
       }
 
+      routeList = transformObjToRoute(routeList);
       //  Background routing to menu structure
       const backMenuList = transformRouteToMenu(routeList);
+
       this.setBackMenuList(backMenuList);
 
       // remove meta.ignoreRoute item
