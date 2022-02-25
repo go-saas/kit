@@ -11,10 +11,10 @@ services:
     #    depends_on:
     #      - etcd
     ports:
-      - "9080:9080/tcp"
-      - "9091:9091/tcp"
-      - "9443:9443/tcp"
-      - "9092/tcp"
+      - "8600:9080"
+      - "9091:9091"
+      - "9443:9443"
+      - "9092"
 
   api_docs:
     image: ${DOCKER_REGISTRY}go-saas-kit-swagger:${DOCKER_TAG:-latest}
