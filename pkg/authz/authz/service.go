@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
+	"github.com/goxiaoy/go-saas/common"
 	"strings"
 )
 
@@ -37,11 +38,12 @@ func NewSubjectResolver(opt *Option) *SubjectResolverImpl {
 func (s *SubjectResolverImpl) ResolveFromContext(ctx context.Context) ([]Subject, error) {
 	var subjects []Subject
 	var userId string
-	if userInfo, ok := authn.FromUserContext(ctx); ok {
-		userId = userInfo.GetId()
-		subjects = append(subjects, NewUserSubject(userId))
-	}
-	if clientId, ok := authn.FromClientContext(ctx); ok {
+	userInfo, _ := authn.FromUserContext(ctx)
+	userId = userInfo.GetId()
+	//append empty user
+	subjects = append(subjects, NewUserSubject(userId))
+	if clientId, ok := authn.FromClientContext(ctx); ok && len(clientId) > 0 {
+		//do not append empty client
 		subjects = append(subjects, NewClientSubject(clientId))
 	}
 	return subjects, nil
@@ -127,22 +129,26 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 	for _, s := range subjectList {
 		logStr = append(logStr, s.GetIdentity())
 	}
-	a.log.Debugf("check permission for Subject %s Action %s to Resource %s ", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+	ti, _ := common.FromCurrentTenant(ctx)
+	logItems := []interface{}{
+		strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()), ti.GetId(),
+	}
+	a.log.Debugf("check permission for Subject: %s Action: %s to Resource: %s in Tenant:%s", logItems...)
 
 	grantType, err := a.checker.IsGrant(ctx, resource, action, subjectList...)
 	if err != nil {
 		return nil, err
 	}
 	if grantType == EffectForbidden {
-		a.log.Debugf("check permission for Subject %s Action %s to Resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+		a.log.Debugf("check permission for Subject: %s Action: %s to Resource: %s in Tenant: %s forbidden", logItems...)
 		r := NewDisallowAuthorizationResult(nil)
 		return r, FormatError(ctx, r, subjectList...)
 	}
 	if grantType == EffectGrant {
-		a.log.Debugf("check permission for Subject %s Action %s to Resource %s granted", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+		a.log.Debugf("check permission for Subject: %s Action: %s to Resource: %s in Tenant: %s granted", logItems...)
 		return NewAllowAuthorizationResult(), nil
 	}
-	a.log.Debugf("check permission for Subject %s Action %s to Resource %s forbidden", strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
+	a.log.Debugf("check permission for Subject: %s Action: %s to Resource: %s in Tenant: %s forbidden", logItems...)
 	r := NewDisallowAuthorizationResult(nil)
 	return r, FormatError(ctx, r, subjectList...)
 }

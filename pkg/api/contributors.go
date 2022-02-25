@@ -89,6 +89,10 @@ func (u *ClientContributor) RecoverContext(ctx context.Context, headers Header) 
 		return ctx, nil
 	}
 	client := headers.Get(clientKey)
+	if client == "-" {
+		//can not set empty value header in gateway
+		client = ""
+	}
 	u.l.Infof("recover client: %s", client)
 	return authn.NewClientContext(ctx, client), nil
 }
@@ -99,6 +103,10 @@ func (u *ClientContributor) CreateHeader(ctx context.Context) map[string]string 
 	}
 	res := map[string]string{}
 	if client, ok := authn.FromClientContext(ctx); ok {
+		if len(client) == 0 {
+			//can not set empty value header in gateway
+			client = "-"
+		}
 		res[clientKey] = client
 	}
 	return res
