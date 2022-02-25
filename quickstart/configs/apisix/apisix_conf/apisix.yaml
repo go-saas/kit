@@ -7,7 +7,7 @@ routes:
     upstream_id: saas-http
 
   -
-    uri: /swagger/*
+    uri: /swagger*
     upstream_id: api-docs
 
 
