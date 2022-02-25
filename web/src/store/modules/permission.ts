@@ -3,18 +3,20 @@ import type { AppRouteRecordRaw, Menu } from '/@/router/types';
 import { defineStore } from 'pinia';
 import { store } from '/@/store';
 import { useI18n } from '/@/hooks/web/useI18n';
-import { flatMultiLevelRoutes } from '/@/router/helper/routeHelper';
+import {
+  flatMultiLevelRoutes,
+  transformObjToAppRouteRecordRaw,
+} from '/@/router/helper/routeHelper';
 import { transformRouteToMenu } from '/@/router/helper/menuHelper';
 import { PermissionAcl } from '/#/store';
 import { PermissionEffect } from '/@/enums/permissionEnum';
 
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
-import { asyncRoutes } from '/@/router/routes';
 import { ERROR_LOG_ROUTE, PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 
 import { filter } from '/@/utils/helper/treeHelper';
 
-import { PermissionServiceApi } from '/@/api-gen/api';
+import { PermissionServiceApi, MenuServiceApi } from '/@/api-gen/api';
 import { PERMISSION_KEY } from '/@/enums/cacheEnum';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { PageEnum } from '/@/enums/pageEnum';
@@ -155,7 +157,9 @@ export const usePermissionStore = defineStore({
       let routeList: AppRouteRecordRaw[] = [];
       try {
         await this.changePermissionCode();
-        routeList = asyncRoutes;
+        routeList = transformObjToAppRouteRecordRaw(
+          (await new MenuServiceApi().menuServiceGetAvailableMenus()).data?.items ?? [],
+        );
       } catch (error) {
         console.error(error);
       }

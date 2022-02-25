@@ -5,7 +5,7 @@ import { store } from '/@/store';
 import { PageEnum } from '/@/enums/pageEnum';
 import { TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
-import { AuthWebApi, AccountApi } from '/@/api-gen/api';
+import { AuthWebApi, AuthApi, AccountApi } from '/@/api-gen/api';
 import { V1LoginAuthRequest } from '/@/api-gen/models';
 import { useI18n } from '/@/hooks/web/useI18n';
 import { useMessage } from '/@/hooks/web/useMessage';
@@ -75,7 +75,11 @@ export const useUserStore = defineStore({
     ): Promise<Nullable<UserInfo>> {
       try {
         const { redirect = '/', mode, ...loginParams } = params;
-        const data = await new AuthWebApi().authWebWebLogin(
+        // const data = await new AuthWebApi().authWebWebLogin(
+        //   { body: loginParams },
+        //   { data: { errorMessageMode: mode } },
+        // );
+        const data = await new AuthApi().authLogin(
           { body: loginParams },
           { data: { errorMessageMode: mode } },
         );
