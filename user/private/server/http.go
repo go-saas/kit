@@ -9,7 +9,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
+	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
@@ -38,7 +38,7 @@ func NewHTTPServer(c *conf.Services,
 	tokenizer jwt.Tokenizer,
 	uowMgr uow2.Manager,
 	mOpt *shttp.WebMultiTenancyOption,
-	apiOpt *api2.Option,
+	apiOpt *sapi.Option,
 	ts common.TenantStore,
 	reqDecoder khttp.DecodeRequestFunc,
 	resEncoder khttp.EncodeResponseFunc,
@@ -68,7 +68,7 @@ func NewHTTPServer(c *conf.Services,
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 			saas.Server(mOpt, ts),
-			api2.ServerMiddleware(apiOpt),
+			sapi.ServerMiddleware(apiOpt, logger),
 			uow.Uow(logger, uowMgr),
 		),
 	}...)
@@ -86,7 +86,7 @@ func NewHTTPServer(c *conf.Services,
 
 		server.MiddlewareConvert(
 			saas.Server(mOpt, ts),
-			api2.ServerMiddleware(apiOpt),
+			sapi.ServerMiddleware(apiOpt, logger),
 			uow.Uow(logger, uowMgr),
 		))
 

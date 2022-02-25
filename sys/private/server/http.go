@@ -8,7 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
+	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
@@ -33,7 +33,7 @@ func NewHTTPServer(c *conf2.Services,
 	errEncoder http.EncodeErrorFunc,
 	factory blob.Factory,
 	dataCfg *conf.Data,
-	apiOpt *api2.Option,
+	apiOpt *sapi.Option,
 	logger log.Logger,
 	menu *service.MenuService) *http.Server {
 	var opts []http.ServerOption
@@ -46,7 +46,7 @@ func NewHTTPServer(c *conf2.Services,
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			api2.ServerMiddleware(apiOpt),
+			sapi.ServerMiddleware(apiOpt, logger),
 			uow.Uow(logger, uowMgr),
 		),
 	}...)

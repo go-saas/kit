@@ -1,13 +1,21 @@
 package main
 
 import (
+	"errors"
+	"fmt"
+	"github.com/go-kratos/kratos/v2/log"
+	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas/common"
+	shttp "github.com/goxiaoy/go-saas/common/http"
 	sapisix "github.com/goxiaoy/go-saas/gateway/apisix"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"net/http"
 )
 
 type App struct {
@@ -16,25 +24,50 @@ type App struct {
 	tokenManager api.TokenManager
 	services     *conf.Services
 	clientName   api.ClientName
-	ao           *api.Option
+	logger       klog.Logger
+	tenantCfg    *shttp.WebMultiTenancyOption
 }
 
-func newApp(tenantStore common.TenantStore, t jwt.Tokenizer, tmr api.TokenManager, services *conf.Services, clientName api.ClientName, ao *api.Option) (*App, error) {
-	ret := &App{tenantStore: tenantStore, tokenizer: t, tokenManager: tmr, services: services, clientName: clientName, ao: ao}
+func newApp(tenantStore common.TenantStore, t jwt.Tokenizer, tmr api.TokenManager, services *conf.Services, clientName api.ClientName, tenantCfg *shttp.WebMultiTenancyOption, logger klog.Logger) (*App, error) {
+	ret := &App{tenantStore: tenantStore, tokenizer: t, tokenManager: tmr, services: services, clientName: clientName, tenantCfg: tenantCfg, logger: logger}
 	return ret, ret.load()
 }
 
 func (a *App) load() error {
-	sapisix.InitTenantStore(a.tenantStore)
-	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.ao); err != nil {
+	sapisix.Init(a.tenantStore, fmt.Sprintf("%s%s", api.PrefixOrDefault(""), a.tenantCfg.TenantKey), func(err error, w http.ResponseWriter) {
+		if errors.Is(err, common.ErrTenantNotFound) {
+			w.WriteHeader(404)
+			w.Header().Set("Content-Type", "application/json")
+			w.Write([]byte("{\"code\":404,\"reason\":\"\",\"message\":\"\"}"))
+			return
+		}
+		if st, ok := status.FromError(err); ok {
+			if st.Code() == codes.PermissionDenied {
+				w.WriteHeader(403)
+				w.Header().Set("Content-Type", "application/json")
+				w.Write([]byte("{\"code\":403,\"reason\":\"\",\"message\":\"\"}"))
+				return
+			}
+			if st.Code() == codes.Unauthenticated {
+				w.WriteHeader(401)
+				w.Header().Set("Content-Type", "application/json")
+				w.Write([]byte("{\"code\":401,\"reason\":\"\",\"message\":\"\"}"))
+				return
+			}
+		}
+		w.WriteHeader(500)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte("{\"code\":500,\"reason\":\"\",\"message\":\"\"}"))
+	})
+	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.logger); err != nil {
 		return err
 	}
 	return nil
 }
 
-func NewOption() *api.Option {
-	return api.NewOption("", true, api.NewUserContributor(), api.NewClientContributor())
+func NewSelfClientOption(logger log.Logger) *api.Option {
+	return api.NewOption("", false, api.NewUserContributor(logger), api.NewClientContributor(true, logger))
 }
 
-var ProviderSet = wire.NewSet(api.NewInMemoryTokenManager, NewOption,
-	wire.Bind(new(api.TokenManager), new(*api.InMemoryTokenManager)))
+var ProviderSet = wire.NewSet(api.NewInMemoryTokenManager, NewSelfClientOption,
+	wire.Bind(new(api.TokenManager), new(*api.InMemoryTokenManager)), shttp.NewDefaultWebMultiTenancyOption)

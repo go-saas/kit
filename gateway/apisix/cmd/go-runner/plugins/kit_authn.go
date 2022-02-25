@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
@@ -29,12 +30,14 @@ type KitAuthn struct {
 type KitAuthConf struct {
 }
 
-var tokenizer jwt.Tokenizer
-var tokenManager api.TokenManager
-var apiClient *conf2.Client
-var apiOpt *api.Option
+var (
+	tokenizer    jwt.Tokenizer
+	tokenManager api.TokenManager
+	apiClient    *conf2.Client
+	apiOpt       *api.Option
+)
 
-func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, services *conf2.Services, ao *api.Option) error {
+func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, services *conf2.Services, logger klog.Logger) error {
 	tokenizer = t
 	tokenManager = tmr
 	clientCfg, ok := services.Clients[string(clientName)]
@@ -42,8 +45,7 @@ func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, serv
 		return errors.New(fmt.Sprintf(" %v client not found", clientName))
 	}
 	apiClient = clientCfg
-
-	apiOpt = ao
+	apiOpt = api.NewOption("", true, api.NewUserContributor(logger), api.NewClientContributor(false, logger))
 	return nil
 }
 
@@ -85,10 +87,12 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 			clientId = claims.ClientId
 		}
 	}
+
+	//TODO session auth
+
 	log.Infof("resolve user: %s client: %s", uid, clientId)
-	if len(clientId) > 0 {
-		ctx = authn.NewClientContext(ctx, clientId)
-	}
+	//keep previous client id
+	ctx = authn.NewClientContext(ctx, clientId)
 	ctx = authn.NewUserContext(ctx, authn.NewUserInfo(uid))
 
 	//set auth token
@@ -112,12 +116,10 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 			for k, v := range headers {
 				nh := fmt.Sprintf("%s%s", api.PrefixOrDefault(""), k)
 				log.Infof("set header: %s value: %s", nh, v)
-				w.Header().Set(nh, v)
+				r.Header().Set(nh, v)
 			}
 		}
 	}
-
-	//TODO session auth
 
 	//continue request
 	return

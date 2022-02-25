@@ -39,13 +39,11 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbOpener, cleanup := gorm.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
-	saasContributor := api.NewSaasContributor(webMultiTenancyOption)
-	userContributor := api.NewUserContributor()
-	clientContributor := api.NewClientContributor()
-	option := api.NewDefaultOption(saasContributor, userContributor, clientContributor)
+	saasContributor := api.NewSaasContributor(webMultiTenancyOption, logger)
+	option := api.NewDefaultOption(saasContributor, logger)
 	clientName := _wireClientNameValue
-	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer)
-	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, arg...)
+	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
+	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	tenantServiceClient := api2.NewTenantGrpcClient(grpcConn)
 	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceClient)
 	decodeRequestFunc := _wireDecodeRequestFuncValue

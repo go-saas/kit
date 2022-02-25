@@ -50,7 +50,7 @@ func NewHTTPServer(c *conf.Services,
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 			saas.Server(mOpt, ts),
-			api2.ServerMiddleware(apiOpt),
+			api2.ServerMiddleware(apiOpt, logger),
 			uow.Uow(logger, uowMgr),
 		),
 	}...)

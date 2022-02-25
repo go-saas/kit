@@ -27,11 +27,17 @@ saas:
 sys:
 	cd sys && $(MAKE) all
 
+.PHONY: apisix
+apisix:
+	cd gateway/apisix && $(MAKE) all
+
+
 all:
 	make user
 	make saas
 	make api
 	make sys
+	make apisix
 
 .PHONY: api
 # generate api proto

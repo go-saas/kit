@@ -39,6 +39,8 @@ import (
 
 	_ "github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
 	_ "github.com/goxiaoy/go-saas/gateway/apisix"
+
+	klog "github.com/go-kratos/kratos/v2/log"
 )
 
 var (
@@ -100,6 +102,10 @@ func newRunCommand() *cobra.Command {
 	var mode RunMode
 	var clientName string
 	var flagconf string
+	logger := klog.With(klog.NewStdLogger(os.Stdout),
+		"ts", klog.DefaultTimestamp,
+		"caller", klog.DefaultCaller,
+	)
 	cmd := &cobra.Command{
 		Use:   "run",
 		Short: "run",
@@ -155,7 +161,7 @@ func newRunCommand() *cobra.Command {
 			}
 
 			//init all
-			_, clean, err := initApp(bc.Services, bc.Security, api.ClientName(clientName))
+			_, clean, err := initApp(bc.Services, bc.Security, api.ClientName(clientName), logger)
 			if err != nil {
 				panic(err)
 			}

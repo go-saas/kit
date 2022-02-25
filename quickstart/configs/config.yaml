@@ -5,6 +5,8 @@ services:
         timeout: 200s
         cors:
           allowed_origins: [ "*" ]
+      grpc:
+        timeout: 200s
     user:
       http:
         addr: 0.0.0.0:8500
