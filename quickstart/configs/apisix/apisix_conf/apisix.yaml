@@ -1,0 +1,89 @@
+routes:
+  -
+    uri: /v1/saas/*
+    upstream_id: saas-http
+  -
+    uri: /assets/saas/*
+    upstream_id: saas-http
+
+  -
+    uri: /swagger/*
+    upstream_id: api-docs
+
+
+  -
+    uri: /v1/sys/*
+    upstream_id: sys-http
+
+  -
+    uri: /v1/*
+    upstream_id: user-http
+
+  -
+    uri: /assets/user
+    upstream_id: user-http
+
+
+  -
+    uri: /user.*
+    upstream_id: user-grpc
+
+  -
+    uri: /saas.*
+    upstream_id: saas-grpc
+
+  -
+    uri: /sys.*
+    upstream_id: sys-grpc
+
+upstreams:
+  -
+    id: user-http
+    nodes:
+      "user:8500": 1
+    type: roundrobin
+  -
+    id: user-grpc
+    nodes:
+      "user:8501": 1
+    type: roundrobin
+    scheme: grpc
+  -
+    id: saas-http
+    nodes:
+      "saas:8520": 1
+    type: roundrobin
+  -
+    id: saas-grpc
+    nodes:
+      "saas:8521": 1
+    type: roundrobin
+    scheme: grpc
+  -
+    id: sys-http
+    nodes:
+      "sys:8530": 1
+    type: roundrobin
+  -
+    id: sys-grpc
+    nodes:
+      "sys:8531": 1
+    type: roundrobin
+    scheme: grpc
+  -
+    id: api-docs
+    nodes:
+      "api_docs:8080": 1
+    type: roundrobin
+
+global_rules:
+  -
+    id: 1
+    plugins:
+      ext-plugin-pre-req:
+        conf:
+          - name: "go-saas"
+            value:  "{}"
+          - name: "kit_authn"
+            value:  "{}"
+#END

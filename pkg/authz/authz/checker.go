@@ -14,7 +14,7 @@ type PermissionChecker interface {
 var _ PermissionChecker = (*PermissionService)(nil)
 
 func (p *PermissionService) IsGrant(ctx context.Context, resource Resource, action Action, subjects ...Subject) (Effect, error) {
-	tenantInfo := common.FromCurrentTenant(ctx)
+	tenantInfo, _ := common.FromCurrentTenant(ctx)
 	return p.IsGrantTenant(ctx, resource, action, tenantInfo.GetId(), subjects...)
 }
 

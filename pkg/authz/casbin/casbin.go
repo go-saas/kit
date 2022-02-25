@@ -29,7 +29,7 @@ func (p *EnforcerProvider) Get(ctx context.Context) (*casbin.SyncedEnforcer, err
 	if err != nil {
 		return nil, err
 	}
-	tenantInfo := common.FromCurrentTenant(ctx)
+	tenantInfo, _ := common.FromCurrentTenant(ctx)
 	filter := gormadapter.Filter{
 		//TODO host side?
 		V4: []string{tenantInfo.GetId(), "*"},

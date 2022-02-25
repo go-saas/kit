@@ -64,7 +64,7 @@ func (f *FactoryImpl) Get(ctx context.Context, name string, tenancy bool) Blob {
 	}
 	opt := *cfg
 	if tenancy {
-		ti := common.FromCurrentTenant(ctx)
+		ti, _ := common.FromCurrentTenant(ctx)
 		t := ti.GetId()
 		if t == "" {
 			t = "_"

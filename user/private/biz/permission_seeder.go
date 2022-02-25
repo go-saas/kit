@@ -20,7 +20,7 @@ func NewPermissionSeeder(permission authz.PermissionManagementService, checker a
 
 func (p *PermissionSeeder) Seed(ctx context.Context, sCtx *seed.Context) error {
 
-	tenantInfo := common.FromCurrentTenant(ctx)
+	tenantInfo, _ := common.FromCurrentTenant(ctx)
 	err := authz.EnsureGrant(ctx, p.permission, p.checker,
 		authz.NewEntityResource("*", "*"),
 		authz.ActionStr("*"),

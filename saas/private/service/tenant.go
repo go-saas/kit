@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
@@ -102,7 +103,11 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 	if t == nil {
 		return nil, errors.NotFound("", "")
 	}
-
+	//TODO separate this check???
+	if claim, ok := jwt.FromClaimsContext(ctx); ok && len(claim.ClientId) > 0 {
+		//internal api call
+		return mapBizTenantToApi(t), nil
+	}
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", t.ID), authz.GetAction); err != nil {
 		return nil, err
 	}

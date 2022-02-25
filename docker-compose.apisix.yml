@@ -1,23 +1,6 @@
 version: '3.7'
 services:
 
-  apisix:
-    image: ${DOCKER_REGISTRY}go-saas-kit-apisix:${DOCKER_TAG:-latest}
-    restart: always
-    build:
-      context: .
-      dockerfile: ./gateway/apisix/Dockerfile
-    volumes:
-      - ./quickstart/configs/apisix/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
-      - ./quickstart/configs:/usr/local/apisix/kit/conf
-    depends_on:
-      - etcd
-    ports:
-      - "9080:9080/tcp"
-      - "9091:9091/tcp"
-      - "9443:9443/tcp"
-      - "9092/tcp"
-
   apisix-dashboard:
     image: apache/apisix-dashboard:2.10.1-alpine
     restart: always

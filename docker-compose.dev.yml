@@ -1,6 +1,11 @@
 version: '3.7'
 services:
 
+  apisix:
+    build:
+      context: .
+      dockerfile: ./gateway/apisix/Dockerfile
+
   api_docs:
     build:
       context: .

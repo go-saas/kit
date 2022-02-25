@@ -27,7 +27,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
-	"github.com/goxiaoy/go-saas/kratos/saas"
 	uow2 "github.com/goxiaoy/uow"
 	"net/http"
 )
@@ -67,8 +66,8 @@ func NewHTTPServer(c *conf.Services,
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			saas.Server(mOpt, ts),
 			sapi.ServerMiddleware(apiOpt, logger),
+			server.Saas(mOpt, ts),
 			uow.Uow(logger, uowMgr),
 		),
 	}...)
@@ -85,8 +84,8 @@ func NewHTTPServer(c *conf.Services,
 			jwt.ServerExtractAndAuth(tokenizer, logger)),
 
 		server.MiddlewareConvert(
-			saas.Server(mOpt, ts),
 			sapi.ServerMiddleware(apiOpt, logger),
+			server.Saas(mOpt, ts),
 			uow.Uow(logger, uowMgr),
 		))
 

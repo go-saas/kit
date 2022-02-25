@@ -32,7 +32,7 @@ func (s *SaasContributor) RecoverContext(ctx context.Context, headers Header) (c
 }
 
 func (s *SaasContributor) CreateHeader(ctx context.Context) map[string]string {
-	ti := common.FromCurrentTenant(ctx)
+	ti, _ := common.FromCurrentTenant(ctx)
 	return map[string]string{
 		s.hmtOpt.TenantKey: ti.GetId(),
 	}

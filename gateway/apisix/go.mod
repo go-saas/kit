@@ -6,7 +6,7 @@ require (
 	github.com/apache/apisix-go-plugin-runner v0.0.0-20220214021533-1a00a4b14f93
 	github.com/go-kratos/kratos/v2 v2.1.5
 	github.com/google/wire v0.5.0
-	github.com/goxiaoy/go-saas v0.1.1-0.20220225081545-ae783a4e75a3
+	github.com/goxiaoy/go-saas v0.1.1-0.20220225092118-64ec0b150cb7
 	github.com/goxiaoy/go-saas-kit v0.0.0-20210824031453-1ed2913fb383
 	github.com/spf13/cobra v1.3.0
 	github.com/thediveo/enumflag v0.10.1

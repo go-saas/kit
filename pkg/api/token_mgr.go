@@ -35,7 +35,7 @@ func (i *InMemoryTokenManager) GetOrGenerateToken(ctx context.Context, client *c
 	if err != nil {
 		return token, err
 	}
-	i.l.Info("generate token for client: %s", client.GetClientId())
+	i.l.Infof("generate token for client: %s", client.GetClientId())
 	i.token = token
 	i.currentClient = client.GetClientId()
 	return token, nil
