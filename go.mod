@@ -39,7 +39,7 @@ require (
 	github.com/aws/aws-sdk-go v1.43.2
 	github.com/fclairamb/afero-s3 v0.3.1
 	github.com/gorilla/mux v1.8.0
-	github.com/gorilla/sessions v1.2.1
+	github.com/goxiaoy/sessions v1.2.2-0.20220226081452-f724382d1ab0
 	github.com/spf13/afero v1.8.1
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )

@@ -2,9 +2,9 @@ package session
 
 import (
 	"context"
-	"github.com/gorilla/sessions"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/sessions"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"net/http"
 )
@@ -20,6 +20,7 @@ func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 	rememberStore := NewRememberStore(cfg)
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			*r = *r.WithContext(sessions.NewRegistryContext(r.Context(), r.Header))
 			var sn = defaultSessionName
 			if cfg.SessionCookie != nil && cfg.SessionCookie.Name != nil {
 				sn = cfg.SessionCookie.Name.Value
@@ -30,11 +31,11 @@ func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 				rn = cfg.RememberCookie.Name.Value
 			}
 
-			s, _ := sessionInfoStore.Get(r, sn)
+			s, _ := sessionInfoStore.Get(r.Context(), r.Header, sn)
 
-			rs, _ := rememberStore.Get(r, rn)
+			rs, _ := rememberStore.Get(r.Context(), r.Header, rn)
 
-			stateWriter := NewClientStateWriter(s, rs, w, r)
+			stateWriter := NewClientStateWriter(s, rs, w, r.Header)
 			defer func() { stateWriter.Save(context.Background()) }()
 			newCtx := NewClientStateWriterContext(r.Context(), stateWriter)
 			state := NewClientState(s, rs)
