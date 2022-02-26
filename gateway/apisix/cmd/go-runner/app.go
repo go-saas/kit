@@ -26,10 +26,18 @@ type App struct {
 	clientName   api.ClientName
 	logger       klog.Logger
 	tenantCfg    *shttp.WebMultiTenancyOption
+	security     *conf.Security
 }
 
-func newApp(tenantStore common.TenantStore, t jwt.Tokenizer, tmr api.TokenManager, services *conf.Services, clientName api.ClientName, tenantCfg *shttp.WebMultiTenancyOption, logger klog.Logger) (*App, error) {
-	ret := &App{tenantStore: tenantStore, tokenizer: t, tokenManager: tmr, services: services, clientName: clientName, tenantCfg: tenantCfg, logger: logger}
+func newApp(tenantStore common.TenantStore,
+	t jwt.Tokenizer,
+	tmr api.TokenManager,
+	services *conf.Services,
+	clientName api.ClientName,
+	tenantCfg *shttp.WebMultiTenancyOption,
+	security *conf.Security,
+	logger klog.Logger) (*App, error) {
+	ret := &App{tenantStore: tenantStore, tokenizer: t, tokenManager: tmr, services: services, clientName: clientName, tenantCfg: tenantCfg, security: security, logger: logger}
 	return ret, ret.load()
 }
 
@@ -59,7 +67,7 @@ func (a *App) load() error {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte("{\"code\":500,\"reason\":\"\",\"message\":\"\"}"))
 	})
-	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.logger); err != nil {
+	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.security, a.logger); err != nil {
 		return err
 	}
 	return nil

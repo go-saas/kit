@@ -8,6 +8,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/goxiaoy/go-saas v0.1.1-0.20220225103612-6f5ce6167440
 	github.com/goxiaoy/go-saas-kit v0.0.0-20210824031453-1ed2913fb383
+	github.com/goxiaoy/sessions v1.2.2-0.20220226081452-f724382d1ab0
 	github.com/spf13/cobra v1.3.0
 	github.com/thediveo/enumflag v0.10.1
 	go.uber.org/zap v1.21.0
@@ -25,6 +26,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/flatbuffers v2.0.5+incompatible // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.3 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect

@@ -21,19 +21,10 @@ func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			*r = *r.WithContext(sessions.NewRegistryContext(r.Context(), r.Header))
-			var sn = defaultSessionName
-			if cfg.SessionCookie != nil && cfg.SessionCookie.Name != nil {
-				sn = cfg.SessionCookie.Name.Value
-			}
 
-			var rn = defaultRememberName
-			if cfg.RememberCookie != nil && cfg.RememberCookie.Name != nil {
-				rn = cfg.RememberCookie.Name.Value
-			}
+			s, _ := GetSession(r.Context(), r.Header, sessionInfoStore, cfg)
 
-			s, _ := sessionInfoStore.Get(r.Context(), r.Header, sn)
-
-			rs, _ := rememberStore.Get(r.Context(), r.Header, rn)
+			rs, _ := GetRememberSession(r.Context(), r.Header, rememberStore, cfg)
 
 			stateWriter := NewClientStateWriter(s, rs, w, r.Header)
 			defer func() { stateWriter.Save(context.Background()) }()
@@ -46,6 +37,21 @@ func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 
 		})
 	}
+}
+
+func GetSession(ctx context.Context, header sessions.Header, sessionInfoStore sessions.Store, cfg *conf.Security) (*sessions.Session, error) {
+	var sn = defaultSessionName
+	if cfg.SessionCookie != nil && cfg.SessionCookie.Name != nil {
+		sn = cfg.SessionCookie.Name.Value
+	}
+	return sessionInfoStore.Get(ctx, header, sn)
+}
+func GetRememberSession(ctx context.Context, header sessions.Header, rememberStore sessions.Store, cfg *conf.Security) (*sessions.Session, error) {
+	var rn = defaultRememberName
+	if cfg.RememberCookie != nil && cfg.RememberCookie.Name != nil {
+		rn = cfg.RememberCookie.Name.Value
+	}
+	return rememberStore.Get(ctx, header, rn)
 }
 
 //TODO handle remember?

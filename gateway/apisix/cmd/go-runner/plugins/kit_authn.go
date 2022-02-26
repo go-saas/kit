@@ -9,7 +9,9 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/sessions"
 	"net/http"
 
 	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
@@ -31,13 +33,16 @@ type KitAuthConf struct {
 }
 
 var (
-	tokenizer    jwt.Tokenizer
-	tokenManager api.TokenManager
-	apiClient    *conf2.Client
-	apiOpt       *api.Option
+	tokenizer        jwt.Tokenizer
+	tokenManager     api.TokenManager
+	apiClient        *conf2.Client
+	apiOpt           *api.Option
+	sessionInfoStore sessions.Store
+	rememberStore    sessions.Store
+	securityCfg      *conf2.Security
 )
 
-func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, services *conf2.Services, logger klog.Logger) error {
+func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, services *conf2.Services, security *conf2.Security, logger klog.Logger) error {
 	tokenizer = t
 	tokenManager = tmr
 	clientCfg, ok := services.Clients[string(clientName)]
@@ -46,6 +51,10 @@ func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, serv
 	}
 	apiClient = clientCfg
 	apiOpt = api.NewOption("", true, api.NewUserContributor(logger), api.NewClientContributor(false, logger))
+	securityCfg = security
+	sessionInfoStore = session.NewSessionInfoStore(security)
+	rememberStore = session.NewRememberStore(security)
+
 	return nil
 }
 
@@ -75,20 +84,36 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	}
 	uid := ""
 	clientId := ""
+
+	//session auth
+	header := r.Header().View()
+	ctx = sessions.NewRegistryContext(ctx, header)
+
+	s, _ := session.GetSession(ctx, header, sessionInfoStore, securityCfg)
+
+	rs, _ := session.GetRememberSession(ctx, header, rememberStore, securityCfg)
+
+	stateWriter := session.NewClientStateWriter(s, rs, w, header)
+	defer func() { stateWriter.Save(context.Background()) }()
+	ctx = session.NewClientStateWriterContext(ctx, stateWriter)
+	state := session.NewClientState(s, rs)
+	ctx = session.NewClientStateContext(ctx, state)
+	//set uid from cookie
+	uid = state.GetUid()
+
+	//jwt auth
 	if len(t) > 0 {
 		if claims, err := jwt.ExtractAndValidate(tokenizer, t); err != nil {
 			log.Errorf("fail to extract and validate token %s", err)
 		} else {
 			if claims.Subject != "" {
 				uid = claims.Subject
-			} else {
+			} else if claims.Subject != "" {
 				uid = claims.Uid
 			}
 			clientId = claims.ClientId
 		}
 	}
-
-	//TODO session auth
 
 	log.Infof("resolve user: %s client: %s", uid, clientId)
 	//keep previous client id
