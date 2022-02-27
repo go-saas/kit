@@ -1,6 +1,9 @@
 version: '3.7'
 services:
 
+  web:
+    build:
+      context: ./web
   apisix:
     build:
       context: .

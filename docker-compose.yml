@@ -1,6 +1,10 @@
 version: '3.7'
 services:
 
+  web:
+    image: ${DOCKER_REGISTRY}go-saas-kit-web:${DOCKER_TAG:-latest}
+    restart: always
+
   apisix:
     image: ${DOCKER_REGISTRY}go-saas-kit-apisix:${DOCKER_TAG:-latest}
     restart: always

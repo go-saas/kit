@@ -36,6 +36,10 @@ routes:
     uri: /sys.*
     upstream_id: sys-grpc
 
+  -
+    uri: /*
+    upstream_id: web
+
 upstreams:
   -
     id: user-http
@@ -74,6 +78,11 @@ upstreams:
     id: api-docs
     nodes:
       "api_docs:8080": 1
+    type: roundrobin
+  -
+    id: web
+    nodes:
+      "web:80": 1
     type: roundrobin
 
 global_rules:

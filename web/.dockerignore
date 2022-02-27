@@ -1,0 +1,8 @@
+
+# Develop tools
+.vscode/
+.idea/
+.run/
+*.swp
+
+node_modules/
