@@ -40,13 +40,18 @@ func PatchHttpOpts(l log.Logger,
 	resEncoder khttp.EncodeResponseFunc,
 	errEncoder khttp.EncodeErrorFunc,
 	f ...khttp.FilterFunc) []khttp.ServerOption {
-	server, ok := services.Servers[name]
-	if !ok {
-		panic(errors.New(fmt.Sprintf(" %v server not found", name)))
+	var server *conf.Server
+	if s, ok := services.Servers[name]; ok {
+		server = s
 	}
-
 	if def, ok := services.Servers[defaultSrvName]; ok {
-		proto.Merge(server, def)
+		if server != nil {
+			proto.Merge(server, def)
+		} else {
+			server = def
+		}
+	} else if server == nil {
+		panic(errors.New(fmt.Sprintf("both %v and %s server not found", name, defaultSrvName)))
 	}
 
 	if server.Http.Network != "" {
