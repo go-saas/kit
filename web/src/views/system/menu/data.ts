@@ -40,11 +40,13 @@ export function getMenuColumns(): BasicColumn[] {
 }
 
 export async function getMenuData(): Promise<BasicFetchResult<V1Menu>> {
-  return await new MenuServiceApi().menuServiceGetAvailableMenus().then((response) => {
-    const menuData: BasicFetchResult<V1Menu> = {
-      total: response.data.items!.length,
-      items: response.data.items!,
-    };
-    return menuData;
-  });
+  return await new MenuServiceApi()
+    .menuServiceListMenu2({ body: { pageSize: -1 } })
+    .then((response) => {
+      const menuData: BasicFetchResult<V1Menu> = {
+        total: response.data.items!.length,
+        items: response.data.items!,
+      };
+      return menuData;
+    });
 }
