@@ -45,7 +45,6 @@ export async function getMenuData(): Promise<BasicFetchResult<V1Menu>> {
       total: response.data.items!.length,
       items: response.data.items!,
     };
-    console.log(menuData);
     return menuData;
   });
 }
