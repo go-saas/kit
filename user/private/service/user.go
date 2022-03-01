@@ -192,7 +192,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 	g := req.GetUser().Gender.Enum().String()
 	u.Gender = &g
-	if err := s.um.Update(ctx, u); err != nil {
+	if err := s.um.Update(ctx, u, nil); err != nil {
 		return nil, err
 	}
 	res := MapBizUserToApi(ctx, u, s.blob)

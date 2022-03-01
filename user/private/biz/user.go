@@ -7,6 +7,7 @@ import (
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	gorm3 "github.com/goxiaoy/go-saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	gorm2 "gorm.io/gorm"
 	"time"
 )
@@ -73,7 +74,7 @@ type UserRepo interface {
 	List(ctx context.Context, query *v1.ListUsersRequest) ([]*User, error)
 	Count(ctx context.Context, query *v1.UserFilter) (total int64, filtered int64, err error)
 	Create(ctx context.Context, user *User) error
-	Update(ctx context.Context, user *User) error
+	Update(ctx context.Context, user *User, p *fieldmaskpb.FieldMask) error
 	Delete(ctx context.Context, user *User) error
 	FindByID(ctx context.Context, id string) (*User, error)
 	FindByName(ctx context.Context, name string) (*User, error)

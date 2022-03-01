@@ -2,14 +2,22 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"io"
+	"os"
+	"path/filepath"
 )
 
 type TenantService struct {
@@ -42,7 +50,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		return nil, err
 	}
 
-	return mapBizTenantToApi(t), nil
+	return mapBizTenantToApi(ctx, s.blob, t), nil
 }
 func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRequest) (*pb.Tenant, error) {
 
@@ -81,7 +89,7 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 	if err := s.useCase.Update(ctx, t, req.UpdateMask); err != nil {
 		return nil, err
 	}
-	return mapBizTenantToApi(t), nil
+	return mapBizTenantToApi(ctx, s.blob, t), nil
 }
 func (s *TenantService) DeleteTenant(ctx context.Context, req *pb.DeleteTenantRequest) (*pb.DeleteTenantReply, error) {
 
@@ -106,13 +114,13 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 	//TODO separate this check???
 	if claim, ok := jwt.FromClaimsContext(ctx); ok && len(claim.ClientId) > 0 {
 		//internal api call
-		return mapBizTenantToApi(t), nil
+		return mapBizTenantToApi(ctx, s.blob, t), nil
 	}
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", t.ID), authz.GetAction); err != nil {
 		return nil, err
 	}
 
-	return mapBizTenantToApi(t), nil
+	return mapBizTenantToApi(ctx, s.blob, t), nil
 }
 func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantRequest) (*pb.ListTenantReply, error) {
 
@@ -136,12 +144,71 @@ func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantReques
 	}
 	rItems := make([]*pb.Tenant, len(items))
 
-	linq.From(items).SelectT(func(g *biz.Tenant) *pb.Tenant { return mapBizTenantToApi(g) }).ToSlice(&rItems)
+	linq.From(items).SelectT(func(g *biz.Tenant) *pb.Tenant { return mapBizTenantToApi(ctx, s.blob, g) }).ToSlice(&rItems)
 	ret.Items = rItems
 	return ret, nil
 }
 
-func mapBizTenantToApi(tenant *biz.Tenant) *pb.Tenant {
+func (s *TenantService) UpdateLogo(ctx http.Context) error {
+	req := ctx.Request()
+	vars := mux.Vars(req)
+	//TODO do not know why should read form file first ...
+	if _, _, err := req.FormFile("file"); err != nil {
+		return err
+	}
+	h := ctx.Middleware(func(ctx context.Context, _ interface{}) (interface{}, error) {
+		if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", vars["id"]), authz.UpdateAction); err != nil {
+			return nil, err
+		}
+		file, handle, err := req.FormFile("file")
+		if err != nil {
+			return nil, err
+		}
+		defer file.Close()
+		fileName := handle.Filename
+		ext := filepath.Ext(fileName)
+		normalizedName := fmt.Sprintf("tenant/logo/%s%s", uuid.New().String(), ext)
+		blob := biz.LogoBlob(ctx, s.blob)
+		a := blob.GetAfero()
+		err = a.MkdirAll("tenant/logo", 0755)
+		if err != nil {
+			return nil, err
+		}
+		f, err := a.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
+		if err != nil {
+			return nil, err
+		}
+		defer f.Close()
+		_, err = io.Copy(f, file)
+		if err != nil {
+			return nil, err
+		}
+		//update field
+
+		t, err := s.useCase.FindByIdOrName(ctx, vars["id"])
+		if err != nil {
+			return nil, err
+		}
+		if t == nil {
+			return nil, errors.NotFound("", "")
+		}
+
+		t.Logo = normalizedName
+		err = s.useCase.Update(ctx, t, &fieldmaskpb.FieldMask{Paths: []string{"logo"}})
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
+	})
+	_, err := h(ctx, nil)
+	if err != nil {
+		return err
+	}
+
+	return ctx.Returns(201, nil)
+}
+
+func mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenant) *pb.Tenant {
 	var conns []*pb.TenantConnectionString
 	linq.From(tenant.Conn).SelectT(func(con biz.TenantConn) *pb.TenantConnectionString {
 		return &pb.TenantConnectionString{
@@ -167,6 +234,22 @@ func mapBizTenantToApi(tenant *biz.Tenant) *pb.Tenant {
 		UpdatedAt:   timestamppb.New(tenant.UpdatedAt),
 		Conn:        conns,
 		Features:    features,
+		Logo:        mapLogo(ctx, blob, tenant),
 	}
+
 	return res
+}
+
+func mapLogo(ctx context.Context, factory blob.Factory, entity *biz.Tenant) *blob.BlobFile {
+	if entity.Logo == "" {
+		return nil
+	}
+	profile := biz.LogoBlob(ctx, factory)
+
+	url, _ := profile.GeneratePublicUrl(entity.Logo)
+	return &blob.BlobFile{
+		Id:   entity.Logo,
+		Name: "",
+		Url:  url,
+	}
 }

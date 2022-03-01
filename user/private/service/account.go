@@ -13,6 +13,7 @@ import (
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"io"
@@ -150,41 +151,52 @@ func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddr
 }
 
 func (s *AccountService) UpdateAvatar(ctx http.Context) error {
-	user, err := authn.ErrIfUnauthenticated(ctx)
-	if err != nil {
-		return err
-	}
 	req := ctx.Request()
-	file, handle, err := req.FormFile("file")
-	if err != nil {
+	//TODO do not know why should read form file first ...
+	if _, _, err := req.FormFile("file"); err != nil {
 		return err
 	}
-	defer file.Close()
-	fileName := handle.Filename
-	ext := filepath.Ext(fileName)
-	normalizedName := fmt.Sprintf("avatar/%s%s", uuid.New().String(), ext)
-	profileBlob := biz.ProfileBlob(ctx, s.blob)
-	a := profileBlob.GetAfero()
-	err = a.MkdirAll("avatar", 0755)
-	if err != nil {
-		return err
-	}
-	f, err := a.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	_, err = io.Copy(f, file)
-	if err != nil {
-		return err
-	}
-	//update avatar field
-	u, err := s.um.FindByID(ctx, user.GetId())
-	if err != nil {
-		return err
-	}
-	u.Avatar = &normalizedName
-	err = s.um.Update(ctx, u)
+	h := ctx.Middleware(func(ctx context.Context, _ interface{}) (interface{}, error) {
+		user, err := authn.ErrIfUnauthenticated(ctx)
+		if err != nil {
+			return nil, err
+		}
+		file, handle, err := req.FormFile("file")
+		if err != nil {
+			return nil, err
+		}
+		defer file.Close()
+		fileName := handle.Filename
+		ext := filepath.Ext(fileName)
+		normalizedName := fmt.Sprintf("avatar/%s%s", uuid.New().String(), ext)
+		profileBlob := biz.ProfileBlob(ctx, s.blob)
+		a := profileBlob.GetAfero()
+		err = a.MkdirAll("avatar", 0755)
+		if err != nil {
+			return nil, err
+		}
+		f, err := a.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
+		if err != nil {
+			return nil, err
+		}
+		defer f.Close()
+		_, err = io.Copy(f, file)
+		if err != nil {
+			return nil, err
+		}
+		//update avatar field
+		u, err := s.um.FindByID(ctx, user.GetId())
+		if err != nil {
+			return nil, err
+		}
+		u.Avatar = &normalizedName
+		err = s.um.Update(ctx, u, &fieldmaskpb.FieldMask{Paths: []string{"avatar"}})
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
+	})
+	_, err := h(ctx, nil)
 	if err != nil {
 		return err
 	}
