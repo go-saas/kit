@@ -1,0 +1,13 @@
+syntax = "proto3";
+package kratos.api;
+
+option go_package = "github.com/goxiaoy/go-saas-kit/gateway/apisix/internal/conf;conf";
+
+import "conf/conf.proto";
+
+message Bootstrap {
+  conf.Security security=3;
+  conf.Services services =4;
+}
+
+

@@ -44,4 +44,10 @@ export interface V1UpdateSubjectPermissionAcl {
    * @memberof V1UpdateSubjectPermissionAcl
    */
   effect?: V1Effect;
+  /**
+   *
+   * @type {string}
+   * @memberof V1UpdateSubjectPermissionAcl
+   */
+  tenantId?: string;
 }

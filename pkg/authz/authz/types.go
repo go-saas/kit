@@ -60,3 +60,8 @@ func NewUpdateSubjectPermission(resource Resource, action Action, tenantID strin
 		Effect:   effect,
 	}
 }
+
+type PermissionRequirement struct {
+	Resource Resource
+	Action   Action
+}

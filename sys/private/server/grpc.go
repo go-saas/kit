@@ -8,7 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
+	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
@@ -22,7 +22,7 @@ import (
 
 // NewGRPCServer new a gRPC server.
 func NewGRPCServer(c *conf2.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager,
-	apiOpt *api2.Option, logger log.Logger,
+	apiOpt *sapi.Option, logger log.Logger,
 	menu *service.MenuService) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
@@ -32,7 +32,7 @@ func NewGRPCServer(c *conf2.Services, tokenizer jwt.Tokenizer, ts common.TenantS
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			api2.ServerMiddleware(apiOpt),
+			sapi.ServerMiddleware(apiOpt, logger),
 			uow.Uow(logger, uowMgr),
 		),
 	}

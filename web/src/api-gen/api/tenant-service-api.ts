@@ -52,6 +52,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
   return {
     /**
      *
+     * @summary authz: saas.tenant,*,create
      * @param {V1CreateTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -96,6 +97,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -136,6 +138,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},get
      * @param {string} idOrName
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -176,6 +179,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
+     * @summary authz: saas.tenant,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -263,6 +267,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
+     * @summary authz: saas.tenant,*,list
      * @param {V1ListTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -307,6 +312,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -358,6 +364,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -419,6 +426,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
+     * @summary authz: saas.tenant,*,create
      * @param {V1CreateTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -435,6 +443,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -451,6 +460,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},get
      * @param {string} idOrName
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -467,6 +477,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: saas.tenant,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -507,6 +518,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: saas.tenant,*,list
      * @param {V1ListTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -523,6 +535,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -542,6 +555,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -575,6 +589,7 @@ export const TenantServiceApiFactory = function (
   return {
     /**
      *
+     * @summary authz: saas.tenant,*,create
      * @param {V1CreateTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -589,6 +604,7 @@ export const TenantServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -600,6 +616,7 @@ export const TenantServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},get
      * @param {string} idOrName
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -611,6 +628,7 @@ export const TenantServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: saas.tenant,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -652,6 +670,7 @@ export const TenantServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: saas.tenant,*,list
      * @param {V1ListTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -666,6 +685,7 @@ export const TenantServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -682,6 +702,7 @@ export const TenantServiceApiFactory = function (
     },
     /**
      *
+     * @summary authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -876,6 +897,7 @@ export interface TenantServiceApiTenantServiceUpdateTenant2Request {
 export class TenantServiceApi extends BaseAPI {
   /**
    *
+   * @summary authz: saas.tenant,*,create
    * @param {TenantServiceApiTenantServiceCreateTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -892,6 +914,7 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: saas.tenant,{id},delete
    * @param {TenantServiceApiTenantServiceDeleteTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -908,6 +931,7 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: saas.tenant,{id},get
    * @param {TenantServiceApiTenantServiceGetTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -924,6 +948,7 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: saas.tenant,*,list
    * @param {TenantServiceApiTenantServiceListTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -951,6 +976,7 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: saas.tenant,*,list
    * @param {TenantServiceApiTenantServiceListTenant2Request} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -967,6 +993,7 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: saas.tenant,{id},update
    * @param {TenantServiceApiTenantServiceUpdateTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -983,6 +1010,7 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
+   * @summary authz: saas.tenant,{id},update
    * @param {TenantServiceApiTenantServiceUpdateTenant2Request} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}

@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
+	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/sessions"
 	"net/http"
 
 	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
@@ -28,17 +30,19 @@ type KitAuthn struct {
 }
 
 type KitAuthConf struct {
-	Security   *conf2.Security
-	Services   *conf2.Services
-	ClientName string
 }
 
-var tokenizer jwt.Tokenizer
-var tokenManager api.TokenManager
-var apiClient *conf2.Client
-var apiOpt *api.Option
+var (
+	tokenizer        jwt.Tokenizer
+	tokenManager     api.TokenManager
+	apiClient        *conf2.Client
+	apiOpt           *api.Option
+	sessionInfoStore sessions.Store
+	rememberStore    sessions.Store
+	securityCfg      *conf2.Security
+)
 
-func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, services *conf2.Services, ao *api.Option) error {
+func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, services *conf2.Services, security *conf2.Security, logger klog.Logger) error {
 	tokenizer = t
 	tokenManager = tmr
 	clientCfg, ok := services.Clients[string(clientName)]
@@ -46,8 +50,11 @@ func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, serv
 		return errors.New(fmt.Sprintf(" %v client not found", clientName))
 	}
 	apiClient = clientCfg
+	apiOpt = api.NewOption("", true, api.NewUserContributor(logger), api.NewClientContributor(false, logger))
+	securityCfg = security
+	sessionInfoStore = session.NewSessionInfoStore(security)
+	rememberStore = session.NewRememberStore(security)
 
-	apiOpt = ao
 	return nil
 }
 
@@ -58,11 +65,6 @@ func (p *KitAuthn) Name() string {
 func (p *KitAuthn) ParseConf(in []byte) (interface{}, error) {
 	conf := KitAuthConf{}
 	err := json.Unmarshal(in, &conf)
-	if err != nil {
-		return nil, err
-	}
-	//init all
-	_, _, err = initApp(conf.Services, conf.Security, api.ClientName(conf.ClientName))
 	if err != nil {
 		return nil, err
 	}
@@ -83,31 +85,49 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	uid := ""
 	clientId := ""
 
-	if claims, err := jwt.ExtractAndValidate(tokenizer, t); err != nil {
-		log.Fatalf("fail to extract and validate token %s", err)
-	} else {
-		if claims.Subject != "" {
-			uid = claims.Subject
+	//session auth
+	header := r.Header().View()
+	ctx = sessions.NewRegistryContext(ctx, header)
+
+	s, _ := session.GetSession(ctx, header, sessionInfoStore, securityCfg)
+
+	rs, _ := session.GetRememberSession(ctx, header, rememberStore, securityCfg)
+
+	stateWriter := session.NewClientStateWriter(s, rs, w, header)
+	defer func() { stateWriter.Save(context.Background()) }()
+	ctx = session.NewClientStateWriterContext(ctx, stateWriter)
+	state := session.NewClientState(s, rs)
+	ctx = session.NewClientStateContext(ctx, state)
+	//set uid from cookie
+	uid = state.GetUid()
+
+	//jwt auth
+	if len(t) > 0 {
+		if claims, err := jwt.ExtractAndValidate(tokenizer, t); err != nil {
+			log.Errorf("fail to extract and validate token %s", err)
 		} else {
-			uid = claims.Uid
+			if claims.Subject != "" {
+				uid = claims.Subject
+			} else if claims.Subject != "" {
+				uid = claims.Uid
+			}
+			clientId = claims.ClientId
 		}
-		clientId = claims.ClientId
 	}
 
-	if len(clientId) > 0 {
-		ctx = authn.NewClientContext(ctx, clientId)
-	}
+	log.Infof("resolve user: %s client: %s", uid, clientId)
+	//keep previous client id
+	ctx = authn.NewClientContext(ctx, clientId)
 	ctx = authn.NewUserContext(ctx, authn.NewUserInfo(uid))
 
 	//set auth token
-
 	//use token mgr
 	token, err := tokenManager.GetOrGenerateToken(ctx, &conf2.Client{
 		ClientId:     apiClient.ClientId,
 		ClientSecret: apiClient.ClientSecret,
 	})
 	if err != nil {
-		log.Fatalf("%s", err)
+		log.Errorf("%s", err)
 		w.WriteHeader(500)
 		return
 	}
@@ -119,12 +139,12 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		headers := contributor.CreateHeader(ctx)
 		if headers != nil {
 			for k, v := range headers {
-				w.Header().Set(fmt.Sprintf("%s%s", api.PrefixOrDefault(""), k), v)
+				nh := fmt.Sprintf("%s%s", api.PrefixOrDefault(""), k)
+				log.Infof("set header: %s value: %s", nh, v)
+				r.Header().Set(nh, v)
 			}
 		}
 	}
-
-	//TODO session auth
 
 	//continue request
 	return

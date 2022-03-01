@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
@@ -24,10 +25,8 @@ func NewTenantService(useCase *biz.TenantUseCase, auth authz.Service, blob blob.
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {
 
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", "*"), authz.CreateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", "*"), authz.CreateAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors.Forbidden("", "")
 	}
 
 	disPlayName := req.Name
@@ -47,10 +46,8 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 }
 func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRequest) (*pb.Tenant, error) {
 
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", req.Tenant.Id), authz.UpdateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", req.Tenant.Id), authz.UpdateAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors.Forbidden("", "")
 	}
 
 	t, err := s.useCase.Get(ctx, req.Tenant.Id)
@@ -88,10 +85,8 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 }
 func (s *TenantService) DeleteTenant(ctx context.Context, req *pb.DeleteTenantRequest) (*pb.DeleteTenantReply, error) {
 
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", req.Id), authz.DeleteAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", req.Id), authz.DeleteAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors.Forbidden("", "")
 	}
 
 	if err := s.useCase.Delete(ctx, req.Id); err != nil {
@@ -101,21 +96,20 @@ func (s *TenantService) DeleteTenant(ctx context.Context, req *pb.DeleteTenantRe
 }
 
 func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest) (*pb.Tenant, error) {
-
 	t, err := s.useCase.FindByIdOrName(ctx, req.IdOrName)
 	if err != nil {
 		return nil, err
 	}
-
 	if t == nil {
-		//align with later auth check
-		return nil, errors.Forbidden("", "")
+		return nil, errors.NotFound("", "")
 	}
-
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", t.ID), authz.GetAction); err != nil {
+	//TODO separate this check???
+	if claim, ok := jwt.FromClaimsContext(ctx); ok && len(claim.ClientId) > 0 {
+		//internal api call
+		return mapBizTenantToApi(t), nil
+	}
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", t.ID), authz.GetAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors.Forbidden("", "")
 	}
 
 	return mapBizTenantToApi(t), nil

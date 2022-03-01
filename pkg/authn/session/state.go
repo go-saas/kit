@@ -2,7 +2,7 @@ package session
 
 import (
 	"context"
-	"github.com/gorilla/sessions"
+	"github.com/goxiaoy/sessions"
 	"net/http"
 )
 
@@ -116,15 +116,15 @@ type ClientStateWriterImpl struct {
 	rs *sessions.Session
 
 	w         http.ResponseWriter
-	r         *http.Request
+	h         sessions.Header
 	sChanged  bool
 	rsChanged bool
 }
 
 var _ ClientStateWriter = (*ClientStateWriterImpl)(nil)
 
-func NewClientStateWriter(s *sessions.Session, rs *sessions.Session, w http.ResponseWriter, r *http.Request) ClientStateWriter {
-	return &ClientStateWriterImpl{s: s, rs: rs, w: w, r: r}
+func NewClientStateWriter(s *sessions.Session, rs *sessions.Session, w http.ResponseWriter, h sessions.Header) ClientStateWriter {
+	return &ClientStateWriterImpl{s: s, rs: rs, w: w, h: h}
 }
 
 func (c *ClientStateWriterImpl) SetUid(ctx context.Context, uid string) error {
@@ -199,12 +199,12 @@ func (c *ClientStateWriterImpl) Clear(ctx context.Context) error {
 
 func (c *ClientStateWriterImpl) Save(ctx context.Context) error {
 	if c.sChanged {
-		if err := c.s.Save(c.r, c.w); err != nil {
+		if err := c.s.Save(c.h, c.w); err != nil {
 			return err
 		}
 	}
 	if c.rsChanged {
-		if err := c.rs.Save(c.r, c.w); err != nil {
+		if err := c.rs.Save(c.h, c.w); err != nil {
 			return err
 		}
 	}

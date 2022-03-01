@@ -10,7 +10,10 @@ func NewUserContext(ctx context.Context, user UserInfo) context.Context {
 
 func FromUserContext(ctx context.Context) (user UserInfo, ok bool) {
 	user, ok = ctx.Value(userKey{}).(UserInfo)
-	return
+	if ok {
+		return user, ok
+	}
+	return NewUserInfo(""), ok
 }
 
 type clientKey struct {

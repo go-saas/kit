@@ -44,7 +44,7 @@ func (r *PermissionChecker) IsGrantTenant(ctx context.Context, resource authz.Re
 }
 
 func (r *PermissionChecker) IsGrant(ctx context.Context, resource authz.Resource, action authz.Action, subjects ...authz.Subject) (authz.Effect, error) {
-	tenantInfo := common.FromCurrentTenant(ctx)
+	tenantInfo, _ := common.FromCurrentTenant(ctx)
 	return r.IsGrantTenant(ctx, resource, action, tenantInfo.GetId(), subjects...)
 }
 

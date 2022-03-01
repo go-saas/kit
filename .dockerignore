@@ -6,5 +6,6 @@ docker-compose.dev.yml
 .idea/
 .run/
 *.swp
-.temp/
-.web/
+
+**/*/.temp/
+**/*/node_modules

@@ -26,13 +26,13 @@ export interface V1UpdateTenant {
    * @type {string}
    * @memberof V1UpdateTenant
    */
-  id?: string;
+  id: string;
   /**
    *
    * @type {string}
    * @memberof V1UpdateTenant
    */
-  name?: string;
+  name: string;
   /**
    *
    * @type {string}

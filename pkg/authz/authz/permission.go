@@ -62,7 +62,7 @@ func (p *PermissionService) ListAcl(ctx context.Context, subjects ...Subject) ([
 	p.mux.Lock()
 	defer p.mux.Unlock()
 	//TODO host side?
-	tenantInfo := common.FromCurrentTenant(ctx)
+	tenantInfo, _ := common.FromCurrentTenant(ctx)
 	var ret []PermissionBean
 	for _, bean := range p.v {
 		for _, subject := range subjects {
@@ -150,7 +150,7 @@ func match(pattern string, value string) bool {
 }
 
 func NormalizeTenantId(ctx context.Context, tenantId string) string {
-	ti := common.FromCurrentTenant(ctx)
+	ti, _ := common.FromCurrentTenant(ctx)
 	if ti.GetId() == "" {
 		//host side
 		return tenantId

@@ -2,9 +2,9 @@ package session
 
 import (
 	"context"
-	"github.com/gorilla/sessions"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/sessions"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"net/http"
 )
@@ -20,21 +20,13 @@ func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 	rememberStore := NewRememberStore(cfg)
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			var sn = defaultSessionName
-			if cfg.SessionCookie != nil && cfg.SessionCookie.Name != nil {
-				sn = cfg.SessionCookie.Name.Value
-			}
+			*r = *r.WithContext(sessions.NewRegistryContext(r.Context(), r.Header))
 
-			var rn = defaultRememberName
-			if cfg.RememberCookie != nil && cfg.RememberCookie.Name != nil {
-				rn = cfg.RememberCookie.Name.Value
-			}
+			s, _ := GetSession(r.Context(), r.Header, sessionInfoStore, cfg)
 
-			s, _ := sessionInfoStore.Get(r, sn)
+			rs, _ := GetRememberSession(r.Context(), r.Header, rememberStore, cfg)
 
-			rs, _ := rememberStore.Get(r, rn)
-
-			stateWriter := NewClientStateWriter(s, rs, w, r)
+			stateWriter := NewClientStateWriter(s, rs, w, r.Header)
 			defer func() { stateWriter.Save(context.Background()) }()
 			newCtx := NewClientStateWriterContext(r.Context(), stateWriter)
 			state := NewClientState(s, rs)
@@ -45,6 +37,21 @@ func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 
 		})
 	}
+}
+
+func GetSession(ctx context.Context, header sessions.Header, sessionInfoStore sessions.Store, cfg *conf.Security) (*sessions.Session, error) {
+	var sn = defaultSessionName
+	if cfg.SessionCookie != nil && cfg.SessionCookie.Name != nil {
+		sn = cfg.SessionCookie.Name.Value
+	}
+	return sessionInfoStore.Get(ctx, header, sn)
+}
+func GetRememberSession(ctx context.Context, header sessions.Header, rememberStore sessions.Store, cfg *conf.Security) (*sessions.Session, error) {
+	var rn = defaultRememberName
+	if cfg.RememberCookie != nil && cfg.RememberCookie.Name != nil {
+		rn = cfg.RememberCookie.Name.Value
+	}
+	return rememberStore.Get(ctx, header, rn)
 }
 
 //TODO handle remember?

@@ -2,6 +2,7 @@ package remote
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/errors"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas/common"
 )
@@ -19,6 +20,9 @@ func NewRemoteGrpcTenantStore(client v1.TenantServiceClient) common.TenantStore 
 func (r *GrpcTenantStore) GetByNameOrId(ctx context.Context, nameOrId string) (*common.TenantConfig, error) {
 	tenant, err := r.client.GetTenant(ctx, &v1.GetTenantRequest{IdOrName: nameOrId})
 	if err != nil {
+		if errors.IsNotFound(err) {
+			return nil, common.ErrTenantNotFound
+		}
 		return nil, err
 	}
 	ret := common.NewTenantConfig(tenant.Id, tenant.Name, tenant.Region)

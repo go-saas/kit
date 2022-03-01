@@ -15,11 +15,11 @@ func NewCsrf(l log.Logger, sCfg *conf.Security, cfg *conf.Server_HTTP_Csrf, errE
 
 	var csrfOpt []csrf.Option
 
+	name := "kit_csrf"
+
 	if cfg.Cookie != nil {
 		if cfg.Cookie.Name != nil {
-			csrfOpt = append(csrfOpt, csrf.CookieName(cfg.Cookie.Name.Value))
-		} else {
-			csrfOpt = append(csrfOpt, csrf.CookieName("kit_csrf"))
+			name = cfg.Cookie.Name.Value
 		}
 		if cfg.Cookie.MaxAge != nil {
 			csrfOpt = append(csrfOpt, csrf.MaxAge(int(cfg.Cookie.MaxAge.Value)))
@@ -47,7 +47,7 @@ func NewCsrf(l log.Logger, sCfg *conf.Security, cfg *conf.Server_HTTP_Csrf, errE
 			}
 		}
 	}
-
+	csrfOpt = append(csrfOpt, csrf.CookieName(name))
 	if cfg.RequestHeader != nil {
 		csrfOpt = append(csrfOpt, csrf.RequestHeader(cfg.RequestHeader.Value))
 	}

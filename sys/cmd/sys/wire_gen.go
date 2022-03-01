@@ -37,12 +37,10 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	clientName := _wireClientNameValue
-	saasContributor := api.NewSaasContributor(webMultiTenancyOption)
-	userContributor := api.NewUserContributor()
-	clientContributor := api.NewClientContributor()
-	option := api.NewDefaultOption(saasContributor, userContributor, clientContributor)
-	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer)
-	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, arg...)
+	saasContributor := api.NewSaasContributor(webMultiTenancyOption, logger)
+	option := api.NewDefaultOption(saasContributor, logger)
+	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
+	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	tenantServiceClient := api2.NewTenantGrpcClient(grpcConn)
 	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceClient)
 	dbOpener, cleanup2 := gorm.NewDbOpener()
@@ -51,7 +49,7 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
 	factory := data.NewBlobFactory(confData)
-	apiGrpcConn, cleanup3 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, arg...)
+	apiGrpcConn, cleanup3 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	permissionServiceClient := api3.NewPermissionGrpcClient(apiGrpcConn)
 	permissionChecker := remote2.NewRemotePermissionChecker(permissionServiceClient)
 	authzOption := service.NewAuthorizationOption()

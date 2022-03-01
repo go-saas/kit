@@ -50,4 +50,10 @@ export interface V1Permission {
    * @memberof V1Permission
    */
   effect?: V1Effect;
+  /**
+   *
+   * @type {string}
+   * @memberof V1Permission
+   */
+  tenantId?: string;
 }

@@ -12,6 +12,9 @@ generate:
 build:
 	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
 
+.PHONY: all
+all:
+	make generate
 
 # show help
 help:

@@ -75,6 +75,10 @@ export const useUserStore = defineStore({
     ): Promise<Nullable<UserInfo>> {
       try {
         const { redirect = '/', mode, ...loginParams } = params;
+        // const data = await new AuthWebApi().authWebWebLogin(
+        //   { body: loginParams },
+        //   { data: { errorMessageMode: mode } },
+        // );
         const data = await new AuthWebApi().authWebWebLogin(
           { body: loginParams },
           { data: { errorMessageMode: mode } },

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
@@ -14,7 +15,10 @@ import (
 type ClientName string
 
 // NewGrpcConn create new grpc client from name
-func NewGrpcConn(clientName ClientName, serviceName string, services *conf.Services, insecure bool, opt *Option, tokenMgr TokenManager, opts ...grpc.ClientOption) (grpc2.ClientConnInterface, func()) {
+func NewGrpcConn(clientName ClientName, serviceName string,
+	services *conf.Services, insecure bool, opt *Option, tokenMgr TokenManager,
+	logger log.Logger,
+	opts ...grpc.ClientOption) (grpc2.ClientConnInterface, func()) {
 	endpoint, ok := services.Services[serviceName]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", serviceName)))
@@ -27,7 +31,7 @@ func NewGrpcConn(clientName ClientName, serviceName string, services *conf.Servi
 	var err error
 	fOpts := []grpc.ClientOption{
 		grpc.WithEndpoint(endpoint.GrpcEndpoint),
-		grpc.WithMiddleware(ClientMiddleware(clientCfg, opt, tokenMgr)),
+		grpc.WithMiddleware(ClientMiddleware(clientCfg, opt, tokenMgr, logger)),
 	}
 	if clientCfg.Timeout != nil {
 		fOpts = append(fOpts, grpc.WithTimeout(clientCfg.Timeout.AsDuration()))
@@ -48,7 +52,10 @@ func NewGrpcConn(clientName ClientName, serviceName string, services *conf.Servi
 }
 
 // NewHttpClient create new http client from name
-func NewHttpClient(clientName ClientName, serviceName string, services *conf.Services, opt *Option, tokenMgr TokenManager, opts ...http.ClientOption) (*http.Client, func()) {
+func NewHttpClient(clientName ClientName, serviceName string,
+	services *conf.Services, opt *Option, tokenMgr TokenManager,
+	logger log.Logger,
+	opts ...http.ClientOption) (*http.Client, func()) {
 	endpoint, ok := services.Services[serviceName]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", serviceName)))
@@ -61,7 +68,7 @@ func NewHttpClient(clientName ClientName, serviceName string, services *conf.Ser
 
 	fOpts := []http.ClientOption{
 		http.WithEndpoint(endpoint.HttpEndpoint),
-		http.WithMiddleware(ClientMiddleware(clientCfg, opt, tokenMgr)),
+		http.WithMiddleware(ClientMiddleware(clientCfg, opt, tokenMgr, logger)),
 	}
 	if clientCfg.Timeout != nil {
 		fOpts = append(fOpts, http.WithTimeout(clientCfg.Timeout.AsDuration()))
@@ -77,6 +84,6 @@ func NewHttpClient(clientName ClientName, serviceName string, services *conf.Ser
 	}
 }
 
-var DefaultProviderSet = wire.NewSet(NewSaasContributor, NewUserContributor, NewClientContributor,
+var DefaultProviderSet = wire.NewSet(NewSaasContributor,
 	NewDefaultOption, NewInMemoryTokenManager,
 	wire.Bind(new(TokenManager), new(*InMemoryTokenManager)))

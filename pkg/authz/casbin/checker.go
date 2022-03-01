@@ -9,7 +9,7 @@ import (
 var _ authz.PermissionChecker = (*PermissionService)(nil)
 
 func (p *PermissionService) IsGrant(ctx context.Context, resource authz.Resource, action authz.Action, subjects ...authz.Subject) (authz.Effect, error) {
-	tenantInfo := common.FromCurrentTenant(ctx)
+	tenantInfo, _ := common.FromCurrentTenant(ctx)
 	return p.IsGrantTenant(ctx, resource, action, tenantInfo.GetId(), subjects...)
 }
 

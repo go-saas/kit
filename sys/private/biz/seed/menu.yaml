@@ -50,7 +50,7 @@ menus:
             action: "list"
       - name: "permission"
         path: "permission"
-        component: "/system/role/permission/index"
+        component: "/system/permission/index"
         meta:
         title: "routes.system.permission.management"
         requirement:

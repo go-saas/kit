@@ -5,6 +5,7 @@ import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT } from '/@/router/constant
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '/@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
+import { V1Menu } from '/@/api-gen/models';
 
 export type LayoutMapKey = 'LAYOUT';
 const IFRAME = () => import('/@/views/sys/iframe/FrameBlank.vue');
@@ -17,7 +18,6 @@ LayoutMap.set('IFRAME', IFRAME);
 let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
 
 // Dynamic introduction
-// eslint-disable-next-line no-unused-vars
 function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
   dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../views/**/*.{vue,tsx}');
   if (!routes) return;
@@ -69,32 +69,79 @@ function dynamicImport(
   }
 }
 
-// // Turn background objects into routing objects
-// export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModule[]): T[] {
-//   routeList.forEach((route) => {
-//     console.log(route);
-//     const component = route.component as string;
-//     console.log(component);
-//     if (component) {
-//       if (component.toUpperCase() === 'LAYOUT') {
-//         route.component = LayoutMap.get(component.toUpperCase());
-//       } else {
-//         route.children = [cloneDeep(route)];
-//         route.component = LAYOUT;
-//         route.name = `${route.name}Parent`;
-//         route.path = '';
-//         const meta = route.meta || {};
-//         meta.single = true;
-//         meta.affix = false;
-//         route.meta = meta;
-//       }
-//     } else {
-//       warn('请正确配置路由：' + route?.name + '的component属性');
-//     }
-//     route.children && asyncImportRoute(route.children);
-//   });
-//   return routeList as unknown as T[];
-// }
+// Turn background objects into routing objects
+export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModule[]): T[] {
+  routeList.forEach((route) => {
+    console.log(route);
+    const component = route.component as string;
+    console.log(component);
+    if (component) {
+      if (component.toUpperCase() === 'LAYOUT') {
+        route.component = LayoutMap.get(component.toUpperCase());
+      } else {
+        route.children = [cloneDeep(route)];
+        route.component = LAYOUT;
+        route.name = `${route.name}Parent`;
+        route.path = '';
+        const meta = route.meta || {};
+        meta.single = true;
+        meta.affix = false;
+        route.meta = meta;
+      }
+    } else {
+      warn('请正确配置路由：' + route?.name + '的component属性');
+    }
+    route.children && asyncImportRoute(route.children);
+  });
+  return routeList as unknown as T[];
+}
+
+export function transformObjToAppRouteRecordRaw(
+  menuList: V1Menu[],
+  parentId: string | undefined = undefined,
+): AppRouteRecordRaw[] {
+  const ret: AppRouteRecordRaw[] = [];
+  for (const menu of menuList) {
+    if (parentId && menu.parent != parentId) {
+      continue;
+    }
+    if (!parentId && menu.parent != '') {
+      continue;
+    }
+
+    const raw: AppRouteRecordRaw = {
+      path: menu.path!,
+      name: menu.name!,
+      component: menu.component,
+      redirect: menu.redirect,
+      meta: {
+        title: menu.title ?? '',
+        icon: menu.icon,
+        orderNo: menu.priority,
+        ignoreAuth: menu.ignoreAuth,
+        frameSrc: menu.iframe,
+        microApp: menu.microApp,
+      },
+      fullPath: menu.fullPath,
+    };
+    //merge meta
+    raw.meta = { ...raw.meta, ...(menu.meta ?? {}) };
+    //map requirement
+    raw.meta.requirement = (menu.requirement ?? []).map((requirement) => {
+      return {
+        namespace: requirement.namespace ?? '*',
+        resource: requirement.resource ?? '*',
+        action: requirement.action ?? '*',
+      };
+    });
+
+    //children
+    raw.children = transformObjToAppRouteRecordRaw(menuList, menu.id!);
+    ret.push(raw);
+  }
+
+  return ret;
+}
 
 /**
  * Convert multi-level routing to level 2 routing
