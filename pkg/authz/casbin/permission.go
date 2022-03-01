@@ -49,16 +49,24 @@ func (p *PermissionService) ListAcl(ctx context.Context, subjects ...authz.Subje
 	policies := enforcer.GetPolicy()
 	var ret []authz.PermissionBean
 	for _, policy := range policies {
-		for _, subject := range subjects {
-			if util.KeyMatch(policy[0], subject.GetIdentity()) {
-				ret = append(ret, authz.NewPermissionBean(authz.NewEntityResource(policy[1], policy[2]),
-					authz.ActionStr(policy[3]),
-					authz.SubjectStr(policy[0]),
-					policy[4], mapToAuthEffect(policy[5]),
-				))
+		//tenant has been filtered by LoadFilteredPolicy
+		if len(subjects) > 0 {
+			for _, subject := range subjects {
+				if util.KeyMatch(policy[0], subject.GetIdentity()) {
+					ret = append(ret, authz.NewPermissionBean(authz.NewEntityResource(policy[1], policy[2]),
+						authz.ActionStr(policy[3]),
+						authz.SubjectStr(policy[0]),
+						policy[4], mapToAuthEffect(policy[5]),
+					))
+				}
 			}
+		} else {
+			ret = append(ret, authz.NewPermissionBean(authz.NewEntityResource(policy[1], policy[2]),
+				authz.ActionStr(policy[3]),
+				authz.SubjectStr(policy[0]),
+				policy[4], mapToAuthEffect(policy[5]),
+			))
 		}
-
 	}
 	return ret, nil
 }

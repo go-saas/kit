@@ -68,6 +68,7 @@ message CreateTenantRequest {
 	string name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 	string display_name=3;
 	string region = 4;
+	string logo =5;
 }
 
 message UpdateTenantRequest {
@@ -83,6 +84,7 @@ message UpdateTenant{
 
 	repeated TenantConnectionString conn=7;
 	repeated TenantFeature features=8;
+	string logo =9;
 }
 
 message DeleteTenantRequest {

@@ -115,9 +115,17 @@ func (c *MenuRepo) Create(ctx context.Context, entity *biz.Menu) error {
 }
 
 func (c *MenuRepo) Update(ctx context.Context, entity *biz.Menu, p query.Select) error {
+	if entity.Requirement != nil {
+		if err := c.GetDb(ctx).Model(entity).Association("Requirement").Replace(entity.Requirement); err != nil {
+			return err
+		}
+	}
 	return c.GetDb(ctx).Updates(entity).Error
 }
 
 func (c *MenuRepo) Delete(ctx context.Context, id string) error {
+	if err := c.GetDb(ctx).Delete(&biz.MenuPermissionRequirement{}, "menu_id = ?", id).Error; err != nil {
+		return err
+	}
 	return c.GetDb(ctx).Delete(&biz.Menu{}, "id = ?", id).Error
 }

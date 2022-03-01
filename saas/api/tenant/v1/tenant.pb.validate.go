@@ -72,6 +72,8 @@ func (m *CreateTenantRequest) validate(all bool) error {
 
 	// no validation rules for Region
 
+	// no validation rules for Logo
+
 	if len(errors) > 0 {
 		return CreateTenantRequestMultiError(errors)
 	}
@@ -434,6 +436,8 @@ func (m *UpdateTenant) validate(all bool) error {
 		}
 
 	}
+
+	// no validation rules for Logo
 
 	if len(errors) > 0 {
 		return UpdateTenantMultiError(errors)

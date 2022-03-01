@@ -6,6 +6,7 @@ import (
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"gorm.io/gorm"
 )
 import "context"
@@ -100,7 +101,7 @@ func (u *UserRepo) Create(ctx context.Context, user *biz.User) error {
 	return u.GetDb(ctx).Create(user).Error
 }
 
-func (u *UserRepo) Update(ctx context.Context, user *biz.User) error {
+func (u *UserRepo) Update(ctx context.Context, user *biz.User, p *fieldmaskpb.FieldMask) error {
 	return concurrency.ConcurrentUpdates(u.GetDb(ctx).Model(user).Omit("Roles", "Tenants"), *user).Error
 }
 

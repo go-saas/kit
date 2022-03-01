@@ -15,7 +15,7 @@ type Menu struct {
 	Name        string                      `json:"name"`
 	Desc        string                      `json:"desc"`
 	Component   string                      `json:"component"`
-	Requirement []MenuPermissionRequirement `gorm:"foreignKey:MenuID" json:"requirement"`
+	Requirement []MenuPermissionRequirement `gorm:"foreignKey:MenuID;constraint:OnDelete:CASCADE;" json:"requirement"`
 	Parent      string                      `json:"parent"`
 	Props       data.JSONMap                `json:"props"`
 	FullPath    string                      `json:"full_path"`

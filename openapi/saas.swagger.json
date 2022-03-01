@@ -392,6 +392,9 @@
         },
         "region": {
           "type": "string"
+        },
+        "logo": {
+          "type": "string"
         }
       },
       "required": [
@@ -570,6 +573,9 @@
           "items": {
             "$ref": "#/definitions/v1TenantFeature"
           }
+        },
+        "logo": {
+          "type": "string"
         }
       },
       "required": [

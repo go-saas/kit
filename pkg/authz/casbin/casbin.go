@@ -31,7 +31,6 @@ func (p *EnforcerProvider) Get(ctx context.Context) (*casbin.SyncedEnforcer, err
 	}
 	tenantInfo, _ := common.FromCurrentTenant(ctx)
 	filter := gormadapter.Filter{
-		//TODO host side?
 		V4: []string{tenantInfo.GetId(), "*"},
 	}
 	if m, err := model.NewModelFromString(modelStr); err != nil {

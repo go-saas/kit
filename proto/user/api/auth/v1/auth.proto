@@ -3,6 +3,7 @@ syntax = "proto3";
 package user.api.auth.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/wrappers.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/auth/v1;v1";
@@ -153,6 +154,8 @@ message LoginPasswordlessReply{
 
 }
 message ForgetPasswordTokenRequest{
+    google.protobuf.StringValue phone =4;
+    google.protobuf.StringValue email=5;
 
 }
 message ForgetPasswordTokenReply{

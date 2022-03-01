@@ -8,6 +8,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas/common"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"time"
 )
 
@@ -112,12 +113,12 @@ func (um *UserManager) FindByConfirmSelector(ctx context.Context, c string) (use
 	return um.userRepo.FindByConfirmSelector(ctx, c)
 }
 
-func (um *UserManager) Update(ctx context.Context, user *User) (err error) {
+func (um *UserManager) Update(ctx context.Context, user *User, p *fieldmaskpb.FieldMask) (err error) {
 	um.normalize(ctx, user)
 	if err = um.validateUser(ctx, user); err != nil {
 		return
 	}
-	return um.userRepo.Update(ctx, user)
+	return um.userRepo.Update(ctx, user, p)
 }
 
 func (um *UserManager) Delete(ctx context.Context, user *User) error {
@@ -134,7 +135,7 @@ func (um *UserManager) CheckPassword(ctx context.Context, user *User, password s
 		if err := um.updatePassword(ctx, user, &password, false); err != nil {
 			return err
 		}
-		err := um.userRepo.Update(ctx, user)
+		err := um.userRepo.Update(ctx, user, &fieldmaskpb.FieldMask{Paths: []string{"password"}})
 		return err
 	}
 	//fail
@@ -148,14 +149,14 @@ func (um *UserManager) ChangePassword(ctx context.Context, user *User, current s
 	if err := um.updatePassword(ctx, user, &newPwd, true); err != nil {
 		return err
 	}
-	return um.Update(ctx, user)
+	return um.Update(ctx, user, &fieldmaskpb.FieldMask{Paths: []string{"password"}})
 }
 
 func (um *UserManager) UpdatePassword(ctx context.Context, user *User, newPwd string) error {
 	if err := um.updatePassword(ctx, user, &newPwd, true); err != nil {
 		return err
 	}
-	return um.Update(ctx, user)
+	return um.Update(ctx, user, &fieldmaskpb.FieldMask{Paths: []string{"password"}})
 }
 
 func (um *UserManager) GetRoles(ctx context.Context, user *User) ([]*Role, error) {
