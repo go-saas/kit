@@ -3,12 +3,20 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/ahmetb/go-linq/v3"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/google/uuid"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
+	"io"
+	"os"
+	"path/filepath"
 
 	pb "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -236,6 +244,76 @@ func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleReque
 		}
 	}
 	return resp, nil
+}
+
+func (s *UserService) UpdateAvatar(ctx http.Context) error {
+	req := ctx.Request()
+	//TODO do not know why should read form file first ...
+	if _, _, err := req.FormFile("file"); err != nil {
+		return err
+	}
+	userId := req.FormValue("id")
+	h := ctx.Middleware(func(ctx context.Context, _ interface{}) (interface{}, error) {
+		if len(userId) > 0 {
+			if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", userId), authz.UpdateAction); err != nil {
+				return nil, err
+			}
+		} else {
+			_, err := authn.ErrIfUnauthenticated(ctx)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		file, handle, err := req.FormFile("file")
+		if err != nil {
+			return nil, err
+		}
+		defer file.Close()
+		fileName := handle.Filename
+		ext := filepath.Ext(fileName)
+		normalizedName := fmt.Sprintf("avatar/%s%s", uuid.New().String(), ext)
+		profileBlob := biz.ProfileBlob(ctx, s.blob)
+		a := profileBlob.GetAfero()
+		err = a.MkdirAll("avatar", 0755)
+		if err != nil {
+			return nil, err
+		}
+		f, err := a.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
+		if err != nil {
+			return nil, err
+		}
+		defer f.Close()
+		_, err = io.Copy(f, file)
+		if err != nil {
+			return nil, err
+		}
+		if len(userId) > 0 {
+			//update avatar field
+			u, err := s.um.FindByID(ctx, userId)
+			if err != nil {
+				return nil, err
+			}
+			u.Avatar = &normalizedName
+			err = s.um.Update(ctx, u, &fieldmaskpb.FieldMask{Paths: []string{"avatar"}})
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		profile := biz.ProfileBlob(ctx, s.blob)
+		url, _ := profile.GeneratePublicUrl(normalizedName)
+		return &blob.BlobFile{
+			Id:   normalizedName,
+			Name: "",
+			Url:  url,
+		}, nil
+	})
+	out, err := h(ctx, nil)
+	if err != nil {
+		return err
+	}
+	return ctx.Result(201, out)
 }
 
 func MapBizUserToApi(ctx context.Context, u *biz.User, b blob.Factory) *pb.User {

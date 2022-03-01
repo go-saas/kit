@@ -13,6 +13,7 @@ import (
 
 type PermissionManagementService interface {
 	AddGrant(ctx context.Context, resource Resource, action Action, subject Subject, tenantID string, effect Effect) error
+	//ListAcl list permission of subjects. if not subjects provided, all acl will be returned
 	ListAcl(ctx context.Context, subjects ...Subject) ([]PermissionBean, error)
 	UpdateGrant(ctx context.Context, subject Subject, acl []UpdateSubjectPermission) error
 	RemoveGrant(ctx context.Context, resource Resource, action Action, subject Subject, tenantID string, effects []Effect) error
@@ -61,14 +62,25 @@ func NewPermissionService(logger log.Logger) *PermissionService {
 func (p *PermissionService) ListAcl(ctx context.Context, subjects ...Subject) ([]PermissionBean, error) {
 	p.mux.Lock()
 	defer p.mux.Unlock()
-	//TODO host side?
 	tenantInfo, _ := common.FromCurrentTenant(ctx)
+	tenantFilter := tenantInfo.GetId()
+	if len(tenantFilter) == 0 {
+		//host side
+		tenantFilter = "*"
+	}
 	var ret []PermissionBean
 	for _, bean := range p.v {
-		for _, subject := range subjects {
-			if (match(bean.Subject, subject.GetIdentity()) || match(bean.Subject, "")) && match(bean.TenantID, tenantInfo.GetId()) {
-				ret = append(ret, bean)
+		if !match(bean.TenantID, tenantFilter) {
+			continue
+		}
+		if len(subjects) > 0 {
+			for _, subject := range subjects {
+				if match(bean.Subject, subject.GetIdentity()) || match(bean.Subject, "") {
+					ret = append(ret, bean)
+				}
 			}
+		} else {
+			ret = append(ret, bean)
 		}
 	}
 	return ret, nil

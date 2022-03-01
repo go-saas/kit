@@ -7,7 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
@@ -45,6 +45,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		Name:        req.Name,
 		DisplayName: disPlayName,
 		Region:      req.Region,
+		Logo:        req.Logo,
 	}
 	if err := s.useCase.Create(ctx, t); err != nil {
 		return nil, err
@@ -67,6 +68,7 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 	}
 	t.Name = req.Tenant.Name
 	t.DisplayName = req.Tenant.DisplayName
+	t.Logo = req.Tenant.Logo
 
 	var tenantConn []biz.TenantConn
 	linq.From(req.Tenant.Conn).SelectT(func(t *pb.TenantConnectionString) biz.TenantConn {
@@ -151,15 +153,23 @@ func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantReques
 
 func (s *TenantService) UpdateLogo(ctx http.Context) error {
 	req := ctx.Request()
-	vars := mux.Vars(req)
 	//TODO do not know why should read form file first ...
 	if _, _, err := req.FormFile("file"); err != nil {
 		return err
 	}
+	tenantID := req.FormValue("id")
 	h := ctx.Middleware(func(ctx context.Context, _ interface{}) (interface{}, error) {
-		if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", vars["id"]), authz.UpdateAction); err != nil {
-			return nil, err
+		if len(tenantID) > 0 {
+			if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", tenantID), authz.UpdateAction); err != nil {
+				return nil, err
+			}
+		} else {
+			_, err := authn.ErrIfUnauthenticated(ctx)
+			if err != nil {
+				return nil, err
+			}
 		}
+
 		file, handle, err := req.FormFile("file")
 		if err != nil {
 			return nil, err
@@ -168,8 +178,8 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 		fileName := handle.Filename
 		ext := filepath.Ext(fileName)
 		normalizedName := fmt.Sprintf("tenant/logo/%s%s", uuid.New().String(), ext)
-		blob := biz.LogoBlob(ctx, s.blob)
-		a := blob.GetAfero()
+		logoBlob := biz.LogoBlob(ctx, s.blob)
+		a := logoBlob.GetAfero()
 		err = a.MkdirAll("tenant/logo", 0755)
 		if err != nil {
 			return nil, err
@@ -183,29 +193,36 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 		if err != nil {
 			return nil, err
 		}
-		//update field
+		if len(tenantID) > 0 {
+			//update field
+			t, err := s.useCase.FindByIdOrName(ctx, tenantID)
+			if err != nil {
+				return nil, err
+			}
+			if t == nil {
+				return nil, errors.NotFound("", "")
+			}
 
-		t, err := s.useCase.FindByIdOrName(ctx, vars["id"])
-		if err != nil {
-			return nil, err
+			t.Logo = normalizedName
+			if err := s.useCase.Update(ctx, t, &fieldmaskpb.FieldMask{Paths: []string{"logo"}}); err != nil {
+				return nil, err
+			}
 		}
-		if t == nil {
-			return nil, errors.NotFound("", "")
-		}
+		profile := biz.LogoBlob(ctx, s.blob)
 
-		t.Logo = normalizedName
-		err = s.useCase.Update(ctx, t, &fieldmaskpb.FieldMask{Paths: []string{"logo"}})
-		if err != nil {
-			return nil, err
-		}
-		return nil, nil
+		url, _ := profile.GeneratePublicUrl(normalizedName)
+		return &blob.BlobFile{
+			Id:   normalizedName,
+			Name: "",
+			Url:  url,
+		}, nil
 	})
-	_, err := h(ctx, nil)
+	out, err := h(ctx, nil)
 	if err != nil {
 		return err
 	}
 
-	return ctx.Returns(201, nil)
+	return ctx.Result(201, out)
 }
 
 func mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenant) *pb.Tenant {

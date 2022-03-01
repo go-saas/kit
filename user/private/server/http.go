@@ -105,6 +105,7 @@ func NewHTTPServer(c *conf.Services,
 	route := srv.Route("/")
 
 	route.POST("/v1/account/avatar", account.UpdateAvatar)
+	route.POST("/v1/user/avatar", user.UpdateAvatar)
 
 	v14.RegisterAuthHTTPServer(srv, auth)
 	v1.RegisterRoleServiceHTTPServer(srv, role)

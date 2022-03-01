@@ -119,5 +119,8 @@ func (c *MenuRepo) Update(ctx context.Context, entity *biz.Menu, p query.Select)
 }
 
 func (c *MenuRepo) Delete(ctx context.Context, id string) error {
+	if err := c.GetDb(ctx).Delete(&biz.MenuPermissionRequirement{}, "menu_id = ?", id).Error; err != nil {
+		return err
+	}
 	return c.GetDb(ctx).Delete(&biz.Menu{}, "id = ?", id).Error
 }

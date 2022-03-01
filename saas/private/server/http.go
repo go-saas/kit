@@ -57,7 +57,7 @@ func NewHTTPServer(c *conf.Services,
 
 	route := srv.Route("/")
 
-	route.POST("/v1/saas/tenant/{id}/logo", tenant.UpdateLogo)
+	route.POST("/v1/saas/tenant/logo", tenant.UpdateLogo)
 	server.HandleBlobs("", dataCfg.Blobs, srv, factory)
 	v1.RegisterTenantServiceHTTPServer(srv, tenant)
 	return srv
