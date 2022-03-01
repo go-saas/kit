@@ -22,7 +22,7 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
   dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../views/**/*.{vue,tsx}');
   if (!routes) return;
   routes.forEach((item) => {
-    if (!item.component && item.meta?.frameSrc) {
+    if (!item.meta.microApp && !item.component && item.meta?.frameSrc) {
       item.component = 'IFRAME';
     }
     const { component, name } = item;

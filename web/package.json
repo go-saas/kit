@@ -36,8 +36,12 @@
   "dependencies": {
     "@ant-design/colors": "^6.0.0",
     "@ant-design/icons-vue": "^6.0.1",
+    "@formily/antdv": "^1.0.0-alpha.6",
+    "@formily/core": "^2.0.13",
+    "@formily/vue": "^2.0.13",
     "@iconify/iconify": "^2.0.4",
     "@micro-zoe/micro-app": "^0.8.5",
+    "@vue/composition-api": "^1.4.9",
     "@vueuse/core": "^6.7.4",
     "@vueuse/shared": "^6.7.4",
     "@zxcvbn-ts/core": "^1.0.0-beta.0",

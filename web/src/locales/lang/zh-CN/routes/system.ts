@@ -9,4 +9,7 @@ export default {
   permission: {
     management: '权限管理',
   },
+  menu: {
+    management: '菜单管理',
+  },
 };
