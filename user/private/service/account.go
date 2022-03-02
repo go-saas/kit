@@ -77,7 +77,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	}
 
 	tenantIds := make([]string, len(u.Tenants))
-	linq.From(u.Tenants).SelectT(func(t biz.UserTenant) string { return t.TenantId }).ToSlice(&tenantIds)
+	linq.From(u.Tenants).SelectT(func(t biz.UserTenant) string { return t.TenantId.String }).ToSlice(&tenantIds)
 	if len(tenantIds) > 0 {
 		tenants, err := s.tenantService.ListTenant(ctx, &v13.ListTenantRequest{Filter: &v13.TenantFilter{IdIn: tenantIds}})
 		if err != nil {
@@ -87,17 +87,17 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		reTenants := make([]*pb.UserTenant, len(u.Tenants))
 		linq.From(u.Tenants).SelectT(func(ut biz.UserTenant) *pb.UserTenant {
 			//get tenant info
-			if ut.TenantId == "" {
+			if ut.TenantId.Valid {
 				//host
-				return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId, IsHost: true}
+				return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId.String, IsHost: true}
 			}
 
-			t := linq.From(tenants.Items).FirstWithT(func(t *v13.Tenant) bool { return t.Id == ut.TenantId })
+			t := linq.From(tenants.Items).FirstWithT(func(t *v13.Tenant) bool { return t.Id == ut.TenantId.String })
 			if t == nil {
 				return nil
 			}
 			tt := t.(*v13.Tenant)
-			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId, Tenant: &pb.UserTenant_Tenant{
+			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId.String, Tenant: &pb.UserTenant_Tenant{
 				Id:          tt.Id,
 				Name:        tt.Name,
 				DisplayName: tt.DisplayName,

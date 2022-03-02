@@ -45,6 +45,9 @@ func (s *AuthService) Register(ctx context.Context, req *pb.RegisterAuthRequest)
 }
 func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.LoginAuthReply, error) {
 	user, err := FindUserByUsernameAndValidatePwd(ctx, s.um, req.Username, req.Password)
+	if err != nil {
+		return nil, err
+	}
 	//login success
 	t, err := s.generateToken(ctx, user.ID)
 	if err != nil {

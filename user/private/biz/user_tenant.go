@@ -3,6 +3,8 @@ package biz
 import (
 	"context"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
+	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas/gorm"
 	"time"
 )
 
@@ -25,9 +27,10 @@ func (p UserTenantStatus) String() string {
 }
 
 type UserTenant struct {
-	UserId   string           `gorm:"type:char(36);primaryKey" json:"user_id"`
-	TenantId string           `json:"tenant_id" gorm:"type:char(36);primaryKey"`
-	JoinTime time.Time        `json:"joint_time"`
+	gorm2.UIDBase
+	UserId   string           `gorm:"type:char(36)" json:"user_id"`
+	TenantId gorm.HasTenant   `json:"tenant_id" gorm:"type:char(36)"`
+	JoinTime time.Time        `json:"join_time"`
 	Status   UserTenantStatus `json:"status"`
 	Extra    data.JSONMap
 }

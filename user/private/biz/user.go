@@ -5,7 +5,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
-	gorm3 "github.com/goxiaoy/go-saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	gorm2 "gorm.io/gorm"
@@ -16,7 +15,6 @@ type User struct {
 	gorm.UIDBase        `json:",squash"`
 	concurrency.Version `gorm:"type:char(36)"`
 	gorm.AuditedModel
-	gorm3.MultiTenancy
 
 	DeletedAt gorm2.DeletedAt `gorm:"index"`
 
@@ -68,6 +66,8 @@ type User struct {
 	Tenants []UserTenant `json:"tenants"`
 
 	Extra data.JSONMap
+	//creation tenant
+	CreatedTenant *string `json:"created_tenant"`
 }
 
 type UserRepo interface {

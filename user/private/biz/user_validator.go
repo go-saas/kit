@@ -27,6 +27,8 @@ func NewUserValidator() UserValidator {
 
 func (u *userValidator) Validate(ctx context.Context, um *UserManager, user *User) (err error) {
 	//check duplicate email/phone/username
+	//TODO from configuration?
+	ctx = NewIgnoreUserTenantsContext(ctx, true)
 	if user.Username != nil {
 		u, err := um.FindByName(ctx, *user.Username)
 		if err != nil {

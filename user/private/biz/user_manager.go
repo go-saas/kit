@@ -238,7 +238,7 @@ func (um *UserManager) validateUser(ctx context.Context, u *User) (err error) {
 	return
 }
 
-func (um *UserManager) normalize(_ context.Context, u *User) {
+func (um *UserManager) normalize(ctx context.Context, u *User) {
 	//normalize
 	if u.Username != nil {
 		n := um.lookupNormalizer.Name(*u.Username)
@@ -247,6 +247,11 @@ func (um *UserManager) normalize(_ context.Context, u *User) {
 	if u.Email != nil {
 		e := um.lookupNormalizer.Name(*u.Email)
 		u.NormalizedEmail = &e
+	}
+	t, _ := common.FromCurrentTenant(ctx)
+	if len(t.GetId()) > 0 {
+		ti := t.GetId()
+		u.CreatedTenant = &ti
 	}
 }
 func (um *UserManager) updatePassword(ctx context.Context, u *User, password *string, validate bool) error {

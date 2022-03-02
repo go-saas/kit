@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
+	gorm2 "github.com/goxiaoy/go-saas/gorm"
 	"gorm.io/gorm"
 	"time"
 )
@@ -21,9 +22,16 @@ func NewUserTenantRepo(data *Data) biz.UserTenantRepo {
 }
 
 func (u *UserTenantRepo) JoinTenant(ctx context.Context, userId string, tenantId string) (*biz.UserTenant, error) {
+	if ut, err := u.Get(ctx, userId, tenantId); err != nil {
+		return nil, err
+	} else if ut != nil {
+		//already in
+		return ut, nil
+	}
+	//not present
 	t := &biz.UserTenant{
 		UserId:   userId,
-		TenantId: tenantId,
+		TenantId: gorm2.NewTenantId(tenantId),
 		JoinTime: time.Now(),
 		Status:   biz.Active,
 		Extra:    nil,
@@ -43,12 +51,23 @@ func (u *UserTenantRepo) IsIn(ctx context.Context, userId string, tenantId strin
 }
 
 func (u *UserTenantRepo) RemoveFromTenant(ctx context.Context, userId string, tenantId string) error {
-	return u.GetDb(ctx).Delete(&biz.UserTenant{}, "user_id = ? and tenant_id = ?", userId, tenantId).Error
+	var err error
+	if len(tenantId) > 0 {
+		err = u.GetDb(ctx).Delete(&biz.UserTenant{}, "user_id = ? and tenant_id = ?", userId, tenantId).Error
+	} else {
+		err = u.GetDb(ctx).Delete(&biz.UserTenant{}, "user_id = ? and tenant_id is NULL ?", userId).Error
+	}
+	return err
 }
 
 func (u *UserTenantRepo) Get(ctx context.Context, userId string, tenantId string) (*biz.UserTenant, error) {
 	t := &biz.UserTenant{}
-	err := u.GetDb(ctx).Where("user_id = ? and tenant_id = ?", userId, tenantId).First(t).Error
+	var err error
+	if len(tenantId) > 0 {
+		err = u.GetDb(ctx).Where("user_id = ? and tenant_id = ?", userId, tenantId).First(t).Error
+	} else {
+		err = u.GetDb(ctx).Where("user_id = ? and tenant_id is NULL", userId).First(t).Error
+	}
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -59,6 +78,5 @@ func (u *UserTenantRepo) Get(ctx context.Context, userId string, tenantId string
 }
 
 func (u *UserTenantRepo) Update(ctx context.Context, userTenant *biz.UserTenant) error {
-	err := u.GetDb(ctx).Where("user_id = ? and tenant_id = ?", userTenant.UserId, userTenant.TenantId).Updates(userTenant).Error
-	return err
+	return u.GetDb(ctx).Updates(userTenant).Error
 }

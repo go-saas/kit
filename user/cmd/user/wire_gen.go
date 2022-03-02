@@ -22,7 +22,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
-	"github.com/goxiaoy/go-saas-kit/user/private/seed"
 	server2 "github.com/goxiaoy/go-saas-kit/user/private/server"
 	http2 "github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
@@ -87,9 +86,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
-	fake := seed.NewFake(userManager)
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
-	seeder := server2.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, fake, permissionSeeder)
+	seeder := server2.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, permissionSeeder)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
 		cleanup3()
