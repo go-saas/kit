@@ -1,6 +1,7 @@
 import { MenuServiceApi } from '/@/api-gen/api/menu-service-api';
 import { V1Menu } from '/@/api-gen/models/v1-menu';
-import { BasicFetchResult } from '/@/api/model/baseModel';
+import { BasicFetchResult, BasicPageParams } from '/@/api/model/baseModel';
+import { FormSchema } from '/@/components/Form/src/types/form';
 import { BasicColumn } from '/@/components/Table/src/types/table';
 
 const defaultRequirement = {
@@ -39,9 +40,16 @@ export function getMenuColumns(): BasicColumn[] {
   ];
 }
 
-export async function getMenuData(): Promise<BasicFetchResult<V1Menu>> {
+export const formSchema: FormSchema[] = [];
+
+export async function getMenuData(param: BasicPageParams): Promise<BasicFetchResult<V1Menu>> {
   return await new MenuServiceApi()
-    .menuServiceListMenu2({ body: { pageSize: -1 } })
+    .menuServiceListMenu2({
+      body: {
+        pageSize: param.pageSize,
+        pageOffset: (param.page - 1) * param.pageSize,
+      },
+    })
     .then((response) => {
       const menuData: BasicFetchResult<V1Menu> = {
         total: response.data.items!.length,
