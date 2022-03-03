@@ -27,7 +27,7 @@ menus:
     redirect: '/system/users'
     title: "routes.system.title"
     icon: "ion:grid-outline"
-    priority: 101
+    priority: 1000
     meta:
     children:
       - name: "user"
@@ -55,5 +55,14 @@ menus:
         title: "routes.system.permission.management"
         requirement:
           - namespace: "permission"
+            resource: "*"
+            action: "list"
+      - name: "menu"
+        path: "menu"
+        component: "/system/menu/index"
+        meta:
+        title: "routes.system.menu.management"
+        requirement:
+          - namespace: "sys.menu"
             resource: "*"
             action: "list"

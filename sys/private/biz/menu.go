@@ -28,6 +28,7 @@ type Menu struct {
 	Title       string                      `json:"title"`
 	Path        string                      `json:"path"`
 	Redirect    string                      `json:"redirect"`
+	IsPreserved bool                        `json:"preserved"`
 }
 
 type MenuPermissionRequirement struct {

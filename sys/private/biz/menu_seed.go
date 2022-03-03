@@ -70,6 +70,7 @@ func (m *MenuSeed) upsertMenus(ctx context.Context, parentId string, menus inter
 			actual.Parent = parentId
 			//ensure create
 			actual.Name = strings.ToLower(actual.Name)
+			actual.IsPreserved = true
 			dbEntity, err := m.menuRepo.FindByName(ctx, actual.Name)
 			pId := ""
 			if err != nil {

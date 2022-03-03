@@ -10,4 +10,5 @@ enum ErrorReason {
   option (errors.default_code) = 500;
 
   MENU_NAME_DUPLICATE = 0 [(errors.code) = 400];
+  MENU_PRESERVED =1 [(errors.code) = 403];
 }

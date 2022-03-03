@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package user.api.role.v1;
+import "errors/errors.proto";
+
+option go_package = "github.com/goxiaoy/go-saas-kit/user/api/role/v1;v1";
+
+enum ErrorReason {
+
+  option (errors.default_code) = 500;
+
+  ROLE_PRESERVED = 0 [(errors.code) = 403];
+
+}

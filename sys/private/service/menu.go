@@ -108,6 +108,9 @@ func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest)
 	if g == nil {
 		return nil, errors.NotFound("", "")
 	}
+	if g.IsPreserved {
+		return nil, pb.ErrorMenuPreserved("", "")
+	}
 	MapUpdatePbMenu2Biz(req.Menu, g)
 	if err := s.repo.Update(ctx, g, nil); err != nil {
 		return nil, err
@@ -127,6 +130,9 @@ func (s *MenuService) DeleteMenu(ctx context.Context, req *pb.DeleteMenuRequest)
 	}
 	if g == nil {
 		return nil, errors.NotFound("", "")
+	}
+	if g.IsPreserved {
+		return nil, pb.ErrorMenuPreserved("", "")
 	}
 	err = s.repo.Delete(ctx, req.Id)
 	if err != nil {

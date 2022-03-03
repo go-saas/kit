@@ -22,3 +22,15 @@ func IsMenuNameDuplicate(err error) bool {
 func ErrorMenuNameDuplicate(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_MENU_NAME_DUPLICATE.String(), fmt.Sprintf(format, args...))
 }
+
+func IsMenuPreserved(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_MENU_PRESERVED.String() && e.Code == 403
+}
+
+func ErrorMenuPreserved(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_MENU_PRESERVED.String(), fmt.Sprintf(format, args...))
+}
