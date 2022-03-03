@@ -1979,6 +1979,9 @@
         },
         "avatar": {
           "$ref": "#/definitions/blobBlobFile"
+        },
+        "currentTenant": {
+          "$ref": "#/definitions/v1UserTenant"
         }
       }
     },
@@ -2336,6 +2339,26 @@
         }
       }
     },
+    "v1TenantInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "logo": {
+          "$ref": "#/definitions/blobBlobFile"
+        }
+      }
+    },
     "v1TokenReply": {
       "type": "object",
       "properties": {
@@ -2647,27 +2670,10 @@
           "type": "string"
         },
         "tenant": {
-          "$ref": "#/definitions/v1UserTenantTenant"
+          "$ref": "#/definitions/v1TenantInfo"
         },
         "isHost": {
           "type": "boolean"
-        }
-      }
-    },
-    "v1UserTenantTenant": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
         }
       }
     },

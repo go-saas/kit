@@ -13,6 +13,7 @@ import (
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
+	"github.com/goxiaoy/go-saas/common"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -44,6 +45,9 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		return nil, err
 	}
 	u, err := s.um.FindByID(ctx, userInfo.GetId())
+	if u == nil {
+		return nil, errors.Unauthorized("", "")
+	}
 	if err != nil {
 		return nil, errors.Forbidden("", "")
 	}
@@ -78,6 +82,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 
 	tenantIds := make([]string, len(u.Tenants))
 	linq.From(u.Tenants).SelectT(func(t biz.UserTenant) string { return t.TenantId.String }).ToSlice(&tenantIds)
+	currentTenant, _ := common.FromCurrentTenant(ctx)
 	if len(tenantIds) > 0 {
 		tenants, err := s.tenantService.ListTenant(ctx, &v13.ListTenantRequest{Filter: &v13.TenantFilter{IdIn: tenantIds}})
 		if err != nil {
@@ -87,7 +92,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		reTenants := make([]*pb.UserTenant, len(u.Tenants))
 		linq.From(u.Tenants).SelectT(func(ut biz.UserTenant) *pb.UserTenant {
 			//get tenant info
-			if ut.TenantId.Valid {
+			if !ut.TenantId.Valid {
 				//host
 				return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId.String, IsHost: true}
 			}
@@ -97,13 +102,20 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 				return nil
 			}
 			tt := t.(*v13.Tenant)
-			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId.String, Tenant: &pb.UserTenant_Tenant{
+			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId.String, Tenant: &v13.TenantInfo{
 				Id:          tt.Id,
 				Name:        tt.Name,
 				DisplayName: tt.DisplayName,
 				Region:      tt.Region,
+				Logo:        tt.Logo,
 			}}
 		}).ToSlice(&reTenants)
+		for i := range reTenants {
+			if currentTenant.GetId() == reTenants[i].TenantId {
+				res.CurrentTenant = reTenants[i]
+				break
+			}
+		}
 		res.Tenants = reTenants
 	}
 	//avatar

@@ -42,7 +42,7 @@ func _TenantService_CreateTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/api.tenant.v1.TenantService/CreateTenant")
+		http.SetOperation(ctx, "/saas.api.tenant.v1.TenantService/CreateTenant")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.CreateTenant(ctx, req.(*CreateTenantRequest))
 		})
@@ -64,7 +64,7 @@ func _TenantService_UpdateTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/api.tenant.v1.TenantService/UpdateTenant")
+		http.SetOperation(ctx, "/saas.api.tenant.v1.TenantService/UpdateTenant")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.UpdateTenant(ctx, req.(*UpdateTenantRequest))
 		})
@@ -86,7 +86,7 @@ func _TenantService_UpdateTenant1_HTTP_Handler(srv TenantServiceHTTPServer) func
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/api.tenant.v1.TenantService/UpdateTenant")
+		http.SetOperation(ctx, "/saas.api.tenant.v1.TenantService/UpdateTenant")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.UpdateTenant(ctx, req.(*UpdateTenantRequest))
 		})
@@ -108,7 +108,7 @@ func _TenantService_DeleteTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/api.tenant.v1.TenantService/DeleteTenant")
+		http.SetOperation(ctx, "/saas.api.tenant.v1.TenantService/DeleteTenant")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.DeleteTenant(ctx, req.(*DeleteTenantRequest))
 		})
@@ -130,7 +130,7 @@ func _TenantService_GetTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func(ct
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/api.tenant.v1.TenantService/GetTenant")
+		http.SetOperation(ctx, "/saas.api.tenant.v1.TenantService/GetTenant")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.GetTenant(ctx, req.(*GetTenantRequest))
 		})
@@ -149,7 +149,7 @@ func _TenantService_ListTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func(c
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/api.tenant.v1.TenantService/ListTenant")
+		http.SetOperation(ctx, "/saas.api.tenant.v1.TenantService/ListTenant")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.ListTenant(ctx, req.(*ListTenantRequest))
 		})
@@ -168,7 +168,7 @@ func _TenantService_ListTenant1_HTTP_Handler(srv TenantServiceHTTPServer) func(c
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/api.tenant.v1.TenantService/ListTenant")
+		http.SetOperation(ctx, "/saas.api.tenant.v1.TenantService/ListTenant")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.ListTenant(ctx, req.(*ListTenantRequest))
 		})
@@ -201,7 +201,7 @@ func (c *TenantServiceHTTPClientImpl) CreateTenant(ctx context.Context, in *Crea
 	var out Tenant
 	pattern := "/v1/saas/tenant"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/api.tenant.v1.TenantService/CreateTenant"))
+	opts = append(opts, http.Operation("/saas.api.tenant.v1.TenantService/CreateTenant"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -214,7 +214,7 @@ func (c *TenantServiceHTTPClientImpl) DeleteTenant(ctx context.Context, in *Dele
 	var out DeleteTenantReply
 	pattern := "/v1/saas/tenant/{id}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation("/api.tenant.v1.TenantService/DeleteTenant"))
+	opts = append(opts, http.Operation("/saas.api.tenant.v1.TenantService/DeleteTenant"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
@@ -227,7 +227,7 @@ func (c *TenantServiceHTTPClientImpl) GetTenant(ctx context.Context, in *GetTena
 	var out Tenant
 	pattern := "/v1/saas/tenant/{id_or_name}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation("/api.tenant.v1.TenantService/GetTenant"))
+	opts = append(opts, http.Operation("/saas.api.tenant.v1.TenantService/GetTenant"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -240,7 +240,7 @@ func (c *TenantServiceHTTPClientImpl) ListTenant(ctx context.Context, in *ListTe
 	var out ListTenantReply
 	pattern := "/v1/saas/tenants"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation("/api.tenant.v1.TenantService/ListTenant"))
+	opts = append(opts, http.Operation("/saas.api.tenant.v1.TenantService/ListTenant"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -253,7 +253,7 @@ func (c *TenantServiceHTTPClientImpl) UpdateTenant(ctx context.Context, in *Upda
 	var out Tenant
 	pattern := "/v1/saas/tenant/{tenant.id}"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/api.tenant.v1.TenantService/UpdateTenant"))
+	opts = append(opts, http.Operation("/saas.api.tenant.v1.TenantService/UpdateTenant"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {

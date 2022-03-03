@@ -66,6 +66,7 @@ message GetProfileResponse{
   // user available tenants
   repeated UserTenant tenants=9;
   blob.BlobFile avatar=10;
+  UserTenant current_tenant=11;
 }
 message UpdateProfileRequest{
 
@@ -103,12 +104,6 @@ message UpdateAddressesReply{
 message UserTenant{
   string user_id=1;
   string tenant_id=2;
-  message Tenant{
-    string id=1;
-    string name=2;
-    string display_name=3;
-    string region=4;
-  }
-  Tenant tenant=3;
-  bool is_host=4;
+  .saas.api.tenant.v1.TenantInfo tenant=3;
+  bool is_host = 4;
 }

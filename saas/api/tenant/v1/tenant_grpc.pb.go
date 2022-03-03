@@ -44,7 +44,7 @@ func NewTenantServiceClient(cc grpc.ClientConnInterface) TenantServiceClient {
 
 func (c *tenantServiceClient) CreateTenant(ctx context.Context, in *CreateTenantRequest, opts ...grpc.CallOption) (*Tenant, error) {
 	out := new(Tenant)
-	err := c.cc.Invoke(ctx, "/api.tenant.v1.TenantService/CreateTenant", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/CreateTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (c *tenantServiceClient) CreateTenant(ctx context.Context, in *CreateTenant
 
 func (c *tenantServiceClient) UpdateTenant(ctx context.Context, in *UpdateTenantRequest, opts ...grpc.CallOption) (*Tenant, error) {
 	out := new(Tenant)
-	err := c.cc.Invoke(ctx, "/api.tenant.v1.TenantService/UpdateTenant", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/UpdateTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *tenantServiceClient) UpdateTenant(ctx context.Context, in *UpdateTenant
 
 func (c *tenantServiceClient) DeleteTenant(ctx context.Context, in *DeleteTenantRequest, opts ...grpc.CallOption) (*DeleteTenantReply, error) {
 	out := new(DeleteTenantReply)
-	err := c.cc.Invoke(ctx, "/api.tenant.v1.TenantService/DeleteTenant", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/DeleteTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *tenantServiceClient) DeleteTenant(ctx context.Context, in *DeleteTenant
 
 func (c *tenantServiceClient) GetTenant(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*Tenant, error) {
 	out := new(Tenant)
-	err := c.cc.Invoke(ctx, "/api.tenant.v1.TenantService/GetTenant", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/GetTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (c *tenantServiceClient) GetTenant(ctx context.Context, in *GetTenantReques
 
 func (c *tenantServiceClient) ListTenant(ctx context.Context, in *ListTenantRequest, opts ...grpc.CallOption) (*ListTenantReply, error) {
 	out := new(ListTenantReply)
-	err := c.cc.Invoke(ctx, "/api.tenant.v1.TenantService/ListTenant", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/ListTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +146,7 @@ func _TenantService_CreateTenant_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.tenant.v1.TenantService/CreateTenant",
+		FullMethod: "/saas.api.tenant.v1.TenantService/CreateTenant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TenantServiceServer).CreateTenant(ctx, req.(*CreateTenantRequest))
@@ -164,7 +164,7 @@ func _TenantService_UpdateTenant_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.tenant.v1.TenantService/UpdateTenant",
+		FullMethod: "/saas.api.tenant.v1.TenantService/UpdateTenant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TenantServiceServer).UpdateTenant(ctx, req.(*UpdateTenantRequest))
@@ -182,7 +182,7 @@ func _TenantService_DeleteTenant_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.tenant.v1.TenantService/DeleteTenant",
+		FullMethod: "/saas.api.tenant.v1.TenantService/DeleteTenant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TenantServiceServer).DeleteTenant(ctx, req.(*DeleteTenantRequest))
@@ -200,7 +200,7 @@ func _TenantService_GetTenant_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.tenant.v1.TenantService/GetTenant",
+		FullMethod: "/saas.api.tenant.v1.TenantService/GetTenant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TenantServiceServer).GetTenant(ctx, req.(*GetTenantRequest))
@@ -218,7 +218,7 @@ func _TenantService_ListTenant_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.tenant.v1.TenantService/ListTenant",
+		FullMethod: "/saas.api.tenant.v1.TenantService/ListTenant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TenantServiceServer).ListTenant(ctx, req.(*ListTenantRequest))
@@ -230,7 +230,7 @@ func _TenantService_ListTenant_Handler(srv interface{}, ctx context.Context, dec
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TenantService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.tenant.v1.TenantService",
+	ServiceName: "saas.api.tenant.v1.TenantService",
 	HandlerType: (*TenantServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

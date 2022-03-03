@@ -122,7 +122,7 @@ func (u *UserRepo) Delete(ctx context.Context, user *biz.User) error {
 
 func (u *UserRepo) FindByID(ctx context.Context, id string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope()).Scopes(buildUserTenantsScope()).Scopes(preloadUserScope(true)).First(user, "id=?", id).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope()).Scopes(preloadUserScope(true)).First(user, "id=?", id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

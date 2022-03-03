@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package api.tenant.v1;
+package saas.api.tenant.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/field_mask.proto";
@@ -145,4 +145,12 @@ message TenantConnectionString{
 message TenantFeature{
 	string key=1;
 	string value=2;
+}
+
+message TenantInfo{
+	string id=1;
+	string name=2;
+	string display_name=3;
+	string region=4;
+	blob.BlobFile logo = 9;
 }
