@@ -962,12 +962,14 @@
         "parameters": [
           {
             "name": "id",
+            "description": "id or name should be provided",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
             "name": "name",
+            "description": "id or name should be provided.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -2504,13 +2506,16 @@
     "v1CreateRoleRequest": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "name": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "name"
+          ]
         }
-      }
+      },
+      "required": [
+        "name"
+      ]
     },
     "v1CreateTenantRequest": {
       "type": "object",
@@ -3517,12 +3522,22 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "id"
+          ]
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "name"
+          ]
         }
-      }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
     },
     "v1UpdateRolePermissionAcl": {
       "type": "object",

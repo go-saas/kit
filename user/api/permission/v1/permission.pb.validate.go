@@ -1597,7 +1597,16 @@ func (m *AddSubjectPermissionRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Effect
+	if _, ok := _AddSubjectPermissionRequest_Effect_InLookup[m.GetEffect()]; !ok {
+		err := AddSubjectPermissionRequestValidationError{
+			field:  "Effect",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for TenantId
 
@@ -1680,6 +1689,11 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = AddSubjectPermissionRequestValidationError{}
+
+var _AddSubjectPermissionRequest_Effect_InLookup = map[Effect]struct{}{
+	1: {},
+	2: {},
+}
 
 // Validate checks the field values on AddSubjectPermissionResponse with the
 // rules defined in the proto definition for this message. If any rules are

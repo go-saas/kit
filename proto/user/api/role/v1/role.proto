@@ -107,13 +107,14 @@ message Role{
 }
 
 message GetRoleRequest{
+  // id or name should be provided
   string  id=1;
+  // id or name should be provided
   string name =2;
 }
 
 message CreateRoleRequest{
-  string  id=1;
-  string name =2;
+  string name =2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
 
 message UpdateRoleRequest{
@@ -122,19 +123,19 @@ message UpdateRoleRequest{
 }
 
 message UpdateRole{
-  string id=1;
-  string name =2;
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string name =2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
 
 message DeleteRoleRequest{
-  string id =1;
+  string id =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
 message DeleteRoleResponse{
 
 }
 
 message GetRolePermissionRequest{
-  string id =1;
+  string id =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
 
 message GetRolePermissionResponse{

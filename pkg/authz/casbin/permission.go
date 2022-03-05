@@ -2,11 +2,12 @@ package casbin
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/casbin/casbin/v2/util"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
+	"net/http"
 	"strings"
 )
 
@@ -132,7 +133,7 @@ func mapToEffect(effect authz.Effect) (string, error) {
 	} else if effect == authz.EffectForbidden {
 		eff = "deny"
 	} else {
-		return "", errors.New(fmt.Sprintf("effect should be one of %s,%s", "grant", "forbidden"))
+		return "", errors.New(http.StatusBadRequest, "EFFECT_INVALID", fmt.Sprintf("effect should be one of %s,%s", "grant", "forbidden"))
 	}
 	return eff, nil
 }

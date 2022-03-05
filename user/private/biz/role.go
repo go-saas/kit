@@ -97,9 +97,22 @@ func (r *RoleManager) Update(ctx context.Context, id string, role *Role, p query
 		// duplicate
 		return errors.Forbidden("NAME_DUPLICATE", "role name duplicate")
 	}
+	if role.IsPreserved {
+		return v12.ErrorRolePreserved("", "")
+	}
 	return r.repo.Update(ctx, id, role, p)
 }
 
 func (r *RoleManager) Delete(ctx context.Context, id string) error {
+	role, err := r.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+	if role == nil {
+		return errors.NotFound("", "")
+	}
+	if role.IsPreserved {
+		return v12.ErrorRolePreserved("", "")
+	}
 	return r.repo.Delete(ctx, id)
 }

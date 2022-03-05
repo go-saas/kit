@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/ahmetb/go-linq/v3"
@@ -24,9 +25,9 @@ type Tenant struct {
 	//region of this tenant
 	Region    string `gorm:"column:region;index;size:255;"`
 	Logo      string
-	CreatedAt time.Time  `gorm:"column:created_at;index;"`
-	UpdatedAt time.Time  `gorm:"column:updated_at;index;"`
-	DeletedAt *time.Time `gorm:"column:deleted_at;index;"`
+	CreatedAt time.Time    `gorm:"column:created_at;index;"`
+	UpdatedAt time.Time    `gorm:"column:updated_at;index;"`
+	DeletedAt gg.DeletedAt `gorm:"column:deleted_at;index;"`
 
 	//connection
 	Conn []TenantConn `gorm:"foreignKey:TenantId"`
@@ -235,7 +236,13 @@ func mapBizTenantToDataTenant(a *biz.Tenant, b *Tenant) {
 	b.Region = a.Region
 	b.CreatedAt = a.CreatedAt
 	b.UpdatedAt = a.UpdatedAt
-	b.DeletedAt = a.DeletedAt
+	if a.DeletedAt != nil {
+		b.DeletedAt = gg.DeletedAt(sql.NullTime{
+			Valid: true,
+			Time:  *a.DeletedAt,
+		})
+	}
+
 	b.Conn = conn
 	b.Features = features
 	b.Logo = a.Logo
@@ -270,7 +277,11 @@ func mapDataTenantToBizTenant(a *Tenant, b *biz.Tenant) {
 	b.Region = a.Region
 	b.CreatedAt = a.CreatedAt
 	b.UpdatedAt = a.UpdatedAt
-	b.DeletedAt = a.DeletedAt
+	if a.DeletedAt.Valid {
+		t := a.DeletedAt.Time
+		b.DeletedAt = &t
+	}
+
 	b.Conn = conn
 	b.Features = features
 	b.Logo = a.Logo

@@ -155,7 +155,7 @@ message AddSubjectPermissionRequest{
   string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   string subject = 4[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  Effect effect =5 [(google.api.field_behavior) = REQUIRED];
+  Effect effect =5 [(google.api.field_behavior) = REQUIRED,(validate.rules).enum= {in:[1,2]}];
   string tenant_id =6;
 }
 

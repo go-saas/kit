@@ -3,7 +3,6 @@ package data
 import (
 	"context"
 	"errors"
-	errors2 "github.com/go-kratos/kratos/v2/errors"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
@@ -101,7 +100,7 @@ func (r *RoleRepo) Count(ctx context.Context, query *v12.RoleFilter) (total int6
 func (r *RoleRepo) Get(ctx context.Context, id string) (*biz.Role, error) {
 	db := r.GetDb(ctx)
 	var item = &biz.Role{}
-	if err := db.First(item, id).Error; err != nil {
+	if err := db.First(item, "id=?", id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
@@ -121,16 +120,6 @@ func (r *RoleRepo) Update(ctx context.Context, id string, role *biz.Role, p quer
 }
 
 func (r *RoleRepo) Delete(ctx context.Context, id string) error {
-	role, err := r.Get(ctx, id)
-	if err != nil {
-		return err
-	}
-	if role == nil {
-		return errors2.NotFound("", "")
-	}
-	if role.IsPreserved {
-		return v12.ErrorRolePreserved("", "")
-	}
 	db := r.GetDb(ctx)
-	return db.Delete(role).Error
+	return db.Delete("id = ?", id).Error
 }
