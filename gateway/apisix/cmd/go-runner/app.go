@@ -3,18 +3,19 @@ package main
 import (
 	"errors"
 	"fmt"
+	kerrors "github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	klog "github.com/go-kratos/kratos/v2/log"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
 	sapisix "github.com/goxiaoy/go-saas/gateway/apisix"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"net/http"
 )
 
@@ -44,28 +45,12 @@ func newApp(tenantStore common.TenantStore,
 func (a *App) load() error {
 	sapisix.Init(a.tenantStore, fmt.Sprintf("%s%s", api.PrefixOrDefault(""), a.tenantCfg.TenantKey), func(err error, w http.ResponseWriter) {
 		if errors.Is(err, common.ErrTenantNotFound) {
-			w.WriteHeader(404)
-			w.Header().Set("Content-Type", "application/json")
-			w.Write([]byte("{\"code\":404,\"reason\":\"\",\"message\":\"\"}"))
-			return
+			err = v1.ErrorTenantNotFound("")
 		}
-		if st, ok := status.FromError(err); ok {
-			if st.Code() == codes.PermissionDenied {
-				w.WriteHeader(403)
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte("{\"code\":403,\"reason\":\"\",\"message\":\"\"}"))
-				return
-			}
-			if st.Code() == codes.Unauthenticated {
-				w.WriteHeader(401)
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte("{\"code\":401,\"reason\":\"\",\"message\":\"\"}"))
-				return
-			}
-		}
-		w.WriteHeader(500)
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte("{\"code\":500,\"reason\":\"\",\"message\":\"\"}"))
+		//use error codec
+		fr := kerrors.FromError(err)
+		w.WriteHeader(int(fr.Code))
+		khttp.DefaultErrorEncoder(w, &http.Request{}, err)
 	})
 	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.security, a.logger); err != nil {
 		return err

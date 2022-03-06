@@ -27,7 +27,7 @@ menus:
     redirect: '/system/users'
     title: "routes.system.title"
     icon: "ion:grid-outline"
-    priority: 1000
+    priority: 100
     meta:
     children:
       - name: "user"

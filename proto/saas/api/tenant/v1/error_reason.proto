@@ -10,5 +10,6 @@ enum ErrorReason {
   option (errors.default_code) = 500;
 
   DUPLICATE_TENANT_NAME = 0 [(errors.code) = 400];
-
+  TENANT_NOT_FOUND = 1[(errors.code) = 404];
+  TENANT_FORBIDDEN = 2[(errors.code) = 403];
 }
