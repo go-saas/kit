@@ -3,6 +3,7 @@ package authz
 import (
 	"context"
 	"fmt"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas/common"
@@ -45,6 +46,14 @@ func EnsureForbidden(ctx context.Context, mgr PermissionManagementService, check
 		}
 	}
 	return nil
+}
+
+func CheckForHostOnly(ctx context.Context, service Service, resource Resource, action Action) (*Result, error) {
+	ti, _ := common.FromCurrentTenant(ctx)
+	if len(ti.GetId()) != 0 {
+		return nil, errors.Forbidden("", "")
+	}
+	return service.Check(ctx, resource, action)
 }
 
 type PermissionService struct {

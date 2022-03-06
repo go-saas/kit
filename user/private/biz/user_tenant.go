@@ -5,6 +5,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas/gorm"
+	gg "gorm.io/gorm"
 	"time"
 )
 
@@ -28,15 +29,16 @@ func (p UserTenantStatus) String() string {
 
 type UserTenant struct {
 	gorm2.UIDBase
-	UserId   string           `gorm:"type:char(36)" json:"user_id"`
-	TenantId gorm.HasTenant   `json:"tenant_id" gorm:"type:char(36)"`
-	JoinTime time.Time        `json:"join_time"`
-	Status   UserTenantStatus `json:"status"`
-	Extra    data.JSONMap
+	UserId    string           `gorm:"type:char(36)" json:"user_id"`
+	TenantId  gorm.HasTenant   `json:"tenant_id" gorm:"type:char(36)"`
+	JoinTime  time.Time        `json:"join_time"`
+	Status    UserTenantStatus `json:"status"`
+	DeletedAt gg.DeletedAt     `gorm:"index"`
+	Extra     data.JSONMap
 }
 
 type UserTenantRepo interface {
-	JoinTenant(ctx context.Context, userId string, tenantId string) (*UserTenant, error)
+	JoinTenant(ctx context.Context, userId string, tenantId string, status UserTenantStatus) (*UserTenant, error)
 	RemoveFromTenant(ctx context.Context, userId string, tenantId string) error
 	Get(ctx context.Context, userId string, tenantId string) (*UserTenant, error)
 	IsIn(ctx context.Context, userId string, tenantId string) (bool, error)

@@ -5,12 +5,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	kerrors "github.com/go-kratos/kratos/v2/errors"
 	klog "github.com/go-kratos/kratos/v2/log"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
+	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/sessions"
 	"net/http"
 
@@ -33,16 +37,17 @@ type KitAuthConf struct {
 }
 
 var (
-	tokenizer        jwt.Tokenizer
-	tokenManager     api.TokenManager
-	apiClient        *conf2.Client
-	apiOpt           *api.Option
-	sessionInfoStore sessions.Store
-	rememberStore    sessions.Store
-	securityCfg      *conf2.Security
+	tokenizer           jwt.Tokenizer
+	tokenManager        api.TokenManager
+	apiClient           *conf2.Client
+	apiOpt              *api.Option
+	sessionInfoStore    sessions.Store
+	rememberStore       sessions.Store
+	securityCfg         *conf2.Security
+	userTenantValidator *uremote.UserTenantContributor
 )
 
-func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, services *conf2.Services, security *conf2.Security, logger klog.Logger) error {
+func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, services *conf2.Services, security *conf2.Security, userTenant *uremote.UserTenantContributor, logger klog.Logger) error {
 	tokenizer = t
 	tokenManager = tmr
 	clientCfg, ok := services.Clients[string(clientName)]
@@ -54,7 +59,7 @@ func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, serv
 	securityCfg = security
 	sessionInfoStore = session.NewSessionInfoStore(security)
 	rememberStore = session.NewRememberStore(security)
-
+	userTenantValidator = userTenant
 	return nil
 }
 
@@ -74,6 +79,10 @@ func (p *KitAuthn) ParseConf(in []byte) (interface{}, error) {
 func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
 
 	ctx := context.Background()
+
+	//get tenant id from go-saas plugin
+
+	tenantId := r.Header().Get("internal.__tenant")
 
 	var t = ""
 	if auth := r.Header().Get(jwt.AuthorizationHeader); len(auth) > 0 {
@@ -115,7 +124,23 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		}
 	}
 
-	log.Infof("resolve user: %s client: %s", uid, clientId)
+	ctx = authn.NewUserContext(ctx, authn.NewUserInfo(uid))
+	//check tenant and user mismatch
+	trCtx := common.NewTenantResolveContext(ctx)
+	trCtx.TenantIdOrName = tenantId
+
+	log.Infof("resolve user: %s client: %s tenantId: %s", uid, clientId, tenantId)
+	err := userTenantValidator.Resolve(trCtx)
+	if err != nil {
+		log.Errorf("%s", err)
+		// user can not in this tenant
+		//use error codec
+		fr := kerrors.FromError(err)
+		w.WriteHeader(int(fr.Code))
+		khttp.DefaultErrorEncoder(w, &http.Request{}, err)
+		return
+	}
+
 	//keep previous client id
 	ctx = authn.NewClientContext(ctx, clientId)
 	ctx = authn.NewUserContext(ctx, authn.NewUserInfo(uid))

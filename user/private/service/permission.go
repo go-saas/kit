@@ -55,7 +55,7 @@ func (s *PermissionService) CheckCurrent(ctx context.Context, req *pb.CheckPermi
 
 //CheckForSubjects internal api for remote permission checker
 func (s *PermissionService) CheckForSubjects(ctx context.Context, req *pb.CheckSubjectsPermissionRequest) (*pb.CheckSubjectsPermissionReply, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", "*"), authz.GetAction); err != nil {
+	if _, err := s.auth.CheckInTenant(ctx, authz.NewEntityResource("permission", "*"), authz.GetAction, "*"); err != nil {
 		return nil, err
 	}
 	subjects := make([]authz.Subject, len(req.Subjects))

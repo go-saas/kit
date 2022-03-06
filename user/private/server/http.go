@@ -52,6 +52,7 @@ func NewHTTPServer(c *conf.Services,
 	errorHandler server.ErrorHandler,
 	dataCfg *conf2.Data,
 	factory blob.Factory,
+	userTenant *service.UserTenantContributor,
 ) *khttp.Server {
 	var opts []khttp.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
@@ -67,7 +68,9 @@ func NewHTTPServer(c *conf.Services,
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 			sapi.ServerMiddleware(apiOpt, logger),
-			server.Saas(mOpt, ts),
+			server.Saas(mOpt, ts, func(o *common.TenantResolveOption) {
+				o.AppendContributors(userTenant)
+			}),
 			uow.Uow(logger, uowMgr),
 		),
 	}...)

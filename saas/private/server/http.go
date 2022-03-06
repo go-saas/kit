@@ -18,6 +18,7 @@ import (
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	conf2 "github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
+	"github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
 	http2 "github.com/goxiaoy/go-saas/common/http"
 	uow2 "github.com/goxiaoy/uow"
@@ -37,7 +38,8 @@ func NewHTTPServer(c *conf.Services,
 	errEncoder http.EncodeErrorFunc,
 	factory blob.Factory,
 	dataCfg *conf2.Data,
-	logger log.Logger) *http.Server {
+	logger log.Logger,
+	userTenant *remote.UserTenantContributor) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
 	opts = append(opts, []http.ServerOption{
@@ -49,7 +51,9 @@ func NewHTTPServer(c *conf.Services,
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 			api2.ServerMiddleware(apiOpt, logger),
-			server.Saas(mOpt, ts),
+			server.Saas(mOpt, ts, func(o *common.TenantResolveOption) {
+				o.AppendContributors(userTenant)
+			}),
 			uow.Uow(logger, uowMgr),
 		),
 	}...)

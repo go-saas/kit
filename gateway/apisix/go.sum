@@ -58,6 +58,8 @@ github.com/ReneKroon/ttlcache/v2 v2.4.0/go.mod h1:zbo6Pv/28e21Z8CzzqgYRArQYGYtjO
 github.com/ReneKroon/ttlcache/v2 v2.11.0 h1:OvlcYFYi941SBN3v9dsDcC2N8vRxyHcCmJb3Vl4QMoM=
 github.com/ReneKroon/ttlcache/v2 v2.11.0/go.mod h1:mBxvsNY+BT8qLLd6CuAJubbKo6r0jh3nb5et22bbfGY=
 github.com/StackExchange/wmi v1.2.1/go.mod h1:rcmrprowKIVzvc+NUiLncP2uuArMWLCbu9SBzvHz7e8=
+github.com/ahmetb/go-linq/v3 v3.2.0 h1:BEuMfp+b59io8g5wYzNoFe9pWPalRklhlhbiU3hYZDE=
+github.com/ahmetb/go-linq/v3 v3.2.0/go.mod h1:haQ3JfOeWK8HpVxMtHHEMPVgBKiYyQ+f1/kLZh/cj9U=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
@@ -263,8 +265,8 @@ github.com/gorilla/securecookie v1.1.1 h1:miw7JPhV+b/lAHSXz4qd/nN9jRiAFV5FwjeKyC
 github.com/gorilla/securecookie v1.1.1/go.mod h1:ra0sb63/xPlUeL+yeDciTfxMRAA+MP+HVt/4epWDjd4=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
-github.com/goxiaoy/go-saas v0.1.1-0.20220306050636-a0ee621fe503 h1:vIcUQKgqz/xAvd9yXnkbxELGuNQObt5B9NQ56kxBjAI=
-github.com/goxiaoy/go-saas v0.1.1-0.20220306050636-a0ee621fe503/go.mod h1:OHvFfwun3KCWSkK6PweVEZ66zdmOYXqviMS1tbWGXnU=
+github.com/goxiaoy/go-saas v0.1.1-0.20220306103631-b9f681ed67a8 h1:RifC0ow5Ty29LR7Cg0O2AmWqSSbwqrjiE8pcEdu2ecc=
+github.com/goxiaoy/go-saas v0.1.1-0.20220306103631-b9f681ed67a8/go.mod h1:OHvFfwun3KCWSkK6PweVEZ66zdmOYXqviMS1tbWGXnU=
 github.com/goxiaoy/sessions v1.2.2-0.20220226081452-f724382d1ab0 h1:hNvdfvRGhgwcC2vwzM65G6XFQUBQeq4S2+OammPtEmU=
 github.com/goxiaoy/sessions v1.2.2-0.20220226081452-f724382d1ab0/go.mod h1:eGlJVX1aOtwJk0cajdAbltTc3Fk1KclMji1K6UmJ640=
 github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a/go.mod h1:Wflo5hwQqaoLsAvHsLkCdZMmXU8PFf404iI6hTjKt1s=

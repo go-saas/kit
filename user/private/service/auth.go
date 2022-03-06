@@ -41,9 +41,11 @@ func NewAuthService(um *biz.UserManager,
 }
 
 func (s *AuthService) Register(ctx context.Context, req *pb.RegisterAuthRequest) (*pb.RegisterAuthReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	return &pb.RegisterAuthReply{}, nil
 }
 func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.LoginAuthReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	user, err := FindUserByUsernameAndValidatePwd(ctx, s.um, req.Username, req.Password)
 	if err != nil {
 		return nil, err
@@ -56,12 +58,8 @@ func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.
 	return &pb.LoginAuthReply{AccessToken: t.accessToken, Expires: t.expiresIn, ExpiresIn: t.expiresIn, TokenType: "Bearer", RefreshToken: t.refreshToken}, nil
 }
 
-//
-//func (s *AuthService) GetLoginForm(ctx context.Context, req *pb.GetLoginFormRequest) (*pb.GetLoginFormResponse, error) {
-//
-//}
-
 func (s *AuthService) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	if req.GrantType == "" || req.GrantType == "password" {
 		res, err := s.Login(ctx, &pb.LoginAuthRequest{Username: req.Username, Password: req.Password})
 		if err != nil {
@@ -91,6 +89,7 @@ func (s *AuthService) Token(ctx context.Context, req *pb.TokenRequest) (*pb.Toke
 }
 
 func (s *AuthService) Refresh(ctx context.Context, req *pb.RefreshTokenAuthRequest) (*pb.RefreshTokenAuthReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	t, err := s.refresh(ctx, req.RefreshToken)
 	if err != nil {
 		return nil, err
@@ -98,20 +97,25 @@ func (s *AuthService) Refresh(ctx context.Context, req *pb.RefreshTokenAuthReque
 	return &pb.RefreshTokenAuthReply{AccessToken: t.accessToken, ExpiresIn: t.expiresIn, TokenType: "Bearer", RefreshToken: t.refreshToken}, nil
 }
 func (s *AuthService) SendPasswordlessToken(ctx context.Context, req *pb.PasswordlessTokenAuthRequest) (*pb.PasswordlessTokenAuthReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	return &pb.PasswordlessTokenAuthReply{}, nil
 }
 func (s *AuthService) LoginPasswordless(ctx context.Context, req *pb.LoginPasswordlessRequest) (*pb.LoginPasswordlessReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	return &pb.LoginPasswordlessReply{}, nil
 }
 func (s *AuthService) SendForgetPasswordToken(ctx context.Context, req *pb.ForgetPasswordTokenRequest) (*pb.ForgetPasswordTokenReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	return &pb.ForgetPasswordTokenReply{}, nil
 }
 
 func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPasswordRequest) (*pb.ForgetPasswordReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	return &pb.ForgetPasswordReply{}, nil
 }
 
 func (s *AuthService) ValidatePassword(ctx context.Context, req *pb.ValidatePasswordRequest) (*pb.ValidatePasswordReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	err := s.pwdValidator.Validate(ctx, req.Password)
 	if err != nil {
 		return nil, err
@@ -194,7 +198,7 @@ func (s *AuthService) refresh(ctx context.Context, refreshToken string) (*tokenM
 }
 
 func FindUserByUsernameAndValidatePwd(ctx context.Context, um *biz.UserManager, username, password string) (*biz.User, error) {
-	user, err := um.FindByName(ctx, username)
+	user, err := um.FindByIdentity(ctx, username)
 	if err != nil {
 		return nil, err
 	}

@@ -1988,6 +1988,8 @@ func (m *DeleteUserRequest) validate(all bool) error {
 
 	// no validation rules for Id
 
+	// no validation rules for Force
+
 	if len(errors) > 0 {
 		return DeleteUserRequestMultiError(errors)
 	}
@@ -2505,3 +2507,424 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserRoleValidationError{}
+
+// Validate checks the field values on InviteUserRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *InviteUserRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on InviteUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// InviteUserRequestMultiError, or nil if none found.
+func (m *InviteUserRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *InviteUserRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetIdentify()) < 1 {
+		err := InviteUserRequestValidationError{
+			field:  "Identify",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return InviteUserRequestMultiError(errors)
+	}
+	return nil
+}
+
+// InviteUserRequestMultiError is an error wrapping multiple validation errors
+// returned by InviteUserRequest.ValidateAll() if the designated constraints
+// aren't met.
+type InviteUserRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m InviteUserRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m InviteUserRequestMultiError) AllErrors() []error { return m }
+
+// InviteUserRequestValidationError is the validation error returned by
+// InviteUserRequest.Validate if the designated constraints aren't met.
+type InviteUserRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e InviteUserRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e InviteUserRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e InviteUserRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e InviteUserRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e InviteUserRequestValidationError) ErrorName() string {
+	return "InviteUserRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e InviteUserRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sInviteUserRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = InviteUserRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = InviteUserRequestValidationError{}
+
+// Validate checks the field values on InviteUserReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *InviteUserReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on InviteUserReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// InviteUserReplyMultiError, or nil if none found.
+func (m *InviteUserReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *InviteUserReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RequiredConfirm
+
+	if len(errors) > 0 {
+		return InviteUserReplyMultiError(errors)
+	}
+	return nil
+}
+
+// InviteUserReplyMultiError is an error wrapping multiple validation errors
+// returned by InviteUserReply.ValidateAll() if the designated constraints
+// aren't met.
+type InviteUserReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m InviteUserReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m InviteUserReplyMultiError) AllErrors() []error { return m }
+
+// InviteUserReplyValidationError is the validation error returned by
+// InviteUserReply.Validate if the designated constraints aren't met.
+type InviteUserReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e InviteUserReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e InviteUserReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e InviteUserReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e InviteUserReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e InviteUserReplyValidationError) ErrorName() string { return "InviteUserReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e InviteUserReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sInviteUserReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = InviteUserReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = InviteUserReplyValidationError{}
+
+// Validate checks the field values on CheckUserTenantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CheckUserTenantRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckUserTenantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckUserTenantRequestMultiError, or nil if none found.
+func (m *CheckUserTenantRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckUserTenantRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	// no validation rules for TenantId
+
+	if len(errors) > 0 {
+		return CheckUserTenantRequestMultiError(errors)
+	}
+	return nil
+}
+
+// CheckUserTenantRequestMultiError is an error wrapping multiple validation
+// errors returned by CheckUserTenantRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CheckUserTenantRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckUserTenantRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckUserTenantRequestMultiError) AllErrors() []error { return m }
+
+// CheckUserTenantRequestValidationError is the validation error returned by
+// CheckUserTenantRequest.Validate if the designated constraints aren't met.
+type CheckUserTenantRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckUserTenantRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckUserTenantRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckUserTenantRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckUserTenantRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckUserTenantRequestValidationError) ErrorName() string {
+	return "CheckUserTenantRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CheckUserTenantRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckUserTenantRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckUserTenantRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckUserTenantRequestValidationError{}
+
+// Validate checks the field values on CheckUserTenantReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CheckUserTenantReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckUserTenantReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckUserTenantReplyMultiError, or nil if none found.
+func (m *CheckUserTenantReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckUserTenantReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Ok
+
+	if len(errors) > 0 {
+		return CheckUserTenantReplyMultiError(errors)
+	}
+	return nil
+}
+
+// CheckUserTenantReplyMultiError is an error wrapping multiple validation
+// errors returned by CheckUserTenantReply.ValidateAll() if the designated
+// constraints aren't met.
+type CheckUserTenantReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckUserTenantReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckUserTenantReplyMultiError) AllErrors() []error { return m }
+
+// CheckUserTenantReplyValidationError is the validation error returned by
+// CheckUserTenantReply.Validate if the designated constraints aren't met.
+type CheckUserTenantReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckUserTenantReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckUserTenantReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckUserTenantReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckUserTenantReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckUserTenantReplyValidationError) ErrorName() string {
+	return "CheckUserTenantReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CheckUserTenantReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckUserTenantReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckUserTenantReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckUserTenantReplyValidationError{}

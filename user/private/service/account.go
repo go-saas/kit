@@ -40,6 +40,7 @@ func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13
 }
 
 func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileRequest) (*pb.GetProfileResponse, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -83,6 +84,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	tenantIds := make([]string, len(u.Tenants))
 	linq.From(u.Tenants).SelectT(func(t biz.UserTenant) string { return t.TenantId.String }).ToSlice(&tenantIds)
 	currentTenant, _ := common.FromCurrentTenant(ctx)
+	//TODO current tenant not found when admin faked?
 	if len(tenantIds) > 0 {
 		tenants, err := s.tenantService.ListTenant(ctx, &v13.ListTenantRequest{Filter: &v13.TenantFilter{IdIn: tenantIds}})
 		if err != nil {
@@ -124,6 +126,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	return res, nil
 }
 func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	_, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -132,6 +135,7 @@ func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfil
 	return &pb.UpdateProfileResponse{}, nil
 }
 func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsRequest) (*pb.GetSettingsResponse, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	_, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -140,6 +144,7 @@ func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsReq
 	return &pb.GetSettingsResponse{}, nil
 }
 func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSettingsRequest) (*pb.UpdateSettingsResponse, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	_, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -147,6 +152,7 @@ func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSetti
 	return &pb.UpdateSettingsResponse{}, nil
 }
 func (s *AccountService) GetAddresses(ctx context.Context, req *pb.GetAddressesRequest) (*pb.GetAddressesReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	_, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -155,6 +161,7 @@ func (s *AccountService) GetAddresses(ctx context.Context, req *pb.GetAddressesR
 }
 
 func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddressesRequest) (*pb.UpdateAddressesReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	_, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -163,12 +170,14 @@ func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddr
 }
 
 func (s *AccountService) UpdateAvatar(ctx http.Context) error {
+
 	req := ctx.Request()
 	//TODO do not know why should read form file first ...
 	if _, _, err := req.FormFile("file"); err != nil {
 		return err
 	}
 	h := ctx.Middleware(func(ctx context.Context, _ interface{}) (interface{}, error) {
+		ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 		user, err := authn.ErrIfUnauthenticated(ctx)
 		if err != nil {
 			return nil, err

@@ -14,6 +14,8 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/remote"
+	api3 "github.com/goxiaoy/go-saas-kit/user/api"
+	remote2 "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common/http"
 )
 
@@ -32,13 +34,18 @@ func initApp(services *conf.Services, security *conf.Security, clientName api.Cl
 	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	tenantServiceClient := api2.NewTenantGrpcClient(grpcConn)
 	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceClient)
+	apiGrpcConn, cleanup2 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
+	userServiceClient := api3.NewUserGrpcClient(apiGrpcConn)
+	userTenantContributor := remote2.NewUserTenantContributor(userServiceClient)
 	webMultiTenancyOption := http.NewDefaultWebMultiTenancyOption()
-	app, err := newApp(tenantStore, tokenizer, inMemoryTokenManager, services, clientName, webMultiTenancyOption, security, logger)
+	app, err := newApp(tenantStore, userTenantContributor, tokenizer, inMemoryTokenManager, services, clientName, webMultiTenancyOption, security, logger)
 	if err != nil {
+		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
 	return app, func() {
+		cleanup2()
 		cleanup()
 	}, nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas/common"
+	"github.com/goxiaoy/go-saas/data"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"time"
 )
@@ -69,7 +70,10 @@ func (um *UserManager) Count(ctx context.Context, query *v1.UserFilter) (total i
 }
 
 func (um *UserManager) Create(ctx context.Context, u *User) (err error) {
-	um.normalize(ctx, u)
+	err = um.normalize(ctx, u)
+	if err != nil {
+		return err
+	}
 	if err = um.validateUser(ctx, u); err != nil {
 		return
 	}
@@ -94,16 +98,42 @@ func (um *UserManager) FindByID(ctx context.Context, id string) (user *User, err
 	return um.userRepo.FindByID(ctx, id)
 }
 func (um *UserManager) FindByName(ctx context.Context, name string) (user *User, err error) {
-	name = um.lookupNormalizer.Name(name)
+	name, err = um.lookupNormalizer.Name(name)
+	if err != nil {
+		return nil, err
+	}
 	return um.userRepo.FindByName(ctx, name)
 }
+
 func (um *UserManager) FindByPhone(ctx context.Context, phone string) (user *User, err error) {
+	phone, err = um.lookupNormalizer.Phone(phone)
+	if err != nil {
+		return nil, err
+	}
 	return um.userRepo.FindByPhone(ctx, phone)
 }
 
 func (um *UserManager) FindByEmail(ctx context.Context, email string) (user *User, err error) {
-	email = um.lookupNormalizer.Email(email)
+	email, err = um.lookupNormalizer.Email(email)
+	if err != nil {
+		return nil, err
+	}
 	return um.userRepo.FindByEmail(ctx, email)
+}
+
+func (um *UserManager) FindByIdentity(ctx context.Context, identity string) (user *User, err error) {
+	//try to find by id
+	if uid, err := uuid.Parse(identity); err == nil {
+		//
+		return um.FindByID(ctx, uid.String())
+	}
+	if _, err := um.lookupNormalizer.Email(identity); err == nil {
+		return um.FindByEmail(ctx, identity)
+	}
+	if phone, err := um.lookupNormalizer.Phone(identity); err == nil {
+		return um.FindByPhone(ctx, phone)
+	}
+	return um.FindByName(ctx, identity)
 }
 
 func (um *UserManager) FindByRecoverSelector(ctx context.Context, r string) (user *User, err error) {
@@ -114,7 +144,10 @@ func (um *UserManager) FindByConfirmSelector(ctx context.Context, c string) (use
 }
 
 func (um *UserManager) Update(ctx context.Context, user *User, p *fieldmaskpb.FieldMask) (err error) {
-	um.normalize(ctx, user)
+	err = um.normalize(ctx, user)
+	if err != nil {
+		return err
+	}
 	if err = um.validateUser(ctx, user); err != nil {
 		return
 	}
@@ -217,18 +250,25 @@ func (um *UserManager) RefreshRememberToken(ctx context.Context, uid uuid.UUID, 
 	}
 }
 
+func (um *UserManager) IsInTenant(ctx context.Context, uid, tenantId string) (bool, error) {
+	ctx = data.NewDisableMultiTenancyDataFilter(ctx)
+	return um.userTenantRepo.IsIn(ctx, uid, tenantId)
+}
+
 //JoinTenant add user into tenant. safe to call when user already in
 func (um *UserManager) JoinTenant(ctx context.Context, uid, tenantId string) error {
+	ctx = data.NewDisableMultiTenancyDataFilter(ctx)
 	if in, err := um.userTenantRepo.IsIn(ctx, uid, tenantId); err != nil {
 		return err
 	} else if in {
 		return nil
 	}
-	_, err := um.userTenantRepo.JoinTenant(ctx, uid, tenantId)
+	_, err := um.userTenantRepo.JoinTenant(ctx, uid, tenantId, Active)
 	return err
 }
 
 func (um *UserManager) RemoveFromTenant(ctx context.Context, uid, tenantId string) error {
+	ctx = data.NewDisableMultiTenancyDataFilter(ctx)
 	err := um.userTenantRepo.RemoveFromTenant(ctx, uid, tenantId)
 	return err
 }
@@ -238,21 +278,35 @@ func (um *UserManager) validateUser(ctx context.Context, u *User) (err error) {
 	return
 }
 
-func (um *UserManager) normalize(ctx context.Context, u *User) {
+func (um *UserManager) normalize(ctx context.Context, u *User) error {
 	//normalize
 	if u.Username != nil {
-		n := um.lookupNormalizer.Name(*u.Username)
+		n, err := um.lookupNormalizer.Name(*u.Username)
+		if err != nil {
+			return err
+		}
 		u.NormalizedUsername = &n
 	}
 	if u.Email != nil {
-		e := um.lookupNormalizer.Name(*u.Email)
+		e, err := um.lookupNormalizer.Name(*u.Email)
+		if err != nil {
+			return err
+		}
 		u.NormalizedEmail = &e
+	}
+	if u.Phone != nil {
+		phone, err := um.lookupNormalizer.Phone(*u.Phone)
+		if err != nil {
+			return err
+		}
+		u.Phone = &phone
 	}
 	t, _ := common.FromCurrentTenant(ctx)
 	if len(t.GetId()) > 0 {
 		ti := t.GetId()
 		u.CreatedTenant = &ti
 	}
+	return nil
 }
 func (um *UserManager) updatePassword(ctx context.Context, u *User, password *string, validate bool) error {
 	if password != nil && validate {

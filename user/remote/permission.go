@@ -7,4 +7,4 @@ import (
 
 var GrpcProviderSet = wire.NewSet(NewRemotePermissionChecker,
 	wire.Bind(new(authz.PermissionChecker), new(*PermissionChecker)),
-	wire.Bind(new(authz.PermissionManagementService), new(*PermissionChecker)))
+	wire.Bind(new(authz.PermissionManagementService), new(*PermissionChecker)), NewUserTenantContributor)

@@ -11,7 +11,9 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	v12 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
+	"github.com/goxiaoy/go-saas/common"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"io"
@@ -40,10 +42,8 @@ func NewUserService(um *biz.UserManager, auth authz.Service, blob blob.Factory) 
 }
 
 func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", "*"), authz.ListAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", "*"), authz.ListAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors2.Forbidden("", "")
 	}
 	ret := &pb.ListUsersResponse{}
 	totalCount, filterCount, err := s.um.Count(ctx, req.Filter)
@@ -88,15 +88,13 @@ func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 }
 
 func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", "*"), authz.CreateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", "*"), authz.CreateAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors2.Forbidden("", "")
 	}
 	// check confirm password
 	if req.Password != "" {
 		if req.ConfirmPassword != req.Password {
-			return nil, pb.ErrorConfirmPasswordMismatch("", "")
+			return nil, pb.ErrorConfirmPasswordMismatch("")
 		}
 	}
 	u := biz.User{}
@@ -127,16 +125,16 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	}
 	if err != nil {
 		if errors.Is(err, biz.ErrInsufficientStrength) {
-			return nil, pb.ErrorPasswordInsufficientStrength("", "")
+			return nil, pb.ErrorPasswordInsufficientStrength("")
 		}
 		if errors.Is(err, biz.ErrDuplicateEmail) {
-			return nil, pb.ErrorDuplicateEmail("", "")
+			return nil, pb.ErrorDuplicateEmail("")
 		}
 		if errors.Is(err, biz.ErrDuplicateUsername) {
-			return nil, pb.ErrorDuplicateUsername("", "")
+			return nil, pb.ErrorDuplicateUsername("")
 		}
 		if errors.Is(err, biz.ErrDuplicatePhone) {
-			return nil, pb.ErrorDuplicatePhone("", "")
+			return nil, pb.ErrorDuplicatePhone("")
 		}
 		return nil, err
 	}
@@ -146,16 +144,14 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 
 func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.User, error) {
 
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", req.User.Id), authz.UpdateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", req.User.Id), authz.UpdateAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors2.Forbidden("", "")
 	}
 
 	// check confirm password
 	if req.User.Password != "" {
 		if req.User.ConfirmPassword != req.User.Password {
-			return nil, pb.ErrorConfirmPasswordMismatch("", "")
+			return nil, pb.ErrorConfirmPasswordMismatch("")
 		}
 	}
 
@@ -208,21 +204,44 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 }
 
 func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", req.Id), authz.DeleteAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", req.Id), authz.DeleteAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors2.Forbidden("", "")
 	}
+	u, err := s.um.FindByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if u == nil {
+		return nil, errors2.NotFound("", "")
+	}
+	ti, _ := common.FromCurrentTenant(ctx)
+	if req.Force {
 
+		creatorId := ""
+		if u.CreatedTenant != nil {
+			creatorId = *u.CreatedTenant
+		}
+		if ti.GetId() != creatorId {
+			//TODO ??other matching?
+			return nil, errors2.Forbidden("", "")
+		}
+		if err := s.um.Delete(ctx, u); err != nil {
+			return nil, err
+		}
+		return &pb.DeleteUserResponse{}, nil
+	} else {
+		//just remove from tenant
+		if err := s.um.RemoveFromTenant(ctx, u.ID.String(), ti.GetId()); err != nil {
+			return nil, err
+		}
+	}
 	return &pb.DeleteUserResponse{}, nil
 }
 
 func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleRequest) (*pb.GetUserRoleReply, error) {
 	//TODO frequency call. use cache
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", req.Id), authz.GetAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", req.Id), authz.GetAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors2.Forbidden("", "")
 	}
 	u, err := s.um.FindByID(ctx, req.Id)
 	if err != nil {
@@ -244,6 +263,60 @@ func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleReque
 		}
 	}
 	return resp, nil
+}
+
+func (s *UserService) InviteUser(ctx context.Context, req *pb.InviteUserRequest) (*pb.InviteUserReply, error) {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.user", "*"), authz.CreateAction); err != nil {
+		return nil, err
+	}
+
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+	//find user
+	u, err := s.um.FindByIdentity(ctx, req.Identify)
+	if err != nil {
+		return nil, err
+	}
+	if u == nil {
+		return nil, errors2.NotFound("", "")
+	}
+	ti, _ := common.FromCurrentTenant(ctx)
+	//TODO confirm??
+	err = s.um.JoinTenant(ctx, u.ID.String(), ti.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.InviteUserReply{RequiredConfirm: false}, nil
+}
+
+//CheckUserTenant internal api for check user tenant
+func (s *UserService) CheckUserTenant(ctx context.Context, req *pb.CheckUserTenantRequest) (*pb.CheckUserTenantReply, error) {
+	//check permission
+	if _, err := s.auth.CheckInTenant(ctx, authz.NewEntityResource("user.user", req.UserId), authz.ActionStr("check_user_tenant"), "*"); err != nil {
+		return nil, err
+	}
+	ok, err := s.CheckUserTenantInternal(ctx, req.UserId, req.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CheckUserTenantReply{Ok: ok}, nil
+}
+
+func (s *UserService) CheckUserTenantInternal(ctx context.Context, userId, tenantId string) (bool, error) {
+	ok, err := s.um.IsInTenant(ctx, userId, tenantId)
+	if err != nil {
+		return false, err
+	}
+	if ok {
+		//user in this tenant
+		return true, nil
+	}
+	tenantCtx := common.NewCurrentTenant(ctx, tenantId, "")
+	if _, err := s.auth.Check(tenantCtx, authz.NewEntityResource("*", "*"), authz.ActionStr("*")); err != nil {
+		//no permission
+		return false, v12.ErrorTenantForbidden("")
+	}
+	//super permission
+	return true, nil
 }
 
 func (s *UserService) UpdateAvatar(ctx http.Context) error {

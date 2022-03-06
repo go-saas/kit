@@ -20,7 +20,6 @@ const _ = http.SupportPackageIsVersion1
 type PermissionServiceHTTPServer interface {
 	AddSubjectPermission(context.Context, *AddSubjectPermissionRequest) (*AddSubjectPermissionResponse, error)
 	CheckCurrent(context.Context, *CheckPermissionRequest) (*CheckPermissionReply, error)
-	CheckForSubjects(context.Context, *CheckSubjectsPermissionRequest) (*CheckSubjectsPermissionReply, error)
 	GetCurrent(context.Context, *GetCurrentPermissionRequest) (*GetCurrentPermissionReply, error)
 	ListSubjectPermission(context.Context, *ListSubjectPermissionRequest) (*ListSubjectPermissionResponse, error)
 	RemoveSubjectPermission(context.Context, *RemoveSubjectPermissionRequest) (*RemoveSubjectPermissionReply, error)
@@ -31,7 +30,6 @@ func RegisterPermissionServiceHTTPServer(s *http.Server, srv PermissionServiceHT
 	r := s.Route("/")
 	r.GET("/v1/permission/current", _PermissionService_GetCurrent0_HTTP_Handler(srv))
 	r.POST("/v1/permission/check", _PermissionService_CheckCurrent0_HTTP_Handler(srv))
-	r.POST("/v1/permission/check-subjects", _PermissionService_CheckForSubjects0_HTTP_Handler(srv))
 	r.POST("/v1/permission/subject", _PermissionService_AddSubjectPermission0_HTTP_Handler(srv))
 	r.POST("/v1/permission/subject/list", _PermissionService_ListSubjectPermission0_HTTP_Handler(srv))
 	r.GET("/v1/permission/subject", _PermissionService_ListSubjectPermission1_HTTP_Handler(srv))
@@ -73,25 +71,6 @@ func _PermissionService_CheckCurrent0_HTTP_Handler(srv PermissionServiceHTTPServ
 			return err
 		}
 		reply := out.(*CheckPermissionReply)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _PermissionService_CheckForSubjects0_HTTP_Handler(srv PermissionServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in CheckSubjectsPermissionRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, "/user.api.permission.v1.PermissionService/CheckForSubjects")
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.CheckForSubjects(ctx, req.(*CheckSubjectsPermissionRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*CheckSubjectsPermissionReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -194,7 +173,6 @@ func _PermissionService_RemoveSubjectPermission0_HTTP_Handler(srv PermissionServ
 type PermissionServiceHTTPClient interface {
 	AddSubjectPermission(ctx context.Context, req *AddSubjectPermissionRequest, opts ...http.CallOption) (rsp *AddSubjectPermissionResponse, err error)
 	CheckCurrent(ctx context.Context, req *CheckPermissionRequest, opts ...http.CallOption) (rsp *CheckPermissionReply, err error)
-	CheckForSubjects(ctx context.Context, req *CheckSubjectsPermissionRequest, opts ...http.CallOption) (rsp *CheckSubjectsPermissionReply, err error)
 	GetCurrent(ctx context.Context, req *GetCurrentPermissionRequest, opts ...http.CallOption) (rsp *GetCurrentPermissionReply, err error)
 	ListSubjectPermission(ctx context.Context, req *ListSubjectPermissionRequest, opts ...http.CallOption) (rsp *ListSubjectPermissionResponse, err error)
 	RemoveSubjectPermission(ctx context.Context, req *RemoveSubjectPermissionRequest, opts ...http.CallOption) (rsp *RemoveSubjectPermissionReply, err error)
@@ -227,19 +205,6 @@ func (c *PermissionServiceHTTPClientImpl) CheckCurrent(ctx context.Context, in *
 	pattern := "/v1/permission/check"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.permission.v1.PermissionService/CheckCurrent"))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
-func (c *PermissionServiceHTTPClientImpl) CheckForSubjects(ctx context.Context, in *CheckSubjectsPermissionRequest, opts ...http.CallOption) (*CheckSubjectsPermissionReply, error) {
-	var out CheckSubjectsPermissionReply
-	pattern := "/v1/permission/check-subjects"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/user.api.permission.v1.PermissionService/CheckForSubjects"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

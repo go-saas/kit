@@ -22,6 +22,7 @@ type UserServiceHTTPServer interface {
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*User, error)
 	GetUserRoles(context.Context, *GetUserRoleRequest) (*GetUserRoleReply, error)
+	InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error)
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
 }
@@ -36,6 +37,7 @@ func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
 	r.PUT("/v1/user/{user.id}", _UserService_UpdateUser1_HTTP_Handler(srv))
 	r.DELETE("/v1/user/{id}", _UserService_DeleteUser0_HTTP_Handler(srv))
 	r.GET("/v1/user/{id}/roles", _UserService_GetUserRoles0_HTTP_Handler(srv))
+	r.POST("/v1/user/invite", _UserService_InviteUser0_HTTP_Handler(srv))
 }
 
 func _UserService_ListUsers0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
@@ -205,11 +207,31 @@ func _UserService_GetUserRoles0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx
 	}
 }
 
+func _UserService_InviteUser0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in InviteUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.user.v1.UserService/InviteUser")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.InviteUser(ctx, req.(*InviteUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*InviteUserReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type UserServiceHTTPClient interface {
 	CreateUser(ctx context.Context, req *CreateUserRequest, opts ...http.CallOption) (rsp *User, err error)
 	DeleteUser(ctx context.Context, req *DeleteUserRequest, opts ...http.CallOption) (rsp *DeleteUserResponse, err error)
 	GetUser(ctx context.Context, req *GetUserRequest, opts ...http.CallOption) (rsp *User, err error)
 	GetUserRoles(ctx context.Context, req *GetUserRoleRequest, opts ...http.CallOption) (rsp *GetUserRoleReply, err error)
+	InviteUser(ctx context.Context, req *InviteUserRequest, opts ...http.CallOption) (rsp *InviteUserReply, err error)
 	ListUsers(ctx context.Context, req *ListUsersRequest, opts ...http.CallOption) (rsp *ListUsersResponse, err error)
 	UpdateUser(ctx context.Context, req *UpdateUserRequest, opts ...http.CallOption) (rsp *User, err error)
 }
@@ -268,6 +290,19 @@ func (c *UserServiceHTTPClientImpl) GetUserRoles(ctx context.Context, in *GetUse
 	opts = append(opts, http.Operation("/user.api.user.v1.UserService/GetUserRoles"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *UserServiceHTTPClientImpl) InviteUser(ctx context.Context, in *InviteUserRequest, opts ...http.CallOption) (*InviteUserReply, error) {
+	var out InviteUserReply
+	pattern := "/v1/user/invite"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation("/user.api.user.v1.UserService/InviteUser"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

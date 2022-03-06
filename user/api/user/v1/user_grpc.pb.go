@@ -34,6 +34,9 @@ type UserServiceClient interface {
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
 	// authz: user.user,id,get
 	GetUserRoles(ctx context.Context, in *GetUserRoleRequest, opts ...grpc.CallOption) (*GetUserRoleReply, error)
+	// authz: user.user,*,create
+	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserReply, error)
+	CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error)
 }
 
 type userServiceClient struct {
@@ -98,6 +101,24 @@ func (c *userServiceClient) GetUserRoles(ctx context.Context, in *GetUserRoleReq
 	return out, nil
 }
 
+func (c *userServiceClient) InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserReply, error) {
+	out := new(InviteUserReply)
+	err := c.cc.Invoke(ctx, "/user.api.user.v1.UserService/InviteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error) {
+	out := new(CheckUserTenantReply)
+	err := c.cc.Invoke(ctx, "/user.api.user.v1.UserService/CheckUserTenant", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -114,6 +135,9 @@ type UserServiceServer interface {
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
 	// authz: user.user,id,get
 	GetUserRoles(context.Context, *GetUserRoleRequest) (*GetUserRoleReply, error)
+	// authz: user.user,*,create
+	InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error)
+	CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -138,6 +162,12 @@ func (UnimplementedUserServiceServer) DeleteUser(context.Context, *DeleteUserReq
 }
 func (UnimplementedUserServiceServer) GetUserRoles(context.Context, *GetUserRoleRequest) (*GetUserRoleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserRoles not implemented")
+}
+func (UnimplementedUserServiceServer) InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InviteUser not implemented")
+}
+func (UnimplementedUserServiceServer) CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckUserTenant not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -260,6 +290,42 @@ func _UserService_GetUserRoles_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_InviteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InviteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).InviteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.user.v1.UserService/InviteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).InviteUser(ctx, req.(*InviteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_CheckUserTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckUserTenantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CheckUserTenant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.user.v1.UserService/CheckUserTenant",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CheckUserTenant(ctx, req.(*CheckUserTenantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -290,6 +356,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserRoles",
 			Handler:    _UserService_GetUserRoles_Handler,
+		},
+		{
+			MethodName: "InviteUser",
+			Handler:    _UserService_InviteUser_Handler,
+		},
+		{
+			MethodName: "CheckUserTenant",
+			Handler:    _UserService_CheckUserTenant_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

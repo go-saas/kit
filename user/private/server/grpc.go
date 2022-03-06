@@ -26,12 +26,14 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, mOpt *http2.WebMultiTenancyOption, apiOpt *sapi.Option, logger log.Logger,
+func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager, mOpt *http2.WebMultiTenancyOption,
+	apiOpt *sapi.Option, logger log.Logger,
 	user *service.UserService,
 	account *service.AccountService,
 	auth *service.AuthService,
 	role *service.RoleService,
-	permission *service.PermissionService) *grpc.Server {
+	permission *service.PermissionService,
+	userTenant *service.UserTenantContributor) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -41,7 +43,9 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 			sapi.ServerMiddleware(apiOpt, logger),
-			server.Saas(mOpt, ts),
+			server.Saas(mOpt, ts, func(o *common.TenantResolveOption) {
+				o.AppendContributors(userTenant)
+			}),
 			uow.Uow(logger, uowMgr),
 		),
 	}

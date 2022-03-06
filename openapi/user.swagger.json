@@ -651,38 +651,6 @@
         ]
       }
     },
-    "/v1/permission/check-subjects": {
-      "post": {
-        "operationId": "PermissionService_CheckForSubjects",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1CheckSubjectsPermissionReply"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1CheckSubjectsPermissionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "PermissionService"
-        ]
-      }
-    },
     "/v1/permission/current": {
       "get": {
         "summary": "Get current permission",
@@ -1317,6 +1285,39 @@
         ]
       }
     },
+    "/v1/user/invite": {
+      "post": {
+        "summary": "authz: user.user,*,create",
+        "operationId": "UserService_InviteUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1InviteUserReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1InviteUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/v1/user/list": {
       "post": {
         "summary": "authz: user.user,*,list",
@@ -1403,6 +1404,13 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "force",
+            "description": "default false. Just remove user out of tenant. set to true to remove user from system.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -1781,42 +1789,14 @@
         }
       }
     },
-    "v1CheckSubjectsPermissionRequest": {
+    "v1CheckUserTenantReply": {
       "type": "object",
       "properties": {
-        "namespace": {
-          "type": "string",
-          "required": [
-            "namespace"
-          ]
-        },
-        "resource": {
-          "type": "string",
-          "required": [
-            "resource"
-          ]
-        },
-        "action": {
-          "type": "string",
-          "required": [
-            "action"
-          ]
-        },
-        "subjects": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "tenantId": {
-          "type": "string"
+        "ok": {
+          "type": "boolean",
+          "title": "can user access this tenant"
         }
-      },
-      "required": [
-        "namespace",
-        "resource",
-        "action"
-      ]
+      }
     },
     "v1CreateRoleRequest": {
       "type": "object",
@@ -2014,6 +1994,29 @@
           }
         }
       }
+    },
+    "v1InviteUserReply": {
+      "type": "object",
+      "properties": {
+        "requiredConfirm": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1InviteUserRequest": {
+      "type": "object",
+      "properties": {
+        "identify": {
+          "type": "string",
+          "title": "username email or phone",
+          "required": [
+            "identify"
+          ]
+        }
+      },
+      "required": [
+        "identify"
+      ]
     },
     "v1ListRolesRequest": {
       "type": "object",

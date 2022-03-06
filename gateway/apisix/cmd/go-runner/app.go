@@ -13,6 +13,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
 	sapisix "github.com/goxiaoy/go-saas/gateway/apisix"
@@ -28,9 +29,11 @@ type App struct {
 	logger       klog.Logger
 	tenantCfg    *shttp.WebMultiTenancyOption
 	security     *conf.Security
+	userTenant   *uremote.UserTenantContributor
 }
 
 func newApp(tenantStore common.TenantStore,
+	userTenant *uremote.UserTenantContributor,
 	t jwt.Tokenizer,
 	tmr api.TokenManager,
 	services *conf.Services,
@@ -38,7 +41,15 @@ func newApp(tenantStore common.TenantStore,
 	tenantCfg *shttp.WebMultiTenancyOption,
 	security *conf.Security,
 	logger klog.Logger) (*App, error) {
-	ret := &App{tenantStore: tenantStore, tokenizer: t, tokenManager: tmr, services: services, clientName: clientName, tenantCfg: tenantCfg, security: security, logger: logger}
+	ret := &App{tenantStore: tenantStore,
+		userTenant:   userTenant,
+		tokenizer:    t,
+		tokenManager: tmr,
+		services:     services,
+		clientName:   clientName,
+		tenantCfg:    tenantCfg,
+		security:     security,
+		logger:       logger}
 	return ret, ret.load()
 }
 
@@ -52,7 +63,7 @@ func (a *App) load() error {
 		w.WriteHeader(int(fr.Code))
 		khttp.DefaultErrorEncoder(w, &http.Request{}, err)
 	})
-	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.security, a.logger); err != nil {
+	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.security, a.userTenant, a.logger); err != nil {
 		return err
 	}
 	return nil

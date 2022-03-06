@@ -44,6 +44,7 @@ service UserService{
       body:"*"
     };
   }
+
   // authz: user.user,id,update
   rpc UpdateUser(UpdateUserRequest) returns(User){
     option (google.api.http) = {
@@ -68,6 +69,18 @@ service UserService{
     option (google.api.http) = {
       get: "/v1/user/{id}/roles"
     };
+  }
+
+  // authz: user.user,*,create
+  rpc InviteUser(InviteUserRequest)returns(InviteUserReply){
+    option (google.api.http) = {
+      post: "/v1/user/invite"
+      body:"*"
+    };
+  }
+
+  rpc CheckUserTenant(CheckUserTenantRequest)returns(CheckUserTenantReply){
+
   }
 }
 
@@ -176,6 +189,8 @@ message UpdateUser{
 
 message DeleteUserRequest{
   string id =1;
+  //default false. Just remove user out of tenant. set to true to remove user from system
+  bool force=2;
 }
 message DeleteUserResponse{
 
@@ -191,4 +206,23 @@ message GetUserRoleReply{
 message UserRole{
   string  id=1;
   string name =2;
+}
+
+message InviteUserRequest{
+  //username email or phone
+  string identify=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+message InviteUserReply{
+  bool required_confirm=1;
+}
+
+message CheckUserTenantRequest{
+  string user_id=1;
+  string tenant_id=2;
+}
+
+message CheckUserTenantReply{
+  //can user access this tenant
+  bool ok=1;
 }

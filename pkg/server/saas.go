@@ -11,8 +11,8 @@ import (
 	"github.com/goxiaoy/go-saas/kratos/saas"
 )
 
-func Saas(hmtOpt *shttp.WebMultiTenancyOption, ts common.TenantStore) middleware.Middleware {
-	return selector.Server(saas.Server(hmtOpt, ts, ErrorFormatter())).Match(func(ctx context.Context, operation string) bool {
+func Saas(hmtOpt *shttp.WebMultiTenancyOption, ts common.TenantStore, options ...common.PatchTenantResolveOption) middleware.Middleware {
+	return selector.Server(saas.Server(hmtOpt, ts, ErrorFormatter(), options...)).Match(func(ctx context.Context, operation string) bool {
 		_, ok := common.FromCurrentTenant(ctx)
 		return !ok
 	}).Build()

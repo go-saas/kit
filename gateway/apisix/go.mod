@@ -6,18 +6,18 @@ require (
 	github.com/apache/apisix-go-plugin-runner v0.0.0-20220214021533-1a00a4b14f93
 	github.com/go-kratos/kratos/v2 v2.1.5
 	github.com/google/wire v0.5.0
-	github.com/goxiaoy/go-saas v0.1.1-0.20220306050636-a0ee621fe503
+	github.com/goxiaoy/go-saas v0.1.1-0.20220306103631-b9f681ed67a8
 	github.com/goxiaoy/go-saas-kit v0.0.0-20210824031453-1ed2913fb383
 	github.com/goxiaoy/sessions v1.2.2-0.20220226081452-f724382d1ab0
 	github.com/spf13/cobra v1.3.0
 	github.com/thediveo/enumflag v0.10.1
 	go.uber.org/zap v1.21.0
-	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 )
 
 require (
 	github.com/ReneKroon/ttlcache/v2 v2.11.0 // indirect
+	github.com/ahmetb/go-linq/v3 v3.2.0 // indirect
 	github.com/api7/ext-plugin-proto v0.3.0 // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.6.3 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
@@ -39,6 +39,7 @@ require (
 	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220218161850-94dd64e39d7c // indirect
+	google.golang.org/grpc v1.44.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 

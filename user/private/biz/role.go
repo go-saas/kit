@@ -52,7 +52,10 @@ func (r *RoleManager) First(ctx context.Context, query *v12.RoleFilter) (*Role, 
 }
 
 func (r *RoleManager) FindByName(ctx context.Context, name string) (*Role, error) {
-	nn := r.lookupNormalizer.Name(name)
+	nn, err := r.lookupNormalizer.Name(name)
+	if err != nil {
+		return nil, err
+	}
 	return r.repo.FindByName(ctx, nn)
 }
 
@@ -72,7 +75,10 @@ func (r *RoleManager) Get(ctx context.Context, id string) (*Role, error) {
 }
 
 func (r *RoleManager) Create(ctx context.Context, role *Role) error {
-	nn := r.lookupNormalizer.Name(role.Name)
+	nn, err := r.lookupNormalizer.Name(role.Name)
+	if err != nil {
+		return err
+	}
 	// check duplicate
 	dbRole, err := r.repo.FindByName(ctx, nn)
 	if err != nil {
@@ -87,7 +93,10 @@ func (r *RoleManager) Create(ctx context.Context, role *Role) error {
 }
 
 func (r *RoleManager) Update(ctx context.Context, id string, role *Role, p query.Select) error {
-	nn := r.lookupNormalizer.Name(role.Name)
+	nn, err := r.lookupNormalizer.Name(role.Name)
+	if err != nil {
+		return err
+	}
 	role.NormalizedName = nn
 	dbRole, err := r.repo.FindByName(ctx, nn)
 	if err != nil {
@@ -98,7 +107,7 @@ func (r *RoleManager) Update(ctx context.Context, id string, role *Role, p query
 		return errors.Forbidden("NAME_DUPLICATE", "role name duplicate")
 	}
 	if role.IsPreserved {
-		return v12.ErrorRolePreserved("", "")
+		return v12.ErrorRolePreserved("")
 	}
 	return r.repo.Update(ctx, id, role, p)
 }
@@ -112,7 +121,7 @@ func (r *RoleManager) Delete(ctx context.Context, id string) error {
 		return errors.NotFound("", "")
 	}
 	if role.IsPreserved {
-		return v12.ErrorRolePreserved("", "")
+		return v12.ErrorRolePreserved("")
 	}
 	return r.repo.Delete(ctx, id)
 }

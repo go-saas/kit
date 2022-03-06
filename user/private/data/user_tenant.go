@@ -21,7 +21,7 @@ func NewUserTenantRepo(data *Data) biz.UserTenantRepo {
 	}
 }
 
-func (u *UserTenantRepo) JoinTenant(ctx context.Context, userId string, tenantId string) (*biz.UserTenant, error) {
+func (u *UserTenantRepo) JoinTenant(ctx context.Context, userId string, tenantId string, status biz.UserTenantStatus) (*biz.UserTenant, error) {
 	if ut, err := u.Get(ctx, userId, tenantId); err != nil {
 		return nil, err
 	} else if ut != nil {
@@ -33,7 +33,7 @@ func (u *UserTenantRepo) JoinTenant(ctx context.Context, userId string, tenantId
 		UserId:   userId,
 		TenantId: gorm2.NewTenantId(tenantId),
 		JoinTime: time.Now(),
-		Status:   biz.Active,
+		Status:   status,
 		Extra:    nil,
 	}
 	if err := u.GetDb(ctx).Save(t).Error; err != nil {

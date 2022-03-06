@@ -18,4 +18,8 @@ enum ErrorReason {
   DUPLICATE_USERNAME=3 [(errors.code) = 400];
   DUPLICATE_EMAIL=4 [(errors.code) = 400];
   DUPLICATE_PHONE=5 [(errors.code) = 400];
+
+  INVALID_EMAIL = 6[(errors.code) = 400];
+  INVALID_PHONE = 7[(errors.code) = 400];
+  INVALID_USERNAME= 8[(errors.code) = 400];
 }

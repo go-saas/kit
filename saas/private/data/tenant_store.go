@@ -17,9 +17,9 @@ func NewTenantStore(tr biz.TenantRepo) common.TenantStore {
 	}
 }
 
-func (g TenantStore) GetByNameOrId(_ context.Context, nameOrId string) (*common.TenantConfig, error) {
+func (g TenantStore) GetByNameOrId(ctx context.Context, nameOrId string) (*common.TenantConfig, error) {
 	//change to host side
-	newCtx := common.NewCurrentTenant(context.Background(), "", "")
+	newCtx := common.NewCurrentTenant(ctx, "", "")
 	t, err := g.tr.FindByIdOrName(newCtx, nameOrId)
 	if err != nil {
 		return nil, err

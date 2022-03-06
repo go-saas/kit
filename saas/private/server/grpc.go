@@ -16,6 +16,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/saas/api"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
+	"github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/common/http"
 	uow2 "github.com/goxiaoy/uow"
@@ -25,6 +26,7 @@ import (
 func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager,
 	mOpt *http.WebMultiTenancyOption, apiOpt *sapi.Option,
 	tenant *service.TenantService,
+	userTenant *remote.UserTenantContributor,
 	logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
@@ -35,7 +37,9 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 			sapi.ServerMiddleware(apiOpt, logger),
-			server.Saas(mOpt, ts),
+			server.Saas(mOpt, ts, func(o *common.TenantResolveOption) {
+				o.AppendContributors(userTenant)
+			}),
 			uow.Uow(logger, uowMgr),
 		),
 	}

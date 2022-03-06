@@ -14,8 +14,10 @@ import (
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	sapi "github.com/goxiaoy/go-saas-kit/saas/api"
 	sremote "github.com/goxiaoy/go-saas-kit/saas/remote"
+	uapi "github.com/goxiaoy/go-saas-kit/user/api"
+	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 )
 
 func initApp(*conf2.Services, *conf2.Security, api.ClientName, klog.Logger, ...grpc.ClientOption) (*App, func(), error) {
-	panic(wire.Build(ProviderSet, sapi.GrpcProviderSet, sremote.GrpcProviderSet, jwt.ProviderSet, newApp))
+	panic(wire.Build(ProviderSet, sapi.GrpcProviderSet, sremote.GrpcProviderSet, uapi.GrpcProviderSet, uremote.GrpcProviderSet, jwt.ProviderSet, newApp))
 }

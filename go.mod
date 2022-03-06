@@ -16,7 +16,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/gorilla/csrf v1.7.1
 	github.com/gorilla/handlers v1.5.1
-	github.com/goxiaoy/go-saas v0.1.1-0.20220306050636-a0ee621fe503
+	github.com/goxiaoy/go-saas v0.1.1-0.20220306103631-b9f681ed67a8
 	github.com/goxiaoy/gorm-concurrency v1.0.5
 	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.3
@@ -40,6 +40,7 @@ require (
 	github.com/fclairamb/afero-s3 v0.3.1
 	github.com/gorilla/mux v1.8.0
 	github.com/goxiaoy/sessions v1.2.2-0.20220226081452-f724382d1ab0
+	github.com/nyaruka/phonenumbers v1.0.74
 	github.com/spf13/afero v1.8.1
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )

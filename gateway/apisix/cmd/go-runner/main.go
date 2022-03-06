@@ -37,10 +37,10 @@ import (
 	"github.com/apache/apisix-go-plugin-runner/pkg/log"
 	"github.com/apache/apisix-go-plugin-runner/pkg/runner"
 
+	klog "github.com/go-kratos/kratos/v2/log"
+
 	_ "github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
 	_ "github.com/goxiaoy/go-saas/gateway/apisix"
-
-	klog "github.com/go-kratos/kratos/v2/log"
 )
 
 var (

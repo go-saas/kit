@@ -82,3 +82,39 @@ func IsDuplicatePhone(err error) bool {
 func ErrorDuplicatePhone(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_DUPLICATE_PHONE.String(), fmt.Sprintf(format, args...))
 }
+
+func IsInvalidEmail(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_INVALID_EMAIL.String() && e.Code == 400
+}
+
+func ErrorInvalidEmail(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_INVALID_EMAIL.String(), fmt.Sprintf(format, args...))
+}
+
+func IsInvalidPhone(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_INVALID_PHONE.String() && e.Code == 400
+}
+
+func ErrorInvalidPhone(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_INVALID_PHONE.String(), fmt.Sprintf(format, args...))
+}
+
+func IsInvalidUsername(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_INVALID_USERNAME.String() && e.Code == 400
+}
+
+func ErrorInvalidUsername(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_INVALID_USERNAME.String(), fmt.Sprintf(format, args...))
+}
