@@ -84,6 +84,7 @@ message CreateMenuRequest {
   string title=17;
   string path=18;
   string redirect=19;
+  bool host_only=20;
 }
 
 message UpdateMenuRequest {
@@ -111,6 +112,7 @@ message UpdateMenu{
   string title=17;
   string path=18;
   string redirect=19;
+  bool host_only=20;
 }
 
 
@@ -165,6 +167,7 @@ message Menu{
   string title=17;
   string path=18;
   string redirect=19;
+  bool host_only=20;
 }
 
 message GetAvailableMenusRequest{

@@ -111,6 +111,7 @@
         ]
       },
       "put": {
+        "summary": "UpdateProfile\r\nAvatar: POST form file /v1/account/avatar",
         "operationId": "Account_UpdateProfile",
         "responses": {
           "200": {
@@ -158,6 +159,14 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
         "tags": [
           "Account"
         ]
@@ -2477,6 +2486,9 @@
         },
         "redirect": {
           "type": "string"
+        },
+        "hostOnly": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -3080,6 +3092,9 @@
         },
         "redirect": {
           "type": "string"
+        },
+        "hostOnly": {
+          "type": "boolean"
         }
       }
     },
@@ -3157,6 +3172,9 @@
         },
         "action": {
           "type": "string"
+        },
+        "hostOnly": {
+          "type": "boolean"
         }
       }
     },
@@ -3280,6 +3298,9 @@
           }
         }
       }
+    },
+    "v1SettingsFilter": {
+      "type": "object"
     },
     "v1Tenant": {
       "type": "object",
@@ -3497,6 +3518,9 @@
         },
         "redirect": {
           "type": "string"
+        },
+        "hostOnly": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -3516,7 +3540,18 @@
       }
     },
     "v1UpdateProfileRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "gender": {
+          "$ref": "#/definitions/v1Gender"
+        }
+      }
     },
     "v1UpdateProfileResponse": {
       "type": "object"

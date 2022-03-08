@@ -40,18 +40,20 @@ func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13
 }
 
 func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileRequest) (*pb.GetProfileResponse, error) {
+	//TODO clean
 	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
 	u, err := s.um.FindByID(ctx, userInfo.GetId())
+	if err != nil {
+		return nil, err
+	}
 	if u == nil {
 		return nil, errors.Unauthorized("", "")
 	}
-	if err != nil {
-		return nil, errors.Forbidden("", "")
-	}
+
 	res := &pb.GetProfileResponse{
 		Id:       u.ID.String(),
 		Username: &wrapperspb.StringValue{Value: *u.Username},
@@ -81,10 +83,13 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		})
 	}
 
-	tenantIds := make([]string, len(u.Tenants))
-	linq.From(u.Tenants).SelectT(func(t biz.UserTenant) string { return t.TenantId.String }).ToSlice(&tenantIds)
+	tenantIds := make([]string, len(u.Tenants)+1)
+	linq.From(u.Tenants).SelectT(func(t biz.UserTenant) string {
+		return t.GetTenantId()
+	}).ToSlice(&tenantIds)
 	currentTenant, _ := common.FromCurrentTenant(ctx)
-	//TODO current tenant not found when admin faked?
+	//append current tenant
+	tenantIds[len(tenantIds)-1] = currentTenant.GetId()
 	if len(tenantIds) > 0 {
 		tenants, err := s.tenantService.ListTenant(ctx, &v13.ListTenantRequest{Filter: &v13.TenantFilter{IdIn: tenantIds}})
 		if err != nil {
@@ -94,17 +99,17 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		reTenants := make([]*pb.UserTenant, len(u.Tenants))
 		linq.From(u.Tenants).SelectT(func(ut biz.UserTenant) *pb.UserTenant {
 			//get tenant info
-			if !ut.TenantId.Valid {
+			if ut.TenantId == nil {
 				//host
-				return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId.String, IsHost: true}
+				return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.GetTenantId(), IsHost: true}
 			}
 
-			t := linq.From(tenants.Items).FirstWithT(func(t *v13.Tenant) bool { return t.Id == ut.TenantId.String })
+			t := linq.From(tenants.Items).FirstWithT(func(t *v13.Tenant) bool { return t.Id == ut.GetTenantId() })
 			if t == nil {
 				return nil
 			}
 			tt := t.(*v13.Tenant)
-			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.TenantId.String, Tenant: &v13.TenantInfo{
+			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.GetTenantId(), Tenant: &v13.TenantInfo{
 				Id:          tt.Id,
 				Name:        tt.Name,
 				DisplayName: tt.DisplayName,
@@ -112,13 +117,24 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 				Logo:        tt.Logo,
 			}}
 		}).ToSlice(&reTenants)
-		for i := range reTenants {
-			if currentTenant.GetId() == reTenants[i].TenantId {
-				res.CurrentTenant = reTenants[i]
+		for _, tt := range tenants.Items {
+			if currentTenant.GetId() == tt.GetId() {
+				res.CurrentTenant = &pb.UserTenant{UserId: userInfo.GetId(), TenantId: currentTenant.GetId(), Tenant: &v13.TenantInfo{
+					Id:          tt.Id,
+					Name:        tt.Name,
+					DisplayName: tt.DisplayName,
+					Region:      tt.Region,
+					Logo:        tt.Logo,
+				}}
 				break
 			}
 		}
+
 		res.Tenants = reTenants
+	}
+	if len(currentTenant.GetId()) == 0 {
+		//host
+		res.CurrentTenant = &pb.UserTenant{UserId: userInfo.GetId(), TenantId: currentTenant.GetId(), IsHost: true}
 	}
 	//avatar
 	res.Avatar = mapAvatar(ctx, s.blob, u)
@@ -127,11 +143,30 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 }
 func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {
 	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
-	_, err := authn.ErrIfUnauthenticated(ctx)
+	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
-
+	u, err := s.um.FindByID(ctx, userInfo.GetId())
+	if err != nil {
+		return nil, err
+	}
+	if u == nil {
+		return nil, errors.Unauthorized("", "")
+	}
+	if req.Username != nil {
+		u.Username = &req.Username.Value
+	}
+	if req.Name != nil {
+		u.Name = &req.Name.Value
+	}
+	if req.Gender != v1.Gender_UNKNOWN {
+		g := req.Gender.String()
+		u.Gender = &g
+	}
+	if err := s.um.Update(ctx, u, nil); err != nil {
+		return nil, err
+	}
 	return &pb.UpdateProfileResponse{}, nil
 }
 func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsRequest) (*pb.GetSettingsResponse, error) {
@@ -140,7 +175,7 @@ func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsReq
 	if err != nil {
 		return nil, err
 	}
-
+	//TODO
 	return &pb.GetSettingsResponse{}, nil
 }
 func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSettingsRequest) (*pb.UpdateSettingsResponse, error) {
@@ -149,6 +184,7 @@ func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSetti
 	if err != nil {
 		return nil, err
 	}
+	//TODO
 	return &pb.UpdateSettingsResponse{}, nil
 }
 func (s *AccountService) GetAddresses(ctx context.Context, req *pb.GetAddressesRequest) (*pb.GetAddressesReply, error) {
@@ -157,6 +193,7 @@ func (s *AccountService) GetAddresses(ctx context.Context, req *pb.GetAddressesR
 	if err != nil {
 		return nil, err
 	}
+	//TODO
 	return &pb.GetAddressesReply{}, nil
 }
 
@@ -166,11 +203,11 @@ func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddr
 	if err != nil {
 		return nil, err
 	}
+	//TODO
 	return &pb.UpdateAddressesReply{}, nil
 }
 
 func (s *AccountService) UpdateAvatar(ctx http.Context) error {
-
 	req := ctx.Request()
 	//TODO do not know why should read form file first ...
 	if _, _, err := req.FormFile("file"); err != nil {

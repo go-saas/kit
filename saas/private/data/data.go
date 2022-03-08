@@ -5,6 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas/common"
@@ -27,11 +28,11 @@ type Data struct {
 	DbProvider gorm.DbProvider
 }
 
-// GlobalData TODO better way to prevent cycle dependency
 var GlobalData *Data
 
 func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
 	db := provider.Get(ctx, ConnName)
+	gorm2.RegisterCallbacks(db)
 	return db
 }
 

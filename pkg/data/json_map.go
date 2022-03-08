@@ -86,8 +86,8 @@ func (JSONMap) GormDBDataType(db *gorm.DB, field *schema.Field) string {
 	return ""
 }
 
-func (jm JSONMap) GormValue(ctx context.Context, db *gorm.DB) clause.Expr {
-	data, _ := jm.MarshalJSON()
+func (m JSONMap) GormValue(ctx context.Context, db *gorm.DB) clause.Expr {
+	data, _ := m.MarshalJSON()
 	switch db.Dialector.Name() {
 	case "mysql":
 		if v, ok := db.Dialector.(*mysql.Dialector); ok && !strings.Contains(v.ServerVersion, "MariaDB") {

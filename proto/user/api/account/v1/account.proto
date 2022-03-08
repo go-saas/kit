@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
 
 import "user/api/role/v1/role.proto";
 import "user/api/user/v1/user.proto";
@@ -20,6 +21,8 @@ service Account{
       get: "/v1/account/profile"
     };
   }
+  //UpdateProfile
+  //Avatar: POST form file /v1/account/avatar
   rpc UpdateProfile(UpdateProfileRequest)returns(UpdateProfileResponse){
     option (google.api.http) = {
       put: "/v1/account/profile",
@@ -68,13 +71,22 @@ message GetProfileResponse{
   blob.BlobFile avatar=10;
   UserTenant current_tenant=11;
 }
-message UpdateProfileRequest{
 
+message UpdateProfileRequest{
+  google.protobuf.StringValue username =2;
+  google.protobuf.StringValue name=3;
+  .user.api.user.v1.Gender gender=7;
 }
+
 message UpdateProfileResponse{
 
 }
 message GetSettingsRequest{
+  google.protobuf.FieldMask fields=5;
+  SettingsFilter filter=6;
+}
+
+message SettingsFilter{
 
 }
 message GetSettingsResponse{

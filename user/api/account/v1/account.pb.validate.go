@@ -534,6 +534,66 @@ func (m *UpdateProfileRequest) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetUsername()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateProfileRequestValidationError{
+					field:  "Username",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateProfileRequestValidationError{
+					field:  "Username",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateProfileRequestValidationError{
+				field:  "Username",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetName()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateProfileRequestValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateProfileRequestValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateProfileRequestValidationError{
+				field:  "Name",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Gender
+
 	if len(errors) > 0 {
 		return UpdateProfileRequestMultiError(errors)
 	}
@@ -736,6 +796,64 @@ func (m *GetSettingsRequest) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetFields()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetSettingsRequestValidationError{
+					field:  "Fields",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetSettingsRequestValidationError{
+					field:  "Fields",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetSettingsRequestValidationError{
+				field:  "Fields",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetFilter()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetSettingsRequestValidationError{
+					field:  "Filter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetSettingsRequestValidationError{
+					field:  "Filter",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetSettingsRequestValidationError{
+				field:  "Filter",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return GetSettingsRequestMultiError(errors)
 	}
@@ -814,6 +932,105 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetSettingsRequestValidationError{}
+
+// Validate checks the field values on SettingsFilter with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SettingsFilter) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SettingsFilter with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SettingsFilterMultiError,
+// or nil if none found.
+func (m *SettingsFilter) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SettingsFilter) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return SettingsFilterMultiError(errors)
+	}
+	return nil
+}
+
+// SettingsFilterMultiError is an error wrapping multiple validation errors
+// returned by SettingsFilter.ValidateAll() if the designated constraints
+// aren't met.
+type SettingsFilterMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SettingsFilterMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SettingsFilterMultiError) AllErrors() []error { return m }
+
+// SettingsFilterValidationError is the validation error returned by
+// SettingsFilter.Validate if the designated constraints aren't met.
+type SettingsFilterValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SettingsFilterValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SettingsFilterValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SettingsFilterValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SettingsFilterValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SettingsFilterValidationError) ErrorName() string { return "SettingsFilterValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SettingsFilterValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSettingsFilter.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SettingsFilterValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SettingsFilterValidationError{}
 
 // Validate checks the field values on GetSettingsResponse with the rules
 // defined in the proto definition for this message. If any rules are

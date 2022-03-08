@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package data;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/struct.proto";
+import "query/operation.proto";
+
+option go_package = "github.com/goxiaoy/go-saas-kit/pkg/data;data";
+
+message DynamicValue{
+  oneof value{
+    int32 int_value=2;
+    int64 long_value=3;
+    float float_value=4;
+    double double_value=5;
+    string string_value=6;
+    bool bool_value=7;
+    google.protobuf.NullValue null_value=8;
+    google.protobuf.Struct json_value=9;
+  }
+}
+
+message DynamicValueFilter{
+  oneof filter{
+    query.operation.Int32FilterOperators int_value=2;
+    query.operation.Int64FilterOperators long_value=3;
+    query.operation.FloatFilterOperators float_value=4;
+    query.operation.DoubleFilterOperators double_value=5;
+    query.operation.StringFilterOperation string_value=6;
+    query.operation.BooleanFilterOperators bool_value=7;
+    query.operation.NullFilterOperators null_value=8;
+  }
+}

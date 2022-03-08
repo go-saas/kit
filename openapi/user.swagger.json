@@ -105,6 +105,7 @@
         ]
       },
       "put": {
+        "summary": "UpdateProfile\r\nAvatar: POST form file /v1/account/avatar",
         "operationId": "Account_UpdateProfile",
         "responses": {
           "200": {
@@ -152,6 +153,14 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
         "tags": [
           "Account"
         ]
@@ -2347,6 +2356,9 @@
         }
       }
     },
+    "v1SettingsFilter": {
+      "type": "object"
+    },
     "v1TenantInfo": {
       "type": "object",
       "properties": {
@@ -2412,7 +2424,18 @@
       "type": "object"
     },
     "v1UpdateProfileRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "gender": {
+          "$ref": "#/definitions/v1Gender"
+        }
+      }
     },
     "v1UpdateProfileResponse": {
       "type": "object"

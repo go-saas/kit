@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
@@ -46,6 +47,7 @@ func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
 	if err := db.SetupJoinTable(&biz.User{}, "Roles", &biz.UserRole{}); err != nil {
 		panic(err)
 	}
+	gorm2.RegisterCallbacks(db)
 	return db
 }
 

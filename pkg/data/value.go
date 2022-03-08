@@ -1,5 +1,7 @@
 package data
 
+import "google.golang.org/protobuf/types/known/structpb"
+
 type Value struct {
 	// which kind of data, can be "null","int","long","float","double","string","bool"
 	Kind        string
@@ -9,6 +11,7 @@ type Value struct {
 	DoubleValue float64
 	StringValue string
 	BoolValue   bool
+	JsonValue   JSONMap
 }
 
 const NullKind = "null"
@@ -18,8 +21,9 @@ const FloatKind = "float"
 const DoubleKind = "double"
 const StringKind = "string"
 const BoolKind = "bool"
+const JsonKind = "json"
 
-func (v *Value) GetValue() interface{} {
+func (v *Value) GetNativeValue() interface{} {
 	switch v.Kind {
 	case NullKind:
 		return nil
@@ -35,6 +39,8 @@ func (v *Value) GetValue() interface{} {
 		return v.StringValue
 	case BoolKind:
 		return v.BoolValue
+	case JsonKind:
+		return map[string]interface{}(v.JsonValue)
 	default:
 		return nil
 	}
@@ -107,4 +113,18 @@ func (v *Value) RunIfBool(f func()) {
 	if v.Kind == BoolKind {
 		f()
 	}
+}
+func (v *Value) SetAsJson(value map[string]interface{}) {
+	v.Kind = JsonKind
+	v.JsonValue = value
+}
+func (v *Value) RunIfJson(f func()) {
+	if v.Kind == JsonKind {
+		f()
+	}
+}
+
+func (v *Value) ToStructPb() *structpb.Value {
+	p, _ := structpb.NewValue(v.GetNativeValue())
+	return p
 }

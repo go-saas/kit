@@ -64,4 +64,5 @@ func NewUpdateSubjectPermission(resource Resource, action Action, tenantID strin
 type PermissionRequirement struct {
 	Resource Resource
 	Action   Action
+	HostOnly bool
 }

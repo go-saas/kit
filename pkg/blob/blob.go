@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/spf13/afero"
+	"net/url"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -113,11 +114,21 @@ func (f *FileBlob) GetAfero() *afero.Afero {
 }
 
 func (f *FileBlob) GeneratePreSignedURL(name string, expire time.Duration) (string, error) {
-	return path.Join(f.PublicUrl, f.BasePath, name), nil
+	u, err := url.Parse(f.PublicUrl)
+	if err != nil {
+		return "", err
+	}
+	u.Path = path.Join(u.Path, f.BasePath, name)
+	return u.String(), nil
 }
 
 func (f *FileBlob) GeneratePublicUrl(name string) (string, error) {
-	return path.Join(f.PublicUrl, f.BasePath, name), nil
+	u, err := url.Parse(f.PublicUrl)
+	if err != nil {
+		return "", err
+	}
+	u.Path = path.Join(u.Path, f.BasePath, name)
+	return u.String(), nil
 }
 
 func (f *FileBlob) GenerateInternalUrl(name string) (string, error) {

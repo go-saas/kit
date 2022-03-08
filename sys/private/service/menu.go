@@ -8,6 +8,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
+	"github.com/goxiaoy/go-saas/common"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"strings"
@@ -26,7 +27,7 @@ func NewMenuService(auth authz.Service, repo biz.MenuRepo) *MenuService {
 }
 
 func (s *MenuService) ListMenu(ctx context.Context, req *pb.ListMenuRequest) (*pb.ListMenuReply, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("sys.menu", "*"), authz.ListAction); err != nil {
+	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("sys.menu", "*"), authz.ListAction); err != nil {
 		return nil, err
 	}
 	ret := &pb.ListMenuReply{}
@@ -54,7 +55,7 @@ func (s *MenuService) ListMenu(ctx context.Context, req *pb.ListMenuRequest) (*p
 	return ret, nil
 }
 func (s *MenuService) GetMenu(ctx context.Context, req *pb.GetMenuRequest) (*pb.Menu, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("sys.menu", req.Id), authz.GetAction); err != nil {
+	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("sys.menu", req.Id), authz.GetAction); err != nil {
 		return nil, err
 	}
 	g, err := s.repo.Get(ctx, req.GetId())
@@ -69,7 +70,7 @@ func (s *MenuService) GetMenu(ctx context.Context, req *pb.GetMenuRequest) (*pb.
 	return res, nil
 }
 func (s *MenuService) CreateMenu(ctx context.Context, req *pb.CreateMenuRequest) (*pb.Menu, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("sys.menu", "*"), authz.CreateAction); err != nil {
+	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("sys.menu", "*"), authz.CreateAction); err != nil {
 		return nil, err
 	}
 
@@ -90,7 +91,7 @@ func (s *MenuService) CreateMenu(ctx context.Context, req *pb.CreateMenuRequest)
 	return res, nil
 }
 func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest) (*pb.Menu, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("sys.menu", req.Menu.Id), authz.UpdateAction); err != nil {
+	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("sys.menu", req.Menu.Id), authz.UpdateAction); err != nil {
 		return nil, err
 	}
 
@@ -121,7 +122,7 @@ func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest)
 }
 
 func (s *MenuService) DeleteMenu(ctx context.Context, req *pb.DeleteMenuRequest) (*pb.DeleteMenuReply, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("sys.menu", req.Id), authz.DeleteAction); err != nil {
+	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("sys.menu", req.Id), authz.DeleteAction); err != nil {
 		return nil, err
 	}
 	g, err := s.repo.Get(ctx, req.Id)
@@ -153,7 +154,12 @@ func (s *MenuService) GetAvailableMenus(ctx context.Context, req *pb.GetAvailabl
 	//filter by permission
 	var filter []*biz.Menu
 	var disAllowMenuId []string
+	ti, _ := common.FromCurrentTenant(ctx)
 	for _, item := range items {
+		if item.HostOnly && len(ti.GetId()) != 0 {
+			//host only
+			continue
+		}
 		if item.IgnoreAuth {
 			filter = append(filter, item)
 			continue
@@ -161,7 +167,13 @@ func (s *MenuService) GetAvailableMenus(ctx context.Context, req *pb.GetAvailabl
 		if len(item.Requirement) > 0 {
 			//TODO batch
 			for _, requirement := range item.Requirement {
-				if _, err := s.auth.Check(ctx, authz.NewEntityResource(requirement.Namespace, requirement.Resource), authz.ActionStr(requirement.Action)); err == nil {
+				var err error
+				if requirement.HostOnly {
+					_, err = authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource(requirement.Namespace, requirement.Resource), authz.ActionStr(requirement.Action))
+				} else {
+					_, err = s.auth.Check(ctx, authz.NewEntityResource(requirement.Namespace, requirement.Resource), authz.ActionStr(requirement.Action))
+				}
+				if err == nil {
 					filter = append(filter, item)
 				} else {
 					//TODO handle permission error or other error
@@ -213,6 +225,7 @@ func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
 			Namespace: a.Namespace,
 			Resource:  a.Resource,
 			Action:    a.Action,
+			HostOnly:  a.HostOnly,
 		}
 		return ret
 	}).ToSlice(&requirement)
@@ -233,6 +246,7 @@ func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
 	b.Title = a.Title
 	b.Path = a.Path
 	b.Redirect = a.Redirect
+	b.HostOnly = a.HostOnly
 }
 
 func MapListBizMenu2Pb(a []biz.Menu, b *[]*pb.Menu) {
@@ -255,6 +269,7 @@ func MapUpdatePbMenu2Biz(a *pb.UpdateMenu, b *biz.Menu) {
 			Namespace: a.Namespace,
 			Resource:  a.Resource,
 			Action:    a.Action,
+			HostOnly:  a.HostOnly,
 		}
 		return ret
 	}).ToSlice(&requirement)
@@ -276,6 +291,7 @@ func MapUpdatePbMenu2Biz(a *pb.UpdateMenu, b *biz.Menu) {
 	b.Title = a.Title
 	b.Path = a.Path
 	b.Redirect = a.Redirect
+	b.HostOnly = a.HostOnly
 }
 
 func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
@@ -290,6 +306,7 @@ func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
 			Namespace: a.Namespace,
 			Resource:  a.Resource,
 			Action:    a.Action,
+			HostOnly:  a.HostOnly,
 		}
 		return ret
 	}).ToSlice(&requirement)
@@ -311,6 +328,7 @@ func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
 	b.Title = a.Title
 	b.Path = a.Path
 	b.Redirect = a.Redirect
+	b.HostOnly = a.HostOnly
 }
 
 func normalizeName(name string) string {

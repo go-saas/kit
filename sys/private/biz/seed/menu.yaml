@@ -7,6 +7,7 @@ menus:
     icon: "ion:grid-outline"
     meta:
     priority: 101
+    host_only: true
     requirement:
       - namespace: "saas.tenant"
         resource: "*"
@@ -62,7 +63,9 @@ menus:
         component: "/system/menu/index"
         meta:
         title: "routes.system.menu.management"
+        host_only: true
         requirement:
           - namespace: "sys.menu"
             resource: "*"
             action: "list"
+            host_only: true

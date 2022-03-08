@@ -419,6 +419,9 @@
         },
         "redirect": {
           "type": "string"
+        },
+        "hostOnly": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -556,6 +559,9 @@
         },
         "redirect": {
           "type": "string"
+        },
+        "hostOnly": {
+          "type": "boolean"
         }
       }
     },
@@ -593,6 +599,9 @@
         },
         "action": {
           "type": "string"
+        },
+        "hostOnly": {
+          "type": "boolean"
         }
       }
     },
@@ -660,6 +669,9 @@
         },
         "redirect": {
           "type": "string"
+        },
+        "hostOnly": {
+          "type": "boolean"
         }
       },
       "required": [

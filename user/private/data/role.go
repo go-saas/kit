@@ -72,7 +72,7 @@ func (r *RoleRepo) FindById(ctx context.Context, id string) (*biz.Role, error) {
 }
 
 func (r *RoleRepo) FindByName(ctx context.Context, name string) (*biz.Role, error) {
-	db := r.GetDb(ctx)
+	db := r.GetDb(ctx).Model(&biz.Role{})
 	var item = &biz.Role{}
 	if err := db.Where("normalized_name = ?", name).First(item).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -98,7 +98,7 @@ func (r *RoleRepo) Count(ctx context.Context, query *v12.RoleFilter) (total int6
 }
 
 func (r *RoleRepo) Get(ctx context.Context, id string) (*biz.Role, error) {
-	db := r.GetDb(ctx)
+	db := r.GetDb(ctx).Model(&biz.Role{})
 	var item = &biz.Role{}
 	if err := db.First(item, "id=?", id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -110,16 +110,16 @@ func (r *RoleRepo) Get(ctx context.Context, id string) (*biz.Role, error) {
 }
 
 func (r *RoleRepo) Create(ctx context.Context, role *biz.Role) error {
-	db := r.GetDb(ctx)
+	db := r.GetDb(ctx).Model(&biz.Role{})
 	return db.Create(role).Error
 }
 
 func (r *RoleRepo) Update(ctx context.Context, id string, role *biz.Role, p query.Select) error {
-	db := r.GetDb(ctx)
+	db := r.GetDb(ctx).Model(&biz.Role{})
 	return db.Where("id=?", id).Updates(role).Error
 }
 
 func (r *RoleRepo) Delete(ctx context.Context, id string) error {
-	db := r.GetDb(ctx)
+	db := r.GetDb(ctx).Model(&biz.Role{})
 	return db.Delete("id = ?", id).Error
 }

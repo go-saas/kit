@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
-	gorm2 "github.com/goxiaoy/go-saas/gorm"
 	"gorm.io/gorm"
 	"time"
 )
@@ -29,13 +28,12 @@ func (u *UserTenantRepo) JoinTenant(ctx context.Context, userId string, tenantId
 		return ut, nil
 	}
 	//not present
-	t := &biz.UserTenant{
+	t := (&biz.UserTenant{
 		UserId:   userId,
-		TenantId: gorm2.NewTenantId(tenantId),
 		JoinTime: time.Now(),
 		Status:   status,
 		Extra:    nil,
-	}
+	}).SetTenantId(tenantId)
 	if err := u.GetDb(ctx).Save(t).Error; err != nil {
 		return nil, err
 	}

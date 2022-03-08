@@ -171,4 +171,5 @@ message PermissionRequirement{
   string namespace = 1;
   string resource = 2;
   string action = 3;
+  bool host_only=4;
 }

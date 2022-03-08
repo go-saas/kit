@@ -2063,6 +2063,8 @@ func (m *PermissionRequirement) validate(all bool) error {
 
 	// no validation rules for Action
 
+	// no validation rules for HostOnly
+
 	if len(errors) > 0 {
 		return PermissionRequirementMultiError(errors)
 	}

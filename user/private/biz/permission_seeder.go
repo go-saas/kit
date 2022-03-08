@@ -37,12 +37,17 @@ func (p *PermissionSeeder) Seed(ctx context.Context, sCtx *seed.Context) error {
 	if adminRole == nil {
 		return errors.New("admin role not found")
 	}
-	err = authz.EnsureGrant(ctx, p.permission, p.checker,
+	permissionTenant := tenantInfo.GetId()
+	if len(permissionTenant) == 0 {
+		//host
+		//TODO this make admin of host to be a super admin across all tenants
+		permissionTenant = "*"
+	}
+	if err := authz.EnsureGrant(ctx, p.permission, p.checker,
 		authz.NewEntityResource("*", "*"),
 		authz.ActionStr("*"),
 		authz.NewRoleSubject(adminRole.ID.String()),
-		tenantInfo.GetId())
-	if err != nil {
+		permissionTenant); err != nil {
 		return err
 	}
 

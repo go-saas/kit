@@ -34,6 +34,11 @@ message BooleanFilterOperators{
   google.protobuf.BoolValue nnull=4 [json_name="$nnull"];
 }
 
+message NullFilterOperators{
+  google.protobuf.BoolValue  null=7 [json_name="$null"];
+  google.protobuf.BoolValue nnull=8 [json_name="$nnull"];
+}
+
 message DateFilterOperators{
   google.protobuf.StringValue eq =1 [json_name="$eq"];
   google.protobuf.StringValue neq=2 [json_name="$neq"];

@@ -8,7 +8,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas/common"
-	"github.com/goxiaoy/go-saas/data"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"time"
 )
@@ -251,13 +250,11 @@ func (um *UserManager) RefreshRememberToken(ctx context.Context, uid uuid.UUID, 
 }
 
 func (um *UserManager) IsInTenant(ctx context.Context, uid, tenantId string) (bool, error) {
-	ctx = data.NewDisableMultiTenancyDataFilter(ctx)
 	return um.userTenantRepo.IsIn(ctx, uid, tenantId)
 }
 
 //JoinTenant add user into tenant. safe to call when user already in
 func (um *UserManager) JoinTenant(ctx context.Context, uid, tenantId string) error {
-	ctx = data.NewDisableMultiTenancyDataFilter(ctx)
 	if in, err := um.userTenantRepo.IsIn(ctx, uid, tenantId); err != nil {
 		return err
 	} else if in {
@@ -268,7 +265,6 @@ func (um *UserManager) JoinTenant(ctx context.Context, uid, tenantId string) err
 }
 
 func (um *UserManager) RemoveFromTenant(ctx context.Context, uid, tenantId string) error {
-	ctx = data.NewDisableMultiTenancyDataFilter(ctx)
 	err := um.userTenantRepo.RemoveFromTenant(ctx, uid, tenantId)
 	return err
 }
