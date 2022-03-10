@@ -1039,60 +1039,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "alc": {
+                "acl": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/v1UpdateRolePermissionAcl"
-                  }
-                }
-              }
-            }
-          }
-        ],
-        "tags": [
-          "RoleService"
-        ]
-      },
-      "patch": {
-        "operationId": "RoleService_PatchRolePermission",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1PatchRolePermissionResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "addAcl": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/v1UpdateRolePermissionAcl"
-                  }
-                },
-                "removeAcl": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/v1RemoveRRolePermissionAcl"
                   }
                 }
               }
@@ -2209,9 +2159,6 @@
     "v1PasswordlessTokenAuthRequest": {
       "type": "object"
     },
-    "v1PatchRolePermissionResponse": {
-      "type": "object"
-    },
     "v1Permission": {
       "type": "object",
       "properties": {
@@ -2269,14 +2216,6 @@
     },
     "v1RegisterAuthRequest": {
       "type": "object"
-    },
-    "v1RemoveRRolePermissionAcl": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
     },
     "v1RemoveSubjectPermissionReply": {
       "type": "object"

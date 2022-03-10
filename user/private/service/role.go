@@ -2,22 +2,26 @@ package service
 
 import (
 	"context"
+	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas-kit/user/private/biz"
-	"github.com/mennanov/fmutils"
-
+	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
+	"github.com/goxiaoy/go-saas-kit/user/util"
+	"github.com/goxiaoy/go-saas/common"
+	"github.com/mennanov/fmutils"
 )
 
 type RoleService struct {
-	mgr  *biz.RoleManager
-	auth authz.Service
+	mgr           *biz.RoleManager
+	auth          authz.Service
+	permissionMgr authz.PermissionManagementService
 	pb.UnimplementedRoleServiceServer
 }
 
-func NewRoleServiceService(repo *biz.RoleManager, auth authz.Service) *RoleService {
-	return &RoleService{mgr: repo, auth: auth}
+func NewRoleServiceService(repo *biz.RoleManager, auth authz.Service, permissionMgr authz.PermissionManagementService) *RoleService {
+	return &RoleService{mgr: repo, auth: auth, permissionMgr: permissionMgr}
 }
 
 func (s *RoleService) ListRoles(ctx context.Context, req *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
@@ -114,6 +118,7 @@ func (s *RoleService) UpdateRole(ctx context.Context, req *pb.UpdateRoleRequest)
 	MapBizRoleToApi(r, ret)
 	return ret, nil
 }
+
 func (s *RoleService) DeleteRole(ctx context.Context, req *pb.DeleteRoleRequest) (*pb.DeleteRoleResponse, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", req.Id), authz.DeleteAction); err != nil {
 		return nil, err
@@ -122,6 +127,63 @@ func (s *RoleService) DeleteRole(ctx context.Context, req *pb.DeleteRoleRequest)
 		return nil, err
 	}
 	return &pb.DeleteRoleResponse{}, nil
+}
+func (s *RoleService) GetRolePermission(ctx context.Context, req *pb.GetRolePermissionRequest) (*pb.GetRolePermissionResponse, error) {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", req.Id), authz.GetAction); err != nil {
+		return nil, err
+	}
+	r, err := s.mgr.Get(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if r == nil {
+		return nil, errors.NotFound("", "")
+	}
+
+	acl, err := s.permissionMgr.ListAcl(ctx, authz.NewRoleSubject(req.Id))
+	if err != nil {
+		return nil, err
+	}
+	resItems := make([]*v1.Permission, len(acl))
+	for i, bean := range acl {
+		r := &v1.Permission{}
+		util.MapPermissionBeanToPb(bean, r)
+		resItems[i] = r
+	}
+	return &pb.GetRolePermissionResponse{
+		Acl: resItems,
+	}, nil
+}
+
+func (s *RoleService) UpdateRolePermission(ctx context.Context, req *pb.UpdateRolePermissionRequest) (*pb.UpdateRolePermissionResponse, error) {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", req.Id), authz.GetAction); err != nil {
+		return nil, err
+	}
+	r, err := s.mgr.Get(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if r == nil {
+		return nil, errors.NotFound("", "")
+	}
+	if r.IsPreserved {
+		return nil, pb.ErrorRolePreserved("")
+	}
+	ti, _ := common.FromCurrentTenant(ctx)
+	var acl []authz.UpdateSubjectPermission
+	linq.From(req.Acl).SelectT(func(a *pb.UpdateRolePermissionAcl) authz.UpdateSubjectPermission {
+		effect := util.MapPbEffect2AuthEffect(a.Effect)
+		return authz.UpdateSubjectPermission{
+			Resource: authz.NewEntityResource(a.Namespace, a.Resource),
+			Action:   authz.ActionStr(a.Action),
+			TenantID: ti.GetId(),
+			Effect:   effect,
+		}
+	}).ToSlice(&acl)
+	if err := s.permissionMgr.UpdateGrant(ctx, authz.NewRoleSubject(req.Id), acl); err != nil {
+		return nil, err
+	}
+	return &pb.UpdateRolePermissionResponse{}, nil
 }
 
 func MapBizRoleToApi(u *biz.Role, b *pb.Role) {

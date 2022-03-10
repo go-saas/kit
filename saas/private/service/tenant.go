@@ -33,7 +33,7 @@ func NewTenantService(useCase *biz.TenantUseCase, auth authz.Service, blob blob.
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {
 
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", "*"), authz.CreateAction); err != nil {
+	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("saas.tenant", "*"), authz.CreateAction); err != nil {
 		return nil, err
 	}
 
@@ -55,7 +55,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 }
 func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRequest) (*pb.Tenant, error) {
 
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", req.Tenant.Id), authz.UpdateAction); err != nil {
+	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("saas.tenant", req.Tenant.Id), authz.UpdateAction); err != nil {
 		return nil, err
 	}
 
@@ -95,7 +95,7 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 }
 func (s *TenantService) DeleteTenant(ctx context.Context, req *pb.DeleteTenantRequest) (*pb.DeleteTenantReply, error) {
 
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", req.Id), authz.DeleteAction); err != nil {
+	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("saas.tenant", req.Id), authz.DeleteAction); err != nil {
 		return nil, err
 	}
 
@@ -126,7 +126,7 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 }
 func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantRequest) (*pb.ListTenantReply, error) {
 
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", "*"), authz.ListAction); err != nil {
+	if authResult, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("saas.tenant", "*"), authz.ListAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors.Forbidden("", "")

@@ -76,7 +76,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	roleRepo := data.NewRoleRepo(dataData)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, security)
-	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService)
+	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService, permissionService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl)
 	signInManager := biz.NewSignInManager(userManager)
 	auth := http2.NewAuth(decodeRequestFunc, encodeResponseFunc, userManager, logger, signInManager)

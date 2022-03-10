@@ -69,13 +69,6 @@ service RoleService{
     };
   }
 
-  rpc PatchRolePermission(PatchRolePermissionRequest) returns(PatchRolePermissionResponse){
-    option (google.api.http) = {
-      patch: "/v1/role/{id}/permission"
-      body: "*"
-    };
-  }
-
 }
 
 message RoleFilter{
@@ -144,7 +137,7 @@ message GetRolePermissionResponse{
 
 message UpdateRolePermissionRequest{
   string id =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];;
-  repeated UpdateRolePermissionAcl alc =2;
+  repeated UpdateRolePermissionAcl acl =2;
 }
 
 message UpdateRolePermissionAcl{
@@ -158,15 +151,4 @@ message UpdateRolePermissionResponse{
 
 }
 
-message PatchRolePermissionRequest{
-  string id =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];;
-  repeated UpdateRolePermissionAcl add_acl =2;
-  repeated RemoveRRolePermissionAcl remove_acl=3;
-}
 
-message RemoveRRolePermissionAcl{
-  string id=1;
-}
-message PatchRolePermissionResponse{
-
-}
