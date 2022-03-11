@@ -5,7 +5,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v1 "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1"
 )
 
@@ -28,7 +27,7 @@ type Menu struct {
 	Title       string                      `json:"title"`
 	Path        string                      `json:"path"`
 	Redirect    string                      `json:"redirect"`
-	IsPreserved bool                        `json:"preserved"`
+	IsPreserved bool                        `json:"is_preserved"`
 	HostOnly    bool                        `json:"host_only"`
 }
 
@@ -42,12 +41,6 @@ type MenuPermissionRequirement struct {
 }
 
 type MenuRepo interface {
-	List(ctx context.Context, query *v1.ListMenuRequest) ([]*Menu, error)
-	First(ctx context.Context, search string, query *v1.MenuFilter) (*Menu, error)
+	data.Repo[Menu, string, v1.ListMenuRequest]
 	FindByName(ctx context.Context, name string) (*Menu, error)
-	Count(ctx context.Context, search string, query *v1.MenuFilter) (total int64, filtered int64, err error)
-	Get(ctx context.Context, id string) (*Menu, error)
-	Create(ctx context.Context, entity *Menu) error
-	Update(ctx context.Context, entity *Menu, p query.Select) error
-	Delete(ctx context.Context, id string) error
 }

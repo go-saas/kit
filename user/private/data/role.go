@@ -3,26 +3,30 @@ package data
 import (
 	"context"
 	"errors"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	"github.com/goxiaoy/go-saas-kit/pkg/query"
+
+	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"gorm.io/gorm"
 )
 
 type RoleRepo struct {
-	Repo
+	*kitgorm.Repo[biz.Role, string, v12.ListRolesRequest]
 }
 
 func NewRoleRepo(data *Data) biz.RoleRepo {
 	return &RoleRepo{
-		Repo{
-			DbProvider: data.DbProvider,
-		},
+		Repo: kitgorm.NewRepo[biz.Role, string, v12.ListRolesRequest](data.DbProvider),
 	}
 }
 
-func buildRoleScope(filter *v12.RoleFilter) func(db *gorm.DB) *gorm.DB {
+func (r *RoleRepo) GetDb(ctx context.Context) *gorm.DB {
+	return GetDb(ctx, r.DbProvider)
+}
+
+//BuildFilterScope filter
+func (r *RoleRepo) BuildFilterScope(q *v12.ListRolesRequest) func(db *gorm.DB) *gorm.DB {
+	filter := q.Filter
 	return func(db *gorm.DB) *gorm.DB {
 		if filter == nil {
 			return db
@@ -38,37 +42,9 @@ func buildRoleScope(filter *v12.RoleFilter) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func (r *RoleRepo) List(ctx context.Context, query *v12.ListRolesRequest) ([]*biz.Role, error) {
-	db := r.GetDb(ctx).Model(&biz.Role{})
-	db = db.Scopes(buildRoleScope(query.Filter), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
-	var items []*biz.Role
-	res := db.Find(&items)
-	return items, res.Error
-}
-
-func (r *RoleRepo) First(ctx context.Context, query *v12.RoleFilter) (*biz.Role, error) {
-	db := r.GetDb(ctx).Model(&biz.Role{})
-	db = db.Scopes(buildRoleScope(query))
-	var item = biz.Role{}
-	if err := db.First(&item).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return &item, nil
-}
-
-func (r *RoleRepo) FindById(ctx context.Context, id string) (*biz.Role, error) {
-	db := r.GetDb(ctx).Model(&biz.Role{})
-	var item = biz.Role{}
-	if err := db.First(&item, "id = ?", id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return &item, nil
+//DefaultSorting get default sorting
+func (r *RoleRepo) DefaultSorting() []string {
+	return []string{"-created_at"}
 }
 
 func (r *RoleRepo) FindByName(ctx context.Context, name string) (*biz.Role, error) {
@@ -81,45 +57,4 @@ func (r *RoleRepo) FindByName(ctx context.Context, name string) (*biz.Role, erro
 		return nil, err
 	}
 	return item, nil
-}
-
-func (r *RoleRepo) Count(ctx context.Context, query *v12.RoleFilter) (total int64, filtered int64, err error) {
-	db := r.GetDb(ctx).Model(&biz.Role{})
-	err = db.Count(&total).Error
-	if err != nil {
-		return
-	}
-	db = db.Scopes(buildRoleScope(query))
-	if err != nil {
-		return
-	}
-	err = db.Count(&filtered).Error
-	return
-}
-
-func (r *RoleRepo) Get(ctx context.Context, id string) (*biz.Role, error) {
-	db := r.GetDb(ctx).Model(&biz.Role{})
-	var item = &biz.Role{}
-	if err := db.First(item, "id=?", id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return item, nil
-}
-
-func (r *RoleRepo) Create(ctx context.Context, role *biz.Role) error {
-	db := r.GetDb(ctx).Model(&biz.Role{})
-	return db.Create(role).Error
-}
-
-func (r *RoleRepo) Update(ctx context.Context, id string, role *biz.Role, p query.Select) error {
-	db := r.GetDb(ctx).Model(&biz.Role{})
-	return db.Where("id=?", id).Updates(role).Error
-}
-
-func (r *RoleRepo) Delete(ctx context.Context, id string) error {
-	db := r.GetDb(ctx).Model(&biz.Role{})
-	return db.Delete("id = ?", id).Error
 }

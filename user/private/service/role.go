@@ -31,7 +31,7 @@ func (s *RoleService) ListRoles(ctx context.Context, req *pb.ListRolesRequest) (
 		return nil, errors.Forbidden("", "")
 	}
 	ret := &pb.ListRolesResponse{}
-	totalCount, filterCount, err := s.mgr.Count(ctx, req.Filter)
+	totalCount, filterCount, err := s.mgr.Count(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (s *RoleService) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.
 	var u *biz.Role
 	var err error
 	if req.Id != "" {
-		u, err = s.mgr.FindById(ctx, req.Id)
+		u, err = s.mgr.Get(ctx, req.Id)
 		if err != nil {
 			return nil, err
 		}

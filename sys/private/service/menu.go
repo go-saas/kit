@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"strings"
+
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
@@ -11,7 +13,6 @@ import (
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"strings"
 
 	pb "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1"
 )
@@ -32,7 +33,7 @@ func (s *MenuService) ListMenu(ctx context.Context, req *pb.ListMenuRequest) (*p
 	}
 	ret := &pb.ListMenuReply{}
 
-	totalCount, filterCount, err := s.repo.Count(ctx, req.Search, req.Filter)
+	totalCount, filterCount, err := s.repo.Count(ctx, req)
 	ret.TotalSize = int32(totalCount)
 	ret.FilterSize = int32(filterCount)
 
@@ -111,7 +112,7 @@ func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest)
 		return nil, pb.ErrorMenuPreserved("", "")
 	}
 	MapUpdatePbMenu2Biz(req.Menu, g)
-	if err := s.repo.Update(ctx, g, nil); err != nil {
+	if err := s.repo.Update(ctx, g.ID.String(), g, nil); err != nil {
 		return nil, err
 	}
 	res := &pb.Menu{}

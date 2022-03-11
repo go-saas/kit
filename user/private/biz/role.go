@@ -3,7 +3,8 @@ package biz
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/data"
+	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	gorm2 "github.com/goxiaoy/go-saas/gorm"
@@ -11,26 +12,19 @@ import (
 )
 
 type Role struct {
-	gorm.UIDBase
-	concurrency.Version `gorm:"type:char(36)"`
-	gorm.AuditedModel
+	kitgorm.UIDBase
+	concurrency.Version `kitgorm:"type:char(36)"`
+	kitgorm.AuditedModel
 	gorm2.MultiTenancy
-	Name           string `json:"name" gorm:"index"`
-	NormalizedName string `json:"normalized_name" gorm:"index"`
+	Name           string `json:"name" kitgorm:"index"`
+	NormalizedName string `json:"normalized_name" kitgorm:"index"`
 	IsPreserved    bool   `json:"is_preserved"`
 }
 
 // RoleRepo crud role
 type RoleRepo interface {
-	List(ctx context.Context, query *v12.ListRolesRequest) ([]*Role, error)
-	First(ctx context.Context, query *v12.RoleFilter) (*Role, error)
-	FindById(ctx context.Context, id string) (*Role, error)
+	data.Repo[Role, string, v12.ListRolesRequest]
 	FindByName(ctx context.Context, name string) (*Role, error)
-	Count(ctx context.Context, query *v12.RoleFilter) (total int64, filtered int64, err error)
-	Get(ctx context.Context, id string) (*Role, error)
-	Create(ctx context.Context, role *Role) error
-	Update(ctx context.Context, id string, role *Role, p query.Select) error
-	Delete(ctx context.Context, id string) error
 }
 
 var _ RoleRepo = (*RoleManager)(nil)
@@ -47,7 +41,7 @@ func NewRoleManager(repo RoleRepo, lookupNormalizer LookupNormalizer) *RoleManag
 	}
 }
 
-func (r *RoleManager) First(ctx context.Context, query *v12.RoleFilter) (*Role, error) {
+func (r *RoleManager) First(ctx context.Context, query *v12.ListRolesRequest) (*Role, error) {
 	return r.repo.First(ctx, query)
 }
 
@@ -59,14 +53,11 @@ func (r *RoleManager) FindByName(ctx context.Context, name string) (*Role, error
 	return r.repo.FindByName(ctx, nn)
 }
 
-func (r *RoleManager) FindById(ctx context.Context, id string) (*Role, error) {
-	return r.repo.FindById(ctx, id)
-}
 func (r *RoleManager) List(ctx context.Context, query *v12.ListRolesRequest) ([]*Role, error) {
 	return r.repo.List(ctx, query)
 }
 
-func (r *RoleManager) Count(ctx context.Context, query *v12.RoleFilter) (total int64, filtered int64, err error) {
+func (r *RoleManager) Count(ctx context.Context, query *v12.ListRolesRequest) (total int64, filtered int64, err error) {
 	return r.repo.Count(ctx, query)
 }
 

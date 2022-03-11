@@ -4,24 +4,40 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v1 "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1"
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
-	"github.com/goxiaoy/go-saas/gorm"
-	g "gorm.io/gorm"
+	sgorm "github.com/goxiaoy/go-saas/gorm"
+	"gorm.io/gorm"
 )
 
 type MenuRepo struct {
-	Repo
+	*kitgorm.Repo[biz.Menu, string, v1.ListMenuRequest]
 }
 
-func NewMenuRepo(dbProvider gorm.DbProvider) biz.MenuRepo {
-	return &MenuRepo{Repo: Repo{DbProvider: dbProvider}}
+var _ biz.MenuRepo = (*MenuRepo)(nil)
+
+func NewMenuRepo(dbProvider sgorm.DbProvider) biz.MenuRepo {
+	return &MenuRepo{Repo: kitgorm.NewRepo[biz.Menu, string, v1.ListMenuRequest](dbProvider)}
 }
 
-func buildMenuScope(search string, filter *v1.MenuFilter) func(db *g.DB) *g.DB {
-	return func(db *g.DB) *g.DB {
+func (c *MenuRepo) GetDb(ctx context.Context) *gorm.DB {
+	return GetDb(ctx, c.Repo.DbProvider)
+}
+
+//BuildDetailScope preload relations
+func (c *MenuRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Preload("Requirement")
+	}
+}
+
+//BuildFilterScope filter
+func (c *MenuRepo) BuildFilterScope(q *v1.ListMenuRequest) func(db *gorm.DB) *gorm.DB {
+	search := q.Search
+	filter := q.Filter
+	return func(db *gorm.DB) *gorm.DB {
 		ret := db
 
 		if search != "" {
@@ -42,44 +58,19 @@ func buildMenuScope(search string, filter *v1.MenuFilter) func(db *g.DB) *g.DB {
 		}
 		return ret
 	}
-
 }
 
-func preloadMenuScope() func(db *g.DB) *g.DB {
-	return func(db *g.DB) *g.DB {
-		return db.Preload("Requirement")
-	}
-}
-
-func (c *MenuRepo) List(ctx context.Context, query *v1.ListMenuRequest) ([]*biz.Menu, error) {
-	db := c.GetDb(ctx).Model(&biz.Menu{})
-	db = db.Scopes(buildMenuScope(query.Search, query.Filter), preloadMenuScope(), gorm2.SortScope(query, []string{"created_at"}), gorm2.PageScope(query))
-	var items []*biz.Menu
-	res := db.Find(&items)
-	return items, res.Error
-}
-
-func (c *MenuRepo) First(ctx context.Context, search string, query *v1.MenuFilter) (*biz.Menu, error) {
-	db := c.GetDb(ctx).Model(&biz.Menu{})
-	db = db.Scopes(buildMenuScope(search, query), preloadMenuScope())
-	var item = biz.Menu{}
-	err := db.First(&item).Error
-	if err != nil {
-		if errors.Is(err, g.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return &item, nil
+func (c *MenuRepo) DefaultSorting() []string {
+	return []string{"created_at"}
 }
 
 func (c *MenuRepo) FindByName(ctx context.Context, name string) (*biz.Menu, error) {
 	db := c.GetDb(ctx).Model(&biz.Menu{})
-	db = db.Scopes(preloadMenuScope()).Where("name = ?", name)
+	db = db.Scopes(c.BuildDetailScope(true)).Where("name = ?", name)
 	var item = biz.Menu{}
 	err := db.First(&item).Error
 	if err != nil {
-		if errors.Is(err, g.ErrRecordNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err
@@ -87,45 +78,18 @@ func (c *MenuRepo) FindByName(ctx context.Context, name string) (*biz.Menu, erro
 	return &item, nil
 }
 
-func (c *MenuRepo) Count(ctx context.Context, search string, query *v1.MenuFilter) (total int64, filtered int64, err error) {
-	db := c.GetDb(ctx).Model(&biz.Menu{})
-	err = db.Count(&total).Error
-	if err != nil {
-		return
-	}
-	db = db.Scopes(buildMenuScope(search, query))
-	err = db.Count(&filtered).Error
-	return
-}
-
-func (c *MenuRepo) Get(ctx context.Context, id string) (*biz.Menu, error) {
-	var entity = &biz.Menu{}
-	err := c.GetDb(ctx).Model(&biz.Menu{}).Scopes(preloadMenuScope()).First(entity, "id = ?", id).Error
-	if err != nil {
-		if errors.Is(err, g.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return entity, nil
-}
-
-func (c *MenuRepo) Create(ctx context.Context, entity *biz.Menu) error {
-	return c.GetDb(ctx).Create(entity).Error
-}
-
-func (c *MenuRepo) Update(ctx context.Context, entity *biz.Menu, p query.Select) error {
+func (c *MenuRepo) Update(ctx context.Context, id string, entity *biz.Menu, p query.Select) error {
 	if entity.Requirement != nil {
 		if err := c.GetDb(ctx).Model(entity).Association("Requirement").Replace(entity.Requirement); err != nil {
 			return err
 		}
 	}
-	return c.GetDb(ctx).Updates(entity).Error
+	return c.Repo.Update(ctx, id, entity, p)
 }
 
 func (c *MenuRepo) Delete(ctx context.Context, id string) error {
 	if err := c.GetDb(ctx).Delete(&biz.MenuPermissionRequirement{}, "menu_id = ?", id).Error; err != nil {
 		return err
 	}
-	return c.GetDb(ctx).Delete(&biz.Menu{}, "id = ?", id).Error
+	return c.Repo.Delete(ctx, id)
 }

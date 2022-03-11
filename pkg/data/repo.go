@@ -1,19 +1,21 @@
 package data
 
 import (
+	"context"
+	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	"github.com/samber/lo"
 	"strings"
 )
 
-//type Repo[T interface{}] interface {
-//	List(ctx context.Context, query interface{}) ([]*T, error)
-//	First(ctx context.Context, query interface{})(*T, error)
-//	Count(ctx context.Context, query interface{}) (total int64, filtered int64, err error)
-//	Get(ctx context.Context, id string) (*T, error)
-//	Create(ctx context.Context, group *T) error
-//	Update(ctx context.Context, id string, group *T, p rql.Select) error
-//	Delete(ctx context.Context, id string) error
-//}
+type Repo[TEntity any, TKey any, TQuery any] interface {
+	List(ctx context.Context, query *TQuery) ([]*TEntity, error)
+	First(ctx context.Context, query *TQuery) (*TEntity, error)
+	Count(ctx context.Context, query *TQuery) (total int64, filtered int64, err error)
+	Get(ctx context.Context, id TKey) (*TEntity, error)
+	Create(ctx context.Context, entity *TEntity) error
+	Update(ctx context.Context, id TKey, entity *TEntity, p query.Select) error
+	Delete(ctx context.Context, id TKey) error
+}
 
 var (
 	sortDirection = map[byte]string{

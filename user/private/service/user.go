@@ -3,6 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+
 	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
@@ -15,9 +19,6 @@ import (
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
-	"io"
-	"os"
-	"path/filepath"
 
 	pb "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -134,7 +135,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	//set roles
 	var roles []*biz.Role
 	for _, r := range req.RolesId {
-		if rr, err := s.rm.FindById(ctx, r); err != nil {
+		if rr, err := s.rm.Get(ctx, r); err != nil {
 			return nil, ConvertError(err)
 		} else if rr == nil {
 			return nil, errors2.NotFound("", "role not found")
@@ -213,7 +214,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	//set roles
 	var roles []*biz.Role
 	for _, r := range req.User.RolesId {
-		if rr, err := s.rm.FindById(ctx, r); err != nil {
+		if rr, err := s.rm.Get(ctx, r); err != nil {
 			return nil, ConvertError(err)
 		} else if rr == nil {
 			return nil, errors2.NotFound("", "role not found")

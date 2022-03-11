@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	"github.com/goxiaoy/go-saas/seed"
 	"gorm.io/gorm"
@@ -24,5 +25,4 @@ func (m *Migrate) Seed(ctx context.Context, sCtx *seed.Context) error {
 func migrateDb(db *gorm.DB) error {
 	//TDOO migrate
 	return db.AutoMigrate(&biz.Menu{}, &biz.MenuPermissionRequirement{})
-	return nil
 }
