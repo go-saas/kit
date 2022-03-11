@@ -1,7 +1,7 @@
 package data
 
 import (
-	"github.com/ahmetb/go-linq/v3"
+	"github.com/samber/lo"
 	"strings"
 )
 
@@ -24,8 +24,7 @@ var (
 
 func ParseSort(fields []string) string {
 	opts := ParseSortIntoOpt(fields)
-	sortParams := make([]string, len(fields))
-	linq.From(opts).SelectT(func(s *SortOpt) string {
+	sortParams := lo.Map[*SortOpt, string](opts, func(s *SortOpt, _ int) string {
 		colName := s.Field
 		if s.IsDesc {
 			colName += " " + "desc"
@@ -33,7 +32,7 @@ func ParseSort(fields []string) string {
 			colName += " " + "asc"
 		}
 		return colName
-	}).ToSlice(&sortParams)
+	})
 	return strings.Join(sortParams, ", ")
 }
 
