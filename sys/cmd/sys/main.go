@@ -20,7 +20,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/sys/private/conf"
 )
 
-// go build -ldflags "-X main.Version=x.y.z"
+// go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
 	Name string

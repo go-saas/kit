@@ -22,14 +22,21 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TenantServiceClient interface {
+	//CreateTenant
 	//authz: saas.tenant,*,create
 	CreateTenant(ctx context.Context, in *CreateTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
+	//UpdateTenant
 	//authz: saas.tenant,{id},update
 	UpdateTenant(ctx context.Context, in *UpdateTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
+	//DeleteTenant
 	//authz: saas.tenant,{id},delete
 	DeleteTenant(ctx context.Context, in *DeleteTenantRequest, opts ...grpc.CallOption) (*DeleteTenantReply, error)
-	//authz: saas.tenant,{id},get
+	// GetTenant
+	// authz: saas.tenant,{id},get
 	GetTenant(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
+	//GetCurrentTenant
+	GetCurrentTenant(ctx context.Context, in *GetCurrentTenantRequest, opts ...grpc.CallOption) (*GetCurrentTenantReply, error)
+	//ListTenant
 	//authz: saas.tenant,*,list
 	ListTenant(ctx context.Context, in *ListTenantRequest, opts ...grpc.CallOption) (*ListTenantReply, error)
 }
@@ -78,6 +85,15 @@ func (c *tenantServiceClient) GetTenant(ctx context.Context, in *GetTenantReques
 	return out, nil
 }
 
+func (c *tenantServiceClient) GetCurrentTenant(ctx context.Context, in *GetCurrentTenantRequest, opts ...grpc.CallOption) (*GetCurrentTenantReply, error) {
+	out := new(GetCurrentTenantReply)
+	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/GetCurrentTenant", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tenantServiceClient) ListTenant(ctx context.Context, in *ListTenantRequest, opts ...grpc.CallOption) (*ListTenantReply, error) {
 	out := new(ListTenantReply)
 	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/ListTenant", in, out, opts...)
@@ -91,14 +107,21 @@ func (c *tenantServiceClient) ListTenant(ctx context.Context, in *ListTenantRequ
 // All implementations must embed UnimplementedTenantServiceServer
 // for forward compatibility
 type TenantServiceServer interface {
+	//CreateTenant
 	//authz: saas.tenant,*,create
 	CreateTenant(context.Context, *CreateTenantRequest) (*Tenant, error)
+	//UpdateTenant
 	//authz: saas.tenant,{id},update
 	UpdateTenant(context.Context, *UpdateTenantRequest) (*Tenant, error)
+	//DeleteTenant
 	//authz: saas.tenant,{id},delete
 	DeleteTenant(context.Context, *DeleteTenantRequest) (*DeleteTenantReply, error)
-	//authz: saas.tenant,{id},get
+	// GetTenant
+	// authz: saas.tenant,{id},get
 	GetTenant(context.Context, *GetTenantRequest) (*Tenant, error)
+	//GetCurrentTenant
+	GetCurrentTenant(context.Context, *GetCurrentTenantRequest) (*GetCurrentTenantReply, error)
+	//ListTenant
 	//authz: saas.tenant,*,list
 	ListTenant(context.Context, *ListTenantRequest) (*ListTenantReply, error)
 	mustEmbedUnimplementedTenantServiceServer()
@@ -119,6 +142,9 @@ func (UnimplementedTenantServiceServer) DeleteTenant(context.Context, *DeleteTen
 }
 func (UnimplementedTenantServiceServer) GetTenant(context.Context, *GetTenantRequest) (*Tenant, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTenant not implemented")
+}
+func (UnimplementedTenantServiceServer) GetCurrentTenant(context.Context, *GetCurrentTenantRequest) (*GetCurrentTenantReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCurrentTenant not implemented")
 }
 func (UnimplementedTenantServiceServer) ListTenant(context.Context, *ListTenantRequest) (*ListTenantReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTenant not implemented")
@@ -208,6 +234,24 @@ func _TenantService_GetTenant_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TenantService_GetCurrentTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCurrentTenantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TenantServiceServer).GetCurrentTenant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/saas.api.tenant.v1.TenantService/GetCurrentTenant",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TenantServiceServer).GetCurrentTenant(ctx, req.(*GetCurrentTenantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TenantService_ListTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTenantRequest)
 	if err := dec(in); err != nil {
@@ -248,6 +292,10 @@ var TenantService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTenant",
 			Handler:    _TenantService_GetTenant_Handler,
+		},
+		{
+			MethodName: "GetCurrentTenant",
+			Handler:    _TenantService_GetCurrentTenant_Handler,
 		},
 		{
 			MethodName: "ListTenant",

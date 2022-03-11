@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
@@ -29,13 +28,15 @@ import (
 type UserService struct {
 	pb.UnimplementedUserServiceServer
 	um   *biz.UserManager
+	rm   *biz.RoleManager
 	auth authz.Service
 	blob blob.Factory
 }
 
-func NewUserService(um *biz.UserManager, auth authz.Service, blob blob.Factory) *UserService {
+func NewUserService(um *biz.UserManager, rm *biz.RoleManager, auth authz.Service, blob blob.Factory) *UserService {
 	return &UserService{
 		um:   um,
+		rm:   rm,
 		auth: auth,
 		blob: blob,
 	}
@@ -116,6 +117,10 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		u.Birthday = &b
 	}
 	gender := req.Gender.String()
+	if len(req.Avatar) > 0 {
+		u.Avatar = &req.Avatar
+	}
+
 	u.Gender = &gender
 	var err error
 	if req.Password != "" {
@@ -124,18 +129,21 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		err = s.um.Create(ctx, &u)
 	}
 	if err != nil {
-		if errors.Is(err, biz.ErrInsufficientStrength) {
-			return nil, pb.ErrorPasswordInsufficientStrength("")
+		return nil, ConvertError(err)
+	}
+	//set roles
+	var roles []*biz.Role
+	for _, r := range req.RolesId {
+		if rr, err := s.rm.FindById(ctx, r); err != nil {
+			return nil, ConvertError(err)
+		} else if rr == nil {
+			return nil, errors2.NotFound("", "role not found")
+		} else {
+			roles = append(roles, rr)
 		}
-		if errors.Is(err, biz.ErrDuplicateEmail) {
-			return nil, pb.ErrorDuplicateEmail("")
-		}
-		if errors.Is(err, biz.ErrDuplicateUsername) {
-			return nil, pb.ErrorDuplicateUsername("")
-		}
-		if errors.Is(err, biz.ErrDuplicatePhone) {
-			return nil, pb.ErrorDuplicatePhone("")
-		}
+	}
+
+	if err := s.um.UpdateRoles(ctx, &u, roles); err != nil {
 		return nil, err
 	}
 	res := MapBizUserToApi(ctx, &u, s.blob)
@@ -193,12 +201,31 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 		v := req.GetUser().GetBirthday().AsTime()
 		u.Birthday = &v
 	}
-
+	if len(req.User.Avatar) > 0 {
+		u.Avatar = &req.User.Avatar
+	}
 	g := req.GetUser().Gender.Enum().String()
 	u.Gender = &g
 	if err := s.um.Update(ctx, u, nil); err != nil {
+		return nil, ConvertError(err)
+	}
+
+	//set roles
+	var roles []*biz.Role
+	for _, r := range req.User.RolesId {
+		if rr, err := s.rm.FindById(ctx, r); err != nil {
+			return nil, ConvertError(err)
+		} else if rr == nil {
+			return nil, errors2.NotFound("", "role not found")
+		} else {
+			roles = append(roles, rr)
+		}
+	}
+
+	if err := s.um.UpdateRoles(ctx, u, roles); err != nil {
 		return nil, err
 	}
+
 	res := MapBizUserToApi(ctx, u, s.blob)
 	return res, nil
 }

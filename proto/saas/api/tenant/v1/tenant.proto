@@ -20,6 +20,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 };
 
 service TenantService {
+	//CreateTenant
 	//authz: saas.tenant,*,create
 	rpc CreateTenant (CreateTenantRequest) returns (Tenant){
 		option (google.api.http) = {
@@ -27,6 +28,7 @@ service TenantService {
 			body: "*"
 		};
 	};
+	//UpdateTenant
 	//authz: saas.tenant,{id},update
 	rpc UpdateTenant (UpdateTenantRequest) returns (Tenant){
 		option (google.api.http) = {
@@ -40,18 +42,29 @@ service TenantService {
 			]
 		};
 	}
+	//DeleteTenant
 	//authz: saas.tenant,{id},delete
 	rpc DeleteTenant (DeleteTenantRequest) returns (DeleteTenantReply){
 		option (google.api.http) = {
 			delete: "/v1/saas/tenant/{id}"
 		};
 	}
-	//authz: saas.tenant,{id},get
+	// GetTenant
+	// authz: saas.tenant,{id},get
 	rpc GetTenant (GetTenantRequest) returns (Tenant){
 		option (google.api.http) = {
 			get: "/v1/saas/tenant/{id_or_name}"
 		};
 	}
+
+	//GetCurrentTenant
+	rpc GetCurrentTenant (GetCurrentTenantRequest) returns (GetCurrentTenantReply){
+		option (google.api.http) = {
+			get: "/v1/saas/current"
+		};
+	}
+
+	//ListTenant
 	//authz: saas.tenant,*,list
 	rpc ListTenant (ListTenantRequest) returns (ListTenantReply){
 		option (google.api.http) = {
@@ -152,5 +165,18 @@ message TenantInfo{
 	string name=2;
 	string display_name=3;
 	string region=4;
+	blob.BlobFile logo = 9;
+}
+
+
+message GetCurrentTenantRequest{
+
+}
+message GetCurrentTenantReply{
+	string id=1;
+	string name=2;
+	string display_name=3;
+	string region=4;
+	bool is_host=5;
 	blob.BlobFile logo = 9;
 }

@@ -82,7 +82,8 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 			Name: role.Name,
 		})
 	}
-	tenantIds := lo.Map[biz.UserTenant, string](u.Tenants, func(t biz.UserTenant, _ int) string {
+	var tenantIds []string
+	tenantIds = lo.Map[biz.UserTenant, string](u.Tenants, func(t biz.UserTenant, _ int) string {
 		return t.GetTenantId()
 	})
 	currentTenant, _ := common.FromCurrentTenant(ctx)

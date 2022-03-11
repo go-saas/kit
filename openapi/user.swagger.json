@@ -1798,6 +1798,15 @@
         },
         "gender": {
           "$ref": "#/definitions/v1Gender"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "rolesId": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -2536,6 +2545,15 @@
         },
         "confirmPassword": {
           "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "rolesId": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [

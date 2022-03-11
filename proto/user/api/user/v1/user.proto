@@ -98,8 +98,6 @@ message UserFilter{
 
 }
 
-
-
 message ListUsersRequest{
   int32 page_offset =1;
   int32 page_size = 2;
@@ -148,6 +146,8 @@ message CreateUserRequest{
     google.protobuf.Timestamp birthday=7;
     //
     Gender gender=8;
+    string avatar=9;
+    repeated string roles_id=10;
 }
 
 enum Gender{
@@ -156,16 +156,7 @@ enum Gender{
   FEMALE =2;
   OTHER=3;
 }
-message CreateUserResponse{
-  string  id=1;
-  google.protobuf.StringValue username =2;
-  google.protobuf.StringValue name=3;
-  google.protobuf.StringValue phone =4;
-  google.protobuf.StringValue email=5;
-  google.protobuf.Timestamp birthday=6;
-  //Gender
-  Gender gender=7;
-}
+
 message UpdateUserRequest{
   UpdateUser user=2 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
   google.protobuf.FieldMask update_mask = 3;
@@ -185,6 +176,8 @@ message UpdateUser{
   //reset password
   string password=8;
   string confirm_password=9;
+  string avatar=10;
+  repeated string roles_id=11;
 }
 
 message DeleteUserRequest{

@@ -12,6 +12,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
+	"github.com/goxiaoy/go-saas/common"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -122,6 +123,29 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 
 	return mapBizTenantToApi(ctx, s.blob, t), nil
 }
+
+func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrentTenantRequest) (*pb.GetCurrentTenantReply, error) {
+	ti, _ := common.FromCurrentTenant(ctx)
+	if len(ti.GetId()) == 0 {
+		return &pb.GetCurrentTenantReply{IsHost: true}, nil
+	} else {
+		t, err := s.useCase.FindByIdOrName(ctx, ti.GetId())
+		if err != nil {
+			return nil, err
+		}
+		if t == nil {
+			return nil, pb.ErrorTenantNotFound("")
+		}
+		return &pb.GetCurrentTenantReply{
+			Id:          t.ID,
+			Name:        t.Name,
+			DisplayName: t.DisplayName,
+			Region:      t.Region,
+			Logo:        mapLogo(ctx, s.blob, t),
+		}, nil
+	}
+}
+
 func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantRequest) (*pb.ListTenantReply, error) {
 
 	if authResult, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("saas.tenant", "*"), authz.ListAction); err != nil {

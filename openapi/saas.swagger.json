@@ -16,9 +16,32 @@
     "application/json"
   ],
   "paths": {
+    "/v1/saas/current": {
+      "get": {
+        "summary": "GetCurrentTenant",
+        "operationId": "TenantService_GetCurrentTenant",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetCurrentTenantReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "TenantService"
+        ]
+      }
+    },
     "/v1/saas/tenant": {
       "post": {
-        "summary": "authz: saas.tenant,*,create",
+        "summary": "CreateTenant\r\nauthz: saas.tenant,*,create",
         "operationId": "TenantService_CreateTenant",
         "responses": {
           "200": {
@@ -51,7 +74,7 @@
     },
     "/v1/saas/tenant/list": {
       "post": {
-        "summary": "authz: saas.tenant,*,list",
+        "summary": "ListTenant\r\nauthz: saas.tenant,*,list",
         "operationId": "TenantService_ListTenant2",
         "responses": {
           "200": {
@@ -84,7 +107,7 @@
     },
     "/v1/saas/tenant/{idOrName}": {
       "get": {
-        "summary": "authz: saas.tenant,{id},get",
+        "summary": "GetTenant\r\nauthz: saas.tenant,{id},get",
         "operationId": "TenantService_GetTenant",
         "responses": {
           "200": {
@@ -115,7 +138,7 @@
     },
     "/v1/saas/tenant/{id}": {
       "delete": {
-        "summary": "authz: saas.tenant,{id},delete",
+        "summary": "DeleteTenant\r\nauthz: saas.tenant,{id},delete",
         "operationId": "TenantService_DeleteTenant",
         "responses": {
           "200": {
@@ -146,7 +169,7 @@
     },
     "/v1/saas/tenant/{tenant.id}": {
       "put": {
-        "summary": "authz: saas.tenant,{id},update",
+        "summary": "UpdateTenant\r\nauthz: saas.tenant,{id},update",
         "operationId": "TenantService_UpdateTenant",
         "responses": {
           "200": {
@@ -223,7 +246,7 @@
         ]
       },
       "patch": {
-        "summary": "authz: saas.tenant,{id},update",
+        "summary": "UpdateTenant\r\nauthz: saas.tenant,{id},update",
         "operationId": "TenantService_UpdateTenant2",
         "responses": {
           "200": {
@@ -302,7 +325,7 @@
     },
     "/v1/saas/tenants": {
       "get": {
-        "summary": "authz: saas.tenant,*,list",
+        "summary": "ListTenant\r\nauthz: saas.tenant,*,list",
         "operationId": "TenantService_ListTenant",
         "responses": {
           "200": {
@@ -486,6 +509,29 @@
       "properties": {
         "id": {
           "type": "string"
+        }
+      }
+    },
+    "v1GetCurrentTenantReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "isHost": {
+          "type": "boolean"
+        },
+        "logo": {
+          "$ref": "#/definitions/blobBlobFile"
         }
       }
     },
