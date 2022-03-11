@@ -2,9 +2,9 @@ package biz
 
 import (
 	"context"
-	"github.com/ahmetb/go-linq/v3"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas/seed"
+	"github.com/samber/lo"
 )
 
 const Admin = "admin"
@@ -76,7 +76,7 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	if err != nil {
 		return err
 	}
-	if find := linq.From(roles).AnyWithT(func(r *Role) bool {
+	if find := lo.ContainsBy(roles, func(r *Role) bool {
 		return r.Name == Admin
 	}); !find {
 		adminRole, err := u.rm.FindByName(ctx, Admin)

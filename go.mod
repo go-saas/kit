@@ -4,7 +4,6 @@ go 1.18
 
 require (
 	entgo.io/ent v0.10.0
-	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
 	github.com/casbin/casbin/v2 v2.41.0
 	github.com/casbin/gorm-adapter/v3 v3.5.0

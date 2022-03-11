@@ -17,7 +17,6 @@ require (
 
 require (
 	github.com/ReneKroon/ttlcache/v2 v2.11.0 // indirect
-	github.com/ahmetb/go-linq/v3 v3.2.0 // indirect
 	github.com/api7/ext-plugin-proto v0.3.0 // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.6.3 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
@@ -30,10 +29,12 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.3 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/samber/lo v1.10.0 // indirect
 	github.com/spf13/afero v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
+	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect

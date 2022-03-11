@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/ahmetb/go-linq/v3"
 	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
@@ -14,6 +13,7 @@ import (
 	v12 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	"github.com/goxiaoy/go-saas/common"
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"io"
@@ -415,13 +415,12 @@ func MapBizUserToApi(ctx context.Context, u *biz.User, b blob.Factory) *pb.User 
 		}
 	}
 	if u.Roles != nil {
-		var returnRoles []*v1.Role
-		linq.From(u.Roles).SelectT(func(i biz.Role) *v1.Role {
+		var returnRoles = lo.Map(u.Roles, func(i biz.Role, _ int) *v1.Role {
 			return &v1.Role{
 				Id:   i.ID.String(),
 				Name: i.Name,
 			}
-		}).ToSlice(&returnRoles)
+		})
 		res.Roles = returnRoles
 	}
 	res.Avatar = mapAvatar(ctx, b, u)

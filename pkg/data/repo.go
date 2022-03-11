@@ -24,7 +24,7 @@ var (
 
 func ParseSort(fields []string) string {
 	opts := ParseSortIntoOpt(fields)
-	sortParams := lo.Map[*SortOpt, string](opts, func(s *SortOpt, _ int) string {
+	sortParams := lo.Map(opts, func(s *SortOpt, _ int) string {
 		colName := s.Field
 		if s.IsDesc {
 			colName += " " + "desc"

@@ -5,12 +5,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/ahmetb/go-linq/v3"
 	"github.com/google/uuid"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"github.com/goxiaoy/go-saas/gorm"
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	gg "gorm.io/gorm"
 	"time"
@@ -116,12 +116,11 @@ func (g *TenantRepo) List(ctx context.Context, query *v1.ListTenantRequest) ([]*
 	db = db.Scopes(buildTenantScope(query.Search, query.Filter), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
 	var items []*Tenant
 	res := db.Find(&items)
-	var rItems []*biz.Tenant
-	linq.From(items).SelectT(func(t *Tenant) *biz.Tenant {
+	rItems := lo.Map(items, func(t *Tenant, _ int) *biz.Tenant {
 		res := &biz.Tenant{}
 		mapDataTenantToBizTenant(t, res)
 		return res
-	}).ToSlice(&rItems)
+	})
 	return rItems, res.Error
 }
 
@@ -204,8 +203,8 @@ func (g *TenantRepo) Delete(ctx context.Context, id string) error {
 }
 
 func mapBizTenantToDataTenant(a *biz.Tenant, b *Tenant) {
-	var conn []TenantConn
-	linq.From(a.Conn).SelectT(func(c biz.TenantConn) TenantConn {
+	//var conn []TenantConn
+	conn := lo.Map(a.Conn, func(c biz.TenantConn, _ int) TenantConn {
 		return TenantConn{
 			TenantId:  c.TenantId,
 			Key:       c.Key,
@@ -213,11 +212,8 @@ func mapBizTenantToDataTenant(a *biz.Tenant, b *Tenant) {
 			CreatedAt: c.CreatedAt,
 			UpdatedAt: c.UpdatedAt,
 		}
-	}).ToSlice(&conn)
-
-	var features []TenantFeature
-
-	linq.From(a.Features).SelectT(func(c biz.TenantFeature) TenantFeature {
+	})
+	features := lo.Map(a.Features, func(c biz.TenantFeature, I int) TenantFeature {
 		return TenantFeature{
 			TenantId:  c.TenantId,
 			Key:       c.Key,
@@ -225,7 +221,7 @@ func mapBizTenantToDataTenant(a *biz.Tenant, b *Tenant) {
 			CreatedAt: c.CreatedAt,
 			UpdatedAt: c.UpdatedAt,
 		}
-	}).ToSlice(&features)
+	})
 	var id uuid.UUID
 	if a.ID != "" {
 		id = uuid.MustParse(a.ID)
@@ -249,8 +245,7 @@ func mapBizTenantToDataTenant(a *biz.Tenant, b *Tenant) {
 }
 
 func mapDataTenantToBizTenant(a *Tenant, b *biz.Tenant) {
-	var conn []biz.TenantConn
-	linq.From(a.Conn).SelectT(func(c TenantConn) biz.TenantConn {
+	conn := lo.Map(a.Conn, func(c TenantConn, _ int) biz.TenantConn {
 		return biz.TenantConn{
 			TenantId:  c.TenantId,
 			Key:       c.Key,
@@ -258,11 +253,9 @@ func mapDataTenantToBizTenant(a *Tenant, b *biz.Tenant) {
 			CreatedAt: c.CreatedAt,
 			UpdatedAt: c.UpdatedAt,
 		}
-	}).ToSlice(&conn)
+	})
 
-	var features []biz.TenantFeature
-
-	linq.From(a.Features).SelectT(func(c TenantFeature) biz.TenantFeature {
+	features := lo.Map(a.Features, func(c TenantFeature, _ int) biz.TenantFeature {
 		return biz.TenantFeature{
 			TenantId:  c.TenantId,
 			Key:       c.Key,
@@ -270,7 +263,7 @@ func mapDataTenantToBizTenant(a *Tenant, b *biz.Tenant) {
 			CreatedAt: c.CreatedAt,
 			UpdatedAt: c.UpdatedAt,
 		}
-	}).ToSlice(&features)
+	})
 	b.ID = a.ID.String()
 	b.Name = a.Name
 	b.DisplayName = a.DisplayName

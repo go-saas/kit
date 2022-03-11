@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
@@ -14,6 +13,7 @@ import (
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas/common"
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -82,41 +82,36 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 			Name: role.Name,
 		})
 	}
-
-	tenantIds := make([]string, len(u.Tenants)+1)
-	linq.From(u.Tenants).SelectT(func(t biz.UserTenant) string {
+	tenantIds := lo.Map[biz.UserTenant, string](u.Tenants, func(t biz.UserTenant, _ int) string {
 		return t.GetTenantId()
-	}).ToSlice(&tenantIds)
+	})
 	currentTenant, _ := common.FromCurrentTenant(ctx)
-	//append current tenant
-	tenantIds[len(tenantIds)-1] = currentTenant.GetId()
+	tenantIds = append(tenantIds, currentTenant.GetId())
+
 	if len(tenantIds) > 0 {
 		tenants, err := s.tenantService.ListTenant(ctx, &v13.ListTenantRequest{Filter: &v13.TenantFilter{IdIn: tenantIds}})
 		if err != nil {
 			return nil, err
 		}
 
-		reTenants := make([]*pb.UserTenant, len(u.Tenants))
-		linq.From(u.Tenants).SelectT(func(ut biz.UserTenant) *pb.UserTenant {
+		reTenants := lo.Map(u.Tenants, func(ut biz.UserTenant, _ int) *pb.UserTenant {
 			//get tenant info
 			if ut.TenantId == nil {
 				//host
 				return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.GetTenantId(), IsHost: true}
 			}
-
-			t := linq.From(tenants.Items).FirstWithT(func(t *v13.Tenant) bool { return t.Id == ut.GetTenantId() })
-			if t == nil {
+			t, ok := lo.Find(tenants.Items, func(t *v13.Tenant) bool { return t.Id == ut.GetTenantId() })
+			if !ok {
 				return nil
 			}
-			tt := t.(*v13.Tenant)
 			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.GetTenantId(), Tenant: &v13.TenantInfo{
-				Id:          tt.Id,
-				Name:        tt.Name,
-				DisplayName: tt.DisplayName,
-				Region:      tt.Region,
-				Logo:        tt.Logo,
+				Id:          t.Id,
+				Name:        t.Name,
+				DisplayName: t.DisplayName,
+				Region:      t.Region,
+				Logo:        t.Logo,
 			}}
-		}).ToSlice(&reTenants)
+		})
 		for _, tt := range tenants.Items {
 			if currentTenant.GetId() == tt.GetId() {
 				res.CurrentTenant = &pb.UserTenant{UserId: userInfo.GetId(), TenantId: currentTenant.GetId(), Tenant: &v13.TenantInfo{

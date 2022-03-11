@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
-	"github.com/ahmetb/go-linq/v3"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	"github.com/goxiaoy/go-saas-kit/user/util"
+	"github.com/samber/lo"
 )
 
 type PermissionService struct {
@@ -32,12 +32,12 @@ func (s *PermissionService) GetCurrent(ctx context.Context, req *pb.GetCurrentPe
 	if err != nil {
 		return nil, err
 	}
-	var acl []*pb.Permission
-	linq.From(beans).SelectT(func(bean authz.PermissionBean) *pb.Permission {
+
+	acl := lo.Map(beans, func(bean authz.PermissionBean, _ int) *pb.Permission {
 		t := &pb.Permission{}
 		util.MapPermissionBeanToPb(bean, t)
 		return t
-	}).ToSlice(&acl)
+	})
 	return &pb.GetCurrentPermissionReply{Acl: acl}, nil
 }
 
@@ -112,8 +112,7 @@ func (s *PermissionService) UpdateSubjectPermission(ctx context.Context, req *pb
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", req.Subject), authz.UpdateAction); err != nil {
 		return nil, err
 	}
-	var acl []authz.UpdateSubjectPermission
-	linq.From(req.Acl).SelectT(func(a *pb.UpdateSubjectPermissionAcl) authz.UpdateSubjectPermission {
+	var acl = lo.Map(req.Acl, func(a *pb.UpdateSubjectPermissionAcl, _ int) authz.UpdateSubjectPermission {
 		effect := util.MapPbEffect2AuthEffect(a.Effect)
 		return authz.UpdateSubjectPermission{
 			Resource: authz.NewEntityResource(a.Namespace, a.Resource),
@@ -121,7 +120,7 @@ func (s *PermissionService) UpdateSubjectPermission(ctx context.Context, req *pb
 			TenantID: a.TenantId,
 			Effect:   effect,
 		}
-	}).ToSlice(&acl)
+	})
 	if err := s.permissionMgr.UpdateGrant(ctx, authz.SubjectStr(req.Subject), acl); err != nil {
 		return nil, err
 	}

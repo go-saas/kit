@@ -2,11 +2,11 @@ package remote
 
 import (
 	"context"
-	"github.com/ahmetb/go-linq/v3"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	"github.com/goxiaoy/go-saas-kit/user/util"
 	"github.com/goxiaoy/go-saas/common"
+	"github.com/samber/lo"
 )
 
 type PermissionChecker struct {
@@ -79,8 +79,7 @@ func (r *PermissionChecker) ListAcl(ctx context.Context, subjects ...authz.Subje
 }
 
 func (r *PermissionChecker) UpdateGrant(ctx context.Context, subject authz.Subject, acl []authz.UpdateSubjectPermission) error {
-	var pbAcl []*v1.UpdateSubjectPermissionAcl
-	linq.From(acl).SelectT(func(a authz.UpdateSubjectPermission) *v1.UpdateSubjectPermissionAcl {
+	var pbAcl = lo.Map(acl, func(a authz.UpdateSubjectPermission, _ int) *v1.UpdateSubjectPermissionAcl {
 		return &v1.UpdateSubjectPermissionAcl{
 			Namespace: a.Resource.GetNamespace(),
 			Resource:  a.Resource.GetIdentity(),
@@ -88,7 +87,7 @@ func (r *PermissionChecker) UpdateGrant(ctx context.Context, subject authz.Subje
 			Effect:    util.MapAuthEffect2PbEffect(a.Effect),
 			TenantId:  a.TenantID,
 		}
-	}).ToSlice(&pbAcl)
+	})
 	_, err := r.client.UpdateSubjectPermission(ctx, &v1.UpdateSubjectPermissionRequest{
 		Subject: subject.GetIdentity(),
 		Acl:     pbAcl,
@@ -97,10 +96,9 @@ func (r *PermissionChecker) UpdateGrant(ctx context.Context, subject authz.Subje
 }
 
 func (r *PermissionChecker) RemoveGrant(ctx context.Context, resource authz.Resource, action authz.Action, subject authz.Subject, tenantID string, effects []authz.Effect) error {
-	var effs []v1.Effect
-	linq.From(effs).SelectT(func(e authz.Effect) v1.Effect {
+	var effs = lo.Map(effects, func(e authz.Effect, _ int) v1.Effect {
 		return util.MapAuthEffect2PbEffect(e)
-	}).ToSlice(effs)
+	})
 	_, err := r.client.RemoveSubjectPermission(ctx, &v1.RemoveSubjectPermissionRequest{
 		Namespace: resource.GetNamespace(),
 		Resource:  resource.GetIdentity(),

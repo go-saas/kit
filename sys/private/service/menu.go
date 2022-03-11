@@ -2,13 +2,13 @@ package service
 
 import (
 	"context"
-	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	"github.com/goxiaoy/go-saas/common"
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"strings"
@@ -43,13 +43,11 @@ func (s *MenuService) ListMenu(ctx context.Context, req *pb.ListMenuRequest) (*p
 	if err != nil {
 		return ret, err
 	}
-	rItems := make([]*pb.Menu, len(items))
-
-	linq.From(items).SelectT(func(g *biz.Menu) *pb.Menu {
+	rItems := lo.Map(items, func(g *biz.Menu, _ int) *pb.Menu {
 		b := &pb.Menu{}
 		MapBizMenu2Pb(g, b)
 		return b
-	}).ToSlice(&rItems)
+	})
 
 	ret.Items = rItems
 	return ret, nil
@@ -205,12 +203,11 @@ func (s *MenuService) GetAvailableMenus(ctx context.Context, req *pb.GetAvailabl
 		}
 	}
 
-	var retItems []*pb.Menu
-	linq.From(filterChildren).SelectT(func(a *biz.Menu) *pb.Menu {
+	var retItems = lo.Map(filterChildren, func(a *biz.Menu, _ int) *pb.Menu {
 		ret := &pb.Menu{}
 		MapBizMenu2Pb(a, ret)
 		return ret
-	}).ToSlice(&retItems)
+	})
 	return &pb.GetAvailableMenusReply{Items: retItems}, nil
 }
 func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
@@ -219,8 +216,8 @@ func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
 	b.Desc = a.Desc
 	b.CreatedAt = timestamppb.New(a.CreatedAt)
 	b.Component = a.Component
-	var requirement []*v1.PermissionRequirement
-	linq.From(a.Requirement).SelectT(func(a biz.MenuPermissionRequirement) *v1.PermissionRequirement {
+
+	requirement := lo.Map(a.Requirement, func(a biz.MenuPermissionRequirement, _ int) *v1.PermissionRequirement {
 		ret := &v1.PermissionRequirement{
 			Namespace: a.Namespace,
 			Resource:  a.Resource,
@@ -228,7 +225,8 @@ func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
 			HostOnly:  a.HostOnly,
 		}
 		return ret
-	}).ToSlice(&requirement)
+	})
+
 	b.Requirement = requirement
 	b.Parent = a.Parent
 	if a.Props != nil {
@@ -249,22 +247,13 @@ func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
 	b.HostOnly = a.HostOnly
 }
 
-func MapListBizMenu2Pb(a []biz.Menu, b *[]*pb.Menu) {
-	linq.From(a).SelectT(func(c biz.Menu) *pb.Menu {
-		ca := pb.Menu{}
-		MapBizMenu2Pb(&c, &ca)
-		return &ca
-	}).ToSlice(b)
-}
-
 func MapUpdatePbMenu2Biz(a *pb.UpdateMenu, b *biz.Menu) {
 
 	b.Name = normalizeName(a.Name)
 	b.Desc = a.Desc
 
 	b.Component = a.Component
-	var requirement []biz.MenuPermissionRequirement
-	linq.From(a.Requirement).SelectT(func(a *v1.PermissionRequirement) biz.MenuPermissionRequirement {
+	requirement := lo.Map(a.Requirement, func(a *v1.PermissionRequirement, _ int) biz.MenuPermissionRequirement {
 		ret := biz.MenuPermissionRequirement{
 			Namespace: a.Namespace,
 			Resource:  a.Resource,
@@ -272,7 +261,8 @@ func MapUpdatePbMenu2Biz(a *pb.UpdateMenu, b *biz.Menu) {
 			HostOnly:  a.HostOnly,
 		}
 		return ret
-	}).ToSlice(&requirement)
+	})
+
 	b.Requirement = requirement
 	b.Parent = a.Parent
 	if a.Props != nil {
@@ -300,8 +290,7 @@ func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
 	b.Desc = a.Desc
 
 	b.Component = a.Component
-	var requirement []biz.MenuPermissionRequirement
-	linq.From(a.Requirement).SelectT(func(a *v1.PermissionRequirement) biz.MenuPermissionRequirement {
+	requirement := lo.Map(a.Requirement, func(a *v1.PermissionRequirement, _ int) biz.MenuPermissionRequirement {
 		ret := biz.MenuPermissionRequirement{
 			Namespace: a.Namespace,
 			Resource:  a.Resource,
@@ -309,7 +298,7 @@ func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
 			HostOnly:  a.HostOnly,
 		}
 		return ret
-	}).ToSlice(&requirement)
+	})
 	b.Requirement = requirement
 	b.Parent = a.Parent
 	if a.Props != nil {

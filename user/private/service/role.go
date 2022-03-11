@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
@@ -11,6 +10,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/util"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/mennanov/fmutils"
+	"github.com/samber/lo"
 )
 
 type RoleService struct {
@@ -170,8 +170,7 @@ func (s *RoleService) UpdateRolePermission(ctx context.Context, req *pb.UpdateRo
 		return nil, pb.ErrorRolePreserved("")
 	}
 	ti, _ := common.FromCurrentTenant(ctx)
-	var acl []authz.UpdateSubjectPermission
-	linq.From(req.Acl).SelectT(func(a *pb.UpdateRolePermissionAcl) authz.UpdateSubjectPermission {
+	var acl = lo.Map(req.Acl, func(a *pb.UpdateRolePermissionAcl, _ int) authz.UpdateSubjectPermission {
 		effect := util.MapPbEffect2AuthEffect(a.Effect)
 		return authz.UpdateSubjectPermission{
 			Resource: authz.NewEntityResource(a.Namespace, a.Resource),
@@ -179,7 +178,7 @@ func (s *RoleService) UpdateRolePermission(ctx context.Context, req *pb.UpdateRo
 			TenantID: ti.GetId(),
 			Effect:   effect,
 		}
-	}).ToSlice(&acl)
+	})
 	if err := s.permissionMgr.UpdateGrant(ctx, authz.NewRoleSubject(req.Id), acl); err != nil {
 		return nil, err
 	}

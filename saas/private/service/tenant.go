@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/ahmetb/go-linq/v3"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
@@ -13,6 +12,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
@@ -70,21 +70,19 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 	t.DisplayName = req.Tenant.DisplayName
 	t.Logo = req.Tenant.Logo
 
-	var tenantConn []biz.TenantConn
-	linq.From(req.Tenant.Conn).SelectT(func(t *pb.TenantConnectionString) biz.TenantConn {
+	tenantConn := lo.Map(req.Tenant.Conn, func(t *pb.TenantConnectionString, _ int) biz.TenantConn {
 		return biz.TenantConn{
 			Key:   t.Key,
 			Value: t.Value,
 		}
-	}).ToSlice(&tenantConn)
+	})
 
-	var tenantFeature []biz.TenantFeature
-	linq.From(req.Tenant.Features).SelectT(func(t *pb.TenantFeature) biz.TenantFeature {
+	tenantFeature := lo.Map(req.Tenant.Features, func(t *pb.TenantFeature, _ int) biz.TenantFeature {
 		return biz.TenantFeature{
 			Key:   t.Key,
 			Value: t.Value,
 		}
-	}).ToSlice(&tenantFeature)
+	})
 	t.Conn = tenantConn
 	t.Features = tenantFeature
 
@@ -144,9 +142,7 @@ func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantReques
 	if err != nil {
 		return ret, err
 	}
-	rItems := make([]*pb.Tenant, len(items))
-
-	linq.From(items).SelectT(func(g *biz.Tenant) *pb.Tenant { return mapBizTenantToApi(ctx, s.blob, g) }).ToSlice(&rItems)
+	rItems := lo.Map(items, func(g *biz.Tenant, _ int) *pb.Tenant { return mapBizTenantToApi(ctx, s.blob, g) })
 	ret.Items = rItems
 	return ret, nil
 }
@@ -226,21 +222,19 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 }
 
 func mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenant) *pb.Tenant {
-	var conns []*pb.TenantConnectionString
-	linq.From(tenant.Conn).SelectT(func(con biz.TenantConn) *pb.TenantConnectionString {
+	conns := lo.Map(tenant.Conn, func(con biz.TenantConn, _ int) *pb.TenantConnectionString {
 		return &pb.TenantConnectionString{
 			Key:   con.Key,
 			Value: con.Value,
 		}
-	}).ToSlice(&conns)
+	})
 
-	var features []*pb.TenantFeature
-	linq.From(tenant.Features).SelectT(func(con biz.TenantFeature) *pb.TenantFeature {
+	features := lo.Map(tenant.Features, func(con biz.TenantFeature, _ int) *pb.TenantFeature {
 		return &pb.TenantFeature{
 			Key:   con.Key,
 			Value: con.Value,
 		}
-	}).ToSlice(&features)
+	})
 
 	res := &pb.Tenant{
 		Id:          tenant.ID,
