@@ -3,6 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
@@ -17,9 +21,6 @@ import (
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
-	"io"
-	"os"
-	"path/filepath"
 
 	pb "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 )
@@ -83,7 +84,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		})
 	}
 	var tenantIds []string
-	tenantIds = lo.Map[biz.UserTenant, string](u.Tenants, func(t biz.UserTenant, _ int) string {
+	tenantIds = lo.Map(u.Tenants, func(t biz.UserTenant, _ int) string {
 		return t.GetTenantId()
 	})
 	currentTenant, _ := common.FromCurrentTenant(ctx)

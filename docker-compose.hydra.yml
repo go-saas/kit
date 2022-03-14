@@ -2,7 +2,7 @@ version: '3.7'
 services:
 
   hydra:
-    image: oryd/hydra:v1.10.6
+    image: oryd/hydra:v1.11.7
     ports:
       - "4444:4444" # Public port
       - "4445:4445" # Admin port
@@ -19,7 +19,7 @@ services:
       - hydra-migrate
 
   hydra-migrate:
-    image: oryd/hydra:v1.10.6
+    image: oryd/hydra:v1.11.7
     environment:
       - DSN=mysql://root:youShouldChangeThis@tcp(mysqld:3306)/mysql?max_conns=20&max_idle_conns=4
     command:
@@ -31,7 +31,7 @@ services:
   consent:
     environment:
       - HYDRA_ADMIN_URL=http://hydra:4445
-    image: oryd/hydra-login-consent-node:v1.10.6
+    image: oryd/hydra-login-consent-node:v1.11.7
     ports:
       - "3000:3000"
     restart: unless-stopped

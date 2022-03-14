@@ -284,12 +284,12 @@
     },
     "/v1/auth/login": {
       "get": {
-        "operationId": "Auth_GetLoginForm",
+        "operationId": "Auth_GetLogin",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetLoginFormResponse"
+              "$ref": "#/definitions/v1GetLoginResponse"
             }
           },
           "default": {
@@ -303,6 +303,12 @@
           {
             "name": "redirect",
             "description": "redirect url.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "loginChallenge",
             "in": "query",
             "required": false,
             "type": "string"
@@ -535,14 +541,44 @@
         ]
       }
     },
-    "/v1/auth/web/login": {
+    "/v1/auth/web/consent": {
       "get": {
-        "operationId": "AuthWeb_GetWebLoginForm",
+        "operationId": "AuthWeb_GrantConsent",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetLoginFormResponse"
+              "$ref": "#/definitions/v1GrantConsentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "challenge",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AuthWeb"
+        ]
+      }
+    },
+    "/v1/auth/web/login": {
+      "get": {
+        "operationId": "AuthWeb_GetWebLogin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetLoginResponse"
             }
           },
           "default": {
@@ -556,6 +592,12 @@
           {
             "name": "redirect",
             "description": "redirect url.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "loginChallenge",
             "in": "query",
             "required": false,
             "type": "string"
@@ -597,6 +639,34 @@
       }
     },
     "/v1/auth/web/logout": {
+      "get": {
+        "operationId": "AuthWeb_GetWebLogout",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetLogoutResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "logoutChallenge",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AuthWeb"
+        ]
+      },
       "post": {
         "operationId": "AuthWeb_WebLogout",
         "responses": {
@@ -1858,6 +1928,29 @@
     "v1GetAddressesReply": {
       "type": "object"
     },
+    "v1GetConsentResponse": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "string"
+        },
+        "requestedScope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "userId": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "redirect": {
+          "type": "string"
+        }
+      }
+    },
     "v1GetCsrfTokenResponse": {
       "type": "object",
       "properties": {
@@ -1877,7 +1970,7 @@
         }
       }
     },
-    "v1GetLoginFormResponse": {
+    "v1GetLoginResponse": {
       "type": "object",
       "properties": {
         "redirect": {
@@ -1889,6 +1982,20 @@
           "items": {
             "$ref": "#/definitions/v1OAuthProvider"
           }
+        },
+        "hint": {
+          "type": "string"
+        },
+        "challenge": {
+          "type": "string"
+        }
+      }
+    },
+    "v1GetLogoutResponse": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "string"
         }
       }
     },
@@ -1960,6 +2067,23 @@
           "items": {
             "$ref": "#/definitions/v1UserRole"
           }
+        }
+      }
+    },
+    "v1GrantConsentResponse": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "string"
+        },
+        "grantScope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "redirect": {
+          "type": "string"
         }
       }
     },
@@ -2125,6 +2249,9 @@
           "type": "integer",
           "format": "int32",
           "title": "Expires time in seconds"
+        },
+        "redirect": {
+          "type": "string"
         }
       }
     },
@@ -2149,10 +2276,20 @@
       "type": "object"
     },
     "v1LogoutRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "string"
+        }
+      }
     },
     "v1LogoutResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "redirect": {
+          "type": "string"
+        }
+      }
     },
     "v1OAuthProvider": {
       "type": "object",

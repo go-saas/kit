@@ -22,9 +22,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthWebClient interface {
-	GetWebLoginForm(ctx context.Context, in *GetLoginFormRequest, opts ...grpc.CallOption) (*GetLoginFormResponse, error)
+	GetWebLogin(ctx context.Context, in *GetLoginRequest, opts ...grpc.CallOption) (*GetLoginResponse, error)
 	WebLogin(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthReply, error)
+	GetWebLogout(ctx context.Context, in *GetLogoutRequest, opts ...grpc.CallOption) (*GetLogoutResponse, error)
 	WebLogout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
+	GetConsent(ctx context.Context, in *GetConsentRequest, opts ...grpc.CallOption) (*GetConsentResponse, error)
+	GrantConsent(ctx context.Context, in *GrantConsentRequest, opts ...grpc.CallOption) (*GrantConsentResponse, error)
 }
 
 type authWebClient struct {
@@ -35,9 +38,9 @@ func NewAuthWebClient(cc grpc.ClientConnInterface) AuthWebClient {
 	return &authWebClient{cc}
 }
 
-func (c *authWebClient) GetWebLoginForm(ctx context.Context, in *GetLoginFormRequest, opts ...grpc.CallOption) (*GetLoginFormResponse, error) {
-	out := new(GetLoginFormResponse)
-	err := c.cc.Invoke(ctx, "/user.api.auth.v1.AuthWeb/GetWebLoginForm", in, out, opts...)
+func (c *authWebClient) GetWebLogin(ctx context.Context, in *GetLoginRequest, opts ...grpc.CallOption) (*GetLoginResponse, error) {
+	out := new(GetLoginResponse)
+	err := c.cc.Invoke(ctx, "/user.api.auth.v1.AuthWeb/GetWebLogin", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,9 +56,36 @@ func (c *authWebClient) WebLogin(ctx context.Context, in *LoginAuthRequest, opts
 	return out, nil
 }
 
+func (c *authWebClient) GetWebLogout(ctx context.Context, in *GetLogoutRequest, opts ...grpc.CallOption) (*GetLogoutResponse, error) {
+	out := new(GetLogoutResponse)
+	err := c.cc.Invoke(ctx, "/user.api.auth.v1.AuthWeb/GetWebLogout", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authWebClient) WebLogout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error) {
 	out := new(LogoutResponse)
 	err := c.cc.Invoke(ctx, "/user.api.auth.v1.AuthWeb/WebLogout", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authWebClient) GetConsent(ctx context.Context, in *GetConsentRequest, opts ...grpc.CallOption) (*GetConsentResponse, error) {
+	out := new(GetConsentResponse)
+	err := c.cc.Invoke(ctx, "/user.api.auth.v1.AuthWeb/GetConsent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authWebClient) GrantConsent(ctx context.Context, in *GrantConsentRequest, opts ...grpc.CallOption) (*GrantConsentResponse, error) {
+	out := new(GrantConsentResponse)
+	err := c.cc.Invoke(ctx, "/user.api.auth.v1.AuthWeb/GrantConsent", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,9 +96,12 @@ func (c *authWebClient) WebLogout(ctx context.Context, in *LogoutRequest, opts .
 // All implementations must embed UnimplementedAuthWebServer
 // for forward compatibility
 type AuthWebServer interface {
-	GetWebLoginForm(context.Context, *GetLoginFormRequest) (*GetLoginFormResponse, error)
+	GetWebLogin(context.Context, *GetLoginRequest) (*GetLoginResponse, error)
 	WebLogin(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
+	GetWebLogout(context.Context, *GetLogoutRequest) (*GetLogoutResponse, error)
 	WebLogout(context.Context, *LogoutRequest) (*LogoutResponse, error)
+	GetConsent(context.Context, *GetConsentRequest) (*GetConsentResponse, error)
+	GrantConsent(context.Context, *GrantConsentRequest) (*GrantConsentResponse, error)
 	mustEmbedUnimplementedAuthWebServer()
 }
 
@@ -76,14 +109,23 @@ type AuthWebServer interface {
 type UnimplementedAuthWebServer struct {
 }
 
-func (UnimplementedAuthWebServer) GetWebLoginForm(context.Context, *GetLoginFormRequest) (*GetLoginFormResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetWebLoginForm not implemented")
+func (UnimplementedAuthWebServer) GetWebLogin(context.Context, *GetLoginRequest) (*GetLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWebLogin not implemented")
 }
 func (UnimplementedAuthWebServer) WebLogin(context.Context, *LoginAuthRequest) (*LoginAuthReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WebLogin not implemented")
 }
+func (UnimplementedAuthWebServer) GetWebLogout(context.Context, *GetLogoutRequest) (*GetLogoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWebLogout not implemented")
+}
 func (UnimplementedAuthWebServer) WebLogout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WebLogout not implemented")
+}
+func (UnimplementedAuthWebServer) GetConsent(context.Context, *GetConsentRequest) (*GetConsentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetConsent not implemented")
+}
+func (UnimplementedAuthWebServer) GrantConsent(context.Context, *GrantConsentRequest) (*GrantConsentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GrantConsent not implemented")
 }
 func (UnimplementedAuthWebServer) mustEmbedUnimplementedAuthWebServer() {}
 
@@ -98,20 +140,20 @@ func RegisterAuthWebServer(s grpc.ServiceRegistrar, srv AuthWebServer) {
 	s.RegisterService(&AuthWeb_ServiceDesc, srv)
 }
 
-func _AuthWeb_GetWebLoginForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetLoginFormRequest)
+func _AuthWeb_GetWebLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthWebServer).GetWebLoginForm(ctx, in)
+		return srv.(AuthWebServer).GetWebLogin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/user.api.auth.v1.AuthWeb/GetWebLoginForm",
+		FullMethod: "/user.api.auth.v1.AuthWeb/GetWebLogin",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthWebServer).GetWebLoginForm(ctx, req.(*GetLoginFormRequest))
+		return srv.(AuthWebServer).GetWebLogin(ctx, req.(*GetLoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -134,6 +176,24 @@ func _AuthWeb_WebLogin_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthWeb_GetWebLogout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLogoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthWebServer).GetWebLogout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.auth.v1.AuthWeb/GetWebLogout",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthWebServer).GetWebLogout(ctx, req.(*GetLogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AuthWeb_WebLogout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LogoutRequest)
 	if err := dec(in); err != nil {
@@ -152,6 +212,42 @@ func _AuthWeb_WebLogout_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthWeb_GetConsent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetConsentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthWebServer).GetConsent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.auth.v1.AuthWeb/GetConsent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthWebServer).GetConsent(ctx, req.(*GetConsentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthWeb_GrantConsent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GrantConsentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthWebServer).GrantConsent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.auth.v1.AuthWeb/GrantConsent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthWebServer).GrantConsent(ctx, req.(*GrantConsentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthWeb_ServiceDesc is the grpc.ServiceDesc for AuthWeb service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -160,16 +256,28 @@ var AuthWeb_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AuthWebServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetWebLoginForm",
-			Handler:    _AuthWeb_GetWebLoginForm_Handler,
+			MethodName: "GetWebLogin",
+			Handler:    _AuthWeb_GetWebLogin_Handler,
 		},
 		{
 			MethodName: "WebLogin",
 			Handler:    _AuthWeb_WebLogin_Handler,
 		},
 		{
+			MethodName: "GetWebLogout",
+			Handler:    _AuthWeb_GetWebLogout_Handler,
+		},
+		{
 			MethodName: "WebLogout",
 			Handler:    _AuthWeb_WebLogout_Handler,
+		},
+		{
+			MethodName: "GetConsent",
+			Handler:    _AuthWeb_GetConsent_Handler,
+		},
+		{
+			MethodName: "GrantConsent",
+			Handler:    _AuthWeb_GrantConsent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

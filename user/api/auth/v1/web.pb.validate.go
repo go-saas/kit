@@ -34,3 +34,627 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 )
+
+// Validate checks the field values on GetLogoutRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetLogoutRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetLogoutRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetLogoutRequestMultiError, or nil if none found.
+func (m *GetLogoutRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetLogoutRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for LogoutChallenge
+
+	if len(errors) > 0 {
+		return GetLogoutRequestMultiError(errors)
+	}
+	return nil
+}
+
+// GetLogoutRequestMultiError is an error wrapping multiple validation errors
+// returned by GetLogoutRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetLogoutRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetLogoutRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetLogoutRequestMultiError) AllErrors() []error { return m }
+
+// GetLogoutRequestValidationError is the validation error returned by
+// GetLogoutRequest.Validate if the designated constraints aren't met.
+type GetLogoutRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetLogoutRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetLogoutRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetLogoutRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetLogoutRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetLogoutRequestValidationError) ErrorName() string { return "GetLogoutRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetLogoutRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetLogoutRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetLogoutRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetLogoutRequestValidationError{}
+
+// Validate checks the field values on GetLogoutResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetLogoutResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetLogoutResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetLogoutResponseMultiError, or nil if none found.
+func (m *GetLogoutResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetLogoutResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Challenge
+
+	if len(errors) > 0 {
+		return GetLogoutResponseMultiError(errors)
+	}
+	return nil
+}
+
+// GetLogoutResponseMultiError is an error wrapping multiple validation errors
+// returned by GetLogoutResponse.ValidateAll() if the designated constraints
+// aren't met.
+type GetLogoutResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetLogoutResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetLogoutResponseMultiError) AllErrors() []error { return m }
+
+// GetLogoutResponseValidationError is the validation error returned by
+// GetLogoutResponse.Validate if the designated constraints aren't met.
+type GetLogoutResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetLogoutResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetLogoutResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetLogoutResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetLogoutResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetLogoutResponseValidationError) ErrorName() string {
+	return "GetLogoutResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetLogoutResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetLogoutResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetLogoutResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetLogoutResponseValidationError{}
+
+// Validate checks the field values on GetConsentRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetConsentRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetConsentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetConsentRequestMultiError, or nil if none found.
+func (m *GetConsentRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetConsentRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ConsentChallenge
+
+	if len(errors) > 0 {
+		return GetConsentRequestMultiError(errors)
+	}
+	return nil
+}
+
+// GetConsentRequestMultiError is an error wrapping multiple validation errors
+// returned by GetConsentRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetConsentRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetConsentRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetConsentRequestMultiError) AllErrors() []error { return m }
+
+// GetConsentRequestValidationError is the validation error returned by
+// GetConsentRequest.Validate if the designated constraints aren't met.
+type GetConsentRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetConsentRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetConsentRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetConsentRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetConsentRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetConsentRequestValidationError) ErrorName() string {
+	return "GetConsentRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetConsentRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetConsentRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetConsentRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetConsentRequestValidationError{}
+
+// Validate checks the field values on GetConsentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetConsentResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetConsentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetConsentResponseMultiError, or nil if none found.
+func (m *GetConsentResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetConsentResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Challenge
+
+	// no validation rules for UserId
+
+	// no validation rules for ClientId
+
+	// no validation rules for Redirect
+
+	if len(errors) > 0 {
+		return GetConsentResponseMultiError(errors)
+	}
+	return nil
+}
+
+// GetConsentResponseMultiError is an error wrapping multiple validation errors
+// returned by GetConsentResponse.ValidateAll() if the designated constraints
+// aren't met.
+type GetConsentResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetConsentResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetConsentResponseMultiError) AllErrors() []error { return m }
+
+// GetConsentResponseValidationError is the validation error returned by
+// GetConsentResponse.Validate if the designated constraints aren't met.
+type GetConsentResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetConsentResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetConsentResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetConsentResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetConsentResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetConsentResponseValidationError) ErrorName() string {
+	return "GetConsentResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetConsentResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetConsentResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetConsentResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetConsentResponseValidationError{}
+
+// Validate checks the field values on GrantConsentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GrantConsentRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GrantConsentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GrantConsentRequestMultiError, or nil if none found.
+func (m *GrantConsentRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GrantConsentRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Challenge
+
+	if len(errors) > 0 {
+		return GrantConsentRequestMultiError(errors)
+	}
+	return nil
+}
+
+// GrantConsentRequestMultiError is an error wrapping multiple validation
+// errors returned by GrantConsentRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GrantConsentRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GrantConsentRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GrantConsentRequestMultiError) AllErrors() []error { return m }
+
+// GrantConsentRequestValidationError is the validation error returned by
+// GrantConsentRequest.Validate if the designated constraints aren't met.
+type GrantConsentRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GrantConsentRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GrantConsentRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GrantConsentRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GrantConsentRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GrantConsentRequestValidationError) ErrorName() string {
+	return "GrantConsentRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GrantConsentRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGrantConsentRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GrantConsentRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GrantConsentRequestValidationError{}
+
+// Validate checks the field values on GrantConsentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GrantConsentResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GrantConsentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GrantConsentResponseMultiError, or nil if none found.
+func (m *GrantConsentResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GrantConsentResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Challenge
+
+	// no validation rules for Redirect
+
+	if len(errors) > 0 {
+		return GrantConsentResponseMultiError(errors)
+	}
+	return nil
+}
+
+// GrantConsentResponseMultiError is an error wrapping multiple validation
+// errors returned by GrantConsentResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GrantConsentResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GrantConsentResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GrantConsentResponseMultiError) AllErrors() []error { return m }
+
+// GrantConsentResponseValidationError is the validation error returned by
+// GrantConsentResponse.Validate if the designated constraints aren't met.
+type GrantConsentResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GrantConsentResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GrantConsentResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GrantConsentResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GrantConsentResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GrantConsentResponseValidationError) ErrorName() string {
+	return "GrantConsentResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GrantConsentResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGrantConsentResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GrantConsentResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GrantConsentResponseValidationError{}

@@ -34,12 +34,12 @@ func NewAuth(
 }
 
 func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) error {
-	var req v1.GetLoginFormRequest
+	var req v1.GetLoginRequest
 	if err := binding.BindQuery(r.URL.Query(), &req); err != nil {
 		return err
 	}
 
-	var resp v1.GetLoginFormResponse
+	var resp v1.GetLoginResponse
 	//TODO validate url
 	resp.Redirect = req.Redirect
 	//TODO oauth

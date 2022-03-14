@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type AuthClient interface {
 	Register(ctx context.Context, in *RegisterAuthRequest, opts ...grpc.CallOption) (*RegisterAuthReply, error)
 	Login(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthReply, error)
-	GetLoginForm(ctx context.Context, in *GetLoginFormRequest, opts ...grpc.CallOption) (*GetLoginFormResponse, error)
+	GetLogin(ctx context.Context, in *GetLoginRequest, opts ...grpc.CallOption) (*GetLoginResponse, error)
 	Token(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenReply, error)
 	Refresh(ctx context.Context, in *RefreshTokenAuthRequest, opts ...grpc.CallOption) (*RefreshTokenAuthReply, error)
 	SendPasswordlessToken(ctx context.Context, in *PasswordlessTokenAuthRequest, opts ...grpc.CallOption) (*PasswordlessTokenAuthReply, error)
@@ -61,9 +61,9 @@ func (c *authClient) Login(ctx context.Context, in *LoginAuthRequest, opts ...gr
 	return out, nil
 }
 
-func (c *authClient) GetLoginForm(ctx context.Context, in *GetLoginFormRequest, opts ...grpc.CallOption) (*GetLoginFormResponse, error) {
-	out := new(GetLoginFormResponse)
-	err := c.cc.Invoke(ctx, "/user.api.auth.v1.Auth/GetLoginForm", in, out, opts...)
+func (c *authClient) GetLogin(ctx context.Context, in *GetLoginRequest, opts ...grpc.CallOption) (*GetLoginResponse, error) {
+	out := new(GetLoginResponse)
+	err := c.cc.Invoke(ctx, "/user.api.auth.v1.Auth/GetLogin", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func (c *authClient) GetCsrfToken(ctx context.Context, in *GetCsrfTokenRequest, 
 type AuthServer interface {
 	Register(context.Context, *RegisterAuthRequest) (*RegisterAuthReply, error)
 	Login(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
-	GetLoginForm(context.Context, *GetLoginFormRequest) (*GetLoginFormResponse, error)
+	GetLogin(context.Context, *GetLoginRequest) (*GetLoginResponse, error)
 	Token(context.Context, *TokenRequest) (*TokenReply, error)
 	Refresh(context.Context, *RefreshTokenAuthRequest) (*RefreshTokenAuthReply, error)
 	SendPasswordlessToken(context.Context, *PasswordlessTokenAuthRequest) (*PasswordlessTokenAuthReply, error)
@@ -170,8 +170,8 @@ func (UnimplementedAuthServer) Register(context.Context, *RegisterAuthRequest) (
 func (UnimplementedAuthServer) Login(context.Context, *LoginAuthRequest) (*LoginAuthReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthServer) GetLoginForm(context.Context, *GetLoginFormRequest) (*GetLoginFormResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetLoginForm not implemented")
+func (UnimplementedAuthServer) GetLogin(context.Context, *GetLoginRequest) (*GetLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLogin not implemented")
 }
 func (UnimplementedAuthServer) Token(context.Context, *TokenRequest) (*TokenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Token not implemented")
@@ -246,20 +246,20 @@ func _Auth_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_GetLoginForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetLoginFormRequest)
+func _Auth_GetLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).GetLoginForm(ctx, in)
+		return srv.(AuthServer).GetLogin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/user.api.auth.v1.Auth/GetLoginForm",
+		FullMethod: "/user.api.auth.v1.Auth/GetLogin",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).GetLoginForm(ctx, req.(*GetLoginFormRequest))
+		return srv.(AuthServer).GetLogin(ctx, req.(*GetLoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -424,8 +424,8 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Auth_Login_Handler,
 		},
 		{
-			MethodName: "GetLoginForm",
-			Handler:    _Auth_GetLoginForm_Handler,
+			MethodName: "GetLogin",
+			Handler:    _Auth_GetLogin_Handler,
 		},
 		{
 			MethodName: "Token",

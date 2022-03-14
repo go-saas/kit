@@ -26,12 +26,11 @@ service Auth {
         };
     }
 
-    rpc GetLoginForm(GetLoginFormRequest) returns(GetLoginFormResponse){
+    rpc GetLogin(GetLoginRequest) returns(GetLoginResponse){
         option (google.api.http) = {
             get: "/v1/auth/login",
         };
     }
-
 
 
     rpc Token(TokenRequest) returns (TokenReply){
@@ -96,6 +95,7 @@ message LoginAuthRequest{
     string username =1 [(validate.rules).string.min_len = 1];
     string password =2 [(validate.rules).string.min_len = 1];
     bool remember =3;
+
 }
 
 
@@ -126,6 +126,8 @@ message LoginAuthReply{
     string refresh_token=4;
     // Expires time in seconds
     int32 expires_in=5;
+
+    string redirect=10;
 }
 
 message RefreshTokenAuthRequest{
@@ -176,15 +178,20 @@ message ValidatePasswordReply{
     bool ok =1;
 }
 
-message GetLoginFormRequest{
+message GetLoginRequest{
     //redirect url
     string redirect = 1;
+    string login_challenge=2;
 }
 
-message GetLoginFormResponse{
+message GetLoginResponse{
     //normalized redirect url
     string redirect = 1;
     repeated OAuthProvider oauth = 2;
+
+
+    string hint=3;
+    string challenge=4;
 }
 
 message OAuthProvider{
@@ -200,9 +207,9 @@ message GetCsrfTokenResponse{
 }
 
 message LogoutRequest{
-
+    string challenge=1;
 }
 
 message LogoutResponse{
-
+    string redirect = 1;
 }
