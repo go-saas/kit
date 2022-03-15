@@ -30,6 +30,7 @@ message UserConf{
   Admin admin =2;
   Auth auth=3;
   string root_url=4;
+
 }
 
 message Auth{

@@ -22,7 +22,7 @@ type AuthWebHTTPServer interface {
 	GetWebLogin(context.Context, *GetLoginRequest) (*GetLoginResponse, error)
 	GetWebLogout(context.Context, *GetLogoutRequest) (*GetLogoutResponse, error)
 	GrantConsent(context.Context, *GrantConsentRequest) (*GrantConsentResponse, error)
-	WebLogin(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
+	WebLogin(context.Context, *WebLoginAuthRequest) (*WebLoginAuthReply, error)
 	WebLogout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 }
 
@@ -57,19 +57,19 @@ func _AuthWeb_GetWebLogin0_HTTP_Handler(srv AuthWebHTTPServer) func(ctx http.Con
 
 func _AuthWeb_WebLogin0_HTTP_Handler(srv AuthWebHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in LoginAuthRequest
+		var in WebLoginAuthRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, "/user.api.auth.v1.AuthWeb/WebLogin")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.WebLogin(ctx, req.(*LoginAuthRequest))
+			return srv.WebLogin(ctx, req.(*WebLoginAuthRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*LoginAuthReply)
+		reply := out.(*WebLoginAuthReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -155,7 +155,7 @@ type AuthWebHTTPClient interface {
 	GetWebLogin(ctx context.Context, req *GetLoginRequest, opts ...http.CallOption) (rsp *GetLoginResponse, err error)
 	GetWebLogout(ctx context.Context, req *GetLogoutRequest, opts ...http.CallOption) (rsp *GetLogoutResponse, err error)
 	GrantConsent(ctx context.Context, req *GrantConsentRequest, opts ...http.CallOption) (rsp *GrantConsentResponse, err error)
-	WebLogin(ctx context.Context, req *LoginAuthRequest, opts ...http.CallOption) (rsp *LoginAuthReply, err error)
+	WebLogin(ctx context.Context, req *WebLoginAuthRequest, opts ...http.CallOption) (rsp *WebLoginAuthReply, err error)
 	WebLogout(ctx context.Context, req *LogoutRequest, opts ...http.CallOption) (rsp *LogoutResponse, err error)
 }
 
@@ -219,8 +219,8 @@ func (c *AuthWebHTTPClientImpl) GrantConsent(ctx context.Context, in *GrantConse
 	return &out, err
 }
 
-func (c *AuthWebHTTPClientImpl) WebLogin(ctx context.Context, in *LoginAuthRequest, opts ...http.CallOption) (*LoginAuthReply, error) {
-	var out LoginAuthReply
+func (c *AuthWebHTTPClientImpl) WebLogin(ctx context.Context, in *WebLoginAuthRequest, opts ...http.CallOption) (*WebLoginAuthReply, error) {
+	var out WebLoginAuthReply
 	pattern := "/v1/auth/web/login"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.auth.v1.AuthWeb/WebLogin"))

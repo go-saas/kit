@@ -106,6 +106,8 @@ message Security{
 
   Cookie session_cookie=6;
   Cookie remember_cookie=7;
+
+  Oidc oidc=8;
 }
 
 enum SameSiteMode{
@@ -123,4 +125,14 @@ message Cookie{
   google.protobuf.BoolValue http_only =14;
   google.protobuf.BoolValue secure =15;
   SameSiteMode same_site=16;
+}
+
+message Oidc{
+  string provider=1;
+  Hydra hydra=2;
+}
+
+message Hydra{
+  string admin_url=1;
+  string public_url=2;
 }

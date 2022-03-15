@@ -27,11 +27,5 @@ services:
     volumes:
       - ./quickstart/configs/hydra:/etc/config/hydra
     restart: on-failure
-
-  consent:
-    environment:
-      - HYDRA_ADMIN_URL=http://hydra:4445
-    image: oryd/hydra-login-consent-node:v1.11.7
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
+    depends_on:
+      - mysqld

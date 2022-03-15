@@ -40,6 +40,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/goxiaoy/sessions v1.2.2-0.20220226081452-f724382d1ab0
 	github.com/nyaruka/phonenumbers v1.0.74
+	github.com/ory/hydra-client-go v1.11.7
 	github.com/samber/lo v1.10.0
 	github.com/spf13/afero v1.8.1
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
@@ -83,10 +84,12 @@ require (
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20211013180041-c96bc1413d57 // indirect
+	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.9-0.20211216111533-8d383106f7e7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
 	gorm.io/driver/postgres v1.3.1 // indirect
 	gorm.io/driver/sqlserver v1.3.1 // indirect
 	gorm.io/plugin/dbresolver v1.1.0 // indirect

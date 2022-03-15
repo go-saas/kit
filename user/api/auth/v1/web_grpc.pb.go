@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthWebClient interface {
 	GetWebLogin(ctx context.Context, in *GetLoginRequest, opts ...grpc.CallOption) (*GetLoginResponse, error)
-	WebLogin(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthReply, error)
+	WebLogin(ctx context.Context, in *WebLoginAuthRequest, opts ...grpc.CallOption) (*WebLoginAuthReply, error)
 	GetWebLogout(ctx context.Context, in *GetLogoutRequest, opts ...grpc.CallOption) (*GetLogoutResponse, error)
 	WebLogout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 	GetConsent(ctx context.Context, in *GetConsentRequest, opts ...grpc.CallOption) (*GetConsentResponse, error)
@@ -47,8 +47,8 @@ func (c *authWebClient) GetWebLogin(ctx context.Context, in *GetLoginRequest, op
 	return out, nil
 }
 
-func (c *authWebClient) WebLogin(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthReply, error) {
-	out := new(LoginAuthReply)
+func (c *authWebClient) WebLogin(ctx context.Context, in *WebLoginAuthRequest, opts ...grpc.CallOption) (*WebLoginAuthReply, error) {
+	out := new(WebLoginAuthReply)
 	err := c.cc.Invoke(ctx, "/user.api.auth.v1.AuthWeb/WebLogin", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -97,7 +97,7 @@ func (c *authWebClient) GrantConsent(ctx context.Context, in *GrantConsentReques
 // for forward compatibility
 type AuthWebServer interface {
 	GetWebLogin(context.Context, *GetLoginRequest) (*GetLoginResponse, error)
-	WebLogin(context.Context, *LoginAuthRequest) (*LoginAuthReply, error)
+	WebLogin(context.Context, *WebLoginAuthRequest) (*WebLoginAuthReply, error)
 	GetWebLogout(context.Context, *GetLogoutRequest) (*GetLogoutResponse, error)
 	WebLogout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	GetConsent(context.Context, *GetConsentRequest) (*GetConsentResponse, error)
@@ -112,7 +112,7 @@ type UnimplementedAuthWebServer struct {
 func (UnimplementedAuthWebServer) GetWebLogin(context.Context, *GetLoginRequest) (*GetLoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetWebLogin not implemented")
 }
-func (UnimplementedAuthWebServer) WebLogin(context.Context, *LoginAuthRequest) (*LoginAuthReply, error) {
+func (UnimplementedAuthWebServer) WebLogin(context.Context, *WebLoginAuthRequest) (*WebLoginAuthReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WebLogin not implemented")
 }
 func (UnimplementedAuthWebServer) GetWebLogout(context.Context, *GetLogoutRequest) (*GetLogoutResponse, error) {
@@ -159,7 +159,7 @@ func _AuthWeb_GetWebLogin_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _AuthWeb_WebLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginAuthRequest)
+	in := new(WebLoginAuthRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -171,7 +171,7 @@ func _AuthWeb_WebLogin_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: "/user.api.auth.v1.AuthWeb/WebLogin",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthWebServer).WebLogin(ctx, req.(*LoginAuthRequest))
+		return srv.(AuthWebServer).WebLogin(ctx, req.(*WebLoginAuthRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

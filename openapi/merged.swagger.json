@@ -570,6 +570,23 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "grantScope",
+            "description": "user granted scope.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "reject",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -619,7 +636,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1LoginAuthReply"
+              "$ref": "#/definitions/v1WebLoginAuthReply"
             }
           },
           "default": {
@@ -635,7 +652,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1LoginAuthRequest"
+              "$ref": "#/definitions/v1WebLoginAuthRequest"
             }
           }
         ],
@@ -4037,6 +4054,55 @@
       "properties": {
         "password": {
           "type": "string"
+        }
+      }
+    },
+    "v1WebLoginAuthReply": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "tokenType": {
+          "type": "string",
+          "title": "Bearer"
+        },
+        "expires": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Expires time in seconds"
+        },
+        "refreshToken": {
+          "type": "string",
+          "title": "Refresh token to keep login state"
+        },
+        "expiresIn": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Expires time in seconds"
+        },
+        "redirect": {
+          "type": "string"
+        }
+      }
+    },
+    "v1WebLoginAuthRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "remember": {
+          "type": "boolean"
+        },
+        "challenge": {
+          "type": "string"
+        },
+        "reject": {
+          "type": "boolean"
         }
       }
     }

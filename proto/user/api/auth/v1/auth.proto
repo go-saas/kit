@@ -32,7 +32,6 @@ service Auth {
         };
     }
 
-
     rpc Token(TokenRequest) returns (TokenReply){
         option (google.api.http) = {
             post: "/v1/auth/token",
@@ -95,7 +94,6 @@ message LoginAuthRequest{
     string username =1 [(validate.rules).string.min_len = 1];
     string password =2 [(validate.rules).string.min_len = 1];
     bool remember =3;
-
 }
 
 
@@ -212,4 +210,27 @@ message LogoutRequest{
 
 message LogoutResponse{
     string redirect = 1;
+}
+
+
+message WebLoginAuthRequest{
+    string username =1 [(validate.rules).string.min_len = 1];
+    string password =2 [(validate.rules).string.min_len = 1];
+    bool remember =3;
+    string challenge =4;
+    bool reject=5;
+}
+
+message WebLoginAuthReply{
+    string access_token=1;
+    // Bearer
+    string token_type=2;
+    // Expires time in seconds
+    int32 expires=3;
+    // Refresh token to keep login state
+    string refresh_token=4;
+    // Expires time in seconds
+    int32 expires_in=5;
+
+    string redirect=10;
 }

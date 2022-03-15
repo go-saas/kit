@@ -3,6 +3,7 @@ syntax = "proto3";
 package user.api.auth.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/struct.proto";
 import "validate/validate.proto";
 import "user/api/auth/v1/auth.proto";
 
@@ -19,7 +20,7 @@ service AuthWeb {
     };
   }
 
-  rpc WebLogin(LoginAuthRequest) returns (LoginAuthReply){
+  rpc WebLogin(WebLoginAuthRequest) returns (WebLoginAuthReply){
     option (google.api.http) = {
       post: "/v1/auth/web/login",
       body: "*",
@@ -74,9 +75,20 @@ message GetConsentResponse{
 
 message GrantConsentRequest{
   string challenge=1;
+  //user granted scope
+  repeated string grant_scope=2;
+  bool reject=5;
 }
 message GrantConsentResponse{
   string challenge=1;
   repeated string grant_scope=2;
   string redirect=10;
+}
+
+
+message OAuthClient{
+  string id=1;
+  string name=2;
+  string logo_url=3;
+  google.protobuf.Struct metadata=4;
 }

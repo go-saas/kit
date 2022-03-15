@@ -99,26 +99,38 @@ func (s *SignInManager) PasswordSignIn(ctx context.Context, u *User, pwd string,
 	//password correct
 	return s.SignIn(ctx, u, isPersistent)
 }
-func (s *SignInManager) PasswordSignInWithUsername(ctx context.Context, username, pwd string, isPersistent bool, tryLockoutOnFailure bool) error {
+func (s *SignInManager) PasswordSignInWithUsername(ctx context.Context, username, pwd string, isPersistent bool, tryLockoutOnFailure bool) (error, string) {
 	u, err := s.um.FindByName(ctx, username)
 	if err != nil {
-		return err
+		return err, ""
 	}
-	return s.PasswordSignIn(ctx, u, pwd, isPersistent, tryLockoutOnFailure)
+	id := ""
+	if u != nil {
+		id = u.ID.String()
+	}
+	return s.PasswordSignIn(ctx, u, pwd, isPersistent, tryLockoutOnFailure), id
 }
-func (s *SignInManager) PasswordSignInWithPhone(ctx context.Context, phone, pwd string, isPersistent bool, tryLockoutOnFailure bool) error {
+func (s *SignInManager) PasswordSignInWithPhone(ctx context.Context, phone, pwd string, isPersistent bool, tryLockoutOnFailure bool) (error, string) {
 	u, err := s.um.FindByPhone(ctx, phone)
 	if err != nil {
-		return err
+		return err, ""
 	}
-	return s.PasswordSignIn(ctx, u, pwd, isPersistent, tryLockoutOnFailure)
+	id := ""
+	if u != nil {
+		id = u.ID.String()
+	}
+	return s.PasswordSignIn(ctx, u, pwd, isPersistent, tryLockoutOnFailure), id
 }
-func (s *SignInManager) PasswordSignInWithEmail(ctx context.Context, email, pwd string, isPersistent bool, tryLockoutOnFailure bool) error {
+func (s *SignInManager) PasswordSignInWithEmail(ctx context.Context, email, pwd string, isPersistent bool, tryLockoutOnFailure bool) (error, string) {
 	u, err := s.um.FindByEmail(ctx, email)
 	if err != nil {
-		return err
+		return err, ""
 	}
-	return s.PasswordSignIn(ctx, u, pwd, isPersistent, tryLockoutOnFailure)
+	id := ""
+	if u != nil {
+		id = u.ID.String()
+	}
+	return s.PasswordSignIn(ctx, u, pwd, isPersistent, tryLockoutOnFailure), id
 }
 
 func (s *SignInManager) IsTwoFactorClientRemembered(ctx context.Context, u *User) (bool, error) {

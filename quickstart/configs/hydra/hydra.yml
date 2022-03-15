@@ -4,10 +4,14 @@ serve:
 
 urls:
   self:
-    issuer: http://127.0.0.1:8600
-  consent: http://127.0.0.1:3000/consent
-  login: http://127.0.0.1:3000/login
-  logout: http://127.0.0.1:3000/logout
+    #publich hydra server
+    issuer: http://127.0.0.1:4444
+  #consent page
+  consent: http://127.0.0.1:8600/#/consent
+  #login page
+  login: http://127.0.0.1:8600/#/login
+  #logout page
+  logout: http://127.0.0.1:8600/#/logout
 
 secrets:
   system:

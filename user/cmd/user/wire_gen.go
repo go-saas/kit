@@ -15,14 +15,14 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/server"
+	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/remote"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
-	server2 "github.com/goxiaoy/go-saas-kit/user/private/server"
+	"github.com/goxiaoy/go-saas-kit/user/private/server"
 	http2 "github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common/http"
@@ -79,16 +79,17 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService, permissionService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl)
 	signInManager := biz.NewSignInManager(userManager)
-	auth := http2.NewAuth(decodeRequestFunc, encodeResponseFunc, userManager, logger, signInManager)
-	defaultErrorHandler := server.NewDefaultErrorHandler(encodeErrorFunc)
+	apiClient := server.NewHydra(security)
+	auth := http2.NewAuth(decodeRequestFunc, encodeResponseFunc, userManager, logger, signInManager, apiClient)
+	defaultErrorHandler := server2.NewDefaultErrorHandler(encodeErrorFunc)
 	userTenantContributor := service.NewUserTenantContributor(userService)
-	httpServer := server2.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userService, accountService, authService, roleService, servicePermissionService, auth, defaultErrorHandler, confData, factory, userTenantContributor)
-	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, userService, accountService, authService, roleService, servicePermissionService, userTenantContributor)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userService, accountService, authService, roleService, servicePermissionService, auth, defaultErrorHandler, confData, factory, userTenantContributor)
+	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, userService, accountService, authService, roleService, servicePermissionService, userTenantContributor)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
-	seeder := server2.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, permissionSeeder)
+	seeder := server.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, permissionSeeder)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
 		cleanup3()
@@ -98,8 +99,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 }
 
 var (
-	_wireClientNameValue         = server2.ClientName
-	_wireDecodeRequestFuncValue  = server.ReqDecode
-	_wireEncodeResponseFuncValue = server.ResEncoder
-	_wireEncodeErrorFuncValue    = server.ErrEncoder
+	_wireClientNameValue         = server.ClientName
+	_wireDecodeRequestFuncValue  = server2.ReqDecode
+	_wireEncodeResponseFuncValue = server2.ResEncoder
+	_wireEncodeErrorFuncValue    = server2.ErrEncoder
 )
