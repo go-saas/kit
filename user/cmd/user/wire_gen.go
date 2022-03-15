@@ -80,7 +80,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl)
 	signInManager := biz.NewSignInManager(userManager)
 	apiClient := server.NewHydra(security)
-	auth := http2.NewAuth(decodeRequestFunc, encodeResponseFunc, userManager, logger, signInManager, apiClient)
+	auth := http2.NewAuth(decodeRequestFunc, userManager, logger, signInManager, apiClient)
 	defaultErrorHandler := server2.NewDefaultErrorHandler(encodeErrorFunc)
 	userTenantContributor := service.NewUserTenantContributor(userService)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userService, accountService, authService, roleService, servicePermissionService, auth, defaultErrorHandler, confData, factory, userTenantContributor)

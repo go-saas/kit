@@ -14,7 +14,6 @@ import (
 
 type Auth struct {
 	reqDecoder http2.DecodeRequestFunc
-	resEncoder http2.EncodeResponseFunc
 	um         *biz.UserManager
 	logger     *log.Helper
 	signIn     *biz.SignInManager
@@ -23,7 +22,6 @@ type Auth struct {
 
 func NewAuth(
 	reqDecoder http2.DecodeRequestFunc,
-	resEncoder http2.EncodeResponseFunc,
 	um *biz.UserManager,
 	l log.Logger,
 	signIn *biz.SignInManager,
@@ -31,7 +29,6 @@ func NewAuth(
 ) *Auth {
 	return &Auth{
 		reqDecoder: reqDecoder,
-		resEncoder: resEncoder,
 		um:         um,
 		logger:     log.NewHelper(l),
 		signIn:     signIn,
@@ -39,18 +36,18 @@ func NewAuth(
 	}
 }
 
-func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) error {
+func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) (*v1.GetLoginResponse, error) {
 	var req v1.GetLoginRequest
 	if err := binding.BindQuery(r.URL.Query(), &req); err != nil {
-		return err
+		return nil, err
 	}
 	//TODO already signin?
-	var resp v1.GetLoginResponse
+	var resp = &v1.GetLoginResponse{}
 	resp.Redirect = req.Redirect
 	if len(req.LoginChallenge) > 0 {
 		//hydra
-		if hreq, _, err := a.hclient.AdminApi.GetLoginRequestExecute(a.hclient.AdminApi.GetLoginRequest(r.Context())); err != nil {
-			return err
+		if hreq, _, err := a.hclient.AdminApi.GetLoginRequest(r.Context()).LoginChallenge(req.LoginChallenge).Execute(); err != nil {
+			return resp, err
 		} else {
 			// If hydra was already able to authenticate the user, skip will be true and we do not need to re-authenticate
 			// the user.
@@ -60,7 +57,7 @@ func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) error {
 					AcceptLoginRequest(*client.NewAcceptLoginRequest(hreq.Subject)).
 					Execute()
 				if err != nil {
-					return err
+					return resp, err
 				}
 				resp.Redirect = acc.RedirectTo
 			} else {
@@ -77,18 +74,15 @@ func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) error {
 	//for k, _ := range a.Config.Modules.OAuth2Providers {
 	//	resp.Oauth = append(resp.Oauth, &v1.OAuthProvider{Name: k})
 	//}
-	if err := a.resEncoder(w, r, &resp); err != nil {
-		return err
-	}
-	return nil
+	return resp, nil
 }
 
-func (a *Auth) LoginPost(w http.ResponseWriter, r *http.Request) error {
+func (a *Auth) LoginPost(w http.ResponseWriter, r *http.Request) (*v1.WebLoginAuthReply, error) {
 	var req v1.WebLoginAuthRequest
 	if err := a.reqDecoder(r, &req); err != nil {
-		return err
+		return nil, err
 	}
-	var resp v1.WebLoginAuthReply
+	var resp = &v1.WebLoginAuthReply{}
 	if len(req.Challenge) > 0 {
 		// Let's see if the user decided to accept or reject the consent request..
 		if req.Reject {
@@ -99,20 +93,17 @@ func (a *Auth) LoginPost(w http.ResponseWriter, r *http.Request) error {
 			reject.SetErrorDescription("The resource owner denied the request")
 			hreq, _, err := a.hclient.AdminApi.RejectLoginRequest(r.Context()).LoginChallenge(req.Challenge).RejectRequest(reject).Execute()
 			if err != nil {
-				return err
+				return resp, err
 			}
 			resp.Redirect = hreq.RedirectTo
 			//return
-			if err := a.resEncoder(w, r, &resp); err != nil {
-				return err
-			}
-			return nil
+			return resp, nil
 		}
 	}
 	//validate sign in
 	err, uid := a.signIn.PasswordSignInWithUsername(r.Context(), req.Username, req.Password, req.Remember, true)
 	if err != nil {
-		return service.ConvertError(err)
+		return resp, service.ConvertError(err)
 	}
 	if len(req.Challenge) > 0 {
 		// Seems like the user authenticated! Let's tell hydra...
@@ -124,71 +115,64 @@ func (a *Auth) LoginPost(w http.ResponseWriter, r *http.Request) error {
 			LoginChallenge(req.Challenge).
 			AcceptLoginRequest(acc).Execute()
 		if err != nil {
-			return err
+			return resp, err
 		}
 		resp.Redirect = hreq.RedirectTo
 	}
-	if err := a.resEncoder(w, r, &resp); err != nil {
-		return err
-	}
-	return nil
+	return resp, nil
 }
 
-func (a *Auth) LoginOutGet(w http.ResponseWriter, r *http.Request) error {
+func (a *Auth) LoginOutGet(w http.ResponseWriter, r *http.Request) (*v1.GetLogoutResponse, error) {
 	var req v1.GetLogoutRequest
 	if err := binding.BindQuery(r.URL.Query(), &req); err != nil {
-		return err
+		return nil, err
 	}
-	var resp v1.GetLogoutResponse
+	var resp = &v1.GetLogoutResponse{}
 	if len(req.LogoutChallenge) > 0 {
 		_, _, err := a.hclient.AdminApi.GetLogoutRequest(r.Context()).LogoutChallenge(req.LogoutChallenge).Execute()
 		if err != nil {
-			return err
+			return resp, err
 		}
 		resp.Challenge = req.LogoutChallenge
 	}
-	if err := a.resEncoder(w, r, &resp); err != nil {
-		return err
-	}
-	return nil
+
+	return resp, nil
 }
 
-func (a *Auth) Logout(w http.ResponseWriter, r *http.Request) error {
+func (a *Auth) Logout(w http.ResponseWriter, r *http.Request) (*v1.LogoutResponse, error) {
 	var req v1.LogoutRequest
 	if err := a.reqDecoder(r, &req); err != nil {
-		return err
+		return nil, err
 	}
-	var resp v1.LogoutResponse
+	var resp = &v1.LogoutResponse{}
 	err := a.signIn.SignOut(r.Context())
 	if err != nil {
-		return service.ConvertError(err)
+		return resp, service.ConvertError(err)
 	}
 	if len(req.Challenge) > 0 {
 		hreq, _, err := a.hclient.AdminApi.AcceptLogoutRequest(r.Context()).LogoutChallenge(req.Challenge).Execute()
 		if err != nil {
-			return err
+			return resp, err
 		}
 		resp.Redirect = hreq.RedirectTo
 	}
-	if err := a.resEncoder(w, r, &resp); err != nil {
-		return err
-	}
-	return nil
+
+	return resp, nil
 
 }
 
-func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) error {
+func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) (*v1.GetConsentResponse, error) {
 	var req v1.GetConsentRequest
 	if err := binding.BindQuery(r.URL.Query(), &req); err != nil {
-		return err
+		return nil, err
 	}
-	var resp v1.GetConsentResponse
+	var resp = &v1.GetConsentResponse{}
 	if len(req.ConsentChallenge) == 0 {
-		return errors.BadRequest("CONSENT_CHALLENGE_REQUIRED", "")
+		return resp, errors.BadRequest("CONSENT_CHALLENGE_REQUIRED", "")
 	}
 	hreq, _, err := a.hclient.AdminApi.GetConsentRequest(r.Context()).ConsentChallenge(req.ConsentChallenge).Execute()
 	if err != nil {
-		return err
+		return resp, err
 	}
 	if hreq.GetSkip() {
 		acc := *client.NewAcceptConsentRequest()
@@ -200,34 +184,28 @@ func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) error {
 		//})
 		accReq, _, err := a.hclient.AdminApi.AcceptConsentRequest(r.Context()).ConsentChallenge(req.ConsentChallenge).AcceptConsentRequest(acc).Execute()
 		if err != nil {
-			return err
+			return resp, err
 		}
 		resp.Redirect = accReq.RedirectTo
-		if err := a.resEncoder(w, r, &resp); err != nil {
-			return err
-		}
-		return nil
+		return resp, nil
 	}
 	resp.Challenge = hreq.Challenge
 	resp.RequestedScope = hreq.RequestedScope
 	resp.UserId = hreq.GetSubject()
 	c := hreq.GetClient()
 	resp.ClientId = c.GetClientId()
-	if err := a.resEncoder(w, r, &resp); err != nil {
-		return err
-	}
-	return nil
+	return resp, nil
 }
-func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) error {
+func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) (*v1.GrantConsentResponse, error) {
 	var req v1.GrantConsentRequest
 	if err := a.reqDecoder(r, &req); err != nil {
-		return err
+		return nil, err
 	}
 	if len(req.Challenge) == 0 {
-		return errors.BadRequest("CHALLENGE_REQUIRED", "")
+		return nil, errors.BadRequest("CHALLENGE_REQUIRED", "")
 	}
 
-	var resp v1.GrantConsentResponse
+	var resp = &v1.GrantConsentResponse{}
 
 	if req.Reject {
 		reject := *client.NewRejectRequest()
@@ -236,14 +214,11 @@ func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) error {
 		reject.SetErrorDescription("The resource owner denied the request")
 		hreq, _, err := a.hclient.AdminApi.RejectConsentRequest(r.Context()).ConsentChallenge(req.Challenge).RejectRequest(reject).Execute()
 		if err != nil {
-			return err
+			return resp, err
 		}
 		resp.Redirect = hreq.RedirectTo
 		//return
-		if err := a.resEncoder(w, r, &resp); err != nil {
-			return err
-		}
-		return nil
+		return resp, nil
 	}
 	//user allow
 	// The session allows us to set session data for id and access tokens
@@ -263,7 +238,7 @@ func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) error {
 
 	hreq, _, err := a.hclient.AdminApi.GetConsentRequest(r.Context()).ConsentChallenge(req.Challenge).Execute()
 	if err != nil {
-		return err
+		return resp, err
 	}
 
 	acc := client.NewAcceptConsentRequest()
@@ -275,11 +250,8 @@ func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) error {
 
 	accReq, _, err := a.hclient.AdminApi.AcceptConsentRequest(r.Context()).ConsentChallenge(req.Challenge).AcceptConsentRequest(*acc).Execute()
 	if err != nil {
-		return err
+		return resp, err
 	}
 	resp.Redirect = accReq.RedirectTo
-	if err := a.resEncoder(w, r, &resp); err != nil {
-		return err
-	}
-	return nil
+	return resp, nil
 }
