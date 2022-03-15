@@ -37,6 +37,10 @@ func NewSeeder(c *conf.UserConf,
 
 func NewHydra(c *conf2.Security) *client.APIClient {
 	cfg := client.NewConfiguration()
-	cfg.Host = c.Oidc.Hydra.AdminUrl
+	cfg.Servers = client.ServerConfigurations{
+		{
+			URL: c.Oidc.Hydra.AdminUrl,
+		},
+	}
 	return client.NewAPIClient(cfg)
 }
