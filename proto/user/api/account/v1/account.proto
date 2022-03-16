@@ -5,6 +5,7 @@ package user.api.account.v1;
 import "google/api/annotations.proto";
 
 import "google/protobuf/wrappers.proto";
+import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/field_mask.proto";
 
@@ -12,6 +13,8 @@ import "user/api/role/v1/role.proto";
 import "user/api/user/v1/user.proto";
 import "saas/api/tenant/v1/tenant.proto";
 import "blob/blob.proto";
+import "query/operation.proto";
+import "data/data.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/account/v1;v1";
 
@@ -87,10 +90,11 @@ message GetSettingsRequest{
 }
 
 message SettingsFilter{
-
+  query.operation.StringFilterOperation key=1;
 }
-message GetSettingsResponse{
 
+message GetSettingsResponse{
+  repeated Settings settings=1;
 }
 message UpdateSettingsRequest{
 
@@ -118,4 +122,9 @@ message UserTenant{
   string tenant_id=2;
   .saas.api.tenant.v1.TenantInfo tenant=3;
   bool is_host = 4;
+}
+
+message Settings{
+  string key=1;
+  google.protobuf.Value value=2;
 }

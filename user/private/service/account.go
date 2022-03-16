@@ -30,13 +30,15 @@ type AccountService struct {
 	um            *biz.UserManager
 	tenantService v13.TenantServiceClient
 	blob          blob.Factory
+	userSetting   biz.UserSettingRepo
 }
 
-func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13.TenantServiceClient) *AccountService {
+func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13.TenantServiceClient, userSetting biz.UserSettingRepo) *AccountService {
 	return &AccountService{
 		um:            um,
 		blob:          blob,
 		tenantService: tenantService,
+		userSetting:   userSetting,
 	}
 }
 
@@ -168,12 +170,21 @@ func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfil
 }
 func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsRequest) (*pb.GetSettingsResponse, error) {
 	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
-	_, err := authn.ErrIfUnauthenticated(ctx)
+	u, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
-	//TODO
-	return &pb.GetSettingsResponse{}, nil
+	entities, err := s.userSetting.FindByUser(ctx, u.GetId(), req)
+	if err != nil {
+		return nil, err
+	}
+	set := lo.Map(entities, func(t *biz.UserSetting, _ int) *pb.Settings {
+		return &pb.Settings{
+			Key:   t.Key,
+			Value: t.Value.ToStructPb(),
+		}
+	})
+	return &pb.GetSettingsResponse{Settings: set}, nil
 }
 func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSettingsRequest) (*pb.UpdateSettingsResponse, error) {
 	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)

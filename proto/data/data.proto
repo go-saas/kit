@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package data;
 
-import "google/protobuf/duration.proto";
-import "google/protobuf/wrappers.proto";
 import "google/protobuf/struct.proto";
 import "query/operation.proto";
 

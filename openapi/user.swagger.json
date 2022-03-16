@@ -159,6 +159,98 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "filter.key.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.key.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.key.$contains",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.key.$starts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.key.$nstarts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.key.$ends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.key.$nends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.key.$in",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.key.$nin",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.key.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.key.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.key.$empty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.key.$nempty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.key.$like",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1725,6 +1817,59 @@
         }
       }
     },
+    "operationStringFilterOperation": {
+      "type": "object",
+      "properties": {
+        "$eq": {
+          "type": "string"
+        },
+        "$neq": {
+          "type": "string"
+        },
+        "$contains": {
+          "type": "string"
+        },
+        "$starts_with": {
+          "type": "string"
+        },
+        "$nstarts_with": {
+          "type": "string"
+        },
+        "$ends_with": {
+          "type": "string"
+        },
+        "$nends_with": {
+          "type": "string"
+        },
+        "$in": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "$nin": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "$null": {
+          "type": "boolean"
+        },
+        "$nnull": {
+          "type": "boolean"
+        },
+        "$empty": {
+          "type": "boolean"
+        },
+        "$nempty": {
+          "type": "boolean"
+        },
+        "$like": {
+          "type": "string"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -2099,7 +2244,15 @@
       }
     },
     "v1GetSettingsResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "settings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Settings"
+          }
+        }
+      }
     },
     "v1GetUserRoleReply": {
       "type": "object",
@@ -2525,8 +2678,24 @@
         }
       }
     },
+    "v1Settings": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "object"
+        }
+      }
+    },
     "v1SettingsFilter": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "key": {
+          "$ref": "#/definitions/operationStringFilterOperation"
+        }
+      }
     },
     "v1TenantInfo": {
       "type": "object",
