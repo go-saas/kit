@@ -12,6 +12,7 @@ message Bootstrap {
   conf.Security security=3;
   conf.Services services =4;
   UserConf user=5;
+  conf.Logging logging=6;
 }
 
 message Data {

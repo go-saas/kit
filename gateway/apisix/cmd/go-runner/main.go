@@ -23,6 +23,7 @@ import (
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/goxiaoy/go-saas-kit/gateway/apisix/internal/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
+	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"go.uber.org/zap/zapcore"
 	"io"
 	"os"
@@ -102,10 +103,7 @@ func newRunCommand() *cobra.Command {
 	var mode RunMode
 	var clientName string
 	var flagconf string
-	logger := klog.With(klog.NewStdLogger(os.Stdout),
-		"ts", klog.DefaultTimestamp,
-		"caller", klog.DefaultCaller,
-	)
+
 	cmd := &cobra.Command{
 		Use:   "run",
 		Short: "run",
@@ -160,6 +158,10 @@ func newRunCommand() *cobra.Command {
 				panic(err)
 			}
 
+			logger := klog.With(server.PatchFilter(klog.NewStdLogger(os.Stdout), bc.Logging),
+				"ts", klog.DefaultTimestamp,
+				"caller", klog.DefaultCaller,
+			)
 			//init all
 			_, clean, err := initApp(bc.Services, bc.Security, api.ClientName(clientName), logger)
 			if err != nil {

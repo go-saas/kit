@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"github.com/go-kratos/kratos/v2"
+	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/sys/private/data"
 	shttp "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/seed"
@@ -55,15 +56,7 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.See
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace_id", tracing.TraceID(),
-		"span_id", tracing.SpanID(),
-	)
+
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
@@ -79,7 +72,15 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-
+	logger := log.With(server.PatchFilter(log.NewStdLogger(os.Stdout), bc.Logging),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace_id", tracing.TraceID(),
+		"span_id", tracing.SpanID(),
+	)
 	app, cleanup, err := initApp(bc.Services, bc.Security, &uow.Config{
 		SupportNestedTransaction: false,
 	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName), shttp.NewDefaultWebMultiTenancyOption(), bc.Data, logger)

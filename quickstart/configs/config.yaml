@@ -86,3 +86,7 @@ security:
   oidc:
     hydra:
       admin_url: http://hydra:4445
+
+logging:
+  filter:
+    - level: INFO

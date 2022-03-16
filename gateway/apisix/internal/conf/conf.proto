@@ -8,6 +8,7 @@ import "conf/conf.proto";
 message Bootstrap {
   conf.Security security=3;
   conf.Services services =4;
+  conf.Logging logging=5;
 }
 
 

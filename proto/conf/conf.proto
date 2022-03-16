@@ -136,3 +136,21 @@ message Hydra{
   string admin_url=1;
   string public_url=2;
 }
+
+
+message Logging{
+  enum Level{
+    ALL=0;
+    DEBUG=1;
+    INFO=2;
+    WARN=3;
+    ERROR=4;
+    FATAL=5;
+  }
+  message Filter{
+    oneof by{
+     Level level=1;
+    }
+  }
+  repeated Filter filter=1;
+}
