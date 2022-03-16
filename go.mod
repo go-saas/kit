@@ -3,13 +3,13 @@ module github.com/goxiaoy/go-saas-kit
 go 1.18
 
 require (
-	entgo.io/ent v0.10.0
+	entgo.io/ent v0.10.1
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
-	github.com/casbin/casbin/v2 v2.41.0
+	github.com/casbin/casbin/v2 v2.42.0
 	github.com/casbin/gorm-adapter/v3 v3.5.0
-	github.com/envoyproxy/protoc-gen-validate v0.6.3
+	github.com/envoyproxy/protoc-gen-validate v0.6.7
 	github.com/go-chi/chi/v5 v5.0.7
-	github.com/go-kratos/kratos/v2 v2.1.5
+	github.com/go-kratos/kratos/v2 v2.2.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
@@ -18,31 +18,31 @@ require (
 	github.com/goxiaoy/go-saas v0.1.1-0.20220306103631-b9f681ed67a8
 	github.com/goxiaoy/gorm-concurrency v1.0.5
 	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.3
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0
 	github.com/mennanov/fmutils v0.1.1
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354
-	github.com/segmentio/kafka-go v0.4.28
+	github.com/segmentio/kafka-go v0.4.30
 	github.com/stretchr/testify v1.7.1-0.20210427113832-6241f9ab9942
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
-	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
-	google.golang.org/genproto v0.0.0-20220218161850-94dd64e39d7c
-	google.golang.org/grpc v1.44.0
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
+	golang.org/x/sys v0.0.0-20220315194320-039c03cc5b86 // indirect
+	google.golang.org/genproto v0.0.0-20220314164441-57ef72a4c106
+	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.27.1
 	gorm.io/driver/mysql v1.3.3-0.20220223060847-68a051989967
 	gorm.io/driver/sqlite v1.3.1
-	gorm.io/gorm v1.23.1
+	gorm.io/gorm v1.23.2
 )
 
 require (
-	github.com/aws/aws-sdk-go v1.43.2
+	github.com/aws/aws-sdk-go v1.43.19
 	github.com/fclairamb/afero-s3 v0.3.1
 	github.com/gorilla/mux v1.8.0
 	github.com/goxiaoy/sessions v1.2.2-0.20220226081452-f724382d1ab0
 	github.com/nyaruka/phonenumbers v1.0.74
 	github.com/ory/hydra-client-go v1.11.7
-	github.com/samber/lo v1.10.0
-	github.com/spf13/afero v1.8.1
+	github.com/samber/lo v1.10.1
+	github.com/spf13/afero v1.8.2
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
@@ -56,7 +56,7 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
-	github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe // indirect
+	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.0.0-20170517235910-f1bb20e5a188 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
@@ -74,17 +74,18 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/klauspost/compress v1.14.3 // indirect
-	github.com/mattn/go-sqlite3 v1.14.11 // indirect
+	github.com/klauspost/compress v1.15.1 // indirect
+	github.com/mattn/go-sqlite3 v1.14.12 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
+	github.com/pierrec/lz4/v4 v4.1.14 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	go.opentelemetry.io/otel v1.4.1 // indirect
 	go.opentelemetry.io/otel/trace v1.4.1 // indirect
-	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
-	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
+	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd // indirect
+	golang.org/x/exp v0.0.0-20220314205449-43aec2f8a4e7 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20211013180041-c96bc1413d57 // indirect
-	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
+	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.9-0.20211216111533-8d383106f7e7 // indirect

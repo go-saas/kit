@@ -33,7 +33,7 @@ func RegisterAuthWebHTTPServer(s *http.Server, srv AuthWebHTTPServer) {
 	r.GET("/v1/auth/web/logout", _AuthWeb_GetWebLogout0_HTTP_Handler(srv))
 	r.POST("/v1/auth/web/logout", _AuthWeb_WebLogout0_HTTP_Handler(srv))
 	r.GET("/v1/auth/web/consent", _AuthWeb_GetConsent0_HTTP_Handler(srv))
-	r.GET("/v1/auth/web/consent", _AuthWeb_GrantConsent0_HTTP_Handler(srv))
+	r.POST("/v1/auth/web/consent", _AuthWeb_GrantConsent0_HTTP_Handler(srv))
 }
 
 func _AuthWeb_GetWebLogin0_HTTP_Handler(srv AuthWebHTTPServer) func(ctx http.Context) error {
@@ -134,7 +134,7 @@ func _AuthWeb_GetConsent0_HTTP_Handler(srv AuthWebHTTPServer) func(ctx http.Cont
 func _AuthWeb_GrantConsent0_HTTP_Handler(srv AuthWebHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GrantConsentRequest
-		if err := ctx.BindQuery(&in); err != nil {
+		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, "/user.api.auth.v1.AuthWeb/GrantConsent")
@@ -209,10 +209,10 @@ func (c *AuthWebHTTPClientImpl) GetWebLogout(ctx context.Context, in *GetLogoutR
 func (c *AuthWebHTTPClientImpl) GrantConsent(ctx context.Context, in *GrantConsentRequest, opts ...http.CallOption) (*GrantConsentResponse, error) {
 	var out GrantConsentResponse
 	pattern := "/v1/auth/web/consent"
-	path := binding.EncodeURL(pattern, in, true)
+	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.auth.v1.AuthWeb/GrantConsent"))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

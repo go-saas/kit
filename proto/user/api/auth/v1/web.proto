@@ -3,6 +3,7 @@ syntax = "proto3";
 package user.api.auth.v1;
 
 import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
 import "google/protobuf/struct.proto";
 import "validate/validate.proto";
 import "user/api/auth/v1/auth.proto";
@@ -48,7 +49,8 @@ service AuthWeb {
 
   rpc GrantConsent(GrantConsentRequest)returns(GrantConsentResponse){
     option (google.api.http) = {
-      get: "/v1/auth/web/consent",
+      post: "/v1/auth/web/consent",
+      body: "*",
     };
   }
 }
@@ -66,10 +68,10 @@ message GetConsentRequest{
 }
 
 message GetConsentResponse{
-  string challenge=1;
+  string challenge=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   repeated string requested_scope=2;
   string user_id=3;
-  string client_id=4;
+  OAuthClient client=4;
   string redirect=10;
 }
 
@@ -80,8 +82,6 @@ message GrantConsentRequest{
   bool reject=5;
 }
 message GrantConsentResponse{
-  string challenge=1;
-  repeated string grant_scope=2;
   string redirect=10;
 }
 

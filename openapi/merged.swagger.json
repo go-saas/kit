@@ -549,6 +549,34 @@
     },
     "/v1/auth/web/consent": {
       "get": {
+        "operationId": "AuthWeb_GetConsent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetConsentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "consentChallenge",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AuthWeb"
+        ]
+      },
+      "post": {
         "operationId": "AuthWeb_GrantConsent",
         "responses": {
           "200": {
@@ -566,27 +594,12 @@
         },
         "parameters": [
           {
-            "name": "challenge",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "grantScope",
-            "description": "user granted scope.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "reject",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GrantConsentRequest"
+            }
           }
         ],
         "tags": [
@@ -2596,7 +2609,10 @@
       "type": "object",
       "properties": {
         "username": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "username"
+          ]
         },
         "name": {
           "type": "string"
@@ -2629,7 +2645,10 @@
             "type": "string"
           }
         }
-      }
+      },
+      "required": [
+        "username"
+      ]
     },
     "v1DeleteMenuReply": {
       "type": "object",
@@ -2713,7 +2732,10 @@
       "type": "object",
       "properties": {
         "challenge": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "challenge"
+          ]
         },
         "requestedScope": {
           "type": "array",
@@ -2724,13 +2746,16 @@
         "userId": {
           "type": "string"
         },
-        "clientId": {
-          "type": "string"
+        "client": {
+          "$ref": "#/definitions/v1OAuthClient"
         },
         "redirect": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "challenge"
+      ]
     },
     "v1GetCsrfTokenResponse": {
       "type": "object",
@@ -2874,7 +2899,7 @@
         }
       }
     },
-    "v1GrantConsentResponse": {
+    "v1GrantConsentRequest": {
       "type": "object",
       "properties": {
         "challenge": {
@@ -2884,8 +2909,17 @@
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "user granted scope"
         },
+        "reject": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1GrantConsentResponse": {
+      "type": "object",
+      "properties": {
         "redirect": {
           "type": "string"
         }
@@ -3157,15 +3191,25 @@
       "type": "object",
       "properties": {
         "username": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "username"
+          ]
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "password"
+          ]
         },
         "remember": {
           "type": "boolean"
         }
-      }
+      },
+      "required": [
+        "username",
+        "password"
+      ]
     },
     "v1LoginPasswordlessReply": {
       "type": "object"
@@ -3280,6 +3324,23 @@
         }
       }
     },
+    "v1OAuthClient": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "logoUrl": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
     "v1OAuthProvider": {
       "type": "object",
       "properties": {
@@ -3359,9 +3420,15 @@
       "type": "object",
       "properties": {
         "refreshToken": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "refresh_token"
+          ]
         }
-      }
+      },
+      "required": [
+        "refreshToken"
+      ]
     },
     "v1RegisterAuthReply": {
       "type": "object"
@@ -4090,10 +4157,16 @@
       "type": "object",
       "properties": {
         "username": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "username"
+          ]
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "password"
+          ]
         },
         "remember": {
           "type": "boolean"
@@ -4104,7 +4177,11 @@
         "reject": {
           "type": "boolean"
         }
-      }
+      },
+      "required": [
+        "username",
+        "password"
+      ]
     }
   }
 }

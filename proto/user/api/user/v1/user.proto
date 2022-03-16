@@ -108,7 +108,7 @@ message ListUsersRequest{
 }
 
 message GetUserRequest{
-  string  id=1 [(validate.rules).string.min_len = 1];
+  string  id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
 
 
@@ -136,7 +136,7 @@ message ListUsersResponse{
 }
 
 message CreateUserRequest{
-    google.protobuf.StringValue username =1 [(validate.rules).string.min_len = 1];
+    google.protobuf.StringValue username =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
     google.protobuf.StringValue name=2;
     google.protobuf.StringValue phone =3;
     google.protobuf.StringValue email=4 [(validate.rules).string.email = true];

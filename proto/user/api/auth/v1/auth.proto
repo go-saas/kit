@@ -3,6 +3,8 @@ syntax = "proto3";
 package user.api.auth.v1;
 
 import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
 import "google/protobuf/wrappers.proto";
 import "validate/validate.proto";
 
@@ -91,8 +93,8 @@ message RegisterAuthReply{
 }
 
 message LoginAuthRequest{
-    string username =1 [(validate.rules).string.min_len = 1];
-    string password =2 [(validate.rules).string.min_len = 1];
+    string username =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+    string password =2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
     bool remember =3;
 }
 
@@ -129,7 +131,7 @@ message LoginAuthReply{
 }
 
 message RefreshTokenAuthRequest{
-    string refresh_token=4 [(validate.rules).string.min_len = 1];
+    string refresh_token=4 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
 message RefreshTokenAuthReply{
     string access_token=1;
@@ -214,8 +216,8 @@ message LogoutResponse{
 
 
 message WebLoginAuthRequest{
-    string username =1 [(validate.rules).string.min_len = 1];
-    string password =2 [(validate.rules).string.min_len = 1];
+    string username =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+    string password =2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
     bool remember =3;
     string challenge =4;
     bool reject=5;

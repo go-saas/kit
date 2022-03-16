@@ -9,6 +9,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/ory/hydra-client-go"
+	"google.golang.org/protobuf/types/known/structpb"
 	"net/http"
 )
 
@@ -193,7 +194,14 @@ func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) (*v1.GetConsen
 	resp.RequestedScope = hreq.RequestedScope
 	resp.UserId = hreq.GetSubject()
 	c := hreq.GetClient()
-	resp.ClientId = c.GetClientId()
+	meta, _ := structpb.NewStruct(c.GetMetadata())
+	resp.Client = &v1.OAuthClient{
+		Id:       c.GetClientId(),
+		Name:     c.GetClientName(),
+		LogoUrl:  c.GetLogoUri(),
+		Metadata: meta,
+	}
+
 	return resp, nil
 }
 func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) (*v1.GrantConsentResponse, error) {

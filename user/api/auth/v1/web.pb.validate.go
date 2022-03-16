@@ -364,11 +364,47 @@ func (m *GetConsentResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Challenge
+	if utf8.RuneCountInString(m.GetChallenge()) < 1 {
+		err := GetConsentResponseValidationError{
+			field:  "Challenge",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for UserId
 
-	// no validation rules for ClientId
+	if all {
+		switch v := interface{}(m.GetClient()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetConsentResponseValidationError{
+					field:  "Client",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetConsentResponseValidationError{
+					field:  "Client",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetClient()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetConsentResponseValidationError{
+				field:  "Client",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	// no validation rules for Redirect
 
@@ -577,8 +613,6 @@ func (m *GrantConsentResponse) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for Challenge
 
 	// no validation rules for Redirect
 
