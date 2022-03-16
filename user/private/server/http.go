@@ -93,12 +93,12 @@ func NewHTTPServer(c *conf.Services,
 		))
 
 	router.Group(func(router chi.Router) {
-		router.Get("/login", server.HandlerWrap(resEncoder, errorHandler, server.NewHandlerFunc(authHttp.LoginGet)))
-		router.Post("/login", server.HandlerWrap(resEncoder, errorHandler, server.NewHandlerFunc(authHttp.LoginPost)))
-		router.Get("/logout", server.HandlerWrap(resEncoder, errorHandler, server.NewHandlerFunc(authHttp.LoginOutGet)))
-		router.Post("/logout", server.HandlerWrap(resEncoder, errorHandler, server.NewHandlerFunc(authHttp.Logout)))
-		router.Get("/consent", server.HandlerWrap(resEncoder, errorHandler, server.NewHandlerFunc(authHttp.ConsentGet)))
-		router.Post("/consent", server.HandlerWrap(resEncoder, errorHandler, server.NewHandlerFunc(authHttp.Consent)))
+		router.Get("/login", server.HandlerWrap(resEncoder, errorHandler, authHttp.LoginGet))
+		router.Post("/login", server.HandlerWrap(resEncoder, errorHandler, authHttp.LoginPost))
+		router.Get("/logout", server.HandlerWrap(resEncoder, errorHandler, authHttp.LoginOutGet))
+		router.Post("/logout", server.HandlerWrap(resEncoder, errorHandler, authHttp.Logout))
+		router.Get("/consent", server.HandlerWrap(resEncoder, errorHandler, authHttp.ConsentGet))
+		router.Post("/consent", server.HandlerWrap(resEncoder, errorHandler, authHttp.Consent))
 	})
 
 	srv := khttp.NewServer(opts...)

@@ -11,19 +11,7 @@ type Handler[TRet any] interface {
 	ServeHTTP(w http.ResponseWriter, r *http.Request) (TRet, error)
 }
 
-type HandlerFunc[TRet any] struct {
-	f func(w http.ResponseWriter, r *http.Request) (TRet, error)
-}
-
-func NewHandlerFunc[TRet any](f func(w http.ResponseWriter, r *http.Request) (TRet, error)) *HandlerFunc[TRet] {
-	return &HandlerFunc[TRet]{
-		f: f,
-	}
-}
-
-func (h *HandlerFunc[TRet]) ServeHTTP(w http.ResponseWriter, r *http.Request) (TRet, error) {
-	return h.f(w, r)
-}
+type HandlerFunc[TRet any] func(w http.ResponseWriter, r *http.Request) (TRet, error)
 
 type (
 	respKey  struct{}
@@ -48,9 +36,9 @@ func MiddlewareConvert(m ...middleware.Middleware) func(handler http.Handler) ht
 	}
 }
 
-func HandlerWrap[TRet any](resEncoder khttp.EncodeResponseFunc, errorHandler ErrorHandler, handler *HandlerFunc[TRet]) http.HandlerFunc {
+func HandlerWrap[TRet any](resEncoder khttp.EncodeResponseFunc, errorHandler ErrorHandler, handler HandlerFunc[TRet]) http.HandlerFunc {
 	f := func(w http.ResponseWriter, r *http.Request) error {
-		res, err := handler.ServeHTTP(w, r)
+		res, err := handler(w, r)
 		//put into context
 		*r = *r.WithContext(context.WithValue(r.Context(), respKey{}, res))
 		*r = *r.WithContext(context.WithValue(r.Context(), errorKey{}, err))
