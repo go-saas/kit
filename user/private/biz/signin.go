@@ -61,7 +61,8 @@ func (s *SignInManager) SignIn(ctx context.Context, u *User, isPersistent bool) 
 				return err
 			}
 		}
-		return nil
+		//save session
+		return writer.Save(ctx)
 	} else {
 		return ErrWriterNotFound
 	}
@@ -142,7 +143,11 @@ func (s *SignInManager) IsTwoFactorClientRemembered(ctx context.Context, u *User
 
 func (s *SignInManager) RememberTwoFactorClient(ctx context.Context, u *User) error {
 	if writer, ok := session.FromClientStateWriterContext(ctx); ok {
-		return writer.SetTwoFactorClientRemembered(ctx)
+		err := writer.SetTwoFactorClientRemembered(ctx)
+		if err != nil {
+			return err
+		}
+		return writer.Save(ctx)
 	}
 	return ErrWriterNotFound
 }

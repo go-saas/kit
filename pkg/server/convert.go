@@ -25,6 +25,7 @@ func MiddlewareConvert(m ...middleware.Middleware) func(handler http.Handler) ht
 		handleFunc := func(w http.ResponseWriter, r *http.Request) {
 			next := func(ctx context.Context, req interface{}) (interface{}, error) {
 				handler.ServeHTTP(w, r)
+				//compatible with other middlewares
 				res := r.Context().Value(respKey{})
 				err, _ := r.Context().Value(errorKey{}).(error)
 				return res, err
@@ -36,33 +37,17 @@ func MiddlewareConvert(m ...middleware.Middleware) func(handler http.Handler) ht
 	}
 }
 
-//HttpResponseAndErrorEncoder must before any filter may use http.ResponseWriter
-func HttpResponseAndErrorEncoder(resEncoder khttp.EncodeResponseFunc, errorHandler ErrorHandler) func(handler http.Handler) http.Handler {
-	return func(handler http.Handler) http.Handler {
-		return errorHandler.Wrap(func(w http.ResponseWriter, r *http.Request) error {
-			handler.ServeHTTP(w, r)
-			res := r.Context().Value(respKey{})
-			err, _ := r.Context().Value(errorKey{}).(error)
-			if err != nil {
-				return err
-			}
-			if res != nil {
-				//after encoder. w is frozen
-				if err := resEncoder(w, r, res); err != nil {
-					return err
-				}
-			}
-			return nil
-		})
-	}
-}
-
-func HandlerWrap[TRet any](handler HandlerFunc[TRet]) http.HandlerFunc {
-	f := func(w http.ResponseWriter, r *http.Request) {
+func HandlerWrap[TRet any](resEncoder khttp.EncodeResponseFunc, errorHandler ErrorHandler, handler HandlerFunc[TRet]) http.HandlerFunc {
+	f := func(w http.ResponseWriter, r *http.Request) error {
 		res, err := handler(w, r)
 		//put into context
 		*r = *r.WithContext(context.WithValue(r.Context(), respKey{}, res))
 		*r = *r.WithContext(context.WithValue(r.Context(), errorKey{}, err))
+		//after encoder. w is frozen
+		if err := resEncoder(w, r, res); err != nil {
+			return err
+		}
+		return err
 	}
-	return f
+	return errorHandler.Wrap(f).ServeHTTP
 }

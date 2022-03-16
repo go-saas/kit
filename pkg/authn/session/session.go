@@ -20,21 +20,20 @@ func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 	rememberStore := NewRememberStore(cfg)
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			*r = *r.WithContext(sessions.NewRegistryContext(r.Context(), r.Header))
+			ctx := sessions.NewRegistryContext(r.Context(), r.Header)
 
-			s, _ := GetSession(r.Context(), r.Header, sessionInfoStore, cfg)
+			s, _ := GetSession(ctx, r.Header, sessionInfoStore, cfg)
 
-			rs, _ := GetRememberSession(r.Context(), r.Header, rememberStore, cfg)
+			rs, _ := GetRememberSession(ctx, r.Header, rememberStore, cfg)
 
 			stateWriter := NewClientStateWriter(s, rs, w, r.Header)
-			defer func() { stateWriter.Save(context.Background()) }()
-			newCtx := NewClientStateWriterContext(r.Context(), stateWriter)
+
+			ctx = NewClientStateWriterContext(ctx, stateWriter)
 			state := NewClientState(s, rs)
-			newCtx = NewClientStateContext(newCtx, state)
-			newCtx = authn.NewUserContext(newCtx, authn.NewUserInfo(state.GetUid()))
+			ctx = NewClientStateContext(ctx, state)
+			ctx = authn.NewUserContext(ctx, authn.NewUserInfo(state.GetUid()))
 
-			next.ServeHTTP(w, r.WithContext(newCtx))
-
+			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }

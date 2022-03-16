@@ -103,7 +103,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	rs, _ := session.GetRememberSession(ctx, header, rememberStore, securityCfg)
 
 	stateWriter := session.NewClientStateWriter(s, rs, w, header)
-	defer func() { stateWriter.Save(context.Background()) }()
+
 	ctx = session.NewClientStateWriterContext(ctx, stateWriter)
 	state := session.NewClientState(s, rs)
 	ctx = session.NewClientStateContext(ctx, state)

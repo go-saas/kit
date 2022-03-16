@@ -57,7 +57,6 @@ func NewHTTPServer(c *conf.Services,
 	var opts []khttp.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
 		//extract from session cookie
-		server.HttpResponseAndErrorEncoder(resEncoder, errorHandler),
 		session.Auth(sCfg))
 
 	opts = append(opts, []khttp.ServerOption{
@@ -85,21 +84,20 @@ func NewHTTPServer(c *conf.Services,
 			logging.Server(logger),
 			metrics.Server(),
 			validate.Validator(),
-			jwt.ServerExtractAndAuth(tokenizer, logger)),
+			jwt.ServerExtractAndAuth(tokenizer, logger),
 
-		server.MiddlewareConvert(
 			sapi.ServerMiddleware(apiOpt, logger),
 			server.Saas(mOpt, ts),
 			uow.Uow(logger, uowMgr),
 		))
 
 	router.Group(func(router chi.Router) {
-		router.Get("/login", server.HandlerWrap(authHttp.LoginGet))
-		router.Post("/login", server.HandlerWrap(authHttp.LoginPost))
-		router.Get("/logout", server.HandlerWrap(authHttp.LoginOutGet))
-		router.Post("/logout", server.HandlerWrap(authHttp.Logout))
-		router.Get("/consent", server.HandlerWrap(authHttp.ConsentGet))
-		router.Post("/consent", server.HandlerWrap(authHttp.Consent))
+		router.Get("/login", server.HandlerWrap(resEncoder, errorHandler, authHttp.LoginGet))
+		router.Post("/login", server.HandlerWrap(resEncoder, errorHandler, authHttp.LoginPost))
+		router.Get("/logout", server.HandlerWrap(resEncoder, errorHandler, authHttp.LoginOutGet))
+		router.Post("/logout", server.HandlerWrap(resEncoder, errorHandler, authHttp.Logout))
+		router.Get("/consent", server.HandlerWrap(resEncoder, errorHandler, authHttp.ConsentGet))
+		router.Post("/consent", server.HandlerWrap(resEncoder, errorHandler, authHttp.Consent))
 	})
 
 	srv := khttp.NewServer(opts...)
