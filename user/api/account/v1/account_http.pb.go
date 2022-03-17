@@ -18,6 +18,8 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 type AccountHTTPServer interface {
+	CreateAddresses(context.Context, *CreateAddressesRequest) (*CreateAddressReply, error)
+	DeleteAddresses(context.Context, *DeleteAddressRequest) (*DeleteAddressesReply, error)
 	GetAddresses(context.Context, *GetAddressesRequest) (*GetAddressesReply, error)
 	GetProfile(context.Context, *GetProfileRequest) (*GetProfileResponse, error)
 	GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error)
@@ -33,7 +35,9 @@ func RegisterAccountHTTPServer(s *http.Server, srv AccountHTTPServer) {
 	r.GET("/v1/account/settings", _Account_GetSettings0_HTTP_Handler(srv))
 	r.PUT("/v1/account/settings", _Account_UpdateSettings0_HTTP_Handler(srv))
 	r.GET("/v1/account/addresses", _Account_GetAddresses0_HTTP_Handler(srv))
-	r.PUT("/v1/account/addresses", _Account_UpdateAddresses0_HTTP_Handler(srv))
+	r.POST("/v1/account/addresses", _Account_CreateAddresses0_HTTP_Handler(srv))
+	r.PUT("/v1/account/address/{address.id}", _Account_UpdateAddresses0_HTTP_Handler(srv))
+	r.DELETE("/v1/account/addresses", _Account_DeleteAddresses0_HTTP_Handler(srv))
 }
 
 func _Account_GetProfile0_HTTP_Handler(srv AccountHTTPServer) func(ctx http.Context) error {
@@ -131,10 +135,32 @@ func _Account_GetAddresses0_HTTP_Handler(srv AccountHTTPServer) func(ctx http.Co
 	}
 }
 
+func _Account_CreateAddresses0_HTTP_Handler(srv AccountHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in CreateAddressesRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.account.v1.Account/CreateAddresses")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CreateAddresses(ctx, req.(*CreateAddressesRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*CreateAddressReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _Account_UpdateAddresses0_HTTP_Handler(srv AccountHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UpdateAddressesRequest
 		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, "/user.api.account.v1.Account/UpdateAddresses")
@@ -150,7 +176,28 @@ func _Account_UpdateAddresses0_HTTP_Handler(srv AccountHTTPServer) func(ctx http
 	}
 }
 
+func _Account_DeleteAddresses0_HTTP_Handler(srv AccountHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeleteAddressRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.account.v1.Account/DeleteAddresses")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteAddresses(ctx, req.(*DeleteAddressRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*DeleteAddressesReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AccountHTTPClient interface {
+	CreateAddresses(ctx context.Context, req *CreateAddressesRequest, opts ...http.CallOption) (rsp *CreateAddressReply, err error)
+	DeleteAddresses(ctx context.Context, req *DeleteAddressRequest, opts ...http.CallOption) (rsp *DeleteAddressesReply, err error)
 	GetAddresses(ctx context.Context, req *GetAddressesRequest, opts ...http.CallOption) (rsp *GetAddressesReply, err error)
 	GetProfile(ctx context.Context, req *GetProfileRequest, opts ...http.CallOption) (rsp *GetProfileResponse, err error)
 	GetSettings(ctx context.Context, req *GetSettingsRequest, opts ...http.CallOption) (rsp *GetSettingsResponse, err error)
@@ -165,6 +212,32 @@ type AccountHTTPClientImpl struct {
 
 func NewAccountHTTPClient(client *http.Client) AccountHTTPClient {
 	return &AccountHTTPClientImpl{client}
+}
+
+func (c *AccountHTTPClientImpl) CreateAddresses(ctx context.Context, in *CreateAddressesRequest, opts ...http.CallOption) (*CreateAddressReply, error) {
+	var out CreateAddressReply
+	pattern := "/v1/account/addresses"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation("/user.api.account.v1.Account/CreateAddresses"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *AccountHTTPClientImpl) DeleteAddresses(ctx context.Context, in *DeleteAddressRequest, opts ...http.CallOption) (*DeleteAddressesReply, error) {
+	var out DeleteAddressesReply
+	pattern := "/v1/account/addresses"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation("/user.api.account.v1.Account/DeleteAddresses"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
 }
 
 func (c *AccountHTTPClientImpl) GetAddresses(ctx context.Context, in *GetAddressesRequest, opts ...http.CallOption) (*GetAddressesReply, error) {
@@ -208,7 +281,7 @@ func (c *AccountHTTPClientImpl) GetSettings(ctx context.Context, in *GetSettings
 
 func (c *AccountHTTPClientImpl) UpdateAddresses(ctx context.Context, in *UpdateAddressesRequest, opts ...http.CallOption) (*UpdateAddressesReply, error) {
 	var out UpdateAddressesReply
-	pattern := "/v1/account/addresses"
+	pattern := "/v1/account/address/{address.id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/user.api.account.v1.Account/UpdateAddresses"))
 	opts = append(opts, http.PathTemplate(pattern))

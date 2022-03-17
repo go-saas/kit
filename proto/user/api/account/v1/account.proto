@@ -3,7 +3,7 @@ syntax = "proto3";
 package user.api.account.v1;
 
 import "google/api/annotations.proto";
-
+import "google/api/field_behavior.proto";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
@@ -15,6 +15,8 @@ import "saas/api/tenant/v1/tenant.proto";
 import "blob/blob.proto";
 import "query/operation.proto";
 import "data/data.proto";
+import "data/address.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/account/v1;v1";
 
@@ -48,10 +50,21 @@ service Account{
       get: "/v1/account/addresses"
     };
   }
+  rpc CreateAddresses(CreateAddressesRequest) returns(CreateAddressReply){
+    option (google.api.http) = {
+      post: "/v1/account/addresses",
+      body:"*"
+    };
+  }
   rpc UpdateAddresses(UpdateAddressesRequest) returns(UpdateAddressesReply){
     option (google.api.http) = {
-      put: "/v1/account/addresses",
+      put: "/v1/account/address/{address.id}",
       body:"*"
+    };
+  }
+  rpc DeleteAddresses(DeleteAddressRequest) returns(DeleteAddressesReply){
+    option (google.api.http) = {
+      delete: "/v1/account/addresses",
     };
   }
 }
@@ -110,13 +123,54 @@ message GetAddressesRequest{
 }
 
 message GetAddressesReply{
+  repeated UserAddress addresses=1;
+}
+
+
+message UserAddress{
+  string id=1;
+
+  string phone=3;
+  string usage=4;
+  bool prefer=5;
+  data.Address address=6;
+  google.protobuf.Struct metadata=7;
+}
+
+
+message CreateAddressesRequest{
+  string phone=3;
+  string usage=4;
+  bool prefer=5;
+  data.Address address=6 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  google.protobuf.Struct metadata=7;
+}
+
+message CreateAddressReply{
 
 }
-message UpdateAddressesRequest{
 
+message UpdateAddressesRequest{
+  UpdateAddress address=2 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdateAddress{
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string phone=3;
+  string usage=4;
+  bool prefer=5;
+  data.Address address=6 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  google.protobuf.Struct metadata=7;
 }
 
 message UpdateAddressesReply{
+
+}
+
+message DeleteAddressRequest{
+  string id=1  [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+message DeleteAddressesReply{
 
 }
 

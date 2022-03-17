@@ -34,7 +34,8 @@ var ProviderSet = wire.NewSet(
 	NewUserTenantRepo,
 	NewMigrate,
 	NewUserTokenRepo,
-	NewUserSettingRepo)
+	NewUserSettingRepo,
+	NewUserAddrRepo)
 
 const ConnName = "user"
 

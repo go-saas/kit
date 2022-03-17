@@ -29,7 +29,9 @@ type AccountClient interface {
 	GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*GetSettingsResponse, error)
 	UpdateSettings(ctx context.Context, in *UpdateSettingsRequest, opts ...grpc.CallOption) (*UpdateSettingsResponse, error)
 	GetAddresses(ctx context.Context, in *GetAddressesRequest, opts ...grpc.CallOption) (*GetAddressesReply, error)
+	CreateAddresses(ctx context.Context, in *CreateAddressesRequest, opts ...grpc.CallOption) (*CreateAddressReply, error)
 	UpdateAddresses(ctx context.Context, in *UpdateAddressesRequest, opts ...grpc.CallOption) (*UpdateAddressesReply, error)
+	DeleteAddresses(ctx context.Context, in *DeleteAddressRequest, opts ...grpc.CallOption) (*DeleteAddressesReply, error)
 }
 
 type accountClient struct {
@@ -85,9 +87,27 @@ func (c *accountClient) GetAddresses(ctx context.Context, in *GetAddressesReques
 	return out, nil
 }
 
+func (c *accountClient) CreateAddresses(ctx context.Context, in *CreateAddressesRequest, opts ...grpc.CallOption) (*CreateAddressReply, error) {
+	out := new(CreateAddressReply)
+	err := c.cc.Invoke(ctx, "/user.api.account.v1.Account/CreateAddresses", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *accountClient) UpdateAddresses(ctx context.Context, in *UpdateAddressesRequest, opts ...grpc.CallOption) (*UpdateAddressesReply, error) {
 	out := new(UpdateAddressesReply)
 	err := c.cc.Invoke(ctx, "/user.api.account.v1.Account/UpdateAddresses", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountClient) DeleteAddresses(ctx context.Context, in *DeleteAddressRequest, opts ...grpc.CallOption) (*DeleteAddressesReply, error) {
+	out := new(DeleteAddressesReply)
+	err := c.cc.Invoke(ctx, "/user.api.account.v1.Account/DeleteAddresses", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +125,9 @@ type AccountServer interface {
 	GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error)
 	UpdateSettings(context.Context, *UpdateSettingsRequest) (*UpdateSettingsResponse, error)
 	GetAddresses(context.Context, *GetAddressesRequest) (*GetAddressesReply, error)
+	CreateAddresses(context.Context, *CreateAddressesRequest) (*CreateAddressReply, error)
 	UpdateAddresses(context.Context, *UpdateAddressesRequest) (*UpdateAddressesReply, error)
+	DeleteAddresses(context.Context, *DeleteAddressRequest) (*DeleteAddressesReply, error)
 	mustEmbedUnimplementedAccountServer()
 }
 
@@ -128,8 +150,14 @@ func (UnimplementedAccountServer) UpdateSettings(context.Context, *UpdateSetting
 func (UnimplementedAccountServer) GetAddresses(context.Context, *GetAddressesRequest) (*GetAddressesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAddresses not implemented")
 }
+func (UnimplementedAccountServer) CreateAddresses(context.Context, *CreateAddressesRequest) (*CreateAddressReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAddresses not implemented")
+}
 func (UnimplementedAccountServer) UpdateAddresses(context.Context, *UpdateAddressesRequest) (*UpdateAddressesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAddresses not implemented")
+}
+func (UnimplementedAccountServer) DeleteAddresses(context.Context, *DeleteAddressRequest) (*DeleteAddressesReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAddresses not implemented")
 }
 func (UnimplementedAccountServer) mustEmbedUnimplementedAccountServer() {}
 
@@ -234,6 +262,24 @@ func _Account_GetAddresses_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Account_CreateAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAddressesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServer).CreateAddresses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.account.v1.Account/CreateAddresses",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServer).CreateAddresses(ctx, req.(*CreateAddressesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Account_UpdateAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateAddressesRequest)
 	if err := dec(in); err != nil {
@@ -248,6 +294,24 @@ func _Account_UpdateAddresses_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AccountServer).UpdateAddresses(ctx, req.(*UpdateAddressesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Account_DeleteAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServer).DeleteAddresses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.account.v1.Account/DeleteAddresses",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServer).DeleteAddresses(ctx, req.(*DeleteAddressRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -280,8 +344,16 @@ var Account_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Account_GetAddresses_Handler,
 		},
 		{
+			MethodName: "CreateAddresses",
+			Handler:    _Account_CreateAddresses_Handler,
+		},
+		{
 			MethodName: "UpdateAddresses",
 			Handler:    _Account_UpdateAddresses_Handler,
+		},
+		{
+			MethodName: "DeleteAddresses",
+			Handler:    _Account_DeleteAddresses_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

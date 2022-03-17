@@ -37,6 +37,44 @@
     "application/json"
   ],
   "paths": {
+    "/v1/account/address/{address.id}": {
+      "put": {
+        "operationId": "Account_UpdateAddresses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateAddressesReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateAddressesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Account"
+        ]
+      }
+    },
     "/v1/account/addresses": {
       "get": {
         "operationId": "Account_GetAddresses",
@@ -58,13 +96,41 @@
           "Account"
         ]
       },
-      "put": {
-        "operationId": "Account_UpdateAddresses",
+      "delete": {
+        "operationId": "Account_DeleteAddresses",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1UpdateAddressesReply"
+              "$ref": "#/definitions/v1DeleteAddressesReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Account"
+        ]
+      },
+      "post": {
+        "operationId": "Account_CreateAddresses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateAddressReply"
             }
           },
           "default": {
@@ -80,7 +146,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateAddressesRequest"
+              "$ref": "#/definitions/v1CreateAddressesRequest"
             }
           }
         ],
@@ -2455,6 +2521,40 @@
         }
       }
     },
+    "dataAddress": {
+      "type": "object",
+      "properties": {
+        "country": {
+          "type": "string",
+          "title": "Country or region"
+        },
+        "state": {
+          "type": "string",
+          "title": "State or province"
+        },
+        "city": {
+          "type": "string"
+        },
+        "zipCode": {
+          "type": "string"
+        },
+        "line1": {
+          "type": "string"
+        },
+        "line2": {
+          "type": "string"
+        },
+        "line3": {
+          "type": "string"
+        },
+        "longitude": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "string"
+        }
+      }
+    },
     "dataDynamicValue": {
       "type": "object",
       "properties": {
@@ -2679,6 +2779,29 @@
         }
       }
     },
+    "v1CreateAddressReply": {
+      "type": "object"
+    },
+    "v1CreateAddressesRequest": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "prefer": {
+          "type": "boolean"
+        },
+        "address": {
+          "$ref": "#/definitions/dataAddress"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
     "v1CreateMenuRequest": {
       "type": "object",
       "properties": {
@@ -2828,6 +2951,9 @@
         "username"
       ]
     },
+    "v1DeleteAddressesReply": {
+      "type": "object"
+    },
     "v1DeleteMenuReply": {
       "type": "object",
       "properties": {
@@ -2893,7 +3019,15 @@
       "default": "UNKNOWN"
     },
     "v1GetAddressesReply": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "addresses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1UserAddress"
+          }
+        }
+      }
     },
     "v1GetAvailableMenusReply": {
       "type": "object",
@@ -3865,11 +3999,45 @@
         }
       }
     },
+    "v1UpdateAddress": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "required": [
+            "id"
+          ]
+        },
+        "phone": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "prefer": {
+          "type": "boolean"
+        },
+        "address": {
+          "$ref": "#/definitions/dataAddress"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
     "v1UpdateAddressesReply": {
       "type": "object"
     },
     "v1UpdateAddressesRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "address": {
+          "$ref": "#/definitions/v1UpdateAddress"
+        }
+      }
     },
     "v1UpdateMenu": {
       "type": "object",
@@ -4269,6 +4437,29 @@
         },
         "avatar": {
           "$ref": "#/definitions/blobBlobFile"
+        }
+      }
+    },
+    "v1UserAddress": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "prefer": {
+          "type": "boolean"
+        },
+        "address": {
+          "$ref": "#/definitions/dataAddress"
+        },
+        "metadata": {
+          "type": "object"
         }
       }
     },

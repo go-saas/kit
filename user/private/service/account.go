@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
+	"google.golang.org/protobuf/types/known/structpb"
 	"io"
 	"os"
 	"path/filepath"
@@ -32,14 +33,18 @@ type AccountService struct {
 	tenantService v13.TenantServiceClient
 	blob          blob.Factory
 	userSetting   biz.UserSettingRepo
+	userAddr      biz.UserAddressRepo
+	normalizer    biz.LookupNormalizer
 }
 
-func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13.TenantServiceClient, userSetting biz.UserSettingRepo) *AccountService {
+func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13.TenantServiceClient, userSetting biz.UserSettingRepo, userAddr biz.UserAddressRepo, normalizer biz.LookupNormalizer) *AccountService {
 	return &AccountService{
 		um:            um,
 		blob:          blob,
 		tenantService: tenantService,
 		userSetting:   userSetting,
+		userAddr:      userAddr,
+		normalizer:    normalizer,
 	}
 }
 
@@ -215,24 +220,94 @@ func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSetti
 	})
 	return &pb.UpdateSettingsResponse{Settings: set}, nil
 }
+
 func (s *AccountService) GetAddresses(ctx context.Context, req *pb.GetAddressesRequest) (*pb.GetAddressesReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
-	_, err := authn.ErrIfUnauthenticated(ctx)
+	u, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
-	//TODO
-	return &pb.GetAddressesReply{}, nil
+	addres, err := s.userAddr.FindByUser(ctx, u.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetAddressesReply{
+		Addresses: lo.Map(addres, func(t *biz.UserAddress, _ int) *pb.UserAddress {
+			res := &pb.UserAddress{}
+			mapBizUserAddr2Pb(t, res)
+			return res
+		}),
+	}, nil
+}
+func (s *AccountService) CreateAddresses(ctx context.Context, req *pb.CreateAddressesRequest) (*pb.CreateAddressReply, error) {
+	u, err := authn.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
+	}
+	addr := &biz.UserAddress{}
+	mapCreateAddr2Biz(req, addr)
+	addr.UserId = u.GetId()
+
+	if len(addr.Phone) > 0 {
+		p, err := s.normalizer.Phone(addr.Phone)
+		if err != nil {
+			return nil, err
+		}
+		addr.Phone = p
+	}
+	if err := s.userAddr.Create(ctx, addr); err != nil {
+		return nil, err
+	}
+	if addr.Prefer {
+		if err := s.userAddr.SetPrefer(ctx, addr); err != nil {
+			return nil, err
+		}
+	}
+	return &pb.CreateAddressReply{}, nil
 }
 
 func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddressesRequest) (*pb.UpdateAddressesReply, error) {
 	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
-	_, err := authn.ErrIfUnauthenticated(ctx)
+	ui, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
-	//TODO
+	addr, err := s.userAddr.Get(ctx, req.Address.Id)
+	if err != nil {
+		return nil, err
+	}
+	if addr == nil || addr.UserId != ui.GetId() {
+		return nil, errors.NotFound("", "")
+	}
+	mapUpdateAddr2Biz(req.Address, addr)
+
+	if err := s.userAddr.Update(ctx, addr.ID.String(), addr, nil); err != nil {
+		return nil, err
+	}
+	if addr.Prefer {
+		if err := s.userAddr.SetPrefer(ctx, addr); err != nil {
+			return nil, err
+		}
+	}
 	return &pb.UpdateAddressesReply{}, nil
+}
+
+func (s *AccountService) DeleteAddresses(ctx context.Context, req *pb.DeleteAddressRequest) (*pb.DeleteAddressesReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+	ui, err := authn.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
+	}
+	addr, err := s.userAddr.Get(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if addr == nil || addr.UserId != ui.GetId() {
+		return nil, errors.NotFound("", "")
+	}
+	if err := s.userAddr.Delete(ctx, addr.ID.String()); err != nil {
+		return nil, err
+	}
+	return &pb.DeleteAddressesReply{}, nil
 }
 
 func (s *AccountService) UpdateAvatar(ctx http.Context) error {
@@ -300,5 +375,37 @@ func mapAvatar(ctx context.Context, factory blob.Factory, user *biz.User) *blob.
 		Id:   *user.Avatar,
 		Name: "",
 		Url:  url,
+	}
+}
+
+func mapBizUserAddr2Pb(a *biz.UserAddress, b *pb.UserAddress) {
+	b.Id = a.ID.String()
+	b.Phone = a.Phone
+	b.Usage = a.Usage
+	b.Prefer = a.Prefer
+
+	b.Address = a.Address.ToPb()
+	m, _ := structpb.NewStruct(a.Metadata)
+	b.Metadata = m
+}
+
+func mapCreateAddr2Biz(a *pb.CreateAddressesRequest, b *biz.UserAddress) {
+	b.Phone = a.Phone
+	b.Usage = a.Usage
+	b.Prefer = a.Prefer
+
+	b.Address = *data.NewAddressEntityFromPb(a.Address)
+	if a.Metadata != nil {
+		b.Metadata = a.Metadata.AsMap()
+	}
+}
+func mapUpdateAddr2Biz(a *pb.UpdateAddress, b *biz.UserAddress) {
+	b.Phone = a.Phone
+	b.Usage = a.Usage
+	b.Prefer = a.Prefer
+
+	b.Address = *data.NewAddressEntityFromPb(a.Address)
+	if a.Metadata != nil {
+		b.Metadata = a.Metadata.AsMap()
 	}
 }

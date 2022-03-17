@@ -10,7 +10,7 @@ import (
 // UserSetting contains key/value pair of user settings
 type UserSetting struct {
 	gorm.UIDBase
-	UserId string     `json:"user_id"`
+	UserId string     `json:"user_id" gorm:"index"`
 	Key    string     `json:"key" gorm:"index"`
 	Value  data.Value `gorm:"embedded"`
 }
