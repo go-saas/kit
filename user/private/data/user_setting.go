@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
+	"github.com/samber/lo"
 
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -45,4 +46,26 @@ func (r *UserSettingRepo) FindByUser(ctx context.Context, userId string, query *
 	var items []*biz.UserSetting
 	res := db.Find(&items)
 	return items, res.Error
+}
+
+func (r *UserSettingRepo) UpdateByUser(ctx context.Context, userId string, updateBatch []biz.UpdateUserSetting) error {
+	var e biz.UserSetting
+	dels := lo.Map(updateBatch, func(t biz.UpdateUserSetting, _ int) string {
+		return t.Key
+	})
+	db := r.GetDb(ctx).Model(&e)
+	if err := db.Delete(&e, "user_id = ? AND `key` in (?)", userId, dels).Error; err != nil {
+		return err
+	}
+	updates := lo.Map(lo.Filter(updateBatch, func(v biz.UpdateUserSetting, _ int) bool { return !v.Delete }), func(t biz.UpdateUserSetting, _ int) *biz.UserSetting {
+		return &biz.UserSetting{
+			UserId: userId,
+			Key:    t.Key,
+			Value:  *t.Value,
+		}
+	})
+	if err := db.CreateInBatches(updates, 100).Error; err != nil {
+		return err
+	}
+	return nil
 }

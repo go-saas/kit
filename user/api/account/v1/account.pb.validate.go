@@ -1218,6 +1218,40 @@ func (m *UpdateSettingsRequest) validate(all bool) error {
 
 	var errors []error
 
+	for idx, item := range m.GetSettings() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateSettingsRequestValidationError{
+						field:  fmt.Sprintf("Settings[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateSettingsRequestValidationError{
+						field:  fmt.Sprintf("Settings[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateSettingsRequestValidationError{
+					field:  fmt.Sprintf("Settings[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UpdateSettingsRequestMultiError(errors)
 	}
@@ -1318,6 +1352,40 @@ func (m *UpdateSettingsResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	for idx, item := range m.GetSettings() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateSettingsResponseValidationError{
+						field:  fmt.Sprintf("Settings[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateSettingsResponseValidationError{
+						field:  fmt.Sprintf("Settings[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateSettingsResponseValidationError{
+					field:  fmt.Sprintf("Settings[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return UpdateSettingsResponseMultiError(errors)
@@ -2063,3 +2131,135 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SettingsValidationError{}
+
+// Validate checks the field values on UpdateSettings with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UpdateSettings) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateSettings with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UpdateSettingsMultiError,
+// or nil if none found.
+func (m *UpdateSettings) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateSettings) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Key
+
+	if all {
+		switch v := interface{}(m.GetValue()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateSettingsValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateSettingsValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetValue()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateSettingsValidationError{
+				field:  "Value",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Reset_
+
+	if len(errors) > 0 {
+		return UpdateSettingsMultiError(errors)
+	}
+	return nil
+}
+
+// UpdateSettingsMultiError is an error wrapping multiple validation errors
+// returned by UpdateSettings.ValidateAll() if the designated constraints
+// aren't met.
+type UpdateSettingsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateSettingsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateSettingsMultiError) AllErrors() []error { return m }
+
+// UpdateSettingsValidationError is the validation error returned by
+// UpdateSettings.Validate if the designated constraints aren't met.
+type UpdateSettingsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateSettingsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateSettingsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateSettingsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateSettingsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateSettingsValidationError) ErrorName() string { return "UpdateSettingsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UpdateSettingsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateSettings.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateSettingsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateSettingsValidationError{}

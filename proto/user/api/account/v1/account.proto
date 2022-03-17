@@ -96,12 +96,15 @@ message SettingsFilter{
 message GetSettingsResponse{
   repeated Settings settings=1;
 }
+
 message UpdateSettingsRequest{
-
+  repeated UpdateSettings settings=1;
 }
+
 message UpdateSettingsResponse{
-
+  repeated Settings settings=1;
 }
+
 message GetAddressesRequest{
 
 }
@@ -126,5 +129,11 @@ message UserTenant{
 
 message Settings{
   string key=1;
-  google.protobuf.Value value=2;
+  data.DynamicValue value=2;
+}
+
+message UpdateSettings{
+  string key=1;
+  data.DynamicValue value=2;
+  bool reset=3;
 }

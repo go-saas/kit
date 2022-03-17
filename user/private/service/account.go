@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/goxiaoy/go-saas-kit/pkg/data"
 	"io"
 	"os"
 	"path/filepath"
@@ -181,19 +182,38 @@ func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsReq
 	set := lo.Map(entities, func(t *biz.UserSetting, _ int) *pb.Settings {
 		return &pb.Settings{
 			Key:   t.Key,
-			Value: t.Value.ToStructPb(),
+			Value: t.Value.ToDynamicValue(),
 		}
 	})
 	return &pb.GetSettingsResponse{Settings: set}, nil
 }
 func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSettingsRequest) (*pb.UpdateSettingsResponse, error) {
 	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
-	_, err := authn.ErrIfUnauthenticated(ctx)
+	u, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
 	}
-	//TODO
-	return &pb.UpdateSettingsResponse{}, nil
+	if err := s.userSetting.UpdateByUser(ctx, u.GetId(), lo.Map(req.Settings, func(t *pb.UpdateSettings, _ int) biz.UpdateUserSetting {
+		return biz.UpdateUserSetting{
+			Key:    t.Key,
+			Value:  data.NewFromDynamicValue(t.Value),
+			Delete: t.Reset_,
+		}
+	})); err != nil {
+		return nil, err
+	}
+
+	entities, err := s.userSetting.FindByUser(ctx, u.GetId(), new(pb.GetSettingsRequest))
+	if err != nil {
+		return nil, err
+	}
+	set := lo.Map(entities, func(t *biz.UserSetting, _ int) *pb.Settings {
+		return &pb.Settings{
+			Key:   t.Key,
+			Value: t.Value.ToDynamicValue(),
+		}
+	})
+	return &pb.UpdateSettingsResponse{Settings: set}, nil
 }
 func (s *AccountService) GetAddresses(ctx context.Context, req *pb.GetAddressesRequest) (*pb.GetAddressesReply, error) {
 	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)

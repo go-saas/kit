@@ -22,20 +22,28 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
+	//ListUsers
 	// authz: user.user,*,list
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
+	//GetUser
 	// authz: user.user,id,get
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
+	// CreateUser
 	// authz: user.user,*,create
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
+	//UpdateUser
 	// authz: user.user,id,update
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
+	//DeleteUser
 	// authz: user.user,id,delete
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
+	//GetUserRoles
 	// authz: user.user,id,get
 	GetUserRoles(ctx context.Context, in *GetUserRoleRequest, opts ...grpc.CallOption) (*GetUserRoleReply, error)
-	// authz: user.user,*,create
+	//InviteUser
+	//authz: user.user,*,create
 	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserReply, error)
+	//CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error)
 }
 
@@ -123,20 +131,28 @@ func (c *userServiceClient) CheckUserTenant(ctx context.Context, in *CheckUserTe
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
+	//ListUsers
 	// authz: user.user,*,list
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
+	//GetUser
 	// authz: user.user,id,get
 	GetUser(context.Context, *GetUserRequest) (*User, error)
+	// CreateUser
 	// authz: user.user,*,create
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
+	//UpdateUser
 	// authz: user.user,id,update
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
+	//DeleteUser
 	// authz: user.user,id,delete
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
+	//GetUserRoles
 	// authz: user.user,id,get
 	GetUserRoles(context.Context, *GetUserRoleRequest) (*GetUserRoleReply, error)
-	// authz: user.user,*,create
+	//InviteUser
+	//authz: user.user,*,create
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error)
+	//CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
