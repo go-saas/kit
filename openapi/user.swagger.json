@@ -2882,7 +2882,8 @@
         "logo": {
           "$ref": "#/definitions/blobBlobFile"
         }
-      }
+      },
+      "title": "TenantInfo public tenant information"
     },
     "v1TokenReply": {
       "type": "object",

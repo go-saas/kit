@@ -5,11 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	grpc2 "google.golang.org/grpc"
+	grpcx "google.golang.org/grpc"
 )
 
 type ClientName string
@@ -18,7 +20,7 @@ type ClientName string
 func NewGrpcConn(clientName ClientName, serviceName string,
 	services *conf.Services, insecure bool, opt *Option, tokenMgr TokenManager,
 	logger log.Logger,
-	opts ...grpc.ClientOption) (grpc2.ClientConnInterface, func()) {
+	opts ...grpc.ClientOption) (grpcx.ClientConnInterface, func()) {
 	endpoint, ok := services.Services[serviceName]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", serviceName)))
@@ -27,11 +29,16 @@ func NewGrpcConn(clientName ClientName, serviceName string,
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v client not found", clientName)))
 	}
-	var conn *grpc2.ClientConn
+	var conn *grpcx.ClientConn
 	var err error
 	fOpts := []grpc.ClientOption{
 		grpc.WithEndpoint(endpoint.GrpcEndpoint),
-		grpc.WithMiddleware(ClientMiddleware(clientCfg, opt, tokenMgr, logger)),
+		grpc.WithMiddleware(
+			recovery.Recovery(),
+			ClientMiddleware(clientCfg, opt, tokenMgr, logger),
+			tracing.Client()),
+		// for tracing remote ip recording
+		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
 	}
 	if clientCfg.Timeout != nil {
 		fOpts = append(fOpts, grpc.WithTimeout(clientCfg.Timeout.AsDuration()))
@@ -68,7 +75,10 @@ func NewHttpClient(clientName ClientName, serviceName string,
 
 	fOpts := []http.ClientOption{
 		http.WithEndpoint(endpoint.HttpEndpoint),
-		http.WithMiddleware(ClientMiddleware(clientCfg, opt, tokenMgr, logger)),
+		http.WithMiddleware(
+			recovery.Recovery(),
+			ClientMiddleware(clientCfg, opt, tokenMgr, logger),
+			tracing.Client()),
 	}
 	if clientCfg.Timeout != nil {
 		fOpts = append(fOpts, http.WithTimeout(clientCfg.Timeout.AsDuration()))

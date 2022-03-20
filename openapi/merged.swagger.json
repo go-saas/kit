@@ -1595,6 +1595,37 @@
         ]
       }
     },
+    "/v1/saas/tenant/{idOrName}/public": {
+      "get": {
+        "summary": "GetTenant\r\nauthz: saas.tenant,{id},get",
+        "operationId": "TenantService_GetTenantPublic",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1TenantInfo"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "idOrName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      }
+    },
     "/v1/saas/tenant/{id}": {
       "delete": {
         "summary": "DeleteTenant\r\nauthz: saas.tenant,{id},delete",
@@ -3091,23 +3122,11 @@
     "v1GetCurrentTenantReply": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
+        "tenant": {
+          "$ref": "#/definitions/v1TenantInfo"
         },
         "isHost": {
           "type": "boolean"
-        },
-        "logo": {
-          "$ref": "#/definitions/blobBlobFile"
         }
       }
     },
@@ -3959,7 +3978,8 @@
         "logo": {
           "$ref": "#/definitions/blobBlobFile"
         }
-      }
+      },
+      "title": "TenantInfo public tenant information"
     },
     "v1TokenReply": {
       "type": "object",

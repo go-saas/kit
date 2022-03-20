@@ -822,6 +822,109 @@ var _ interface {
 	ErrorName() string
 } = GetTenantRequestValidationError{}
 
+// Validate checks the field values on GetTenantPublicRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetTenantPublicRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetTenantPublicRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetTenantPublicRequestMultiError, or nil if none found.
+func (m *GetTenantPublicRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetTenantPublicRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for IdOrName
+
+	if len(errors) > 0 {
+		return GetTenantPublicRequestMultiError(errors)
+	}
+	return nil
+}
+
+// GetTenantPublicRequestMultiError is an error wrapping multiple validation
+// errors returned by GetTenantPublicRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetTenantPublicRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetTenantPublicRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetTenantPublicRequestMultiError) AllErrors() []error { return m }
+
+// GetTenantPublicRequestValidationError is the validation error returned by
+// GetTenantPublicRequest.Validate if the designated constraints aren't met.
+type GetTenantPublicRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetTenantPublicRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetTenantPublicRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetTenantPublicRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetTenantPublicRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetTenantPublicRequestValidationError) ErrorName() string {
+	return "GetTenantPublicRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetTenantPublicRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetTenantPublicRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetTenantPublicRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetTenantPublicRequestValidationError{}
+
 // Validate checks the field values on TenantFilter with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -1950,22 +2053,12 @@ func (m *GetCurrentTenantReply) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
-
-	// no validation rules for Name
-
-	// no validation rules for DisplayName
-
-	// no validation rules for Region
-
-	// no validation rules for IsHost
-
 	if all {
-		switch v := interface{}(m.GetLogo()).(type) {
+		switch v := interface{}(m.GetTenant()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, GetCurrentTenantReplyValidationError{
-					field:  "Logo",
+					field:  "Tenant",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1973,21 +2066,23 @@ func (m *GetCurrentTenantReply) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, GetCurrentTenantReplyValidationError{
-					field:  "Logo",
+					field:  "Tenant",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetLogo()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetTenant()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return GetCurrentTenantReplyValidationError{
-				field:  "Logo",
+				field:  "Tenant",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
 	}
+
+	// no validation rules for IsHost
 
 	if len(errors) > 0 {
 		return GetCurrentTenantReplyMultiError(errors)

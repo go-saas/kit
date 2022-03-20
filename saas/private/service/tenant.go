@@ -124,6 +124,18 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 	return mapBizTenantToApi(ctx, s.blob, t), nil
 }
 
+//GetTenantPublic return public info of tenant
+func (s *TenantService) GetTenantPublic(ctx context.Context, req *pb.GetTenantPublicRequest) (*pb.TenantInfo, error) {
+	t, err := s.useCase.FindByIdOrName(ctx, req.IdOrName)
+	if err != nil {
+		return nil, err
+	}
+	if t == nil {
+		return nil, errors.NotFound("", "")
+	}
+	return mapBizTenantToInfo(ctx, s.blob, t), nil
+}
+
 func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrentTenantRequest) (*pb.GetCurrentTenantReply, error) {
 	ti, _ := common.FromCurrentTenant(ctx)
 	if len(ti.GetId()) == 0 {
@@ -137,11 +149,14 @@ func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrent
 			return nil, pb.ErrorTenantNotFound("")
 		}
 		return &pb.GetCurrentTenantReply{
-			Id:          t.ID,
-			Name:        t.Name,
-			DisplayName: t.DisplayName,
-			Region:      t.Region,
-			Logo:        mapLogo(ctx, s.blob, t),
+			IsHost: false,
+			Tenant: &pb.TenantInfo{
+				Id:          t.ID,
+				Name:        t.Name,
+				DisplayName: t.DisplayName,
+				Region:      t.Region,
+				Logo:        mapLogo(ctx, s.blob, t),
+			},
 		}, nil
 	}
 }
@@ -272,6 +287,17 @@ func mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenan
 		Logo:        mapLogo(ctx, blob, tenant),
 	}
 
+	return res
+}
+
+func mapBizTenantToInfo(ctx context.Context, blob blob.Factory, tenant *biz.Tenant) *pb.TenantInfo {
+	res := &pb.TenantInfo{
+		Id:          tenant.ID,
+		Name:        tenant.Name,
+		DisplayName: tenant.DisplayName,
+		Region:      tenant.Region,
+		Logo:        mapLogo(ctx, blob, tenant),
+	}
 	return res
 }
 

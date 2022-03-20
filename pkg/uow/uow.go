@@ -91,17 +91,17 @@ func Uow(l log.Logger, um uow.Manager) middleware.Middleware {
 			var err error
 
 			if t, ok := transport.FromServerContext(ctx); ok {
+				//resolve by operation
+				if len(t.Operation()) > 0 && skipOperation(t.Operation()) {
+					//skip unit of work
+					logger.Debugf("safe operation %s. skip uow", t.Operation())
+					return handler(ctx, req)
+				}
+				// can not identify
 				if ht, ok := t.(*khttp.Transport); ok {
 					if contains(safeMethods, ht.Request().Method) {
 						//safe method skip unit of work
 						logger.Debugf("safe method %s. skip uow", ht.Request().Method)
-						return handler(ctx, req)
-					}
-				} else {
-					//resolve by operation
-					if !useOperation(t.Operation()) {
-						//skip unit of work
-						logger.Debugf("safe operation %s. skip uow", t.Operation())
 						return handler(ctx, req)
 					}
 				}
@@ -120,8 +120,8 @@ func Uow(l log.Logger, um uow.Manager) middleware.Middleware {
 }
 
 //useOperation return true if operation action not start with "get" and "list" (case-insensitive)
-func useOperation(operation string) bool {
+func skipOperation(operation string) bool {
 	s := strings.Split(operation, "/")
 	act := strings.ToLower(s[len(s)-1])
-	return !strings.HasPrefix(act, "get") && !strings.HasPrefix(act, "list")
+	return strings.HasPrefix(act, "get") || strings.HasPrefix(act, "list")
 }

@@ -34,11 +34,14 @@ type TenantServiceClient interface {
 	// GetTenant
 	// authz: saas.tenant,{id},get
 	GetTenant(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
-	//GetCurrentTenant
-	GetCurrentTenant(ctx context.Context, in *GetCurrentTenantRequest, opts ...grpc.CallOption) (*GetCurrentTenantReply, error)
+	// GetTenant
+	// authz: saas.tenant,{id},get
+	GetTenantPublic(ctx context.Context, in *GetTenantPublicRequest, opts ...grpc.CallOption) (*TenantInfo, error)
 	//ListTenant
 	//authz: saas.tenant,*,list
 	ListTenant(ctx context.Context, in *ListTenantRequest, opts ...grpc.CallOption) (*ListTenantReply, error)
+	//GetCurrentTenant
+	GetCurrentTenant(ctx context.Context, in *GetCurrentTenantRequest, opts ...grpc.CallOption) (*GetCurrentTenantReply, error)
 }
 
 type tenantServiceClient struct {
@@ -85,9 +88,9 @@ func (c *tenantServiceClient) GetTenant(ctx context.Context, in *GetTenantReques
 	return out, nil
 }
 
-func (c *tenantServiceClient) GetCurrentTenant(ctx context.Context, in *GetCurrentTenantRequest, opts ...grpc.CallOption) (*GetCurrentTenantReply, error) {
-	out := new(GetCurrentTenantReply)
-	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/GetCurrentTenant", in, out, opts...)
+func (c *tenantServiceClient) GetTenantPublic(ctx context.Context, in *GetTenantPublicRequest, opts ...grpc.CallOption) (*TenantInfo, error) {
+	out := new(TenantInfo)
+	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/GetTenantPublic", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,6 +100,15 @@ func (c *tenantServiceClient) GetCurrentTenant(ctx context.Context, in *GetCurre
 func (c *tenantServiceClient) ListTenant(ctx context.Context, in *ListTenantRequest, opts ...grpc.CallOption) (*ListTenantReply, error) {
 	out := new(ListTenantReply)
 	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/ListTenant", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tenantServiceClient) GetCurrentTenant(ctx context.Context, in *GetCurrentTenantRequest, opts ...grpc.CallOption) (*GetCurrentTenantReply, error) {
+	out := new(GetCurrentTenantReply)
+	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/GetCurrentTenant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,11 +131,14 @@ type TenantServiceServer interface {
 	// GetTenant
 	// authz: saas.tenant,{id},get
 	GetTenant(context.Context, *GetTenantRequest) (*Tenant, error)
-	//GetCurrentTenant
-	GetCurrentTenant(context.Context, *GetCurrentTenantRequest) (*GetCurrentTenantReply, error)
+	// GetTenant
+	// authz: saas.tenant,{id},get
+	GetTenantPublic(context.Context, *GetTenantPublicRequest) (*TenantInfo, error)
 	//ListTenant
 	//authz: saas.tenant,*,list
 	ListTenant(context.Context, *ListTenantRequest) (*ListTenantReply, error)
+	//GetCurrentTenant
+	GetCurrentTenant(context.Context, *GetCurrentTenantRequest) (*GetCurrentTenantReply, error)
 	mustEmbedUnimplementedTenantServiceServer()
 }
 
@@ -143,11 +158,14 @@ func (UnimplementedTenantServiceServer) DeleteTenant(context.Context, *DeleteTen
 func (UnimplementedTenantServiceServer) GetTenant(context.Context, *GetTenantRequest) (*Tenant, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTenant not implemented")
 }
-func (UnimplementedTenantServiceServer) GetCurrentTenant(context.Context, *GetCurrentTenantRequest) (*GetCurrentTenantReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCurrentTenant not implemented")
+func (UnimplementedTenantServiceServer) GetTenantPublic(context.Context, *GetTenantPublicRequest) (*TenantInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTenantPublic not implemented")
 }
 func (UnimplementedTenantServiceServer) ListTenant(context.Context, *ListTenantRequest) (*ListTenantReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTenant not implemented")
+}
+func (UnimplementedTenantServiceServer) GetCurrentTenant(context.Context, *GetCurrentTenantRequest) (*GetCurrentTenantReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCurrentTenant not implemented")
 }
 func (UnimplementedTenantServiceServer) mustEmbedUnimplementedTenantServiceServer() {}
 
@@ -234,20 +252,20 @@ func _TenantService_GetTenant_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TenantService_GetCurrentTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetCurrentTenantRequest)
+func _TenantService_GetTenantPublic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTenantPublicRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TenantServiceServer).GetCurrentTenant(ctx, in)
+		return srv.(TenantServiceServer).GetTenantPublic(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/saas.api.tenant.v1.TenantService/GetCurrentTenant",
+		FullMethod: "/saas.api.tenant.v1.TenantService/GetTenantPublic",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TenantServiceServer).GetCurrentTenant(ctx, req.(*GetCurrentTenantRequest))
+		return srv.(TenantServiceServer).GetTenantPublic(ctx, req.(*GetTenantPublicRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -266,6 +284,24 @@ func _TenantService_ListTenant_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TenantServiceServer).ListTenant(ctx, req.(*ListTenantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TenantService_GetCurrentTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCurrentTenantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TenantServiceServer).GetCurrentTenant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/saas.api.tenant.v1.TenantService/GetCurrentTenant",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TenantServiceServer).GetCurrentTenant(ctx, req.(*GetCurrentTenantRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -294,12 +330,16 @@ var TenantService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TenantService_GetTenant_Handler,
 		},
 		{
-			MethodName: "GetCurrentTenant",
-			Handler:    _TenantService_GetCurrentTenant_Handler,
+			MethodName: "GetTenantPublic",
+			Handler:    _TenantService_GetTenantPublic_Handler,
 		},
 		{
 			MethodName: "ListTenant",
 			Handler:    _TenantService_ListTenant_Handler,
+		},
+		{
+			MethodName: "GetCurrentTenant",
+			Handler:    _TenantService_GetCurrentTenant_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
