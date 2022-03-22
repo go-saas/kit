@@ -28,10 +28,10 @@ func (p UserTenantStatus) String() string {
 
 type UserTenant struct {
 	gorm2.UIDBase
-	UserId    string           `gorm:"type:char(36)" json:"user_id"`
-	TenantId  *string          `json:"tenant_id" gorm:"type:char(36)"`
+	UserId    string           `gorm:"type:char(36);index" json:"user_id"`
+	TenantId  *string          `json:"tenant_id" gorm:"type:char(36);index"`
 	JoinTime  time.Time        `json:"join_time"`
-	Status    UserTenantStatus `json:"status"`
+	Status    UserTenantStatus `json:"status;index"`
 	DeletedAt gg.DeletedAt     `gorm:"index"`
 	Extra     data.JSONMap
 }

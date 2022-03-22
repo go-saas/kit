@@ -45,6 +45,9 @@ func (l lookupNormalizer) Phone(phone string) (string, error) {
 	if err != nil {
 		return "", v1.ErrorInvalidPhone("%s", err)
 	}
+	if ok := phonenumbers.IsValidNumber(num); !ok {
+		return "", v1.ErrorInvalidPhone("")
+	}
 	formattedNum := phonenumbers.Format(num, phonenumbers.NATIONAL)
 	return formattedNum, err
 }

@@ -284,7 +284,7 @@ func (um *UserManager) normalize(ctx context.Context, u *User) error {
 		u.NormalizedUsername = &n
 	}
 	if u.Email != nil {
-		e, err := um.lookupNormalizer.Name(*u.Email)
+		e, err := um.lookupNormalizer.Email(*u.Email)
 		if err != nil {
 			return err
 		}
