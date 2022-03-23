@@ -27,9 +27,7 @@ func NewCsrf(l log.Logger, sCfg *conf.Security, cfg *conf.Server_HTTP_Csrf, errE
 		if cfg.Cookie.Domain != nil {
 			csrfOpt = append(csrfOpt, csrf.Domain(cfg.Cookie.Domain.Value))
 		}
-		if cfg.Cookie.Path != nil {
-			csrfOpt = append(csrfOpt, csrf.Path(cfg.Cookie.Path.Value))
-		}
+		csrfOpt = append(csrfOpt, csrf.Path("/"))
 		if cfg.Cookie.HttpOnly != nil {
 			csrfOpt = append(csrfOpt, csrf.HttpOnly(cfg.Cookie.HttpOnly.Value))
 		}
