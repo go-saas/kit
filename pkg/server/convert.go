@@ -44,8 +44,10 @@ func HandlerWrap[TRet any](resEncoder khttp.EncodeResponseFunc, errorHandler Err
 		*r = *r.WithContext(context.WithValue(r.Context(), respKey{}, res))
 		*r = *r.WithContext(context.WithValue(r.Context(), errorKey{}, err))
 		//after encoder. w is frozen
-		if err := resEncoder(w, r, res); err != nil {
-			return err
+		if err == nil {
+			if err := resEncoder(w, r, res); err != nil {
+				return err
+			}
 		}
 		return err
 	}
