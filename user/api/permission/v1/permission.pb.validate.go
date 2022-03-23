@@ -1955,6 +1955,40 @@ func (m *ListSubjectPermissionResponse) validate(all bool) error {
 
 	}
 
+	for idx, item := range m.GetDefGroups() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListSubjectPermissionResponseValidationError{
+						field:  fmt.Sprintf("DefGroups[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListSubjectPermissionResponseValidationError{
+						field:  fmt.Sprintf("DefGroups[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListSubjectPermissionResponseValidationError{
+					field:  fmt.Sprintf("DefGroups[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return ListSubjectPermissionResponseMultiError(errors)
 	}
@@ -2063,8 +2097,6 @@ func (m *PermissionRequirement) validate(all bool) error {
 
 	// no validation rules for Action
 
-	// no validation rules for HostOnly
-
 	if len(errors) > 0 {
 		return PermissionRequirementMultiError(errors)
 	}
@@ -2143,3 +2175,309 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PermissionRequirementValidationError{}
+
+// Validate checks the field values on PermissionDefGroup with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PermissionDefGroup) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PermissionDefGroup with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PermissionDefGroupMultiError, or nil if none found.
+func (m *PermissionDefGroup) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PermissionDefGroup) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DisplayName
+
+	// no validation rules for Side
+
+	// no validation rules for Priority
+
+	for idx, item := range m.GetDef() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PermissionDefGroupValidationError{
+						field:  fmt.Sprintf("Def[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PermissionDefGroupValidationError{
+						field:  fmt.Sprintf("Def[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PermissionDefGroupValidationError{
+					field:  fmt.Sprintf("Def[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if all {
+		switch v := interface{}(m.GetExtra()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PermissionDefGroupValidationError{
+					field:  "Extra",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PermissionDefGroupValidationError{
+					field:  "Extra",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExtra()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PermissionDefGroupValidationError{
+				field:  "Extra",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return PermissionDefGroupMultiError(errors)
+	}
+	return nil
+}
+
+// PermissionDefGroupMultiError is an error wrapping multiple validation errors
+// returned by PermissionDefGroup.ValidateAll() if the designated constraints
+// aren't met.
+type PermissionDefGroupMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PermissionDefGroupMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PermissionDefGroupMultiError) AllErrors() []error { return m }
+
+// PermissionDefGroupValidationError is the validation error returned by
+// PermissionDefGroup.Validate if the designated constraints aren't met.
+type PermissionDefGroupValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PermissionDefGroupValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PermissionDefGroupValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PermissionDefGroupValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PermissionDefGroupValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PermissionDefGroupValidationError) ErrorName() string {
+	return "PermissionDefGroupValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PermissionDefGroupValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPermissionDefGroup.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PermissionDefGroupValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PermissionDefGroupValidationError{}
+
+// Validate checks the field values on PermissionDef with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PermissionDef) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PermissionDef with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PermissionDefMultiError, or
+// nil if none found.
+func (m *PermissionDef) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PermissionDef) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DisplayName
+
+	// no validation rules for Side
+
+	if all {
+		switch v := interface{}(m.GetExtra()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PermissionDefValidationError{
+					field:  "Extra",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PermissionDefValidationError{
+					field:  "Extra",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExtra()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PermissionDefValidationError{
+				field:  "Extra",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Namespace
+
+	// no validation rules for Action
+
+	if len(errors) > 0 {
+		return PermissionDefMultiError(errors)
+	}
+	return nil
+}
+
+// PermissionDefMultiError is an error wrapping multiple validation errors
+// returned by PermissionDef.ValidateAll() if the designated constraints
+// aren't met.
+type PermissionDefMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PermissionDefMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PermissionDefMultiError) AllErrors() []error { return m }
+
+// PermissionDefValidationError is the validation error returned by
+// PermissionDef.Validate if the designated constraints aren't met.
+type PermissionDefValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PermissionDefValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PermissionDefValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PermissionDefValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PermissionDefValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PermissionDefValidationError) ErrorName() string { return "PermissionDefValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PermissionDefValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPermissionDef.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PermissionDefValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PermissionDefValidationError{}

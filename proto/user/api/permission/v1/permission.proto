@@ -7,7 +7,7 @@ import "google/api/field_behavior.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
-
+import "google/protobuf/struct.proto";
 import "validate/validate.proto";
 
 
@@ -165,11 +165,34 @@ message ListSubjectPermissionRequest{
 
 message ListSubjectPermissionResponse{
   repeated Permission acl = 1;
+  repeated PermissionDefGroup def_groups=2;
 }
 
 message PermissionRequirement{
   string namespace = 1;
   string resource = 2;
   string action = 3;
-  bool host_only=4;
+}
+
+
+enum PermissionSide{
+  BOTH=0;
+  HOST_ONLY=1;
+  TENANT_ONLY=2;
+}
+
+message PermissionDefGroup{
+  string display_name=1;
+  PermissionSide side=2;
+  int32 priority=3;
+  repeated PermissionDef def=4;
+  google.protobuf.Struct extra=5;
+}
+
+message PermissionDef{
+  string display_name=1;
+  PermissionSide side=2;
+  google.protobuf.Struct extra=3;
+  string namespace=4;
+  string action=5;
 }

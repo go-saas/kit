@@ -3,6 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
@@ -10,15 +14,13 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	"github.com/goxiaoy/go-saas-kit/saas/api"
 	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"io"
-	"os"
-	"path/filepath"
 )
 
 type TenantService struct {
@@ -34,7 +36,7 @@ func NewTenantService(useCase *biz.TenantUseCase, auth authz.Service, blob blob.
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {
 
-	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("saas.tenant", "*"), authz.CreateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, "*"), authz.CreateAction); err != nil {
 		return nil, err
 	}
 
@@ -56,7 +58,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 }
 func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRequest) (*pb.Tenant, error) {
 
-	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("saas.tenant", req.Tenant.Id), authz.UpdateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, req.Tenant.Id), authz.UpdateAction); err != nil {
 		return nil, err
 	}
 
@@ -94,7 +96,7 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 }
 func (s *TenantService) DeleteTenant(ctx context.Context, req *pb.DeleteTenantRequest) (*pb.DeleteTenantReply, error) {
 
-	if _, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("saas.tenant", req.Id), authz.DeleteAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, req.Id), authz.DeleteAction); err != nil {
 		return nil, err
 	}
 
@@ -117,7 +119,7 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 		//internal api call
 		return mapBizTenantToApi(ctx, s.blob, t), nil
 	}
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", t.ID), authz.GetAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, t.ID), authz.ReadAction); err != nil {
 		return nil, err
 	}
 
@@ -163,7 +165,7 @@ func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrent
 
 func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantRequest) (*pb.ListTenantReply, error) {
 
-	if authResult, err := authz.CheckForHostOnly(ctx, s.auth, authz.NewEntityResource("saas.tenant", "*"), authz.ListAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors.Forbidden("", "")
@@ -195,7 +197,7 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 	tenantID := req.FormValue("id")
 	h := ctx.Middleware(func(ctx context.Context, _ interface{}) (interface{}, error) {
 		if len(tenantID) > 0 {
-			if _, err := s.auth.Check(ctx, authz.NewEntityResource("saas.tenant", tenantID), authz.UpdateAction); err != nil {
+			if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, tenantID), authz.UpdateAction); err != nil {
 				return nil, err
 			}
 		} else {

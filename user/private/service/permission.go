@@ -2,10 +2,15 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
+	"github.com/goxiaoy/go-saas-kit/user/api"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	"github.com/goxiaoy/go-saas-kit/user/util"
+	"github.com/goxiaoy/go-saas/common"
 	"github.com/samber/lo"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type PermissionService struct {
@@ -55,7 +60,7 @@ func (s *PermissionService) CheckCurrent(ctx context.Context, req *pb.CheckPermi
 
 //CheckForSubjects internal api for remote permission checker
 func (s *PermissionService) CheckForSubjects(ctx context.Context, req *pb.CheckSubjectsPermissionRequest) (*pb.CheckSubjectsPermissionReply, error) {
-	if _, err := s.auth.CheckInTenant(ctx, authz.NewEntityResource("permission", "*"), authz.GetAction, "*"); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourcePermissionInternal, "*"), authz.AnyAction); err != nil {
 		return nil, err
 	}
 	subjects := make([]authz.Subject, len(req.Subjects))
@@ -75,7 +80,10 @@ func (s *PermissionService) CheckForSubjects(ctx context.Context, req *pb.CheckS
 }
 
 func (s *PermissionService) AddSubjectPermission(ctx context.Context, req *pb.AddSubjectPermissionRequest) (*pb.AddSubjectPermissionResponse, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", req.Subject), authz.CreateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourcePermission, req.Subject), authz.WriteAction); err != nil {
+		return nil, err
+	}
+	if err := s.findAnyValidateModifyPermissionDef(ctx, req.Namespace, req.Action); err != nil {
 		return nil, err
 	}
 	if err := s.permissionMgr.AddGrant(ctx, authz.NewEntityResource(req.Namespace, req.Resource),
@@ -84,8 +92,9 @@ func (s *PermissionService) AddSubjectPermission(ctx context.Context, req *pb.Ad
 	}
 	return &pb.AddSubjectPermissionResponse{}, nil
 }
+
 func (s *PermissionService) ListSubjectPermission(ctx context.Context, req *pb.ListSubjectPermissionRequest) (*pb.ListSubjectPermissionResponse, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", "*"), authz.ListAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourcePermission, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
 	subs := make([]authz.Subject, len(req.Subjects))
@@ -102,25 +111,47 @@ func (s *PermissionService) ListSubjectPermission(ctx context.Context, req *pb.L
 		util.MapPermissionBeanToPb(bean, r)
 		resItems[i] = r
 	}
-	return &pb.ListSubjectPermissionResponse{
+	res := &pb.ListSubjectPermissionResponse{
 		Acl: resItems,
-	}, nil
+	}
+	ti, _ := common.FromCurrentTenant(ctx)
+	var groups []*pb.PermissionDefGroup
+	authz.WalkGroups(len(ti.GetId()) == 0, func(group authz.PermissionDefGroup) {
+		g := &pb.PermissionDefGroup{}
+		mapGroupDef2Pb(group, g)
+		groups = append(groups, g)
+		var defs []*pb.PermissionDef
+		group.Walk(len(ti.GetId()) == 0, true, func(def authz.PermissionDef) {
+			d := &pb.PermissionDef{}
+			mapDef2Pb(def, d)
+			defs = append(defs, d)
+		})
+		g.Def = defs
+	})
+	res.DefGroups = groups
+	return res, nil
 }
 
 func (s *PermissionService) UpdateSubjectPermission(ctx context.Context, req *pb.UpdateSubjectPermissionRequest) (*pb.UpdateSubjectPermissionResponse, error) {
 	//check update permission
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", req.Subject), authz.UpdateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourcePermission, req.Subject), authz.WriteAction); err != nil {
 		return nil, err
 	}
-	var acl = lo.Map(req.Acl, func(a *pb.UpdateSubjectPermissionAcl, _ int) authz.UpdateSubjectPermission {
+
+	var acl []authz.UpdateSubjectPermission
+	for _, a := range req.Acl {
+		if err := s.findAnyValidateModifyPermissionDef(ctx, a.Namespace, a.Action); err != nil {
+			return nil, err
+		}
 		effect := util.MapPbEffect2AuthEffect(a.Effect)
-		return authz.UpdateSubjectPermission{
+		acl = append(acl, authz.UpdateSubjectPermission{
 			Resource: authz.NewEntityResource(a.Namespace, a.Resource),
 			Action:   authz.ActionStr(a.Action),
 			TenantID: a.TenantId,
 			Effect:   effect,
-		}
-	})
+		})
+	}
+
 	if err := s.permissionMgr.UpdateGrant(ctx, authz.SubjectStr(req.Subject), acl); err != nil {
 		return nil, err
 	}
@@ -129,7 +160,7 @@ func (s *PermissionService) UpdateSubjectPermission(ctx context.Context, req *pb
 
 func (s *PermissionService) RemoveSubjectPermission(ctx context.Context, req *pb.RemoveSubjectPermissionRequest) (*pb.RemoveSubjectPermissionReply, error) {
 	//check delete permission
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("permission", req.Subject), authz.DeleteAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourcePermission, req.Subject), authz.WriteAction); err != nil {
 		return nil, err
 	}
 	effList := make([]authz.Effect, len(req.Effects))
@@ -141,4 +172,50 @@ func (s *PermissionService) RemoveSubjectPermission(ctx context.Context, req *pb
 		return nil, err
 	}
 	return &pb.RemoveSubjectPermissionReply{}, nil
+}
+
+func (s *PermissionService) findAnyValidateModifyPermissionDef(ctx context.Context, namespace string, action string) error {
+	//find def
+	def, err := authz.FindDef(namespace, authz.ActionStr(action), true)
+	if err != nil {
+		return err
+	}
+	ti, _ := common.FromCurrentTenant(ctx)
+	if (def.Side == authz.PermissionHostSideOnly && len(ti.GetId()) != 0) || (def.Side == authz.PermissionTenantSideOnly && len(ti.GetId()) == 0) {
+		return errors.New(400, "PERMISSION_DEF_NOT_FOUND", fmt.Sprintf("action %s in %s not defined", action, namespace))
+	}
+	return nil
+}
+
+func mapGroupDef2Pb(a authz.PermissionDefGroup, b *pb.PermissionDefGroup) {
+	b.DisplayName = a.DisplayName
+	b.Side = mapSide2Pb(a.Side)
+	b.Priority = int32(a.Priority)
+	if a.Extra != nil {
+		e, _ := structpb.NewStruct(a.Extra)
+		b.Extra = e
+	}
+}
+
+func mapDef2Pb(a authz.PermissionDef, b *pb.PermissionDef) {
+	b.DisplayName = a.DisplayName
+	b.Side = mapSide2Pb(a.Side)
+	if a.Extra != nil {
+		e, _ := structpb.NewStruct(a.Extra)
+		b.Extra = e
+	}
+	b.Namespace = a.Namespace
+	b.Action = a.Action.GetIdentity()
+
+}
+
+func mapSide2Pb(side authz.PermissionSide) pb.PermissionSide {
+	switch side {
+	case authz.PermissionHostSideOnly:
+		return pb.PermissionSide_HOST_ONLY
+	case authz.PermissionTenantSideOnly:
+		return pb.PermissionSide_TENANT_ONLY
+	default:
+		return pb.PermissionSide_BOTH
+	}
 }

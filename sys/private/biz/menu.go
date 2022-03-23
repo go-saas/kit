@@ -28,7 +28,6 @@ type Menu struct {
 	Path        string                      `json:"path"`
 	Redirect    string                      `json:"redirect"`
 	IsPreserved bool                        `json:"is_preserved"`
-	HostOnly    bool                        `json:"host_only"`
 }
 
 type MenuPermissionRequirement struct {
@@ -37,7 +36,6 @@ type MenuPermissionRequirement struct {
 	Namespace    string    `json:"namespace"`
 	Resource     string    `json:"resource"`
 	Action       string    `json:"action"`
-	HostOnly     bool      `json:"host_only"`
 }
 
 type MenuRepo interface {

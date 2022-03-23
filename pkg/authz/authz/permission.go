@@ -47,11 +47,6 @@ func EnsureForbidden(ctx context.Context, mgr PermissionManagementService, check
 	return nil
 }
 
-func CheckForHostOnly(ctx context.Context, service Service, resource Resource, action Action) (*Result, error) {
-	//TODO reconsidering
-	return service.CheckInTenant(ctx, resource, action, "*")
-}
-
 type PermissionService struct {
 	v   []PermissionBean
 	mux sync.Mutex

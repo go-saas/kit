@@ -7,9 +7,12 @@ func (a ActionStr) GetIdentity() string {
 }
 
 const (
-	ListAction   ActionStr = "list"
-	UpdateAction ActionStr = "update"
+	AnyAction ActionStr = "*"
+
 	CreateAction ActionStr = "create"
+	UpdateAction ActionStr = "update"
 	DeleteAction ActionStr = "delete"
-	GetAction    ActionStr = "get"
+
+	ReadAction  ActionStr = "read"
+	WriteAction ActionStr = "write"
 )

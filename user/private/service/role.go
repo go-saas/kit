@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
+	"github.com/goxiaoy/go-saas-kit/user/api"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -25,7 +27,7 @@ func NewRoleServiceService(repo *biz.RoleManager, auth authz.Service, permission
 }
 
 func (s *RoleService) ListRoles(ctx context.Context, req *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", "*"), authz.ListAction); err != nil {
+	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceRole, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	} else if !authResult.Allowed {
 		return nil, errors.Forbidden("", "")
@@ -76,7 +78,7 @@ func (s *RoleService) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.
 	if u == nil {
 		return nil, errors.Forbidden("", "")
 	}
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", u.ID.String()), authz.GetAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceRole, u.ID.String()), authz.ReadAction); err != nil {
 		return nil, err
 	}
 	res := &pb.Role{}
@@ -85,7 +87,7 @@ func (s *RoleService) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.
 }
 
 func (s *RoleService) CreateRole(ctx context.Context, req *pb.CreateRoleRequest) (*pb.Role, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", "*"), authz.CreateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceRole, "*"), authz.CreateAction); err != nil {
 		return nil, err
 	}
 	r := &biz.Role{
@@ -100,7 +102,7 @@ func (s *RoleService) CreateRole(ctx context.Context, req *pb.CreateRoleRequest)
 	return ret, nil
 }
 func (s *RoleService) UpdateRole(ctx context.Context, req *pb.UpdateRoleRequest) (*pb.Role, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", req.Role.Id), authz.UpdateAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceRole, req.Role.Id), authz.UpdateAction); err != nil {
 		return nil, err
 	}
 	r, err := s.mgr.Get(ctx, req.Role.Id)
@@ -120,7 +122,7 @@ func (s *RoleService) UpdateRole(ctx context.Context, req *pb.UpdateRoleRequest)
 }
 
 func (s *RoleService) DeleteRole(ctx context.Context, req *pb.DeleteRoleRequest) (*pb.DeleteRoleResponse, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", req.Id), authz.DeleteAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceRole, req.Id), authz.DeleteAction); err != nil {
 		return nil, err
 	}
 	if err := s.mgr.Delete(ctx, req.Id); err != nil {
@@ -129,7 +131,7 @@ func (s *RoleService) DeleteRole(ctx context.Context, req *pb.DeleteRoleRequest)
 	return &pb.DeleteRoleResponse{}, nil
 }
 func (s *RoleService) GetRolePermission(ctx context.Context, req *pb.GetRolePermissionRequest) (*pb.GetRolePermissionResponse, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", req.Id), authz.GetAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceRole, req.Id), authz.ReadAction); err != nil {
 		return nil, err
 	}
 	r, err := s.mgr.Get(ctx, req.Id)
@@ -156,7 +158,7 @@ func (s *RoleService) GetRolePermission(ctx context.Context, req *pb.GetRolePerm
 }
 
 func (s *RoleService) UpdateRolePermission(ctx context.Context, req *pb.UpdateRolePermissionRequest) (*pb.UpdateRolePermissionResponse, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("user.role", req.Id), authz.GetAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceRole, req.Id), authz.ReadAction); err != nil {
 		return nil, err
 	}
 	r, err := s.mgr.Get(ctx, req.Id)

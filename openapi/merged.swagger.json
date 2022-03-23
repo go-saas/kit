@@ -2891,9 +2891,6 @@
         },
         "redirect": {
           "type": "string"
-        },
-        "hostOnly": {
-          "type": "boolean"
         }
       },
       "required": [
@@ -3400,6 +3397,12 @@
           "items": {
             "$ref": "#/definitions/v1Permission"
           }
+        },
+        "defGroups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PermissionDefGroup"
+          }
         }
       }
     },
@@ -3634,9 +3637,6 @@
         },
         "redirect": {
           "type": "string"
-        },
-        "hostOnly": {
-          "type": "boolean"
         }
       }
     },
@@ -3717,6 +3717,50 @@
         }
       }
     },
+    "v1PermissionDef": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "side": {
+          "$ref": "#/definitions/v1PermissionSide"
+        },
+        "extra": {
+          "type": "object"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PermissionDefGroup": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "side": {
+          "$ref": "#/definitions/v1PermissionSide"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "def": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PermissionDef"
+          }
+        },
+        "extra": {
+          "type": "object"
+        }
+      }
+    },
     "v1PermissionRequirement": {
       "type": "object",
       "properties": {
@@ -3728,11 +3772,17 @@
         },
         "action": {
           "type": "string"
-        },
-        "hostOnly": {
-          "type": "boolean"
         }
       }
+    },
+    "v1PermissionSide": {
+      "type": "string",
+      "enum": [
+        "BOTH",
+        "HOST_ONLY",
+        "TENANT_ONLY"
+      ],
+      "default": "BOTH"
     },
     "v1RefreshTokenAuthReply": {
       "type": "object",
@@ -4123,9 +4173,6 @@
         },
         "redirect": {
           "type": "string"
-        },
-        "hostOnly": {
-          "type": "boolean"
         }
       },
       "required": [
