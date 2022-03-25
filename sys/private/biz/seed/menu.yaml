@@ -10,7 +10,7 @@ menus:
     requirement:
       - namespace: "saas.tenant"
         resource: "*"
-        action: "list"
+        action: "read"
     children:
       - name: "tenant"
         path: "/tenants"
@@ -20,7 +20,7 @@ menus:
         requirement:
           - namespace: "saas.tenant"
             resource: "*"
-            action: "list"
+            action: "read"
   - name: "system"
     path: "/system"
     component: "LAYOUT"
@@ -38,7 +38,7 @@ menus:
         requirement:
           - namespace: "user.user"
             resource: "*"
-            action: "list"
+            action: "read"
       - name: "role"
         path: "roles"
         component: "/system/role/index"
@@ -47,7 +47,7 @@ menus:
         requirement:
           - namespace: "user.role"
             resource: "*"
-            action: "list"
+            action: "read"
       - name: "permission"
         path: "permission"
         component: "/system/permission/index"
@@ -56,7 +56,7 @@ menus:
         requirement:
           - namespace: "permission"
             resource: "*"
-            action: "list"
+            action: "read"
       - name: "menu"
         path: "menu"
         component: "/system/menu/index"
@@ -65,4 +65,4 @@ menus:
         requirement:
           - namespace: "sys.menu"
             resource: "*"
-            action: "list"
+            action: "read"

@@ -42,3 +42,13 @@ type MenuRepo interface {
 	data.Repo[Menu, string, v1.ListMenuRequest]
 	FindByName(ctx context.Context, name string) (*Menu, error)
 }
+
+func (m *Menu) MergeWithPreservedFields(p *Menu) {
+	m.Name = p.Name
+	m.Component = p.Component
+	m.Requirement = p.Requirement
+	m.Parent = p.Parent
+	m.FullPath = p.FullPath
+	m.Redirect = p.Redirect
+	m.IsPreserved = true
+}

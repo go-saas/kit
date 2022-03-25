@@ -83,6 +83,11 @@ func (m *MenuSeed) upsertMenus(ctx context.Context, parentId string, menus inter
 				pId = actual.ID.String()
 			} else {
 				pId = dbEntity.ID.String()
+
+				dbEntity.MergeWithPreservedFields(actual)
+				if err := m.menuRepo.Update(ctx, pId, dbEntity, nil); err != nil {
+					return err
+				}
 			}
 
 			if children, ok := raw["children"]; ok {

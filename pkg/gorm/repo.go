@@ -121,7 +121,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entit
 	if p == nil {
 		db = db.Select("*")
 	}
-	return db.Updates(entity).Error
+	return db.Where("id = ?", id).Updates(entity).Error
 }
 func (r *Repo[TEntity, TKey, TQuery]) Delete(ctx context.Context, id TKey) error {
 	var e TEntity

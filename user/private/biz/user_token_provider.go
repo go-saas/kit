@@ -168,7 +168,7 @@ func (p *TwoStepTokenProvider) Retrieve(ctx context.Context, purpose TokenPurpos
 	key := fmt.Sprintf("%s:%s:%s", TwoStepName, purpose, token)
 	err := p.c.Get(ctx, key, dest)
 	if err != nil {
-		if err == redis.Nil {
+		if err == cache.ErrCacheMiss {
 			return false, nil
 		}
 		return false, err
