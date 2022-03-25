@@ -59,7 +59,7 @@ message Services{
 message Database {
   string driver = 1;
   string source = 2;
-  bool  debug = 3;
+  bool debug = 3;
   google.protobuf.StringValue table_prefix = 4;
 }
 
@@ -67,17 +67,19 @@ message Endpoints{
   map<string, Database> databases = 1;
   map<string,Event> events=2;
   map<string,Redis> redis=3;
+  Email email=4;
+  Sms sms=5;
 }
 
 message Redis {
-  string network = 1;
+  google.protobuf.StringValue network = 1;
   string addr = 2;
   google.protobuf.Duration read_timeout = 3;
   google.protobuf.Duration write_timeout = 4;
-  string username = 5;
-  string password = 6;
-  int32  db = 7;
-  int32 max_retries = 8;
+  google.protobuf.StringValue username = 5;
+  google.protobuf.StringValue password = 6;
+  google.protobuf.Int32Value  db = 7;
+  google.protobuf.Int32Value max_retries = 8;
   google.protobuf.Duration min_retry_backoff = 9;
   google.protobuf.Duration max_retry_backoff = 10;
   google.protobuf.Duration dial_timeout = 11;
@@ -153,4 +155,32 @@ message Logging{
     }
   }
   repeated Filter filter=1;
+}
+
+
+message Email{
+  string provider=1;
+  string from = 2;
+  
+  message SMTP{
+    string host=1;
+    int32  port=2;
+    string username=3;
+    string password=4;
+    enum Encryption{
+      NONE=0;
+      SSL=1;
+      STARTTLS=2;
+    }
+    Encryption encryption=5;
+    bool keep_alive=6;
+    google.protobuf.Int32Value connect_timeout=7;
+    google.protobuf.Int32Value send_timeout=8;
+    bool tls_skip_verify=9;
+  }
+  SMTP smtp=100;
+}
+
+message Sms{
+  string provider=1;
 }
