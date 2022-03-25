@@ -7,6 +7,7 @@ import (
 	"fmt"
 	kerrors "github.com/go-kratos/kratos/v2/errors"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
@@ -16,6 +17,7 @@ import (
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/sessions"
+	"go.opentelemetry.io/otel/propagation"
 	"net/http"
 
 	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
@@ -77,8 +79,11 @@ func (p *KitAuthn) ParseConf(in []byte) (interface{}, error) {
 }
 
 func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
-
+	//copy from NewTracer
 	ctx := context.Background()
+	propagator := propagation.NewCompositeTextMapPropagator(tracing.Metadata{}, propagation.Baggage{}, propagation.TraceContext{})
+	//extract tracing information
+	ctx = propagator.Extract(ctx, propagation.HeaderCarrier(r.Header().View()))
 
 	//get tenant id from go-saas plugin
 
@@ -159,18 +164,17 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	//replace with internal token
 	r.Header().Set(jwt.AuthorizationHeader, fmt.Sprintf("%s %s", jwt.BearerTokenType, token))
 
+	headers := api.HeaderCarrier(map[string]string{})
 	//recover header
-	for _, contributor := range apiOpt.Contributor {
-		headers := contributor.CreateHeader(ctx)
-		if headers != nil {
-			for k, v := range headers {
-				nh := fmt.Sprintf("%s%s", api.PrefixOrDefault(""), k)
-				log.Infof("set header: %s value: %s", nh, v)
-				r.Header().Set(nh, v)
-			}
-		}
+	for _, contributor := range apiOpt.Propagators {
+		//do not handle error
+		contributor.Inject(ctx, headers)
 	}
-
+	for k, v := range headers {
+		nh := fmt.Sprintf("%s%s", api.PrefixOrDefault(""), k)
+		log.Infof("set header: %s value: %s", nh, v)
+		r.Header().Set(nh, v)
+	}
 	//continue request
 	return
 }

@@ -57,7 +57,7 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
 	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, tenantStore, logger)
 	menuRepo := data.NewMenuRepo(dbProvider)
-	menuService := service.NewMenuService(defaultAuthorizationService, menuRepo)
+	menuService := service.NewMenuService(defaultAuthorizationService, menuRepo, logger)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, option, logger, menuService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, option, logger, menuService)
 	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)

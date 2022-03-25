@@ -80,5 +80,7 @@ services:
     command: redis-server --requirepass youShouldChangeThis
     ports:
       - "7379:6379"
+
+
 volumes:
   mysql_data:

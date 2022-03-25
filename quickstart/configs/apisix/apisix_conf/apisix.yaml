@@ -89,6 +89,12 @@ global_rules:
   -
     id: 1
     plugins:
+      opentelemetry:
+        sampler:
+          name: always_on
+  -
+    id: 2
+    plugins:
       ext-plugin-pre-req:
         conf:
           - name: "go-saas"

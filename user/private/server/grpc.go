@@ -42,7 +42,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerMiddleware(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, logger),
 			server.Saas(mOpt, ts, func(o *common.TenantResolveOption) {
 				o.AppendContributors(userTenant)
 			}),

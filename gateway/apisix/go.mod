@@ -3,7 +3,7 @@ module github.com/goxiaoy/go-saas-kit/gateway/apisix
 go 1.17
 
 require (
-	github.com/apache/apisix-go-plugin-runner v0.0.0-20220214021533-1a00a4b14f93
+	github.com/apache/apisix-go-plugin-runner v0.0.0-20220323093822-dee7fa0167af
 	github.com/go-kratos/kratos/v2 v2.2.0
 	github.com/google/wire v0.5.0
 	github.com/goxiaoy/go-saas v0.1.1-0.20220306103631-b9f681ed67a8
@@ -18,12 +18,17 @@ require (
 require (
 	github.com/ReneKroon/ttlcache/v2 v2.11.0 // indirect
 	github.com/api7/ext-plugin-proto v0.4.0 // indirect
+	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.6.7 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/go-logr/logr v1.2.2 // indirect
+	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
+	github.com/go-redis/cache/v8 v8.4.3 // indirect
+	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -33,17 +38,27 @@ require (
 	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
+	github.com/klauspost/compress v1.15.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/samber/lo v1.10.1 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	go.opentelemetry.io/otel v1.4.1 // indirect
-	go.opentelemetry.io/otel/trace v1.4.1 // indirect
+	github.com/vmihailenco/go-tinylfu v0.2.2 // indirect
+	github.com/vmihailenco/msgpack/v5 v5.3.4 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+	go.opentelemetry.io/otel v1.6.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.6.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.6.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.6.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.6.0 // indirect
+	go.opentelemetry.io/otel/trace v1.6.0 // indirect
+	go.opentelemetry.io/proto/otlp v0.12.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/exp v0.0.0-20220314205449-43aec2f8a4e7 // indirect

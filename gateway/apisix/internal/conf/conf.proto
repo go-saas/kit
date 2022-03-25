@@ -9,6 +9,7 @@ message Bootstrap {
   conf.Security security=3;
   conf.Services services =4;
   conf.Logging logging=5;
+  conf.Tracers tracing=7;
 }
 
 

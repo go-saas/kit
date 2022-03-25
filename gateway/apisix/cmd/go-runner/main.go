@@ -18,12 +18,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/goxiaoy/go-saas-kit/gateway/apisix/internal/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
+	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	"go.uber.org/zap/zapcore"
 	"io"
 	"os"
@@ -162,6 +164,13 @@ func newRunCommand() *cobra.Command {
 				"ts", klog.DefaultTimestamp,
 				"caller", klog.DefaultCaller,
 			)
+
+			shutdown, err := tracers.SetTracerProvider(context.Background(), bc.Tracing, "public-gateway")
+			if err != nil {
+				logger.Log(klog.LevelError, err)
+			}
+			defer shutdown()
+
 			//init all
 			_, clean, err := initApp(bc.Services, bc.Security, api.ClientName(clientName), logger)
 			if err != nil {

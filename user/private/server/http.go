@@ -67,7 +67,7 @@ func NewHTTPServer(c *conf.Services,
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerMiddleware(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, logger),
 			server.Saas(mOpt, ts, func(o *common.TenantResolveOption) {
 				o.AppendContributors(userTenant)
 			}),
@@ -86,7 +86,7 @@ func NewHTTPServer(c *conf.Services,
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 
-			sapi.ServerMiddleware(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, logger),
 			server.Saas(mOpt, ts),
 			uow.Uow(logger, uowMgr),
 		))

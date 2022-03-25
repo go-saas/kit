@@ -55,14 +55,6 @@ func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resour
 
 func (a *DefaultAuthorizationService) check(ctx context.Context, resource Resource, action Action, tenant string, subject ...Subject) (*Result, error) {
 
-	//find permission definition of current resource and action
-	if resource.GetNamespace() != "*" {
-		def := MustFindDef(resource.GetNamespace(), action)
-		if def.Side == PermissionHostSideOnly {
-			tenant = "*"
-		}
-	}
-
 	if always, ok := FromAlwaysAuthorizationContext(ctx); ok {
 		var subjectStr []string
 		for _, s := range subject {

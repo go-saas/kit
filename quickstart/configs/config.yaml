@@ -96,3 +96,7 @@ security:
 logging:
   filter:
     - level: INFO
+
+tracing:
+  otel:
+    grpc: otel-collector:4317

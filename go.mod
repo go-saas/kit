@@ -22,7 +22,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354
 	github.com/segmentio/kafka-go v0.4.30
-	github.com/stretchr/testify v1.7.1-0.20210427113832-6241f9ab9942
+	github.com/stretchr/testify v1.7.1
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sys v0.0.0-20220315194320-039c03cc5b86 // indirect
 	google.golang.org/genproto v0.0.0-20220314164441-57ef72a4c106
@@ -45,18 +45,22 @@ require (
 	github.com/samber/lo v1.10.1
 	github.com/spf13/afero v1.8.2
 	github.com/xhit/go-simple-mail/v2 v2.11.0
+	go.opentelemetry.io/otel v1.6.0
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.6.0
+	go.opentelemetry.io/otel/sdk v1.6.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
 require (
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
+	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/denisenkom/go-mssqldb v0.12.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/go-logr/logr v1.2.2 // indirect
+	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
@@ -66,6 +70,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/subcommands v1.0.1 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.11.0 // indirect
@@ -88,8 +93,10 @@ require (
 	github.com/vmihailenco/go-tinylfu v0.2.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.4 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	go.opentelemetry.io/otel v1.4.1 // indirect
-	go.opentelemetry.io/otel/trace v1.4.1 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.6.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.6.0 // indirect
+	go.opentelemetry.io/otel/trace v1.6.0 // indirect
+	go.opentelemetry.io/proto/otlp v0.12.0 // indirect
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd // indirect
 	golang.org/x/exp v0.0.0-20220314205449-43aec2f8a4e7 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20211013180041-c96bc1413d57 // indirect

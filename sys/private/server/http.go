@@ -46,7 +46,7 @@ func NewHTTPServer(c *conf2.Services,
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerMiddleware(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, logger),
 			uow.Uow(logger, uowMgr),
 		),
 	}...)

@@ -32,7 +32,7 @@ func NewGRPCServer(c *conf2.Services, tokenizer jwt.Tokenizer, ts common.TenantS
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerMiddleware(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, logger),
 			uow.Uow(logger, uowMgr),
 		),
 	}

@@ -184,3 +184,10 @@ message Email{
 message Sms{
   string provider=1;
 }
+
+message Tracers{
+  message Otel{
+    string grpc=1;
+  }
+  Otel otel=1;
+}

@@ -35,8 +35,9 @@ func NewGrpcConn(clientName ClientName, serviceName string,
 		grpc.WithEndpoint(endpoint.GrpcEndpoint),
 		grpc.WithMiddleware(
 			recovery.Recovery(),
-			ClientMiddleware(clientCfg, opt, tokenMgr, logger),
-			tracing.Client()),
+			tracing.Client(),
+			ClientPropagation(clientCfg, opt, tokenMgr, logger),
+		),
 		// for tracing remote ip recording
 		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
 	}
@@ -77,7 +78,7 @@ func NewHttpClient(clientName ClientName, serviceName string,
 		http.WithEndpoint(endpoint.HttpEndpoint),
 		http.WithMiddleware(
 			recovery.Recovery(),
-			ClientMiddleware(clientCfg, opt, tokenMgr, logger),
+			ClientPropagation(clientCfg, opt, tokenMgr, logger),
 			tracing.Client()),
 	}
 	if clientCfg.Timeout != nil {

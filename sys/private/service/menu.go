@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	klog "github.com/go-kratos/kratos/v2/log"
 	"strings"
 
 	"github.com/goxiaoy/go-saas-kit/sys/api"
@@ -20,12 +21,13 @@ import (
 
 type MenuService struct {
 	pb.UnimplementedMenuServiceServer
-	auth authz.Service
-	repo biz.MenuRepo
+	auth   authz.Service
+	repo   biz.MenuRepo
+	logger *klog.Helper
 }
 
-func NewMenuService(auth authz.Service, repo biz.MenuRepo) *MenuService {
-	return &MenuService{auth: auth, repo: repo}
+func NewMenuService(auth authz.Service, repo biz.MenuRepo, logger klog.Logger) *MenuService {
+	return &MenuService{auth: auth, repo: repo, logger: klog.NewHelper(klog.With(logger, "module", "MenuService"))}
 }
 
 func (s *MenuService) ListMenu(ctx context.Context, req *pb.ListMenuRequest) (*pb.ListMenuReply, error) {
@@ -168,6 +170,11 @@ func (s *MenuService) GetAvailableMenus(ctx context.Context, req *pb.GetAvailabl
 				} else {
 					//TODO handle permission error or other error
 					//disallow
+					s.logger.Error(err)
+					ferr := errors.FromError(err)
+					if ferr.Code >= 500 {
+						return nil, err
+					}
 					disAllowMenuId = append(disAllowMenuId, item.ID.String())
 				}
 			}

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
+	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
 	http2 "github.com/goxiaoy/go-saas/common/http"
@@ -27,7 +28,7 @@ import (
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string
+	Name string = "USER"
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
@@ -83,6 +84,12 @@ func main() {
 		"trace_id", tracing.TraceID(),
 		"span_id", tracing.SpanID(),
 	)
+
+	shutdown, err := tracers.SetTracerProvider(context.Background(), bc.Tracing, Name)
+	if err != nil {
+		log.Error(err)
+	}
+	defer shutdown()
 
 	app, cleanup, err := initApp(bc.Services, bc.Security, bc.User, bc.Data, logger, &uow.Config{
 		SupportNestedTransaction: false,

@@ -15,7 +15,7 @@ const defaultPrefix Prefix = "internal."
 
 type Option struct {
 	HeaderPrefix Prefix
-	Contributor  []Contributor
+	Propagators  []Propagator
 	BypassToken  bool
 }
 
@@ -28,12 +28,12 @@ func PrefixOrDefault(prefix Prefix) Prefix {
 	return prefix
 }
 
-func NewOption(prefix Prefix, bypassToken bool, contributor ...Contributor) *Option {
+func NewOption(prefix Prefix, bypassToken bool, propagators ...Propagator) *Option {
 	prefix = PrefixOrDefault(prefix)
-	return &Option{HeaderPrefix: prefix, BypassToken: bypassToken, Contributor: contributor}
+	return &Option{HeaderPrefix: prefix, BypassToken: bypassToken, Propagators: propagators}
 }
 
-func NewDefaultOption(saas *SaasContributor, logger log.Logger) *Option {
+func NewDefaultOption(saas *SaasPropagator, logger log.Logger) *Option {
 	return NewOption("", false, saas, NewUserContributor(logger), NewClientContributor(true, logger))
 }
 
@@ -43,9 +43,9 @@ type Header interface {
 	HasKey(key string) bool
 }
 
-type headerCarrier map[string]string
+type HeaderCarrier map[string]string
 
-func (h headerCarrier) Get(key string) string {
+func (h HeaderCarrier) Get(key string) string {
 	if r, ok := h[key]; ok {
 		return r
 	} else {
@@ -53,22 +53,25 @@ func (h headerCarrier) Get(key string) string {
 	}
 }
 
-func (h headerCarrier) Set(key, value string) {
+func (h HeaderCarrier) Set(key, value string) {
 	h[key] = value
 }
 
-func (h headerCarrier) HasKey(key string) bool {
+func (h HeaderCarrier) HasKey(key string) bool {
 	_, ok := h[key]
 	return ok
 }
 
-type Contributor interface {
-	RecoverContext(ctx context.Context, headers Header) (context.Context, error)
-	CreateHeader(ctx context.Context) map[string]string
+//Propagator propagates cross-cutting concerns as key-value text
+//pairs within a carrier that travels in-band across process boundaries to keep same state across services
+type Propagator interface {
+	Extract(ctx context.Context, carrier Header) (context.Context, error)
+	Inject(ctx context.Context, carrier Header) error
+	Fields() []string
 }
 
-func ServerMiddleware(opt *Option, logger log.Logger) middleware.Middleware {
-	l := log.NewHelper(log.With(logger, "module", "api.ServerMiddleware"))
+func ServerPropagation(opt *Option, logger log.Logger) middleware.Middleware {
+	l := log.NewHelper(log.With(logger, "module", "api.ServerPropagation"))
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
 			if tr, ok := transport.FromServerContext(ctx); ok {
@@ -81,7 +84,7 @@ func ServerMiddleware(opt *Option, logger log.Logger) middleware.Middleware {
 						//recover context
 						newCtx := ctx
 						var err error
-						cleanHeaders := headerCarrier(map[string]string{})
+						cleanHeaders := HeaderCarrier(map[string]string{})
 						for _, key := range tr.RequestHeader().Keys() {
 							key = strings.ToLower(key)
 							headerPrefix := strings.ToLower(string(opt.HeaderPrefix))
@@ -93,19 +96,13 @@ func ServerMiddleware(opt *Option, logger log.Logger) middleware.Middleware {
 							}
 						}
 
-						for i := range opt.Contributor {
-							newCtx, err = opt.Contributor[i].RecoverContext(newCtx, cleanHeaders)
+						for i := range opt.Propagators {
+							newCtx, err = opt.Propagators[i].Extract(newCtx, cleanHeaders)
 							if err != nil {
 								return nil, err
 							}
 						}
 						return handler(newCtx, req)
-					}
-				}
-				//clean internal headers
-				for _, key := range tr.RequestHeader().Keys() {
-					if strings.HasPrefix(key, string(opt.HeaderPrefix)) {
-						tr.RequestHeader().Set(key, "")
 					}
 				}
 			}
@@ -114,8 +111,8 @@ func ServerMiddleware(opt *Option, logger log.Logger) middleware.Middleware {
 	}
 }
 
-func ClientMiddleware(client *conf.Client, opt *Option, tokenMgr TokenManager, logger log.Logger) middleware.Middleware {
-	l := log.NewHelper(log.With(logger, "module", "api.ClientMiddleware"))
+func ClientPropagation(client *conf.Client, opt *Option, tokenMgr TokenManager, logger log.Logger) middleware.Middleware {
+	l := log.NewHelper(log.With(logger, "module", "api.ClientPropagation"))
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
 			if tr, ok := transport.FromClientContext(ctx); ok {
@@ -134,16 +131,18 @@ func ClientMiddleware(client *conf.Client, opt *Option, tokenMgr TokenManager, l
 					}
 					tr.RequestHeader().Set(jwt.AuthorizationHeader, fmt.Sprintf("%s %s", jwt.BearerTokenType, token))
 				}
+				headers := HeaderCarrier(map[string]string{})
 				//contributor create header
-				for _, contributor := range opt.Contributor {
-					headers := contributor.CreateHeader(ctx)
-					if headers != nil {
-						for k, v := range headers {
-							h := fmt.Sprintf("%s%s", opt.HeaderPrefix, k)
-							l.Debugf("set header: %s,value: %s", h, v)
-							tr.RequestHeader().Set(h, v)
-						}
+				for _, contributor := range opt.Propagators {
+					err := contributor.Inject(ctx, headers)
+					if err != nil {
+						return nil, err
 					}
+				}
+				for k, v := range headers {
+					h := fmt.Sprintf("%s%s", opt.HeaderPrefix, k)
+					l.Debugf("set header: %s,value: %s", h, v)
+					tr.RequestHeader().Set(h, v)
 				}
 			}
 			return handler(ctx, req)

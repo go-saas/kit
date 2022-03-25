@@ -14,6 +14,13 @@ func (p *PermissionService) IsGrant(ctx context.Context, resource authz.Resource
 }
 
 func (p *PermissionService) IsGrantTenant(ctx context.Context, resource authz.Resource, action authz.Action, tenantID string, subjects ...authz.Subject) (authz.Effect, error) {
+	//find permission definition of current resource and action
+	if resource.GetNamespace() != "*" {
+		def := authz.MustFindDef(resource.GetNamespace(), action)
+		if def.Side == authz.PermissionHostSideOnly {
+			tenantID = "*"
+		}
+	}
 	enforcer, err := p.enforcer.Get(ctx)
 	if err != nil {
 		return authz.EffectForbidden, err
