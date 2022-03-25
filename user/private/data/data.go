@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	redisotel "github.com/go-redis/redis/extra/redisotel/v8"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
@@ -12,7 +13,7 @@ import (
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/s3"
 	data2 "github.com/goxiaoy/go-saas-kit/pkg/data"
 	"github.com/goxiaoy/go-saas-kit/pkg/email"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/lazy"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -21,13 +22,14 @@ import (
 	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
 	mail "github.com/xhit/go-simple-mail/v2"
+	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
 	g "gorm.io/gorm"
 )
 
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(
 	NewData,
-	gorm.NewDbOpener,
+	kitgorm.NewDbOpener,
 	uow2.NewUowManager,
 	NewBlobFactory,
 	NewProvider,
@@ -56,7 +58,6 @@ func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
 	if err := db.SetupJoinTable(&biz.User{}, "Roles", &biz.UserRole{}); err != nil {
 		panic(err)
 	}
-	gorm2.RegisterCallbacks(db)
 	return db
 }
 
@@ -96,6 +97,7 @@ func NewRedis(c *conf.Data) *redis.Client {
 	}
 	r := data2.ResolveRedisEndpointOrDefault(c.Endpoints.Redis, ConnName)
 	rdb := redis.NewClient(r)
+	rdb.AddHook(redisotel.NewTracingHook(redisotel.WithAttributes(semconv.NetPeerNameKey.String(r.Addr), semconv.NetPeerPortKey.String(r.Addr))))
 	return rdb
 }
 

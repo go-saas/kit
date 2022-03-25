@@ -78,8 +78,9 @@ func NewHttpClient(clientName ClientName, serviceName string,
 		http.WithEndpoint(endpoint.HttpEndpoint),
 		http.WithMiddleware(
 			recovery.Recovery(),
+			tracing.Client(),
 			ClientPropagation(clientCfg, opt, tokenMgr, logger),
-			tracing.Client()),
+		),
 	}
 	if clientCfg.Timeout != nil {
 		fOpts = append(fOpts, http.WithTimeout(clientCfg.Timeout.AsDuration()))

@@ -5,7 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas/common"
@@ -19,7 +19,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, gorm.NewDbOpener, uow2.NewUowManager, NewTenantStore, NewProvider, NewBlobFactory, NewTenantRepo, NewMigrate)
+var ProviderSet = wire.NewSet(NewData, kitgorm.NewDbOpener, uow2.NewUowManager, NewTenantStore, NewProvider, NewBlobFactory, NewTenantRepo, NewMigrate)
 
 const ConnName = "saas"
 
@@ -32,7 +32,6 @@ var GlobalData *Data
 
 func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
 	db := provider.Get(ctx, ConnName)
-	gorm2.RegisterCallbacks(db)
 	return db
 }
 

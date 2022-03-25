@@ -14,7 +14,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/gorilla/csrf v1.7.1
 	github.com/gorilla/handlers v1.5.1
-	github.com/goxiaoy/go-saas v0.1.1-0.20220306103631-b9f681ed67a8
+	github.com/goxiaoy/go-saas v0.1.1-0.20220325153233-e9872a1712c3
 	github.com/goxiaoy/gorm-concurrency v1.0.5
 	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0
@@ -37,6 +37,7 @@ require (
 	github.com/aws/aws-sdk-go v1.43.19
 	github.com/fclairamb/afero-s3 v0.3.1
 	github.com/go-redis/cache/v8 v8.4.3
+	github.com/go-redis/redis/extra/redisotel/v8 v8.11.5
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gorilla/mux v1.8.0
 	github.com/goxiaoy/sessions v1.2.2-0.20220226081452-f724382d1ab0
@@ -44,6 +45,7 @@ require (
 	github.com/ory/hydra-client-go v1.11.7
 	github.com/samber/lo v1.10.1
 	github.com/spf13/afero v1.8.2
+	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.1.10
 	github.com/xhit/go-simple-mail/v2 v2.11.0
 	go.opentelemetry.io/otel v1.6.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.6.0
@@ -63,12 +65,12 @@ require (
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
+	github.com/go-redis/redis/extra/rediscmd/v8 v8.11.5 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/go-test/deep v1.0.8 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.0.0-20170517235910-f1bb20e5a188 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/subcommands v1.0.1 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
@@ -90,21 +92,21 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/toorop/go-dkim v0.0.0-20201103131630-e1cd1a0a5208 // indirect
+	github.com/uptrace/opentelemetry-go-extra/otelsql v0.1.10 // indirect
 	github.com/vmihailenco/go-tinylfu v0.2.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.4 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.6.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.6.0 // indirect
+	go.opentelemetry.io/otel/internal/metric v0.27.0 // indirect
+	go.opentelemetry.io/otel/metric v0.27.0 // indirect
 	go.opentelemetry.io/otel/trace v1.6.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.12.0 // indirect
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd // indirect
 	golang.org/x/exp v0.0.0-20220314205449-43aec2f8a4e7 // indirect
-	golang.org/x/mod v0.6.0-dev.0.20211013180041-c96bc1413d57 // indirect
 	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.8-0.20211029000441-d6a9af8af023 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	gorm.io/driver/postgres v1.3.1 // indirect
 	gorm.io/driver/sqlserver v1.3.1 // indirect

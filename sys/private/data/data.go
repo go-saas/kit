@@ -8,7 +8,7 @@ import (
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/memory"
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/os"
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/s3"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	suow "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/sys/private/conf"
 	"github.com/goxiaoy/go-saas/common"
@@ -18,7 +18,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, gorm.NewDbOpener, suow.NewUowManager, NewBlobFactory, NewProvider, NewMigrate,
+var ProviderSet = wire.NewSet(NewData, kitgorm.NewDbOpener, suow.NewUowManager, NewBlobFactory, NewProvider, NewMigrate,
 	NewMenuRepo)
 
 const ConnName = "sys"
@@ -30,7 +30,6 @@ type Data struct {
 
 func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
 	db := provider.Get(ctx, ConnName)
-	gorm2.RegisterCallbacks(db)
 	return db
 }
 

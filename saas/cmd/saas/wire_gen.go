@@ -14,6 +14,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
@@ -36,12 +37,12 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	tenantRepo := data.NewTenantRepo()
 	tenantStore := data.NewTenantStore(tenantRepo)
-	dbOpener, cleanup := gorm.NewDbOpener()
+	dbOpener, cleanup := gorm2.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
 	tenantUseCase := biz.NewTenantUserCase(tenantRepo)
 	clientName := _wireClientNameValue
-	saasContributor := api.NewSaasContributor(webMultiTenancyOption, logger)
-	option := api.NewDefaultOption(saasContributor, logger)
+	saasPropagator := api.NewSaasContributor(webMultiTenancyOption, logger)
+	option := api.NewDefaultOption(saasPropagator, logger)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	permissionServiceClient := api2.NewPermissionGrpcClient(grpcConn)

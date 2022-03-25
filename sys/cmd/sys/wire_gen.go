@@ -14,6 +14,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
@@ -37,13 +38,13 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	clientName := _wireClientNameValue
-	saasContributor := api.NewSaasContributor(webMultiTenancyOption, logger)
-	option := api.NewDefaultOption(saasContributor, logger)
+	saasPropagator := api.NewSaasContributor(webMultiTenancyOption, logger)
+	option := api.NewDefaultOption(saasPropagator, logger)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	tenantServiceClient := api2.NewTenantGrpcClient(grpcConn)
 	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceClient)
-	dbOpener, cleanup2 := gorm.NewDbOpener()
+	dbOpener, cleanup2 := gorm2.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue

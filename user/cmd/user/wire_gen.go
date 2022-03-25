@@ -16,6 +16,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	data2 "github.com/goxiaoy/go-saas-kit/pkg/data"
+	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
@@ -42,10 +43,10 @@ import (
 func initApp(services *conf.Services, security *conf.Security, userConf *conf2.UserConf, confData *conf2.Data, logger log.Logger, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
-	dbOpener, cleanup := gorm.NewDbOpener()
+	dbOpener, cleanup := gorm2.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
-	saasContributor := api.NewSaasContributor(webMultiTenancyOption, logger)
-	option := api.NewDefaultOption(saasContributor, logger)
+	saasPropagator := api.NewSaasContributor(webMultiTenancyOption, logger)
+	option := api.NewDefaultOption(saasPropagator, logger)
 	clientName := _wireClientNameValue
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
