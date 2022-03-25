@@ -118,3 +118,15 @@ func IsInvalidUsername(err error) bool {
 func ErrorInvalidUsername(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_INVALID_USERNAME.String(), fmt.Sprintf(format, args...))
 }
+
+func IsUserNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_USER_NOT_FOUND.String() && e.Code == 404
+}
+
+func ErrorUserNotFound(format string, args ...interface{}) *errors.Error {
+	return errors.New(404, ErrorReason_USER_NOT_FOUND.String(), fmt.Sprintf(format, args...))
+}

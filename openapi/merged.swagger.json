@@ -545,8 +545,41 @@
         ]
       }
     },
+    "/v1/auth/password/change": {
+      "post": {
+        "operationId": "Auth_ChangePasswordByPre",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ChangePasswordByPreReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ChangePasswordByPreRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/v1/auth/password/forget": {
       "post": {
+        "summary": "ForgetPassword\r\nverify forget password token",
         "operationId": "Auth_ForgetPassword",
         "responses": {
           "200": {
@@ -577,8 +610,41 @@
         ]
       }
     },
+    "/v1/auth/password/forget/change": {
+      "post": {
+        "operationId": "Auth_ChangePasswordByForget",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ChangePasswordByForgetReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ChangePasswordByForgetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/v1/auth/password/validate": {
       "post": {
+        "summary": "ValidatePassword\r\nserver validation for password strength",
         "operationId": "Auth_ValidatePassword",
         "responses": {
           "200": {
@@ -2757,6 +2823,68 @@
     "v1AddSubjectPermissionResponse": {
       "type": "object"
     },
+    "v1ChangePasswordByForgetReply": {
+      "type": "object"
+    },
+    "v1ChangePasswordByForgetRequest": {
+      "type": "object",
+      "properties": {
+        "changePasswordToken": {
+          "type": "string",
+          "required": [
+            "change_password_token"
+          ]
+        },
+        "newPassword": {
+          "type": "string",
+          "required": [
+            "new_password"
+          ]
+        },
+        "confirmNewPassword": {
+          "type": "string",
+          "required": [
+            "confirm_new_password"
+          ]
+        }
+      },
+      "required": [
+        "changePasswordToken",
+        "newPassword",
+        "confirmNewPassword"
+      ]
+    },
+    "v1ChangePasswordByPreReply": {
+      "type": "object"
+    },
+    "v1ChangePasswordByPreRequest": {
+      "type": "object",
+      "properties": {
+        "prePassword": {
+          "type": "string",
+          "required": [
+            "pre_password"
+          ]
+        },
+        "newPassword": {
+          "type": "string",
+          "required": [
+            "new_password"
+          ]
+        },
+        "confirmNewPassword": {
+          "type": "string",
+          "required": [
+            "confirm_new_password"
+          ]
+        }
+      },
+      "required": [
+        "prePassword",
+        "newPassword",
+        "confirmNewPassword"
+      ]
+    },
     "v1CheckPermissionReply": {
       "type": "object",
       "properties": {
@@ -3017,13 +3145,36 @@
       "default": "UNKNOWN"
     },
     "v1ForgetPasswordReply": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "changePasswordToken": {
+          "type": "string",
+          "title": "next step for change password"
+        }
+      }
     },
     "v1ForgetPasswordRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
     },
     "v1ForgetPasswordTokenReply": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "expire": {
+          "type": "string",
+          "title": "expire time"
+        }
+      }
     },
     "v1ForgetPasswordTokenRequest": {
       "type": "object",
@@ -3513,7 +3664,7 @@
         "expires": {
           "type": "integer",
           "format": "int32",
-          "title": "Expires time in seconds"
+          "title": "Expires time in seconds\r\nDeprecated, use expires_in instead"
         },
         "refreshToken": {
           "type": "string",
@@ -3554,10 +3705,45 @@
       ]
     },
     "v1LoginPasswordlessReply": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "tokenType": {
+          "type": "string",
+          "title": "Bearer"
+        },
+        "refreshToken": {
+          "type": "string",
+          "title": "Refresh token to keep login state"
+        },
+        "expiresIn": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Expires time in seconds"
+        }
+      }
     },
     "v1LoginPasswordlessRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string",
+          "required": [
+            "token"
+          ]
+        }
+      },
+      "required": [
+        "token"
+      ]
     },
     "v1LogoutRequest": {
       "type": "object",
@@ -3689,10 +3875,24 @@
       }
     },
     "v1PasswordlessTokenAuthReply": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "expire": {
+          "type": "string",
+          "title": "expire time"
+        }
+      }
     },
     "v1PasswordlessTokenAuthRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
     },
     "v1Permission": {
       "type": "object",

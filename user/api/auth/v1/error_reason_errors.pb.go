@@ -46,3 +46,123 @@ func IsUserLocked(err error) bool {
 func ErrorUserLocked(format string, args ...interface{}) *errors.Error {
 	return errors.New(403, ErrorReason_USER_LOCKED.String(), fmt.Sprintf(format, args...))
 }
+
+func IsEmailNotConfirmed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_EMAIL_NOT_CONFIRMED.String() && e.Code == 403
+}
+
+func ErrorEmailNotConfirmed(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_EMAIL_NOT_CONFIRMED.String(), fmt.Sprintf(format, args...))
+}
+
+func IsPhoneNotConfirmed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_PHONE_NOT_CONFIRMED.String() && e.Code == 403
+}
+
+func ErrorPhoneNotConfirmed(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_PHONE_NOT_CONFIRMED.String(), fmt.Sprintf(format, args...))
+}
+
+func IsEmailRecoverFailed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_EMAIL_RECOVER_FAILED.String() && e.Code == 403
+}
+
+func ErrorEmailRecoverFailed(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_EMAIL_RECOVER_FAILED.String(), fmt.Sprintf(format, args...))
+}
+
+func IsEmailConfirmFailed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_EMAIL_CONFIRM_FAILED.String() && e.Code == 403
+}
+
+func ErrorEmailConfirmFailed(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_EMAIL_CONFIRM_FAILED.String(), fmt.Sprintf(format, args...))
+}
+
+func IsPhoneRecoverFailed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_PHONE_RECOVER_FAILED.String() && e.Code == 403
+}
+
+func ErrorPhoneRecoverFailed(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_PHONE_RECOVER_FAILED.String(), fmt.Sprintf(format, args...))
+}
+
+func IsPhoneConfirmFailed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_PHONE_CONFIRM_FAILED.String() && e.Code == 403
+}
+
+func ErrorPhoneConfirmFailed(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_PHONE_CONFIRM_FAILED.String(), fmt.Sprintf(format, args...))
+}
+
+func IsTwoStepFailed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_TWO_STEP_FAILED.String() && e.Code == 403
+}
+
+func ErrorTwoStepFailed(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), fmt.Sprintf(format, args...))
+}
+
+func IsConfirmPasswordMismatch(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_CONFIRM_PASSWORD_MISMATCH.String() && e.Code == 400
+}
+
+func ErrorConfirmPasswordMismatch(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), fmt.Sprintf(format, args...))
+}
+
+func IsRememberTokenNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String() && e.Code == 403
+}
+
+func ErrorRememberTokenNotFound(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String(), fmt.Sprintf(format, args...))
+}
+
+func IsUserDeleted(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_USER_DELETED.String() && e.Code == 403
+}
+
+func ErrorUserDeleted(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_USER_DELETED.String(), fmt.Sprintf(format, args...))
+}

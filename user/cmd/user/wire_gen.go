@@ -15,6 +15,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	data2 "github.com/goxiaoy/go-saas-kit/pkg/data"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
@@ -30,10 +31,15 @@ import (
 	"github.com/goxiaoy/uow"
 )
 
+import (
+	_ "github.com/goxiaoy/go-saas-kit/saas/api"
+	_ "github.com/goxiaoy/go-saas-kit/sys/api"
+)
+
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, security *conf.Security, userConf *conf2.UserConf, confData *conf2.Data, logger log.Logger, passwordValidatorConfig *biz.PasswordValidatorConfig, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, security *conf.Security, userConf *conf2.UserConf, confData *conf2.Data, logger log.Logger, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbOpener, cleanup := gorm.NewDbOpener()
@@ -58,12 +64,17 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userRepo := data.NewUserRepo(dataData)
 	passwordHasher := biz.NewPasswordHasher()
 	userValidator := biz.NewUserValidator()
-	passwordValidator := biz.NewPasswordValidator(passwordValidatorConfig)
+	passwordValidator := biz.NewPasswordValidator(userConf)
 	lookupNormalizer := biz.NewLookupNormalizer()
 	userTokenRepo := data.NewUserTokenRepo(dataData)
 	refreshTokenRepo := data.NewRefreshTokenRepo(dataData)
 	userTenantRepo := data.NewUserTenantRepo(dataData)
-	userManager := biz.NewUserManager(userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, userTokenRepo, refreshTokenRepo, userTenantRepo, logger)
+	client := data.NewRedis(confData)
+	emailTokenProvider := biz.NewEmailTokenProvider(client)
+	phoneTokenProvider := biz.NewPhoneTokenProvider(client)
+	cache := data2.NewCache(client)
+	twoStepTokenProvider := biz.NewTwoStepTokenProvider(cache)
+	userManager := biz.NewUserManager(userConf, userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, userTokenRepo, refreshTokenRepo, userTenantRepo, emailTokenProvider, phoneTokenProvider, twoStepTokenProvider, logger)
 	roleRepo := data.NewRoleRepo(dataData)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
 	enforcerProvider := data.NewEnforcerProvider(dbProvider)
@@ -77,7 +88,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userSettingRepo := data.NewUserSettingRepo(dataData)
 	userAddressRepo := data.NewUserAddrRepo(dataData)
 	accountService := service.NewAccountService(userManager, factory, tenantServiceClient, userSettingRepo, userAddressRepo, lookupNormalizer)
-	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, security)
+	of := data.NewEmailer(confData)
+	emailSender := biz.NewEmailSender(of, confData)
+	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, logger)
 	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService, permissionService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl)
 	signInManager := biz.NewSignInManager(userManager)

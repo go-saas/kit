@@ -942,6 +942,64 @@ func (m *PasswordlessTokenAuthRequest) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetPhone()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PasswordlessTokenAuthRequestValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PasswordlessTokenAuthRequestValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PasswordlessTokenAuthRequestValidationError{
+				field:  "Phone",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetEmail()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PasswordlessTokenAuthRequestValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PasswordlessTokenAuthRequestValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PasswordlessTokenAuthRequestValidationError{
+				field:  "Email",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return PasswordlessTokenAuthRequestMultiError(errors)
 	}
@@ -1044,6 +1102,35 @@ func (m *PasswordlessTokenAuthReply) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetExpire()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PasswordlessTokenAuthReplyValidationError{
+					field:  "Expire",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PasswordlessTokenAuthReplyValidationError{
+					field:  "Expire",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExpire()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PasswordlessTokenAuthReplyValidationError{
+				field:  "Expire",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return PasswordlessTokenAuthReplyMultiError(errors)
 	}
@@ -1145,6 +1232,75 @@ func (m *LoginPasswordlessRequest) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetPhone()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, LoginPasswordlessRequestValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, LoginPasswordlessRequestValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return LoginPasswordlessRequestValidationError{
+				field:  "Phone",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetEmail()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, LoginPasswordlessRequestValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, LoginPasswordlessRequestValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return LoginPasswordlessRequestValidationError{
+				field:  "Email",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if utf8.RuneCountInString(m.GetToken()) < 1 {
+		err := LoginPasswordlessRequestValidationError{
+			field:  "Token",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return LoginPasswordlessRequestMultiError(errors)
 	}
@@ -1245,6 +1401,14 @@ func (m *LoginPasswordlessReply) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for AccessToken
+
+	// no validation rules for TokenType
+
+	// no validation rules for RefreshToken
+
+	// no validation rules for ExpiresIn
 
 	if len(errors) > 0 {
 		return LoginPasswordlessReplyMultiError(errors)
@@ -1506,6 +1670,35 @@ func (m *ForgetPasswordTokenReply) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetExpire()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ForgetPasswordTokenReplyValidationError{
+					field:  "Expire",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ForgetPasswordTokenReplyValidationError{
+					field:  "Expire",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExpire()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ForgetPasswordTokenReplyValidationError{
+				field:  "Expire",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return ForgetPasswordTokenReplyMultiError(errors)
 	}
@@ -1607,6 +1800,66 @@ func (m *ForgetPasswordRequest) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetPhone()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ForgetPasswordRequestValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ForgetPasswordRequestValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ForgetPasswordRequestValidationError{
+				field:  "Phone",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetEmail()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ForgetPasswordRequestValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ForgetPasswordRequestValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ForgetPasswordRequestValidationError{
+				field:  "Email",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Token
+
 	if len(errors) > 0 {
 		return ForgetPasswordRequestMultiError(errors)
 	}
@@ -1707,6 +1960,8 @@ func (m *ForgetPasswordReply) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for ChangePasswordToken
 
 	if len(errors) > 0 {
 		return ForgetPasswordReplyMultiError(errors)
@@ -2983,3 +3238,475 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = WebLoginAuthReplyValidationError{}
+
+// Validate checks the field values on ChangePasswordByForgetRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangePasswordByForgetRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangePasswordByForgetRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ChangePasswordByForgetRequestMultiError, or nil if none found.
+func (m *ChangePasswordByForgetRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangePasswordByForgetRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetChangePasswordToken()) < 1 {
+		err := ChangePasswordByForgetRequestValidationError{
+			field:  "ChangePasswordToken",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetNewPassword()) < 1 {
+		err := ChangePasswordByForgetRequestValidationError{
+			field:  "NewPassword",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetConfirmNewPassword()) < 1 {
+		err := ChangePasswordByForgetRequestValidationError{
+			field:  "ConfirmNewPassword",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return ChangePasswordByForgetRequestMultiError(errors)
+	}
+	return nil
+}
+
+// ChangePasswordByForgetRequestMultiError is an error wrapping multiple
+// validation errors returned by ChangePasswordByForgetRequest.ValidateAll()
+// if the designated constraints aren't met.
+type ChangePasswordByForgetRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangePasswordByForgetRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangePasswordByForgetRequestMultiError) AllErrors() []error { return m }
+
+// ChangePasswordByForgetRequestValidationError is the validation error
+// returned by ChangePasswordByForgetRequest.Validate if the designated
+// constraints aren't met.
+type ChangePasswordByForgetRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangePasswordByForgetRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangePasswordByForgetRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangePasswordByForgetRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangePasswordByForgetRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangePasswordByForgetRequestValidationError) ErrorName() string {
+	return "ChangePasswordByForgetRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangePasswordByForgetRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangePasswordByForgetRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangePasswordByForgetRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangePasswordByForgetRequestValidationError{}
+
+// Validate checks the field values on ChangePasswordByForgetReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangePasswordByForgetReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangePasswordByForgetReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangePasswordByForgetReplyMultiError, or nil if none found.
+func (m *ChangePasswordByForgetReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangePasswordByForgetReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ChangePasswordByForgetReplyMultiError(errors)
+	}
+	return nil
+}
+
+// ChangePasswordByForgetReplyMultiError is an error wrapping multiple
+// validation errors returned by ChangePasswordByForgetReply.ValidateAll() if
+// the designated constraints aren't met.
+type ChangePasswordByForgetReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangePasswordByForgetReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangePasswordByForgetReplyMultiError) AllErrors() []error { return m }
+
+// ChangePasswordByForgetReplyValidationError is the validation error returned
+// by ChangePasswordByForgetReply.Validate if the designated constraints
+// aren't met.
+type ChangePasswordByForgetReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangePasswordByForgetReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangePasswordByForgetReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangePasswordByForgetReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangePasswordByForgetReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangePasswordByForgetReplyValidationError) ErrorName() string {
+	return "ChangePasswordByForgetReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangePasswordByForgetReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangePasswordByForgetReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangePasswordByForgetReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangePasswordByForgetReplyValidationError{}
+
+// Validate checks the field values on ChangePasswordByPreRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangePasswordByPreRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangePasswordByPreRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangePasswordByPreRequestMultiError, or nil if none found.
+func (m *ChangePasswordByPreRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangePasswordByPreRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetPrePassword()) < 1 {
+		err := ChangePasswordByPreRequestValidationError{
+			field:  "PrePassword",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetNewPassword()) < 1 {
+		err := ChangePasswordByPreRequestValidationError{
+			field:  "NewPassword",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetConfirmNewPassword()) < 1 {
+		err := ChangePasswordByPreRequestValidationError{
+			field:  "ConfirmNewPassword",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return ChangePasswordByPreRequestMultiError(errors)
+	}
+	return nil
+}
+
+// ChangePasswordByPreRequestMultiError is an error wrapping multiple
+// validation errors returned by ChangePasswordByPreRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ChangePasswordByPreRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangePasswordByPreRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangePasswordByPreRequestMultiError) AllErrors() []error { return m }
+
+// ChangePasswordByPreRequestValidationError is the validation error returned
+// by ChangePasswordByPreRequest.Validate if the designated constraints aren't met.
+type ChangePasswordByPreRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangePasswordByPreRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangePasswordByPreRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangePasswordByPreRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangePasswordByPreRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangePasswordByPreRequestValidationError) ErrorName() string {
+	return "ChangePasswordByPreRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangePasswordByPreRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangePasswordByPreRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangePasswordByPreRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangePasswordByPreRequestValidationError{}
+
+// Validate checks the field values on ChangePasswordByPreReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangePasswordByPreReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangePasswordByPreReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangePasswordByPreReplyMultiError, or nil if none found.
+func (m *ChangePasswordByPreReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangePasswordByPreReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ChangePasswordByPreReplyMultiError(errors)
+	}
+	return nil
+}
+
+// ChangePasswordByPreReplyMultiError is an error wrapping multiple validation
+// errors returned by ChangePasswordByPreReply.ValidateAll() if the designated
+// constraints aren't met.
+type ChangePasswordByPreReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangePasswordByPreReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangePasswordByPreReplyMultiError) AllErrors() []error { return m }
+
+// ChangePasswordByPreReplyValidationError is the validation error returned by
+// ChangePasswordByPreReply.Validate if the designated constraints aren't met.
+type ChangePasswordByPreReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangePasswordByPreReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangePasswordByPreReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangePasswordByPreReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangePasswordByPreReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangePasswordByPreReplyValidationError) ErrorName() string {
+	return "ChangePasswordByPreReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangePasswordByPreReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangePasswordByPreReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangePasswordByPreReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangePasswordByPreReplyValidationError{}

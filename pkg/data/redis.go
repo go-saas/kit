@@ -1,6 +1,7 @@
 package data
 
 import (
+	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis/v8"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 )
@@ -8,6 +9,7 @@ import (
 const defaultKey = "default"
 
 func ResolveRedisEndpointOrDefault(endpoints map[string]*conf.Redis, key string) *redis.Options {
+	//TODO cluster
 	var opt *conf.Redis
 	opt, ok := endpoints[key]
 	if !ok {
@@ -48,4 +50,12 @@ func ResolveRedisEndpointOrDefault(endpoints map[string]*conf.Redis, key string)
 		redisOpt.WriteTimeout = opt.WriteTimeout.AsDuration()
 	}
 	return redisOpt
+}
+
+func NewCache(client *redis.Client) *cache.Cache {
+	c := cache.New(&cache.Options{
+		Redis: client,
+	})
+	return c
+
 }

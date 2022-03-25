@@ -22,4 +22,6 @@ enum ErrorReason {
   INVALID_EMAIL = 6[(errors.code) = 400];
   INVALID_PHONE = 7[(errors.code) = 400];
   INVALID_USERNAME= 8[(errors.code) = 400];
+
+  USER_NOT_FOUND=9[(errors.code) = 404];
 }

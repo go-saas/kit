@@ -132,13 +132,13 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		err = s.um.Create(ctx, &u)
 	}
 	if err != nil {
-		return nil, ConvertError(err)
+		return nil, err
 	}
 	//set roles
 	var roles []*biz.Role
 	for _, r := range req.RolesId {
 		if rr, err := s.rm.Get(ctx, r); err != nil {
-			return nil, ConvertError(err)
+			return nil, err
 		} else if rr == nil {
 			return nil, errors2.NotFound("", "role not found")
 		} else {
@@ -210,14 +210,14 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	g := req.GetUser().Gender.Enum().String()
 	u.Gender = &g
 	if err := s.um.Update(ctx, u, nil); err != nil {
-		return nil, ConvertError(err)
+		return nil, err
 	}
 
 	//set roles
 	var roles []*biz.Role
 	for _, r := range req.User.RolesId {
 		if rr, err := s.rm.Get(ctx, r); err != nil {
-			return nil, ConvertError(err)
+			return nil, err
 		} else if rr == nil {
 			return nil, errors2.NotFound("", "role not found")
 		} else {

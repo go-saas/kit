@@ -6,6 +6,7 @@ option go_package = "github.com/goxiaoy/go-saas-kit/user/private/conf;conf";
 import "conf/conf.proto";
 import "google/protobuf/wrappers.proto";
 import "blob/blob.proto";
+import "google/protobuf/duration.proto";
 
 message Bootstrap {
   Data data = 2;
@@ -31,7 +32,10 @@ message UserConf{
   Admin admin =2;
   Auth auth=3;
   string root_url=4;
-
+  google.protobuf.Duration email_confirm_expiry = 5;
+  google.protobuf.Duration phone_confirm_expiry = 6;
+  google.protobuf.Duration email_recover_expiry = 7;
+  google.protobuf.Duration phone_recover_expiry = 8;
 }
 
 message Auth{

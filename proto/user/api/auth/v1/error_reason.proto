@@ -12,4 +12,19 @@ enum ErrorReason {
   INVALID_CREDENTIALS = 0 [(errors.code) = 400];
   INVALID_OPERATION = 1 [(errors.code) = 400];
   USER_LOCKED = 2 [(errors.code) = 403];
+  EMAIL_NOT_CONFIRMED=3[(errors.code) = 403];
+  PHONE_NOT_CONFIRMED=4[(errors.code) = 403];
+
+  EMAIL_RECOVER_FAILED=5[(errors.code) = 403];
+  EMAIL_CONFIRM_FAILED=6[(errors.code) = 403];
+
+  PHONE_RECOVER_FAILED=7[(errors.code) = 403];
+  PHONE_CONFIRM_FAILED=8[(errors.code) = 403];
+
+  TWO_STEP_FAILED = 9[(errors.code) = 403];
+
+  CONFIRM_PASSWORD_MISMATCH= 10[(errors.code) = 400];
+  REMEMBER_TOKEN_NOT_FOUND = 11[(errors.code) = 403];
+
+  USER_DELETED=12 [(errors.code) = 403];
 }

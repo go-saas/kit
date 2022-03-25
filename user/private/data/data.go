@@ -3,21 +3,25 @@ package data
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/memory"
+	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/os"
+	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/s3"
+	data2 "github.com/goxiaoy/go-saas-kit/pkg/data"
+	"github.com/goxiaoy/go-saas-kit/pkg/email"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/lazy"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
+	mail "github.com/xhit/go-simple-mail/v2"
 	g "gorm.io/gorm"
-
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/memory"
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/os"
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/s3"
 )
 
 // ProviderSet is data providers.
@@ -27,6 +31,9 @@ var ProviderSet = wire.NewSet(
 	uow2.NewUowManager,
 	NewBlobFactory,
 	NewProvider,
+	NewRedis,
+	data2.NewCache,
+	NewEmailer,
 	NewEnforcerProvider,
 	NewUserRepo,
 	NewRefreshTokenRepo,
@@ -81,4 +88,17 @@ func NewEnforcerProvider(dbProvider gorm.DbProvider) *casbin.EnforcerProvider {
 
 func NewBlobFactory(c *conf.Data) blob.Factory {
 	return blob.NewFactory(c.Blobs)
+}
+
+func NewRedis(c *conf.Data) *redis.Client {
+	if c.Endpoints.Redis == nil {
+		panic("redis endpoints required")
+	}
+	r := data2.ResolveRedisEndpointOrDefault(c.Endpoints.Redis, ConnName)
+	rdb := redis.NewClient(r)
+	return rdb
+}
+
+func NewEmailer(c *conf.Data) *lazy.Of[*mail.SMTPClient] {
+	return email.NewLazyClient(c.Endpoints)
 }

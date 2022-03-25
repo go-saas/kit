@@ -3,14 +3,17 @@ package service
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
+	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
 	"github.com/gorilla/csrf"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
+	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -28,6 +31,8 @@ type AuthService struct {
 	pwdValidator     biz.PasswordValidator
 	refreshTokenRepo biz.RefreshTokenRepo
 	security         *conf.Security
+	logger           *klog.Helper
+	emailer          biz.EmailSender
 }
 
 func NewAuthService(um *biz.UserManager,
@@ -36,8 +41,20 @@ func NewAuthService(um *biz.UserManager,
 	config *jwt.TokenizerConfig,
 	pwdValidator biz.PasswordValidator,
 	refreshTokenRepo biz.RefreshTokenRepo,
-	security *conf.Security) *AuthService {
-	return &AuthService{um: um, rm: rm, token: token, config: config, pwdValidator: pwdValidator, refreshTokenRepo: refreshTokenRepo, security: security}
+	emailer biz.EmailSender,
+	security *conf.Security,
+	logger klog.Logger) *AuthService {
+	return &AuthService{
+		um:               um,
+		rm:               rm,
+		token:            token,
+		config:           config,
+		pwdValidator:     pwdValidator,
+		refreshTokenRepo: refreshTokenRepo,
+		emailer:          emailer,
+		security:         security,
+		logger:           klog.NewHelper(klog.With(logger, "module", "AuthService")),
+	}
 }
 
 func (s *AuthService) Register(ctx context.Context, req *pb.RegisterAuthRequest) (*pb.RegisterAuthReply, error) {
@@ -104,14 +121,98 @@ func (s *AuthService) LoginPasswordless(ctx context.Context, req *pb.LoginPasswo
 	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	return &pb.LoginPasswordlessReply{}, nil
 }
+
 func (s *AuthService) SendForgetPasswordToken(ctx context.Context, req *pb.ForgetPasswordTokenRequest) (*pb.ForgetPasswordTokenReply, error) {
 	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+	if req.Phone == nil && req.Email == nil {
+		return nil, errors.BadRequest("", "")
+	}
+	if req.Phone != nil {
+		user, err := s.um.FindByPhone(ctx, req.Phone.Value)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil {
+			return nil, v1.ErrorUserNotFound("")
+		}
+		//generate token
+		token, err := s.um.GeneratePhoneForgetPasswordToken(ctx, user)
+		if err != nil {
+			return nil, err
+		}
+		//TODO send token
+		s.logger.Infof("send forget password token %s to %s for user %s", token, *user.Phone, user.ID.String())
+
+	} else if req.Email != nil {
+		user, err := s.um.FindByEmail(ctx, req.Email.Value)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil {
+			return nil, v1.ErrorUserNotFound("")
+		}
+		//generate token
+		token, err := s.um.GenerateEmailForgetPasswordToken(ctx, user)
+		if err != nil {
+			return nil, err
+		}
+		err = s.emailer.SendForgetPassword(ctx, *user.Email, token)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return &pb.ForgetPasswordTokenReply{}, nil
 }
 
 func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPasswordRequest) (*pb.ForgetPasswordReply, error) {
 	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
-	return &pb.ForgetPasswordReply{}, nil
+	if req.Phone == nil && req.Email == nil {
+		return nil, errors.BadRequest("", "")
+	}
+	var user *biz.User
+	var err error
+	if req.Phone != nil {
+		user, err = s.um.FindByPhone(ctx, req.Phone.Value)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil {
+			return nil, v1.ErrorUserNotFound("")
+		}
+		if err := s.um.VerifyPhoneForgetPasswordToken(ctx, req.Phone.Value, req.Token); err != nil {
+			return nil, err
+		}
+
+	} else if req.Email != nil {
+		user, err = s.um.FindByPhone(ctx, req.Phone.Value)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil {
+			return nil, v1.ErrorUserNotFound("")
+		}
+		if err := s.um.VerifyEmailForgetPasswordToken(ctx, req.Email.Value, req.Token); err != nil {
+			return nil, err
+		}
+	}
+	token, err := s.um.GenerateForgetPasswordToken(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ForgetPasswordReply{ChangePasswordToken: token}, nil
+}
+
+func (s *AuthService) ChangePasswordByForget(ctx context.Context, req *pb.ChangePasswordByForgetRequest) (*pb.ChangePasswordByForgetReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+	//validate password
+	if req.NewPassword != req.ConfirmNewPassword {
+		return nil, v1.ErrorConfirmPasswordMismatch("")
+	}
+	err := s.um.ChangePasswordByToken(ctx, req.ChangePasswordToken, req.NewPassword)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ChangePasswordByForgetReply{}, nil
 }
 
 func (s *AuthService) ValidatePassword(ctx context.Context, req *pb.ValidatePasswordRequest) (*pb.ValidatePasswordReply, error) {
@@ -121,6 +222,27 @@ func (s *AuthService) ValidatePassword(ctx context.Context, req *pb.ValidatePass
 		return nil, err
 	}
 	return &pb.ValidatePasswordReply{Ok: true}, nil
+}
+
+func (s *AuthService) ChangePasswordByPre(ctx context.Context, req *pb.ChangePasswordByPreRequest) (*pb.ChangePasswordByPreReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+	ui, err := authn.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
+	}
+	//validate password
+	if req.NewPassword != req.ConfirmNewPassword {
+		return nil, v1.ErrorConfirmPasswordMismatch("")
+	}
+	user, err := s.um.FindByID(ctx, ui.GetId())
+	if err != nil {
+		return nil, err
+	}
+	err = s.um.ChangePassword(ctx, user, req.PrePassword, req.NewPassword)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ChangePasswordByPreReply{}, nil
 }
 
 func (s *AuthService) GetCsrfToken(ctx context.Context, req *pb.GetCsrfTokenRequest) (*pb.GetCsrfTokenResponse, error) {
@@ -208,9 +330,6 @@ func FindUserByUsernameAndValidatePwd(ctx context.Context, um *biz.UserManager, 
 	// check password
 	err = um.CheckPassword(ctx, user, password)
 	if err != nil {
-		if err == biz.ErrInvalidCredential {
-			return nil, pb.ErrorInvalidCredentials("")
-		}
 		return nil, err
 	}
 	return user, nil

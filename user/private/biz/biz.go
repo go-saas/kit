@@ -13,11 +13,15 @@ var ProviderSet = wire.NewSet(
 	NewUserValidator,
 	NewRoleManager,
 	NewLookupNormalizer,
+	NewEmailTokenProvider,
+	NewPhoneTokenProvider,
+	NewTwoStepTokenProvider,
 	NewPasswordHasher,
 	NewPasswordValidator,
 	NewRoleSeed,
 	NewUserSeed,
-	NewPermissionSeeder)
+	NewPermissionSeeder,
+	NewEmailSender)
 
 func ProfileBlob(ctx context.Context, factory blob.Factory) blob.Blob {
 	return factory.Get(ctx, "user", false)

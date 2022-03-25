@@ -12,6 +12,7 @@ const (
 	InternalRememberTokenName string = "remember"
 )
 
+//UserToken stores external login token
 type UserToken struct {
 	gorm.AuditedModel
 	DeletedAt     gorm2.DeletedAt `gorm:"index"`

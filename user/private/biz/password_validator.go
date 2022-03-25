@@ -2,12 +2,9 @@ package biz
 
 import (
 	"context"
-	"errors"
+	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	"github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/nbutton23/zxcvbn-go"
-)
-
-var (
-	ErrInsufficientStrength = errors.New("insufficient strength")
 )
 
 type PasswordValidator interface {
@@ -15,14 +12,11 @@ type PasswordValidator interface {
 	Validate(ctx context.Context, password string) error
 }
 
-type PasswordValidatorConfig struct {
-	MinScore int
-}
 type passwordValidator struct {
-	config *PasswordValidatorConfig
+	config *conf.UserConf
 }
 
-func NewPasswordValidator(c *PasswordValidatorConfig) PasswordValidator {
+func NewPasswordValidator(c *conf.UserConf) PasswordValidator {
 	return &passwordValidator{
 		config: c,
 	}
@@ -34,9 +28,9 @@ func (p *passwordValidator) Validate(ctx context.Context, password string) (err 
 	}
 
 	strength := zxcvbn.PasswordStrength(password, []string{})
-	ok := strength.Score >= p.config.MinScore
+	ok := strength.Score >= int(p.config.PasswordScoreMin)
 	if !ok {
-		return ErrInsufficientStrength
+		return v1.ErrorPasswordInsufficientStrength("")
 	}
 	return nil
 }

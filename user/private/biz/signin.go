@@ -4,11 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
+	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 )
 
 var (
-	ErrUserDeleted    = errors.New("user deleted")
-	ErrUserLocked     = errors.New("user locked")
 	ErrWriterNotFound = errors.New("writer not found")
 )
 
@@ -31,12 +30,12 @@ func (s *SignInManager) CheckCanSignIn(ctx context.Context, u *User) error {
 	if d, err := s.um.CheckDeleted(ctx, u); err != nil {
 		return err
 	} else if d {
-		return ErrUserDeleted
+		return v12.ErrorUserDeleted("")
 	}
 	if locked, err := s.um.CheckLocked(ctx, u); err != nil {
 		return err
 	} else if locked {
-		return ErrUserLocked
+		return v12.ErrorUserLocked("")
 	}
 	return nil
 }
@@ -64,7 +63,7 @@ func (s *SignInManager) SignIn(ctx context.Context, u *User, isPersistent bool) 
 		//save session
 		return writer.Save(ctx)
 	} else {
-		return ErrWriterNotFound
+		panic(ErrWriterNotFound)
 	}
 }
 
@@ -75,7 +74,7 @@ func (s *SignInManager) SignOut(ctx context.Context) error {
 		}
 		return nil
 	} else {
-		return ErrWriterNotFound
+		panic(ErrWriterNotFound)
 	}
 
 }
@@ -86,11 +85,11 @@ func (s *SignInManager) ValidateSecurityStamp(ctx context.Context, u *User, secu
 
 func (s *SignInManager) PasswordSignIn(ctx context.Context, u *User, pwd string, isPersistent bool, tryLockoutOnFailure bool) error {
 	if u == nil {
-		return ErrInvalidCredential
+		return v12.ErrorInvalidCredentials("")
 	}
 	err := s.um.CheckPassword(ctx, u, pwd)
 	if err != nil {
-		if err == ErrInvalidCredential {
+		if v12.IsInvalidCredentials(err) {
 			if tryLockoutOnFailure {
 				//TODO lock out
 			}
@@ -149,14 +148,14 @@ func (s *SignInManager) RememberTwoFactorClient(ctx context.Context, u *User) er
 		}
 		return writer.Save(ctx)
 	}
-	return ErrWriterNotFound
+	panic(ErrWriterNotFound)
 }
 
 func (s *SignInManager) ForgetTwoFactorClient(ctx context.Context) error {
 	if writer, ok := session.FromClientStateWriterContext(ctx); ok {
 		return writer.SignOutTwoFactorClientRemembered(ctx)
 	}
-	return ErrWriterNotFound
+	panic(ErrWriterNotFound)
 }
 
 func (s *SignInManager) TwoFactorAuthenticatorSignIn(ctx context.Context, code string, isPersistent, rememberClient bool) error {

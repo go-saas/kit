@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http/binding"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
-	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/ory/hydra-client-go"
 	"google.golang.org/protobuf/types/known/structpb"
 	"net/http"
@@ -104,7 +103,7 @@ func (a *Auth) LoginPost(w http.ResponseWriter, r *http.Request) (*v1.WebLoginAu
 	//validate sign in
 	err, uid := a.signIn.PasswordSignInWithUsername(r.Context(), req.Username, req.Password, req.Remember, true)
 	if err != nil {
-		return resp, service.ConvertError(err)
+		return resp, err
 	}
 	if len(req.Challenge) > 0 {
 		// Seems like the user authenticated! Let's tell hydra...
@@ -148,7 +147,7 @@ func (a *Auth) Logout(w http.ResponseWriter, r *http.Request) (*v1.LogoutRespons
 	var resp = &v1.LogoutResponse{}
 	err := a.signIn.SignOut(r.Context())
 	if err != nil {
-		return resp, service.ConvertError(err)
+		return resp, err
 	}
 	if len(req.Challenge) > 0 {
 		hreq, _, err := a.hclient.AdminApi.AcceptLogoutRequest(r.Context()).LogoutChallenge(req.Challenge).Execute()

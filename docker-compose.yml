@@ -34,6 +34,7 @@ services:
       - "8501"
     depends_on:
       - mysqld
+      - redis
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
@@ -57,13 +58,14 @@ services:
       - "8531"
     depends_on:
       - mysqld
-      - user
+      - saas
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
 
   mysqld:
     image: mysql:5.7
+    restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=youShouldChangeThis
       - MYSQL_ROOT_HOST=%
@@ -72,5 +74,11 @@ services:
     ports:
       - "3406:3306"
 
+  redis:
+    image: redis:6.0
+    restart: always
+    command: redis-server --requirepass youShouldChangeThis
+    ports:
+      - "7379:6379"
 volumes:
   mysql_data:

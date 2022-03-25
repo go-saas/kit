@@ -2,13 +2,7 @@ package biz
 
 import (
 	"context"
-	"errors"
-)
-
-var (
-	ErrDuplicateUsername = errors.New("duplicate userName")
-	ErrDuplicateEmail    = errors.New("duplicate email")
-	ErrDuplicatePhone    = errors.New("duplicate phone")
+	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 )
 
 // UserValidator validate user before create and update
@@ -35,7 +29,7 @@ func (u *userValidator) Validate(ctx context.Context, um *UserManager, user *Use
 			return err
 		}
 		if u != nil && u.ID != user.ID {
-			return ErrDuplicateUsername
+			return v1.ErrorDuplicateUsername("")
 		}
 	}
 	if user.Email != nil {
@@ -44,7 +38,7 @@ func (u *userValidator) Validate(ctx context.Context, um *UserManager, user *Use
 			return err
 		}
 		if u != nil && u.ID != user.ID {
-			return ErrDuplicateEmail
+			return v1.ErrorDuplicateEmail("")
 		}
 	}
 	if user.Phone != nil {
@@ -53,7 +47,7 @@ func (u *userValidator) Validate(ctx context.Context, um *UserManager, user *Use
 			return err
 		}
 		if u != nil && u.ID != user.ID {
-			return ErrDuplicatePhone
+			return v1.ErrorDuplicatePhone("")
 		}
 	}
 	return nil

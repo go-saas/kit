@@ -51,7 +51,13 @@ data:
       default:
         driver: mysql
         source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true
-
+    redis:
+      default:
+        addr: redis:6379
+        password: youShouldChangeThis
+    email:
+      smtp:
+        host: localhost
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s

@@ -18,6 +18,8 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 type AuthHTTPServer interface {
+	ChangePasswordByForget(context.Context, *ChangePasswordByForgetRequest) (*ChangePasswordByForgetReply, error)
+	ChangePasswordByPre(context.Context, *ChangePasswordByPreRequest) (*ChangePasswordByPreReply, error)
 	ForgetPassword(context.Context, *ForgetPasswordRequest) (*ForgetPasswordReply, error)
 	GetCsrfToken(context.Context, *GetCsrfTokenRequest) (*GetCsrfTokenResponse, error)
 	GetLogin(context.Context, *GetLoginRequest) (*GetLoginResponse, error)
@@ -42,7 +44,9 @@ func RegisterAuthHTTPServer(s *http.Server, srv AuthHTTPServer) {
 	r.POST("/v1/auth/login/passwordless", _Auth_LoginPasswordless0_HTTP_Handler(srv))
 	r.POST("/v1/auth/action/forget", _Auth_SendForgetPasswordToken0_HTTP_Handler(srv))
 	r.POST("/v1/auth/password/forget", _Auth_ForgetPassword0_HTTP_Handler(srv))
+	r.POST("/v1/auth/password/forget/change", _Auth_ChangePasswordByForget0_HTTP_Handler(srv))
 	r.POST("/v1/auth/password/validate", _Auth_ValidatePassword0_HTTP_Handler(srv))
+	r.POST("/v1/auth/password/change", _Auth_ChangePasswordByPre0_HTTP_Handler(srv))
 	r.GET("/v1/auth/csrf", _Auth_GetCsrfToken0_HTTP_Handler(srv))
 }
 
@@ -217,6 +221,25 @@ func _Auth_ForgetPassword0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Contex
 	}
 }
 
+func _Auth_ChangePasswordByForget0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ChangePasswordByForgetRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.auth.v1.Auth/ChangePasswordByForget")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ChangePasswordByForget(ctx, req.(*ChangePasswordByForgetRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ChangePasswordByForgetReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _Auth_ValidatePassword0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ValidatePasswordRequest
@@ -232,6 +255,25 @@ func _Auth_ValidatePassword0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Cont
 			return err
 		}
 		reply := out.(*ValidatePasswordReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Auth_ChangePasswordByPre0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ChangePasswordByPreRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.api.auth.v1.Auth/ChangePasswordByPre")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ChangePasswordByPre(ctx, req.(*ChangePasswordByPreRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ChangePasswordByPreReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -256,6 +298,8 @@ func _Auth_GetCsrfToken0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context)
 }
 
 type AuthHTTPClient interface {
+	ChangePasswordByForget(ctx context.Context, req *ChangePasswordByForgetRequest, opts ...http.CallOption) (rsp *ChangePasswordByForgetReply, err error)
+	ChangePasswordByPre(ctx context.Context, req *ChangePasswordByPreRequest, opts ...http.CallOption) (rsp *ChangePasswordByPreReply, err error)
 	ForgetPassword(ctx context.Context, req *ForgetPasswordRequest, opts ...http.CallOption) (rsp *ForgetPasswordReply, err error)
 	GetCsrfToken(ctx context.Context, req *GetCsrfTokenRequest, opts ...http.CallOption) (rsp *GetCsrfTokenResponse, err error)
 	GetLogin(ctx context.Context, req *GetLoginRequest, opts ...http.CallOption) (rsp *GetLoginResponse, err error)
@@ -275,6 +319,32 @@ type AuthHTTPClientImpl struct {
 
 func NewAuthHTTPClient(client *http.Client) AuthHTTPClient {
 	return &AuthHTTPClientImpl{client}
+}
+
+func (c *AuthHTTPClientImpl) ChangePasswordByForget(ctx context.Context, in *ChangePasswordByForgetRequest, opts ...http.CallOption) (*ChangePasswordByForgetReply, error) {
+	var out ChangePasswordByForgetReply
+	pattern := "/v1/auth/password/forget/change"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation("/user.api.auth.v1.Auth/ChangePasswordByForget"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *AuthHTTPClientImpl) ChangePasswordByPre(ctx context.Context, in *ChangePasswordByPreRequest, opts ...http.CallOption) (*ChangePasswordByPreReply, error) {
+	var out ChangePasswordByPreReply
+	pattern := "/v1/auth/password/change"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation("/user.api.auth.v1.Auth/ChangePasswordByPre"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
 }
 
 func (c *AuthHTTPClientImpl) ForgetPassword(ctx context.Context, in *ForgetPasswordRequest, opts ...http.CallOption) (*ForgetPasswordReply, error) {

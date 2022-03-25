@@ -30,8 +30,14 @@ type AuthClient interface {
 	SendPasswordlessToken(ctx context.Context, in *PasswordlessTokenAuthRequest, opts ...grpc.CallOption) (*PasswordlessTokenAuthReply, error)
 	LoginPasswordless(ctx context.Context, in *LoginPasswordlessRequest, opts ...grpc.CallOption) (*LoginPasswordlessReply, error)
 	SendForgetPasswordToken(ctx context.Context, in *ForgetPasswordTokenRequest, opts ...grpc.CallOption) (*ForgetPasswordTokenReply, error)
+	//ForgetPassword
+	//verify forget password token
 	ForgetPassword(ctx context.Context, in *ForgetPasswordRequest, opts ...grpc.CallOption) (*ForgetPasswordReply, error)
+	ChangePasswordByForget(ctx context.Context, in *ChangePasswordByForgetRequest, opts ...grpc.CallOption) (*ChangePasswordByForgetReply, error)
+	//ValidatePassword
+	// server validation for password strength
 	ValidatePassword(ctx context.Context, in *ValidatePasswordRequest, opts ...grpc.CallOption) (*ValidatePasswordReply, error)
+	ChangePasswordByPre(ctx context.Context, in *ChangePasswordByPreRequest, opts ...grpc.CallOption) (*ChangePasswordByPreReply, error)
 	GetCsrfToken(ctx context.Context, in *GetCsrfTokenRequest, opts ...grpc.CallOption) (*GetCsrfTokenResponse, error)
 }
 
@@ -124,9 +130,27 @@ func (c *authClient) ForgetPassword(ctx context.Context, in *ForgetPasswordReque
 	return out, nil
 }
 
+func (c *authClient) ChangePasswordByForget(ctx context.Context, in *ChangePasswordByForgetRequest, opts ...grpc.CallOption) (*ChangePasswordByForgetReply, error) {
+	out := new(ChangePasswordByForgetReply)
+	err := c.cc.Invoke(ctx, "/user.api.auth.v1.Auth/ChangePasswordByForget", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authClient) ValidatePassword(ctx context.Context, in *ValidatePasswordRequest, opts ...grpc.CallOption) (*ValidatePasswordReply, error) {
 	out := new(ValidatePasswordReply)
 	err := c.cc.Invoke(ctx, "/user.api.auth.v1.Auth/ValidatePassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) ChangePasswordByPre(ctx context.Context, in *ChangePasswordByPreRequest, opts ...grpc.CallOption) (*ChangePasswordByPreReply, error) {
+	out := new(ChangePasswordByPreReply)
+	err := c.cc.Invoke(ctx, "/user.api.auth.v1.Auth/ChangePasswordByPre", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -154,8 +178,14 @@ type AuthServer interface {
 	SendPasswordlessToken(context.Context, *PasswordlessTokenAuthRequest) (*PasswordlessTokenAuthReply, error)
 	LoginPasswordless(context.Context, *LoginPasswordlessRequest) (*LoginPasswordlessReply, error)
 	SendForgetPasswordToken(context.Context, *ForgetPasswordTokenRequest) (*ForgetPasswordTokenReply, error)
+	//ForgetPassword
+	//verify forget password token
 	ForgetPassword(context.Context, *ForgetPasswordRequest) (*ForgetPasswordReply, error)
+	ChangePasswordByForget(context.Context, *ChangePasswordByForgetRequest) (*ChangePasswordByForgetReply, error)
+	//ValidatePassword
+	// server validation for password strength
 	ValidatePassword(context.Context, *ValidatePasswordRequest) (*ValidatePasswordReply, error)
+	ChangePasswordByPre(context.Context, *ChangePasswordByPreRequest) (*ChangePasswordByPreReply, error)
 	GetCsrfToken(context.Context, *GetCsrfTokenRequest) (*GetCsrfTokenResponse, error)
 	mustEmbedUnimplementedAuthServer()
 }
@@ -191,8 +221,14 @@ func (UnimplementedAuthServer) SendForgetPasswordToken(context.Context, *ForgetP
 func (UnimplementedAuthServer) ForgetPassword(context.Context, *ForgetPasswordRequest) (*ForgetPasswordReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ForgetPassword not implemented")
 }
+func (UnimplementedAuthServer) ChangePasswordByForget(context.Context, *ChangePasswordByForgetRequest) (*ChangePasswordByForgetReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePasswordByForget not implemented")
+}
 func (UnimplementedAuthServer) ValidatePassword(context.Context, *ValidatePasswordRequest) (*ValidatePasswordReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidatePassword not implemented")
+}
+func (UnimplementedAuthServer) ChangePasswordByPre(context.Context, *ChangePasswordByPreRequest) (*ChangePasswordByPreReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePasswordByPre not implemented")
 }
 func (UnimplementedAuthServer) GetCsrfToken(context.Context, *GetCsrfTokenRequest) (*GetCsrfTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCsrfToken not implemented")
@@ -372,6 +408,24 @@ func _Auth_ForgetPassword_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_ChangePasswordByForget_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangePasswordByForgetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).ChangePasswordByForget(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.auth.v1.Auth/ChangePasswordByForget",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).ChangePasswordByForget(ctx, req.(*ChangePasswordByForgetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Auth_ValidatePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ValidatePasswordRequest)
 	if err := dec(in); err != nil {
@@ -386,6 +440,24 @@ func _Auth_ValidatePassword_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServer).ValidatePassword(ctx, req.(*ValidatePasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_ChangePasswordByPre_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangePasswordByPreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).ChangePasswordByPre(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.auth.v1.Auth/ChangePasswordByPre",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).ChangePasswordByPre(ctx, req.(*ChangePasswordByPreRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -452,8 +524,16 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Auth_ForgetPassword_Handler,
 		},
 		{
+			MethodName: "ChangePasswordByForget",
+			Handler:    _Auth_ChangePasswordByForget_Handler,
+		},
+		{
 			MethodName: "ValidatePassword",
 			Handler:    _Auth_ValidatePassword_Handler,
+		},
+		{
+			MethodName: "ChangePasswordByPre",
+			Handler:    _Auth_ChangePasswordByPre_Handler,
 		},
 		{
 			MethodName: "GetCsrfToken",

@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 
 import "google/protobuf/wrappers.proto";
+import "google/protobuf/duration.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/auth/v1;v1";
@@ -40,30 +41,37 @@ service Auth {
             body: "*",
         };
     }
+
     rpc Refresh(RefreshTokenAuthRequest) returns (RefreshTokenAuthReply){
         option (google.api.http) = {
             post: "/v1/auth/refresh",
             body: "*",
         };
     }
+
     rpc SendPasswordlessToken(PasswordlessTokenAuthRequest) returns(PasswordlessTokenAuthReply){
         option (google.api.http) = {
             post: "/v1/auth/action/passwordless",
             body: "*",
         };
     }
+
     rpc LoginPasswordless(LoginPasswordlessRequest) returns(LoginPasswordlessReply){
         option (google.api.http) = {
             post: "/v1/auth/login/passwordless",
             body: "*",
         };
     }
+
     rpc SendForgetPasswordToken(ForgetPasswordTokenRequest) returns(ForgetPasswordTokenReply){
         option (google.api.http) = {
             post: "/v1/auth/action/forget",
             body: "*",
         };
     }
+
+    //ForgetPassword
+    //verify forget password token
     rpc ForgetPassword(ForgetPasswordRequest) returns (ForgetPasswordReply){
         option (google.api.http) = {
             post: "/v1/auth/password/forget",
@@ -71,12 +79,29 @@ service Auth {
         };
     }
 
+    rpc ChangePasswordByForget(ChangePasswordByForgetRequest) returns (ChangePasswordByForgetReply){
+        option (google.api.http) = {
+            post: "/v1/auth/password/forget/change",
+            body: "*",
+        };
+    }
+    
+    //ValidatePassword
+    // server validation for password strength
     rpc ValidatePassword(ValidatePasswordRequest) returns (ValidatePasswordReply){
         option (google.api.http) = {
             post: "/v1/auth/password/validate",
             body: "*",
         };
     }
+
+    rpc ChangePasswordByPre(ChangePasswordByPreRequest)returns(ChangePasswordByPreReply){
+        option (google.api.http) = {
+            post: "/v1/auth/password/change",
+            body: "*",
+        };
+    }
+
 
     rpc GetCsrfToken(GetCsrfTokenRequest) returns(GetCsrfTokenResponse){
         option (google.api.http) = {
@@ -121,7 +146,8 @@ message LoginAuthReply{
     // Bearer
     string token_type=2;
     // Expires time in seconds
-    int32 expires=3;
+    // Deprecated, use expires_in instead
+    int32 expires=3 [deprecated=true];
     // Refresh token to keep login state
     string refresh_token=4;
     // Expires time in seconds
@@ -142,32 +168,53 @@ message RefreshTokenAuthReply{
     // Expires time in seconds
     int32 expires_in=5;
 }
+
 message PasswordlessTokenAuthRequest{
-
+    google.protobuf.StringValue phone =4;
+    google.protobuf.StringValue email=5;
 }
-message PasswordlessTokenAuthReply{
 
+message PasswordlessTokenAuthReply{
+    //expire time
+    google.protobuf.Duration expire=1;
 }
 
 message LoginPasswordlessRequest{
-
+    google.protobuf.StringValue phone =4;
+    google.protobuf.StringValue email=5;
+    string  token=10 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
+
 message LoginPasswordlessReply{
-
+    string access_token=1;
+    // Bearer
+    string token_type=2;
+    // Refresh token to keep login state
+    string refresh_token=4;
+    // Expires time in seconds
+    int32 expires_in=5;
 }
+
 message ForgetPasswordTokenRequest{
     google.protobuf.StringValue phone =4;
     google.protobuf.StringValue email=5;
 
 }
+
 message ForgetPasswordTokenReply{
-
+    //expire time
+    google.protobuf.Duration expire=1;
 }
+
 message ForgetPasswordRequest{
-
+    google.protobuf.StringValue phone =4;
+    google.protobuf.StringValue email=5;
+    string token=10;
 }
-message ForgetPasswordReply{
 
+message ForgetPasswordReply{
+    //next step for change password
+    string change_password_token=1;
 }
 
 message ValidatePasswordRequest{
@@ -188,7 +235,6 @@ message GetLoginResponse{
     //normalized redirect url
     string redirect = 1;
     repeated OAuthProvider oauth = 2;
-
 
     string hint=3;
     string challenge=4;
@@ -235,4 +281,24 @@ message WebLoginAuthReply{
     int32 expires_in=5;
 
     string redirect=10;
+}
+
+message ChangePasswordByForgetRequest{
+    string change_password_token=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+    string new_password=5 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+    string confirm_new_password=6 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+message ChangePasswordByForgetReply{
+
+}
+
+message ChangePasswordByPreRequest{
+    string pre_password=4 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+    string new_password=5 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+    string confirm_new_password=6 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+message ChangePasswordByPreReply{
+
 }

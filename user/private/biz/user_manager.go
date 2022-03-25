@@ -2,23 +2,19 @@ package biz
 
 import (
 	"context"
-	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/uuid"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
+	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	"github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas/common"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"time"
 )
 
-var (
-	ErrInvalidCredential     = errors.New("invalid credential")
-	ErrRememberTokenNotFound = errors.New("remember token not found")
-)
-
 type UserManager struct {
-	cfg              *Config
+	cfg              *conf.UserConf
 	userRepo         UserRepo
 	pwdHasher        PasswordHasher
 	userValidator    UserValidator
@@ -27,12 +23,14 @@ type UserManager struct {
 	userTokenRepo    UserTokenRepo
 	refreshTokenRepo RefreshTokenRepo
 	userTenantRepo   UserTenantRepo
-	tokenFactory     UserTwoFactorTokenProviderFactory
+	emailToken       *EmailTokenProvider
+	phoneToken       *PhoneTokenProvider
+	twoStepToken     *TwoStepTokenProvider
 	log              log.Logger
 }
 
 func NewUserManager(
-	//cfg *Config,
+	cfg *conf.UserConf,
 	userRepo UserRepo,
 	pwdHasher PasswordHasher,
 	userValidator UserValidator,
@@ -41,10 +39,12 @@ func NewUserManager(
 	userTokenRepo UserTokenRepo,
 	refreshTokenRepo RefreshTokenRepo,
 	userTenantRepo UserTenantRepo,
-	//tokenFactory UserTwoFactorTokenProviderFactory,
+	emailToken *EmailTokenProvider,
+	phoneToken *PhoneTokenProvider,
+	twoStepToken *TwoStepTokenProvider,
 	logger log.Logger) *UserManager {
 	return &UserManager{
-		//cfg:       cfg,
+		cfg:              cfg,
 		userRepo:         userRepo,
 		pwdHasher:        pwdHasher,
 		userValidator:    userValidator,
@@ -53,11 +53,10 @@ func NewUserManager(
 		userTokenRepo:    userTokenRepo,
 		refreshTokenRepo: refreshTokenRepo,
 		userTenantRepo:   userTenantRepo,
-		//tokenFactory: tokenFactory,
-		log: log.With(logger, "module", "/biz/user_manager")}
-}
-
-type Config struct {
+		emailToken:       emailToken,
+		phoneToken:       phoneToken,
+		twoStepToken:     twoStepToken,
+		log:              log.With(logger, "module", "/biz/user_manager")}
 }
 
 func (um *UserManager) List(ctx context.Context, query *v1.ListUsersRequest) ([]*User, error) {
@@ -135,13 +134,6 @@ func (um *UserManager) FindByIdentity(ctx context.Context, identity string) (use
 	return um.FindByName(ctx, identity)
 }
 
-func (um *UserManager) FindByRecoverSelector(ctx context.Context, r string) (user *User, err error) {
-	return um.userRepo.FindByRecoverSelector(ctx, r)
-}
-func (um *UserManager) FindByConfirmSelector(ctx context.Context, c string) (user *User, err error) {
-	return um.userRepo.FindByConfirmSelector(ctx, c)
-}
-
 func (um *UserManager) Update(ctx context.Context, user *User, p *fieldmaskpb.FieldMask) (err error) {
 	err = um.normalize(ctx, user)
 	if err != nil {
@@ -171,12 +163,12 @@ func (um *UserManager) CheckPassword(ctx context.Context, user *User, password s
 		return err
 	}
 	//fail
-	return ErrInvalidCredential
+	return v12.ErrorInvalidCredentials("")
 }
 
 func (um *UserManager) ChangePassword(ctx context.Context, user *User, current string, newPwd string) error {
 	if v := um.checkPassword(ctx, user, current); v == PasswordVerificationFail {
-		return ErrInvalidCredential
+		return v12.ErrorInvalidCredentials("")
 	}
 	if err := um.updatePassword(ctx, user, &newPwd, true); err != nil {
 		return err
@@ -189,6 +181,94 @@ func (um *UserManager) UpdatePassword(ctx context.Context, user *User, newPwd st
 		return err
 	}
 	return um.Update(ctx, user, &fieldmaskpb.FieldMask{Paths: []string{"password"}})
+}
+
+func (um *UserManager) GenerateEmailForgetPasswordToken(ctx context.Context, user *User) (string, error) {
+	duration := 5 * time.Minute
+	if um.cfg.EmailRecoverExpiry != nil {
+		duration = um.cfg.EmailRecoverExpiry.AsDuration()
+	}
+	return um.emailToken.Generate(ctx, RecoverPurpose, user, duration)
+}
+
+func (um *UserManager) VerifyEmailForgetPasswordToken(ctx context.Context, email, token string) error {
+	user, err := um.FindByPhone(ctx, email)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return v12.ErrorEmailRecoverFailed("")
+	}
+	ok, err := um.emailToken.Validate(ctx, RecoverPurpose, token, user)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return v12.ErrorEmailRecoverFailed("")
+	}
+	return nil
+}
+
+func (um *UserManager) GeneratePhoneForgetPasswordToken(ctx context.Context, user *User) (string, error) {
+	duration := 5 * time.Minute
+	if um.cfg.PhoneRecoverExpiry != nil {
+		duration = um.cfg.PhoneRecoverExpiry.AsDuration()
+	}
+	return um.phoneToken.Generate(ctx, RecoverPurpose, user, duration)
+}
+
+func (um *UserManager) VerifyPhoneForgetPasswordToken(ctx context.Context, phone, token string) error {
+	user, err := um.FindByPhone(ctx, phone)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return v12.ErrorPhoneRecoverFailed("")
+	}
+	ok, err := um.phoneToken.Validate(ctx, RecoverPurpose, token, user)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return v12.ErrorPhoneRecoverFailed("")
+	}
+	return nil
+}
+
+type ForgetPasswordTwoStepTokenPayload struct {
+	UserID string
+}
+
+func (um *UserManager) GenerateForgetPasswordToken(ctx context.Context, user *User) (string, error) {
+	duration := 5 * time.Minute
+	return um.twoStepToken.Generate(ctx, RecoverChangePasswordPurpose, &ForgetPasswordTwoStepTokenPayload{UserID: user.ID.String()}, duration)
+}
+
+func (um *UserManager) ChangePasswordByToken(ctx context.Context, token, newPwd string) error {
+	user, err := um.retrieveTwoStepForgetPasswordToken(ctx, token)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return v1.ErrorUserNotFound("")
+	}
+	return um.UpdatePassword(ctx, user, newPwd)
+}
+
+func (um *UserManager) retrieveTwoStepForgetPasswordToken(ctx context.Context, token string) (*User, error) {
+	payload := &ForgetPasswordTwoStepTokenPayload{}
+	ok, err := um.twoStepToken.Retrieve(ctx, RecoverChangePasswordPurpose, token, payload)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, v12.ErrorTwoStepFailed("")
+	}
+	user, err := um.FindByID(ctx, payload.UserID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (um *UserManager) GetRoles(ctx context.Context, user *User) ([]*Role, error) {
@@ -234,7 +314,7 @@ func (um *UserManager) RefreshRememberToken(ctx context.Context, uid uuid.UUID, 
 		return "", err
 	} else {
 		if t == nil || t.UserId != uid {
-			return "", ErrRememberTokenNotFound
+			return "", v12.ErrorRememberTokenNotFound("")
 		}
 		//refresh token
 		newToken, err := um.GenerateRememberToken(ctx, uid)
