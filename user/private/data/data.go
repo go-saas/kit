@@ -29,10 +29,11 @@ import (
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(
 	NewData,
+	NewConnStrResolver,
+	kitgorm.NewDbProvider,
 	kitgorm.NewDbOpener,
 	uow2.NewUowManager,
 	NewBlobFactory,
-	NewProvider,
 	NewRedis,
 	data2.NewCache,
 	NewEmailer,
@@ -71,20 +72,12 @@ func NewData(c *conf.Data, dbProvider gorm.DbProvider, logger log.Logger) (*Data
 	}, cleanup, nil
 }
 
-func NewProvider(c *conf.Data, cfg *gorm.Config, opener gorm.DbOpener, ts common.TenantStore, logger log.Logger) gorm.DbProvider {
-	conn := make(data.ConnStrings, 1)
-	for k, v := range c.Endpoints.Databases {
-		conn[k] = v.Source
-	}
-	mr := common.NewMultiTenancyConnStrResolver(func() common.TenantStore {
-		return ts
-	}, data.NewConnStrOption(conn))
-	r := gorm.NewDefaultDbProvider(mr, cfg, opener)
-	return r
+func NewConnStrResolver(c *conf.Data, ts common.TenantStore) data.ConnStrResolver {
+	return kitgorm.NewConnStrResolver(c.Endpoints, ts)
 }
 
-func NewEnforcerProvider(dbProvider gorm.DbProvider) *casbin.EnforcerProvider {
-	return casbin.NewEnforcerProvider(dbProvider, ConnName)
+func NewEnforcerProvider(logger log.Logger, dbProvider gorm.DbProvider) (*casbin.EnforcerProvider, error) {
+	return casbin.NewEnforcerProvider(logger, dbProvider, ConnName)
 }
 
 func NewBlobFactory(c *conf.Data) blob.Factory {

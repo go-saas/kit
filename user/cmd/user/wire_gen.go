@@ -55,7 +55,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
-	dbProvider := data.NewProvider(confData, gormConfig, dbOpener, tenantStore, logger)
+	connStrResolver := data.NewConnStrResolver(confData, tenantStore)
+	dbProvider := gorm2.NewDbProvider(connStrResolver, gormConfig, dbOpener)
 	dataData, cleanup3, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup2()
@@ -78,7 +79,13 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userManager := biz.NewUserManager(userConf, userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, userTokenRepo, refreshTokenRepo, userTenantRepo, emailTokenProvider, phoneTokenProvider, twoStepTokenProvider, logger)
 	roleRepo := data.NewRoleRepo(dataData)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
-	enforcerProvider := data.NewEnforcerProvider(dbProvider)
+	enforcerProvider, err := data.NewEnforcerProvider(logger, dbProvider)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	permissionService := casbin.NewPermissionService(enforcerProvider)
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
 	authzOption := service.NewAuthorizationOption(userRoleContributor)

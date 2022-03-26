@@ -19,7 +19,17 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, kitgorm.NewDbOpener, uow2.NewUowManager, NewTenantStore, NewProvider, NewBlobFactory, NewTenantRepo, NewMigrate)
+var ProviderSet = wire.NewSet(
+	NewData,
+	NewConnStrResolver,
+	kitgorm.NewDbOpener,
+	kitgorm.NewDbProvider,
+	uow2.NewUowManager,
+	NewTenantStore,
+	NewBlobFactory,
+	NewTenantRepo,
+	NewMigrate,
+)
 
 const ConnName = "saas"
 
@@ -46,16 +56,8 @@ func NewData(c *conf.Data, dbProvider gorm.DbProvider, logger log.Logger) (*Data
 	return GlobalData, cleanup, nil
 }
 
-func NewProvider(c *conf.Data, cfg *gorm.Config, opener gorm.DbOpener, ts common.TenantStore, logger log.Logger) gorm.DbProvider {
-	conn := make(data.ConnStrings, 1)
-	for k, v := range c.Endpoints.Databases {
-		conn[k] = v.Source
-	}
-	mr := common.NewMultiTenancyConnStrResolver(func() common.TenantStore {
-		return ts
-	}, data.NewConnStrOption(conn))
-	r := gorm.NewDefaultDbProvider(mr, cfg, opener)
-	return r
+func NewConnStrResolver(c *conf.Data, ts common.TenantStore) data.ConnStrResolver {
+	return kitgorm.NewConnStrResolver(c.Endpoints, ts)
 }
 func NewBlobFactory(c *conf.Data) blob.Factory {
 	return blob.NewFactory(c.Blobs)

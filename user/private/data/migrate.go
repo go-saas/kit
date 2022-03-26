@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas/seed"
 	"gorm.io/gorm"
@@ -32,6 +33,10 @@ func migrateDb(db *gorm.DB) error {
 		&biz.RefreshToken{},
 		&biz.UserTenant{},
 		&biz.UserAddress{}); err != nil {
+		return err
+	}
+	//migrate casbin
+	if _, err := gormadapter.NewAdapterByDB(db); err != nil {
 		return err
 	}
 
