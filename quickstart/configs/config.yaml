@@ -10,9 +10,6 @@ services:
     user:
       http:
         addr: 0.0.0.0:8500
-        csrf:
-          cookie:
-            secure: false
       grpc:
         addr: 0.0.0.0:8501
     saas:

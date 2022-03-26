@@ -16,7 +16,6 @@ import (
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
-	sapisix "github.com/goxiaoy/go-saas/gateway/apisix"
 	"net/http"
 )
 
@@ -54,15 +53,18 @@ func newApp(tenantStore common.TenantStore,
 }
 
 func (a *App) load() error {
-	sapisix.Init(a.tenantStore, fmt.Sprintf("%s%s", api.PrefixOrDefault(""), a.tenantCfg.TenantKey), func(err error, w http.ResponseWriter) {
-		if errors.Is(err, common.ErrTenantNotFound) {
-			err = v1.ErrorTenantNotFound("")
-		}
-		//use error codec
-		fr := kerrors.FromError(err)
-		w.WriteHeader(int(fr.Code))
-		khttp.DefaultErrorEncoder(w, &http.Request{}, err)
-	})
+	plugins.SaasInit(a.tenantStore,
+		fmt.Sprintf("%s%s", api.PrefixOrDefault(""), a.tenantCfg.TenantKey),
+		fmt.Sprintf("%s%s", api.PrefixOrDefault(""), "tenant.info"),
+		func(err error, w http.ResponseWriter) {
+			if errors.Is(err, common.ErrTenantNotFound) {
+				err = v1.ErrorTenantNotFound("")
+			}
+			//use error codec
+			fr := kerrors.FromError(err)
+			w.WriteHeader(int(fr.Code))
+			khttp.DefaultErrorEncoder(w, &http.Request{}, err)
+		})
 	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.security, a.userTenant, a.logger); err != nil {
 		return err
 	}

@@ -43,7 +43,6 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 
 	_ "github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
-	_ "github.com/goxiaoy/go-saas/gateway/apisix"
 )
 
 var (
@@ -165,7 +164,7 @@ func newRunCommand() *cobra.Command {
 				"caller", klog.DefaultCaller,
 			)
 
-			shutdown, err := tracers.SetTracerProvider(context.Background(), bc.Tracing, "public-gateway")
+			shutdown, err := tracers.SetTracerProvider(context.Background(), bc.Tracing, "APISIX")
 			if err != nil {
 				logger.Log(klog.LevelError, err)
 			}

@@ -46,7 +46,7 @@ services:
       - "8521"
     depends_on:
       - mysqld
-      - user
+#      - user
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
@@ -58,7 +58,7 @@ services:
       - "8531"
     depends_on:
       - mysqld
-      - saas
+#      - saas
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets

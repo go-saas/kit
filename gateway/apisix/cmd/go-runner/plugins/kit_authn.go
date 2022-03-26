@@ -1,10 +1,12 @@
 package plugins
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
+	"github.com/apache/apisix-go-plugin-runner/pkg/log"
+	"github.com/apache/apisix-go-plugin-runner/pkg/plugin"
 	kerrors "github.com/go-kratos/kratos/v2/errors"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
@@ -18,11 +20,8 @@ import (
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/sessions"
 	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
-
-	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
-	"github.com/apache/apisix-go-plugin-runner/pkg/log"
-	"github.com/apache/apisix-go-plugin-runner/pkg/plugin"
 )
 
 func init() {
@@ -79,11 +78,12 @@ func (p *KitAuthn) ParseConf(in []byte) (interface{}, error) {
 }
 
 func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
-	//copy from NewTracer
-	ctx := context.Background()
-	propagator := propagation.NewCompositeTextMapPropagator(tracing.Metadata{}, propagation.Baggage{}, propagation.TraceContext{})
-	//extract tracing information
-	ctx = propagator.Extract(ctx, propagation.HeaderCarrier(r.Header().View()))
+
+	ctx := r.Context()
+	tracer := tracing.NewTracer(trace.SpanKindServer)
+	var span trace.Span
+	ctx, span = tracer.Start(ctx, p.Name(), propagation.HeaderCarrier(r.Header().View()))
+	defer func() { tracer.End(ctx, span, nil, nil) }()
 
 	//get tenant id from go-saas plugin
 
@@ -145,6 +145,8 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		khttp.DefaultErrorEncoder(w, &http.Request{}, err)
 		return
 	}
+
+	ctx = trCtx.Context()
 
 	//keep previous client id
 	ctx = authn.NewClientContext(ctx, clientId)

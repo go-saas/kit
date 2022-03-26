@@ -6,12 +6,13 @@ require (
 	github.com/apache/apisix-go-plugin-runner v0.0.0-20220323093822-dee7fa0167af
 	github.com/go-kratos/kratos/v2 v2.2.0
 	github.com/google/wire v0.5.0
-	github.com/goxiaoy/go-saas v0.1.1-0.20220325153233-e9872a1712c3
+	github.com/goxiaoy/go-saas v0.1.1-0.20220326143320-85844cc4ac78
 	github.com/goxiaoy/go-saas-kit v0.0.1
 	github.com/goxiaoy/sessions v1.2.2-0.20220226081452-f724382d1ab0
 	github.com/spf13/cobra v1.4.0
 	github.com/thediveo/enumflag v0.10.1
 	go.opentelemetry.io/otel v1.6.0
+	go.opentelemetry.io/otel/trace v1.6.0
 	go.uber.org/zap v1.21.0
 	google.golang.org/protobuf v1.27.1
 )
@@ -57,7 +58,6 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.6.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.6.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.6.0 // indirect
-	go.opentelemetry.io/otel/trace v1.6.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.12.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect

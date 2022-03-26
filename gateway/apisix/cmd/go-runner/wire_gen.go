@@ -21,7 +21,6 @@ import (
 
 import (
 	_ "github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
-	_ "github.com/goxiaoy/go-saas/gateway/apisix"
 )
 
 // Injectors from wire.go:

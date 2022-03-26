@@ -2,10 +2,18 @@ package api
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
+)
+
+const (
+	userKey       = "user"
+	clientKey     = "client"
+	tenantInfoKey = "tenant.info"
 )
 
 type SaasPropagator struct {
@@ -26,27 +34,39 @@ func (s *SaasPropagator) Extract(ctx context.Context, headers Header) (context.C
 	if !headers.HasKey(s.hmtOpt.TenantKey) {
 		return ctx, nil
 	}
-	tenantId := headers.Get(s.hmtOpt.TenantKey)
-	s.l.Infof("recover tenant: %s", tenantId)
-	return common.NewCurrentTenant(ctx, tenantId, ""), nil
+	if headers.HasKey(s.hmtOpt.TenantKey) {
+		tenantId := headers.Get(s.hmtOpt.TenantKey)
+		s.l.Infof("recover tenant: %s", tenantId)
+		ctx = common.NewCurrentTenant(ctx, tenantId, "")
+	}
+	if headers.HasKey(tenantInfoKey) {
+		if infoJson, err := base64.StdEncoding.DecodeString(headers.Get(tenantInfoKey)); err == nil {
+			tenantConfig := &common.TenantConfig{}
+			if err := json.Unmarshal(infoJson, tenantConfig); err == nil {
+				s.l.Infof("recover tenant config: %s", infoJson)
+				ctx = common.NewTenantConfigContext(ctx, tenantConfig.ID, tenantConfig)
+			}
+		}
+	}
+	return ctx, nil
 }
 
 func (s *SaasPropagator) Inject(ctx context.Context, headers Header) error {
 	ti, _ := common.FromCurrentTenant(ctx)
 	headers.Set(s.hmtOpt.TenantKey, ti.GetId())
+	if tenantConfig, ok := common.FromTenantConfigContext(ctx, ti.GetId()); ok {
+		b, _ := json.Marshal(tenantConfig)
+		headers.Set(tenantInfoKey, base64.StdEncoding.EncodeToString(b))
+	}
 	return nil
 }
 
 func (s *SaasPropagator) Fields() []string {
 	return []string{
 		s.hmtOpt.TenantKey,
+		tenantInfoKey,
 	}
 }
-
-const (
-	userKey   = "user"
-	clientKey = "client"
-)
 
 type UserPropagator struct {
 	l *log.Helper

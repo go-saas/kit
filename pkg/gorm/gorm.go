@@ -25,7 +25,7 @@ func NewConnStrResolver(c *conf.Endpoints, ts common.TenantStore) data.ConnStrRe
 		conn[k] = v.Source
 	}
 	mr := common.NewMultiTenancyConnStrResolver(func() common.TenantStore {
-		return ts
+		return common.NewCachedTenantStore(ts)
 	}, data.NewConnStrOption(conn))
 	return mr
 }
