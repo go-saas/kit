@@ -48,7 +48,15 @@ var (
 	userTenantValidator *uremote.UserTenantContributor
 )
 
-func Init(t jwt.Tokenizer, tmr api.TokenManager, clientName api.ClientName, services *conf2.Services, security *conf2.Security, userTenant *uremote.UserTenantContributor, logger klog.Logger) error {
+func Init(
+	t jwt.Tokenizer,
+	tmr api.TokenManager,
+	clientName api.ClientName,
+	services *conf2.Services,
+	security *conf2.Security,
+	userTenant *uremote.UserTenantContributor,
+	logger klog.Logger,
+) error {
 	tokenizer = t
 	tokenManager = tmr
 	clientCfg, ok := services.Clients[string(clientName)]
@@ -85,8 +93,11 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	ctx, span = tracer.Start(ctx, p.Name(), propagation.HeaderCarrier(r.Header().View()))
 	defer func() { tracer.End(ctx, span, nil, nil) }()
 
-	//get tenant id from go-saas plugin
+	trace := r.Header().Get("traceparent")
+	//https://github.com/apache/apisix/issues/6728
+	log.Infof("trace: %s", trace)
 
+	//get tenant id from go-saas plugin
 	tenantId := r.Header().Get("internal.__tenant")
 
 	var t = ""

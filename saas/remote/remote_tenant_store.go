@@ -14,7 +14,7 @@ type GrpcTenantStore struct {
 var _ common.TenantStore = (*GrpcTenantStore)(nil)
 
 func NewRemoteGrpcTenantStore(client v1.TenantServiceClient) common.TenantStore {
-	return &GrpcTenantStore{client: client}
+	return common.NewCachedTenantStore(&GrpcTenantStore{client: client})
 }
 
 func (r *GrpcTenantStore) GetByNameOrId(ctx context.Context, nameOrId string) (*common.TenantConfig, error) {
