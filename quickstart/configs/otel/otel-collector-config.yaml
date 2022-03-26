@@ -4,7 +4,6 @@ receivers:
       grpc:
       http: # add OTLP HTTP Receiver，default port is 4318
 
-
 exporters:
   prometheus:
     endpoint: "0.0.0.0:8889"
@@ -12,10 +11,6 @@ exporters:
       label1: value1
 
   logging:
-
-  zipkin:
-    endpoint: "http://zipkin-all-in-one:9411/api/v2/spans"
-    format: proto
 
   jaeger:
     endpoint: jaeger-all-in-one:14250
@@ -38,7 +33,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, zipkin, jaeger]
+      exporters: [logging, jaeger]
     metrics:
       receivers: [otlp]
       processors: [batch]
