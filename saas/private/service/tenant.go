@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"io"
 	"os"
 	"path/filepath"
@@ -27,10 +28,11 @@ type TenantService struct {
 	useCase *biz.TenantUseCase
 	auth    authz.Service
 	blob    blob.Factory
+	trusted sapi.TrustedContextValidator
 }
 
-func NewTenantService(useCase *biz.TenantUseCase, auth authz.Service, blob blob.Factory) *TenantService {
-	return &TenantService{useCase: useCase, auth: auth, blob: blob}
+func NewTenantService(useCase *biz.TenantUseCase, auth authz.Service, trusted sapi.TrustedContextValidator, blob blob.Factory) *TenantService {
+	return &TenantService{useCase: useCase, auth: auth, trusted: trusted, blob: blob}
 }
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {
@@ -113,12 +115,13 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 	if t == nil {
 		return nil, errors.NotFound("", "")
 	}
-	
-	//TODO separate this check???
-	//if claim, ok := jwt.FromClaimsContext(ctx); ok && len(claim.ClientId) > 0 {
-	//	//internal api call
-	//	return mapBizTenantToApi(ctx, s.blob, t), nil
-	//}
+	// prevent cycle dependency call in the remote authz checker
+	if ok, err := s.trusted.Trusted(ctx); err != nil {
+		return nil, err
+	} else if ok {
+		//internal api call
+		return mapBizTenantToApi(ctx, s.blob, t), nil
+	}
 
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, t.ID), authz.ReadAction); err != nil {
 		return nil, err

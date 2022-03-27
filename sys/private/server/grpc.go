@@ -21,9 +21,16 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf2.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager,
-	apiOpt *sapi.Option, logger log.Logger,
-	menu *service.MenuService) *grpc.Server {
+func NewGRPCServer(
+	c *conf2.Services,
+	tokenizer jwt.Tokenizer,
+	ts common.TenantStore,
+	uowMgr uow2.Manager,
+	apiOpt *sapi.Option,
+	logger log.Logger,
+	menu *service.MenuService,
+	validator sapi.TrustedContextValidator,
+) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -32,7 +39,7 @@ func NewGRPCServer(c *conf2.Services, tokenizer jwt.Tokenizer, ts common.TenantS
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerPropagation(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, validator, logger),
 			uow.Uow(logger, uowMgr),
 		),
 	}

@@ -263,6 +263,7 @@ func (s *AuthService) GetCsrfToken(ctx context.Context, req *pb.GetCsrfTokenRequ
 }
 
 func (s *AuthService) RefreshRememberToken(ctx context.Context, req *pb.RefreshRememberTokenRequest) (*pb.RefreshRememberTokenReply, error) {
+	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceAuthInternal, authz.AnyResource), authz.AnyAction); err != nil {
 		return nil, err
 	}

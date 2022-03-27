@@ -20,8 +20,8 @@ func NewOption(bypassToken bool, propagators ...Propagator) *Option {
 	return &Option{BypassToken: bypassToken, Propagators: propagators}
 }
 
-func NewDefaultOption(saas *SaasPropagator, logger log.Logger) *Option {
-	return NewOption(false, saas, NewUserPropagator(logger), NewClientPropagator(true, logger))
+func NewDefaultOption(logger log.Logger) *Option {
+	return NewOption(false, NewSaasPropagator(logger), NewUserPropagator(logger), NewClientPropagator(true, logger))
 }
 
 type Header interface {
@@ -60,33 +60,32 @@ type Propagator interface {
 	Fields() []string
 }
 
-func ServerPropagation(opt *Option, logger log.Logger) middleware.Middleware {
+func ServerPropagation(opt *Option, validator TrustedContextValidator, logger log.Logger) middleware.Middleware {
 	l := log.NewHelper(log.With(logger, "module", "api.ServerPropagation"))
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
 			if tr, ok := transport.FromServerContext(ctx); ok {
-				//find client claims
-				if claims, ok := jwt.FromClaimsContext(ctx); ok {
-					//TODO trusted server to server communication
-					if claims.ClientId != "" {
-						l.Debugf("find trusted context with client: %s", claims.ClientId)
-						//preserve all request header
-						//recover context
-						newCtx := ctx
-						var err error
-						headers := HeaderCarrier(map[string]string{})
-						for _, key := range tr.RequestHeader().Keys() {
-							headers.Set(key, tr.RequestHeader().Get(key))
-						}
-						for i := range opt.Propagators {
-							newCtx, err = opt.Propagators[i].Extract(newCtx, headers)
-							if err != nil {
-								return nil, err
-							}
-						}
-						return handler(newCtx, req)
+				if ok, err := validator.Trusted(ctx); err != nil {
+					return nil, err
+				} else if ok {
+					l.Debugf("find trusted context")
+					//preserve all request header
+					//recover context
+					newCtx := ctx
+					var err error
+					headers := HeaderCarrier(map[string]string{})
+					for _, key := range tr.RequestHeader().Keys() {
+						headers.Set(key, tr.RequestHeader().Get(key))
 					}
+					for i := range opt.Propagators {
+						newCtx, err = opt.Propagators[i].Extract(newCtx, headers)
+						if err != nil {
+							return nil, err
+						}
+					}
+					return handler(newCtx, req)
 				}
+
 			}
 			return handler(ctx, req)
 		}

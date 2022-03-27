@@ -23,14 +23,14 @@ func init() {
 	//internal api permission
 	authz.AddIntoGroup(authz.InternalDefGroup,
 		authz.NewPermissionDef(ResourcePermissionInternal, authz.AnyAction, ResourcePermissionInternal, authz.PermissionBothSide)).
-		AddDef(authz.NewPermissionDef(ResourceAuthInternal, authz.AnyAction, ResourceAuthInternal, authz.PermissionBothSide))
+		AddDef(authz.NewPermissionDef(ResourceAuthInternal, authz.AnyAction, ResourceAuthInternal, authz.PermissionBothSide)).
+		AddDef(authz.NewPermissionDef(ResourceUserTenant, authz.AnyAction, fmt.Sprintf("%s.any", ResourceUserTenant), authz.PermissionBothSide))
 
 	authz.AddGroup(authz.NewPermissionDefGroup(fmt.Sprintf("%s.permission", ResourcePermission), authz.PermissionBothSide, 0).
 		AddDef(authz.NewPermissionDef(ResourcePermission, authz.ReadAction, fmt.Sprintf("%s.read", ResourcePermission), authz.PermissionBothSide)).
 		AddDef(authz.NewPermissionDef(ResourcePermission, authz.WriteAction, fmt.Sprintf("%s.write", ResourcePermission), authz.PermissionBothSide)))
 
 	authz.AddGroup(authz.NewPermissionDefGroup(fmt.Sprintf("%s.permission", ResourceUser), authz.PermissionBothSide, 0).
-		AddDef(authz.NewPermissionDef(ResourceUserTenant, authz.AnyAction, fmt.Sprintf("%s.any", ResourceUserTenant), authz.PermissionHostSideOnly).AsInternalOnly()).
 		AddDef(authz.NewPermissionDef(ResourceUser, authz.AnyAction, fmt.Sprintf("%s.any", ResourceUser), authz.PermissionBothSide).AsInternalOnly()).
 		AddDef(authz.NewPermissionDef(ResourceUser, authz.ReadAction, fmt.Sprintf("%s.read", ResourceUser), authz.PermissionBothSide)).
 		AddDef(authz.NewPermissionDef(ResourceUser, authz.CreateAction, fmt.Sprintf("%s.create", ResourceUser), authz.PermissionBothSide)).

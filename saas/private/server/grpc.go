@@ -27,6 +27,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 	mOpt *http.WebMultiTenancyOption, apiOpt *sapi.Option,
 	tenant *service.TenantService,
 	userTenant *remote.UserTenantContributor,
+	validator sapi.TrustedContextValidator,
 	logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
@@ -36,7 +37,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerPropagation(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, validator, logger),
 			server.Saas(mOpt, ts, func(o *common.TenantResolveOption) {
 				o.AppendContributors(userTenant)
 			}),

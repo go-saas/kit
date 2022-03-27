@@ -96,6 +96,9 @@ func NewHttpClient(clientName ClientName, serviceName string,
 	}
 }
 
-var DefaultProviderSet = wire.NewSet(NewSaasPropagator,
-	NewDefaultOption, NewInMemoryTokenManager,
-	wire.Bind(new(TokenManager), new(*InMemoryTokenManager)))
+var DefaultProviderSet = wire.NewSet(
+	NewDefaultOption,
+	NewInMemoryTokenManager,
+	wire.Bind(new(TokenManager), new(*InMemoryTokenManager)),
+	NewClientTrustedContextValidator,
+)

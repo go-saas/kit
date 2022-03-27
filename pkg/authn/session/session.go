@@ -18,7 +18,7 @@ const (
 
 type RefreshTokenProvider = func(ctx context.Context, token string) (err error)
 
-func Auth(cfg *conf.Security, errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider) func(http.Handler) http.Handler {
+func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 
 	sessionInfoStore := NewSessionInfoStore(cfg)
 	rememberStore := NewRememberStore(cfg)
@@ -36,19 +36,31 @@ func Auth(cfg *conf.Security, errEncoder khttp.EncodeErrorFunc, provider Refresh
 			state := NewClientState(s, rs)
 			ctx = NewClientStateContext(ctx, state)
 			ctx = authn.NewUserContext(ctx, authn.NewUserInfo(state.GetUid()))
-			if len(state.GetUid()) == 0 && len(state.GetRememberToken()) > 0 {
-				//call refresh
-				err := provider(ctx, state.GetRememberToken())
-				if err != nil {
-					//recoverable?
-					if errors.Recoverable(err) {
-						//abort with error
-						errEncoder(w, r, err)
-						return
-					} else {
-						//just clean remember token
-						stateWriter.SetRememberToken(ctx, "")
-						stateWriter.Save(ctx)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}
+
+func Refresh(errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			if state, ok := FromClientStateContext(ctx); ok {
+				if stateWriter, ok := FromClientStateWriterContext(ctx); ok {
+					if len(state.GetUid()) == 0 && len(state.GetRememberToken()) > 0 {
+						//call refresh
+						err := provider(ctx, state.GetRememberToken())
+						if err != nil {
+							if errors.Recoverable(err) {
+								//abort with error
+								errEncoder(w, r, err)
+								return
+							} else {
+								//just clean remember token
+								stateWriter.SignOutRememberToken(ctx)
+								stateWriter.Save(ctx)
+							}
+						}
 					}
 				}
 			}
@@ -56,7 +68,6 @@ func Auth(cfg *conf.Security, errEncoder khttp.EncodeErrorFunc, provider Refresh
 		})
 	}
 }
-
 func GetSession(ctx context.Context, header sessions.Header, sessionInfoStore sessions.Store, cfg *conf.Security) (*sessions.Session, error) {
 	var sn = defaultSessionName
 	if cfg.SessionCookie != nil && cfg.SessionCookie.Name != nil {

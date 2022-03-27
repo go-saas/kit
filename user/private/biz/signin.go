@@ -45,6 +45,7 @@ func (s *SignInManager) CheckCanSignIn(ctx context.Context, u *User) error {
 
 //RefreshSignIn refresh sign in
 func (s *SignInManager) RefreshSignIn(ctx context.Context, refreshToken string) error {
+	ctx = NewIgnoreUserTenantsContext(ctx, true)
 	if writer, ok := session.FromClientStateWriterContext(ctx); ok {
 		duration := 0
 		if s.securityCfg != nil && s.securityCfg.RememberCookie != nil && s.securityCfg.RememberCookie.MaxAge != nil {

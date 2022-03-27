@@ -99,10 +99,14 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	tenantIds = append(tenantIds, currentTenant.GetId())
 
 	if len(tenantIds) > 0 {
+		//change to host side
+		ctx = common.NewCurrentTenant(ctx, "", "")
 		tenants, err := s.tenantService.ListTenant(ctx, &v13.ListTenantRequest{Filter: &v13.TenantFilter{IdIn: tenantIds}})
 		if err != nil {
 			return nil, err
 		}
+		//back to current
+		ctx = common.NewCurrentTenant(ctx, currentTenant.GetId(), currentTenant.GetName())
 
 		reTenants := lo.Map(u.Tenants, func(ut biz.UserTenant, _ int) *pb.UserTenant {
 			//get tenant info

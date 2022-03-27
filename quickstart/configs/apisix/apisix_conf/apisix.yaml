@@ -97,8 +97,6 @@ global_rules:
     plugins:
       ext-plugin-pre-req:
         conf:
-          - name: "go-saas"
-            value:  "{}"
           - name: "kit_authn"
             value:  "{}"
 #END

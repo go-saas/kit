@@ -39,6 +39,7 @@ func (r *Resolver) Resolve(ctx context.Context) (common.TenantResolveResult, con
 			t = f[0][1]
 		}
 	}
-
-	return common.TenantResolveResult{TenantIdOrName: t}, ctx, nil
+	res := &common.TenantResolveResult{TenantIdOrName: t}
+	ctx = common.NewTenantResolveRes(ctx, res)
+	return *res, ctx, nil
 }

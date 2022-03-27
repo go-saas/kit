@@ -16,7 +16,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
-	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
@@ -149,25 +148,22 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	ctx = session.NewClientStateWriterContext(ctx, stateWriter)
 	state := session.NewClientState(s, rs)
 	ctx = session.NewClientStateContext(ctx, state)
+
+	if len(state.GetUid()) == 0 && len(state.GetRememberToken()) > 0 {
+		//call refresh
+		log.Infof("call refresh token")
+		err := refreshProvider(ctx, state.GetRememberToken())
+		if err != nil {
+			log.Errorf("refresh fail %v", err)
+			//abort with error
+			abortWithError(err, w)
+			return
+		}
+	}
+
 	//set uid from cookie
 	uid = state.GetUid()
 	ctx = authn.NewUserContext(ctx, authn.NewUserInfo(uid))
-	if len(state.GetUid()) == 0 && len(state.GetRememberToken()) > 0 {
-		//call refresh
-		err := refreshProvider(ctx, state.GetRememberToken())
-		if err != nil {
-			//recoverable?
-			if errors2.Recoverable(err) {
-				//abort with error
-				abortWithError(err, w)
-				return
-			} else {
-				//just clean remember token
-				stateWriter.SetRememberToken(ctx, "")
-				stateWriter.Save(ctx)
-			}
-		}
-	}
 
 	//extract token
 	var t = ""

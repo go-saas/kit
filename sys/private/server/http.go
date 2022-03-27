@@ -35,6 +35,7 @@ func NewHTTPServer(c *conf2.Services,
 	dataCfg *conf.Data,
 	apiOpt *sapi.Option,
 	logger log.Logger,
+	validator sapi.TrustedContextValidator,
 	menu *service.MenuService) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
@@ -46,7 +47,7 @@ func NewHTTPServer(c *conf2.Services,
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerPropagation(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, validator, logger),
 			uow.Uow(logger, uowMgr),
 		),
 	}...)

@@ -8,7 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
+	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
@@ -32,13 +32,14 @@ func NewHTTPServer(c *conf.Services,
 	uowMgr uow2.Manager,
 	tenant *service.TenantService,
 	mOpt *http2.WebMultiTenancyOption,
-	apiOpt *api2.Option,
+	apiOpt *sapi.Option,
 	reqDecoder http.DecodeRequestFunc,
 	resEncoder http.EncodeResponseFunc,
 	errEncoder http.EncodeErrorFunc,
 	factory blob.Factory,
 	dataCfg *conf2.Data,
 	logger log.Logger,
+	validator sapi.TrustedContextValidator,
 	userTenant *remote.UserTenantContributor) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
@@ -50,7 +51,7 @@ func NewHTTPServer(c *conf.Services,
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			api2.ServerPropagation(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, validator, logger),
 			server.Saas(mOpt, ts, func(o *common.TenantResolveOption) {
 				o.AppendContributors(userTenant)
 			}),

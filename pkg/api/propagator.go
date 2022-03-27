@@ -7,12 +7,16 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas/common"
+	"github.com/goxiaoy/go-saas/data"
+	"strconv"
 )
 
 const (
 	InternalKeyPrefix = "internal-"
 	TenantKey         = InternalKeyPrefix + "tenant"
 	TenantInfoKey     = InternalKeyPrefix + "tenant-info"
+	TenantFilterKey   = InternalKeyPrefix + "tenant-data-filter"
+	TenantAutoSetKey  = InternalKeyPrefix + "tenant-data-autoset"
 	UserKey           = InternalKeyPrefix + "user"
 	ClientKey         = InternalKeyPrefix + "client"
 )
@@ -44,6 +48,24 @@ func (s *SaasPropagator) Extract(ctx context.Context, headers Header) (context.C
 			}
 		}
 	}
+	if headers.HasKey(TenantFilterKey) {
+		if v, err := strconv.ParseBool(headers.Get(TenantInfoKey)); err == nil {
+			if v {
+				ctx = data.NewEnableMultiTenancyDataFilter(ctx)
+			} else {
+				ctx = data.NewDisableMultiTenancyDataFilter(ctx)
+			}
+		}
+	}
+	if headers.HasKey(TenantAutoSetKey) {
+		if v, err := strconv.ParseBool(headers.Get(TenantAutoSetKey)); err == nil {
+			if v {
+				ctx = data.NewEnableAutoSetTenantId(ctx)
+			} else {
+				ctx = data.NewDisableAutoSetTenantId(ctx)
+			}
+		}
+	}
 	return ctx, nil
 }
 
@@ -54,6 +76,10 @@ func (s *SaasPropagator) Inject(ctx context.Context, headers Header) error {
 		b, _ := json.Marshal(tenantConfig)
 		headers.Set(TenantInfoKey, base64.StdEncoding.EncodeToString(b))
 	}
+	filter := data.FromMultiTenancyDataFilter(ctx)
+	headers.Set(TenantFilterKey, strconv.FormatBool(filter))
+	autoset := data.FromAutoSetTenantId(ctx)
+	headers.Set(TenantAutoSetKey, strconv.FormatBool(autoset))
 	return nil
 }
 
@@ -61,6 +87,8 @@ func (s *SaasPropagator) Fields() []string {
 	return []string{
 		TenantKey,
 		TenantInfoKey,
+		TenantFilterKey,
+		TenantAutoSetKey,
 	}
 }
 

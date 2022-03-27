@@ -55,12 +55,14 @@ func NewHTTPServer(c *conf.Services,
 	dataCfg *conf2.Data,
 	factory blob.Factory,
 	userTenant *service.UserTenantContributor,
+	validator sapi.TrustedContextValidator,
 	refreshProvider session.RefreshTokenProvider,
 ) *khttp.Server {
 	var opts []khttp.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
 		//extract from session cookie
-		session.Auth(sCfg, errEncoder, refreshProvider))
+		session.Auth(sCfg),
+	)
 
 	opts = append(opts, []khttp.ServerOption{
 		khttp.Middleware(
@@ -70,7 +72,7 @@ func NewHTTPServer(c *conf.Services,
 			metrics.Server(),
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerPropagation(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, validator, logger),
 			server.Saas(mOpt, ts, func(o *common.TenantResolveOption) {
 				o.AppendContributors(userTenant)
 			}),
@@ -89,7 +91,7 @@ func NewHTTPServer(c *conf.Services,
 			validate.Validator(),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 
-			sapi.ServerPropagation(apiOpt, logger),
+			sapi.ServerPropagation(apiOpt, validator, logger),
 			server.Saas(mOpt, ts),
 			uow.Uow(logger, uowMgr),
 		))

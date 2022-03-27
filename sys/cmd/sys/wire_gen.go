@@ -38,8 +38,7 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	clientName := _wireClientNameValue
-	saasPropagator := api.NewSaasPropagator(logger)
-	option := api.NewDefaultOption(saasPropagator, logger)
+	option := api.NewDefaultOption(logger)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	tenantServiceClient := api2.NewTenantGrpcClient(grpcConn)
@@ -50,6 +49,7 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
 	factory := data.NewBlobFactory(confData)
+	trustedContextValidator := api.NewClientTrustedContextValidator()
 	apiGrpcConn, cleanup3 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	permissionServiceClient := api3.NewPermissionGrpcClient(apiGrpcConn)
 	permissionChecker := remote2.NewRemotePermissionChecker(permissionServiceClient)
@@ -60,8 +60,8 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	dbProvider := gorm2.NewDbProvider(connStrResolver, gormConfig, dbOpener)
 	menuRepo := data.NewMenuRepo(dbProvider)
 	menuService := service.NewMenuService(defaultAuthorizationService, menuRepo, logger)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, option, logger, menuService)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, option, logger, menuService)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, option, logger, trustedContextValidator, menuService)
+	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, option, logger, menuService, trustedContextValidator)
 	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup3()

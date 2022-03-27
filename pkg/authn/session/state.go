@@ -153,6 +153,9 @@ func (c *ClientStateWriterImpl) SetTFAInfo(ctx context.Context, t TFAInfo) error
 }
 
 func (c *ClientStateWriterImpl) SetRememberToken(ctx context.Context, r string) error {
+	if len(r) == 0 {
+		return c.SignOutRememberToken(ctx)
+	}
 	c.rs.Values[sessionNameRememberToken] = r
 	c.rsChanged = true
 	return nil
