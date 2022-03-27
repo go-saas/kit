@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
@@ -22,6 +23,7 @@ import (
 	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	uhttp "github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
@@ -53,11 +55,12 @@ func NewHTTPServer(c *conf.Services,
 	dataCfg *conf2.Data,
 	factory blob.Factory,
 	userTenant *service.UserTenantContributor,
+	refreshProvider session.RefreshTokenProvider,
 ) *khttp.Server {
 	var opts []khttp.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
 		//extract from session cookie
-		session.Auth(sCfg))
+		session.Auth(sCfg, errEncoder, refreshProvider))
 
 	opts = append(opts, []khttp.ServerOption{
 		khttp.Middleware(
@@ -116,4 +119,10 @@ func NewHTTPServer(c *conf.Services,
 	v1.RegisterRoleServiceHTTPServer(srv, role)
 	v15.RegisterPermissionServiceHTTPServer(srv, permission)
 	return srv
+}
+
+func NewRefreshTokenProvider(sign *biz.SignInManager) session.RefreshTokenProvider {
+	return func(ctx context.Context, token string) (err error) {
+		return sign.RefreshSignIn(ctx, token)
+	}
 }

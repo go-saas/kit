@@ -5,6 +5,10 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 )
 
-var GrpcProviderSet = wire.NewSet(NewRemotePermissionChecker,
+var GrpcProviderSet = wire.NewSet(
+	NewRemotePermissionChecker,
 	wire.Bind(new(authz.PermissionChecker), new(*PermissionChecker)),
-	wire.Bind(new(authz.PermissionManagementService), new(*PermissionChecker)), NewUserTenantContributor)
+	wire.Bind(new(authz.PermissionManagementService), new(*PermissionChecker)),
+	NewUserTenantContributor,
+	NewRefreshProvider,
+)

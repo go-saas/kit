@@ -37,7 +37,9 @@ func initApp(services *conf.Services, security *conf.Security, clientName api.Cl
 	userServiceClient := api3.NewUserGrpcClient(apiGrpcConn)
 	userTenantContributor := remote2.NewUserTenantContributor(userServiceClient)
 	webMultiTenancyOption := http.NewDefaultWebMultiTenancyOption()
-	app, err := newApp(tenantStore, userTenantContributor, tokenizer, inMemoryTokenManager, services, clientName, webMultiTenancyOption, security, logger)
+	authClient := api3.NewAuthGrpcClient(apiGrpcConn)
+	v := remote2.NewRefreshProvider(authClient)
+	app, err := newApp(tenantStore, userTenantContributor, tokenizer, inMemoryTokenManager, services, clientName, webMultiTenancyOption, security, v, logger)
 	if err != nil {
 		cleanup2()
 		cleanup()

@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
+	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
+	"time"
 )
 
 var (
@@ -12,11 +14,12 @@ var (
 )
 
 type SignInManager struct {
-	um *UserManager
+	um          *UserManager
+	securityCfg *conf.Security
 }
 
-func NewSignInManager(um *UserManager) *SignInManager {
-	return &SignInManager{um: um}
+func NewSignInManager(um *UserManager, securityCfg *conf.Security) *SignInManager {
+	return &SignInManager{um: um, securityCfg: securityCfg}
 }
 
 func (s *SignInManager) IsSignedIn(ctx context.Context) (bool, error) {
@@ -41,8 +44,30 @@ func (s *SignInManager) CheckCanSignIn(ctx context.Context, u *User) error {
 }
 
 //RefreshSignIn refresh sign in
-func (s *SignInManager) RefreshSignIn(ctx context.Context, u *User) error {
-	panic("")
+func (s *SignInManager) RefreshSignIn(ctx context.Context, refreshToken string) error {
+	if writer, ok := session.FromClientStateWriterContext(ctx); ok {
+		duration := 0
+		if s.securityCfg != nil && s.securityCfg.RememberCookie != nil && s.securityCfg.RememberCookie.MaxAge != nil {
+			duration = int(s.securityCfg.RememberCookie.MaxAge.Value)
+		}
+		duration = session.RememberMeExpireSecondsOrDefault(duration)
+		//find refresh token
+		u, newToken, err := s.um.RefreshRememberToken(ctx, refreshToken, time.Duration(duration)*time.Second)
+		if err != nil {
+			return err
+		}
+		if err := writer.SetUid(ctx, u.ID.String()); err != nil {
+			return err
+		}
+		err = writer.SetRememberToken(ctx, newToken)
+		if err != nil {
+			return err
+		}
+		//save session
+		return writer.Save(ctx)
+	} else {
+		panic(ErrWriterNotFound)
+	}
 }
 
 func (s *SignInManager) SignIn(ctx context.Context, u *User, isPersistent bool) error {
@@ -51,7 +76,12 @@ func (s *SignInManager) SignIn(ctx context.Context, u *User, isPersistent bool) 
 			return err
 		}
 		if isPersistent {
-			rememberToken, err := s.um.GenerateRememberToken(ctx, u.ID)
+			duration := 0
+			if s.securityCfg != nil && s.securityCfg.RememberCookie != nil && s.securityCfg.RememberCookie.MaxAge != nil {
+				duration = int(s.securityCfg.RememberCookie.MaxAge.Value)
+			}
+			duration = session.RememberMeExpireSecondsOrDefault(duration)
+			rememberToken, err := s.um.GenerateRememberToken(ctx, time.Duration(duration)*time.Second, u.ID)
 			if err != nil {
 				return err
 			}

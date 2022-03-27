@@ -2,8 +2,10 @@ package session
 
 import (
 	"context"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/go-saas-kit/pkg/errors"
 	"github.com/goxiaoy/sessions"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"net/http"
@@ -14,7 +16,9 @@ const (
 	defaultRememberName = "kit_user_rm"
 )
 
-func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
+type RefreshTokenProvider = func(ctx context.Context, token string) (err error)
+
+func Auth(cfg *conf.Security, errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider) func(http.Handler) http.Handler {
 
 	sessionInfoStore := NewSessionInfoStore(cfg)
 	rememberStore := NewRememberStore(cfg)
@@ -32,7 +36,22 @@ func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 			state := NewClientState(s, rs)
 			ctx = NewClientStateContext(ctx, state)
 			ctx = authn.NewUserContext(ctx, authn.NewUserInfo(state.GetUid()))
-
+			if len(state.GetUid()) == 0 && len(state.GetRememberToken()) > 0 {
+				//call refresh
+				err := provider(ctx, state.GetRememberToken())
+				if err != nil {
+					//recoverable?
+					if errors.Recoverable(err) {
+						//abort with error
+						errEncoder(w, r, err)
+						return
+					} else {
+						//just clean remember token
+						stateWriter.SetRememberToken(ctx, "")
+						stateWriter.Save(ctx)
+					}
+				}
+			}
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
@@ -53,17 +72,21 @@ func GetRememberSession(ctx context.Context, header sessions.Header, rememberSto
 	return rememberStore.Get(ctx, header, rn)
 }
 
-//TODO handle remember?
-
 func NewSessionInfoStore(cfg *conf.Security) sessions.Store {
 	var blockKey []byte = nil
 	if cfg.SecurityCookie.BlockKey != nil {
 		blockKey = []byte(cfg.SecurityCookie.BlockKey.Value)
 	}
 	var store = sessions.NewCookieStore([]byte(cfg.SecurityCookie.HashKey), blockKey)
-	if cfg.SessionCookie != nil {
-		patchCfg(store, cfg.SessionCookie)
+
+	if cfg.SessionCookie == nil {
+		cfg.SessionCookie = &conf.Cookie{}
 	}
+	if cfg.SessionCookie.MaxAge == nil {
+		cfg.SessionCookie.MaxAge = &wrapperspb.Int32Value{Value: int32(SessionExpireSecondsOrDefault(0))}
+	}
+	patchCfg(store, cfg.SessionCookie)
+
 	return store
 }
 
@@ -77,8 +100,7 @@ func NewRememberStore(cfg *conf.Security) sessions.Store {
 		cfg.RememberCookie = &conf.Cookie{}
 	}
 	if cfg.RememberCookie.MaxAge == nil {
-		//365 days
-		cfg.RememberCookie.MaxAge = &wrapperspb.Int32Value{Value: 86400 * 30 * 365}
+		cfg.RememberCookie.MaxAge = &wrapperspb.Int32Value{Value: int32(RememberMeExpireSecondsOrDefault(0))}
 	}
 	patchCfg(store, cfg.RememberCookie)
 	return store
@@ -109,4 +131,22 @@ func patchCfg(store *sessions.CookieStore, c *conf.Cookie) {
 			store.Options.SameSite = http.SameSiteDefaultMode
 		}
 	}
+}
+
+//SessionExpireSecondsOrDefault default 1 day
+func SessionExpireSecondsOrDefault(seconds int) int {
+	if seconds <= 0 {
+		//1 day
+		return 24 * 60 * 60
+	}
+	return seconds
+}
+
+//RememberMeExpireSecondsOrDefault default 30 days
+func RememberMeExpireSecondsOrDefault(seconds int) int {
+	if seconds <= 0 {
+		//30 days
+		return 24 * 60 * 60 * 30
+	}
+	return seconds
 }

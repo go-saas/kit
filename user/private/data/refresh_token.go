@@ -31,7 +31,7 @@ func (r *RefreshTokenRepo) Find(ctx context.Context, token string, validOnly boo
 
 	if validOnly {
 		nowTime := time.Now()
-		q = q.Where("expires is NULL or expires < ?", nowTime)
+		q = q.Where("expires is NULL or expires > ?", nowTime)
 	}
 	err := q.First(&t).Error
 	if err != nil {

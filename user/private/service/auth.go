@@ -10,8 +10,11 @@ import (
 	"github.com/gorilla/csrf"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
+	"github.com/goxiaoy/go-saas-kit/user/api"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -33,6 +36,7 @@ type AuthService struct {
 	security         *conf.Security
 	logger           *klog.Helper
 	emailer          biz.EmailSender
+	auth             authz.Service
 }
 
 func NewAuthService(um *biz.UserManager,
@@ -43,6 +47,7 @@ func NewAuthService(um *biz.UserManager,
 	refreshTokenRepo biz.RefreshTokenRepo,
 	emailer biz.EmailSender,
 	security *conf.Security,
+	authz authz.Service,
 	logger klog.Logger) *AuthService {
 	return &AuthService{
 		um:               um,
@@ -53,6 +58,7 @@ func NewAuthService(um *biz.UserManager,
 		refreshTokenRepo: refreshTokenRepo,
 		emailer:          emailer,
 		security:         security,
+		auth:             authz,
 		logger:           klog.NewHelper(klog.With(logger, "module", "AuthService")),
 	}
 }
@@ -254,6 +260,22 @@ func (s *AuthService) GetCsrfToken(ctx context.Context, req *pb.GetCsrfTokenRequ
 		}
 	}
 	return nil, pb.ErrorInvalidOperation("csrf only supports http")
+}
+
+func (s *AuthService) RefreshRememberToken(ctx context.Context, req *pb.RefreshRememberTokenRequest) (*pb.RefreshRememberTokenReply, error) {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceAuthInternal, authz.AnyResource), authz.AnyAction); err != nil {
+		return nil, err
+	}
+	duration := 0
+	if s.security != nil && s.security.RememberCookie != nil && s.security.RememberCookie.MaxAge != nil {
+		duration = int(s.security.RememberCookie.MaxAge.Value)
+	}
+	duration = session.RememberMeExpireSecondsOrDefault(duration)
+	user, newToken, err := s.um.RefreshRememberToken(ctx, req.RmToken, time.Duration(duration)*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.RefreshRememberTokenReply{UserId: user.ID.String(), NewRmToken: newToken}, nil
 }
 
 type tokenModel struct {

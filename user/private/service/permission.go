@@ -116,7 +116,7 @@ func (s *PermissionService) ListSubjectPermission(ctx context.Context, req *pb.L
 	}
 	ti, _ := common.FromCurrentTenant(ctx)
 	var groups []*pb.PermissionDefGroup
-	authz.WalkGroups(len(ti.GetId()) == 0, func(group authz.PermissionDefGroup) {
+	authz.WalkGroups(len(ti.GetId()) == 0, true, func(group authz.PermissionDefGroup) {
 		g := &pb.PermissionDefGroup{}
 		mapGroupDef2Pb(group, g)
 		groups = append(groups, g)
@@ -182,13 +182,13 @@ func (s *PermissionService) findAnyValidateModifyPermissionDef(ctx context.Conte
 	}
 	ti, _ := common.FromCurrentTenant(ctx)
 	if (def.Side == authz.PermissionHostSideOnly && len(ti.GetId()) != 0) || (def.Side == authz.PermissionTenantSideOnly && len(ti.GetId()) == 0) {
-		return errors.New(400, "PERMISSION_DEF_NOT_FOUND", fmt.Sprintf("action %s in %s not defined", action, namespace))
+		return errors.New(400, authz.DefNotFoundReason, fmt.Sprintf("action %s in %s side mismatch", action, namespace))
 	}
 	return nil
 }
 
 func mapGroupDef2Pb(a authz.PermissionDefGroup, b *pb.PermissionDefGroup) {
-	b.DisplayName = a.DisplayName
+	b.DisplayName = a.Name
 	b.Side = mapSide2Pb(a.Side)
 	b.Priority = int32(a.Priority)
 	if a.Extra != nil {
@@ -198,7 +198,7 @@ func mapGroupDef2Pb(a authz.PermissionDefGroup, b *pb.PermissionDefGroup) {
 }
 
 func mapDef2Pb(a authz.PermissionDef, b *pb.PermissionDef) {
-	b.DisplayName = a.DisplayName
+	b.DisplayName = a.Name
 	b.Side = mapSide2Pb(a.Side)
 	if a.Extra != nil {
 		e, _ := structpb.NewStruct(a.Extra)

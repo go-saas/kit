@@ -7,17 +7,25 @@ import (
 )
 
 const (
-	ResourcePermission         = "permission"
-	ResourcePermissionInternal = ResourcePermission + ".internal"
+	ResourcePermission = "permission"
+
+	ResourcePermissionInternal = "internal." + ResourcePermission
 
 	ResourceUser       = "user.user"
 	ResourceUserTenant = "user.user_tenant"
 	ResourceRole       = "user.role"
+
+	ResourceAuthInternal = "internal.auth"
 )
 
 func init() {
+
+	//internal api permission
+	authz.AddIntoGroup(authz.InternalDefGroup,
+		authz.NewPermissionDef(ResourcePermissionInternal, authz.AnyAction, ResourcePermissionInternal, authz.PermissionBothSide)).
+		AddDef(authz.NewPermissionDef(ResourceAuthInternal, authz.AnyAction, ResourceAuthInternal, authz.PermissionBothSide))
+
 	authz.AddGroup(authz.NewPermissionDefGroup(fmt.Sprintf("%s.permission", ResourcePermission), authz.PermissionBothSide, 0).
-		AddDef(authz.NewPermissionDef(ResourcePermissionInternal, authz.AnyAction, fmt.Sprintf("%s.internal", ResourcePermission), authz.PermissionHostSideOnly).AsInternalOnly()).
 		AddDef(authz.NewPermissionDef(ResourcePermission, authz.ReadAction, fmt.Sprintf("%s.read", ResourcePermission), authz.PermissionBothSide)).
 		AddDef(authz.NewPermissionDef(ResourcePermission, authz.WriteAction, fmt.Sprintf("%s.write", ResourcePermission), authz.PermissionBothSide)))
 

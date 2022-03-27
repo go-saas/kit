@@ -5,7 +5,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	"github.com/goxiaoy/go-saas-kit/user/util"
-	"github.com/goxiaoy/go-saas/common"
 	"github.com/samber/lo"
 )
 
@@ -41,11 +40,6 @@ func (r *PermissionChecker) IsGrantTenant(ctx context.Context, resource authz.Re
 		return authz.EffectGrant, nil
 	}
 	return authz.EffectForbidden, nil
-}
-
-func (r *PermissionChecker) IsGrant(ctx context.Context, resource authz.Resource, action authz.Action, subjects ...authz.Subject) (authz.Effect, error) {
-	tenantInfo, _ := common.FromCurrentTenant(ctx)
-	return r.IsGrantTenant(ctx, resource, action, tenantInfo.GetId(), subjects...)
 }
 
 func (r *PermissionChecker) AddGrant(ctx context.Context, resource authz.Resource, action authz.Action, subject authz.Subject, tenantID string, effect authz.Effect) error {

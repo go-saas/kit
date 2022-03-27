@@ -3984,6 +3984,17 @@
       ],
       "default": "BOTH"
     },
+    "v1RefreshRememberTokenReply": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "newRmToken": {
+          "type": "string"
+        }
+      }
+    },
     "v1RefreshTokenAuthReply": {
       "type": "object",
       "properties": {

@@ -11,7 +11,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	"github.com/goxiaoy/go-saas-kit/saas/api"
@@ -114,11 +113,13 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 	if t == nil {
 		return nil, errors.NotFound("", "")
 	}
+	
 	//TODO separate this check???
-	if claim, ok := jwt.FromClaimsContext(ctx); ok && len(claim.ClientId) > 0 {
-		//internal api call
-		return mapBizTenantToApi(ctx, s.blob, t), nil
-	}
+	//if claim, ok := jwt.FromClaimsContext(ctx); ok && len(claim.ClientId) > 0 {
+	//	//internal api call
+	//	return mapBizTenantToApi(ctx, s.blob, t), nil
+	//}
+
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, t.ID), authz.ReadAction); err != nil {
 		return nil, err
 	}

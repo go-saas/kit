@@ -121,6 +121,7 @@ enum SameSiteMode{
 
 message Cookie{
   google.protobuf.StringValue name=10;
+
   google.protobuf.Int32Value max_age=11;
   google.protobuf.StringValue domain=12;
   google.protobuf.StringValue path=13;

@@ -1,5 +1,11 @@
 package authz
 
+const (
+	AnyNamespace = "*"
+	AnyResource  = "*"
+	AnyTenant    = "*"
+)
+
 type EntityResource struct {
 	Namespace string
 	Id        string

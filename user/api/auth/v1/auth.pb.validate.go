@@ -3710,3 +3710,212 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ChangePasswordByPreReplyValidationError{}
+
+// Validate checks the field values on RefreshRememberTokenRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RefreshRememberTokenRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RefreshRememberTokenRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RefreshRememberTokenRequestMultiError, or nil if none found.
+func (m *RefreshRememberTokenRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RefreshRememberTokenRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RmToken
+
+	if len(errors) > 0 {
+		return RefreshRememberTokenRequestMultiError(errors)
+	}
+	return nil
+}
+
+// RefreshRememberTokenRequestMultiError is an error wrapping multiple
+// validation errors returned by RefreshRememberTokenRequest.ValidateAll() if
+// the designated constraints aren't met.
+type RefreshRememberTokenRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RefreshRememberTokenRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RefreshRememberTokenRequestMultiError) AllErrors() []error { return m }
+
+// RefreshRememberTokenRequestValidationError is the validation error returned
+// by RefreshRememberTokenRequest.Validate if the designated constraints
+// aren't met.
+type RefreshRememberTokenRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RefreshRememberTokenRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RefreshRememberTokenRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RefreshRememberTokenRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RefreshRememberTokenRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RefreshRememberTokenRequestValidationError) ErrorName() string {
+	return "RefreshRememberTokenRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RefreshRememberTokenRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRefreshRememberTokenRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RefreshRememberTokenRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RefreshRememberTokenRequestValidationError{}
+
+// Validate checks the field values on RefreshRememberTokenReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RefreshRememberTokenReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RefreshRememberTokenReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RefreshRememberTokenReplyMultiError, or nil if none found.
+func (m *RefreshRememberTokenReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RefreshRememberTokenReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	// no validation rules for NewRmToken
+
+	if len(errors) > 0 {
+		return RefreshRememberTokenReplyMultiError(errors)
+	}
+	return nil
+}
+
+// RefreshRememberTokenReplyMultiError is an error wrapping multiple validation
+// errors returned by RefreshRememberTokenReply.ValidateAll() if the
+// designated constraints aren't met.
+type RefreshRememberTokenReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RefreshRememberTokenReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RefreshRememberTokenReplyMultiError) AllErrors() []error { return m }
+
+// RefreshRememberTokenReplyValidationError is the validation error returned by
+// RefreshRememberTokenReply.Validate if the designated constraints aren't met.
+type RefreshRememberTokenReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RefreshRememberTokenReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RefreshRememberTokenReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RefreshRememberTokenReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RefreshRememberTokenReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RefreshRememberTokenReplyValidationError) ErrorName() string {
+	return "RefreshRememberTokenReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RefreshRememberTokenReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRefreshRememberTokenReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RefreshRememberTokenReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RefreshRememberTokenReplyValidationError{}

@@ -16,6 +16,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
@@ -48,6 +49,7 @@ var (
 	rememberStore       sessions.Store
 	securityCfg         *conf2.Security
 	userTenantValidator *uremote.UserTenantContributor
+	refreshProvider     session.RefreshTokenProvider
 	ts                  common.TenantStore
 )
 
@@ -59,6 +61,7 @@ func Init(
 	security *conf2.Security,
 	userTenant *uremote.UserTenantContributor,
 	tenantStore common.TenantStore,
+	refreshTokenProvider session.RefreshTokenProvider,
 	logger klog.Logger,
 ) error {
 	tokenizer = t
@@ -73,6 +76,7 @@ func Init(
 	sessionInfoStore = session.NewSessionInfoStore(security)
 	rememberStore = session.NewRememberStore(security)
 	userTenantValidator = userTenant
+	refreshProvider = refreshTokenProvider
 	ts = tenantStore
 	return nil
 }
@@ -88,6 +92,13 @@ func (p *KitAuthn) ParseConf(in []byte) (interface{}, error) {
 		return nil, err
 	}
 	return conf, err
+}
+
+func abortWithError(err error, w http.ResponseWriter) {
+	//use error codec
+	fr := kerrors.FromError(err)
+	w.WriteHeader(int(fr.Code))
+	khttp.DefaultErrorEncoder(w, &http.Request{}, err)
 }
 
 func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
@@ -117,10 +128,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		if errors.Is(err, common.ErrTenantNotFound) {
 			err = v1.ErrorTenantNotFound("")
 		}
-		//use error codec
-		fr := kerrors.FromError(err)
-		w.WriteHeader(int(fr.Code))
-		khttp.DefaultErrorEncoder(w, &http.Request{}, err)
+		abortWithError(err, w)
 		//stop
 		return
 	}
@@ -143,7 +151,25 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	ctx = session.NewClientStateContext(ctx, state)
 	//set uid from cookie
 	uid = state.GetUid()
+	ctx = authn.NewUserContext(ctx, authn.NewUserInfo(uid))
+	if len(state.GetUid()) == 0 && len(state.GetRememberToken()) > 0 {
+		//call refresh
+		err := refreshProvider(ctx, state.GetRememberToken())
+		if err != nil {
+			//recoverable?
+			if errors2.Recoverable(err) {
+				//abort with error
+				abortWithError(err, w)
+				return
+			} else {
+				//just clean remember token
+				stateWriter.SetRememberToken(ctx, "")
+				stateWriter.Save(ctx)
+			}
+		}
+	}
 
+	//extract token
 	var t = ""
 	if auth := r.Header().Get(jwt.AuthorizationHeader); len(auth) > 0 {
 		t = jwt.ExtractHeaderToken(auth)

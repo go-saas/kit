@@ -108,6 +108,11 @@ service Auth {
             get: "/v1/auth/csrf",
         };
     }
+
+    //RefreshRememberToken internal api for refresh remember token
+    rpc RefreshRememberToken(RefreshRememberTokenRequest) returns(RefreshRememberTokenReply){
+
+    }
 }
 
 message RegisterAuthRequest{
@@ -301,4 +306,14 @@ message ChangePasswordByPreRequest{
 
 message ChangePasswordByPreReply{
 
+}
+
+
+message RefreshRememberTokenRequest{
+    string rm_token=1;
+}
+
+message RefreshRememberTokenReply{
+    string user_id=1;
+    string new_rm_token=2;
 }

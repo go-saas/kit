@@ -298,9 +298,8 @@ func (um *UserManager) CheckLocked(ctx context.Context, u *User) (bool, error) {
 	return false, nil
 }
 
-func (um *UserManager) GenerateRememberToken(ctx context.Context, uid uuid.UUID) (string, error) {
-	//TODO? use refresh token?
-	token := NewRefreshToken(uid, 0, server.ClientUserAgent(ctx), server.ClientIP(ctx))
+func (um *UserManager) GenerateRememberToken(ctx context.Context, duration time.Duration, uid uuid.UUID) (string, error) {
+	token := NewRefreshToken(uid, duration, server.ClientUserAgent(ctx), server.ClientIP(ctx))
 	if err := um.refreshTokenRepo.Create(ctx, token); err != nil {
 		return "", err
 	} else {
@@ -308,24 +307,33 @@ func (um *UserManager) GenerateRememberToken(ctx context.Context, uid uuid.UUID)
 	}
 }
 
-func (um *UserManager) RefreshRememberToken(ctx context.Context, uid uuid.UUID, token string) (string, error) {
+func (um *UserManager) RefreshRememberToken(ctx context.Context, token string, duration time.Duration) (*User, string, error) {
 	//find token
 	if t, err := um.refreshTokenRepo.Find(ctx, token, true); err != nil {
-		return "", err
+		return nil, "", err
 	} else {
-		if t == nil || t.UserId != uid {
-			return "", v12.ErrorRememberTokenNotFound("")
+		if t == nil {
+			return nil, "", v12.ErrorRememberTokenNotFound("")
 		}
-		//refresh token
-		newToken, err := um.GenerateRememberToken(ctx, uid)
+		//find user
+		user, err := um.FindByID(ctx, t.UserId.String())
 		if err != nil {
-			return "", err
+			return nil, "", err
+		}
+		if user == nil {
+			return nil, "", v12.ErrorRememberTokenNotFound("")
+		}
+		//TODO check locked?
+		//refresh token
+		newToken, err := um.GenerateRememberToken(ctx, duration, t.UserId)
+		if err != nil {
+			return nil, "", err
 		}
 		err = um.refreshTokenRepo.Revoke(ctx, token)
 		if err != nil {
-			return "", err
+			return user, "", err
 		}
-		return newToken, nil
+		return user, newToken, nil
 	}
 }
 

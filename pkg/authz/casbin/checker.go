@@ -2,25 +2,27 @@ package casbin
 
 import (
 	"context"
+	"fmt"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas/common"
 )
 
 var _ authz.PermissionChecker = (*PermissionService)(nil)
 
-func (p *PermissionService) IsGrant(ctx context.Context, resource authz.Resource, action authz.Action, subjects ...authz.Subject) (authz.Effect, error) {
-	tenantInfo, _ := common.FromCurrentTenant(ctx)
-	return p.IsGrantTenant(ctx, resource, action, tenantInfo.GetId(), subjects...)
-}
-
 func (p *PermissionService) IsGrantTenant(ctx context.Context, resource authz.Resource, action authz.Action, tenantID string, subjects ...authz.Subject) (authz.Effect, error) {
 	//find permission definition of current resource and action
-	if resource.GetNamespace() != "*" {
-		def := authz.MustFindDef(resource.GetNamespace(), action)
-		if def.Side == authz.PermissionHostSideOnly {
-			tenantID = "*"
-		}
+
+	def := authz.MustFindDef(resource.GetNamespace(), action)
+
+	if (def.Side == authz.PermissionHostSideOnly && len(tenantID) != 0) || (def.Side == authz.PermissionTenantSideOnly && len(tenantID) == 0) {
+		return authz.EffectForbidden, errors.New(400, authz.DefNotFoundReason, fmt.Sprintf("action %s in %s side mismatch",
+			action.GetIdentity(), resource.GetNamespace()))
 	}
+	if def.IsInternalOnly() {
+		//internal ignore tenant
+		tenantID = "*"
+	}
+
 	enforcer, err := p.enforcer.Get(ctx)
 	if err != nil {
 		return authz.EffectForbidden, err
