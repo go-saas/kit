@@ -38,7 +38,7 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	clientName := _wireClientNameValue
-	saasPropagator := api.NewSaasContributor(webMultiTenancyOption, logger)
+	saasPropagator := api.NewSaasPropagator(logger)
 	option := api.NewDefaultOption(saasPropagator, logger)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)

@@ -1,22 +1,16 @@
 package main
 
 import (
-	"errors"
-	"fmt"
-	kerrors "github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	klog "github.com/go-kratos/kratos/v2/log"
-	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
-	"net/http"
 )
 
 type App struct {
@@ -53,26 +47,20 @@ func newApp(tenantStore common.TenantStore,
 }
 
 func (a *App) load() error {
-	plugins.SaasInit(a.tenantStore,
-		fmt.Sprintf("%s%s", api.PrefixOrDefault(""), a.tenantCfg.TenantKey),
-		fmt.Sprintf("%s%s", api.PrefixOrDefault(""), "tenant.info"),
-		func(err error, w http.ResponseWriter) {
-			if errors.Is(err, common.ErrTenantNotFound) {
-				err = v1.ErrorTenantNotFound("")
-			}
-			//use error codec
-			fr := kerrors.FromError(err)
-			w.WriteHeader(int(fr.Code))
-			khttp.DefaultErrorEncoder(w, &http.Request{}, err)
-		})
-	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.security, a.userTenant, a.logger); err != nil {
+	if err := plugins.Init(a.tokenizer, a.tokenManager, a.clientName, a.services, a.security, a.userTenant, a.tenantStore, a.logger); err != nil {
 		return err
 	}
 	return nil
 }
 
 func NewSelfClientOption(logger log.Logger) *api.Option {
-	return api.NewOption("", false, api.NewUserContributor(logger), api.NewClientContributor(true, logger))
+	return api.NewOption(
+		false,
+		api.NewSaasPropagator(logger),
+		api.NewUserPropagator(logger),
+		//do not propagate client
+		api.NewClientPropagator(true, logger),
+	)
 }
 
 var ProviderSet = wire.NewSet(api.NewInMemoryTokenManager, NewSelfClientOption,

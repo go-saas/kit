@@ -41,7 +41,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
 	tenantUseCase := biz.NewTenantUserCase(tenantRepo)
 	clientName := _wireClientNameValue
-	saasPropagator := api.NewSaasContributor(webMultiTenancyOption, logger)
+	saasPropagator := api.NewSaasPropagator(logger)
 	option := api.NewDefaultOption(saasPropagator, logger)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)

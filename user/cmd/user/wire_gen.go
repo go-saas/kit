@@ -45,7 +45,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbOpener, cleanup := gorm2.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
-	saasPropagator := api.NewSaasContributor(webMultiTenancyOption, logger)
+	saasPropagator := api.NewSaasPropagator(logger)
 	option := api.NewDefaultOption(saasPropagator, logger)
 	clientName := _wireClientNameValue
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)

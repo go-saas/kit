@@ -7,40 +7,36 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas/common"
-	shttp "github.com/goxiaoy/go-saas/common/http"
 )
 
 const (
-	userKey       = "user"
-	clientKey     = "client"
-	tenantInfoKey = "tenant.info"
+	InternalKeyPrefix = "internal-"
+	TenantKey         = InternalKeyPrefix + "tenant"
+	TenantInfoKey     = InternalKeyPrefix + "tenant-info"
+	UserKey           = InternalKeyPrefix + "user"
+	ClientKey         = InternalKeyPrefix + "client"
 )
 
 type SaasPropagator struct {
-	hmtOpt *shttp.WebMultiTenancyOption
-	l      *log.Helper
+	l *log.Helper
 }
 
 var _ Propagator = (*SaasPropagator)(nil)
 
-func NewSaasContributor(hmtOpt *shttp.WebMultiTenancyOption, logger log.Logger) *SaasPropagator {
+func NewSaasPropagator(logger log.Logger) *SaasPropagator {
 	return &SaasPropagator{
-		hmtOpt: hmtOpt,
-		l:      log.NewHelper(log.With(logger, "module", "SaasPropagator")),
+		l: log.NewHelper(log.With(logger, "module", "SaasPropagator")),
 	}
 }
 
 func (s *SaasPropagator) Extract(ctx context.Context, headers Header) (context.Context, error) {
-	if !headers.HasKey(s.hmtOpt.TenantKey) {
-		return ctx, nil
-	}
-	if headers.HasKey(s.hmtOpt.TenantKey) {
-		tenantId := headers.Get(s.hmtOpt.TenantKey)
+	if headers.HasKey(TenantKey) {
+		tenantId := headers.Get(TenantKey)
 		s.l.Infof("recover tenant: %s", tenantId)
 		ctx = common.NewCurrentTenant(ctx, tenantId, "")
 	}
-	if headers.HasKey(tenantInfoKey) {
-		if infoJson, err := base64.StdEncoding.DecodeString(headers.Get(tenantInfoKey)); err == nil {
+	if headers.HasKey(TenantInfoKey) {
+		if infoJson, err := base64.StdEncoding.DecodeString(headers.Get(TenantInfoKey)); err == nil {
 			tenantConfig := &common.TenantConfig{}
 			if err := json.Unmarshal(infoJson, tenantConfig); err == nil {
 				s.l.Infof("recover tenant config: %s", infoJson)
@@ -53,18 +49,18 @@ func (s *SaasPropagator) Extract(ctx context.Context, headers Header) (context.C
 
 func (s *SaasPropagator) Inject(ctx context.Context, headers Header) error {
 	ti, _ := common.FromCurrentTenant(ctx)
-	headers.Set(s.hmtOpt.TenantKey, ti.GetId())
+	headers.Set(TenantKey, ti.GetId())
 	if tenantConfig, ok := common.FromTenantConfigContext(ctx, ti.GetId()); ok {
 		b, _ := json.Marshal(tenantConfig)
-		headers.Set(tenantInfoKey, base64.StdEncoding.EncodeToString(b))
+		headers.Set(TenantInfoKey, base64.StdEncoding.EncodeToString(b))
 	}
 	return nil
 }
 
 func (s *SaasPropagator) Fields() []string {
 	return []string{
-		s.hmtOpt.TenantKey,
-		tenantInfoKey,
+		TenantKey,
+		TenantInfoKey,
 	}
 }
 
@@ -74,51 +70,51 @@ type UserPropagator struct {
 
 var _ Propagator = (*UserPropagator)(nil)
 
-func NewUserContributor(logger log.Logger) *UserPropagator {
+func NewUserPropagator(logger log.Logger) *UserPropagator {
 	return &UserPropagator{l: log.NewHelper(log.With(logger, "module", "UserPropagator"))}
 }
 
 func (u *UserPropagator) Extract(ctx context.Context, headers Header) (context.Context, error) {
-	if !headers.HasKey(userKey) {
+	if !headers.HasKey(UserKey) {
 		return ctx, nil
 	}
-	user := headers.Get(userKey)
+	user := headers.Get(UserKey)
 	u.l.Infof("recover user: %s", user)
 	return authn.NewUserContext(ctx, authn.NewUserInfo(user)), nil
 }
 
 func (u *UserPropagator) Inject(ctx context.Context, carrier Header) error {
 	if userInfo, ok := authn.FromUserContext(ctx); ok {
-		carrier.Set(userKey, userInfo.GetId())
+		carrier.Set(UserKey, userInfo.GetId())
 	}
 	return nil
 }
 
 func (u *UserPropagator) Fields() []string {
 	return []string{
-		userKey,
+		UserKey,
 	}
 }
 
 type ClientPropagator struct {
-	recoverOnly bool
+	extractOnly bool
 	l           *log.Helper
 }
 
 var _ Propagator = (*ClientPropagator)(nil)
 
-func NewClientContributor(recoverOnly bool, logger log.Logger) *ClientPropagator {
+func NewClientPropagator(extractOnly bool, logger log.Logger) *ClientPropagator {
 	return &ClientPropagator{
-		recoverOnly: recoverOnly,
+		extractOnly: extractOnly,
 		l:           log.NewHelper(log.With(logger, "module", "ClientPropagator")),
 	}
 }
 
 func (u *ClientPropagator) Extract(ctx context.Context, headers Header) (context.Context, error) {
-	if !headers.HasKey(clientKey) {
+	if !headers.HasKey(ClientKey) {
 		return ctx, nil
 	}
-	client := headers.Get(clientKey)
+	client := headers.Get(ClientKey)
 	if client == "-" {
 		//can not set empty value header in gateway
 		client = ""
@@ -128,7 +124,7 @@ func (u *ClientPropagator) Extract(ctx context.Context, headers Header) (context
 }
 
 func (u *ClientPropagator) Inject(ctx context.Context, carrier Header) error {
-	if u.recoverOnly {
+	if u.extractOnly {
 		return nil
 	}
 	if client, ok := authn.FromClientContext(ctx); ok {
@@ -136,13 +132,13 @@ func (u *ClientPropagator) Inject(ctx context.Context, carrier Header) error {
 			//can not set empty value header in gateway
 			client = "-"
 		}
-		carrier.Set(clientKey, client)
+		carrier.Set(ClientKey, client)
 	}
 	return nil
 }
 
 func (u *ClientPropagator) Fields() []string {
 	return []string{
-		clientKey,
+		ClientKey,
 	}
 }

@@ -11,30 +11,17 @@ import (
 	"strings"
 )
 
-const defaultPrefix Prefix = "internal."
-
 type Option struct {
-	HeaderPrefix Prefix
-	Propagators  []Propagator
-	BypassToken  bool
+	Propagators []Propagator
+	BypassToken bool
 }
 
-type Prefix string
-
-func PrefixOrDefault(prefix Prefix) Prefix {
-	if prefix == "" {
-		return defaultPrefix
-	}
-	return prefix
-}
-
-func NewOption(prefix Prefix, bypassToken bool, propagators ...Propagator) *Option {
-	prefix = PrefixOrDefault(prefix)
-	return &Option{HeaderPrefix: prefix, BypassToken: bypassToken, Propagators: propagators}
+func NewOption(bypassToken bool, propagators ...Propagator) *Option {
+	return &Option{BypassToken: bypassToken, Propagators: propagators}
 }
 
 func NewDefaultOption(saas *SaasPropagator, logger log.Logger) *Option {
-	return NewOption("", false, saas, NewUserContributor(logger), NewClientContributor(true, logger))
+	return NewOption(false, saas, NewUserPropagator(logger), NewClientPropagator(true, logger))
 }
 
 type Header interface {
@@ -46,6 +33,7 @@ type Header interface {
 type HeaderCarrier map[string]string
 
 func (h HeaderCarrier) Get(key string) string {
+	key = strings.ToLower(key)
 	if r, ok := h[key]; ok {
 		return r
 	} else {
@@ -54,10 +42,12 @@ func (h HeaderCarrier) Get(key string) string {
 }
 
 func (h HeaderCarrier) Set(key, value string) {
+	key = strings.ToLower(key)
 	h[key] = value
 }
 
 func (h HeaderCarrier) HasKey(key string) bool {
+	key = strings.ToLower(key)
 	_, ok := h[key]
 	return ok
 }
@@ -84,20 +74,12 @@ func ServerPropagation(opt *Option, logger log.Logger) middleware.Middleware {
 						//recover context
 						newCtx := ctx
 						var err error
-						cleanHeaders := HeaderCarrier(map[string]string{})
+						headers := HeaderCarrier(map[string]string{})
 						for _, key := range tr.RequestHeader().Keys() {
-							key = strings.ToLower(key)
-							headerPrefix := strings.ToLower(string(opt.HeaderPrefix))
-							if strings.HasPrefix(key, headerPrefix) {
-								k := strings.TrimPrefix(key, headerPrefix)
-								v := tr.RequestHeader().Get(key)
-								l.Debugf("set clean header key: %s,v: %s", k, v)
-								cleanHeaders.Set(k, v)
-							}
+							headers.Set(key, tr.RequestHeader().Get(key))
 						}
-
 						for i := range opt.Propagators {
-							newCtx, err = opt.Propagators[i].Extract(newCtx, cleanHeaders)
+							newCtx, err = opt.Propagators[i].Extract(newCtx, headers)
 							if err != nil {
 								return nil, err
 							}
@@ -140,9 +122,8 @@ func ClientPropagation(client *conf.Client, opt *Option, tokenMgr TokenManager, 
 					}
 				}
 				for k, v := range headers {
-					h := fmt.Sprintf("%s%s", opt.HeaderPrefix, k)
-					l.Debugf("set header: %s,value: %s", h, v)
-					tr.RequestHeader().Set(h, v)
+					l.Debugf("set header: %s,value: %s", k, v)
+					tr.RequestHeader().Set(k, v)
 				}
 			}
 			return handler(ctx, req)

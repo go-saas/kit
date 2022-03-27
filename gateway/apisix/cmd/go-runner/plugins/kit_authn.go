@@ -16,12 +16,14 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/sessions"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
+	"strings"
 )
 
 func init() {
@@ -46,6 +48,7 @@ var (
 	rememberStore       sessions.Store
 	securityCfg         *conf2.Security
 	userTenantValidator *uremote.UserTenantContributor
+	ts                  common.TenantStore
 )
 
 func Init(
@@ -55,6 +58,7 @@ func Init(
 	services *conf2.Services,
 	security *conf2.Security,
 	userTenant *uremote.UserTenantContributor,
+	tenantStore common.TenantStore,
 	logger klog.Logger,
 ) error {
 	tokenizer = t
@@ -64,11 +68,12 @@ func Init(
 		return errors.New(fmt.Sprintf(" %v client not found", clientName))
 	}
 	apiClient = clientCfg
-	apiOpt = api.NewOption("", true, api.NewUserContributor(logger), api.NewClientContributor(false, logger))
+	apiOpt = api.NewOption(true, api.NewUserPropagator(logger), api.NewClientPropagator(false, logger))
 	securityCfg = security
 	sessionInfoStore = session.NewSessionInfoStore(security)
 	rememberStore = session.NewRememberStore(security)
 	userTenantValidator = userTenant
+	ts = tenantStore
 	return nil
 }
 
@@ -86,27 +91,40 @@ func (p *KitAuthn) ParseConf(in []byte) (interface{}, error) {
 }
 
 func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
-
+	var err error
 	ctx := r.Context()
 	tracer := tracing.NewTracer(trace.SpanKindServer)
 	var span trace.Span
 	ctx, span = tracer.Start(ctx, p.Name(), propagation.HeaderCarrier(r.Header().View()))
 	defer func() { tracer.End(ctx, span, nil, nil) }()
 
+	//clean internal headers
+	for s, _ := range r.Header().View() {
+		if strings.HasPrefix(strings.ToLower(s), api.InternalKeyPrefix) {
+			//just clean headers
+			log.Infof("clean untrusted internal header %s", s)
+			r.Header().Set(s, "")
+		}
+	}
+
 	trace := r.Header().Get("traceparent")
 	//https://github.com/apache/apisix/issues/6728
 	log.Infof("trace: %s", trace)
 
-	//get tenant id from go-saas plugin
-	tenantId := r.Header().Get("internal.__tenant")
+	ctx, err = Saas(ctx, ts, "", w, r)
+	//format error
+	if err != nil {
+		if errors.Is(err, common.ErrTenantNotFound) {
+			err = v1.ErrorTenantNotFound("")
+		}
+		//use error codec
+		fr := kerrors.FromError(err)
+		w.WriteHeader(int(fr.Code))
+		khttp.DefaultErrorEncoder(w, &http.Request{}, err)
+		//stop
+		return
+	}
 
-	var t = ""
-	if auth := r.Header().Get(jwt.AuthorizationHeader); len(auth) > 0 {
-		t = jwt.ExtractHeaderToken(auth)
-	}
-	if len(t) == 0 {
-		t = r.Args().Get(jwt.AuthorizationQuery)
-	}
 	uid := ""
 	clientId := ""
 
@@ -126,6 +144,13 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	//set uid from cookie
 	uid = state.GetUid()
 
+	var t = ""
+	if auth := r.Header().Get(jwt.AuthorizationHeader); len(auth) > 0 {
+		t = jwt.ExtractHeaderToken(auth)
+	}
+	if len(t) == 0 {
+		t = r.Args().Get(jwt.AuthorizationQuery)
+	}
 	//jwt auth
 	if len(t) > 0 {
 		if claims, err := jwt.ExtractAndValidate(tokenizer, t); err != nil {
@@ -141,16 +166,18 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	}
 
 	ctx = authn.NewUserContext(ctx, authn.NewUserInfo(uid))
-	//check tenant and user mismatch
-	trCtx := common.NewTenantResolveContext(ctx)
-	trCtx.TenantIdOrName = tenantId
 
-	log.Infof("resolve user: %s client: %s tenantId: %s", uid, clientId, tenantId)
-	err := userTenantValidator.Resolve(trCtx)
+	//check tenant and user mismatch
+	ti, _ := common.FromCurrentTenant(ctx)
+	trCtx := common.NewTenantResolveContext(ctx)
+	trCtx.TenantIdOrName = ti.GetId()
+
+	log.Infof("resolve user: %s client: %s tenantId: %s", uid, clientId, ti.GetId())
+	err = userTenantValidator.Resolve(trCtx)
 	if err != nil {
 		log.Errorf("%s", err)
 		// user can not in this tenant
-		//use error codec
+		// use error codec
 		fr := kerrors.FromError(err)
 		w.WriteHeader(int(fr.Code))
 		khttp.DefaultErrorEncoder(w, &http.Request{}, err)
@@ -178,15 +205,14 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	r.Header().Set(jwt.AuthorizationHeader, fmt.Sprintf("%s %s", jwt.BearerTokenType, token))
 
 	headers := api.HeaderCarrier(map[string]string{})
-	//recover header
+	//inject header
 	for _, contributor := range apiOpt.Propagators {
 		//do not handle error
 		contributor.Inject(ctx, headers)
 	}
 	for k, v := range headers {
-		nh := fmt.Sprintf("%s%s", api.PrefixOrDefault(""), k)
-		log.Infof("set header: %s value: %s", nh, v)
-		r.Header().Set(nh, v)
+		log.Infof("set header: %s value: %s", k, v)
+		r.Header().Set(k, v)
 	}
 	//continue request
 	return
