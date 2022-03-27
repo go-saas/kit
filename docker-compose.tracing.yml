@@ -7,6 +7,8 @@ services:
       - "16686:16686" # jaeger ui port
       - "14268"
       - "14250"
+    environment:
+      - QUERY_BASE_PATH=/jaeger
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib-dev:latest
