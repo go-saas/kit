@@ -143,7 +143,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 
 	rs, _ := session.GetRememberSession(ctx, header, rememberStore, securityCfg)
 
-	stateWriter := session.NewClientStateWriter(s, rs, w, header)
+	stateWriter := session.NewClientStateWriter(s, rs, r.RespHeader(), header)
 
 	ctx = session.NewClientStateWriterContext(ctx, stateWriter)
 	state := session.NewClientState(s, rs)
@@ -159,6 +159,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 			abortWithError(err, w)
 			return
 		}
+
 	}
 
 	//set uid from cookie
@@ -236,6 +237,11 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		log.Infof("set header: %s value: %s", k, v)
 		r.Header().Set(k, v)
 	}
+
+	//https://github.com/apache/apisix-go-plugin-runner/issues/74
+	//if len(r.RespHeader().Values("Set-Cookie")) > 0 {
+	//	r.RespHeader().Set("Set-Cookie", strings.Join(r.RespHeader().Values("Set-Cookie"), ", "))
+	//}
 	//continue request
 	return
 }

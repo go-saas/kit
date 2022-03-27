@@ -3,7 +3,6 @@ package session
 import (
 	"context"
 	"github.com/goxiaoy/sessions"
-	"net/http"
 )
 
 const (
@@ -115,7 +114,7 @@ type ClientStateWriterImpl struct {
 	//rs remember session
 	rs *sessions.Session
 
-	w         http.ResponseWriter
+	w         sessions.Header
 	h         sessions.Header
 	sChanged  bool
 	rsChanged bool
@@ -123,7 +122,7 @@ type ClientStateWriterImpl struct {
 
 var _ ClientStateWriter = (*ClientStateWriterImpl)(nil)
 
-func NewClientStateWriter(s *sessions.Session, rs *sessions.Session, w http.ResponseWriter, h sessions.Header) ClientStateWriter {
+func NewClientStateWriter(s *sessions.Session, rs *sessions.Session, w sessions.Header, h sessions.Header) ClientStateWriter {
 	return &ClientStateWriterImpl{s: s, rs: rs, w: w, h: h}
 }
 

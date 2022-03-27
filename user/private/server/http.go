@@ -62,6 +62,8 @@ func NewHTTPServer(c *conf.Services,
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
 		//extract from session cookie
 		session.Auth(sCfg),
+		//refresh happens in gateway TODO config
+		//session.Refresh(errEncoder, refreshProvider),
 	)
 
 	opts = append(opts, []khttp.ServerOption{

@@ -30,7 +30,7 @@ func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 
 			rs, _ := GetRememberSession(ctx, r.Header, rememberStore, cfg)
 
-			stateWriter := NewClientStateWriter(s, rs, w, r.Header)
+			stateWriter := NewClientStateWriter(s, rs, w.Header(), r.Header)
 
 			ctx = NewClientStateWriterContext(ctx, stateWriter)
 			state := NewClientState(s, rs)
@@ -60,6 +60,8 @@ func Refresh(errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider) fu
 								stateWriter.SignOutRememberToken(ctx)
 								stateWriter.Save(ctx)
 							}
+						} else {
+							ctx = authn.NewUserContext(ctx, authn.NewUserInfo(state.GetUid()))
 						}
 					}
 				}
