@@ -3,6 +3,7 @@ package casbin
 import (
 	"context"
 	"fmt"
+	"github.com/casbin/casbin/v2"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 )
@@ -11,8 +12,14 @@ var _ authz.PermissionChecker = (*PermissionService)(nil)
 
 func (p *PermissionService) IsGrantTenant(ctx context.Context, requirements authz.RequirementList, tenantID string, subjects ...authz.Subject) ([]authz.Effect, error) {
 	res := []authz.Effect{}
+
+	enforcer, err := p.enforcer.Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, requirement := range requirements {
-		eff, err := p.isGrantTenant(ctx, requirement.Resource, requirement.Action, tenantID, subjects...)
+		eff, err := p.isGrantTenant(ctx, enforcer, requirement.Resource, requirement.Action, tenantID, subjects...)
 		if err != nil {
 			return nil, err
 		}
@@ -21,7 +28,7 @@ func (p *PermissionService) IsGrantTenant(ctx context.Context, requirements auth
 	return res, nil
 }
 
-func (p *PermissionService) isGrantTenant(ctx context.Context, resource authz.Resource, action authz.Action, tenantID string, subjects ...authz.Subject) (authz.Effect, error) {
+func (p *PermissionService) isGrantTenant(ctx context.Context, enforcer *casbin.SyncedEnforcer, resource authz.Resource, action authz.Action, tenantID string, subjects ...authz.Subject) (authz.Effect, error) {
 	//find permission definition of current resource and action
 
 	def := authz.MustFindDef(resource.GetNamespace(), action)
@@ -35,10 +42,6 @@ func (p *PermissionService) isGrantTenant(ctx context.Context, resource authz.Re
 		tenantID = "*"
 	}
 
-	enforcer, err := p.enforcer.Get(ctx)
-	if err != nil {
-		return authz.EffectForbidden, err
-	}
 	subs := make([][]interface{}, len(subjects))
 	for i, subject := range subjects {
 		subs[i] = []interface{}{subject.GetIdentity(), resource.GetNamespace(), resource.GetIdentity(), action.GetIdentity(), tenantID}

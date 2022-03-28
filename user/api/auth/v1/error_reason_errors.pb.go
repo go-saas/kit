@@ -166,3 +166,15 @@ func IsUserDeleted(err error) bool {
 func ErrorUserDeleted(format string, args ...interface{}) *errors.Error {
 	return errors.New(403, ErrorReason_USER_DELETED.String(), fmt.Sprintf(format, args...))
 }
+
+func IsRefreshTokenInvalid(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_REFRESH_TOKEN_INVALID.String() && e.Code == 401
+}
+
+func ErrorRefreshTokenInvalid(format string, args ...interface{}) *errors.Error {
+	return errors.New(401, ErrorReason_REFRESH_TOKEN_INVALID.String(), fmt.Sprintf(format, args...))
+}

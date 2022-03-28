@@ -315,7 +315,7 @@ func (s *AuthService) refresh(ctx context.Context, refreshToken string) (*tokenM
 		return nil, err
 	}
 	if token == nil {
-		return nil, errors.BadRequest("", "refreshToken invalid")
+		return nil, pb.ErrorRefreshTokenInvalid("")
 	}
 	if token.Valid() {
 		//token valid, regenerate
@@ -326,7 +326,7 @@ func (s *AuthService) refresh(ctx context.Context, refreshToken string) (*tokenM
 			return nil, err
 		}
 		if user == nil {
-			return nil, errors.BadRequest("", "refreshToken invalid")
+			return nil, pb.ErrorRefreshTokenInvalid("")
 		}
 
 		t, err := s.generateToken(ctx, user.ID)
@@ -339,7 +339,7 @@ func (s *AuthService) refresh(ctx context.Context, refreshToken string) (*tokenM
 		}
 		return &tokenModel{accessToken: t.accessToken, expiresIn: t.expiresIn, refreshToken: t.refreshToken}, nil
 	}
-	return nil, errors.BadRequest("", "refreshToken invalid")
+	return nil, pb.ErrorRefreshTokenInvalid("")
 }
 
 func FindUserByUsernameAndValidatePwd(ctx context.Context, um *biz.UserManager, username, password string) (*biz.User, error) {

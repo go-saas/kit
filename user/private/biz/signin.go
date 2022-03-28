@@ -103,7 +103,7 @@ func (s *SignInManager) SignOut(ctx context.Context) error {
 		if err := writer.Clear(ctx); err != nil {
 			return err
 		}
-		return nil
+		return writer.Save(ctx)
 	} else {
 		panic(ErrWriterNotFound)
 	}

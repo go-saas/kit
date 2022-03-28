@@ -27,4 +27,6 @@ enum ErrorReason {
   REMEMBER_TOKEN_NOT_FOUND = 11[(errors.code) = 403];
 
   USER_DELETED=12 [(errors.code) = 403];
+
+  REFRESH_TOKEN_INVALID=13[(errors.code) = 401];
 }
