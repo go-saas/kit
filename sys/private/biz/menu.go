@@ -52,5 +52,5 @@ func (m *Menu) MergeWithPreservedFields(p *Menu) {
 	m.Parent = p.Parent
 	m.FullPath = p.FullPath
 	m.Redirect = p.Redirect
-	m.IsPreserved = true
+	m.IsPreserved = p.IsPreserved
 }

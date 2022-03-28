@@ -13,7 +13,7 @@ menus:
         action: "*"
     children:
       - name: "tracing"
-        path: "/jaeger"
+        path: "http://localhost:8600/jaeger"
         component: "IFRAME"
         iframe: "/jaeger"
         title: "routes.dev.jaeger"
@@ -29,6 +29,7 @@ menus:
     icon: "ion:grid-outline"
     meta:
     priority: 101
+    is_preserved: true
     requirement:
       - namespace: "saas.tenant"
         resource: "*"
@@ -37,6 +38,7 @@ menus:
       - name: "tenant"
         path: "/tenants"
         component: "/saas/tenant/index"
+        is_preserved: true
         meta:
         title: "routes.saas.tenant.management"
         requirement:
@@ -46,6 +48,7 @@ menus:
   - name: "system"
     path: "/system"
     component: "LAYOUT"
+    is_preserved: true
     redirect: '/system/users'
     title: "routes.system.title"
     icon: "ion:grid-outline"
@@ -54,6 +57,7 @@ menus:
     children:
       - name: "user"
         path: 'users'
+        is_preserved: true
         component: "/system/user/index"
         meta:
         title: "routes.system.user.management"
@@ -63,6 +67,7 @@ menus:
             action: "read"
       - name: "role"
         path: "roles"
+        is_preserved: true
         component: "/system/role/index"
         meta:
         title: "routes.system.role.management"
@@ -72,6 +77,7 @@ menus:
             action: "read"
       - name: "permission"
         path: "permission"
+        is_preserved: true
         component: "/system/permission/index"
         meta:
         title: "routes.system.permission.management"
@@ -81,6 +87,7 @@ menus:
             action: "read"
       - name: "menu"
         path: "menu"
+        is_preserved: true
         component: "/system/menu/index"
         meta:
         title: "routes.system.menu.management"
