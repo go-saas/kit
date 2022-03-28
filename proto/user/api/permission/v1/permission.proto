@@ -91,15 +91,14 @@ message CheckPermissionReply{
 
 
 message CheckSubjectsPermissionRequest{
-  string namespace = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   repeated string subjects =4;
   string tenant_id =5;
+  repeated PermissionRequirement requirements= 6;
 }
 
 message CheckSubjectsPermissionReply{
-  Effect effect = 1;
+
+  repeated Effect effect_list=2;
 }
 
 
@@ -169,9 +168,9 @@ message ListSubjectPermissionResponse{
 }
 
 message PermissionRequirement{
-  string namespace = 1;
-  string resource = 2;
-  string action = 3;
+  string namespace = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
 
 

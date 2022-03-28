@@ -14,11 +14,11 @@ type PermissionManagementService interface {
 }
 
 func EnsureGrant(ctx context.Context, mgr PermissionManagementService, checker PermissionChecker, resource Resource, action Action, subject Subject, tenantID string) error {
-	eff, err := checker.IsGrantTenant(ctx, resource, action, tenantID, subject)
+	eff, err := checker.IsGrantTenant(ctx, []*Requirement{NewRequirement(resource, action)}, tenantID, subject)
 	if err != nil {
 		return err
 	}
-	if eff != EffectGrant {
+	if eff[0] != EffectGrant {
 		err = mgr.AddGrant(ctx, resource, action, subject, tenantID, EffectGrant)
 		if err != nil {
 			return err
@@ -28,11 +28,11 @@ func EnsureGrant(ctx context.Context, mgr PermissionManagementService, checker P
 }
 
 func EnsureForbidden(ctx context.Context, mgr PermissionManagementService, checker PermissionChecker, resource Resource, action Action, subject Subject, tenantID string) error {
-	eff, err := checker.IsGrantTenant(ctx, resource, action, tenantID, subject)
+	eff, err := checker.IsGrantTenant(ctx, []*Requirement{NewRequirement(resource, action)}, tenantID, subject)
 	if err != nil {
 		return err
 	}
-	if eff != EffectForbidden {
+	if eff[0] != EffectForbidden {
 		err = mgr.AddGrant(ctx, resource, action, subject, tenantID, EffectForbidden)
 		if err != nil {
 			return err

@@ -67,16 +67,23 @@ func (s *PermissionService) CheckForSubjects(ctx context.Context, req *pb.CheckS
 	for i, subject := range req.Subjects {
 		subjects[i] = authz.SubjectStr(subject)
 	}
-	grant, err := s.auth.CheckForSubjects(ctx, authz.NewEntityResource(req.Namespace, req.Resource), authz.ActionStr(req.Action), subjects...)
-	if err != nil && grant == nil {
+	grantList, err := s.auth.BatchCheckForSubjects(ctx, lo.Map(req.Requirements, func(t *pb.PermissionRequirement, _ int) *authz.Requirement {
+		return authz.NewRequirement(authz.NewEntityResource(t.Namespace, t.Resource), authz.ActionStr(t.Action))
+	}), subjects...)
+	if err != nil {
 		//other error
 		return nil, err
 	}
-	effect := pb.Effect_FORBIDDEN
-	if grant.Allowed {
-		effect = pb.Effect_GRANT
-	}
-	return &pb.CheckSubjectsPermissionReply{Effect: effect}, err
+	effList := lo.Map(grantList, func(t *authz.Result, _ int) pb.Effect {
+
+		effect := pb.Effect_FORBIDDEN
+		if t.Allowed {
+			effect = pb.Effect_GRANT
+		}
+		return effect
+	})
+
+	return &pb.CheckSubjectsPermissionReply{EffectList: effList}, err
 }
 
 func (s *PermissionService) AddSubjectPermission(ctx context.Context, req *pb.AddSubjectPermissionRequest) (*pb.AddSubjectPermissionResponse, error) {

@@ -2924,8 +2924,11 @@
     "v1CheckSubjectsPermissionReply": {
       "type": "object",
       "properties": {
-        "effect": {
-          "$ref": "#/definitions/v1Effect"
+        "effectList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Effect"
+          }
         }
       }
     },
@@ -3965,15 +3968,29 @@
       "type": "object",
       "properties": {
         "namespace": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "namespace"
+          ]
         },
         "resource": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "resource"
+          ]
         },
         "action": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "action"
+          ]
         }
-      }
+      },
+      "required": [
+        "namespace",
+        "resource",
+        "action"
+      ]
     },
     "v1PermissionSide": {
       "type": "string",

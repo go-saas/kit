@@ -7,14 +7,14 @@ import (
 
 type Result struct {
 	Allowed      bool
-	Requirements []Requirement
+	Requirements []*Requirement
 }
 
 func NewAllowAuthorizationResult() *Result {
 	return &Result{Allowed: true}
 }
 
-func NewDisallowAuthorizationResult(requirements []Requirement) *Result {
+func NewDisallowAuthorizationResult(requirements ...*Requirement) *Result {
 	return &Result{Allowed: false, Requirements: requirements}
 }
 

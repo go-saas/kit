@@ -21,25 +21,37 @@ func NewRemotePermissionChecker(client v1.PermissionServiceClient) *PermissionCh
 	}
 }
 
-func (r *PermissionChecker) IsGrantTenant(ctx context.Context, resource authz.Resource, action authz.Action, tenantID string, subjects ...authz.Subject) (authz.Effect, error) {
+func (r *PermissionChecker) IsGrantTenant(ctx context.Context, requirements authz.RequirementList, tenantID string, subjects ...authz.Subject) ([]authz.Effect, error) {
 	var protoSubs = make([]string, len(subjects))
 	for i, subject := range subjects {
 		protoSubs[i] = subject.GetIdentity()
 	}
-	grant, err := r.client.CheckForSubjects(ctx, &v1.CheckSubjectsPermissionRequest{
-		Namespace: resource.GetNamespace(),
-		Resource:  resource.GetIdentity(),
-		Action:    action.GetIdentity(),
-		Subjects:  protoSubs,
-		TenantId:  tenantID,
+	grantResp, err := r.client.CheckForSubjects(ctx, &v1.CheckSubjectsPermissionRequest{
+		Requirements: lo.Map(requirements, func(t *authz.Requirement, _ int) *v1.PermissionRequirement {
+			return &v1.PermissionRequirement{
+				Namespace: t.Resource.GetNamespace(),
+				Resource:  t.Resource.GetIdentity(),
+				Action:    t.Action.GetIdentity(),
+			}
+		}),
+		Subjects: protoSubs,
+		TenantId: tenantID,
 	})
 	if err != nil {
-		return authz.EffectForbidden, err
+		return nil, err
 	}
-	if grant.Effect == v1.Effect_GRANT {
-		return authz.EffectGrant, nil
-	}
-	return authz.EffectForbidden, nil
+	effList := lo.Map(grantResp.EffectList, func(eff v1.Effect, _ int) authz.Effect {
+		switch eff {
+		case v1.Effect_GRANT:
+			return authz.EffectGrant
+		case v1.Effect_FORBIDDEN:
+			return authz.EffectForbidden
+		case v1.Effect_UNKNOWN:
+			return authz.EffectUnknown
+		}
+		return authz.EffectUnknown
+	})
+	return effList, nil
 }
 
 func (r *PermissionChecker) AddGrant(ctx context.Context, resource authz.Resource, action authz.Action, subject authz.Subject, tenantID string, effect authz.Effect) error {

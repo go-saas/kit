@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"strings"
 
@@ -155,35 +156,51 @@ func (s *MenuService) GetAvailableMenus(ctx context.Context, req *pb.GetAvailabl
 	//filter by permission
 	var filter []*biz.Menu
 	var disAllowMenuId []string
+
+	var waitForCheckerRequirements = []lo.Tuple2[string, []biz.MenuPermissionRequirement]{}
+
 	for _, item := range items {
 		if item.IgnoreAuth {
 			filter = append(filter, item)
 			continue
 		}
 		if len(item.Requirement) > 0 {
-			//TODO batch
-			for _, requirement := range item.Requirement {
-				var err error
-				_, err = s.auth.Check(ctx, authz.NewEntityResource(requirement.Namespace, requirement.Resource), authz.ActionStr(requirement.Action))
-				if err == nil {
-					filter = append(filter, item)
-				} else {
-					//TODO handle permission error or other error
-					//disallow
-					s.logger.Error(err)
-					ferr := errors.FromError(err)
-					if ferr.Code >= 500 {
-						return nil, err
-					}
-					disAllowMenuId = append(disAllowMenuId, item.ID.String())
-				}
-			}
+			waitForCheckerRequirements = append(waitForCheckerRequirements, lo.Tuple2[string, []biz.MenuPermissionRequirement]{A: item.ID.String(), B: item.Requirement})
+
 		} else {
 			//just check if login
 			if ui, ok := authn.FromUserContext(ctx); ok && len(ui.GetId()) > 0 {
 				filter = append(filter, item)
 			} else {
 				disAllowMenuId = append(disAllowMenuId, item.ID.String())
+			}
+		}
+	}
+	requirementConv := func(t biz.MenuPermissionRequirement, _ int) *authz.Requirement {
+		return authz.NewRequirement(authz.NewEntityResource(t.Namespace, t.Resource), authz.ActionStr(t.Action))
+	}
+	requirementKeyFunc := func(r *authz.Requirement) string {
+		return fmt.Sprintf("%s/%s@%s", r.Resource.GetNamespace(), r.Resource.GetIdentity(), r.Action.GetIdentity())
+	}
+	if len(waitForCheckerRequirements) > 0 {
+		//check
+		allReqEffectMap := map[string]*authz.Result{}
+		rl := lo.UniqBy(lo.Map(lo.FlatMap(waitForCheckerRequirements, func(t lo.Tuple2[string, []biz.MenuPermissionRequirement], _ int) []biz.MenuPermissionRequirement {
+			return t.B
+		}), requirementConv), requirementKeyFunc)
+		grantList, err := s.auth.BatchCheck(ctx, rl)
+		if err != nil {
+			return nil, err
+		}
+		for i, r := range rl {
+			allReqEffectMap[requirementKeyFunc(r)] = grantList[i]
+		}
+		for _, menuRequirements := range waitForCheckerRequirements {
+			for _, mr := range menuRequirements.B {
+				if !allReqEffectMap[requirementKeyFunc(requirementConv(mr, 0))].Allowed {
+					disAllowMenuId = append(disAllowMenuId, menuRequirements.A)
+					continue
+				}
 			}
 		}
 	}

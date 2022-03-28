@@ -2,17 +2,39 @@ package authz
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas/common"
-	"strings"
+	"github.com/samber/lo"
 )
 
 type Service interface {
-	CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (*Result, error)
+	//CheckForSubjects permission of these subjects directly
+	CheckForSubjects(ctx context.Context, resource Resource, action Action, subjects ...Subject) (*Result, error)
+	//Check resolve subject from ctx, then check permission of these subjects
 	Check(ctx context.Context, resource Resource, action Action) (*Result, error)
+
+	BatchCheckForSubjects(ctx context.Context, requirement RequirementList, subjects ...Subject) (ResultList, error)
+	BatchCheck(ctx context.Context, requirement RequirementList) (ResultList, error)
 }
+
+type Requirement struct {
+	Resource Resource
+	Action   Action
+}
+
+func NewRequirement(resource Resource, action Action) *Requirement {
+	return &Requirement{
+		Resource: resource,
+		Action:   action,
+	}
+}
+
+type RequirementList []*Requirement
+
+type SubjectList []Subject
+
+type ResultList []*Result
 
 // SubjectContributor receive one Subject and retrieve as list of subjects
 type SubjectContributor interface {
@@ -39,21 +61,34 @@ func NewDefaultAuthorizationService(checker PermissionChecker, sr SubjectResolve
 	return &DefaultAuthorizationService{checker: checker, sr: sr, log: log.NewHelper(log.With(logger, "module", "authz.service"))}
 }
 
-func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, resource Resource, action Action, subject ...Subject) (*Result, error) {
-	ti, _ := common.FromCurrentTenant(ctx)
-	return a.check(ctx, resource, action, ti.GetId(), subject...)
+func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, resource Resource, action Action, subjects ...Subject) (*Result, error) {
+	requirements := []*Requirement{NewRequirement(resource, action)}
+	resList, err := a.BatchCheckForSubjects(ctx, requirements, subjects...)
+	res := NewDisallowAuthorizationResult(requirements...)
+	if len(resList) > 0 {
+		res = resList[0]
+	}
+	if err != nil {
+		return res, err
+	}
+	return res, FormatError(ctx, res)
 }
 
 func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action) (*Result, error) {
-	subjects, err := a.sr.ResolveFromContext(ctx)
-	if err != nil {
-		return nil, err
+	requirements := []*Requirement{NewRequirement(resource, action)}
+	resList, err := a.BatchCheck(ctx, requirements)
+	res := NewDisallowAuthorizationResult(requirements...)
+	if len(resList) > 0 {
+		res = resList[0]
 	}
-	ti, _ := common.FromCurrentTenant(ctx)
-	return a.check(ctx, resource, action, ti.GetId(), subjects...)
+	if err != nil {
+		return res, err
+	}
+	subjects, _ := a.sr.ResolveFromContext(ctx)
+	return res, FormatError(ctx, res, subjects...)
 }
 
-func (a *DefaultAuthorizationService) check(ctx context.Context, resource Resource, action Action, tenant string, subject ...Subject) (*Result, error) {
+func (a *DefaultAuthorizationService) check(ctx context.Context, requirements RequirementList, tenant string, subject ...Subject) (ResultList, error) {
 
 	if always, ok := FromAlwaysAuthorizationContext(ctx); ok {
 		var subjectStr []string
@@ -61,12 +96,13 @@ func (a *DefaultAuthorizationService) check(ctx context.Context, resource Resour
 			subjectStr = append(subjectStr, s.GetIdentity())
 		}
 		if always {
-			a.log.Debugf("check permission for Subject %s Action %s to Resource %s granted", strings.Join(subjectStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-			return NewAllowAuthorizationResult(), nil
+			return lo.Map(requirements, func(t *Requirement, _ int) *Result {
+				return NewAllowAuthorizationResult()
+			}), nil
 		} else {
-			a.log.Debugf("check permission for Subject %s Action %s to Resource %s forbidden", strings.Join(subjectStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()))
-			r := NewDisallowAuthorizationResult(nil)
-			return r, FormatError(ctx, r)
+			return lo.Map(requirements, func(t *Requirement, _ int) *Result {
+				return NewDisallowAuthorizationResult(requirements...)
+			}), nil
 		}
 	}
 
@@ -75,32 +111,32 @@ func (a *DefaultAuthorizationService) check(ctx context.Context, resource Resour
 		return nil, err
 	}
 
-	var logStr []string
-	for _, s := range subjectList {
-		logStr = append(logStr, s.GetIdentity())
-	}
-
-	logItems := []interface{}{
-		strings.Join(logStr, ","), action.GetIdentity(), fmt.Sprintf("%s/%s", resource.GetNamespace(), resource.GetIdentity()), tenant,
-	}
-	a.log.Debugf("check permission for Subject: %s Action: %s to Resource: %s in Tenant:%s", logItems...)
-
-	grantType, err := a.checker.IsGrantTenant(ctx, resource, action, tenant, subjectList...)
+	grantType, err := a.checker.IsGrantTenant(ctx, requirements, tenant, subjectList...)
 	if err != nil {
 		return nil, err
 	}
-	if grantType == EffectForbidden {
-		a.log.Debugf("check permission for Subject: %s Action: %s to Resource: %s in Tenant: %s forbidden", logItems...)
-		r := NewDisallowAuthorizationResult(nil)
-		return r, FormatError(ctx, r, subjectList...)
+	res := lo.Map(grantType, func(effect Effect, i int) *Result {
+		if effect == EffectForbidden {
+			return NewDisallowAuthorizationResult(requirements[i])
+		} else {
+			return NewAllowAuthorizationResult()
+		}
+	})
+	return res, nil
+}
+
+func (a *DefaultAuthorizationService) BatchCheckForSubjects(ctx context.Context, requirement RequirementList, subjects ...Subject) (ResultList, error) {
+	ti, _ := common.FromCurrentTenant(ctx)
+	return a.check(ctx, requirement, ti.GetId(), subjects...)
+}
+
+func (a *DefaultAuthorizationService) BatchCheck(ctx context.Context, requirement RequirementList) (ResultList, error) {
+	subjects, err := a.sr.ResolveFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
-	if grantType == EffectGrant {
-		a.log.Debugf("check permission for Subject: %s Action: %s to Resource: %s in Tenant: %s granted", logItems...)
-		return NewAllowAuthorizationResult(), nil
-	}
-	a.log.Debugf("check permission for Subject: %s Action: %s to Resource: %s in Tenant: %s forbidden", logItems...)
-	r := NewDisallowAuthorizationResult(nil)
-	return r, FormatError(ctx, r, subjectList...)
+	ti, _ := common.FromCurrentTenant(ctx)
+	return a.check(ctx, requirement, ti.GetId(), subjects...)
 }
 
 var ProviderSet = wire.NewSet(NewDefaultAuthorizationService,

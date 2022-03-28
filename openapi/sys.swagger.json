@@ -586,15 +586,29 @@
       "type": "object",
       "properties": {
         "namespace": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "namespace"
+          ]
         },
         "resource": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "resource"
+          ]
         },
         "action": {
-          "type": "string"
+          "type": "string",
+          "required": [
+            "action"
+          ]
         }
-      }
+      },
+      "required": [
+        "namespace",
+        "resource",
+        "action"
+      ]
     },
     "v1UpdateMenu": {
       "type": "object",

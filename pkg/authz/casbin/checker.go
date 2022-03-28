@@ -9,7 +9,19 @@ import (
 
 var _ authz.PermissionChecker = (*PermissionService)(nil)
 
-func (p *PermissionService) IsGrantTenant(ctx context.Context, resource authz.Resource, action authz.Action, tenantID string, subjects ...authz.Subject) (authz.Effect, error) {
+func (p *PermissionService) IsGrantTenant(ctx context.Context, requirements authz.RequirementList, tenantID string, subjects ...authz.Subject) ([]authz.Effect, error) {
+	res := []authz.Effect{}
+	for _, requirement := range requirements {
+		eff, err := p.isGrantTenant(ctx, requirement.Resource, requirement.Action, tenantID, subjects...)
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, eff)
+	}
+	return res, nil
+}
+
+func (p *PermissionService) isGrantTenant(ctx context.Context, resource authz.Resource, action authz.Action, tenantID string, subjects ...authz.Subject) (authz.Effect, error) {
 	//find permission definition of current resource and action
 
 	def := authz.MustFindDef(resource.GetNamespace(), action)

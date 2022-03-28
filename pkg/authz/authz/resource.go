@@ -1,5 +1,7 @@
 package authz
 
+import "fmt"
+
 const (
 	AnyNamespace = "*"
 	AnyResource  = "*"
@@ -23,4 +25,8 @@ func (r *EntityResource) GetNamespace() string {
 
 func (r *EntityResource) GetIdentity() string {
 	return r.Id
+}
+
+func (r *EntityResource) String() string {
+	return fmt.Sprintf("%s/%s", r.Namespace, r.Id)
 }
