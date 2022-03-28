@@ -11,6 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/remote"
@@ -39,7 +40,12 @@ func initApp(services *conf.Services, security *conf.Security, clientName api.Cl
 	webMultiTenancyOption := http.NewDefaultWebMultiTenancyOption()
 	authClient := api3.NewAuthGrpcClient(apiGrpcConn)
 	v := remote2.NewRefreshProvider(authClient, logger)
-	app, err := newApp(tenantStore, userTenantContributor, tokenizer, inMemoryTokenManager, services, clientName, webMultiTenancyOption, security, v, logger)
+	permissionServiceClient := api3.NewPermissionGrpcClient(apiGrpcConn)
+	permissionChecker := remote2.NewRemotePermissionChecker(permissionServiceClient)
+	authzOption := NewAuthorizationOption()
+	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
+	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
+	app, err := newApp(tenantStore, userTenantContributor, tokenizer, inMemoryTokenManager, services, clientName, webMultiTenancyOption, security, v, defaultAuthorizationService, subjectResolverImpl, logger)
 	if err != nil {
 		cleanup2()
 		cleanup()

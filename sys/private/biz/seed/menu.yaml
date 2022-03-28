@@ -1,4 +1,26 @@
 menus:
+  - name: "dev"
+    path: "/dev"
+    component: "LAYOUT"
+    redirect: "/dev/jaeger"
+    title: "routes.dev.title"
+    icon: "ion:grid-outline"
+    meta:
+    priority: 1000
+    requirement:
+      - namespace: "dev"
+        resource: "*"
+        action: "*"
+    children:
+      - name: "tracing"
+        path: "/jaeger"
+        component: "IFRAME"
+        iframe: "/jaeger"
+        title: "routes.dev.jaeger"
+        requirement:
+          - namespace: "dev.jaeger"
+            resource: "*"
+            action: "*"
   - name: "saas"
     path: "/saas"
     component: "LAYOUT"

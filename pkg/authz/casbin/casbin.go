@@ -14,7 +14,6 @@ import (
 type EnforcerProvider struct {
 	dbProvider sgorm.DbProvider
 	dbKey      string
-	m          model.Model
 	logger     *klog.Helper
 }
 
@@ -27,10 +26,10 @@ func NewEnforcerProvider(logger klog.Logger, dbProvider sgorm.DbProvider, dbKey 
 		dbKey:      dbKey,
 		logger:     klog.NewHelper(klog.With(logger, "module", "EnforcerProvider")),
 	}
-	if m, err := model.NewModelFromString(modelStr); err != nil {
+	if _, err := model.NewModelFromString(modelStr); err != nil {
 		return nil, err
 	} else {
-		res.m = m
+
 	}
 	return res, nil
 }
@@ -50,12 +49,14 @@ func (p *EnforcerProvider) Get(ctx context.Context) (*casbin.SyncedEnforcer, err
 	filter := gormadapter.Filter{
 		V4: []string{tenantInfo.GetId(), "*"},
 	}
+	//model is not concurrency safe
+	m, _ := model.NewModelFromString(modelStr)
 	//load filter policy
-	err = adapter.LoadFilteredPolicy(p.m, filter)
+	err = adapter.LoadFilteredPolicy(m, filter)
 	if err != nil {
 		return nil, err
 	}
-	e, err := casbin.NewSyncedEnforcer(p.m, adapter)
+	e, err := casbin.NewSyncedEnforcer(m, adapter)
 	e.EnableAutoSave(true)
 
 	return e, err

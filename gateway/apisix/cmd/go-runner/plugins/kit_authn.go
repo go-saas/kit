@@ -15,6 +15,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
@@ -30,6 +31,10 @@ func init() {
 	err := plugin.RegisterPlugin(&KitAuthn{})
 	if err != nil {
 		log.Fatalf("failed to register plugin kit_authn: %s", err)
+	}
+	err = plugin.RegisterPlugin(&KitAuthz{})
+	if err != nil {
+		log.Fatalf("failed to register plugin kit_authz: %s", err)
 	}
 }
 
@@ -50,6 +55,8 @@ var (
 	userTenantValidator *uremote.UserTenantContributor
 	refreshProvider     session.RefreshTokenProvider
 	ts                  common.TenantStore
+	authService         authz.Service
+	subjectResolver     authz.SubjectResolver
 )
 
 func Init(
@@ -61,6 +68,8 @@ func Init(
 	userTenant *uremote.UserTenantContributor,
 	tenantStore common.TenantStore,
 	refreshTokenProvider session.RefreshTokenProvider,
+	as authz.Service,
+	sr authz.SubjectResolver,
 	logger klog.Logger,
 ) error {
 	tokenizer = t
@@ -77,6 +86,8 @@ func Init(
 	userTenantValidator = userTenant
 	refreshProvider = refreshTokenProvider
 	ts = tenantStore
+	subjectResolver = sr
+	authService = as
 	return nil
 }
 

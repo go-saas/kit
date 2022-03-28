@@ -13,7 +13,11 @@ routes:
   -
     uri: /jaeger*
     upstream_id: jaeger
-
+    plugins:
+      ext-plugin-pre-req:
+        conf:
+          - name: "kit_authz"
+            value: "{\"requirement\":[{\"namespace\":\"dev.jaeger\",\"resource\":\"*\",\"action\":\"*\"}]}"
   -
     uri: /v1/sys/*
     upstream_id: sys-http

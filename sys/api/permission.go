@@ -8,6 +8,9 @@ import (
 
 const (
 	ResourceMenu = "sys.menu"
+	ResourceDev  = "dev"
+
+	ResourceDevJaeger = "dev.jaeger"
 )
 
 func init() {
@@ -19,4 +22,7 @@ func init() {
 		AddDef(authz.NewPermissionDef(ResourceMenu, authz.UpdateAction, fmt.Sprintf("%s.update", ResourceMenu), authz.PermissionHostSideOnly)).
 		AddDef(authz.NewPermissionDef(ResourceMenu, authz.DeleteAction, fmt.Sprintf("%s.delete", ResourceMenu), authz.PermissionHostSideOnly)))
 
+	authz.AddGroup(authz.NewPermissionDefGroup(ResourceDev, authz.PermissionHostSideOnly, 0)).
+		AddDef(authz.NewPermissionDef(ResourceDev, authz.AnyAction, fmt.Sprintf("%s.any", ResourceDev), authz.PermissionHostSideOnly)).
+		AddDef(authz.NewPermissionDef(ResourceDevJaeger, authz.AnyAction, fmt.Sprintf("%s.any", ResourceDevJaeger), authz.PermissionHostSideOnly))
 }

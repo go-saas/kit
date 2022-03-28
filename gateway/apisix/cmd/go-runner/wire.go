@@ -11,6 +11,7 @@ import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	sapi "github.com/goxiaoy/go-saas-kit/saas/api"
 	sremote "github.com/goxiaoy/go-saas-kit/saas/remote"
@@ -19,5 +20,5 @@ import (
 )
 
 func initApp(*conf2.Services, *conf2.Security, api.ClientName, klog.Logger, ...grpc.ClientOption) (*App, func(), error) {
-	panic(wire.Build(ProviderSet, sapi.GrpcProviderSet, sremote.GrpcProviderSet, uapi.GrpcProviderSet, uremote.GrpcProviderSet, jwt.ProviderSet, newApp))
+	panic(wire.Build(ProviderSet, authz.ProviderSet, sapi.GrpcProviderSet, sremote.GrpcProviderSet, uapi.GrpcProviderSet, uremote.GrpcProviderSet, jwt.ProviderSet, newApp))
 }
