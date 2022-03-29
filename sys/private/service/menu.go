@@ -153,24 +153,21 @@ func (s *MenuService) GetAvailableMenus(ctx context.Context, req *pb.GetAvailabl
 	if err != nil {
 		return nil, err
 	}
-	//filter by permission
-	var filter []*biz.Menu
+
 	var disAllowMenuId []string
 
 	var waitForCheckerRequirements = []lo.Tuple2[string, []biz.MenuPermissionRequirement]{}
 
 	for _, item := range items {
 		if item.IgnoreAuth {
-			filter = append(filter, item)
 			continue
 		}
 		if len(item.Requirement) > 0 {
 			waitForCheckerRequirements = append(waitForCheckerRequirements, lo.Tuple2[string, []biz.MenuPermissionRequirement]{A: item.ID.String(), B: item.Requirement})
-
 		} else {
 			//just check if login
 			if ui, ok := authn.FromUserContext(ctx); ok && len(ui.GetId()) > 0 {
-				filter = append(filter, item)
+				//logged in
 			} else {
 				disAllowMenuId = append(disAllowMenuId, item.ID.String())
 			}
@@ -205,21 +202,25 @@ func (s *MenuService) GetAvailableMenus(ctx context.Context, req *pb.GetAvailabl
 		}
 	}
 
-	var filterChildren []*biz.Menu
-	for _, f := range filter {
-		allow := true
-		for _, dis := range disAllowMenuId {
-			if f.Parent == dis {
-				allow = false
-				break
+	//remove
+	//filter by permission
+	filter := make([]*biz.Menu, len(items))
+	copy(filter, items)
+	for {
+		i := len(filter)
+		filter = lo.Filter(filter, func(m *biz.Menu, _ int) bool {
+			for _, dis := range disAllowMenuId {
+				if m.Parent == dis || m.ID.String() == dis {
+					return false
+				}
 			}
-		}
-		if allow {
-			filterChildren = append(filterChildren, f)
+			return true
+		})
+		if i == len(filter) {
+			break
 		}
 	}
-
-	var retItems = lo.Map(filterChildren, func(a *biz.Menu, _ int) *pb.Menu {
+	var retItems = lo.Map(filter, func(a *biz.Menu, _ int) *pb.Menu {
 		ret := &pb.Menu{}
 		MapBizMenu2Pb(a, ret)
 		return ret

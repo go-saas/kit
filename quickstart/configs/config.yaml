@@ -47,7 +47,7 @@ data:
     databases:
       default:
         driver: mysql
-        source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true
+        source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true&loc=Local
     redis:
       default:
         addr: redis:6379

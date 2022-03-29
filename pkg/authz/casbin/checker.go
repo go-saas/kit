@@ -2,9 +2,7 @@ package casbin
 
 import (
 	"context"
-	"fmt"
 	"github.com/casbin/casbin/v2"
-	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 )
 
@@ -34,8 +32,8 @@ func (p *PermissionService) isGrantTenant(ctx context.Context, enforcer *casbin.
 	def := authz.MustFindDef(resource.GetNamespace(), action)
 
 	if (def.Side == authz.PermissionHostSideOnly && len(tenantID) != 0) || (def.Side == authz.PermissionTenantSideOnly && len(tenantID) == 0) {
-		return authz.EffectForbidden, errors.New(400, authz.DefNotFoundReason, fmt.Sprintf("action %s in %s side mismatch",
-			action.GetIdentity(), resource.GetNamespace()))
+		//just forbid
+		return authz.EffectForbidden, nil
 	}
 	if def.IsInternalOnly() {
 		//internal ignore tenant
