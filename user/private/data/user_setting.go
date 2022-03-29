@@ -15,9 +15,9 @@ type UserSettingRepo struct {
 }
 
 func NewUserSettingRepo(data *Data) biz.UserSettingRepo {
-	return &UserSettingRepo{
-		Repo: kitgorm.NewRepo[biz.UserSetting, string, v1.GetSettingsRequest](data.DbProvider),
-	}
+	res := &UserSettingRepo{}
+	res.Repo = kitgorm.NewRepo[biz.UserSetting, string, v1.GetSettingsRequest](data.DbProvider, res)
+	return res
 }
 
 func (r *UserSettingRepo) GetDb(ctx context.Context) *gorm.DB {

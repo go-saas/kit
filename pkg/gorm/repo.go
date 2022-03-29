@@ -12,50 +12,87 @@ import (
 
 type Repo[TEntity any, TKey any, TQuery any] struct {
 	DbProvider sgorm.DbProvider
+	override   interface{}
 }
 
 //var _ data.Repo[interface{}, interface{}, interface{}] = (*Repo[interface{}, interface{}, interface{}])(nil)
 
-func NewRepo[TEntity any, TKey any, TQuery any](dbProvider sgorm.DbProvider) *Repo[TEntity, TKey, TQuery] {
-	return &Repo[TEntity, TKey, TQuery]{DbProvider: dbProvider}
+func NewRepo[TEntity any, TKey any, TQuery any](dbProvider sgorm.DbProvider, override interface{}) *Repo[TEntity, TKey, TQuery] {
+	return &Repo[TEntity, TKey, TQuery]{DbProvider: dbProvider, override: override}
 }
 
 func (r *Repo[TEntity, TKey, TQuery]) GetDb(ctx context.Context) *gorm.DB {
 	return r.DbProvider.Get(ctx, "")
 }
 
+type BuildDetailScope interface {
+	BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB
+}
+
 //BuildDetailScope preload relations
-func (r *Repo[TEntity, TKey, TQuery]) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
+func (r *Repo[TEntity, TKey, TQuery]) buildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
+	if override, ok := r.override.(BuildDetailScope); ok {
+		return override.BuildDetailScope(withDetail)
+	}
 	return func(db *gorm.DB) *gorm.DB {
 		return db
 	}
+}
+
+type BuildFilterScope[TQuery any] interface {
+	BuildFilterScope(q *TQuery) func(db *gorm.DB) *gorm.DB
 }
 
 //BuildFilterScope filter
-func (r *Repo[TEntity, TKey, TQuery]) BuildFilterScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
+func (r *Repo[TEntity, TKey, TQuery]) buildFilterScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
+	if override, ok := r.override.(BuildFilterScope[TQuery]); ok {
+		return override.BuildFilterScope(q)
+	}
 	return func(db *gorm.DB) *gorm.DB {
 		return db
 	}
+}
+
+type DefaultSorting interface {
+	DefaultSorting() []string
 }
 
 //DefaultSorting get default sorting
-func (r *Repo[TEntity, TKey, TQuery]) DefaultSorting() []string {
+func (r *Repo[TEntity, TKey, TQuery]) defaultSorting() []string {
+	if override, ok := r.override.(DefaultSorting); ok {
+		return override.DefaultSorting()
+	}
 	return nil
 }
 
+type BuildSortScope[TQuery any] interface {
+	BuildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB
+}
+
 //BuildSortScope build sorting query
-func (r *Repo[TEntity, TKey, TQuery]) BuildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
+func (r *Repo[TEntity, TKey, TQuery]) buildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
+	if override, ok := r.override.(BuildSortScope[TQuery]); ok {
+		return override.BuildSortScope(q)
+	}
 	f, ok := (interface{})(q).(query.Sort)
 	if ok {
-		return SortScope(f, r.DefaultSorting())
+		return SortScope(f, r.defaultSorting())
 	}
 	return func(db *gorm.DB) *gorm.DB {
 		return db
 	}
 }
 
+type BuildPageScope[TQuery any] interface {
+	BuildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB
+}
+
 //BuildPageScope page query
-func (r *Repo[TEntity, TKey, TQuery]) BuildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
+func (r *Repo[TEntity, TKey, TQuery]) buildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
+	if override, ok := r.override.(BuildPageScope[TQuery]); ok {
+		return override.BuildPageScope(q)
+	}
+
 	f, ok := (interface{})(q).(query.Page)
 	if ok {
 		return PageScope(f)
@@ -68,7 +105,7 @@ func (r *Repo[TEntity, TKey, TQuery]) BuildPageScope(q *TQuery) func(db *gorm.DB
 func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query *TQuery) ([]*TEntity, error) {
 	var e TEntity
 	db := r.GetDb(ctx).Model(&e)
-	db = db.Scopes(r.BuildFilterScope(query), r.BuildDetailScope(false), r.BuildSortScope(query), r.BuildPageScope(query))
+	db = db.Scopes(r.buildFilterScope(query), r.buildDetailScope(false), r.buildSortScope(query), r.buildPageScope(query))
 	var items []*TEntity
 	res := db.Find(&items)
 	return items, res.Error
@@ -77,7 +114,7 @@ func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query *TQuery) (
 func (r *Repo[TEntity, TKey, TQuery]) First(ctx context.Context, query *TQuery) (*TEntity, error) {
 	var e TEntity
 	db := r.GetDb(ctx).Model(&e)
-	db = db.Scopes(r.BuildFilterScope(query), r.BuildDetailScope(true))
+	db = db.Scopes(r.buildFilterScope(query), r.buildDetailScope(true))
 	var item TEntity
 	err := db.First(&item).Error
 	if err != nil {
@@ -96,13 +133,13 @@ func (r *Repo[TEntity, TKey, TQuery]) Count(ctx context.Context, query *TQuery) 
 	if err != nil {
 		return
 	}
-	db = db.Scopes(r.BuildFilterScope(query))
+	db = db.Scopes(r.buildFilterScope(query))
 	err = db.Count(&filtered).Error
 	return
 }
 func (r *Repo[TEntity, TKey, TQuery]) Get(ctx context.Context, id TKey) (*TEntity, error) {
 	var entity TEntity
-	err := r.GetDb(ctx).Model(&entity).Scopes(r.BuildDetailScope(true)).First(&entity, "id = ?", id).Error
+	err := r.GetDb(ctx).Model(&entity).Scopes(r.buildDetailScope(true)).First(&entity, "id = ?", id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

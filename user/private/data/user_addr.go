@@ -12,9 +12,9 @@ type UserAddrRepo struct {
 }
 
 func NewUserAddrRepo(data *Data) biz.UserAddressRepo {
-	return &UserAddrRepo{
-		Repo: kitgorm.NewRepo[biz.UserAddress, string, interface{}](data.DbProvider),
-	}
+	res := &UserAddrRepo{}
+	res.Repo = kitgorm.NewRepo[biz.UserAddress, string, interface{}](data.DbProvider, res)
+	return res
 }
 
 func (u *UserAddrRepo) GetDb(ctx context.Context) *gorm.DB {

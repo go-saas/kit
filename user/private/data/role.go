@@ -15,9 +15,9 @@ type RoleRepo struct {
 }
 
 func NewRoleRepo(data *Data) biz.RoleRepo {
-	return &RoleRepo{
-		Repo: kitgorm.NewRepo[biz.Role, string, v12.ListRolesRequest](data.DbProvider),
-	}
+	res := &RoleRepo{}
+	res.Repo = kitgorm.NewRepo[biz.Role, string, v12.ListRolesRequest](data.DbProvider, res)
+	return res
 }
 
 func (r *RoleRepo) GetDb(ctx context.Context) *gorm.DB {

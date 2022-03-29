@@ -19,7 +19,9 @@ type MenuRepo struct {
 var _ biz.MenuRepo = (*MenuRepo)(nil)
 
 func NewMenuRepo(dbProvider sgorm.DbProvider) biz.MenuRepo {
-	return &MenuRepo{Repo: kitgorm.NewRepo[biz.Menu, string, v1.ListMenuRequest](dbProvider)}
+	res := &MenuRepo{}
+	res.Repo = kitgorm.NewRepo[biz.Menu, string, v1.ListMenuRequest](dbProvider, res)
+	return res
 }
 
 func (c *MenuRepo) GetDb(ctx context.Context) *gorm.DB {
