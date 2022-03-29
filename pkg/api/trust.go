@@ -5,6 +5,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 )
 
+//TrustedContextValidator validate whether the communication is behind authed gateway or server to server communication
 type TrustedContextValidator interface {
 	Trusted(ctx context.Context) (bool, error)
 }

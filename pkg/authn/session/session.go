@@ -3,6 +3,7 @@ package session
 import (
 	"context"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/errors"
@@ -18,7 +19,7 @@ const (
 
 type RefreshTokenProvider = func(ctx context.Context, token string) (err error)
 
-func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
+func Auth(cfg *conf.Security, validator api.TrustedContextValidator) func(http.Handler) http.Handler {
 
 	sessionInfoStore := NewSessionInfoStore(cfg)
 	rememberStore := NewRememberStore(cfg)
@@ -35,16 +36,23 @@ func Auth(cfg *conf.Security) func(http.Handler) http.Handler {
 			ctx = NewClientStateWriterContext(ctx, stateWriter)
 			state := NewClientState(s, rs)
 			ctx = NewClientStateContext(ctx, state)
-			ctx = authn.NewUserContext(ctx, authn.NewUserInfo(state.GetUid()))
+			if ok, _ := validator.Trusted(ctx); !ok {
+				ctx = authn.NewUserContext(ctx, authn.NewUserInfo(state.GetUid()))
+			}
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }
 
-func Refresh(errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider) func(http.Handler) http.Handler {
+func Refresh(errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider, validator api.TrustedContextValidator) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
+			if ok, _ := validator.Trusted(ctx); ok {
+				//behind gateway
+				next.ServeHTTP(w, r.WithContext(ctx))
+				return
+			}
 			if state, ok := FromClientStateContext(ctx); ok {
 				if stateWriter, ok := FromClientStateWriterContext(ctx); ok {
 					if len(state.GetUid()) == 0 && len(state.GetRememberToken()) > 0 {
