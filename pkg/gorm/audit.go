@@ -16,8 +16,8 @@ import (
 type AuditedModel struct {
 	CreatedBy *string
 	UpdatedBy *string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `gorm:"timestamp"`
+	UpdatedAt time.Time `gorm:"timestamp"`
 }
 
 var _ auditableInterface = (*AuditedModel)(nil)
@@ -92,9 +92,9 @@ func assignUpdatedBy(db *gorm.DB) {
 func RegisterCallbacks(db *gorm.DB) {
 	callback := db.Callback()
 	if callback.Create().Get("audited:assign_created_by") == nil {
-		callback.Create().After("gorm:before_create").Register("audited:assign_created_by", assignCreatedBy)
+		callback.Create().Before("gorm:before_create").Register("audited:assign_created_by", assignCreatedBy)
 	}
 	if callback.Update().Get("audited:assign_updated_by") == nil {
-		callback.Update().After("gorm:before_update").Register("audited:assign_updated_by", assignUpdatedBy)
+		callback.Update().Before("gorm:before_update").Register("audited:assign_updated_by", assignUpdatedBy)
 	}
 }
