@@ -6,12 +6,12 @@ services:
     restart: always
 
   apisix:
-    image: ${DOCKER_REGISTRY}go-saas-kit-apisix:${DOCKER_TAG:-latest}
+    image: apache/apisix:dev
     restart: always
     volumes:
       - ./quickstart/configs/apisix/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
       - ./quickstart/configs/apisix/apisix_conf/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
-      - ./quickstart/configs:/usr/local/apisix/kit/conf
+      - apisix_runner:/tmp/runner #config for plugin
     #    depends_on:
     #      - etcd
     ports:
@@ -19,6 +19,18 @@ services:
       - "9091:9091"
       - "9443:9443"
       - "9092"
+
+  apisix-plugin:
+    image: ${DOCKER_REGISTRY}go-saas-kit-apisix-plugin:${DOCKER_TAG:-latest}
+    restart: always
+    volumes:
+      - apisix_runner:/tmp/runner
+      - ./quickstart/configs:/data/conf
+    environment:
+      - APISIX_LISTEN_ADDRESS=unix:/tmp/runner/runner.sock
+    #    depends_on:
+    #      - etcd
+
 
   api_docs:
     image: ${DOCKER_REGISTRY}go-saas-kit-swagger:${DOCKER_TAG:-latest}
@@ -84,3 +96,4 @@ services:
 
 volumes:
   mysql_data:
+  apisix_runner:

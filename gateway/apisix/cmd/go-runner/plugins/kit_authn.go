@@ -22,7 +22,6 @@ import (
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/sessions"
 	"go.opentelemetry.io/otel/propagation"
-	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"strings"
 )
@@ -112,13 +111,6 @@ func abortWithError(err error, w http.ResponseWriter) {
 }
 
 func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
-	var err error
-	ctx := r.Context()
-	tracer := tracing.NewTracer(trace.SpanKindServer)
-	var span trace.Span
-	ctx, span = tracer.Start(ctx, p.Name(), propagation.HeaderCarrier(r.Header().View()))
-	defer func() { tracer.End(ctx, span, nil, nil) }()
-
 	//clean internal headers
 	for s, _ := range r.Header().View() {
 		if strings.HasPrefix(strings.ToLower(s), api.InternalKeyPrefix) {
@@ -128,9 +120,10 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		}
 	}
 
-	trace := r.Header().Get("traceparent")
-	//https://github.com/apache/apisix/issues/6728
-	log.Infof("trace: %s", trace)
+	var err error
+	ctx := r.Context()
+	propagator := propagation.NewCompositeTextMapPropagator(tracing.Metadata{}, propagation.Baggage{}, propagation.TraceContext{})
+	ctx = propagator.Extract(ctx, propagation.HeaderCarrier(r.Header().View()))
 
 	ctx, err = Saas(ctx, ts, "", w, r)
 	//format error
