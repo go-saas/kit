@@ -21,7 +21,14 @@ func NewRepo[TEntity any, TKey any, TQuery any](dbProvider sgorm.DbProvider, ove
 	return &Repo[TEntity, TKey, TQuery]{DbProvider: dbProvider, override: override}
 }
 
-func (r *Repo[TEntity, TKey, TQuery]) GetDb(ctx context.Context) *gorm.DB {
+type GetDb interface {
+	GetDb(ctx context.Context) *gorm.DB
+}
+
+func (r *Repo[TEntity, TKey, TQuery]) getDb(ctx context.Context) *gorm.DB {
+	if override, ok := r.override.(GetDb); ok {
+		return override.GetDb(ctx)
+	}
 	return r.DbProvider.Get(ctx, "")
 }
 
@@ -104,7 +111,7 @@ func (r *Repo[TEntity, TKey, TQuery]) buildPageScope(q *TQuery) func(db *gorm.DB
 
 func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query *TQuery) ([]*TEntity, error) {
 	var e TEntity
-	db := r.GetDb(ctx).Model(&e)
+	db := r.getDb(ctx).Model(&e)
 	db = db.Scopes(r.buildFilterScope(query), r.buildDetailScope(false), r.buildSortScope(query), r.buildPageScope(query))
 	var items []*TEntity
 	res := db.Find(&items)
@@ -113,7 +120,7 @@ func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query *TQuery) (
 
 func (r *Repo[TEntity, TKey, TQuery]) First(ctx context.Context, query *TQuery) (*TEntity, error) {
 	var e TEntity
-	db := r.GetDb(ctx).Model(&e)
+	db := r.getDb(ctx).Model(&e)
 	db = db.Scopes(r.buildFilterScope(query), r.buildDetailScope(true))
 	var item TEntity
 	err := db.First(&item).Error
@@ -128,7 +135,7 @@ func (r *Repo[TEntity, TKey, TQuery]) First(ctx context.Context, query *TQuery) 
 
 func (r *Repo[TEntity, TKey, TQuery]) Count(ctx context.Context, query *TQuery) (total int64, filtered int64, err error) {
 	var e TEntity
-	db := r.GetDb(ctx).Model(&e)
+	db := r.getDb(ctx).Model(&e)
 	err = db.Count(&total).Error
 	if err != nil {
 		return
@@ -139,7 +146,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Count(ctx context.Context, query *TQuery) 
 }
 func (r *Repo[TEntity, TKey, TQuery]) Get(ctx context.Context, id TKey) (*TEntity, error) {
 	var entity TEntity
-	err := r.GetDb(ctx).Model(&entity).Scopes(r.buildDetailScope(true)).First(&entity, "id = ?", id).Error
+	err := r.getDb(ctx).Model(&entity).Scopes(r.buildDetailScope(true)).First(&entity, "id = ?", id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -149,12 +156,12 @@ func (r *Repo[TEntity, TKey, TQuery]) Get(ctx context.Context, id TKey) (*TEntit
 	return &entity, nil
 }
 func (r *Repo[TEntity, TKey, TQuery]) Create(ctx context.Context, entity *TEntity) error {
-	return r.GetDb(ctx).Create(entity).Error
+	return r.getDb(ctx).Create(entity).Error
 }
 
 func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entity *TEntity, p query.Select) error {
 	var e TEntity
-	db := r.GetDb(ctx).Model(&e)
+	db := r.getDb(ctx).Model(&e)
 	if p == nil {
 		db = db.Select("*")
 	}
@@ -162,7 +169,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entit
 }
 func (r *Repo[TEntity, TKey, TQuery]) Delete(ctx context.Context, id TKey) error {
 	var e TEntity
-	return r.GetDb(ctx).Delete(&e, "id = ?", id).Error
+	return r.getDb(ctx).Delete(&e, "id = ?", id).Error
 }
 
 func PageScope(page query.Page) func(db *gorm.DB) *gorm.DB {
