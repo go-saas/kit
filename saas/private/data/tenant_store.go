@@ -27,7 +27,7 @@ func (g TenantStore) GetByNameOrId(ctx context.Context, nameOrId string) (*commo
 	if t == nil {
 		return nil, common.ErrTenantNotFound
 	}
-	ret := common.NewTenantConfig(t.ID, t.Name, t.Region)
+	ret := common.NewTenantConfig(t.ID.String(), t.Name, t.Region)
 	for _, conn := range t.Conn {
 		ret.Conn[conn.Key] = conn.Value
 	}

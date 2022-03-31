@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package saas.event.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+import "google/api/field_behavior.proto";
+
+option go_package = "github.com/goxiaoy/go-saas-kit/saas/event/v1;v1";
+
+message TenantCreatedEvent{
+  string id=1;
+  string name=2;
+  string region=4;
+  bool separate_db=6;
+}
+
+message TenantReadyEvent{
+  string id=1;
+  string service_name=2;
+  string conn_str_key=3;
+  string conn_str_value=4;
+}

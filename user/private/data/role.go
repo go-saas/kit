@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"errors"
+	"github.com/goxiaoy/go-eventbus"
 
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
@@ -14,9 +15,9 @@ type RoleRepo struct {
 	*kitgorm.Repo[biz.Role, string, v12.ListRolesRequest]
 }
 
-func NewRoleRepo(data *Data) biz.RoleRepo {
+func NewRoleRepo(data *Data, eventbus *eventbus.EventBus) biz.RoleRepo {
 	res := &RoleRepo{}
-	res.Repo = kitgorm.NewRepo[biz.Role, string, v12.ListRolesRequest](data.DbProvider, res)
+	res.Repo = kitgorm.NewRepo[biz.Role, string, v12.ListRolesRequest](data.DbProvider, eventbus, res)
 	return res
 }
 

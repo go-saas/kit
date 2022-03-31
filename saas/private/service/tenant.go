@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
+	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	"io"
 	"os"
 	"path/filepath"
@@ -90,7 +91,7 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 	t.Conn = tenantConn
 	t.Features = tenantFeature
 
-	if err := s.useCase.Update(ctx, t, req.UpdateMask); err != nil {
+	if err := s.useCase.Update(ctx, t, query.NewField(req.UpdateMask)); err != nil {
 		return nil, err
 	}
 	return mapBizTenantToApi(ctx, s.blob, t), nil
@@ -123,7 +124,7 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 		return mapBizTenantToApi(ctx, s.blob, t), nil
 	}
 
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, t.ID), authz.ReadAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, t.ID.String()), authz.ReadAction); err != nil {
 		return nil, err
 	}
 
@@ -157,7 +158,7 @@ func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrent
 		return &pb.GetCurrentTenantReply{
 			IsHost: false,
 			Tenant: &pb.TenantInfo{
-				Id:          t.ID,
+				Id:          t.ID.String(),
 				Name:        t.Name,
 				DisplayName: t.DisplayName,
 				Region:      t.Region,
@@ -177,7 +178,7 @@ func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantReques
 
 	ret := &pb.ListTenantReply{}
 
-	totalCount, filterCount, err := s.useCase.Count(ctx, req.Search, req.Filter)
+	totalCount, filterCount, err := s.useCase.Count(ctx, req)
 	ret.TotalSize = int32(totalCount)
 	ret.FilterSize = int32(filterCount)
 	if err != nil {
@@ -245,7 +246,7 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 			}
 
 			t.Logo = normalizedName
-			if err := s.useCase.Update(ctx, t, &fieldmaskpb.FieldMask{Paths: []string{"logo"}}); err != nil {
+			if err := s.useCase.Update(ctx, t, query.NewField(&fieldmaskpb.FieldMask{Paths: []string{"logo"}})); err != nil {
 				return nil, err
 			}
 		}
@@ -282,7 +283,7 @@ func mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenan
 	})
 
 	res := &pb.Tenant{
-		Id:          tenant.ID,
+		Id:          tenant.ID.String(),
 		Name:        tenant.Name,
 		DisplayName: tenant.DisplayName,
 		Region:      tenant.Region,
@@ -298,7 +299,7 @@ func mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenan
 
 func mapBizTenantToInfo(ctx context.Context, blob blob.Factory, tenant *biz.Tenant) *pb.TenantInfo {
 	res := &pb.TenantInfo{
-		Id:          tenant.ID,
+		Id:          tenant.ID.String(),
 		Name:        tenant.Name,
 		DisplayName: tenant.DisplayName,
 		Region:      tenant.Region,

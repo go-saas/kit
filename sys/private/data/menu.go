@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/goxiaoy/go-eventbus"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v1 "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1"
@@ -18,9 +19,9 @@ type MenuRepo struct {
 
 var _ biz.MenuRepo = (*MenuRepo)(nil)
 
-func NewMenuRepo(dbProvider sgorm.DbProvider) biz.MenuRepo {
+func NewMenuRepo(dbProvider sgorm.DbProvider, eventbus *eventbus.EventBus) biz.MenuRepo {
 	res := &MenuRepo{}
-	res.Repo = kitgorm.NewRepo[biz.Menu, string, v1.ListMenuRequest](dbProvider, res)
+	res.Repo = kitgorm.NewRepo[biz.Menu, string, v1.ListMenuRequest](dbProvider, eventbus, res)
 	return res
 }
 

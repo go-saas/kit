@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/goxiaoy/go-eventbus"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/memory"
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/os"
@@ -23,6 +24,7 @@ var ProviderSet = wire.NewSet(
 	NewConnStrResolver,
 	kitgorm.NewDbOpener,
 	kitgorm.NewDbProvider,
+	NewEventbus,
 	suow.NewUowManager,
 	NewBlobFactory,
 	NewMigrate,
@@ -57,4 +59,8 @@ func NewConnStrResolver(c *conf.Data, ts common.TenantStore) data.ConnStrResolve
 
 func NewBlobFactory(c *conf.Data) blob.Factory {
 	return blob.NewFactory(c.Blobs)
+}
+
+func NewEventbus() *eventbus.EventBus {
+	return eventbus.New()
 }

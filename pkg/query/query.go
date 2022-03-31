@@ -28,3 +28,16 @@ type Select interface {
 type Filter[TFilter any] interface {
 	GetFilter() TFilter
 }
+
+type Field struct {
+	*fieldmaskpb.FieldMask
+}
+
+func NewField(f *fieldmaskpb.FieldMask) *Field {
+	return &Field{
+		f,
+	}
+}
+func (f *Field) GetFields() *fieldmaskpb.FieldMask {
+	return f.FieldMask
+}

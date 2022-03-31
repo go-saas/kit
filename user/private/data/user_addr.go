@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"github.com/goxiaoy/go-eventbus"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"gorm.io/gorm"
@@ -11,9 +12,9 @@ type UserAddrRepo struct {
 	*kitgorm.Repo[biz.UserAddress, string, interface{}]
 }
 
-func NewUserAddrRepo(data *Data) biz.UserAddressRepo {
+func NewUserAddrRepo(data *Data, eventbus *eventbus.EventBus) biz.UserAddressRepo {
 	res := &UserAddrRepo{}
-	res.Repo = kitgorm.NewRepo[biz.UserAddress, string, interface{}](data.DbProvider, res)
+	res.Repo = kitgorm.NewRepo[biz.UserAddress, string, interface{}](data.DbProvider, eventbus, res)
 	return res
 }
 

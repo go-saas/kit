@@ -330,6 +330,8 @@ github.com/gorilla/securecookie v1.1.1/go.mod h1:ra0sb63/xPlUeL+yeDciTfxMRAA+MP+
 github.com/gorilla/websocket v0.0.0-20170926233335-4201258b820c/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
+github.com/goxiaoy/go-eventbus v0.0.3 h1:7ESu6ZQUTY48Fk9mlmts6kJ9TUT3VR1MX6q24BujXYI=
+github.com/goxiaoy/go-eventbus v0.0.3/go.mod h1:b5yykGpYE+OOVJC/0nlJRzulL5GSyVPPp4Msmwi4vYY=
 github.com/goxiaoy/go-saas v0.1.1-0.20220325153233-e9872a1712c3 h1:nEjS8d7MZmgpoozOKooMBnaLULwwYgs9631AVxvjQ0A=
 github.com/goxiaoy/go-saas v0.1.1-0.20220325153233-e9872a1712c3/go.mod h1:9mz2zre8AeQPczT23ryVHVsvxMVN7GTgbJdMxiuwAVo=
 github.com/goxiaoy/gorm-concurrency v1.0.5 h1:Smcbn0xJLU0J9ycomUzY5IUIGwHu9UGpmxCSsRJ2OE4=

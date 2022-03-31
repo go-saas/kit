@@ -17,6 +17,22 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 		title: "Saas Service";
 		version: "1.0";
 	};
+	security_definitions: {
+		security: {
+			key: "bearer"
+			value: {
+				type: TYPE_API_KEY
+				in: IN_HEADER
+				name: "Authorization"
+				description: "Authentication token, prefixed by Bearer: Bearer <token>"
+			}
+		}
+	}
+	security: {
+		security_requirement: {
+			key: "bearer"
+		}
+	}
 };
 
 service TenantService {
@@ -96,6 +112,9 @@ message CreateTenantRequest {
 	string display_name=3;
 	string region = 4;
 	string logo =5;
+
+	bool separate_db=6;
+
 }
 
 message UpdateTenantRequest {

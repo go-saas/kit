@@ -27,7 +27,7 @@ type RoleRepo interface {
 	FindByName(ctx context.Context, name string) (*Role, error)
 }
 
-var _ RoleRepo = (*RoleManager)(nil)
+//var _ RoleRepo = (*RoleManager)(nil)
 
 type RoleManager struct {
 	repo             RoleRepo

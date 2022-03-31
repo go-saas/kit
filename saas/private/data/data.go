@@ -2,11 +2,15 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/goxiaoy/go-eventbus"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	data2 "github.com/goxiaoy/go-saas-kit/pkg/data"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
+	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/data"
@@ -24,6 +28,7 @@ var ProviderSet = wire.NewSet(
 	NewConnStrResolver,
 	kitgorm.NewDbOpener,
 	kitgorm.NewDbProvider,
+	NewEventbus,
 	uow2.NewUowManager,
 	NewTenantStore,
 	NewBlobFactory,
@@ -61,4 +66,23 @@ func NewConnStrResolver(c *conf.Data, ts common.TenantStore) data.ConnStrResolve
 }
 func NewBlobFactory(c *conf.Data) blob.Factory {
 	return blob.NewFactory(c.Blobs)
+}
+
+func NewEventbus() (*eventbus.EventBus, func(), error) {
+	res := eventbus.New()
+	ctx := context.Background()
+	dispose1, err := eventbus.Subscribe[*data2.AfterCreate[*biz.Tenant]](res)(ctx, func(ctx context.Context, data *data2.AfterCreate[*biz.Tenant]) error {
+		//TODO hook with event bus
+		fmt.Sprintf("tenant created !!!!!!!!!!!")
+		return nil
+	})
+	if err != nil {
+		return nil, func() {
+
+		}, err
+	}
+
+	return res, func() {
+		dispose1.Dispose(ctx)
+	}, nil
 }

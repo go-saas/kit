@@ -3,18 +3,18 @@ package data
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
-	redisotel "github.com/go-redis/redis/extra/redisotel/v8"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
+	"github.com/goxiaoy/go-eventbus"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/memory"
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/os"
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/s3"
-	data2 "github.com/goxiaoy/go-saas-kit/pkg/data"
 	"github.com/goxiaoy/go-saas-kit/pkg/email"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/lazy"
+	kitredis "github.com/goxiaoy/go-saas-kit/pkg/redis"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
@@ -22,7 +22,6 @@ import (
 	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
 	mail "github.com/xhit/go-simple-mail/v2"
-	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
 	g "gorm.io/gorm"
 )
 
@@ -32,10 +31,11 @@ var ProviderSet = wire.NewSet(
 	NewConnStrResolver,
 	kitgorm.NewDbProvider,
 	kitgorm.NewDbOpener,
+	NewEventbus,
 	uow2.NewUowManager,
 	NewBlobFactory,
 	NewRedis,
-	data2.NewCache,
+	kitredis.NewCache,
 	NewEmailer,
 	NewEnforcerProvider,
 	NewUserRepo,
@@ -88,12 +88,14 @@ func NewRedis(c *conf.Data) *redis.Client {
 	if c.Endpoints.Redis == nil {
 		panic("redis endpoints required")
 	}
-	r := data2.ResolveRedisEndpointOrDefault(c.Endpoints.Redis, ConnName)
-	rdb := redis.NewClient(r)
-	rdb.AddHook(redisotel.NewTracingHook(redisotel.WithAttributes(semconv.NetPeerNameKey.String(r.Addr), semconv.NetPeerPortKey.String(r.Addr))))
-	return rdb
+	r := kitredis.ResolveRedisEndpointOrDefault(c.Endpoints.Redis, ConnName)
+	return kitredis.NewRedisClient(r)
 }
 
 func NewEmailer(c *conf.Data) *lazy.Of[*mail.SMTPClient] {
 	return email.NewLazyClient(c.Endpoints)
+}
+
+func NewEventbus() *eventbus.EventBus {
+	return eventbus.New()
 }

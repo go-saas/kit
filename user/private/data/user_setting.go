@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"github.com/goxiaoy/go-eventbus"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 	"github.com/samber/lo"
 
@@ -14,9 +15,9 @@ type UserSettingRepo struct {
 	*kitgorm.Repo[biz.UserSetting, string, v1.GetSettingsRequest]
 }
 
-func NewUserSettingRepo(data *Data) biz.UserSettingRepo {
+func NewUserSettingRepo(data *Data, eventbus *eventbus.EventBus) biz.UserSettingRepo {
 	res := &UserSettingRepo{}
-	res.Repo = kitgorm.NewRepo[biz.UserSetting, string, v1.GetSettingsRequest](data.DbProvider, res)
+	res.Repo = kitgorm.NewRepo[biz.UserSetting, string, v1.GetSettingsRequest](data.DbProvider, eventbus, res)
 	return res
 }
 

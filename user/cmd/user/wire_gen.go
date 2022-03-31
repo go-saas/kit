@@ -15,8 +15,8 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	data2 "github.com/goxiaoy/go-saas-kit/pkg/data"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/redis"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
@@ -73,10 +73,11 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	client := data.NewRedis(confData)
 	emailTokenProvider := biz.NewEmailTokenProvider(client)
 	phoneTokenProvider := biz.NewPhoneTokenProvider(client)
-	cache := data2.NewCache(client)
+	cache := redis.NewCache(client)
 	twoStepTokenProvider := biz.NewTwoStepTokenProvider(cache)
 	userManager := biz.NewUserManager(userConf, userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, userTokenRepo, refreshTokenRepo, userTenantRepo, emailTokenProvider, phoneTokenProvider, twoStepTokenProvider, logger)
-	roleRepo := data.NewRoleRepo(dataData)
+	eventBus := data.NewEventbus()
+	roleRepo := data.NewRoleRepo(dataData, eventBus)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
 	enforcerProvider, err := data.NewEnforcerProvider(logger, dbProvider)
 	if err != nil {
@@ -92,8 +93,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionService, subjectResolverImpl, logger)
 	factory := data.NewBlobFactory(confData)
 	userService := service.NewUserService(userManager, roleManager, defaultAuthorizationService, factory)
-	userSettingRepo := data.NewUserSettingRepo(dataData)
-	userAddressRepo := data.NewUserAddrRepo(dataData)
+	userSettingRepo := data.NewUserSettingRepo(dataData, eventBus)
+	userAddressRepo := data.NewUserAddrRepo(dataData, eventBus)
 	accountService := service.NewAccountService(userManager, factory, tenantServiceClient, userSettingRepo, userAddressRepo, lookupNormalizer)
 	of := data.NewEmailer(confData)
 	emailSender := biz.NewEmailSender(of, confData)

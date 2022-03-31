@@ -1,7 +1,7 @@
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
 INTERNAL_PROTO_FILES=$(shell find private -name *.proto)
-BUF_VERSION=v1.0.0
+BUF_VERSION=v1.3.0
 
 .PHONY: init
 # init env

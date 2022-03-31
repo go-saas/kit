@@ -74,6 +74,8 @@ func (m *CreateTenantRequest) validate(all bool) error {
 
 	// no validation rules for Logo
 
+	// no validation rules for SeparateDb
+
 	if len(errors) > 0 {
 		return CreateTenantRequestMultiError(errors)
 	}

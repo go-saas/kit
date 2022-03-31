@@ -2,47 +2,30 @@ package data
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-eventbus"
+	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"github.com/goxiaoy/go-saas/gorm"
-	"github.com/samber/lo"
-	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	gg "gorm.io/gorm"
-	"time"
 )
-
-type Tenant struct {
-	gorm2.UIDBase
-	//unique name. usually for domain name
-	Name string `gorm:"column:name;index;size:255;"`
-	//localed display name
-	DisplayName string `gorm:"column:display_name;index;size:255;"`
-	//region of this tenant
-	Region    string `gorm:"column:region;index;size:255;"`
-	Logo      string
-	CreatedAt time.Time    `gorm:"column:created_at;index;"`
-	UpdatedAt time.Time    `gorm:"column:updated_at;index;"`
-	DeletedAt gg.DeletedAt `gorm:"column:deleted_at;index;"`
-
-	//connection
-	Conn []TenantConn `gorm:"foreignKey:TenantId"`
-	//edition
-	Features []TenantFeature `gorm:"foreignKey:TenantId"`
-}
 
 type TenantRepo struct {
 	DbProviderGetter
+	*kitgorm.Repo[biz.Tenant, string, v1.ListTenantRequest]
 }
-
 type DbProviderGetter func() gorm.DbProvider
 
-func NewTenantRepo() biz.TenantRepo {
-	return &TenantRepo{DbProviderGetter: func() gorm.DbProvider { return GlobalData.DbProvider }}
+func NewTenantRepo(eventbus *eventbus.EventBus) biz.TenantRepo {
+	res := &TenantRepo{}
+	res.Repo = kitgorm.NewRepo[biz.Tenant, string, v1.ListTenantRequest](nil, eventbus, res)
+	res.DbProviderGetter = func() gorm.DbProvider {
+		return GlobalData.DbProvider
+	}
+	return res
 }
 
 func (g *TenantRepo) GetDb(ctx context.Context) *gg.DB {
@@ -50,7 +33,7 @@ func (g *TenantRepo) GetDb(ctx context.Context) *gg.DB {
 	return ret
 }
 
-func preloadTenantScope(withDetail bool) func(db *gg.DB) *gg.DB {
+func (g *TenantRepo) BuildDetailScope(withDetail bool) func(db *gg.DB) *gg.DB {
 	return func(db *gg.DB) *gg.DB {
 		if withDetail {
 			return db.Preload("Conn").Preload("Features")
@@ -59,7 +42,9 @@ func preloadTenantScope(withDetail bool) func(db *gg.DB) *gg.DB {
 	}
 }
 
-func buildTenantScope(search string, filter *v1.TenantFilter) func(db *gg.DB) *gg.DB {
+func (g *TenantRepo) BuildFilterScope(q *v1.ListTenantRequest) func(db *gg.DB) *gg.DB {
+	search := q.Search
+	filter := q.Filter
 	return func(db *gg.DB) *gg.DB {
 		ret := db
 		if search != "" {
@@ -93,12 +78,12 @@ func (g *TenantRepo) FindByIdOrName(ctx context.Context, idOrName string) (*biz.
 	}
 	//parse uuid
 	id, err := uuid.Parse(idOrName)
-	var tDb Tenant
+	var tDb biz.Tenant
 	if err == nil {
 		//id
-		err = g.GetDb(ctx).Model(&Tenant{}).Scopes(preloadTenantScope(true)).Where("id = ?", id.String()).First(&tDb).Error
+		err = g.GetDb(ctx).Model(&biz.Tenant{}).Scopes(g.BuildDetailScope(true)).Where("id = ?", id.String()).First(&tDb).Error
 	} else {
-		err = g.GetDb(ctx).Model(&Tenant{}).Scopes(preloadTenantScope(true)).Where("name = ?", idOrName).First(&tDb).Error
+		err = g.GetDb(ctx).Model(&biz.Tenant{}).Scopes(g.BuildDetailScope(true)).Where("name = ?", idOrName).First(&tDb).Error
 	}
 	if err != nil {
 		if errors.Is(err, gg.ErrRecordNotFound) {
@@ -106,176 +91,19 @@ func (g *TenantRepo) FindByIdOrName(ctx context.Context, idOrName string) (*biz.
 		}
 		return nil, err
 	}
-	var ret = &biz.Tenant{}
-	mapDataTenantToBizTenant(&tDb, ret)
-	return ret, err
+	return &tDb, err
 }
 
-func (g *TenantRepo) List(ctx context.Context, query *v1.ListTenantRequest) ([]*biz.Tenant, error) {
-	db := g.GetDb(ctx).Model(&Tenant{})
-	db = db.Scopes(buildTenantScope(query.Search, query.Filter), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
-	var items []*Tenant
-	res := db.Find(&items)
-	rItems := lo.Map(items, func(t *Tenant, _ int) *biz.Tenant {
-		res := &biz.Tenant{}
-		mapDataTenantToBizTenant(t, res)
-		return res
-	})
-	return rItems, res.Error
-}
-
-func (g *TenantRepo) First(ctx context.Context, search string, query *v1.TenantFilter) (*biz.Tenant, error) {
-	db := g.GetDb(ctx).Model(&Tenant{})
-	db = db.Scopes(buildTenantScope(search, query))
-	var item = Tenant{}
-	if err := db.First(&item).Error; err != nil {
-		if errors.Is(err, gg.ErrRecordNotFound) {
-			return nil, nil
+func (g *TenantRepo) UpdateAssociation(ctx context.Context, entity *biz.Tenant) error {
+	if entity.Conn != nil {
+		if err := g.GetDb(ctx).Model(entity).Association("Conn").Replace(entity.Conn); err != nil {
+			return err
 		}
-		return nil, err
 	}
-	var ret = &biz.Tenant{}
-	mapDataTenantToBizTenant(&item, ret)
-	return ret, nil
-}
-
-func (g *TenantRepo) Count(ctx context.Context, search string, query *v1.TenantFilter) (total int64, filtered int64, err error) {
-	db := g.GetDb(ctx).Model(&Tenant{})
-	err = db.Count(&total).Error
-	if err != nil {
-		return
-	}
-	db = db.Scopes(buildTenantScope(search, query))
-	if err != nil {
-		return
-	}
-	err = db.Count(&filtered).Error
-	return
-}
-
-func (g *TenantRepo) Get(ctx context.Context, id string) (*biz.Tenant, error) {
-	db := g.GetDb(ctx)
-	var item = &Tenant{}
-	if err := db.First(item, "id = ?", id).Error; err != nil {
-		if errors.Is(err, gg.ErrRecordNotFound) {
-			return nil, nil
+	if entity.Features != nil {
+		if err := g.GetDb(ctx).Model(entity).Association("Features").Replace(entity.Features); err != nil {
+			return err
 		}
-		return nil, err
 	}
-	var ret = &biz.Tenant{}
-	mapDataTenantToBizTenant(item, ret)
-
-	return ret, nil
-}
-
-func (g *TenantRepo) Create(ctx context.Context, entity *biz.Tenant) error {
-	var tDb = &Tenant{}
-	mapBizTenantToDataTenant(entity, tDb)
-	d := g.GetDb(ctx)
-	if err := d.Create(tDb).Error; err != nil {
-		return err
-	}
-	mapDataTenantToBizTenant(tDb, entity)
 	return nil
-}
-
-func (g *TenantRepo) Update(ctx context.Context, entity *biz.Tenant, p *fieldmaskpb.FieldMask) error {
-	var tDb = &Tenant{}
-	mapBizTenantToDataTenant(entity, tDb)
-	d := g.GetDb(ctx)
-
-	if tDb.Conn != nil {
-		d.Model(tDb).Association("Conn").Replace(tDb.Conn)
-	}
-	if tDb.Features != nil {
-		d.Model(tDb).Association("Features").Replace(tDb.Features)
-	}
-	err := d.Model(&Tenant{}).Where("id = ?", entity.ID).Updates(tDb).Error
-	if err != nil {
-		return err
-	}
-	mapDataTenantToBizTenant(tDb, entity)
-	return nil
-}
-
-func (g *TenantRepo) Delete(ctx context.Context, id string) error {
-	return g.GetDb(ctx).Delete(&Tenant{}, "id = ?", id).Error
-}
-
-func mapBizTenantToDataTenant(a *biz.Tenant, b *Tenant) {
-	//var conn []TenantConn
-	conn := lo.Map(a.Conn, func(c biz.TenantConn, _ int) TenantConn {
-		return TenantConn{
-			TenantId:  c.TenantId,
-			Key:       c.Key,
-			Value:     c.Value,
-			CreatedAt: c.CreatedAt,
-			UpdatedAt: c.UpdatedAt,
-		}
-	})
-	features := lo.Map(a.Features, func(c biz.TenantFeature, I int) TenantFeature {
-		return TenantFeature{
-			TenantId:  c.TenantId,
-			Key:       c.Key,
-			Value:     c.Value,
-			CreatedAt: c.CreatedAt,
-			UpdatedAt: c.UpdatedAt,
-		}
-	})
-	var id uuid.UUID
-	if a.ID != "" {
-		id = uuid.MustParse(a.ID)
-	}
-	b.UIDBase = gorm2.UIDBase{ID: id}
-	b.Name = a.Name
-	b.DisplayName = a.DisplayName
-	b.Region = a.Region
-	b.CreatedAt = a.CreatedAt
-	b.UpdatedAt = a.UpdatedAt
-	if a.DeletedAt != nil {
-		b.DeletedAt = gg.DeletedAt(sql.NullTime{
-			Valid: true,
-			Time:  *a.DeletedAt,
-		})
-	}
-
-	b.Conn = conn
-	b.Features = features
-	b.Logo = a.Logo
-}
-
-func mapDataTenantToBizTenant(a *Tenant, b *biz.Tenant) {
-	conn := lo.Map(a.Conn, func(c TenantConn, _ int) biz.TenantConn {
-		return biz.TenantConn{
-			TenantId:  c.TenantId,
-			Key:       c.Key,
-			Value:     c.Value,
-			CreatedAt: c.CreatedAt,
-			UpdatedAt: c.UpdatedAt,
-		}
-	})
-
-	features := lo.Map(a.Features, func(c TenantFeature, _ int) biz.TenantFeature {
-		return biz.TenantFeature{
-			TenantId:  c.TenantId,
-			Key:       c.Key,
-			Value:     c.Value,
-			CreatedAt: c.CreatedAt,
-			UpdatedAt: c.UpdatedAt,
-		}
-	})
-	b.ID = a.ID.String()
-	b.Name = a.Name
-	b.DisplayName = a.DisplayName
-	b.Region = a.Region
-	b.CreatedAt = a.CreatedAt
-	b.UpdatedAt = a.UpdatedAt
-	if a.DeletedAt.Valid {
-		t := a.DeletedAt.Time
-		b.DeletedAt = &t
-	}
-
-	b.Conn = conn
-	b.Features = features
-	b.Logo = a.Logo
 }

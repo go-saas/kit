@@ -2,42 +2,57 @@ package biz
 
 import (
 	"context"
+	"github.com/goxiaoy/go-saas-kit/pkg/data"
+	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
-	"google.golang.org/protobuf/types/known/fieldmaskpb"
+	gg "gorm.io/gorm"
 	"time"
 )
 
 type Tenant struct {
-	// unique id
-	ID string
+	gorm2.UIDBase
 	//unique name. usually for domain name
-	Name string
+	Name string `gorm:"column:name;index;size:255;"`
 	//localed display name
-	DisplayName string
-	//region of this tenant. Useful for data storage location
-	Region string
-	//url or asset id
-	Logo string
+	DisplayName string `gorm:"column:display_name;index;size:255;"`
+	//region of this tenant
+	Region    string `gorm:"column:region;index;size:255;"`
+	Logo      string
+	CreatedAt time.Time    `gorm:"column:created_at;index;"`
+	UpdatedAt time.Time    `gorm:"column:updated_at;index;"`
+	DeletedAt gg.DeletedAt `gorm:"column:deleted_at;index;"`
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	//should apply soft delete
-	DeletedAt *time.Time
 	//connection
-	Conn []TenantConn
+	Conn []TenantConn `gorm:"foreignKey:TenantId"`
 	//edition
-	Features []TenantFeature
+	Features []TenantFeature `gorm:"foreignKey:TenantId"`
+}
+
+// TenantConn connection string info
+type TenantConn struct {
+	TenantId string `gorm:"column:tenant_id;primary_key;size:36;"`
+	//key of connection string
+	Key string `gorm:"column:key;primary_key;size:100;"`
+	//connection string
+	Value     string    `gorm:"column:value;size:1000;"`
+	CreatedAt time.Time `gorm:"column:created_at;index;"`
+	UpdatedAt time.Time `gorm:"column:updated_at;index;"`
+}
+
+type TenantFeature struct {
+	TenantId string `gorm:"column:tenant_id;primary_key;size:36;"`
+	//key of connection string
+	Key string `gorm:"column:key;primary_key;size:100;"`
+	//connection string
+	Value     string    `gorm:"column:value;size:1000;"`
+	CreatedAt time.Time `gorm:"column:created_at;index;"`
+	UpdatedAt time.Time `gorm:"column:updated_at;index;"`
 }
 
 type TenantRepo interface {
+	data.Repo[Tenant, string, v1.ListTenantRequest]
 	FindByIdOrName(ctx context.Context, idOrName string) (*Tenant, error)
-	List(ctx context.Context, query *v1.ListTenantRequest) ([]*Tenant, error)
-	First(ctx context.Context, search string, query *v1.TenantFilter) (*Tenant, error)
-	Count(ctx context.Context, search string, query *v1.TenantFilter) (total int64, filtered int64, err error)
-	Get(ctx context.Context, id string) (*Tenant, error)
-	Create(ctx context.Context, entity *Tenant) error
-	Update(ctx context.Context, entity *Tenant, p *fieldmaskpb.FieldMask) error
-	Delete(ctx context.Context, id string) error
 }
 
 type TenantUseCase struct {
@@ -56,12 +71,12 @@ func (t TenantUseCase) List(ctx context.Context, query *v1.ListTenantRequest) ([
 	return t.repo.List(ctx, query)
 }
 
-func (t TenantUseCase) First(ctx context.Context, search string, query *v1.TenantFilter) (*Tenant, error) {
-	return t.repo.First(ctx, search, query)
+func (t TenantUseCase) First(ctx context.Context, query *v1.ListTenantRequest) (*Tenant, error) {
+	return t.repo.First(ctx, query)
 }
 
-func (t TenantUseCase) Count(ctx context.Context, search string, query *v1.TenantFilter) (total int64, filtered int64, err error) {
-	return t.repo.Count(ctx, search, query)
+func (t TenantUseCase) Count(ctx context.Context, query *v1.ListTenantRequest) (total int64, filtered int64, err error) {
+	return t.repo.Count(ctx, query)
 }
 
 func (t TenantUseCase) Get(ctx context.Context, id string) (*Tenant, error) {
@@ -81,7 +96,7 @@ func (t TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
 	return t.repo.Create(ctx, entity)
 }
 
-func (t TenantUseCase) Update(ctx context.Context, entity *Tenant, p *fieldmaskpb.FieldMask) error {
+func (t TenantUseCase) Update(ctx context.Context, entity *Tenant, p query.Select) error {
 	// check duplicate
 	dbEntity, err := t.repo.FindByIdOrName(ctx, entity.Name)
 	if err != nil {
@@ -91,7 +106,7 @@ func (t TenantUseCase) Update(ctx context.Context, entity *Tenant, p *fieldmaskp
 		// duplicate
 		return v1.ErrorDuplicateTenantName("%v is used", entity.Name)
 	}
-	return t.repo.Update(ctx, entity, p)
+	return t.repo.Update(ctx, entity.ID.String(), entity, p)
 }
 
 func (t TenantUseCase) Delete(ctx context.Context, id string) error {

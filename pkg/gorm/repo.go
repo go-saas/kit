@@ -3,7 +3,9 @@ package gorm
 import (
 	"context"
 	"errors"
+	errors2 "github.com/go-kratos/kratos/v2/errors"
 
+	eventbus "github.com/goxiaoy/go-eventbus"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	sgorm "github.com/goxiaoy/go-saas/gorm"
@@ -12,13 +14,14 @@ import (
 
 type Repo[TEntity any, TKey any, TQuery any] struct {
 	DbProvider sgorm.DbProvider
+	Eventbus   *eventbus.EventBus
 	override   interface{}
 }
 
-//var _ data.Repo[interface{}, interface{}, interface{}] = (*Repo[interface{}, interface{}, interface{}])(nil)
+var _ data.Repo[interface{}, interface{}, interface{}] = (*Repo[interface{}, interface{}, interface{}])(nil)
 
-func NewRepo[TEntity any, TKey any, TQuery any](dbProvider sgorm.DbProvider, override interface{}) *Repo[TEntity, TKey, TQuery] {
-	return &Repo[TEntity, TKey, TQuery]{DbProvider: dbProvider, override: override}
+func NewRepo[TEntity any, TKey any, TQuery any](dbProvider sgorm.DbProvider, eventbus *eventbus.EventBus, override interface{}) *Repo[TEntity, TKey, TQuery] {
+	return &Repo[TEntity, TKey, TQuery]{DbProvider: dbProvider, Eventbus: eventbus, override: override}
 }
 
 type GetDb interface {
@@ -94,6 +97,10 @@ type BuildPageScope[TQuery any] interface {
 	BuildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB
 }
 
+type UpdateAssociation[TEntity any] interface {
+	UpdateAssociation(ctx context.Context, entity *TEntity) error
+}
+
 //BuildPageScope page query
 func (r *Repo[TEntity, TKey, TQuery]) buildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildPageScope[TQuery]); ok {
@@ -155,8 +162,35 @@ func (r *Repo[TEntity, TKey, TQuery]) Get(ctx context.Context, id TKey) (*TEntit
 	}
 	return &entity, nil
 }
+
 func (r *Repo[TEntity, TKey, TQuery]) Create(ctx context.Context, entity *TEntity) error {
-	return r.getDb(ctx).Create(entity).Error
+	if err := eventbus.Publish[*data.BeforeCreate[*TEntity]](r.Eventbus)(ctx, data.NewBeforeCreate(entity)); err != nil {
+		return err
+	}
+	if err := r.getDb(ctx).Create(entity).Error; err != nil {
+		return err
+	}
+	if err := eventbus.Publish[*data.AfterCreate[*TEntity]](r.Eventbus)(ctx, data.NewAfterCreate(entity)); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Repo[TEntity, TKey, TQuery]) BatchCreate(ctx context.Context, entity []*TEntity, batchSize int) error {
+	for _, tEntity := range entity {
+		if err := eventbus.Publish[*data.BeforeCreate[*TEntity]](r.Eventbus)(ctx, data.NewBeforeCreate(tEntity)); err != nil {
+			return err
+		}
+	}
+	if err := r.getDb(ctx).CreateInBatches(entity, batchSize).Error; err != nil {
+		return err
+	}
+	for _, tEntity := range entity {
+		if err := eventbus.Publish[*data.AfterCreate[*TEntity]](r.Eventbus)(ctx, data.NewAfterCreate(tEntity)); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entity *TEntity, p query.Select) error {
@@ -165,11 +199,43 @@ func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entit
 	if p == nil {
 		db = db.Select("*")
 	}
-	return db.Where("id = ?", id).Updates(entity).Error
+	if err := eventbus.Publish[*data.BeforeUpdate[*TEntity]](r.Eventbus)(ctx, data.NewBeforeUpdate(entity)); err != nil {
+		return err
+	}
+
+	if u, ok := r.override.(UpdateAssociation[TEntity]); ok {
+		if err := u.UpdateAssociation(ctx, &e); err != nil {
+			return err
+		}
+	}
+
+	if err := db.Where("id = ?", id).Updates(entity).Error; err != nil {
+		return err
+	}
+	if err := eventbus.Publish[*data.AfterUpdate[*TEntity]](r.Eventbus)(ctx, data.NewAfterUpdate(entity)); err != nil {
+		return err
+	}
+	return nil
 }
 func (r *Repo[TEntity, TKey, TQuery]) Delete(ctx context.Context, id TKey) error {
-	var e TEntity
-	return r.getDb(ctx).Delete(&e, "id = ?", id).Error
+	var entity TEntity
+	err := r.getDb(ctx).Model(&entity).First(&entity, "id = ?", id).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors2.NotFound("", "")
+		}
+		return err
+	}
+	if err := eventbus.Publish[*data.BeforeDelete[*TEntity]](r.Eventbus)(ctx, data.NewBeforeDelete(&entity)); err != nil {
+		return err
+	}
+	if err := r.getDb(ctx).Delete(&entity, "id = ?", id).Error; err != nil {
+		return err
+	}
+	if err := eventbus.Publish[*data.AfterDelete[*TEntity]](r.Eventbus)(ctx, data.NewAfterDelete(&entity)); err != nil {
+		return err
+	}
+	return nil
 }
 
 func PageScope(page query.Page) func(db *gorm.DB) *gorm.DB {
