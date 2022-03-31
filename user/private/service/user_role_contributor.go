@@ -27,13 +27,9 @@ func (u *UserRoleContributor) Process(ctx context.Context, subject authz.Subject
 			if user == nil {
 				return nil, nil
 			}
-			roles, err := u.userRepo.GetRoles(ctx, user)
-			if err != nil {
-				return nil, err
-			}
-			roleSubjects := make([]authz.Subject, len(roles))
-			for i := range roles {
-				roleSubjects[i] = authz.NewRoleSubject(roles[i].ID.String())
+			roleSubjects := make([]authz.Subject, len(user.Roles))
+			for i, r := range user.Roles {
+				roleSubjects[i] = authz.NewRoleSubject(r.ID.String())
 			}
 			return roleSubjects, nil
 		}

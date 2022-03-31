@@ -226,48 +226,34 @@ func (u *UserRepo) GetToken(ctx context.Context, user *biz.User, loginProvider s
 	return &t.Value, nil
 }
 
-func (u *UserRepo) GetRoles(ctx context.Context, user *biz.User) ([]*biz.Role, error) {
-	db := u.GetDb(ctx).Model(&biz.User{}).Preload("Roles")
-	dbUser := &biz.User{}
-	if err := db.Where("id=?", user.ID).Find(dbUser).Error; err != nil {
+func (u *UserRepo) GetRoles(ctx context.Context, user *biz.User) ([]biz.Role, error) {
+	db := u.GetDb(ctx)
+	var ret []biz.Role
+	if err := db.Model(user).Association("Roles").Find(&ret); err != nil {
 		return nil, err
+	} else {
+		return ret, nil
 	}
-	var ret []*biz.Role
-	for _, i := range dbUser.Roles {
-		ret = append(ret, &i)
-	}
-	return ret, nil
 }
 
-func (u *UserRepo) UpdateRoles(ctx context.Context, user *biz.User, roles []*biz.Role) error {
+func (u *UserRepo) UpdateRoles(ctx context.Context, user *biz.User, roles []biz.Role) error {
 	//delete all previous
 	db := u.GetDb(ctx)
-	if err := db.Where("user_id=?", user.ID).Delete(biz.UserRole{}).Error; err != nil {
+	if err := db.Model(&user).Association("Roles").Clear(); err != nil {
 		return err
 	}
-	var ur []*biz.UserRole
-	for _, role := range roles {
-		ur = append(ur, &biz.UserRole{
-			UserID: user.ID,
-			RoleID: role.ID,
-		})
-	}
-	if err := db.CreateInBatches(ur, 100).Error; err != nil {
+	if err := db.Model(&user).Association("Roles").Append(roles); err != nil {
 		return err
 	}
 	return nil
-
 }
 
-func (u *UserRepo) AddToRole(ctx context.Context, user *biz.User, role *biz.Role) error {
+func (u *UserRepo) AddToRole(ctx context.Context, user *biz.User, role biz.Role) error {
 	db := u.GetDb(ctx)
-	ur := biz.UserRole{UserID: user.ID, RoleID: role.ID}
-	err := db.Model(&biz.UserRole{}).Where("user_id=? and role_id=?", user.ID, role.ID).FirstOrCreate(&ur).Error
-	return err
+	return db.Model(user).Association("Roles").Append(role)
 }
 
-func (u *UserRepo) RemoveFromRole(ctx context.Context, user *biz.User, role *biz.Role) error {
+func (u *UserRepo) RemoveFromRole(ctx context.Context, user *biz.User, role biz.Role) error {
 	db := u.GetDb(ctx)
-	err := db.Where("user_id=? and role_id=?", user.ID, role.ID).Delete(&biz.UserRole{}).Error
-	return err
+	return db.Model(user).Association("Roles").Delete(role)
 }

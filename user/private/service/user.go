@@ -135,14 +135,14 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, err
 	}
 	//set roles
-	var roles []*biz.Role
+	var roles []biz.Role
 	for _, r := range req.RolesId {
 		if rr, err := s.rm.Get(ctx, r); err != nil {
 			return nil, err
 		} else if rr == nil {
 			return nil, errors2.NotFound("", "role not found")
 		} else {
-			roles = append(roles, rr)
+			roles = append(roles, *rr)
 		}
 	}
 
@@ -214,14 +214,14 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	}
 
 	//set roles
-	var roles []*biz.Role
+	var roles []biz.Role
 	for _, r := range req.User.RolesId {
 		if rr, err := s.rm.Get(ctx, r); err != nil {
 			return nil, err
 		} else if rr == nil {
 			return nil, errors2.NotFound("", "role not found")
 		} else {
-			roles = append(roles, rr)
+			roles = append(roles, *rr)
 		}
 	}
 

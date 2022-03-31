@@ -73,7 +73,7 @@ func NewEventbus() (*eventbus.EventBus, func(), error) {
 	ctx := context.Background()
 	dispose1, err := eventbus.Subscribe[*data2.AfterCreate[*biz.Tenant]](res)(ctx, func(ctx context.Context, data *data2.AfterCreate[*biz.Tenant]) error {
 		//TODO hook with event bus
-		fmt.Sprintf("tenant created !!!!!!!!!!!")
+		fmt.Println("tenant created !!!!!!!!!!!")
 		return nil
 	})
 	if err != nil {
