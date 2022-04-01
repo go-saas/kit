@@ -2,14 +2,16 @@ package data
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-eventbus"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	data2 "github.com/goxiaoy/go-saas-kit/pkg/data"
+	event2 "github.com/goxiaoy/go-saas-kit/pkg/event"
+	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
+	v1 "github.com/goxiaoy/go-saas-kit/saas/event/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas/common"
@@ -33,6 +35,7 @@ var ProviderSet = wire.NewSet(
 	NewTenantStore,
 	NewBlobFactory,
 	NewTenantRepo,
+	NewEventSender,
 	NewMigrate,
 )
 
@@ -68,21 +71,32 @@ func NewBlobFactory(c *conf.Data) blob.Factory {
 	return blob.NewFactory(c.Blobs)
 }
 
-func NewEventbus() (*eventbus.EventBus, func(), error) {
+func NewEventSender(c *conf.Data, logger log.Logger) (event.Sender, func(), error) {
+	e := c.Endpoints.GetEventOrDefault(ConnName)
+	return event2.NewEventSender(e, logger)
+}
+
+func NewEventbus(sender event.Sender) (*eventbus.EventBus, func(), error) {
 	res := eventbus.New()
-	ctx := context.Background()
-	dispose1, err := eventbus.Subscribe[*data2.AfterCreate[*biz.Tenant]](res)(ctx, func(ctx context.Context, data *data2.AfterCreate[*biz.Tenant]) error {
-		//TODO hook with event bus
-		fmt.Println("tenant created !!!!!!!!!!!")
-		return nil
+	dispose1, err := eventbus.Subscribe[*data2.AfterCreate[*biz.Tenant]](res)(func(ctx context.Context, data *data2.AfterCreate[*biz.Tenant]) error {
+		event, err := event.NewMessageFromProto(&v1.TenantCreatedEvent{
+			Id:         data.Entity.ID.String(),
+			Name:       data.Entity.Name,
+			Region:     data.Entity.Region,
+			SeparateDb: data.Entity.SeparateDb,
+		})
+		if err != nil {
+			return err
+		}
+		return sender.Send(ctx, event)
 	})
+
 	if err != nil {
 		return nil, func() {
-
 		}, err
 	}
 
 	return res, func() {
-		dispose1.Dispose(ctx)
+		dispose1.Dispose()
 	}, nil
 }

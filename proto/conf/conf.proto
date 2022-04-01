@@ -90,6 +90,10 @@ message Event{
   string addr=2;
   string topic=3;
   string group=4;
+  message Kafka{
+    google.protobuf.StringValue version=1;
+  }
+  Kafka kafka=10;
 }
 
 message Security{

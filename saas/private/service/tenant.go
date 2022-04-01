@@ -51,6 +51,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		DisplayName: disPlayName,
 		Region:      req.Region,
 		Logo:        req.Logo,
+		SeparateDb:  req.SeparateDb,
 	}
 	if err := s.useCase.Create(ctx, t); err != nil {
 		return nil, err

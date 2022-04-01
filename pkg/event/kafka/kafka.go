@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Shopify/sarama"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 )
 
@@ -18,14 +19,21 @@ type kafkaSender struct {
 	logger *log.Helper
 }
 
-func NewKafkaSender(address []string, topic string, logger log.Logger) (event.Sender, func(), error) {
+func NewKafkaSender(address []string, topic string, logger log.Logger, cfg *conf.Event_Kafka) (event.Sender, func(), error) {
 	conf := sarama.NewConfig()
 	conf.Producer.Interceptors = []sarama.ProducerInterceptor{NewOTelInterceptor(KindProducer, address)}
+	conf.Producer.Return.Successes = true
+	conf.Producer.Return.Errors = true
+	var cleanup = func() {
+
+	}
+	err := patchConf(conf, cfg)
+	if err != nil {
+		return nil, cleanup, err
+	}
 	w, err := sarama.NewSyncProducer(address, conf)
 	if err != nil {
-		return nil, func() {
-
-		}, err
+		return nil, cleanup, err
 	}
 	res := &kafkaSender{writer: w, topic: topic, logger: log.NewHelper(log.With(logger, "module", "kafka.kafkaSender"))}
 	return res, func() {
@@ -63,12 +71,17 @@ type kafkaReceiver struct {
 	oi     *OTelInterceptor
 }
 
-func NewKafkaReceiver(address []string, topic string, group string, logger log.Logger) (event.Receiver, func(), error) {
+func NewKafkaReceiver(address []string, topic string, group string, logger log.Logger, cfg *conf.Event_Kafka) (event.Receiver, func(), error) {
 	res := &kafkaReceiver{topic: topic, group: group, logger: log.NewHelper(log.With(logger, "module", "kafka.kafkaReceiver"))}
 	res.oi = NewOTelInterceptor(KindConsumer, address)
 	config := sarama.NewConfig()
-	config.Consumer.Return.Errors = true
+	var cleanup = func() {
 
+	}
+	err := patchConf(config, cfg)
+	if err != nil {
+		return nil, cleanup, err
+	}
 	cg, err := sarama.NewConsumerGroup(address, group, config)
 	if err != nil {
 		return nil, func() {
@@ -109,6 +122,19 @@ type consumerGroupHandler struct {
 	logger  *log.Helper
 	oi      *OTelInterceptor
 	group   string
+}
+
+func patchConf(config *sarama.Config, cfg *conf.Event_Kafka) error {
+	if cfg != nil {
+		if cfg.Version != nil {
+			v, err := sarama.ParseKafkaVersion(cfg.Version.Value)
+			if err != nil {
+				return err
+			}
+			config.Version = v
+		}
+	}
+	return nil
 }
 
 func newConsumerGroupHandler(group string, handler event.Handler, oi *OTelInterceptor, logger *log.Helper) *consumerGroupHandler {

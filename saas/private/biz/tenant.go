@@ -17,12 +17,12 @@ type Tenant struct {
 	//localed display name
 	DisplayName string `gorm:"column:display_name;index;size:255;"`
 	//region of this tenant
-	Region    string `gorm:"column:region;index;size:255;"`
-	Logo      string
-	CreatedAt time.Time    `gorm:"column:created_at;index;"`
-	UpdatedAt time.Time    `gorm:"column:updated_at;index;"`
-	DeletedAt gg.DeletedAt `gorm:"column:deleted_at;index;"`
-
+	Region     string `gorm:"column:region;index;size:255;"`
+	Logo       string
+	CreatedAt  time.Time    `gorm:"column:created_at;index;"`
+	UpdatedAt  time.Time    `gorm:"column:updated_at;index;"`
+	DeletedAt  gg.DeletedAt `gorm:"column:deleted_at;index;"`
+	SeparateDb bool
 	//connection
 	Conn []TenantConn `gorm:"foreignKey:TenantId"`
 	//edition

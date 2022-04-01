@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/propagation"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"net/http"
 	"strings"
 
@@ -31,7 +31,7 @@ type OTelInterceptor struct {
 // headers with the span data.
 func NewOTelInterceptor(kind SpanKind, brokers []string) *OTelInterceptor {
 	oi := OTelInterceptor{}
-	oi.tracer = sdktrace.NewTracerProvider().Tracer("kafka/interceptors")
+	oi.tracer = otel.Tracer("kafka/interceptors")
 	oi.propagator = propagation.NewCompositeTextMapPropagator(tracing.Metadata{}, propagation.Baggage{}, propagation.TraceContext{})
 	// These are based on the spec, which was reachable as of 2020-05-15
 	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/messaging.md
@@ -92,8 +92,7 @@ func (oi *OTelInterceptor) OnSend(msg *sarama.ProducerMessage) {
 		attribute.String("messaging.message_id", spanContext.SpanID().String()),
 	)
 	if msg.Key != nil {
-		b, err := msg.Key.Encode()
-		if err != nil {
+		if b, err := msg.Key.Encode(); err == nil {
 			attWithTopic = append(attWithTopic, attribute.String("messaging.kafka.message_key", string(b)))
 		}
 	}

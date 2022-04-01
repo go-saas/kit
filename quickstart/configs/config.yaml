@@ -47,7 +47,7 @@ data:
     databases:
       default:
         driver: mysql
-        source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true&loc=Local
+        source: root:youShouldChangeThis@tcp(mysqld:3306)/mysql?parseTime=true&loc=Local&charset=utf8mb4
     redis:
       default:
         addr: redis:6379
@@ -55,11 +55,22 @@ data:
     email:
       smtp:
         host: localhost
-  redis:
-    addr: 127.0.0.1:6379
-    read_timeout: 0.2s
-    write_timeout: 0.2s
-
+    events:
+      saas:
+        type: kafka
+        addr: kafka:9092
+        topic: kit
+        group: saas-golang
+      user:
+        type: kafka
+        addr: kafka:9092
+        topic: kit
+        group: user-golang
+      sys:
+        type: kafka
+        addr: kafka:9092
+        topic: kit
+        group: sys-golang
   blobs:
     user:
       provider: os
