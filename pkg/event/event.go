@@ -14,6 +14,7 @@ import (
 func NewEventReceiver(cfg *conf.Event, handler event.Handler, logger log.Logger) (event.Receiver, func(), error) {
 	var ret event.Receiver
 	var err error
+	var clean = func() {}
 	if cfg.Type == "kafka" || cfg.Type == "" {
 		var addr []string
 		if cfg.Addr != "" {
@@ -21,7 +22,7 @@ func NewEventReceiver(cfg *conf.Event, handler event.Handler, logger log.Logger)
 		} else {
 			addr = []string{"localhost:9092"}
 		}
-		ret, err = kafka.NewKafkaReceiver(addr, cfg.Topic, cfg.Group, logger)
+		ret, clean, err = kafka.NewKafkaReceiver(addr, cfg.Topic, cfg.Group, logger)
 	} else {
 		return nil, nil, errors.New(fmt.Sprintf("unsupported event type %s", cfg.Type))
 	}
@@ -29,14 +30,13 @@ func NewEventReceiver(cfg *conf.Event, handler event.Handler, logger log.Logger)
 		return nil, func() {}, err
 	}
 	err = ret.Receive(context.Background(), handler)
-	return ret, func() {
-		ret.Close()
-	}, err
+	return ret, clean, err
 }
 
 func NewEventSender(cfg *conf.Event, logger log.Logger) (event.Sender, func(), error) {
 	var ret event.Sender
 	var err error
+	var clean = func() {}
 	if cfg.Type == "kafka" || cfg.Type == "" {
 		var addr []string
 		if cfg.Addr != "" {
@@ -44,14 +44,12 @@ func NewEventSender(cfg *conf.Event, logger log.Logger) (event.Sender, func(), e
 		} else {
 			addr = []string{"localhost:9092"}
 		}
-		ret, err = kafka.NewKafkaSender(addr, cfg.Topic, logger)
+		ret, clean, err = kafka.NewKafkaSender(addr, cfg.Topic, logger)
 	} else {
 		return nil, nil, errors.New(fmt.Sprintf("unsupported event type %s", cfg.Type))
 	}
 	if err != nil {
-		return nil, func() {}, err
+		return nil, clean, err
 	}
-	return ret, func() {
-		ret.Close()
-	}, err
+	return ret, clean, err
 }

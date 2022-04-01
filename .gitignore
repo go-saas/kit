@@ -39,3 +39,5 @@ bin/
 /configs
 
 .temp/
+
+.assets/

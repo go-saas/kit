@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 	"github.com/goxiaoy/uow"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -32,6 +33,15 @@ func NewMessage(key string, value []byte) Event {
 		key:   key,
 		value: value,
 	}
+}
+
+func NewMessageFromProto(msg proto.Message) (Event, error) {
+	data, err := proto.Marshal(msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewMessage(string(msg.ProtoReflect().Descriptor().FullName()), data), nil
 }
 
 type Handler func(context.Context, Event) error

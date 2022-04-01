@@ -2,11 +2,9 @@ package kafka
 
 import (
 	"context"
-	"fmt"
+	"github.com/Shopify/sarama"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
-
-	"github.com/segmentio/kafka-go"
 )
 
 var (
@@ -15,16 +13,34 @@ var (
 )
 
 type kafkaSender struct {
-	writer *kafka.Writer
+	writer sarama.SyncProducer
 	topic  string
 	logger *log.Helper
 }
 
+func NewKafkaSender(address []string, topic string, logger log.Logger) (event.Sender, func(), error) {
+	conf := sarama.NewConfig()
+	conf.Producer.Interceptors = []sarama.ProducerInterceptor{NewOTelInterceptor(KindProducer, address)}
+	w, err := sarama.NewSyncProducer(address, conf)
+	if err != nil {
+		return nil, func() {
+
+		}, err
+	}
+	res := &kafkaSender{writer: w, topic: topic, logger: log.NewHelper(log.With(logger, "module", "kafka.kafkaSender"))}
+	return res, func() {
+		res.Close()
+	}, nil
+}
+
 func (s *kafkaSender) Send(ctx context.Context, message event.Event) error {
-	err := s.writer.WriteMessages(ctx, kafka.Message{
-		Key:   []byte(message.Key()),
-		Value: message.Value(),
+	_, _, err := s.writer.SendMessage(&sarama.ProducerMessage{
+		Topic:    s.topic,
+		Key:      sarama.StringEncoder(message.Key()),
+		Value:    sarama.ByteEncoder(message.Value()),
+		Metadata: ctx,
 	})
+
 	if err != nil {
 		return err
 	}
@@ -39,36 +55,41 @@ func (s *kafkaSender) Close() error {
 	return nil
 }
 
-func NewKafkaSender(address []string, topic string, logger log.Logger) (event.Sender, error) {
-	w := &kafka.Writer{
-		Topic:    topic,
-		Addr:     kafka.TCP(address...),
-		Balancer: &kafka.LeastBytes{},
-	}
-	return &kafkaSender{writer: w, topic: topic, logger: log.NewHelper(log.With(logger, "module", "kafka.kafkaSender"))}, nil
+type kafkaReceiver struct {
+	reader sarama.ConsumerGroup
+	topic  string
+	group  string
+	logger *log.Helper
+	oi     *OTelInterceptor
 }
 
-type kafkaReceiver struct {
-	reader *kafka.Reader
-	topic  string
-	logger *log.Helper
+func NewKafkaReceiver(address []string, topic string, group string, logger log.Logger) (event.Receiver, func(), error) {
+	res := &kafkaReceiver{topic: topic, group: group, logger: log.NewHelper(log.With(logger, "module", "kafka.kafkaReceiver"))}
+	res.oi = NewOTelInterceptor(KindConsumer, address)
+	config := sarama.NewConfig()
+	config.Consumer.Return.Errors = true
+
+	cg, err := sarama.NewConsumerGroup(address, group, config)
+	if err != nil {
+		return nil, func() {
+
+		}, err
+	}
+	res.reader = cg
+
+	return res, func() {
+		res.Close()
+	}, nil
+
 }
 
 func (k *kafkaReceiver) Receive(ctx context.Context, handler event.Handler) error {
+	topics := []string{k.topic}
 	go func() {
 		for {
-			m, err := k.reader.FetchMessage(context.Background())
+			err := k.reader.Consume(ctx, topics, newConsumerGroupHandler(k.group, handler, k.oi, k.logger))
 			if err != nil {
-				break
-			}
-			err = handler(context.Background(), event.NewMessage(string(m.Key), m.Value))
-			if err != nil {
-				//TODO error handling
-				k.logger.Error(fmt.Sprintf("message handling exception: %v", err))
-				continue
-			}
-			if err := k.reader.CommitMessages(ctx, m); err != nil {
-				k.logger.Error(fmt.Sprintf("failed to commit messages: %v", err))
+				k.logger.Error(err)
 			}
 		}
 	}()
@@ -83,13 +104,33 @@ func (k *kafkaReceiver) Close() error {
 	return nil
 }
 
-func NewKafkaReceiver(address []string, topic string, group string, logger log.Logger) (event.Receiver, error) {
-	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  address,
-		GroupID:  group,
-		Topic:    topic,
-		MinBytes: 10e3, // 10KB
-		MaxBytes: 10e6, // 10MB
-	})
-	return &kafkaReceiver{reader: r, topic: topic, logger: log.NewHelper(log.With(logger, "module", "kafka.kafkaReceiver"))}, nil
+type consumerGroupHandler struct {
+	handler event.Handler
+	logger  *log.Helper
+	oi      *OTelInterceptor
+	group   string
+}
+
+func newConsumerGroupHandler(group string, handler event.Handler, oi *OTelInterceptor, logger *log.Helper) *consumerGroupHandler {
+	return &consumerGroupHandler{group: group, handler: handler, oi: oi, logger: logger}
+}
+func (*consumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error   { return nil }
+func (*consumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
+func (h *consumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+
+	for msg := range claim.Messages() {
+		ctx := context.Background()
+		//start span
+		ctx, span := h.oi.StartConsumerSpan(ctx, h.group, msg)
+		h.logger.Debugf("Message topic:%q key:%s partition:%d offset:%d", msg.Topic, string(msg.Key), msg.Partition, msg.Offset)
+		//handle msg
+		err := h.handler(sess.Context(), event.NewMessage(string(msg.Key), msg.Value))
+		if err != nil {
+			h.logger.Error(err)
+		} else {
+			sess.MarkMessage(msg, "")
+		}
+		span.End()
+	}
+	return nil
 }
