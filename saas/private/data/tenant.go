@@ -17,6 +17,7 @@ type TenantRepo struct {
 	DbProviderGetter
 	*kitgorm.Repo[biz.Tenant, string, v1.ListTenantRequest]
 }
+
 type DbProviderGetter func() gorm.DbProvider
 
 func NewTenantRepo(eventbus *eventbus.EventBus) biz.TenantRepo {
@@ -39,6 +40,11 @@ func (g *TenantRepo) BuildDetailScope(withDetail bool) func(db *gg.DB) *gg.DB {
 			return db.Preload("Conn").Preload("Features")
 		}
 		return db
+	}
+}
+func (g *TenantRepo) DefaultSorting() []string {
+	return []string{
+		"-created_at",
 	}
 }
 

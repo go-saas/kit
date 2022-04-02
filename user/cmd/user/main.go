@@ -4,9 +4,11 @@ import (
 	"context"
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
+	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
 	http2 "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/seed"
@@ -41,8 +43,11 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.Seeder) *kratos.App {
-	if err := seeder.Seed(context.Background()); err != nil {
+func newApp(c *conf.UserConf, logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.Seeder, _ event.Receiver) *kratos.App {
+	if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("").WithExtra(map[string]interface{}{
+		biz.AdminUsernameKey: c.Admin.GetUsername(),
+		biz.AdminPasswordKey: c.Admin.GetPassword(),
+	})); err != nil {
 		panic(err)
 	}
 	return kratos.New(

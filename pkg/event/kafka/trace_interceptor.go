@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/propagation"
 	"net/http"
 	"strings"
@@ -147,4 +148,14 @@ func (oi *OTelInterceptor) StartConsumerSpan(ctx context.Context, group string, 
 	attWithTopic = append(attWithTopic, attribute.Int("messaging.kafka.partition", int(msg.Partition)))
 	span.SetAttributes(attWithTopic...)
 	return ctx, span
+}
+
+func (oi *OTelInterceptor) EndConsumerSpan(ctx context.Context, span trace.Span, err error) {
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+	} else {
+		span.SetStatus(codes.Ok, "OK")
+	}
+	span.End()
 }

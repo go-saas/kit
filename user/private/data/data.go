@@ -12,6 +12,8 @@ import (
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/os"
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/s3"
 	"github.com/goxiaoy/go-saas-kit/pkg/email"
+	event2 "github.com/goxiaoy/go-saas-kit/pkg/event"
+	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/lazy"
 	kitredis "github.com/goxiaoy/go-saas-kit/pkg/redis"
@@ -31,7 +33,8 @@ var ProviderSet = wire.NewSet(
 	NewConnStrResolver,
 	kitgorm.NewDbProvider,
 	kitgorm.NewDbOpener,
-	NewEventbus,
+	wire.Value(eventbus.Default),
+	NewRemoteEventReceiver,
 	uow2.NewUowManager,
 	NewBlobFactory,
 	NewRedis,
@@ -96,6 +99,7 @@ func NewEmailer(c *conf.Data) *lazy.Of[*mail.SMTPClient] {
 	return email.NewLazyClient(c.Endpoints)
 }
 
-func NewEventbus() *eventbus.EventBus {
-	return eventbus.New()
+func NewRemoteEventReceiver(c *conf.Data, logger log.Logger, handler event.Handler) (event.Receiver, func(), error) {
+	e := c.Endpoints.GetEventOrDefault(ConnName)
+	return event2.NewEventReceiver(e, handler, logger)
 }

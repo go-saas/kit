@@ -78,7 +78,7 @@ func buildUserScope(filter *v1.UserFilter) func(db *gorm.DB) *gorm.DB {
 
 func buildUserTenantsScope() func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		if biz.FromIgnoreUserTenantsContext(db.Statement.Context) {
+		if !biz.FromEnableUserTenantContext(db.Statement.Context) {
 			return db
 		}
 		ti, _ := common.FromCurrentTenant(db.Statement.Context)

@@ -350,8 +350,8 @@ github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoA
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/goxiaoy/go-eventbus v0.0.5 h1:i+/btPzl+YTAjix8StqTVF3b6NIXMGn8SEVnrwSBXic=
 github.com/goxiaoy/go-eventbus v0.0.5/go.mod h1:b5yykGpYE+OOVJC/0nlJRzulL5GSyVPPp4Msmwi4vYY=
-github.com/goxiaoy/go-saas v0.1.1-0.20220325153233-e9872a1712c3 h1:nEjS8d7MZmgpoozOKooMBnaLULwwYgs9631AVxvjQ0A=
-github.com/goxiaoy/go-saas v0.1.1-0.20220325153233-e9872a1712c3/go.mod h1:9mz2zre8AeQPczT23ryVHVsvxMVN7GTgbJdMxiuwAVo=
+github.com/goxiaoy/go-saas v0.1.1-0.20220401141333-ba15e049c885 h1:XMUN5rgdS5VUNk4K1DVgMjfSkSYgHKL37qZMywyzzcc=
+github.com/goxiaoy/go-saas v0.1.1-0.20220401141333-ba15e049c885/go.mod h1:9mz2zre8AeQPczT23ryVHVsvxMVN7GTgbJdMxiuwAVo=
 github.com/goxiaoy/gorm-concurrency v1.0.5 h1:Smcbn0xJLU0J9ycomUzY5IUIGwHu9UGpmxCSsRJ2OE4=
 github.com/goxiaoy/gorm-concurrency v1.0.5/go.mod h1:0rkcYgZ6OLLYLWT7QfYZkDrnIcTMWStwyLVNQdd8lGw=
 github.com/goxiaoy/sessions v1.2.2-0.20220327125603-baf0b311512e h1:tKvF7rNf7tSape+3HC9fb6n0uqRtGIhDt0Hn6gmWDpg=

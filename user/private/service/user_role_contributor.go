@@ -18,7 +18,7 @@ func NewUserRoleContributor(userRepo biz.UserRepo) *UserRoleContributor {
 func (u *UserRoleContributor) Process(ctx context.Context, subject authz.Subject) ([]authz.Subject, error) {
 	if us, ok := authz.ParseUserSubject(subject); ok {
 		if us.GetUserId() != "" {
-			ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 			ctx = data.NewDisableMultiTenancyDataFilter(ctx)
 			user, err := u.userRepo.FindByID(ctx, us.GetUserId())
 			if err != nil {

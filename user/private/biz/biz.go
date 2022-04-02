@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	"github.com/goxiaoy/uow"
 )
 
 // ProviderSet is biz providers.
@@ -13,6 +15,7 @@ var ProviderSet = wire.NewSet(
 	NewUserValidator,
 	NewRoleManager,
 	NewLookupNormalizer,
+	NewRemoteEventHandler,
 	NewEmailTokenProvider,
 	NewPhoneTokenProvider,
 	NewTwoStepTokenProvider,
@@ -21,8 +24,14 @@ var ProviderSet = wire.NewSet(
 	NewRoleSeed,
 	NewUserSeed,
 	NewPermissionSeeder,
-	NewEmailSender)
+	NewEmailSender,
+	NewTenantSeedEventHandler)
 
 func ProfileBlob(ctx context.Context, factory blob.Factory) blob.Blob {
 	return factory.Get(ctx, "user", false)
+}
+
+//NewRemoteEventHandler handler for remote event
+func NewRemoteEventHandler(uowMgr uow.Manager, tenantSeed TenantSeedEventHandler) event.Handler {
+	return event.UowHandler(uowMgr, event.ChainHandler(event.Handler(tenantSeed)))
 }

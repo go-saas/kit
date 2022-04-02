@@ -16,9 +16,5 @@ var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewSeeder, wire.Valu
 var ClientName api.ClientName = api2.ServiceName
 
 func NewSeeder(uow uow.Manager, migrate *data.Migrate, menu *biz.MenuSeed) seed.Seeder {
-	var opt = seed.NewSeedOption(seed.NewUowContributor(uow, seed.Chain(migrate, menu)))
-	// seed host
-	opt.TenantIds = []string{""}
-
-	return seed.NewDefaultSeeder(opt, map[string]interface{}{})
+	return seed.NewDefaultSeeder(seed.NewUowContributor(uow, seed.Chain(migrate, menu)))
 }

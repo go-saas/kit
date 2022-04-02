@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/goxiaoy/go-eventbus"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
@@ -76,7 +77,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	cache := redis.NewCache(client)
 	twoStepTokenProvider := biz.NewTwoStepTokenProvider(cache)
 	userManager := biz.NewUserManager(userConf, userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, userTokenRepo, refreshTokenRepo, userTenantRepo, emailTokenProvider, phoneTokenProvider, twoStepTokenProvider, logger)
-	eventBus := data.NewEventbus()
+	eventBus := _wireEventBusValue
 	roleRepo := data.NewRoleRepo(dataData, eventBus)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)
 	enforcerProvider, err := data.NewEnforcerProvider(logger, dbProvider)
@@ -100,13 +101,13 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	emailSender := biz.NewEmailSender(of, confData)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, defaultAuthorizationService, logger)
 	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService, permissionService)
-	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl)
+	trustedContextValidator := api.NewClientTrustedContextValidator()
+	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl, trustedContextValidator)
 	signInManager := biz.NewSignInManager(userManager, security)
 	apiClient := server.NewHydra(security)
 	auth := http2.NewAuth(decodeRequestFunc, userManager, logger, signInManager, apiClient)
 	defaultErrorHandler := server2.NewDefaultErrorHandler(encodeErrorFunc)
 	userTenantContributor := service.NewUserTenantContributor(userService)
-	trustedContextValidator := api.NewClientTrustedContextValidator()
 	v := server.NewRefreshTokenProvider(signInManager)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userService, accountService, authService, roleService, servicePermissionService, auth, defaultErrorHandler, confData, factory, userTenantContributor, trustedContextValidator, v)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, userService, accountService, authService, roleService, servicePermissionService, trustedContextValidator, userTenantContributor)
@@ -115,8 +116,18 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
 	seeder := server.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, permissionSeeder)
-	app := newApp(logger, httpServer, grpcServer, seeder)
+	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(seeder)
+	handler := biz.NewRemoteEventHandler(manager, tenantSeedEventHandler)
+	receiver, cleanup4, err := data.NewRemoteEventReceiver(confData, logger, handler)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	app := newApp(userConf, logger, httpServer, grpcServer, seeder, receiver)
 	return app, func() {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -128,4 +139,5 @@ var (
 	_wireDecodeRequestFuncValue  = server2.ReqDecode
 	_wireEncodeResponseFuncValue = server2.ResEncoder
 	_wireEncodeErrorFuncValue    = server2.ErrEncoder
+	_wireEventBusValue           = eventbus.Default
 )

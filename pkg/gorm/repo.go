@@ -3,13 +3,21 @@ package gorm
 import (
 	"context"
 	"errors"
-	errors2 "github.com/go-kratos/kratos/v2/errors"
+	kerrors "github.com/go-kratos/kratos/v2/errors"
 
 	eventbus "github.com/goxiaoy/go-eventbus"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	sgorm "github.com/goxiaoy/go-saas/gorm"
 	"gorm.io/gorm"
+)
+
+const (
+	ConcurrentUpdateCode = "CONCURRENT_UPDATE"
+)
+
+var (
+	ErrConcurrency = kerrors.Conflict(ConcurrentUpdateCode, "")
 )
 
 type Repo[TEntity any, TKey any, TQuery any] struct {
@@ -208,9 +216,13 @@ func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entit
 			return err
 		}
 	}
-
-	if err := db.Where("id = ?", id).Updates(entity).Error; err != nil {
+	updateRet := db.Where("id = ?", id).Updates(entity)
+	if err := updateRet.Error; err != nil {
 		return err
+	}
+	//check row affected for concurrency
+	if updateRet.RowsAffected == 0 {
+		return ErrConcurrency
 	}
 	if err := eventbus.Publish[*data.AfterUpdate[*TEntity]](r.Eventbus)(ctx, data.NewAfterUpdate(entity)); err != nil {
 		return err
@@ -222,7 +234,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Delete(ctx context.Context, id TKey) error
 	err := r.getDb(ctx).Model(&entity).First(&entity, "id = ?", id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors2.NotFound("", "")
+			return kerrors.NotFound("", "")
 		}
 		return err
 	}

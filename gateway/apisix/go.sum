@@ -238,8 +238,8 @@ github.com/gorilla/securecookie v1.1.1 h1:miw7JPhV+b/lAHSXz4qd/nN9jRiAFV5FwjeKyC
 github.com/gorilla/securecookie v1.1.1/go.mod h1:ra0sb63/xPlUeL+yeDciTfxMRAA+MP+HVt/4epWDjd4=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
-github.com/goxiaoy/go-saas v0.1.1-0.20220326143320-85844cc4ac78 h1:Hyh+qdADdm3sufWQIBdk7tIKU1/XaQT0N5/B3rf5Xc0=
-github.com/goxiaoy/go-saas v0.1.1-0.20220326143320-85844cc4ac78/go.mod h1:9mz2zre8AeQPczT23ryVHVsvxMVN7GTgbJdMxiuwAVo=
+github.com/goxiaoy/go-saas v0.1.1-0.20220401141333-ba15e049c885 h1:XMUN5rgdS5VUNk4K1DVgMjfSkSYgHKL37qZMywyzzcc=
+github.com/goxiaoy/go-saas v0.1.1-0.20220401141333-ba15e049c885/go.mod h1:9mz2zre8AeQPczT23ryVHVsvxMVN7GTgbJdMxiuwAVo=
 github.com/goxiaoy/sessions v1.2.2-0.20220327125603-baf0b311512e h1:tKvF7rNf7tSape+3HC9fb6n0uqRtGIhDt0Hn6gmWDpg=
 github.com/goxiaoy/sessions v1.2.2-0.20220327125603-baf0b311512e/go.mod h1:eGlJVX1aOtwJk0cajdAbltTc3Fk1KclMji1K6UmJ640=
 github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a/go.mod h1:Wflo5hwQqaoLsAvHsLkCdZMmXU8PFf404iI6hTjKt1s=

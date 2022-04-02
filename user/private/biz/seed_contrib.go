@@ -7,9 +7,13 @@ import (
 	"github.com/samber/lo"
 )
 
-const Admin = "admin"
-const AdminUsernameKey = "admin_username"
-const AdminPasswordKey = "admin_password"
+const (
+	Admin            = "admin"
+	AdminUsernameKey = "admin_username"
+	AdminEmailKey    = "admin_email"
+	AdminPasswordKey = "admin_password"
+	SkipMigration    = "skip_migration"
+)
 
 type RoleSeed struct {
 	rm         *RoleManager
@@ -49,23 +53,41 @@ type UserSeed struct {
 func NewUserSeed(um *UserManager, rm *RoleManager) *UserSeed {
 	return &UserSeed{um: um, rm: rm}
 }
+
 func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	adminUsername := ""
-	adminUsername, _ = sCtx.Extra[AdminUsernameKey].(string)
-
-	adminPassword := ""
-	adminPassword, _ = sCtx.Extra[AdminPasswordKey].(string)
-
-	admin, err := u.um.FindByName(ctx, adminUsername)
+	adminEmail := ""
+	var admin *User
+	var err error
+	var ok bool
+	if adminUsername, ok = sCtx.Extra[AdminUsernameKey].(string); ok {
+		admin, err = u.um.FindByName(ctx, adminUsername)
+	}
+	if adminEmail, ok = sCtx.Extra[AdminEmailKey].(string); ok {
+		admin, err = u.um.FindByEmail(ctx, adminEmail)
+	}
 	if err != nil {
 		return err
 	}
+	adminPassword := ""
+	adminPassword, _ = sCtx.Extra[AdminPasswordKey].(string)
+
+	if len(adminUsername) == 0 && len(adminEmail) == 0 {
+		//can not seed admin
+		return nil
+	}
+	//seed admin
 	if admin == nil {
 		//seed
 		name := adminUsername
 		admin = &User{
-			Name:     &name,
-			Username: &name,
+			Name: &name,
+		}
+		if len(adminUsername) > 0 {
+			admin.Username = &adminUsername
+		}
+		if len(adminEmail) > 0 {
+			admin.Email = &adminEmail
 		}
 		if err = u.um.CreateWithPassword(ctx, admin, adminPassword); err != nil {
 			return err
@@ -88,7 +110,7 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 		}
 	}
 
-	//add into host tenant
+	//add into tenant
 	if err := u.um.JoinTenant(ctx, admin.UIDBase.ID.String(), sCtx.TenantId); err != nil {
 		return err
 	}

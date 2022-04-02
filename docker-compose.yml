@@ -12,8 +12,8 @@ services:
       - ./quickstart/configs/apisix/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
       - ./quickstart/configs/apisix/apisix_conf/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
       - apisix_runner:/tmp/runner #config for plugin
-    #    depends_on:
-    #      - etcd
+    depends_on:
+      - apisix-plugin
     ports:
       - "8600:9080"
       - "9091:9091"

@@ -50,7 +50,7 @@ func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13
 
 func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileRequest) (*pb.GetProfileResponse, error) {
 	//TODO clean
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -151,7 +151,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	return res, nil
 }
 func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -179,7 +179,7 @@ func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfil
 	return &pb.UpdateProfileResponse{}, nil
 }
 func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsRequest) (*pb.GetSettingsResponse, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	u, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -197,7 +197,7 @@ func (s *AccountService) GetSettings(ctx context.Context, req *pb.GetSettingsReq
 	return &pb.GetSettingsResponse{Settings: set}, nil
 }
 func (s *AccountService) UpdateSettings(ctx context.Context, req *pb.UpdateSettingsRequest) (*pb.UpdateSettingsResponse, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	u, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -270,7 +270,7 @@ func (s *AccountService) CreateAddresses(ctx context.Context, req *pb.CreateAddr
 }
 
 func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddressesRequest) (*pb.UpdateAddressesReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	ui, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -296,7 +296,7 @@ func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddr
 }
 
 func (s *AccountService) DeleteAddresses(ctx context.Context, req *pb.DeleteAddressRequest) (*pb.DeleteAddressesReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	ui, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -321,7 +321,7 @@ func (s *AccountService) UpdateAvatar(ctx http.Context) error {
 		return err
 	}
 	h := ctx.Middleware(func(ctx context.Context, _ interface{}) (interface{}, error) {
-		ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 		user, err := authn.ErrIfUnauthenticated(ctx)
 		if err != nil {
 			return nil, err

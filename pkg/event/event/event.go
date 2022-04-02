@@ -3,7 +3,6 @@ package event
 import (
 	"context"
 	"github.com/goxiaoy/uow"
-	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -35,16 +34,11 @@ func NewMessage(key string, value []byte) Event {
 	}
 }
 
-func NewMessageFromProto(msg proto.Message) (Event, error) {
-	data, err := proto.Marshal(msg)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewMessage(string(msg.ProtoReflect().Descriptor().FullName()), data), nil
-}
-
 type Handler func(context.Context, Event) error
+
+type HandlerOf[T any] func(context.Context, T) error
+
+type TransformerOf[T any] func(e Event) (T, error)
 
 type Sender interface {
 	Send(ctx context.Context, msg Event) error
@@ -76,6 +70,7 @@ func UowHandler(uowMgr uow.Manager, handler Handler) Handler {
 	}
 }
 
+//FilterKeyHandler filter event by key compare
 func FilterKeyHandler(key string, handler Handler) Handler {
 	return func(ctx context.Context, event Event) error {
 		if event.Key() == key {
@@ -85,8 +80,8 @@ func FilterKeyHandler(key string, handler Handler) Handler {
 	}
 }
 
-//TransformHandler transform Event into some type
-func TransformHandler[T any](transformer func(e Event) (T, error), next func(context.Context, T) error) Handler {
+//TransformHandler transform Event into type T
+func TransformHandler[T any](transformer TransformerOf[T], next HandlerOf[T]) Handler {
 	return func(ctx context.Context, event Event) error {
 		if data, err := transformer(event); err != nil {
 			return err

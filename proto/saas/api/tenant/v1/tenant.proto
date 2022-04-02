@@ -108,7 +108,7 @@ service TenantService {
 }
 
 message CreateTenantRequest {
-	string name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+	string name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED,(validate.rules).string.pattern="^[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?$"];
 	string display_name=3;
 	string region = 4;
 	string logo =5;
@@ -125,7 +125,7 @@ message UpdateTenantRequest {
 
 message UpdateTenant{
 	string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-	string name =2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+	string name =2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED,(validate.rules).string.pattern="^[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?$"];
 	string display_name=3;
 
 	repeated TenantConnectionString conn=7;

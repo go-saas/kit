@@ -25,14 +25,8 @@ func NewSeeder(c *conf.UserConf,
 	roleSeed *biz.RoleSeed,
 	userSeed *biz.UserSeed,
 	p *biz.PermissionSeeder) seed.Seeder {
-	var opt = seed.NewSeedOption(migrate, seed.NewUowContributor(uow, seed.Chain(roleSeed, userSeed, p)))
-	// seed host
-	opt.TenantIds = []string{""}
-
-	return seed.NewDefaultSeeder(opt, map[string]interface{}{
-		biz.AdminUsernameKey: c.Admin.GetUsername(),
-		biz.AdminPasswordKey: c.Admin.GetPassword(),
-	})
+	res := seed.NewDefaultSeeder(migrate, seed.NewUowContributor(uow, seed.Chain(roleSeed, userSeed, p)))
+	return res
 }
 
 func NewHydra(c *conf2.Security) *client.APIClient {

@@ -6,12 +6,14 @@ import (
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	concurrency "github.com/goxiaoy/gorm-concurrency"
 	gg "gorm.io/gorm"
 	"time"
 )
 
 type Tenant struct {
 	gorm2.UIDBase
+	concurrency.Version
 	//unique name. usually for domain name
 	Name string `gorm:"column:name;index;size:255;"`
 	//localed display name
@@ -27,6 +29,7 @@ type Tenant struct {
 	Conn []TenantConn `gorm:"foreignKey:TenantId"`
 	//edition
 	Features []TenantFeature `gorm:"foreignKey:TenantId"`
+	Extra    data.JSONMap
 }
 
 // TenantConn connection string info
@@ -63,27 +66,27 @@ func NewTenantUserCase(repo TenantRepo) *TenantUseCase {
 	return &TenantUseCase{repo: repo}
 }
 
-func (t TenantUseCase) FindByIdOrName(ctx context.Context, idOrName string) (*Tenant, error) {
+func (t *TenantUseCase) FindByIdOrName(ctx context.Context, idOrName string) (*Tenant, error) {
 	return t.repo.FindByIdOrName(ctx, idOrName)
 }
 
-func (t TenantUseCase) List(ctx context.Context, query *v1.ListTenantRequest) ([]*Tenant, error) {
+func (t *TenantUseCase) List(ctx context.Context, query *v1.ListTenantRequest) ([]*Tenant, error) {
 	return t.repo.List(ctx, query)
 }
 
-func (t TenantUseCase) First(ctx context.Context, query *v1.ListTenantRequest) (*Tenant, error) {
+func (t *TenantUseCase) First(ctx context.Context, query *v1.ListTenantRequest) (*Tenant, error) {
 	return t.repo.First(ctx, query)
 }
 
-func (t TenantUseCase) Count(ctx context.Context, query *v1.ListTenantRequest) (total int64, filtered int64, err error) {
+func (t *TenantUseCase) Count(ctx context.Context, query *v1.ListTenantRequest) (total int64, filtered int64, err error) {
 	return t.repo.Count(ctx, query)
 }
 
-func (t TenantUseCase) Get(ctx context.Context, id string) (*Tenant, error) {
+func (t *TenantUseCase) Get(ctx context.Context, id string) (*Tenant, error) {
 	return t.repo.Get(ctx, id)
 }
 
-func (t TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
+func (t *TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
 	// check duplicate
 	dbEntity, err := t.repo.FindByIdOrName(ctx, entity.Name)
 	if err != nil {
@@ -96,7 +99,7 @@ func (t TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
 	return t.repo.Create(ctx, entity)
 }
 
-func (t TenantUseCase) Update(ctx context.Context, entity *Tenant, p query.Select) error {
+func (t *TenantUseCase) Update(ctx context.Context, entity *Tenant, p query.Select) error {
 	// check duplicate
 	dbEntity, err := t.repo.FindByIdOrName(ctx, entity.Name)
 	if err != nil {
@@ -109,6 +112,6 @@ func (t TenantUseCase) Update(ctx context.Context, entity *Tenant, p query.Selec
 	return t.repo.Update(ctx, entity.ID.String(), entity, p)
 }
 
-func (t TenantUseCase) Delete(ctx context.Context, id string) error {
+func (t *TenantUseCase) Delete(ctx context.Context, id string) error {
 	return t.repo.Delete(ctx, id)
 }

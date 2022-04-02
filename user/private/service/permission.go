@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
+	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/user/api"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
@@ -18,10 +19,11 @@ type PermissionService struct {
 	auth          authz.Service
 	permissionMgr authz.PermissionManagementService
 	sr            authz.SubjectResolver
+	trust         api2.TrustedContextValidator
 }
 
-func NewPermissionService(auth authz.Service, permissionMgr authz.PermissionManagementService, sr authz.SubjectResolver) *PermissionService {
-	return &PermissionService{auth: auth, permissionMgr: permissionMgr, sr: sr}
+func NewPermissionService(auth authz.Service, permissionMgr authz.PermissionManagementService, sr authz.SubjectResolver, trust api2.TrustedContextValidator) *PermissionService {
+	return &PermissionService{auth: auth, permissionMgr: permissionMgr, sr: sr, trust: trust}
 }
 
 func (s *PermissionService) GetCurrent(ctx context.Context, req *pb.GetCurrentPermissionRequest) (*pb.GetCurrentPermissionReply, error) {
@@ -60,8 +62,11 @@ func (s *PermissionService) CheckCurrent(ctx context.Context, req *pb.CheckPermi
 
 //CheckForSubjects internal api for remote permission checker
 func (s *PermissionService) CheckForSubjects(ctx context.Context, req *pb.CheckSubjectsPermissionRequest) (*pb.CheckSubjectsPermissionReply, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourcePermissionInternal, "*"), authz.AnyAction); err != nil {
-		return nil, err
+	//if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourcePermissionInternal, "*"), authz.AnyAction); err != nil {
+	//	return nil, err
+	//}
+	if ok, _ := s.trust.Trusted(ctx); !ok {
+		return nil, errors.Forbidden("", "")
 	}
 	subjects := make([]authz.Subject, len(req.Subjects))
 	for i, subject := range req.Subjects {

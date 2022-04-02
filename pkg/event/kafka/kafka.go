@@ -156,7 +156,7 @@ func (h *consumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, cl
 		} else {
 			sess.MarkMessage(msg, "")
 		}
-		span.End()
+		h.oi.EndConsumerSpan(ctx, span, err)
 	}
 	return nil
 }

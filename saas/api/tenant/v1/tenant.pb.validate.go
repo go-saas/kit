@@ -68,6 +68,17 @@ func (m *CreateTenantRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if !_CreateTenantRequest_Name_Pattern.MatchString(m.GetName()) {
+		err := CreateTenantRequestValidationError{
+			field:  "Name",
+			reason: "value does not match regex pattern \"^[A-Za-z0-9](?:[A-Za-z0-9\\\\-]{0,61}[A-Za-z0-9])?$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	// no validation rules for DisplayName
 
 	// no validation rules for Region
@@ -154,6 +165,8 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CreateTenantRequestValidationError{}
+
+var _CreateTenantRequest_Name_Pattern = regexp.MustCompile("^[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?$")
 
 // Validate checks the field values on UpdateTenantRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -369,6 +382,17 @@ func (m *UpdateTenant) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if !_UpdateTenant_Name_Pattern.MatchString(m.GetName()) {
+		err := UpdateTenantValidationError{
+			field:  "Name",
+			reason: "value does not match regex pattern \"^[A-Za-z0-9](?:[A-Za-z0-9\\\\-]{0,61}[A-Za-z0-9])?$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	// no validation rules for DisplayName
 
 	for idx, item := range m.GetConn() {
@@ -516,6 +540,8 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateTenantValidationError{}
+
+var _UpdateTenant_Name_Pattern = regexp.MustCompile("^[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?$")
 
 // Validate checks the field values on DeleteTenantRequest with the rules
 // defined in the proto definition for this message. If any rules are

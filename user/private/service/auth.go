@@ -64,11 +64,11 @@ func NewAuthService(um *biz.UserManager,
 }
 
 func (s *AuthService) Register(ctx context.Context, req *pb.RegisterAuthRequest) (*pb.RegisterAuthReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	return &pb.RegisterAuthReply{}, nil
 }
 func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.LoginAuthReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	user, err := FindUserByUsernameAndValidatePwd(ctx, s.um, req.Username, req.Password)
 	if err != nil {
 		return nil, err
@@ -82,7 +82,7 @@ func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.
 }
 
 func (s *AuthService) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	if req.GrantType == "" || req.GrantType == "password" {
 		res, err := s.Login(ctx, &pb.LoginAuthRequest{Username: req.Username, Password: req.Password})
 		if err != nil {
@@ -112,7 +112,7 @@ func (s *AuthService) Token(ctx context.Context, req *pb.TokenRequest) (*pb.Toke
 }
 
 func (s *AuthService) Refresh(ctx context.Context, req *pb.RefreshTokenAuthRequest) (*pb.RefreshTokenAuthReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	t, err := s.refresh(ctx, req.RefreshToken)
 	if err != nil {
 		return nil, err
@@ -120,16 +120,16 @@ func (s *AuthService) Refresh(ctx context.Context, req *pb.RefreshTokenAuthReque
 	return &pb.RefreshTokenAuthReply{AccessToken: t.accessToken, ExpiresIn: t.expiresIn, TokenType: "Bearer", RefreshToken: t.refreshToken}, nil
 }
 func (s *AuthService) SendPasswordlessToken(ctx context.Context, req *pb.PasswordlessTokenAuthRequest) (*pb.PasswordlessTokenAuthReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	return &pb.PasswordlessTokenAuthReply{}, nil
 }
 func (s *AuthService) LoginPasswordless(ctx context.Context, req *pb.LoginPasswordlessRequest) (*pb.LoginPasswordlessReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	return &pb.LoginPasswordlessReply{}, nil
 }
 
 func (s *AuthService) SendForgetPasswordToken(ctx context.Context, req *pb.ForgetPasswordTokenRequest) (*pb.ForgetPasswordTokenReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	if req.Phone == nil && req.Email == nil {
 		return nil, errors.BadRequest("", "")
 	}
@@ -171,7 +171,7 @@ func (s *AuthService) SendForgetPasswordToken(ctx context.Context, req *pb.Forge
 }
 
 func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPasswordRequest) (*pb.ForgetPasswordReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	if req.Phone == nil && req.Email == nil {
 		return nil, errors.BadRequest("", "")
 	}
@@ -209,7 +209,7 @@ func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPassword
 }
 
 func (s *AuthService) ChangePasswordByForget(ctx context.Context, req *pb.ChangePasswordByForgetRequest) (*pb.ChangePasswordByForgetReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	//validate password
 	if req.NewPassword != req.ConfirmNewPassword {
 		return nil, v1.ErrorConfirmPasswordMismatch("")
@@ -222,7 +222,7 @@ func (s *AuthService) ChangePasswordByForget(ctx context.Context, req *pb.Change
 }
 
 func (s *AuthService) ValidatePassword(ctx context.Context, req *pb.ValidatePasswordRequest) (*pb.ValidatePasswordReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	err := s.pwdValidator.Validate(ctx, req.Password)
 	if err != nil {
 		return nil, err
@@ -231,7 +231,7 @@ func (s *AuthService) ValidatePassword(ctx context.Context, req *pb.ValidatePass
 }
 
 func (s *AuthService) ChangePasswordByPre(ctx context.Context, req *pb.ChangePasswordByPreRequest) (*pb.ChangePasswordByPreReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	ui, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -263,7 +263,7 @@ func (s *AuthService) GetCsrfToken(ctx context.Context, req *pb.GetCsrfTokenRequ
 }
 
 func (s *AuthService) RefreshRememberToken(ctx context.Context, req *pb.RefreshRememberTokenRequest) (*pb.RefreshRememberTokenReply, error) {
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
+
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceAuthInternal, authz.AnyResource), authz.AnyAction); err != nil {
 		return nil, err
 	}

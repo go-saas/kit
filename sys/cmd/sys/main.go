@@ -39,7 +39,7 @@ func init() {
 }
 
 func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.Seeder) *kratos.App {
-	if err := seeder.Seed(context.Background()); err != nil {
+	if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("")); err != nil {
 		panic(err)
 	}
 	return kratos.New(

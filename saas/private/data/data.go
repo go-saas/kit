@@ -6,13 +6,10 @@ import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-eventbus"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
-	data2 "github.com/goxiaoy/go-saas-kit/pkg/data"
 	event2 "github.com/goxiaoy/go-saas-kit/pkg/event"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
-	v1 "github.com/goxiaoy/go-saas-kit/saas/event/v1"
-	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/data"
@@ -30,7 +27,9 @@ var ProviderSet = wire.NewSet(
 	NewConnStrResolver,
 	kitgorm.NewDbOpener,
 	kitgorm.NewDbProvider,
-	NewEventbus,
+	//local event bus
+	wire.Value(eventbus.Default),
+	NewRemoteEventReceiver,
 	uow2.NewUowManager,
 	NewTenantStore,
 	NewBlobFactory,
@@ -76,27 +75,7 @@ func NewEventSender(c *conf.Data, logger log.Logger) (event.Sender, func(), erro
 	return event2.NewEventSender(e, logger)
 }
 
-func NewEventbus(sender event.Sender) (*eventbus.EventBus, func(), error) {
-	res := eventbus.New()
-	dispose1, err := eventbus.Subscribe[*data2.AfterCreate[*biz.Tenant]](res)(func(ctx context.Context, data *data2.AfterCreate[*biz.Tenant]) error {
-		event, err := event.NewMessageFromProto(&v1.TenantCreatedEvent{
-			Id:         data.Entity.ID.String(),
-			Name:       data.Entity.Name,
-			Region:     data.Entity.Region,
-			SeparateDb: data.Entity.SeparateDb,
-		})
-		if err != nil {
-			return err
-		}
-		return sender.Send(ctx, event)
-	})
-
-	if err != nil {
-		return nil, func() {
-		}, err
-	}
-
-	return res, func() {
-		dispose1.Dispose()
-	}, nil
+func NewRemoteEventReceiver(c *conf.Data, logger log.Logger, handler event.Handler) (event.Receiver, func(), error) {
+	e := c.Endpoints.GetEventOrDefault(ConnName)
+	return event2.NewEventReceiver(e, handler, logger)
 }

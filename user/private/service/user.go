@@ -49,6 +49,7 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
+	ctx = biz.NewEnableUserTenantsContext(ctx)
 	ret := &pb.ListUsersResponse{}
 	totalCount, filterCount, err := s.um.Count(ctx, req.Filter)
 	if err != nil {
@@ -75,11 +76,10 @@ func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (
 }
 
 func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User, error) {
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.Id), authz.ReadAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.Id), authz.ReadAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors2.Forbidden("", "")
 	}
+	ctx = biz.NewEnableUserTenantsContext(ctx)
 	u, err := s.um.FindByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
@@ -158,7 +158,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.User.Id), authz.UpdateAction); err != nil {
 		return nil, err
 	}
-
+	ctx = biz.NewEnableUserTenantsContext(ctx)
 	// check confirm password
 	if req.User.Password != "" {
 		if req.User.ConfirmPassword != req.User.Password {
@@ -234,9 +234,11 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 }
 
 func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
+
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.Id), authz.DeleteAction); err != nil {
 		return nil, err
 	}
+	ctx = biz.NewEnableUserTenantsContext(ctx)
 	u, err := s.um.FindByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
@@ -269,10 +271,10 @@ func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 }
 
 func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleRequest) (*pb.GetUserRoleReply, error) {
-	//TODO frequency call. use cache
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.Id), authz.ReadAction); err != nil {
 		return nil, err
 	}
+	ctx = biz.NewEnableUserTenantsContext(ctx)
 	u, err := s.um.FindByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
@@ -300,7 +302,6 @@ func (s *UserService) InviteUser(ctx context.Context, req *pb.InviteUserRequest)
 		return nil, err
 	}
 
-	ctx = biz.NewIgnoreUserTenantsContext(ctx, true)
 	//find user
 	u, err := s.um.FindByIdentity(ctx, req.Identify)
 	if err != nil {

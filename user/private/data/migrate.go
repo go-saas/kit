@@ -18,6 +18,9 @@ func NewMigrate(data *Data) *Migrate {
 	}
 }
 func (m *Migrate) Seed(ctx context.Context, sCtx *seed.Context) error {
+	if _, ok := sCtx.Extra[biz.SkipMigration]; ok {
+		return nil
+	}
 	db := GetDb(ctx, m.data.DbProvider)
 	return migrateDb(db)
 }
