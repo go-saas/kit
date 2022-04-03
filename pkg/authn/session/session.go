@@ -59,7 +59,7 @@ func Refresh(errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider, va
 						//call refresh
 						err := provider(ctx, state.GetRememberToken())
 						if err != nil {
-							if errors.Recoverable(err) {
+							if errors.NotBizError(err) {
 								//abort with error
 								errEncoder(w, r, err)
 								return

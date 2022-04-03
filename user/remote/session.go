@@ -14,7 +14,7 @@ func NewRefreshProvider(client v1.AuthClient, logger klog.Logger) session.Refres
 	return func(ctx context.Context, token string) (err error) {
 		if writer, ok := session.FromClientStateWriterContext(ctx); ok {
 			handlerError := func(err error) error {
-				if errors2.Recoverable(err) {
+				if errors2.NotBizError(err) {
 					return err
 				} else {
 					l.Errorf("fail to refresh with error %v", err)

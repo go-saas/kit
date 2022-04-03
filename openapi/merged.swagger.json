@@ -3376,6 +3376,12 @@
           "items": {
             "$ref": "#/definitions/v1Permission"
           }
+        },
+        "defGroups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PermissionDefGroup"
+          }
         }
       }
     },
@@ -3949,6 +3955,9 @@
         },
         "action": {
           "type": "string"
+        },
+        "granted": {
+          "type": "boolean"
         }
       }
     },

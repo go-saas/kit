@@ -2431,6 +2431,8 @@ func (m *PermissionDef) validate(all bool) error {
 
 	// no validation rules for Action
 
+	// no validation rules for Granted
+
 	if len(errors) > 0 {
 		return PermissionDefMultiError(errors)
 	}

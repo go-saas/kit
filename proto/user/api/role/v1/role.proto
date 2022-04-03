@@ -133,6 +133,7 @@ message GetRolePermissionRequest{
 
 message GetRolePermissionResponse{
   repeated .user.api.permission.v1.Permission acl = 1;
+  repeated .user.api.permission.v1.PermissionDefGroup def_groups=2;
 }
 
 message UpdateRolePermissionRequest{

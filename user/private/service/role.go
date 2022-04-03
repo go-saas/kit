@@ -141,8 +141,8 @@ func (s *RoleService) GetRolePermission(ctx context.Context, req *pb.GetRolePerm
 	if r == nil {
 		return nil, errors.NotFound("", "")
 	}
-
-	acl, err := s.permissionMgr.ListAcl(ctx, authz.NewRoleSubject(req.Id))
+	roleSubject := authz.NewRoleSubject(req.Id)
+	acl, err := s.permissionMgr.ListAcl(ctx, roleSubject)
 	if err != nil {
 		return nil, err
 	}
@@ -152,9 +152,43 @@ func (s *RoleService) GetRolePermission(ctx context.Context, req *pb.GetRolePerm
 		util.MapPermissionBeanToPb(bean, r)
 		resItems[i] = r
 	}
-	return &pb.GetRolePermissionResponse{
+	res := &pb.GetRolePermissionResponse{
 		Acl: resItems,
-	}, nil
+	}
+	ti, _ := common.FromCurrentTenant(ctx)
+	var groups []*v1.PermissionDefGroup
+	authz.WalkGroups(len(ti.GetId()) == 0, true, func(group authz.PermissionDefGroup) {
+		g := &v1.PermissionDefGroup{}
+		mapGroupDef2Pb(group, g)
+		groups = append(groups, g)
+		var defs []*v1.PermissionDef
+		group.Walk(len(ti.GetId()) == 0, true, func(def authz.PermissionDef) {
+			d := &v1.PermissionDef{}
+			mapDef2Pb(def, d)
+			defs = append(defs, d)
+		})
+		g.Def = defs
+	})
+	requirements := lo.FlatMap(groups, func(group *v1.PermissionDefGroup, _ int) []*authz.Requirement {
+		return lo.Map(group.Def, func(def *v1.PermissionDef, _ int) *authz.Requirement {
+			return authz.NewRequirement(authz.NewEntityResource(def.Namespace, authz.AnyResource), authz.ActionStr(def.Action))
+		})
+	})
+	checkResults, err := s.auth.BatchCheckForSubjects(ctx, requirements, roleSubject)
+	if err != nil {
+		return nil, err
+	}
+	i := 0
+	for _, group := range groups {
+		for _, def := range group.Def {
+			def.Granted = checkResults[i].Allowed
+			i++
+		}
+	}
+
+	res.DefGroups = groups
+
+	return res, nil
 }
 
 func (s *RoleService) UpdateRolePermission(ctx context.Context, req *pb.UpdateRolePermissionRequest) (*pb.UpdateRolePermissionResponse, error) {

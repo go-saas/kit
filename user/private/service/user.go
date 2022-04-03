@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
+	klog "github.com/go-kratos/kratos/v2/log"
+	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/errors"
 	v12 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"io"
@@ -31,18 +33,22 @@ import (
 
 type UserService struct {
 	pb.UnimplementedUserServiceServer
-	um   *biz.UserManager
-	rm   *biz.RoleManager
-	auth authz.Service
-	blob blob.Factory
+	um     *biz.UserManager
+	rm     *biz.RoleManager
+	auth   authz.Service
+	blob   blob.Factory
+	trust  api2.TrustedContextValidator
+	logger *klog.Helper
 }
 
-func NewUserService(um *biz.UserManager, rm *biz.RoleManager, auth authz.Service, blob blob.Factory) *UserService {
+func NewUserService(um *biz.UserManager, rm *biz.RoleManager, auth authz.Service, blob blob.Factory, trust api2.TrustedContextValidator, l klog.Logger) *UserService {
 	return &UserService{
-		um:   um,
-		rm:   rm,
-		auth: auth,
-		blob: blob,
+		um:     um,
+		rm:     rm,
+		auth:   auth,
+		blob:   blob,
+		trust:  trust,
+		logger: klog.NewHelper(klog.With(l, "module", "user.UserService")),
 	}
 }
 
@@ -323,8 +329,9 @@ func (s *UserService) InviteUser(ctx context.Context, req *pb.InviteUserRequest)
 //CheckUserTenant internal api for check user tenant
 func (s *UserService) CheckUserTenant(ctx context.Context, req *pb.CheckUserTenantRequest) (*pb.CheckUserTenantReply, error) {
 	//check permission
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUserTenant, req.UserId), authz.AnyAction); err != nil {
-		return nil, err
+	if ok, _ := s.trust.Trusted(ctx); !ok {
+		s.logger.Warnf("untrusted can no call CheckUserTenant api")
+		return nil, errors2.Forbidden("", "")
 	}
 	ok, err := s.CheckUserTenantInternal(ctx, req.UserId, req.TenantId)
 	if err != nil {
@@ -345,11 +352,14 @@ func (s *UserService) CheckUserTenantInternal(ctx context.Context, userId, tenan
 		//user in this tenant
 		return true, nil
 	}
+	s.logger.Debugf("user:%s not in tenant:%s", userId, tenantId)
 	//super permission check
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource("*", "*"), authz.AnyAction); err != nil {
 		//no permission
-		if !errors.Recoverable(err) {
+
+		if errors.NotBizError(err) {
 			//internal server error
+			s.logger.Errorf("no recover error:%v", err)
 			return false, err
 		}
 		return false, v12.ErrorTenantForbidden("")
