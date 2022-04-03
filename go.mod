@@ -15,7 +15,7 @@ require (
 	github.com/gorilla/csrf v1.7.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/goxiaoy/go-eventbus v0.0.5
-	github.com/goxiaoy/go-saas v0.1.1-0.20220401141333-ba15e049c885
+	github.com/goxiaoy/go-saas v0.1.1-0.20220402162851-7116458f7dea
 	github.com/goxiaoy/gorm-concurrency v1.0.5
 	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0
@@ -30,7 +30,7 @@ require (
 	google.golang.org/protobuf v1.27.1
 	gorm.io/driver/mysql v1.3.3-0.20220223060847-68a051989967
 	gorm.io/driver/sqlite v1.3.1
-	gorm.io/gorm v1.23.3
+	gorm.io/gorm v1.23.4
 )
 
 require (
@@ -129,8 +129,4 @@ require (
 	gorm.io/plugin/dbresolver v1.1.0 // indirect
 )
 
-replace (
-	github.com/casbin/gorm-adapter/v3 => github.com/Goxiaoy/gorm-adapter/v3 v3.5.1-0.20220326110105-403c86d95e88
-	gorm.io/gorm => github.com/Goxiaoy/gorm v1.23.4-0.20220331145405-c4108274cfaf
-
-)
+replace github.com/casbin/gorm-adapter/v3 => github.com/Goxiaoy/gorm-adapter/v3 v3.5.1-0.20220326110105-403c86d95e88

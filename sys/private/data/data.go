@@ -12,7 +12,6 @@ import (
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	suow "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/sys/private/conf"
-	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
 	g "gorm.io/gorm"
@@ -53,8 +52,13 @@ func NewData(c *conf.Data, dbProvider gorm.DbProvider, logger log.Logger) (*Data
 	}, cleanup, nil
 }
 
-func NewConnStrResolver(c *conf.Data, ts common.TenantStore) data.ConnStrResolver {
-	return kitgorm.NewConnStrResolver(c.Endpoints, ts)
+func NewConnStrResolver(c *conf.Data) data.ConnStrResolver {
+	//sys service ignore multi-tenancy
+	conn := make(data.ConnStrings, 1)
+	for k, v := range c.Endpoints.Databases {
+		conn[k] = v.Source
+	}
+	return data.NewDefaultConnStrResolver(data.NewConnStrOption(conn))
 }
 
 func NewBlobFactory(c *conf.Data) blob.Factory {

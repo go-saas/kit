@@ -14,23 +14,17 @@ import (
 )
 
 type TenantRepo struct {
-	DbProviderGetter
 	*kitgorm.Repo[biz.Tenant, string, v1.ListTenantRequest]
 }
 
-type DbProviderGetter func() gorm.DbProvider
-
-func NewTenantRepo(eventbus *eventbus.EventBus) biz.TenantRepo {
+func NewTenantRepo(eventbus *eventbus.EventBus, dbProvider gorm.DbProvider) biz.TenantRepo {
 	res := &TenantRepo{}
-	res.Repo = kitgorm.NewRepo[biz.Tenant, string, v1.ListTenantRequest](nil, eventbus, res)
-	res.DbProviderGetter = func() gorm.DbProvider {
-		return GlobalData.DbProvider
-	}
+	res.Repo = kitgorm.NewRepo[biz.Tenant, string, v1.ListTenantRequest](dbProvider, eventbus, res)
 	return res
 }
 
 func (g *TenantRepo) GetDb(ctx context.Context) *gg.DB {
-	ret := GetDb(ctx, g.DbProviderGetter())
+	ret := GetDb(ctx, g.DbProvider)
 	return ret
 }
 

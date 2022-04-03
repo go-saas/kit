@@ -11,7 +11,6 @@ import (
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
-	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
 	g "gorm.io/gorm"
@@ -45,8 +44,6 @@ type Data struct {
 	DbProvider gorm.DbProvider
 }
 
-var GlobalData *Data
-
 func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
 	db := provider.Get(ctx, ConnName)
 	return db
@@ -57,14 +54,18 @@ func NewData(c *conf.Data, dbProvider gorm.DbProvider, logger log.Logger) (*Data
 	cleanup := func() {
 		logger.Log(log.LevelInfo, "closing the data resources")
 	}
-	GlobalData = &Data{
+	return &Data{
 		DbProvider: dbProvider,
-	}
-	return GlobalData, cleanup, nil
+	}, cleanup, nil
 }
 
-func NewConnStrResolver(c *conf.Data, ts common.TenantStore) data.ConnStrResolver {
-	return kitgorm.NewConnStrResolver(c.Endpoints, ts)
+func NewConnStrResolver(c *conf.Data) data.ConnStrResolver {
+	//saas service ignore multi-tenancy
+	conn := make(data.ConnStrings, 1)
+	for k, v := range c.Endpoints.Databases {
+		conn[k] = v.Source
+	}
+	return data.NewDefaultConnStrResolver(data.NewConnStrOption(conn))
 }
 func NewBlobFactory(c *conf.Data) blob.Factory {
 	return blob.NewFactory(c.Blobs)

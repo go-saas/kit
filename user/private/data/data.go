@@ -35,6 +35,7 @@ var ProviderSet = wire.NewSet(
 	kitgorm.NewDbOpener,
 	wire.Value(eventbus.Default),
 	NewRemoteEventReceiver,
+	NewEventSender,
 	uow2.NewUowManager,
 	NewBlobFactory,
 	NewRedis,
@@ -97,6 +98,11 @@ func NewRedis(c *conf.Data) *redis.Client {
 
 func NewEmailer(c *conf.Data) *lazy.Of[*mail.SMTPClient] {
 	return email.NewLazyClient(c.Endpoints)
+}
+
+func NewEventSender(c *conf.Data, logger log.Logger) (event.Sender, func(), error) {
+	e := c.Endpoints.GetEventOrDefault(ConnName)
+	return event2.NewEventSender(e, logger)
 }
 
 func NewRemoteEventReceiver(c *conf.Data, logger log.Logger, handler event.Handler) (event.Receiver, func(), error) {

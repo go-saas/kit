@@ -65,6 +65,12 @@ func (m *TenantCreatedEvent) validate(all bool) error {
 
 	// no validation rules for SeparateDb
 
+	// no validation rules for AdminEmail
+
+	// no validation rules for AdminUsername
+
+	// no validation rules for AdminPassword
+
 	if len(errors) > 0 {
 		return TenantCreatedEventMultiError(errors)
 	}
@@ -169,10 +175,6 @@ func (m *TenantReadyEvent) validate(all bool) error {
 	// no validation rules for Id
 
 	// no validation rules for ServiceName
-
-	// no validation rules for ConnStrKey
-
-	// no validation rules for ConnStrValue
 
 	if len(errors) > 0 {
 		return TenantReadyEventMultiError(errors)

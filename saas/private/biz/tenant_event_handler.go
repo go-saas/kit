@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/event/v1"
-	"github.com/samber/lo"
 )
 
 type TenantReadyEventHandler event.Handler
@@ -17,13 +16,7 @@ func NewTenantReadyEventHandler(useCase *TenantUseCase) TenantReadyEventHandler 
 		if err != nil {
 			return err
 		}
-		if len(msg.ConnStrKey) > 0 {
-			tenant.Conn = lo.Filter(tenant.Conn, func(conn TenantConn, _ int) bool { return conn.Key != msg.ConnStrKey })
-			tenant.Conn = append(tenant.Conn, TenantConn{
-				Key:   msg.ConnStrKey,
-				Value: msg.ConnStrValue,
-			})
-		}
+
 		if tenant.Extra == nil {
 			tenant.Extra = map[string]interface{}{}
 		}

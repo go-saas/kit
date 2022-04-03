@@ -12,6 +12,8 @@ message Bootstrap {
   conf.Services services =4;
   conf.Logging logging=6;
   conf.Tracers tracing=7;
+
+  SaasConf saas=20;
 }
 
 message Data {
@@ -19,4 +21,12 @@ message Data {
   map<string,blob.BlobConfig> blobs=2;
 }
 
+message SaasConf{
+    repeated DatabaseTemplate database = 1;
+}
 
+message DatabaseTemplate{
+  string name=1;
+  string template=2;
+
+}

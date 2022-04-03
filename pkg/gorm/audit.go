@@ -10,8 +10,7 @@ import (
 
 // AuditedModel make Model Auditable, embed `audited.AuditedModel` into your model as anonymous field to make the model auditable
 //    type User struct {
-//      gorm.Model
-//      audited.AuditedModel
+//      gorm.AuditedModel
 //    }
 type AuditedModel struct {
 	CreatedBy *string

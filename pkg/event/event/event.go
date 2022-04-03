@@ -2,6 +2,9 @@ package event
 
 import (
 	"context"
+	"fmt"
+	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/goxiaoy/go-saas-kit/pkg/errors"
 	"github.com/goxiaoy/uow"
 )
 
@@ -50,6 +53,7 @@ type Receiver interface {
 	Close() error
 }
 
+//ChainHandler cmobine multiple handler one by one
 func ChainHandler(h ...Handler) Handler {
 	return func(ctx context.Context, event Event) error {
 		for _, handler := range h {
@@ -58,6 +62,21 @@ func ChainHandler(h ...Handler) Handler {
 			}
 		}
 		return nil
+	}
+}
+
+//RecoverHandler wrap next with recover. prevent consumer panic
+func RecoverHandler(l klog.Logger, next Handler) Handler {
+	logger := klog.NewHelper(l)
+	return func(ctx context.Context, event Event) (err error) {
+		defer func() {
+			if rerr := recover(); rerr != nil {
+				stack := errors.Stack(0)
+				err = fmt.Errorf("panic recovered: %s\n %s", rerr, stack)
+				logger.Error(err)
+			}
+		}()
+		return next(ctx, event)
 	}
 }
 
@@ -80,7 +99,7 @@ func FilterKeyHandler(key string, handler Handler) Handler {
 	}
 }
 
-//TransformHandler transform Event into type T
+//TransformHandler transform Event into type generic T
 func TransformHandler[T any](transformer TransformerOf[T], next HandlerOf[T]) Handler {
 	return func(ctx context.Context, event Event) error {
 		if data, err := transformer(event); err != nil {

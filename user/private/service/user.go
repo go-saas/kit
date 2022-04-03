@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/goxiaoy/go-saas-kit/pkg/errors"
+	v12 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"io"
 	"os"
 	"path/filepath"
@@ -15,7 +17,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
-	v12 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/samber/lo"
@@ -127,7 +128,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	u.Gender = &gender
 	var err error
 	if req.Password != "" {
-		err = s.um.CreateWithPassword(ctx, &u, req.Password)
+		err = s.um.CreateWithPassword(ctx, &u, req.Password, true)
 	} else {
 		err = s.um.Create(ctx, &u)
 	}
@@ -329,10 +330,13 @@ func (s *UserService) CheckUserTenant(ctx context.Context, req *pb.CheckUserTena
 	if err != nil {
 		return nil, err
 	}
+
 	return &pb.CheckUserTenantReply{Ok: ok}, nil
 }
 
 func (s *UserService) CheckUserTenantInternal(ctx context.Context, userId, tenantId string) (bool, error) {
+	//change to the request tenant
+	ctx = common.NewCurrentTenant(ctx, tenantId, "")
 	ok, err := s.um.IsInTenant(ctx, userId, tenantId)
 	if err != nil {
 		return false, err
@@ -341,10 +345,13 @@ func (s *UserService) CheckUserTenantInternal(ctx context.Context, userId, tenan
 		//user in this tenant
 		return true, nil
 	}
-	tenantCtx := common.NewCurrentTenant(ctx, tenantId, "")
 	//super permission check
-	if _, err := s.auth.Check(tenantCtx, authz.NewEntityResource("*", "*"), authz.AnyAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource("*", "*"), authz.AnyAction); err != nil {
 		//no permission
+		if !errors.Recoverable(err) {
+			//internal server error
+			return false, err
+		}
 		return false, v12.ErrorTenantForbidden("")
 	}
 	return true, nil

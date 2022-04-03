@@ -33,19 +33,27 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, security *conf.Security, confData *conf2.Data, logger log.Logger, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, security *conf.Security, confData *conf2.Data, saasConf *conf2.SaasConf, logger log.Logger, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	eventBus := _wireEventBusValue
-	tenantRepo := data.NewTenantRepo(eventBus)
-	tenantStore := data.NewTenantStore(tenantRepo)
+	connStrResolver := data.NewConnStrResolver(confData)
 	dbOpener, cleanup := gorm2.NewDbOpener()
+	dbProvider := gorm2.NewDbProvider(connStrResolver, gormConfig, dbOpener)
+	tenantRepo := data.NewTenantRepo(eventBus, dbProvider)
+	tenantStore := data.NewTenantStore(tenantRepo)
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
-	tenantUseCase := biz.NewTenantUserCase(tenantRepo)
+	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
+	sender, cleanup2, err := data.NewEventSender(confData, logger)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, sender)
 	clientName := _wireClientNameValue
 	option := api.NewDefaultOption(logger)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
+	grpcConn, cleanup3 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	permissionServiceClient := api2.NewPermissionGrpcClient(grpcConn)
 	permissionChecker := remote.NewRemotePermissionChecker(permissionServiceClient)
 	authzOption := service.NewAuthorizationOption()
@@ -61,10 +69,9 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	userTenantContributor := remote.NewUserTenantContributor(userServiceClient)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, logger, trustedContextValidator, userTenantContributor)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, tenantService, userTenantContributor, trustedContextValidator, logger)
-	connStrResolver := data.NewConnStrResolver(confData, tenantStore)
-	dbProvider := gorm2.NewDbProvider(connStrResolver, gormConfig, dbOpener)
-	dataData, cleanup3, err := data.NewData(confData, dbProvider, logger)
+	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
+		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
@@ -72,15 +79,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	migrate := data.NewMigrate(dataData)
 	seeder := server.NewSeeder(manager, migrate)
 	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
-	handler := biz.NewRemoteEventHandler(manager, tenantReadyEventHandler)
-	receiver, cleanup4, err := data.NewRemoteEventReceiver(confData, logger, handler)
-	if err != nil {
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	sender, cleanup5, err := data.NewEventSender(confData, logger)
+	handler := biz.NewRemoteEventHandler(logger, manager, tenantReadyEventHandler)
+	receiver, cleanup5, err := data.NewRemoteEventReceiver(confData, logger, handler)
 	if err != nil {
 		cleanup4()
 		cleanup3()

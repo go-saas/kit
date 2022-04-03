@@ -53,7 +53,11 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		Logo:        req.Logo,
 		SeparateDb:  req.SeparateDb,
 	}
-	if err := s.useCase.Create(ctx, t); err != nil {
+	if err := s.useCase.CreateWithAdmin(ctx, t, &biz.AdminInfo{
+		Username: req.AdminUsername,
+		Email:    req.AdminEmail,
+		Password: req.AdminPassword,
+	}); err != nil {
 		return nil, err
 	}
 
@@ -293,6 +297,7 @@ func mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenan
 		Conn:        conns,
 		Features:    features,
 		Logo:        mapLogo(ctx, blob, tenant),
+		SeparateDb:  tenant.SeparateDb,
 	}
 
 	return res

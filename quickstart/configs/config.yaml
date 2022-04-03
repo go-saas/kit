@@ -91,6 +91,11 @@ user:
     username: admin
     password: youShouldChangeThis@123
 
+saas:
+  database:
+    - name: user
+      template: root:youShouldChangeThis@tcp(mysqld:3306)/user-%s?parseTime=true&loc=Local&charset=utf8mb4
+
 security:
   jwt:
     expire_in: 2592000s #    30 days

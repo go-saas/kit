@@ -85,8 +85,12 @@ func (um *UserManager) Create(ctx context.Context, u *User) (err error) {
 	return nil
 }
 
-func (um *UserManager) CreateWithPassword(ctx context.Context, u *User, pwd string) (err error) {
-	if err = um.updatePassword(ctx, u, &pwd, true); err != nil {
+func (um *UserManager) CreateWithPassword(ctx context.Context, u *User, pwd string, validate bool) (err error) {
+	var password *string
+	if len(pwd) > 0 {
+		password = &pwd
+	}
+	if err = um.updatePassword(ctx, u, password, validate); err != nil {
 		return
 	}
 	return um.Create(ctx, u)

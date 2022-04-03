@@ -8,53 +8,11 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
 	gorm2 "github.com/goxiaoy/uow/gorm"
-	"gorm.io/driver/mysql"
-	"gorm.io/driver/sqlite"
-	g "gorm.io/gorm"
-	"gorm.io/gorm/schema"
 	"strings"
 )
-
-func NewGormConfig(databases *conf.Endpoints, name string) *gorm.Config {
-	var c *conf.Database
-	var ok bool
-	c, ok = databases.Databases[name]
-	if !ok {
-		c, ok = databases.Databases[data.Default]
-	}
-	tp := ""
-	if c.TablePrefix == nil {
-		tp = fmt.Sprintf("kit_%s_", name)
-	} else {
-		tp = c.TablePrefix.Value
-	}
-	cfg := &gorm.Config{
-		Debug: c.Debug,
-		Cfg: &g.Config{NamingStrategy: schema.NamingStrategy{
-			TablePrefix: tp,
-		}},
-	}
-	if c.Driver == "mysql" {
-		cfg.Dialect = func(s string) g.Dialector {
-			return mysql.Open(s)
-		}
-	}
-	if c.Driver == "sqlite" {
-		cfg.Dialect = func(s string) g.Dialector {
-			return sqlite.Open(s)
-		}
-		i := 1
-		//https://github.com/go-gorm/gorm/issues/2875
-		cfg.MaxOpenConn = &i
-		cfg.MaxIdleConn = &i
-	}
-	return cfg
-}
 
 func NewUowManager(cfg *gorm.Config, config *uow.Config, opener gorm.DbOpener) uow.Manager {
 	return uow.NewManager(config, func(ctx context.Context, kind, key string) uow.TransactionalDb {

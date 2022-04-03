@@ -2,10 +2,13 @@ package biz
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
+	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	v12 "github.com/goxiaoy/go-saas-kit/saas/event/v1"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	gg "gorm.io/gorm"
 	"time"
@@ -59,11 +62,13 @@ type TenantRepo interface {
 }
 
 type TenantUseCase struct {
-	repo TenantRepo
+	repo             TenantRepo
+	connStrGenerator ConnStrGenerator
+	sender           event.Sender
 }
 
-func NewTenantUserCase(repo TenantRepo) *TenantUseCase {
-	return &TenantUseCase{repo: repo}
+func NewTenantUserCase(repo TenantRepo, connStrGenerator ConnStrGenerator, sender event.Sender) *TenantUseCase {
+	return &TenantUseCase{repo: repo, connStrGenerator: connStrGenerator, sender: sender}
 }
 
 func (t *TenantUseCase) FindByIdOrName(ctx context.Context, idOrName string) (*Tenant, error) {
@@ -87,6 +92,16 @@ func (t *TenantUseCase) Get(ctx context.Context, id string) (*Tenant, error) {
 }
 
 func (t *TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
+	return t.CreateWithAdmin(ctx, entity, nil)
+}
+
+type AdminInfo struct {
+	Username string
+	Email    string
+	Password string
+}
+
+func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adminInfo *AdminInfo) error {
 	// check duplicate
 	dbEntity, err := t.repo.FindByIdOrName(ctx, entity.Name)
 	if err != nil {
@@ -96,7 +111,32 @@ func (t *TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
 		// duplicate
 		return v1.ErrorDuplicateTenantName("%v is used", entity.Name)
 	}
-	return t.repo.Create(ctx, entity)
+	//ensure id generate
+	entity.UIDBase.ID = uuid.New()
+	if entity.SeparateDb {
+		conn, err := t.connStrGenerator.Generate(ctx, entity)
+		if err != nil {
+			return err
+		}
+		entity.Conn = conn
+	}
+	if err := t.repo.Create(ctx, entity); err != nil {
+		return err
+	}
+	//dispatch a remote event for seeding database
+	remoteEvent := &v12.TenantCreatedEvent{
+		Id:         entity.ID.String(),
+		Name:       entity.Name,
+		Region:     entity.Region,
+		SeparateDb: entity.SeparateDb,
+	}
+	if adminInfo != nil {
+		remoteEvent.AdminEmail = adminInfo.Email
+		remoteEvent.AdminUsername = adminInfo.Username
+		remoteEvent.AdminPassword = adminInfo.Password
+	}
+	e, _ := event.NewMessageFromProto(remoteEvent)
+	return t.sender.Send(ctx, e)
 }
 
 func (t *TenantUseCase) Update(ctx context.Context, entity *Tenant, p query.Select) error {

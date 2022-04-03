@@ -116,10 +116,18 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
 	seeder := server.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, permissionSeeder)
-	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(seeder)
-	handler := biz.NewRemoteEventHandler(manager, tenantSeedEventHandler)
-	receiver, cleanup4, err := data.NewRemoteEventReceiver(confData, logger, handler)
+	sender, cleanup4, err := data.NewEventSender(confData, logger)
 	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(seeder, sender)
+	handler := biz.NewRemoteEventHandler(logger, manager, tenantSeedEventHandler)
+	receiver, cleanup5, err := data.NewRemoteEventReceiver(confData, logger, handler)
+	if err != nil {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -127,6 +135,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	}
 	app := newApp(userConf, logger, httpServer, grpcServer, seeder, receiver)
 	return app, func() {
+		cleanup5()
 		cleanup4()
 		cleanup3()
 		cleanup2()

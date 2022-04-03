@@ -56,7 +56,7 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	authzOption := service.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
-	connStrResolver := data.NewConnStrResolver(confData, tenantStore)
+	connStrResolver := data.NewConnStrResolver(confData)
 	dbProvider := gorm2.NewDbProvider(connStrResolver, gormConfig, dbOpener)
 	eventBus := data.NewEventbus()
 	menuRepo := data.NewMenuRepo(dbProvider, eventBus)

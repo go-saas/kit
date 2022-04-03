@@ -12,7 +12,6 @@ const (
 	AdminUsernameKey = "admin_username"
 	AdminEmailKey    = "admin_email"
 	AdminPasswordKey = "admin_password"
-	SkipMigration    = "skip_migration"
 )
 
 type RoleSeed struct {
@@ -62,8 +61,7 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	var ok bool
 	if adminUsername, ok = sCtx.Extra[AdminUsernameKey].(string); ok {
 		admin, err = u.um.FindByName(ctx, adminUsername)
-	}
-	if adminEmail, ok = sCtx.Extra[AdminEmailKey].(string); ok {
+	} else if adminEmail, ok = sCtx.Extra[AdminEmailKey].(string); ok {
 		admin, err = u.um.FindByEmail(ctx, adminEmail)
 	}
 	if err != nil {
@@ -89,7 +87,7 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 		if len(adminEmail) > 0 {
 			admin.Email = &adminEmail
 		}
-		if err = u.um.CreateWithPassword(ctx, admin, adminPassword); err != nil {
+		if err = u.um.CreateWithPassword(ctx, admin, adminPassword, false); err != nil {
 			return err
 		}
 	}

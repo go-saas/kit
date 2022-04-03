@@ -532,6 +532,15 @@
         },
         "separateDb": {
           "type": "boolean"
+        },
+        "adminEmail": {
+          "type": "string"
+        },
+        "adminUsername": {
+          "type": "string"
+        },
+        "adminPassword": {
+          "type": "string"
         }
       },
       "required": [
@@ -641,6 +650,9 @@
         },
         "logo": {
           "$ref": "#/definitions/blobBlobFile"
+        },
+        "separateDb": {
+          "type": "boolean"
         }
       }
     },

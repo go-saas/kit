@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"github.com/go-kratos/kratos/v2"
+	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	"github.com/goxiaoy/go-saas-kit/sys/private/data"
@@ -18,7 +19,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/sys/private/conf"
 )
 
@@ -89,7 +89,7 @@ func main() {
 	defer shutdown()
 	app, cleanup, err := initApp(bc.Services, bc.Security, &uow.Config{
 		SupportNestedTransaction: false,
-	}, uow2.NewGormConfig(bc.Data.Endpoints, data.ConnName), shttp.NewDefaultWebMultiTenancyOption(), bc.Data, logger)
+	}, gorm.NewGormConfig(bc.Data.Endpoints, data.ConnName), shttp.NewDefaultWebMultiTenancyOption(), bc.Data, logger)
 	if err != nil {
 		panic(err)
 	}
