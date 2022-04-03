@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	"sync"
 )
 
 var (
@@ -69,6 +70,8 @@ type kafkaReceiver struct {
 	group  string
 	logger *log.Helper
 	oi     *OTelInterceptor
+	cancel context.CancelFunc
+	wg     *sync.WaitGroup
 }
 
 func NewKafkaReceiver(address []string, topic string, group string, logger log.Logger, cfg *conf.Event_Kafka) (event.Receiver, func(), error) {
@@ -97,12 +100,25 @@ func NewKafkaReceiver(address []string, topic string, group string, logger log.L
 }
 
 func (k *kafkaReceiver) Receive(ctx context.Context, handler event.Handler) error {
+	ctx, cancel := context.WithCancel(ctx)
+	k.cancel = cancel
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	k.wg = wg
 	topics := []string{k.topic}
 	go func() {
+		defer wg.Done()
 		for {
-			err := k.reader.Consume(ctx, topics, newConsumerGroupHandler(k.group, handler, k.oi, k.logger))
-			if err != nil {
+			// `Consume` should be called inside an infinite loop, when a
+			// server-side rebalance happens, the consumer session will need to be
+			// recreated to get the new claims
+			if err := k.reader.Consume(ctx, topics, newConsumerGroupHandler(k.group, handler, k.oi, k.logger)); err != nil {
 				k.logger.Error(err)
+				//TODO panic?
+			}
+			// check if context was cancelled, signaling that the consumer should stop
+			if ctx.Err() != nil {
+				return
 			}
 		}
 	}()
@@ -110,6 +126,8 @@ func (k *kafkaReceiver) Receive(ctx context.Context, handler event.Handler) erro
 }
 
 func (k *kafkaReceiver) Close() error {
+	k.cancel()
+	k.wg.Wait()
 	err := k.reader.Close()
 	if err != nil {
 		return err

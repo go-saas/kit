@@ -103,7 +103,7 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 		if err != nil {
 			return err
 		}
-		if err := u.um.AddToRole(ctx, admin, *adminRole); err != nil {
+		if err := u.um.AddToRole(ctx, admin, adminRole); err != nil {
 			return err
 		}
 	}

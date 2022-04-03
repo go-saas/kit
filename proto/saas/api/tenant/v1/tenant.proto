@@ -4,6 +4,7 @@ package saas.api.tenant.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
@@ -115,9 +116,9 @@ message CreateTenantRequest {
 
 	bool separate_db=6;
 
-	string admin_email = 7 [(validate.rules).string.email=true];
-	string admin_username=8;
-	string admin_password=9;
+	google.protobuf.StringValue admin_email = 7 [(validate.rules).string.email=true];
+	google.protobuf.StringValue admin_username=8;
+	google.protobuf.StringValue admin_password=9;
 }
 
 message UpdateTenantRequest {

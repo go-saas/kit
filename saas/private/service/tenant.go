@@ -53,11 +53,17 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		Logo:        req.Logo,
 		SeparateDb:  req.SeparateDb,
 	}
-	if err := s.useCase.CreateWithAdmin(ctx, t, &biz.AdminInfo{
-		Username: req.AdminUsername,
-		Email:    req.AdminEmail,
-		Password: req.AdminPassword,
-	}); err != nil {
+	adminInfo := &biz.AdminInfo{}
+	if req.AdminUsername != nil {
+		adminInfo.Username = req.AdminUsername.Value
+	}
+	if req.AdminEmail != nil {
+		adminInfo.Email = req.AdminEmail.Value
+	}
+	if req.AdminPassword != nil {
+		adminInfo.Password = req.AdminPassword.Value
+	}
+	if err := s.useCase.CreateWithAdmin(ctx, t, adminInfo); err != nil {
 		return nil, err
 	}
 

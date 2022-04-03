@@ -85,6 +85,6 @@ type UserRepo interface {
 	GetToken(ctx context.Context, user *User, loginProvider string, name string) (*string, error)
 	GetRoles(ctx context.Context, user *User) ([]Role, error)
 	UpdateRoles(ctx context.Context, user *User, roles []Role) error
-	AddToRole(ctx context.Context, user *User, role Role) error
-	RemoveFromRole(ctx context.Context, user *User, role Role) error
+	AddToRole(ctx context.Context, user *User, role *Role) error
+	RemoveFromRole(ctx context.Context, user *User, role *Role) error
 }

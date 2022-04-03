@@ -248,12 +248,12 @@ func (u *UserRepo) UpdateRoles(ctx context.Context, user *biz.User, roles []biz.
 	return nil
 }
 
-func (u *UserRepo) AddToRole(ctx context.Context, user *biz.User, role biz.Role) error {
+func (u *UserRepo) AddToRole(ctx context.Context, user *biz.User, role *biz.Role) error {
 	db := u.GetDb(ctx)
 	return db.Model(user).Association("Roles").Append(role)
 }
 
-func (u *UserRepo) RemoveFromRole(ctx context.Context, user *biz.User, role biz.Role) error {
+func (u *UserRepo) RemoveFromRole(ctx context.Context, user *biz.User, role *biz.Role) error {
 	db := u.GetDb(ctx)
 	return db.Model(user).Association("Roles").Delete(role)
 }

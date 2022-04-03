@@ -282,10 +282,10 @@ func (um *UserManager) GetRoles(ctx context.Context, user *User) ([]Role, error)
 func (um *UserManager) UpdateRoles(ctx context.Context, user *User, roles []Role) error {
 	return um.userRepo.UpdateRoles(ctx, user, roles)
 }
-func (um *UserManager) AddToRole(ctx context.Context, user *User, role Role) error {
+func (um *UserManager) AddToRole(ctx context.Context, user *User, role *Role) error {
 	return um.userRepo.AddToRole(ctx, user, role)
 }
-func (um *UserManager) RemoveFromRole(ctx context.Context, user *User, role Role) error {
+func (um *UserManager) RemoveFromRole(ctx context.Context, user *User, role *Role) error {
 	return um.userRepo.RemoveFromRole(ctx, user, role)
 }
 func (um *UserManager) CheckDeleted(ctx context.Context, u *User) (bool, error) {
