@@ -127,16 +127,27 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 	if t == nil {
 		return nil, errors.NotFound("", "")
 	}
-	// prevent cycle dependency call in the remote authz checker
-	if ok, err := s.trusted.Trusted(ctx); err != nil {
-		return nil, err
-	} else if ok {
-		//internal api call
-		return mapBizTenantToApi(ctx, s.blob, t), nil
-	}
 
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, t.ID.String()), authz.ReadAction); err != nil {
 		return nil, err
+	}
+
+	return mapBizTenantToApi(ctx, s.blob, t), nil
+}
+
+func (s *TenantService) GetTenantInternal(ctx context.Context, req *pb.GetTenantRequest) (*pb.Tenant, error) {
+	if ok, err := s.trusted.Trusted(ctx); err != nil {
+		return nil, err
+	} else if !ok {
+		//internal api call
+		return nil, errors.Forbidden("", "")
+	}
+	t, err := s.useCase.FindByIdOrName(ctx, req.IdOrName)
+	if err != nil {
+		return nil, err
+	}
+	if t == nil {
+		return nil, errors.NotFound("", "")
 	}
 
 	return mapBizTenantToApi(ctx, s.blob, t), nil

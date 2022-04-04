@@ -105,6 +105,9 @@ service TenantService {
 		};
 	}
 
+	//GetTenantInternal internal api for remote tenant store
+	rpc GetTenantInternal (GetTenantRequest) returns (Tenant){
+	}
 
 }
 

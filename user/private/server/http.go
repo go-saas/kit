@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -63,46 +64,34 @@ func NewHTTPServer(c *conf.Services,
 		session.Auth(sCfg, validator),
 		session.Refresh(errEncoder, refreshProvider, validator),
 	)
-
+	middlewares := middleware.Chain(recovery.Recovery(),
+		tracing.Server(),
+		logging.Server(logger),
+		metrics.Server(),
+		validate.Validator(),
+		jwt.ServerExtractAndAuth(tokenizer, logger),
+		sapi.ServerPropagation(apiOpt, validator, logger),
+		server.Saas(mOpt, ts, validator, func(o *common.TenantResolveOption) {
+			o.AppendContributors(userTenant)
+		}),
+		uow.Uow(logger, uowMgr))
 	opts = append(opts, []khttp.ServerOption{
-		khttp.Middleware(
-			recovery.Recovery(),
-			tracing.Server(),
-			logging.Server(logger),
-			metrics.Server(),
-			validate.Validator(),
-			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerPropagation(apiOpt, validator, logger),
-			server.Saas(mOpt, ts, validator, func(o *common.TenantResolveOption) {
-				o.AppendContributors(userTenant)
-			}),
-			uow.Uow(logger, uowMgr),
-		),
+		khttp.Middleware(middlewares),
 	}...)
 
 	router := chi.NewRouter()
 
 	//global filter
 	router.Use(
-		server.MiddlewareConvert(recovery.Recovery(),
-			tracing.Server(),
-			logging.Server(logger),
-			metrics.Server(),
-			validate.Validator(),
-			jwt.ServerExtractAndAuth(tokenizer, logger),
-
-			sapi.ServerPropagation(apiOpt, validator, logger),
-			server.Saas(mOpt, ts, validator),
-			uow.Uow(logger, uowMgr),
-		))
+		server.MiddlewareConvert(errEncoder, middlewares))
 
 	router.Group(func(router chi.Router) {
-		router.Get("/login", server.HandlerWrap(resEncoder, errorHandler, authHttp.LoginGet))
-		router.Post("/login", server.HandlerWrap(resEncoder, errorHandler, authHttp.LoginPost))
-		router.Get("/logout", server.HandlerWrap(resEncoder, errorHandler, authHttp.LoginOutGet))
-		router.Post("/logout", server.HandlerWrap(resEncoder, errorHandler, authHttp.Logout))
-		router.Get("/consent", server.HandlerWrap(resEncoder, errorHandler, authHttp.ConsentGet))
-		router.Post("/consent", server.HandlerWrap(resEncoder, errorHandler, authHttp.Consent))
+		router.Get("/login", server.HandlerWrap(resEncoder, authHttp.LoginGet))
+		router.Post("/login", server.HandlerWrap(resEncoder, authHttp.LoginPost))
+		router.Get("/logout", server.HandlerWrap(resEncoder, authHttp.LoginOutGet))
+		router.Post("/logout", server.HandlerWrap(resEncoder, authHttp.Logout))
+		router.Get("/consent", server.HandlerWrap(resEncoder, authHttp.ConsentGet))
+		router.Post("/consent", server.HandlerWrap(resEncoder, authHttp.Consent))
 	})
 
 	srv := khttp.NewServer(opts...)

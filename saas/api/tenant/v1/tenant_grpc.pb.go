@@ -42,6 +42,8 @@ type TenantServiceClient interface {
 	ListTenant(ctx context.Context, in *ListTenantRequest, opts ...grpc.CallOption) (*ListTenantReply, error)
 	//GetCurrentTenant
 	GetCurrentTenant(ctx context.Context, in *GetCurrentTenantRequest, opts ...grpc.CallOption) (*GetCurrentTenantReply, error)
+	//GetTenantInternal internal api for remote tenant store
+	GetTenantInternal(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
 }
 
 type tenantServiceClient struct {
@@ -115,6 +117,15 @@ func (c *tenantServiceClient) GetCurrentTenant(ctx context.Context, in *GetCurre
 	return out, nil
 }
 
+func (c *tenantServiceClient) GetTenantInternal(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*Tenant, error) {
+	out := new(Tenant)
+	err := c.cc.Invoke(ctx, "/saas.api.tenant.v1.TenantService/GetTenantInternal", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TenantServiceServer is the server API for TenantService service.
 // All implementations must embed UnimplementedTenantServiceServer
 // for forward compatibility
@@ -139,6 +150,8 @@ type TenantServiceServer interface {
 	ListTenant(context.Context, *ListTenantRequest) (*ListTenantReply, error)
 	//GetCurrentTenant
 	GetCurrentTenant(context.Context, *GetCurrentTenantRequest) (*GetCurrentTenantReply, error)
+	//GetTenantInternal internal api for remote tenant store
+	GetTenantInternal(context.Context, *GetTenantRequest) (*Tenant, error)
 	mustEmbedUnimplementedTenantServiceServer()
 }
 
@@ -166,6 +179,9 @@ func (UnimplementedTenantServiceServer) ListTenant(context.Context, *ListTenantR
 }
 func (UnimplementedTenantServiceServer) GetCurrentTenant(context.Context, *GetCurrentTenantRequest) (*GetCurrentTenantReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCurrentTenant not implemented")
+}
+func (UnimplementedTenantServiceServer) GetTenantInternal(context.Context, *GetTenantRequest) (*Tenant, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTenantInternal not implemented")
 }
 func (UnimplementedTenantServiceServer) mustEmbedUnimplementedTenantServiceServer() {}
 
@@ -306,6 +322,24 @@ func _TenantService_GetCurrentTenant_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TenantService_GetTenantInternal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTenantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TenantServiceServer).GetTenantInternal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/saas.api.tenant.v1.TenantService/GetTenantInternal",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TenantServiceServer).GetTenantInternal(ctx, req.(*GetTenantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TenantService_ServiceDesc is the grpc.ServiceDesc for TenantService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -340,6 +374,10 @@ var TenantService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCurrentTenant",
 			Handler:    _TenantService_GetCurrentTenant_Handler,
+		},
+		{
+			MethodName: "GetTenantInternal",
+			Handler:    _TenantService_GetTenantInternal_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -18,7 +18,7 @@ func NewRemoteGrpcTenantStore(client v1.TenantServiceClient) common.TenantStore 
 }
 
 func (r *GrpcTenantStore) GetByNameOrId(ctx context.Context, nameOrId string) (*common.TenantConfig, error) {
-	tenant, err := r.client.GetTenant(ctx, &v1.GetTenantRequest{IdOrName: nameOrId})
+	tenant, err := r.client.GetTenantInternal(ctx, &v1.GetTenantRequest{IdOrName: nameOrId})
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return nil, common.ErrTenantNotFound
