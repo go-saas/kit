@@ -7,6 +7,7 @@ import "conf/conf.proto";
 import "google/protobuf/wrappers.proto";
 import "blob/blob.proto";
 import "google/protobuf/duration.proto";
+import "authz/def.proto";
 
 message Bootstrap {
   Data data = 2;
@@ -38,5 +39,7 @@ message UserConf{
   google.protobuf.Duration phone_recover_expiry = 8;
 
   google.protobuf.StringValue totp_2fa_issuer=9;
+
+  authz.PermissionConf permission=10;
 }
 

@@ -1,90 +1,52 @@
 package authz
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/samber/lo"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
+	"gopkg.in/yaml.v3"
+	"log"
 	"sort"
 )
 
 var (
-	//TODO priority queue
-	groups []*PermissionDefGroup
-	//InternalDefGroup define internal only
-	InternalDefGroup  = "internal"
+	groups            []*PermissionDefGroup
 	DefNotFoundReason = "PERMISSION_DEF_NOT_FOUND"
 )
 
-type PermissionDefGroup struct {
-	Name     string
-	Side     PermissionSide
-	Priority int
-	//TODO priority queue
-	def          []PermissionDef
-	Extra        map[string]interface{}
-	internalOnly bool
-}
-
 func init() {
-	AddGroup(NewPermissionDefGroup(InternalDefGroup, PermissionBothSide, 0).AsInternalOnly().
-		//add admin permission definition
-		AddDef(NewPermissionDef(AnyNamespace, AnyAction, "any", PermissionBothSide)))
+	FindOrAddGroup(&PermissionDefGroup{
+		Name: "internal",
+		Side: PermissionAllowSide_BOTH,
+		Def: []*PermissionDef{
+			{
+				Name:      "internal",
+				Namespace: AnyNamespace,
+				Action:    AnyAction.GetIdentity(),
+			},
+		},
+		Internal: true,
+	})
 }
-func NewPermissionDefGroup(name string, side PermissionSide, priority int, extra ...map[string]interface{}) *PermissionDefGroup {
-	res := &PermissionDefGroup{Name: name, Side: side, Priority: priority}
-	if len(extra) > 0 {
-		res.Extra = extra[0]
+
+func FindOrAddGroup(group *PermissionDefGroup) *PermissionDefGroup {
+	if len(group.Name) == 0 {
+		panic(fmt.Errorf("group name required"))
 	}
-	return res
-}
-
-type PermissionDef struct {
-	Namespace    string
-	Side         PermissionSide
-	Name         string
-	Action       Action
-	Extra        map[string]interface{}
-	internalOnly bool
-}
-
-func NewPermissionDef(namespace string, action Action, name string, side PermissionSide, extra ...map[string]interface{}) *PermissionDef {
-	res := &PermissionDef{Namespace: namespace, Action: action, Side: side, Name: name}
-	if len(extra) > 0 {
-		res.Extra = extra[0]
+	find, ok := lo.Find(groups, func(t *PermissionDefGroup) bool {
+		return t.Name == group.Name
+	})
+	if ok {
+		return find
 	}
-	return res
-}
-
-func (d *PermissionDef) AsInternalOnly() *PermissionDef {
-	d.internalOnly = true
-	return d
-}
-func (d *PermissionDef) IsInternalOnly() bool {
-	return d.internalOnly
-}
-
-type PermissionSide int32
-
-const (
-	PermissionBothSide       PermissionSide = 0
-	PermissionHostSideOnly   PermissionSide = 1
-	PermissionTenantSideOnly PermissionSide = 2
-)
-
-func AddGroup(group *PermissionDefGroup) *PermissionDefGroup {
 	groups = append(groups, group)
 	return group
 }
 
-func AddIntoGroup(groupName string, def *PermissionDef) *PermissionDefGroup {
-	group, ok := lo.Find(groups, func(g *PermissionDefGroup) bool { return g.Name == groupName })
-	if !ok {
-		panic(fmt.Errorf("def group %s not found", groupName))
-	}
-	return group.AddDef(def)
-}
-
-func MustFindDef(namespace string, action Action) PermissionDef {
+func MustFindDef(namespace string, action Action) *PermissionDef {
 	def, err := FindDef(namespace, action, false)
 	if err != nil {
 		panic(err)
@@ -92,62 +54,113 @@ func MustFindDef(namespace string, action Action) PermissionDef {
 	return def
 }
 
-func FindDef(namespace string, action Action, publicOnly bool) (PermissionDef, error) {
-	//TODO cache?
-	def, ok := lo.Find(lo.FlatMap(groups, func(t *PermissionDefGroup, _ int) []PermissionDef {
-		return t.def
-	}), func(t PermissionDef) bool {
-		return t.Namespace == namespace && t.Action.GetIdentity() == action.GetIdentity()
+func FindDef(namespace string, action Action, publicOnly bool) (*PermissionDef, error) {
+	def, ok := lo.Find(lo.FlatMap(groups, func(t *PermissionDefGroup, _ int) []*PermissionDef {
+		return t.Def
+	}), func(t *PermissionDef) bool {
+		return t.Namespace == namespace && t.Action == action.GetIdentity()
 	})
-	if !ok || (publicOnly && def.internalOnly) {
-		return PermissionDef{}, errors.New(400, DefNotFoundReason, fmt.Sprintf("action %s in %s not defined", action.GetIdentity(), namespace))
+	if !ok || (publicOnly && def.Internal) {
+		return nil, errors.New(400, DefNotFoundReason, fmt.Sprintf("permissin action %s in %s not defined", action.GetIdentity(), namespace))
 	}
 	return def, nil
 }
 
-func (g *PermissionDefGroup) AddDef(def *PermissionDef) *PermissionDefGroup {
-	if g.Side != PermissionBothSide && g.Side != def.Side {
-		panic(fmt.Sprintf("group %s has permission side %v, but try to add permission %s with %v side", g.Name, g.Side, def.Name, def.Side))
-	}
-	if g.internalOnly {
-		def.AsInternalOnly()
-	}
-	g.def = append(g.def, *def)
-	return g
+func (x *PermissionDefGroup) AddDef(def *PermissionDef) {
+	x.Def = append(x.Def, def)
 }
 
-func (g *PermissionDefGroup) AsInternalOnly() *PermissionDefGroup {
-	g.internalOnly = true
-	return g
+func (x *PermissionDefGroup) NormalizeAndValidate() error {
+	if len(x.Name) == 0 {
+		return fmt.Errorf("group name required")
+	}
+	for _, def := range x.Def {
+		if len(def.Name) == 0 {
+			return fmt.Errorf("def under group %s name required", x.Name)
+		}
+		if x.Side != PermissionAllowSide_BOTH && x.Side != def.Side {
+			if def.Side == PermissionAllowSide_BOTH {
+				def.Side = x.Side
+			} else {
+				return fmt.Errorf("group %s has permission side %v, but try to add permission %s with %v side", x.Name, x.Side, def.Name, def.Side)
+			}
+		}
+		if x.Internal {
+			def.Internal = true
+		}
+	}
+	return nil
 }
 
-func (g *PermissionDefGroup) Walk(isHost bool, publicOnly bool, f func(def PermissionDef)) {
-	for _, def := range g.def {
-		if publicOnly && def.internalOnly {
+func (x *PermissionDefGroup) Walk(isHost bool, publicOnly bool, f func(def *PermissionDef)) {
+
+	var sortedDef []*PermissionDef
+	sortedDef = append(sortedDef, x.Def...)
+	sort.SliceStable(sortedDef, func(i, j int) bool {
+		return sortedDef[i].Priority < sortedDef[j].Priority
+	})
+
+	for _, def := range sortedDef {
+		if publicOnly && def.Internal {
 			continue
 		}
-		if (def.Side == PermissionHostSideOnly && !isHost) || (def.Side == PermissionTenantSideOnly && isHost) {
+		if (def.Side == PermissionAllowSide_HOST_ONLY && !isHost) || (def.Side == PermissionAllowSide_TENANT_ONLY && isHost) {
 			continue
 		}
 		f(def)
 	}
 }
 
-func WalkGroups(isHost bool, publicOnly bool, f func(group PermissionDefGroup)) {
-	var sortedGroup []PermissionDefGroup
-	sortedGroup = append(sortedGroup, lo.Map(groups, func(t *PermissionDefGroup, _ int) PermissionDefGroup {
-		return *t
-	})...)
+func WalkGroups(isHost bool, publicOnly bool, f func(group *PermissionDefGroup)) {
+	var sortedGroup []*PermissionDefGroup
+	sortedGroup = append(sortedGroup, groups...)
 	sort.SliceStable(sortedGroup, func(i, j int) bool {
 		return sortedGroup[i].Priority < sortedGroup[j].Priority
 	})
 	for _, g := range sortedGroup {
-		if publicOnly && g.internalOnly {
+		if publicOnly && g.Internal {
 			continue
 		}
-		if (g.Side == PermissionHostSideOnly && !isHost) || (g.Side == PermissionTenantSideOnly && isHost) {
+		if (g.Side == PermissionAllowSide_HOST_ONLY && !isHost) || (g.Side == PermissionAllowSide_TENANT_ONLY && isHost) {
 			continue
 		}
 		f(g)
+	}
+}
+
+func LoadFromYaml(data []byte) {
+	m := make(map[string]interface{})
+
+	err := yaml.Unmarshal(data, &m)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
+	b, err := json.Marshal(m)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
+
+	opt := protojson.UnmarshalOptions{}
+	groupConf := &PermissionConf{}
+	err = opt.Unmarshal(b, groupConf)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
+	LoadFromConf(groupConf)
+}
+
+func LoadFromConf(groupConf *PermissionConf) {
+	for _, group := range groupConf.Groups {
+		//clone to clean previous def
+		gg := proto.Clone(group).(*PermissionDefGroup)
+		gg.Def = []*PermissionDef{}
+		gg = FindOrAddGroup(gg)
+		//merge def
+		for _, def := range group.Def {
+			gg.AddDef(def)
+		}
+		if err := gg.NormalizeAndValidate(); err != nil {
+			panic(err)
+		}
 	}
 }

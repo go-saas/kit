@@ -1,0 +1,25 @@
+groups:
+  - name: "permission.saas.tenant"
+    side: HOST_ONLY
+    def:
+      - name: "permission.saas.tenant.any"
+        namespace: "saas.tenant"
+        action: "*"
+        internal: true
+        side: HOST_ONLY
+      - name: "permission.saas.tenant.read"
+        namespace: "saas.tenant"
+        action: "read"
+        side: HOST_ONLY
+      - name: "permission.saas.tenant.create"
+        namespace: "saas.tenant"
+        action: "create"
+        side: HOST_ONLY
+      - name: "permission.saas.tenant.update"
+        namespace: "saas.tenant"
+        action: "update"
+        side: HOST_ONLY
+      - name: "permission.saas.tenant.delete"
+        namespace: "saas.tenant"
+        action: "delete"
+        side: HOST_ONLY

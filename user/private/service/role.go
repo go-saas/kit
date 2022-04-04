@@ -157,12 +157,12 @@ func (s *RoleService) GetRolePermission(ctx context.Context, req *pb.GetRolePerm
 	}
 	ti, _ := common.FromCurrentTenant(ctx)
 	var groups []*v1.PermissionDefGroup
-	authz.WalkGroups(len(ti.GetId()) == 0, true, func(group authz.PermissionDefGroup) {
+	authz.WalkGroups(len(ti.GetId()) == 0, true, func(group *authz.PermissionDefGroup) {
 		g := &v1.PermissionDefGroup{}
 		mapGroupDef2Pb(group, g)
 		groups = append(groups, g)
 		var defs []*v1.PermissionDef
-		group.Walk(len(ti.GetId()) == 0, true, func(def authz.PermissionDef) {
+		group.Walk(len(ti.GetId()) == 0, true, func(def *authz.PermissionDef) {
 			d := &v1.PermissionDef{}
 			mapDef2Pb(def, d)
 			defs = append(defs, d)

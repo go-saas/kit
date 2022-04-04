@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package authz;
+
+import "google/protobuf/struct.proto";
+option go_package = "github.com/goxiaoy/go-saas-kit/pkg/authz/authz;authz";
+
+enum PermissionAllowSide{
+  BOTH=0;
+  HOST_ONLY=1;
+  TENANT_ONLY=2;
+}
+
+message PermissionDefGroup{
+  string name=1;
+  PermissionAllowSide side=2;
+  repeated PermissionDef def=3;
+  google.protobuf.Struct extra=4;
+  bool internal=5;
+  int32 priority=6;
+}
+
+message PermissionDef{
+  string name=1;
+  PermissionAllowSide side=2;
+  string namespace=3;
+  string action=4;
+  google.protobuf.Struct extra=5;
+  bool  internal=6;
+  int32 priority=7;
+}
+
+message PermissionConf{
+  repeated PermissionDefGroup groups=1;
+}

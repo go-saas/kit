@@ -31,13 +31,9 @@ func (p *PermissionService) isGrantTenant(ctx context.Context, enforcer *casbin.
 
 	def := authz.MustFindDef(resource.GetNamespace(), action)
 
-	if (def.Side == authz.PermissionHostSideOnly && len(tenantID) != 0) || (def.Side == authz.PermissionTenantSideOnly && len(tenantID) == 0) {
+	if (def.Side == authz.PermissionAllowSide_HOST_ONLY && len(tenantID) != 0) || (def.Side == authz.PermissionAllowSide_TENANT_ONLY && len(tenantID) == 0) {
 		//just forbid
 		return authz.EffectForbidden, nil
-	}
-	if def.IsInternalOnly() {
-		//internal ignore tenant
-		tenantID = "*"
 	}
 
 	subs := make([][]interface{}, len(subjects))

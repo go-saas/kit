@@ -1,0 +1,48 @@
+groups:
+
+  - name: "permission.permission"
+    def:
+      - name: "permission.permission.read"
+        namespace: "permission"
+        action: "read"
+      - name: "permission.permission.write"
+        namespace: "permission"
+        action: "write"
+
+  - name: "permission.user.user"
+    def:
+      - name: "permission.user.user.any"
+        namespace: "user.user"
+        action: "*"
+        internal: true
+      - name: "permission.user.user.read"
+        namespace: "user.user"
+        action: "read"
+      - name: "permission.user.user.create"
+        namespace: "user.user"
+        action: "create"  
+      - name: "permission.user.user.update"
+        namespace: "user.user"
+        action: "update"
+      - name: "permission.user.user.delete"
+        namespace: "user.user"
+        action: "delete"
+
+  - name: "permission.user.role"
+    def:
+      - name: "permission.user.role.any"
+        namespace: "user.role"
+        action: "*"
+        internal: true
+      - name: "permission.user.role.read"
+        namespace: "user.role"
+        action: "read"
+      - name: "permission.user.role.create"
+        namespace: "user.role"
+        action: "create"
+      - name: "permission.user.role.update"
+        namespace: "user.role"
+        action: "update"
+      - name: "permission.user.role.delete"
+        namespace: "user.role"
+        action: "delete"

@@ -100,7 +100,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	accountService := service.NewAccountService(userManager, factory, tenantServiceClient, userSettingRepo, userAddressRepo, lookupNormalizer)
 	of := data.NewEmailer(confData)
 	emailSender := biz.NewEmailSender(of, confData)
-	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, defaultAuthorizationService, logger)
+	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, defaultAuthorizationService, trustedContextValidator, logger)
 	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService, permissionService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl, trustedContextValidator)
 	signInManager := biz.NewSignInManager(userManager, security)

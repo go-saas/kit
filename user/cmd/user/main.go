@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
@@ -95,6 +96,10 @@ func main() {
 		log.Error(err)
 	}
 	defer shutdown()
+
+	if bc.User != nil && bc.User.Permission != nil {
+		authz.LoadFromConf(bc.User.Permission)
+	}
 
 	app, cleanup, err := initApp(bc.Services, bc.Security, bc.User, bc.Data, logger, &uow.Config{
 		SupportNestedTransaction: false,

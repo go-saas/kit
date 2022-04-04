@@ -11,7 +11,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/util"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/samber/lo"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type PermissionService struct {
@@ -128,12 +127,12 @@ func (s *PermissionService) ListSubjectPermission(ctx context.Context, req *pb.L
 	}
 	ti, _ := common.FromCurrentTenant(ctx)
 	var groups []*pb.PermissionDefGroup
-	authz.WalkGroups(len(ti.GetId()) == 0, true, func(group authz.PermissionDefGroup) {
+	authz.WalkGroups(len(ti.GetId()) == 0, true, func(group *authz.PermissionDefGroup) {
 		g := &pb.PermissionDefGroup{}
 		mapGroupDef2Pb(group, g)
 		groups = append(groups, g)
 		var defs []*pb.PermissionDef
-		group.Walk(len(ti.GetId()) == 0, true, func(def authz.PermissionDef) {
+		group.Walk(len(ti.GetId()) == 0, true, func(def *authz.PermissionDef) {
 			d := &pb.PermissionDef{}
 			mapDef2Pb(def, d)
 			defs = append(defs, d)
@@ -193,39 +192,33 @@ func (s *PermissionService) findAnyValidateModifyPermissionDef(ctx context.Conte
 		return err
 	}
 	ti, _ := common.FromCurrentTenant(ctx)
-	if (def.Side == authz.PermissionHostSideOnly && len(ti.GetId()) != 0) || (def.Side == authz.PermissionTenantSideOnly && len(ti.GetId()) == 0) {
+	if (def.Side == authz.PermissionAllowSide_HOST_ONLY && len(ti.GetId()) != 0) || (def.Side == authz.PermissionAllowSide_TENANT_ONLY && len(ti.GetId()) == 0) {
 		return errors.New(400, authz.DefNotFoundReason, fmt.Sprintf("action %s in %s side mismatch", action, namespace))
 	}
 	return nil
 }
 
-func mapGroupDef2Pb(a authz.PermissionDefGroup, b *pb.PermissionDefGroup) {
+func mapGroupDef2Pb(a *authz.PermissionDefGroup, b *pb.PermissionDefGroup) {
 	b.DisplayName = a.Name
 	b.Side = mapSide2Pb(a.Side)
-	b.Priority = int32(a.Priority)
-	if a.Extra != nil {
-		e, _ := structpb.NewStruct(a.Extra)
-		b.Extra = e
-	}
+	b.Priority = a.Priority
+	b.Extra = a.Extra
 }
 
-func mapDef2Pb(a authz.PermissionDef, b *pb.PermissionDef) {
+func mapDef2Pb(a *authz.PermissionDef, b *pb.PermissionDef) {
 	b.DisplayName = a.Name
 	b.Side = mapSide2Pb(a.Side)
-	if a.Extra != nil {
-		e, _ := structpb.NewStruct(a.Extra)
-		b.Extra = e
-	}
+	b.Extra = a.Extra
 	b.Namespace = a.Namespace
-	b.Action = a.Action.GetIdentity()
+	b.Action = a.Action
 
 }
 
-func mapSide2Pb(side authz.PermissionSide) pb.PermissionSide {
+func mapSide2Pb(side authz.PermissionAllowSide) pb.PermissionSide {
 	switch side {
-	case authz.PermissionHostSideOnly:
+	case authz.PermissionAllowSide_HOST_ONLY:
 		return pb.PermissionSide_HOST_ONLY
-	case authz.PermissionTenantSideOnly:
+	case authz.PermissionAllowSide_TENANT_ONLY:
 		return pb.PermissionSide_TENANT_ONLY
 	default:
 		return pb.PermissionSide_BOTH

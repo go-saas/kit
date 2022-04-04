@@ -8,13 +8,13 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
 	"github.com/gorilla/csrf"
+	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
-	"github.com/goxiaoy/go-saas-kit/user/api"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -37,6 +37,7 @@ type AuthService struct {
 	logger           *klog.Helper
 	emailer          biz.EmailSender
 	auth             authz.Service
+	trust            api2.TrustedContextValidator
 }
 
 func NewAuthService(um *biz.UserManager,
@@ -48,6 +49,7 @@ func NewAuthService(um *biz.UserManager,
 	emailer biz.EmailSender,
 	security *conf.Security,
 	authz authz.Service,
+	trust api2.TrustedContextValidator,
 	logger klog.Logger) *AuthService {
 	return &AuthService{
 		um:               um,
@@ -263,9 +265,10 @@ func (s *AuthService) GetCsrfToken(ctx context.Context, req *pb.GetCsrfTokenRequ
 }
 
 func (s *AuthService) RefreshRememberToken(ctx context.Context, req *pb.RefreshRememberTokenRequest) (*pb.RefreshRememberTokenReply, error) {
-
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceAuthInternal, authz.AnyResource), authz.AnyAction); err != nil {
+	if ok, err := s.trust.Trusted(ctx); err != nil {
 		return nil, err
+	} else if !ok {
+		return nil, errors.Forbidden("", "")
 	}
 	duration := 0
 	if s.security != nil && s.security.RememberCookie != nil && s.security.RememberCookie.MaxAge != nil {

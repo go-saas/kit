@@ -1,0 +1,39 @@
+groups:
+
+  - name: "permission.sys.menu"
+    side: HOST_ONLY
+    def:
+      - name: "permission.sys.menu.any"
+        namespace: "sys.menu"
+        action: "*"
+        internal: true
+        side: HOST_ONLY
+      - name: "permission.sys.menu.read"
+        namespace: "sys.menu"
+        action: "read"
+        side: HOST_ONLY
+      - name: "permission.sys.menu.create"
+        namespace: "sys.menu"
+        action: "create"
+        side: HOST_ONLY
+      - name: "permission.sys.menu.update"
+        namespace: "sys.menu"
+        action: "update"
+        side: HOST_ONLY
+      - name: "permission.sys.menu.delete"
+        namespace: "sys.menu"
+        action: "delete"
+        side: HOST_ONLY
+
+  - name: "permission.dev"
+    side: HOST_ONLY
+    def:
+      - name: "permission.dev"
+        namespace: "dev"
+        action: "*"
+        internal: true
+        side: HOST_ONLY
+      - name: "permission.dev.jaeger"
+        namespace: "dev.jaeger"
+        action: "*"
+        side: HOST_ONLY
