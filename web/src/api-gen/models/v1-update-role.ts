@@ -23,11 +23,11 @@ export interface V1UpdateRole {
    * @type {string}
    * @memberof V1UpdateRole
    */
-  id?: string;
+  id: string;
   /**
    *
    * @type {string}
    * @memberof V1UpdateRole
    */
-  name?: string;
+  name: string;
 }

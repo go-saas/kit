@@ -6,6 +6,8 @@ export const LOCALE_KEY = 'LOCALE__';
 // user info key
 export const USER_INFO_KEY = 'USER__INFO__';
 
+export const TENANT_INFO_KEY = 'TENANT_INFO__';
+
 export const PERMISSION_KEY = 'PERMISSION__KEY__';
 
 // project config key

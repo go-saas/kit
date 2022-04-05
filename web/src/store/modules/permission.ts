@@ -22,7 +22,7 @@ import { PERMISSION_KEY } from '/@/enums/cacheEnum';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { PageEnum } from '/@/enums/pageEnum';
 import { isGrant } from '/@/utils/permission';
-
+import { useUserStore } from '/@/store/modules/user';
 interface PermissionState {
   permissionList: PermissionAcl[];
   // Whether the route has been dynamically added
@@ -100,14 +100,14 @@ export const usePermissionStore = defineStore({
     },
     async buildRoutesAction(): Promise<AppRouteRecordRaw[]> {
       const { t } = useI18n();
-
+      const userStore = useUserStore();
       let routes: AppRouteRecordRaw[] = [];
 
       const routeFilter = (route: AppRouteRecordRaw) => {
         const { meta } = route;
         const { requirement } = meta || {};
         if (!requirement) return true;
-        return isGrant(requirement, this.permissionList);
+        return isGrant(userStore.getCurrentIsHost, requirement, this.permissionList);
       };
 
       const routeRemoveIgnoreFilter = (route: AppRouteRecordRaw) => {

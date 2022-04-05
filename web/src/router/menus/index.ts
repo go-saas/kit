@@ -35,7 +35,11 @@ const staticMenus: Menu[] = [];
 
 async function getAsyncMenus() {
   const permissionStore = usePermissionStore();
-  return permissionStore.getBackMenuList.filter((item) => !item.meta?.hideMenu && !item.hideMenu);
+  return permissionStore.getBackMenuList
+    .filter((item) => !item.meta?.hideMenu && !item.hideMenu)
+    .sort((a, b) => {
+      return (a.orderNo || 0) - (b.orderNo || 0);
+    });
   return staticMenus;
 }
 

@@ -74,4 +74,16 @@ export interface V1UpdateUser {
    * @memberof V1UpdateUser
    */
   confirmPassword?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof V1UpdateUser
+   */
+  avatar?: string;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof V1UpdateUser
+   */
+  rolesId?: Array<string>;
 }

@@ -1,5 +1,5 @@
 import type { PropType } from 'vue';
-import { FileBasicColumn } from './typing';
+import { FileBasicColumn, FileItem } from './typing';
 
 export const basicProps = {
   helpText: {
@@ -46,7 +46,7 @@ export const basicProps = {
 
 export const uploadContainerProps = {
   value: {
-    type: Array as PropType<string[]>,
+    type: Array as PropType<FileItem[]>,
     default: () => [],
   },
   ...basicProps,
@@ -62,7 +62,7 @@ export const uploadContainerProps = {
 
 export const previewProps = {
   value: {
-    type: Array as PropType<string[]>,
+    type: Array as PropType<FileItem[]>,
     default: () => [],
   },
 };

@@ -51,4 +51,10 @@ export interface V1UpdateTenant {
    * @memberof V1UpdateTenant
    */
   features?: Array<V1TenantFeature>;
+  /**
+   *
+   * @type {string}
+   * @memberof V1UpdateTenant
+   */
+  logo?: string;
 }

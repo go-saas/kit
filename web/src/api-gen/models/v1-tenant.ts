@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import { BlobBlobFile } from './blob-blob-file';
 import { V1TenantConnectionString } from './v1-tenant-connection-string';
 import { V1TenantFeature } from './v1-tenant-feature';
 
@@ -69,4 +70,16 @@ export interface V1Tenant {
    * @memberof V1Tenant
    */
   features?: Array<V1TenantFeature>;
+  /**
+   *
+   * @type {BlobBlobFile}
+   * @memberof V1Tenant
+   */
+  logo?: BlobBlobFile;
+  /**
+   *
+   * @type {boolean}
+   * @memberof V1Tenant
+   */
+  separateDb?: boolean;
 }

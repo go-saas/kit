@@ -1,12 +1,12 @@
-import type { UserInfo } from '/#/store';
+import type { UserInfo, UserTenantInfo } from '/#/store';
 import type { ErrorMessageMode } from '/#/axios';
 import { defineStore } from 'pinia';
 import { store } from '/@/store';
 import { PageEnum } from '/@/enums/pageEnum';
-import { TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
+import { TOKEN_KEY, USER_INFO_KEY, TENANT_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import { AuthWebApi, AccountApi } from '/@/api-gen/api';
-import { V1LoginAuthRequest } from '/@/api-gen/models';
+import { V1WebLoginAuthRequest } from '/@/api-gen/models';
 import { useI18n } from '/@/hooks/web/useI18n';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { router } from '/@/router';
@@ -19,6 +19,7 @@ interface UserState {
   userInfo: Nullable<UserInfo>;
   sessionTimeout?: boolean;
   lastUpdateTime: number;
+  selectionTenantId?: Nullable<string>;
 }
 
 export const useUserStore = defineStore({
@@ -30,6 +31,7 @@ export const useUserStore = defineStore({
     sessionTimeout: false,
     // Last fetch time
     lastUpdateTime: 0,
+    selectionTenantId: null,
   }),
   getters: {
     getUserInfo(): UserInfo {
@@ -38,7 +40,18 @@ export const useUserStore = defineStore({
     getIsLogin(): boolean {
       return (this.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {})?.id != null;
     },
-
+    getCurrentTenant(): UserTenantInfo {
+      return (this.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {})?.currentTenant || {};
+    },
+    getCurrentIsHost(): boolean {
+      return (
+        (this.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {})?.currentTenant?.isHost ??
+        false
+      );
+    },
+    getCurrentSettingTenant(): Nullable<string> {
+      return this.selectionTenantId || getAuthCache<string>(TENANT_INFO_KEY);
+    },
     getSessionTimeout(): boolean {
       return !!this.sessionTimeout;
     },
@@ -68,13 +81,13 @@ export const useUserStore = defineStore({
      * @description: login
      */
     async login(
-      params: V1LoginAuthRequest & {
+      params: V1WebLoginAuthRequest & {
         redirect?: string;
         mode?: ErrorMessageMode;
       },
     ): Promise<Nullable<UserInfo>> {
       try {
-        const { redirect = '/', mode, ...loginParams } = params;
+        const { mode, ...loginParams } = params;
         // const data = await new AuthWebApi().authWebWebLogin(
         //   { body: loginParams },
         //   { data: { errorMessageMode: mode } },
@@ -84,7 +97,7 @@ export const useUserStore = defineStore({
           { data: { errorMessageMode: mode } },
         );
 
-        const { accessToken } = data.data;
+        const { accessToken, redirect } = data.data;
         if (accessToken) {
           // save token
           this.setToken(accessToken);
@@ -94,7 +107,10 @@ export const useUserStore = defineStore({
         return Promise.reject(error);
       }
     },
-    async afterLoginAction(redirect = '/'): Promise<Nullable<UserInfo>> {
+    async afterLoginAction(redirect): Promise<Nullable<UserInfo>> {
+      if (redirect == null || redirect == '') {
+        redirect = '/';
+      }
       // get user info
       const userInfo = await this.getUserInfoAction();
 
@@ -111,23 +127,28 @@ export const useUserStore = defineStore({
           router.addRoute(PAGE_NOT_FOUND_ROUTE as unknown as RouteRecordRaw);
           permissionStore.setDynamicAddedRoute(true);
         }
-        await router.replace(redirect);
+        if (redirect.indexOf('http://') === 0 || redirect.indexOf('https://') === 0) {
+          location.replace(redirect);
+        } else {
+          await router.replace(redirect);
+        }
       }
       return userInfo;
     },
     async getUserInfoAction(): Promise<UserInfo | null> {
       const userInfo = (await new AccountApi().accountGetProfile()).data;
-      const { roles = [] } = userInfo;
+      const { roles = [], tenants = [] } = userInfo;
 
       const converted: UserInfo = {
         id: userInfo.id!,
         username: userInfo.username ?? '',
         name: userInfo.name ?? '',
-        //TODO avatar
-        avatar: '',
+        avatar: userInfo.avatar?.url ?? '',
         roles: roles.map((item) => {
           return { name: item.name ?? '', isPreserved: item.isPreserved ?? false, id: item.id! };
         }),
+        tenants: tenants.map((item) => item as UserTenantInfo),
+        currentTenant: userInfo.currentTenant as UserTenantInfo,
       };
       this.setUserInfo(converted);
       return converted;
@@ -144,7 +165,11 @@ export const useUserStore = defineStore({
       this.setUserInfo(null);
       goLogin && router.push(PageEnum.BASE_LOGIN);
     },
-
+    async changeTenant(userTenant?: string | null) {
+      this.selectionTenantId = userTenant;
+      setAuthCache(TENANT_INFO_KEY, userTenant);
+      window.location.reload();
+    },
     /**
      * @description: Confirm before logging out
      */

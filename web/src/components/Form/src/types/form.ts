@@ -202,6 +202,8 @@ export interface FormSchema {
   dynamicDisabled?: boolean | ((renderCallbackParams: RenderCallbackParams) => boolean);
 
   dynamicRules?: (renderCallbackParams: RenderCallbackParams) => Rule[];
+  valueTransformer?: (value: any) => any;
+  displayTransformer?: (value: any) => any;
 }
 export interface HelpComponentProps {
   maxWidth: string;

@@ -55,11 +55,11 @@ export function createTableColumns(): BasicColumn[] {
         return text && (text / 1024).toFixed(2) + 'KB';
       },
     },
-    // {
-    //   dataIndex: 'type',
-    //   title: '文件类型',
-    //   width: 100,
-    // },
+    {
+      dataIndex: 'type',
+      title: '文件类型',
+      width: 100,
+    },
     {
       dataIndex: 'status',
       title: t('component.upload.fileStatue'),
@@ -80,7 +80,7 @@ export function createTableColumns(): BasicColumn[] {
 }
 export function createActionColumn(handleRemove: Function): BasicColumn {
   return {
-    width: 120,
+    width: 60,
     title: t('component.upload.operating'),
     dataIndex: 'action',
     fixed: false,
@@ -110,6 +110,7 @@ export function createPreviewColumns(): BasicColumn[] {
       title: t('component.upload.legend'),
       width: 100,
       customRender: ({ record }) => {
+        console.log(record);
         const { url } = (record as PreviewFileItem) || {};
         return isImgTypeByName(url) && <ThumbUrl fileUrl={url} />;
       },

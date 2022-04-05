@@ -23,11 +23,5 @@ export interface V1CreateRoleRequest {
    * @type {string}
    * @memberof V1CreateRoleRequest
    */
-  id?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof V1CreateRoleRequest
-   */
-  name?: string;
+  name: string;
 }

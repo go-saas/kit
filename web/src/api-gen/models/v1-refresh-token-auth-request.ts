@@ -23,5 +23,5 @@ export interface V1RefreshTokenAuthRequest {
    * @type {string}
    * @memberof V1RefreshTokenAuthRequest
    */
-  refreshToken?: string;
+  refreshToken: string;
 }

@@ -33,8 +33,6 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 // @ts-ignore
 import { InlineObject } from '../models';
 // @ts-ignore
-import { InlineObject1 } from '../models';
-// @ts-ignore
 import { RpcStatus } from '../models';
 // @ts-ignore
 import { V1CreateRoleRequest } from '../models';
@@ -78,6 +76,9 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -124,6 +125,9 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = {
@@ -140,8 +144,8 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
     /**
      *
      * @summary authz: user.role,id,get
-     * @param {string} id
-     * @param {string} [name]
+     * @param {string} id id or name should be provided
+     * @param {string} [name] id or name should be provided.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -163,6 +167,9 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       if (name !== undefined) {
         localVarQueryParameter['name'] = name;
@@ -207,6 +214,9 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -255,6 +265,9 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       if (pageOffset !== undefined) {
         localVarQueryParameter['pageOffset'] = pageOffset;
@@ -322,56 +335,8 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
-      localVarHeaderParameter['Content-Type'] = 'application/json';
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        body,
-        localVarRequestOptions,
-        configuration,
-      );
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @param {string} id
-     * @param {InlineObject1} body
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    roleServicePatchRolePermission: async (
-      id: string,
-      body: InlineObject1,
-      options: AxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'id' is not null or undefined
-      assertParamExists('roleServicePatchRolePermission', 'id', id);
-      // verify required parameter 'body' is not null or undefined
-      assertParamExists('roleServicePatchRolePermission', 'body', body);
-      const localVarPath = `/v1/role/{id}/permission`.replace(
-        `{${'id'}}`,
-        encodeURIComponent(String(id)),
-      );
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -425,6 +390,9 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -477,6 +445,9 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -527,6 +498,9 @@ export const RoleServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -592,8 +566,8 @@ export const RoleServiceApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary authz: user.role,id,get
-     * @param {string} id
-     * @param {string} [name]
+     * @param {string} id id or name should be provided
+     * @param {string} [name] id or name should be provided.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -674,25 +648,6 @@ export const RoleServiceApiFp = function (configuration?: Configuration) {
       options?: AxiosRequestConfig,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1ListRolesResponse>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.roleServiceListRoles2(
-        body,
-        options,
-      );
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @param {string} id
-     * @param {InlineObject1} body
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async roleServicePatchRolePermission(
-      id: string,
-      body: InlineObject1,
-      options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.roleServicePatchRolePermission(
-        id,
         body,
         options,
       );
@@ -798,8 +753,8 @@ export const RoleServiceApiFactory = function (
     /**
      *
      * @summary authz: user.role,id,get
-     * @param {string} id
-     * @param {string} [name]
+     * @param {string} id id or name should be provided
+     * @param {string} [name] id or name should be provided.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -871,22 +826,6 @@ export const RoleServiceApiFactory = function (
     ): AxiosPromise<V1ListRolesResponse> {
       return localVarFp
         .roleServiceListRoles2(body, options)
-        .then((request) => request(axios, basePath));
-    },
-    /**
-     *
-     * @param {string} id
-     * @param {InlineObject1} body
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    roleServicePatchRolePermission(
-      id: string,
-      body: InlineObject1,
-      options?: any,
-    ): AxiosPromise<object> {
-      return localVarFp
-        .roleServicePatchRolePermission(id, body, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -977,14 +916,14 @@ export interface RoleServiceApiRoleServiceDeleteRoleRequest {
  */
 export interface RoleServiceApiRoleServiceGetRoleRequest {
   /**
-   *
+   * id or name should be provided
    * @type {string}
    * @memberof RoleServiceApiRoleServiceGetRole
    */
   readonly id: string;
 
   /**
-   *
+   * id or name should be provided.
    * @type {string}
    * @memberof RoleServiceApiRoleServiceGetRole
    */
@@ -1073,27 +1012,6 @@ export interface RoleServiceApiRoleServiceListRoles2Request {
    * @memberof RoleServiceApiRoleServiceListRoles2
    */
   readonly body: V1ListRolesRequest;
-}
-
-/**
- * Request parameters for roleServicePatchRolePermission operation in RoleServiceApi.
- * @export
- * @interface RoleServiceApiRoleServicePatchRolePermissionRequest
- */
-export interface RoleServiceApiRoleServicePatchRolePermissionRequest {
-  /**
-   *
-   * @type {string}
-   * @memberof RoleServiceApiRoleServicePatchRolePermission
-   */
-  readonly id: string;
-
-  /**
-   *
-   * @type {InlineObject1}
-   * @memberof RoleServiceApiRoleServicePatchRolePermission
-   */
-  readonly body: InlineObject1;
 }
 
 /**
@@ -1273,22 +1191,6 @@ export class RoleServiceApi extends BaseAPI {
   ) {
     return RoleServiceApiFp(this.configuration)
       .roleServiceListRoles2(requestParameters.body, options)
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @param {RoleServiceApiRoleServicePatchRolePermissionRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof RoleServiceApi
-   */
-  public roleServicePatchRolePermission(
-    requestParameters: RoleServiceApiRoleServicePatchRolePermissionRequest,
-    options?: AxiosRequestConfig,
-  ) {
-    return RoleServiceApiFp(this.configuration)
-      .roleServicePatchRolePermission(requestParameters.id, requestParameters.body, options)
       .then((request) => request(this.axios, this.basePath));
   }
 

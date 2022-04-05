@@ -33,13 +33,33 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 // @ts-ignore
 import { RpcStatus } from '../models';
 // @ts-ignore
+import { V1ChangePasswordByForgetRequest } from '../models';
+// @ts-ignore
+import { V1ChangePasswordByPreRequest } from '../models';
+// @ts-ignore
+import { V1ForgetPasswordReply } from '../models';
+// @ts-ignore
+import { V1ForgetPasswordRequest } from '../models';
+// @ts-ignore
+import { V1ForgetPasswordTokenReply } from '../models';
+// @ts-ignore
+import { V1ForgetPasswordTokenRequest } from '../models';
+// @ts-ignore
 import { V1GetCsrfTokenResponse } from '../models';
 // @ts-ignore
-import { V1GetLoginFormResponse } from '../models';
+import { V1GetLoginResponse } from '../models';
 // @ts-ignore
 import { V1LoginAuthReply } from '../models';
 // @ts-ignore
 import { V1LoginAuthRequest } from '../models';
+// @ts-ignore
+import { V1LoginPasswordlessReply } from '../models';
+// @ts-ignore
+import { V1LoginPasswordlessRequest } from '../models';
+// @ts-ignore
+import { V1PasswordlessTokenAuthReply } from '../models';
+// @ts-ignore
+import { V1PasswordlessTokenAuthRequest } from '../models';
 // @ts-ignore
 import { V1RefreshTokenAuthReply } from '../models';
 // @ts-ignore
@@ -60,12 +80,107 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
   return {
     /**
      *
-     * @param {object} body
+     * @param {V1ChangePasswordByForgetRequest} body
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    authChangePasswordByForget: async (
+      body: V1ChangePasswordByForgetRequest,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'body' is not null or undefined
+      assertParamExists('authChangePasswordByForget', 'body', body);
+      const localVarPath = `/v1/auth/password/forget/change`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
+      localVarHeaderParameter['Content-Type'] = 'application/json';
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        body,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @param {V1ChangePasswordByPreRequest} body
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    authChangePasswordByPre: async (
+      body: V1ChangePasswordByPreRequest,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'body' is not null or undefined
+      assertParamExists('authChangePasswordByPre', 'body', body);
+      const localVarPath = `/v1/auth/password/change`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
+      localVarHeaderParameter['Content-Type'] = 'application/json';
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        body,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary ForgetPassword  verify forget password token
+     * @param {V1ForgetPasswordRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     authForgetPassword: async (
-      body: object,
+      body: V1ForgetPasswordRequest,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'body' is not null or undefined
@@ -81,6 +196,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -120,6 +238,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = {
@@ -136,11 +257,13 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
     /**
      *
      * @param {string} [redirect] redirect url.
+     * @param {string} [loginChallenge]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    authGetLoginForm: async (
+    authGetLogin: async (
       redirect?: string,
+      loginChallenge?: string,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       const localVarPath = `/v1/auth/login`;
@@ -155,8 +278,15 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       if (redirect !== undefined) {
         localVarQueryParameter['redirect'] = redirect;
+      }
+
+      if (loginChallenge !== undefined) {
+        localVarQueryParameter['loginChallenge'] = loginChallenge;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -196,6 +326,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -218,12 +351,12 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
     },
     /**
      *
-     * @param {object} body
+     * @param {V1LoginPasswordlessRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     authLoginPasswordless: async (
-      body: object,
+      body: V1LoginPasswordlessRequest,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'body' is not null or undefined
@@ -239,6 +372,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -284,6 +420,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -325,6 +464,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -347,12 +489,12 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
     },
     /**
      *
-     * @param {object} body
+     * @param {V1ForgetPasswordTokenRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     authSendForgetPasswordToken: async (
-      body: object,
+      body: V1ForgetPasswordTokenRequest,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'body' is not null or undefined
@@ -369,6 +511,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -391,12 +536,12 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
     },
     /**
      *
-     * @param {object} body
+     * @param {V1PasswordlessTokenAuthRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     authSendPasswordlessToken: async (
-      body: object,
+      body: V1PasswordlessTokenAuthRequest,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'body' is not null or undefined
@@ -412,6 +557,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -457,6 +605,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -479,6 +630,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
     },
     /**
      *
+     * @summary ValidatePassword  server validation for password strength
      * @param {V1ValidatePasswordRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -500,6 +652,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -533,14 +688,47 @@ export const AuthApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
-     * @param {object} body
+     * @param {V1ChangePasswordByForgetRequest} body
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async authChangePasswordByForget(
+      body: V1ChangePasswordByForgetRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.authChangePasswordByForget(
+        body,
+        options,
+      );
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
+     * @param {V1ChangePasswordByPreRequest} body
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async authChangePasswordByPre(
+      body: V1ChangePasswordByPreRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.authChangePasswordByPre(
+        body,
+        options,
+      );
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
+     * @summary ForgetPassword  verify forget password token
+     * @param {V1ForgetPasswordRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async authForgetPassword(
-      body: object,
+      body: V1ForgetPasswordRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1ForgetPasswordReply>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.authForgetPassword(body, options);
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
@@ -558,14 +746,20 @@ export const AuthApiFp = function (configuration?: Configuration) {
     /**
      *
      * @param {string} [redirect] redirect url.
+     * @param {string} [loginChallenge]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async authGetLoginForm(
+    async authGetLogin(
       redirect?: string,
+      loginChallenge?: string,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1GetLoginFormResponse>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.authGetLoginForm(redirect, options);
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1GetLoginResponse>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.authGetLogin(
+        redirect,
+        loginChallenge,
+        options,
+      );
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
     /**
@@ -583,14 +777,16 @@ export const AuthApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @param {object} body
+     * @param {V1LoginPasswordlessRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async authLoginPasswordless(
-      body: object,
+      body: V1LoginPasswordlessRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1LoginPasswordlessReply>
+    > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.authLoginPasswordless(
         body,
         options,
@@ -627,14 +823,16 @@ export const AuthApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @param {object} body
+     * @param {V1ForgetPasswordTokenRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async authSendForgetPasswordToken(
-      body: object,
+      body: V1ForgetPasswordTokenRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1ForgetPasswordTokenReply>
+    > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.authSendForgetPasswordToken(
         body,
         options,
@@ -643,14 +841,16 @@ export const AuthApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @param {object} body
+     * @param {V1PasswordlessTokenAuthRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async authSendPasswordlessToken(
-      body: object,
+      body: V1PasswordlessTokenAuthRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1PasswordlessTokenAuthReply>
+    > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.authSendPasswordlessToken(
         body,
         options,
@@ -672,6 +872,7 @@ export const AuthApiFp = function (configuration?: Configuration) {
     },
     /**
      *
+     * @summary ValidatePassword  server validation for password strength
      * @param {V1ValidatePasswordRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -701,11 +902,43 @@ export const AuthApiFactory = function (
   return {
     /**
      *
-     * @param {object} body
+     * @param {V1ChangePasswordByForgetRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    authForgetPassword(body: object, options?: any): AxiosPromise<object> {
+    authChangePasswordByForget(
+      body: V1ChangePasswordByForgetRequest,
+      options?: any,
+    ): AxiosPromise<object> {
+      return localVarFp
+        .authChangePasswordByForget(body, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @param {V1ChangePasswordByPreRequest} body
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    authChangePasswordByPre(
+      body: V1ChangePasswordByPreRequest,
+      options?: any,
+    ): AxiosPromise<object> {
+      return localVarFp
+        .authChangePasswordByPre(body, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary ForgetPassword  verify forget password token
+     * @param {V1ForgetPasswordRequest} body
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    authForgetPassword(
+      body: V1ForgetPasswordRequest,
+      options?: any,
+    ): AxiosPromise<V1ForgetPasswordReply> {
       return localVarFp
         .authForgetPassword(body, options)
         .then((request) => request(axios, basePath));
@@ -721,12 +954,17 @@ export const AuthApiFactory = function (
     /**
      *
      * @param {string} [redirect] redirect url.
+     * @param {string} [loginChallenge]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    authGetLoginForm(redirect?: string, options?: any): AxiosPromise<V1GetLoginFormResponse> {
+    authGetLogin(
+      redirect?: string,
+      loginChallenge?: string,
+      options?: any,
+    ): AxiosPromise<V1GetLoginResponse> {
       return localVarFp
-        .authGetLoginForm(redirect, options)
+        .authGetLogin(redirect, loginChallenge, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -740,11 +978,14 @@ export const AuthApiFactory = function (
     },
     /**
      *
-     * @param {object} body
+     * @param {V1LoginPasswordlessRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    authLoginPasswordless(body: object, options?: any): AxiosPromise<object> {
+    authLoginPasswordless(
+      body: V1LoginPasswordlessRequest,
+      options?: any,
+    ): AxiosPromise<V1LoginPasswordlessReply> {
       return localVarFp
         .authLoginPasswordless(body, options)
         .then((request) => request(axios, basePath));
@@ -772,22 +1013,28 @@ export const AuthApiFactory = function (
     },
     /**
      *
-     * @param {object} body
+     * @param {V1ForgetPasswordTokenRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    authSendForgetPasswordToken(body: object, options?: any): AxiosPromise<object> {
+    authSendForgetPasswordToken(
+      body: V1ForgetPasswordTokenRequest,
+      options?: any,
+    ): AxiosPromise<V1ForgetPasswordTokenReply> {
       return localVarFp
         .authSendForgetPasswordToken(body, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @param {object} body
+     * @param {V1PasswordlessTokenAuthRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    authSendPasswordlessToken(body: object, options?: any): AxiosPromise<object> {
+    authSendPasswordlessToken(
+      body: V1PasswordlessTokenAuthRequest,
+      options?: any,
+    ): AxiosPromise<V1PasswordlessTokenAuthReply> {
       return localVarFp
         .authSendPasswordlessToken(body, options)
         .then((request) => request(axios, basePath));
@@ -803,6 +1050,7 @@ export const AuthApiFactory = function (
     },
     /**
      *
+     * @summary ValidatePassword  server validation for password strength
      * @param {V1ValidatePasswordRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -819,6 +1067,34 @@ export const AuthApiFactory = function (
 };
 
 /**
+ * Request parameters for authChangePasswordByForget operation in AuthApi.
+ * @export
+ * @interface AuthApiAuthChangePasswordByForgetRequest
+ */
+export interface AuthApiAuthChangePasswordByForgetRequest {
+  /**
+   *
+   * @type {V1ChangePasswordByForgetRequest}
+   * @memberof AuthApiAuthChangePasswordByForget
+   */
+  readonly body: V1ChangePasswordByForgetRequest;
+}
+
+/**
+ * Request parameters for authChangePasswordByPre operation in AuthApi.
+ * @export
+ * @interface AuthApiAuthChangePasswordByPreRequest
+ */
+export interface AuthApiAuthChangePasswordByPreRequest {
+  /**
+   *
+   * @type {V1ChangePasswordByPreRequest}
+   * @memberof AuthApiAuthChangePasswordByPre
+   */
+  readonly body: V1ChangePasswordByPreRequest;
+}
+
+/**
  * Request parameters for authForgetPassword operation in AuthApi.
  * @export
  * @interface AuthApiAuthForgetPasswordRequest
@@ -826,24 +1102,31 @@ export const AuthApiFactory = function (
 export interface AuthApiAuthForgetPasswordRequest {
   /**
    *
-   * @type {object}
+   * @type {V1ForgetPasswordRequest}
    * @memberof AuthApiAuthForgetPassword
    */
-  readonly body: object;
+  readonly body: V1ForgetPasswordRequest;
 }
 
 /**
- * Request parameters for authGetLoginForm operation in AuthApi.
+ * Request parameters for authGetLogin operation in AuthApi.
  * @export
- * @interface AuthApiAuthGetLoginFormRequest
+ * @interface AuthApiAuthGetLoginRequest
  */
-export interface AuthApiAuthGetLoginFormRequest {
+export interface AuthApiAuthGetLoginRequest {
   /**
    * redirect url.
    * @type {string}
-   * @memberof AuthApiAuthGetLoginForm
+   * @memberof AuthApiAuthGetLogin
    */
   readonly redirect?: string;
+
+  /**
+   *
+   * @type {string}
+   * @memberof AuthApiAuthGetLogin
+   */
+  readonly loginChallenge?: string;
 }
 
 /**
@@ -868,10 +1151,10 @@ export interface AuthApiAuthLoginRequest {
 export interface AuthApiAuthLoginPasswordlessRequest {
   /**
    *
-   * @type {object}
+   * @type {V1LoginPasswordlessRequest}
    * @memberof AuthApiAuthLoginPasswordless
    */
-  readonly body: object;
+  readonly body: V1LoginPasswordlessRequest;
 }
 
 /**
@@ -910,10 +1193,10 @@ export interface AuthApiAuthRegisterRequest {
 export interface AuthApiAuthSendForgetPasswordTokenRequest {
   /**
    *
-   * @type {object}
+   * @type {V1ForgetPasswordTokenRequest}
    * @memberof AuthApiAuthSendForgetPasswordToken
    */
-  readonly body: object;
+  readonly body: V1ForgetPasswordTokenRequest;
 }
 
 /**
@@ -924,10 +1207,10 @@ export interface AuthApiAuthSendForgetPasswordTokenRequest {
 export interface AuthApiAuthSendPasswordlessTokenRequest {
   /**
    *
-   * @type {object}
+   * @type {V1PasswordlessTokenAuthRequest}
    * @memberof AuthApiAuthSendPasswordlessToken
    */
-  readonly body: object;
+  readonly body: V1PasswordlessTokenAuthRequest;
 }
 
 /**
@@ -967,6 +1250,39 @@ export interface AuthApiAuthValidatePasswordRequest {
 export class AuthApi extends BaseAPI {
   /**
    *
+   * @param {AuthApiAuthChangePasswordByForgetRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AuthApi
+   */
+  public authChangePasswordByForget(
+    requestParameters: AuthApiAuthChangePasswordByForgetRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return AuthApiFp(this.configuration)
+      .authChangePasswordByForget(requestParameters.body, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @param {AuthApiAuthChangePasswordByPreRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AuthApi
+   */
+  public authChangePasswordByPre(
+    requestParameters: AuthApiAuthChangePasswordByPreRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return AuthApiFp(this.configuration)
+      .authChangePasswordByPre(requestParameters.body, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary ForgetPassword  verify forget password token
    * @param {AuthApiAuthForgetPasswordRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -995,17 +1311,17 @@ export class AuthApi extends BaseAPI {
 
   /**
    *
-   * @param {AuthApiAuthGetLoginFormRequest} requestParameters Request parameters.
+   * @param {AuthApiAuthGetLoginRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof AuthApi
    */
-  public authGetLoginForm(
-    requestParameters: AuthApiAuthGetLoginFormRequest = {},
+  public authGetLogin(
+    requestParameters: AuthApiAuthGetLoginRequest = {},
     options?: AxiosRequestConfig,
   ) {
     return AuthApiFp(this.configuration)
-      .authGetLoginForm(requestParameters.redirect, options)
+      .authGetLogin(requestParameters.redirect, requestParameters.loginChallenge, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -1111,6 +1427,7 @@ export class AuthApi extends BaseAPI {
 
   /**
    *
+   * @summary ValidatePassword  server validation for password strength
    * @param {AuthApiAuthValidatePasswordRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}

@@ -10,7 +10,13 @@ import { useGlobSetting } from '/@/hooks/setting';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { RequestEnum, ResultEnum, ContentTypeEnum } from '/@/enums/httpEnum';
 import { isString } from '/@/utils/is';
-import { getToken, getCsrfToken, setCsrfToken } from '/@/utils/auth';
+import {
+  getToken,
+  getCsrfToken,
+  setCsrfToken,
+  getSettingTenantId,
+  setSettingTenantId,
+} from '/@/utils/auth';
 import { setObjToUrlParams, deepMerge } from '/@/utils';
 import { useErrorLogStoreWithOut } from '/@/store/modules/errorLog';
 import { useI18n } from '/@/hooks/web/useI18n';
@@ -156,6 +162,12 @@ const transform: AxiosTransform = {
     if (csrf) {
       (config as Recordable).headers['x-csrf-token'] = csrf;
     }
+
+    const tenant = getSettingTenantId();
+    if (tenant) {
+      (config as Recordable).headers['__tenant'] = tenant;
+    }
+
     return config;
   },
 
@@ -178,12 +190,17 @@ const transform: AxiosTransform = {
     const errorLogStore = useErrorLogStoreWithOut();
     errorLogStore.addAjaxErrorInfo(error);
     const { response, code, message, config } = error || {};
-    console.log(config);
-    const errorMessageMode = config?.requestOptions?.errorMessageMode || 'none';
+    const errorMessageMode = config?.requestOptions?.errorMessageMode || 'message';
 
     const errorBody = response?.data as ErrorMessage;
 
-    const msg: string = errorBody?.message ?? '';
+    let msg: string = errorBody?.message;
+    if (!!!msg) {
+      msg = errorBody.reason;
+    }
+    if (!!!msg) {
+      msg = '';
+    }
     const err: string = error?.toString?.() ?? '';
 
     let errMessage = msg;
@@ -194,7 +211,29 @@ const transform: AxiosTransform = {
       if (err?.includes('Network Error')) {
         errMessage = t('sys.api.networkExceptionMsg');
       }
+      if (['TENANT_NOT_FOUND', 'TENANT_FORBIDDEN'].includes(errorBody?.reason)) {
+        if (errorBody?.reason == 'TENANT_NOT_FOUND') {
+          createErrorModal({
+            title: t('sys.api.errorTip'),
+            content: t('saas.tenantNotFound'),
+            onOk: () => {
+              window.location.reload();
+            },
+          });
+        }
 
+        if (errorBody?.reason == 'TENANT_FORBIDDEN') {
+          createErrorModal({
+            title: t('sys.api.errorTip'),
+            content: t('saas.tenantForbidden'),
+            onOk: () => {
+              window.location.reload();
+            },
+          });
+        }
+
+        setSettingTenantId(null);
+      }
       if (errMessage) {
         if (errorMessageMode === 'modal') {
           createErrorModal({ title: t('sys.api.errorTip'), content: errMessage });

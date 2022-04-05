@@ -38,10 +38,11 @@
           fileListRef.value = value
             .filter((item) => !!item)
             .map((item) => {
+              const url = item.url ?? item.responseData?.url ?? '';
               return {
-                url: item,
-                type: item.split('.').pop() || '',
-                name: item.split('/').pop() || '',
+                url: url,
+                type: url.split('.').pop() || '',
+                name: url.split('/').pop() || '',
               };
             });
         },

@@ -101,7 +101,7 @@
   import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
   import { useDesign } from '/@/hooks/web/useDesign';
   //import { onKeyStroke } from '@vueuse/core';
-
+  import { useRoute } from 'vue-router';
   const ACol = Col;
   const ARow = Row;
   const FormItem = Form.Item;
@@ -119,14 +119,14 @@
   const rememberMe = ref(false);
 
   const formData = reactive({
-    account: 'admin',
-    password: 'youShouldChangeThis@123',
+    account: '',
+    password: '',
   });
 
   const { validForm } = useFormValid(formRef);
-
+  const { query } = useRoute();
   //onKeyStroke('Enter', handleLogin);
-
+  const { login_challenge: loginChallenge } = query;
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN);
 
   async function handleLogin() {
@@ -138,7 +138,8 @@
         password: data.password,
         username: data.account,
         remember: rememberMe.value,
-        mode: 'none', //不要默认的错误提示
+        challenge: loginChallenge?.toString(),
+        mode: 'none', //不要默认的错误提示,
       });
       if (userInfo) {
         notification.success({

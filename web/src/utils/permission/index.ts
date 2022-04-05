@@ -2,6 +2,7 @@ import type { PermissionAcl, PermissionRequirement } from '/#/store';
 import { PermissionEffect } from '/@/enums/permissionEnum';
 import { isArray } from '/@/utils/is';
 export function isGrant(
+  hostNow: boolean,
   requirement: PermissionRequirement | PermissionRequirement[],
   aclList: PermissionAcl[],
 ): boolean {
@@ -11,6 +12,9 @@ export function isGrant(
 
   for (const r of requirement) {
     let effect = PermissionEffect.UNKNOWN;
+    if (r.hostOnly && !hostNow) {
+      return false;
+    }
     for (const acl of aclList) {
       if (
         keyMatch(r.action, acl.action) &&

@@ -6,7 +6,7 @@
       v-if="!sessionTimeout && showLocale"
     />
     <AppDarkModeToggle class="absolute top-3 right-7 enter-x" v-if="!sessionTimeout" />
-
+    <AppTenantSwitcher />
     <span class="-enter-x xl:hidden">
       <AppLogo :alwaysShowTitle="true" />
     </span>
@@ -64,7 +64,7 @@
 </template>
 <script lang="ts" setup>
   import { computed, onMounted, ref } from 'vue';
-  import { AppLogo } from '/@/components/Application';
+  import { AppLogo, AppTenantSwitcher } from '/@/components/Application';
   import { AppLocalePicker, AppDarkModeToggle } from '/@/components/Application';
   import LoginForm from './LoginForm.vue';
   import ForgetPasswordForm from './ForgetPasswordForm.vue';
@@ -95,23 +95,30 @@
   const title = computed(() => globSetting?.title ?? '');
 
   const { query } = useRoute();
-  const { redirect: redirectUrl } = query;
+  const { redirect: redirectUrl, login_challenge: loginChallenge } = query;
   const loading = ref(false);
   onMounted(() => {
     loading.value = true;
-    //TODO retry
     new AuthWebApi()
-      .authWebGetWebLoginForm({ redirect: redirectUrl?.toString() ?? '/' })
+      .authWebGetWebLogin({
+        redirect: redirectUrl?.toString() ?? '/',
+        loginChallenge: loginChallenge?.toString() ?? '',
+      })
       .then(async (data) => {
         if (
           redirectUrl != null &&
           data?.data?.redirect != null &&
           redirectUrl != data.data.redirect
         ) {
-          await router.replace({
-            path: PageEnum.BASE_LOGIN,
-            query: { redirect: data.data.redirect },
-          });
+          const redirect = data.data.redirect;
+          if (redirect.indexOf('http://') === 0 || redirect.indexOf('https://') === 0) {
+            location.replace(redirect);
+          } else {
+            await router.replace({
+              path: PageEnum.BASE_LOGIN,
+              query: { redirect: redirect },
+            });
+          }
         }
         loading.value = false;
         //TODO oauth

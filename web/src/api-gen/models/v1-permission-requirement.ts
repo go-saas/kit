@@ -23,17 +23,17 @@ export interface V1PermissionRequirement {
    * @type {string}
    * @memberof V1PermissionRequirement
    */
-  namespace?: string;
+  namespace: string;
   /**
    *
    * @type {string}
    * @memberof V1PermissionRequirement
    */
-  resource?: string;
+  resource: string;
   /**
    *
    * @type {string}
    * @memberof V1PermissionRequirement
    */
-  action?: string;
+  action: string;
 }

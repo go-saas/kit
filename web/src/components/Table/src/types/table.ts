@@ -1,11 +1,8 @@
 import type { VNodeChild } from 'vue';
 import type { PaginationProps } from './pagination';
 import type { FormProps } from '/@/components/Form';
-import type {
-  ColumnProps,
-  TableRowSelection as ITableRowSelection,
-} from 'ant-design-vue/lib/table/interface';
-
+import type { TableRowSelection as ITableRowSelection } from 'ant-design-vue/lib/table/interface';
+import type { ColumnProps } from 'ant-design-vue/lib/table';
 import { ComponentType } from './componentType';
 import { VueNode } from '/@/utils/propTypes';
 import { PermissionRequirement } from '/#/store';
@@ -410,7 +407,7 @@ export type CellFormat =
   | Map<string | number, any>;
 
 // @ts-ignore
-export interface BasicColumn extends ColumnProps {
+export interface BasicColumn extends ColumnProps<Recordable> {
   children?: BasicColumn[];
   filters?: {
     text: string;
@@ -443,7 +440,7 @@ export interface BasicColumn extends ColumnProps {
   editRule?: boolean | ((text: string, record: Recordable) => Promise<string>);
   editValueMap?: (value: any) => string;
   onEditRow?: () => void;
-  requirement: PermissionRequirement | PermissionRequirement[];
+  requirement?: PermissionRequirement | PermissionRequirement[];
   // 业务控制是否显示
   ifShow?: boolean | ((column: BasicColumn) => boolean);
 }

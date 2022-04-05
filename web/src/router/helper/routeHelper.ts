@@ -6,6 +6,7 @@ import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '/@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { V1Menu } from '/@/api-gen/models';
+import { getDynamicComponent } from '/@/utils/dynamicComponent';
 
 export type LayoutMapKey = 'LAYOUT';
 const IFRAME = () => import('/@/views/sys/iframe/FrameBlank.vue');
@@ -27,7 +28,9 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
     }
     const { component, name } = item;
     const { children } = item;
-    if (component) {
+    if (component === 'MICROAPP') {
+      item.component = () => Promise.resolve(getDynamicComponent(item));
+    } else if (component) {
       const layoutFound = LayoutMap.get(component.toUpperCase());
       if (layoutFound) {
         item.component = layoutFound;
@@ -72,9 +75,7 @@ function dynamicImport(
 // Turn background objects into routing objects
 export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModule[]): T[] {
   routeList.forEach((route) => {
-    console.log(route);
     const component = route.component as string;
-    console.log(component);
     if (component) {
       if (component.toUpperCase() === 'LAYOUT') {
         route.component = LayoutMap.get(component.toUpperCase());
@@ -108,12 +109,14 @@ export function transformObjToAppRouteRecordRaw(
     if (!parentId && menu.parent != '') {
       continue;
     }
-
     const raw: AppRouteRecordRaw = {
+      id: menu.id,
+      parent: menu.parent,
       path: menu.path!,
       name: menu.name!,
       component: menu.component,
       redirect: menu.redirect,
+      priority: menu.priority,
       meta: {
         title: menu.title ?? '',
         icon: menu.icon,
@@ -122,6 +125,10 @@ export function transformObjToAppRouteRecordRaw(
         frameSrc: menu.iframe,
         microApp: menu.microApp,
       },
+
+      icon: menu.icon ?? '',
+      microApp: menu.microApp ?? '',
+      title: menu.title ?? '',
       fullPath: menu.fullPath,
     };
     //merge meta
@@ -134,12 +141,10 @@ export function transformObjToAppRouteRecordRaw(
         action: requirement.action ?? '*',
       };
     });
-
     //children
     raw.children = transformObjToAppRouteRecordRaw(menuList, menu.id!);
     ret.push(raw);
   }
-
   return ret;
 }
 

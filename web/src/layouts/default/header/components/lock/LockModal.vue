@@ -44,7 +44,7 @@
       const userStore = useUserStore();
       const lockStore = useLockStore();
 
-      const getRealName = computed(() => userStore.getUserInfo?.realName);
+      const getRealName = computed(() => userStore.getUserInfo?.name);
       const [register, { closeModal }] = useModalInner();
 
       const [registerForm, { validateFields, resetFields }] = useForm({

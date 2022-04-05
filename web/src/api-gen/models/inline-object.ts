@@ -25,5 +25,5 @@ export interface InlineObject {
    * @type {Array<V1UpdateRolePermissionAcl>}
    * @memberof InlineObject
    */
-  alc?: Array<V1UpdateRolePermissionAcl>;
+  acl?: Array<V1UpdateRolePermissionAcl>;
 }

@@ -6,6 +6,7 @@
     RedoOutlined,
     TableOutlined,
   } from '@ant-design/icons-vue';
+  import { useI18n } from '/@/hooks/web/useI18n';
   import { List, Card, Image, Typography, Tooltip, Slider, Avatar } from 'ant-design-vue';
   import { Dropdown } from '/@/components/Dropdown';
   import { BasicForm, useForm } from '/@/components/Form';
@@ -15,6 +16,7 @@
   const ListItem = List.Item;
   const CardMeta = Card.Meta;
   const TypographyText = Typography.Text;
+  const { t } = useI18n();
   // 获取slider属性
   const sliderProp = computed(() => useSlider(4));
   // 组件接收参数
@@ -154,7 +156,7 @@
                       text: '删除',
                       event: '1',
                       popConfirm: {
-                        title: '是否确认删除',
+                        title: t('common.confirmDelete'),
                         confirm: handleDelete.bind(null, item.id),
                       },
                     },

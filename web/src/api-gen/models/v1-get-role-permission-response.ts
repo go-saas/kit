@@ -13,6 +13,7 @@
  */
 
 import { V1Permission } from './v1-permission';
+import { V1PermissionDefGroup } from './v1-permission-def-group';
 
 /**
  *
@@ -26,4 +27,10 @@ export interface V1GetRolePermissionResponse {
    * @memberof V1GetRolePermissionResponse
    */
   acl?: Array<V1Permission>;
+  /**
+   *
+   * @type {Array<V1PermissionDefGroup>}
+   * @memberof V1GetRolePermissionResponse
+   */
+  defGroups?: Array<V1PermissionDefGroup>;
 }

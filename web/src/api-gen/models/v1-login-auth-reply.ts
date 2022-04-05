@@ -48,4 +48,10 @@ export interface V1LoginAuthReply {
    * @memberof V1LoginAuthReply
    */
   expiresIn?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof V1LoginAuthReply
+   */
+  redirect?: string;
 }

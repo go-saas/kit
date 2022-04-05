@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { V1UserTenantTenant } from './v1-user-tenant-tenant';
+import { V1TenantInfo } from './v1-tenant-info';
 
 /**
  *
@@ -34,10 +34,10 @@ export interface V1UserTenant {
   tenantId?: string;
   /**
    *
-   * @type {V1UserTenantTenant}
+   * @type {V1TenantInfo}
    * @memberof V1UserTenant
    */
-  tenant?: V1UserTenantTenant;
+  tenant?: V1TenantInfo;
   /**
    *
    * @type {boolean}

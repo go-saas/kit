@@ -74,5 +74,13 @@ export const ERROR_LOG_ROUTE: AppRouteRecordRaw = {
         currentActiveMenu: '/error-log',
       },
     },
+    {
+      path: '/role/:id/detail',
+      name: 'roleDetail',
+      component: () => import('../../views/system/role/RoleDetail.vue'),
+      meta: {
+        title: 'page',
+      },
+    },
   ],
 };

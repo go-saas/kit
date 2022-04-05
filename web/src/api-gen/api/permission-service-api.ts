@@ -39,10 +39,6 @@ import { V1CheckPermissionReply } from '../models';
 // @ts-ignore
 import { V1CheckPermissionRequest } from '../models';
 // @ts-ignore
-import { V1CheckSubjectsPermissionReply } from '../models';
-// @ts-ignore
-import { V1CheckSubjectsPermissionRequest } from '../models';
-// @ts-ignore
 import { V1GetCurrentPermissionReply } from '../models';
 // @ts-ignore
 import { V1ListSubjectPermissionRequest } from '../models';
@@ -84,6 +80,9 @@ export const PermissionServiceApiAxiosParamCreator = function (configuration?: C
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -129,49 +128,8 @@ export const PermissionServiceApiAxiosParamCreator = function (configuration?: C
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
-      localVarHeaderParameter['Content-Type'] = 'application/json';
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        body,
-        localVarRequestOptions,
-        configuration,
-      );
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @param {V1CheckSubjectsPermissionRequest} body
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    permissionServiceCheckForSubjects: async (
-      body: V1CheckSubjectsPermissionRequest,
-      options: AxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'body' is not null or undefined
-      assertParamExists('permissionServiceCheckForSubjects', 'body', body);
-      const localVarPath = `/v1/permission/check-subjects`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -212,6 +170,9 @@ export const PermissionServiceApiAxiosParamCreator = function (configuration?: C
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = {
@@ -247,6 +208,9 @@ export const PermissionServiceApiAxiosParamCreator = function (configuration?: C
       const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       if (subjects) {
         localVarQueryParameter['subjects'] = subjects;
@@ -289,6 +253,9 @@ export const PermissionServiceApiAxiosParamCreator = function (configuration?: C
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -335,6 +302,9 @@ export const PermissionServiceApiAxiosParamCreator = function (configuration?: C
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -379,6 +349,9 @@ export const PermissionServiceApiAxiosParamCreator = function (configuration?: C
       const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -436,24 +409,6 @@ export const PermissionServiceApiFp = function (configuration?: Configuration) {
       options?: AxiosRequestConfig,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1CheckPermissionReply>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.permissionServiceCheckCurrent(
-        body,
-        options,
-      );
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @param {V1CheckSubjectsPermissionRequest} body
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async permissionServiceCheckForSubjects(
-      body: V1CheckSubjectsPermissionRequest,
-      options?: AxiosRequestConfig,
-    ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1CheckSubjectsPermissionReply>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.permissionServiceCheckForSubjects(
         body,
         options,
       );
@@ -586,20 +541,6 @@ export const PermissionServiceApiFactory = function (
     },
     /**
      *
-     * @param {V1CheckSubjectsPermissionRequest} body
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    permissionServiceCheckForSubjects(
-      body: V1CheckSubjectsPermissionRequest,
-      options?: any,
-    ): AxiosPromise<V1CheckSubjectsPermissionReply> {
-      return localVarFp
-        .permissionServiceCheckForSubjects(body, options)
-        .then((request) => request(axios, basePath));
-    },
-    /**
-     *
      * @summary Get current permission
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -701,20 +642,6 @@ export interface PermissionServiceApiPermissionServiceCheckCurrentRequest {
 }
 
 /**
- * Request parameters for permissionServiceCheckForSubjects operation in PermissionServiceApi.
- * @export
- * @interface PermissionServiceApiPermissionServiceCheckForSubjectsRequest
- */
-export interface PermissionServiceApiPermissionServiceCheckForSubjectsRequest {
-  /**
-   *
-   * @type {V1CheckSubjectsPermissionRequest}
-   * @memberof PermissionServiceApiPermissionServiceCheckForSubjects
-   */
-  readonly body: V1CheckSubjectsPermissionRequest;
-}
-
-/**
  * Request parameters for permissionServiceListSubjectPermission operation in PermissionServiceApi.
  * @export
  * @interface PermissionServiceApiPermissionServiceListSubjectPermissionRequest
@@ -807,22 +734,6 @@ export class PermissionServiceApi extends BaseAPI {
   ) {
     return PermissionServiceApiFp(this.configuration)
       .permissionServiceCheckCurrent(requestParameters.body, options)
-      .then((request) => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @param {PermissionServiceApiPermissionServiceCheckForSubjectsRequest} requestParameters Request parameters.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof PermissionServiceApi
-   */
-  public permissionServiceCheckForSubjects(
-    requestParameters: PermissionServiceApiPermissionServiceCheckForSubjectsRequest,
-    options?: AxiosRequestConfig,
-  ) {
-    return PermissionServiceApiFp(this.configuration)
-      .permissionServiceCheckForSubjects(requestParameters.body, options)
       .then((request) => request(this.axios, this.basePath));
   }
 

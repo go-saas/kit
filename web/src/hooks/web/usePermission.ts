@@ -11,11 +11,14 @@ import { useMultipleTabStore } from '/@/store/modules/multipleTab';
 
 import { PermissionRequirement } from '/#/store';
 import { isGrant } from '/@/utils/permission';
+
+import { useUserStore } from '/@/store/modules/user';
+
 // User permissions related operations
 export function usePermission() {
   const permissionStore = usePermissionStore();
   const { closeAll } = useTabs(router);
-
+  const userStore = useUserStore();
   /**
    * Reset and regain authority resource information
    * @param id
@@ -36,14 +39,15 @@ export function usePermission() {
    * Determine whether there is permission
    */
   function hasPermission(
-    requirement: Nullable<PermissionRequirement | PermissionRequirement[]>,
+    requirement?: PermissionRequirement | PermissionRequirement[],
     def = true,
   ): boolean {
     // Visible by default
     if (!requirement) {
       return def;
     }
-    return isGrant(requirement, permissionStore.getPermissionList);
+
+    return isGrant(userStore.getCurrentIsHost, requirement, permissionStore.getPermissionList);
   }
 
   /**

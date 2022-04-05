@@ -37,6 +37,10 @@ import { V1CreateUserRequest } from '../models';
 // @ts-ignore
 import { V1GetUserRoleReply } from '../models';
 // @ts-ignore
+import { V1InviteUserReply } from '../models';
+// @ts-ignore
+import { V1InviteUserRequest } from '../models';
+// @ts-ignore
 import { V1ListUsersRequest } from '../models';
 // @ts-ignore
 import { V1ListUsersResponse } from '../models';
@@ -52,7 +56,7 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
   return {
     /**
      *
-     * @summary authz: user.user,*,create
+     * @summary CreateUser  authz: user.user,*,create
      * @param {V1CreateUserRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -74,6 +78,9 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -97,13 +104,15 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
-     * @summary authz: user.user,id,delete
+     * @summary DeleteUser  authz: user.user,id,delete
      * @param {string} id
+     * @param {boolean} [force] default false. Just remove user out of tenant. set to true to remove user from system.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     userServiceDeleteUser: async (
       id: string,
+      force?: boolean,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
@@ -120,6 +129,13 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
+      if (force !== undefined) {
+        localVarQueryParameter['force'] = force;
+      }
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = {
@@ -135,7 +151,7 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
-     * @summary authz: user.user,id,get
+     * @summary GetUser  authz: user.user,id,get
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -158,6 +174,9 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = {
@@ -173,7 +192,7 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
-     * @summary authz: user.user,id,get
+     * @summary GetUserRoles  authz: user.user,id,get
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -199,6 +218,9 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = {
@@ -214,7 +236,55 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
-     * @summary authz: user.user,*,list
+     * @summary InviteUser  authz: user.user,*,create
+     * @param {V1InviteUserRequest} body
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    userServiceInviteUser: async (
+      body: V1InviteUserRequest,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'body' is not null or undefined
+      assertParamExists('userServiceInviteUser', 'body', body);
+      const localVarPath = `/v1/user/invite`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
+      localVarHeaderParameter['Content-Type'] = 'application/json';
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        body,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary ListUsers  authz: user.user,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -254,6 +324,9 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       if (pageOffset !== undefined) {
         localVarQueryParameter['pageOffset'] = pageOffset;
@@ -320,7 +393,7 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
-     * @summary authz: user.user,*,list
+     * @summary ListUsers  authz: user.user,*,list
      * @param {V1ListUsersRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -342,6 +415,9 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -365,7 +441,7 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
-     * @summary authz: user.user,id,update
+     * @summary UpdateUser  authz: user.user,id,update
      * @param {string} userId
      * @param {V1UpdateUserRequest} body
      * @param {*} [options] Override http request option.
@@ -395,6 +471,9 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -417,7 +496,7 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
     },
     /**
      *
-     * @summary authz: user.user,id,update
+     * @summary UpdateUser  authz: user.user,id,update
      * @param {string} userId
      * @param {V1UpdateUserRequest} body
      * @param {*} [options] Override http request option.
@@ -446,6 +525,9 @@ export const UserServiceApiAxiosParamCreator = function (configuration?: Configu
       const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -479,7 +561,7 @@ export const UserServiceApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
-     * @summary authz: user.user,*,create
+     * @summary CreateUser  authz: user.user,*,create
      * @param {V1CreateUserRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -496,21 +578,27 @@ export const UserServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: user.user,id,delete
+     * @summary DeleteUser  authz: user.user,id,delete
      * @param {string} id
+     * @param {boolean} [force] default false. Just remove user out of tenant. set to true to remove user from system.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async userServiceDeleteUser(
       id: string,
+      force?: boolean,
       options?: AxiosRequestConfig,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.userServiceDeleteUser(id, options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.userServiceDeleteUser(
+        id,
+        force,
+        options,
+      );
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
     /**
      *
-     * @summary authz: user.user,id,get
+     * @summary GetUser  authz: user.user,id,get
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -524,7 +612,7 @@ export const UserServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: user.user,id,get
+     * @summary GetUserRoles  authz: user.user,id,get
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -541,7 +629,24 @@ export const UserServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: user.user,*,list
+     * @summary InviteUser  authz: user.user,*,create
+     * @param {V1InviteUserRequest} body
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async userServiceInviteUser(
+      body: V1InviteUserRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1InviteUserReply>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.userServiceInviteUser(
+        body,
+        options,
+      );
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
+     * @summary ListUsers  authz: user.user,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -588,7 +693,7 @@ export const UserServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: user.user,*,list
+     * @summary ListUsers  authz: user.user,*,list
      * @param {V1ListUsersRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -605,7 +710,7 @@ export const UserServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: user.user,id,update
+     * @summary UpdateUser  authz: user.user,id,update
      * @param {string} userId
      * @param {V1UpdateUserRequest} body
      * @param {*} [options] Override http request option.
@@ -625,7 +730,7 @@ export const UserServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: user.user,id,update
+     * @summary UpdateUser  authz: user.user,id,update
      * @param {string} userId
      * @param {V1UpdateUserRequest} body
      * @param {*} [options] Override http request option.
@@ -659,7 +764,7 @@ export const UserServiceApiFactory = function (
   return {
     /**
      *
-     * @summary authz: user.user,*,create
+     * @summary CreateUser  authz: user.user,*,create
      * @param {V1CreateUserRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -671,19 +776,20 @@ export const UserServiceApiFactory = function (
     },
     /**
      *
-     * @summary authz: user.user,id,delete
+     * @summary DeleteUser  authz: user.user,id,delete
      * @param {string} id
+     * @param {boolean} [force] default false. Just remove user out of tenant. set to true to remove user from system.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    userServiceDeleteUser(id: string, options?: any): AxiosPromise<object> {
+    userServiceDeleteUser(id: string, force?: boolean, options?: any): AxiosPromise<object> {
       return localVarFp
-        .userServiceDeleteUser(id, options)
+        .userServiceDeleteUser(id, force, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary authz: user.user,id,get
+     * @summary GetUser  authz: user.user,id,get
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -693,7 +799,7 @@ export const UserServiceApiFactory = function (
     },
     /**
      *
-     * @summary authz: user.user,id,get
+     * @summary GetUserRoles  authz: user.user,id,get
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -705,7 +811,22 @@ export const UserServiceApiFactory = function (
     },
     /**
      *
-     * @summary authz: user.user,*,list
+     * @summary InviteUser  authz: user.user,*,create
+     * @param {V1InviteUserRequest} body
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    userServiceInviteUser(
+      body: V1InviteUserRequest,
+      options?: any,
+    ): AxiosPromise<V1InviteUserReply> {
+      return localVarFp
+        .userServiceInviteUser(body, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary ListUsers  authz: user.user,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -753,7 +874,7 @@ export const UserServiceApiFactory = function (
     },
     /**
      *
-     * @summary authz: user.user,*,list
+     * @summary ListUsers  authz: user.user,*,list
      * @param {V1ListUsersRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -768,7 +889,7 @@ export const UserServiceApiFactory = function (
     },
     /**
      *
-     * @summary authz: user.user,id,update
+     * @summary UpdateUser  authz: user.user,id,update
      * @param {string} userId
      * @param {V1UpdateUserRequest} body
      * @param {*} [options] Override http request option.
@@ -785,7 +906,7 @@ export const UserServiceApiFactory = function (
     },
     /**
      *
-     * @summary authz: user.user,id,update
+     * @summary UpdateUser  authz: user.user,id,update
      * @param {string} userId
      * @param {V1UpdateUserRequest} body
      * @param {*} [options] Override http request option.
@@ -829,6 +950,13 @@ export interface UserServiceApiUserServiceDeleteUserRequest {
    * @memberof UserServiceApiUserServiceDeleteUser
    */
   readonly id: string;
+
+  /**
+   * default false. Just remove user out of tenant. set to true to remove user from system.
+   * @type {boolean}
+   * @memberof UserServiceApiUserServiceDeleteUser
+   */
+  readonly force?: boolean;
 }
 
 /**
@@ -857,6 +985,20 @@ export interface UserServiceApiUserServiceGetUserRolesRequest {
    * @memberof UserServiceApiUserServiceGetUserRoles
    */
   readonly id: string;
+}
+
+/**
+ * Request parameters for userServiceInviteUser operation in UserServiceApi.
+ * @export
+ * @interface UserServiceApiUserServiceInviteUserRequest
+ */
+export interface UserServiceApiUserServiceInviteUserRequest {
+  /**
+   *
+   * @type {V1InviteUserRequest}
+   * @memberof UserServiceApiUserServiceInviteUser
+   */
+  readonly body: V1InviteUserRequest;
 }
 
 /**
@@ -1008,7 +1150,7 @@ export interface UserServiceApiUserServiceUpdateUser2Request {
 export class UserServiceApi extends BaseAPI {
   /**
    *
-   * @summary authz: user.user,*,create
+   * @summary CreateUser  authz: user.user,*,create
    * @param {UserServiceApiUserServiceCreateUserRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1025,7 +1167,7 @@ export class UserServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: user.user,id,delete
+   * @summary DeleteUser  authz: user.user,id,delete
    * @param {UserServiceApiUserServiceDeleteUserRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1036,13 +1178,13 @@ export class UserServiceApi extends BaseAPI {
     options?: AxiosRequestConfig,
   ) {
     return UserServiceApiFp(this.configuration)
-      .userServiceDeleteUser(requestParameters.id, options)
+      .userServiceDeleteUser(requestParameters.id, requestParameters.force, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
-   * @summary authz: user.user,id,get
+   * @summary GetUser  authz: user.user,id,get
    * @param {UserServiceApiUserServiceGetUserRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1059,7 +1201,7 @@ export class UserServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: user.user,id,get
+   * @summary GetUserRoles  authz: user.user,id,get
    * @param {UserServiceApiUserServiceGetUserRolesRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1076,7 +1218,24 @@ export class UserServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: user.user,*,list
+   * @summary InviteUser  authz: user.user,*,create
+   * @param {UserServiceApiUserServiceInviteUserRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof UserServiceApi
+   */
+  public userServiceInviteUser(
+    requestParameters: UserServiceApiUserServiceInviteUserRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return UserServiceApiFp(this.configuration)
+      .userServiceInviteUser(requestParameters.body, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary ListUsers  authz: user.user,*,list
    * @param {UserServiceApiUserServiceListUsersRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1106,7 +1265,7 @@ export class UserServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: user.user,*,list
+   * @summary ListUsers  authz: user.user,*,list
    * @param {UserServiceApiUserServiceListUsers2Request} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1123,7 +1282,7 @@ export class UserServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: user.user,id,update
+   * @summary UpdateUser  authz: user.user,id,update
    * @param {UserServiceApiUserServiceUpdateUserRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1140,7 +1299,7 @@ export class UserServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: user.user,id,update
+   * @summary UpdateUser  authz: user.user,id,update
    * @param {UserServiceApiUserServiceUpdateUser2Request} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}

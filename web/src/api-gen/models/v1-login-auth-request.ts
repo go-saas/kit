@@ -23,13 +23,13 @@ export interface V1LoginAuthRequest {
    * @type {string}
    * @memberof V1LoginAuthRequest
    */
-  username?: string;
+  username: string;
   /**
    *
    * @type {string}
    * @memberof V1LoginAuthRequest
    */
-  password?: string;
+  password: string;
   /**
    *
    * @type {boolean}

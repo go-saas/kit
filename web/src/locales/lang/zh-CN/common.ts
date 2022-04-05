@@ -18,4 +18,8 @@ export default {
 
   light: '亮色主题',
   dark: '黑暗主题',
+  confirmDelete: '是否确认删除？',
+  operating: '操作',
+  updatedAt: '更新时间',
+  createdAt: '创建时间',
 };

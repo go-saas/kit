@@ -36,4 +36,34 @@ export interface V1CreateTenantRequest {
    * @memberof V1CreateTenantRequest
    */
   region?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof V1CreateTenantRequest
+   */
+  logo?: string;
+  /**
+   *
+   * @type {boolean}
+   * @memberof V1CreateTenantRequest
+   */
+  separateDb?: boolean;
+  /**
+   *
+   * @type {string}
+   * @memberof V1CreateTenantRequest
+   */
+  adminEmail?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof V1CreateTenantRequest
+   */
+  adminUsername?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof V1CreateTenantRequest
+   */
+  adminPassword?: string;
 }

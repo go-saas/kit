@@ -18,4 +18,8 @@ export default {
 
   light: 'Light',
   dark: 'Dark',
+  confirmDelete: 'Confirm Delete?',
+  operating: 'Operating',
+  updatedAt: 'UpdatedAt',
+  createdAt: 'CreatedAt',
 };

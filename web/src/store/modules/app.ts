@@ -16,7 +16,7 @@ import { Persistent } from '/@/utils/cache/persistent';
 import { darkMode } from '/@/settings/designSetting';
 import { resetRouter } from '/@/router';
 import { deepMerge } from '/@/utils';
-
+import { getSettingTenantId, setSettingTenantId } from '/@/utils/auth';
 interface AppState {
   darkMode?: ThemeEnum;
   // Page loading status
@@ -85,7 +85,10 @@ export const useAppStore = defineStore({
 
     async resetAllState() {
       resetRouter();
+      //should preserve some keys
+      const tenant = getSettingTenantId();
       Persistent.clearAll();
+      setSettingTenantId(tenant);
     },
     async setPageLoadingAction(loading: boolean): Promise<void> {
       if (loading) {

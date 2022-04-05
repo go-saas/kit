@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { Tenantv1Tenant } from './tenantv1-tenant';
+import { V1Tenant } from './v1-tenant';
 
 /**
  *
@@ -34,8 +34,8 @@ export interface V1ListTenantReply {
   filterSize?: number;
   /**
    *
-   * @type {Array<Tenantv1Tenant>}
+   * @type {Array<V1Tenant>}
    * @memberof V1ListTenantReply
    */
-  items?: Array<Tenantv1Tenant>;
+  items?: Array<V1Tenant>;
 }

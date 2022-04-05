@@ -7,6 +7,7 @@ import { Memory } from './memory';
 import {
   TOKEN_KEY,
   USER_INFO_KEY,
+  TENANT_INFO_KEY,
   PERMISSION_KEY,
   LOCK_INFO_KEY,
   PROJ_CFG_KEY,
@@ -21,6 +22,7 @@ import { pick, omit } from 'lodash-es';
 interface BasicStore {
   [TOKEN_KEY]: string | number | null | undefined;
   [USER_INFO_KEY]: UserInfo;
+  [TENANT_INFO_KEY]: string | null;
   [PERMISSION_KEY]: PermissionAcl[];
   [LOCK_INFO_KEY]: LockInfo;
   [PROJ_CFG_KEY]: ProjectConfig;

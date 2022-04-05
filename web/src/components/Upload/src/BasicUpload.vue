@@ -47,6 +47,7 @@
   import { omit } from 'lodash-es';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { isArray } from '/@/utils/is';
+  import { FileItem } from './typing';
 
   export default defineComponent({
     name: 'BasicUpload',
@@ -62,7 +63,7 @@
       //   预览modal
       const [registerPreviewModal, { openModal: openPreviewModal }] = useModal();
 
-      const fileList = ref<string[]>([]);
+      const fileList = ref<FileItem[]>([]);
 
       const showPreview = computed(() => {
         const { emptyHidePreview } = props;
@@ -84,15 +85,15 @@
       );
 
       // 上传modal保存操作
-      function handleChange(urls: string[]) {
-        fileList.value = [...unref(fileList), ...(urls || [])];
+      function handleChange(items: FileItem[]) {
+        fileList.value = [...unref(fileList), ...(items || [])];
         emit('update:value', fileList.value);
         emit('change', fileList.value);
       }
 
       // 预览modal保存操作
-      function handlePreviewChange(urls: string[]) {
-        fileList.value = [...(urls || [])];
+      function handlePreviewChange(items: FileItem[]) {
+        fileList.value = [...(items || [])];
         emit('update:value', fileList.value);
         emit('change', fileList.value);
       }

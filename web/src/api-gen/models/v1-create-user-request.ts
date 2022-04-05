@@ -25,7 +25,7 @@ export interface V1CreateUserRequest {
    * @type {string}
    * @memberof V1CreateUserRequest
    */
-  username?: string;
+  username: string;
   /**
    *
    * @type {string}
@@ -68,4 +68,16 @@ export interface V1CreateUserRequest {
    * @memberof V1CreateUserRequest
    */
   gender?: V1Gender;
+  /**
+   *
+   * @type {string}
+   * @memberof V1CreateUserRequest
+   */
+  avatar?: string;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof V1CreateUserRequest
+   */
+  rolesId?: Array<string>;
 }

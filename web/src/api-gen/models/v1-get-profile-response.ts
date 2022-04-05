@@ -83,4 +83,10 @@ export interface V1GetProfileResponse {
    * @memberof V1GetProfileResponse
    */
   avatar?: BlobBlobFile;
+  /**
+   *
+   * @type {V1UserTenant}
+   * @memberof V1GetProfileResponse
+   */
+  currentTenant?: V1UserTenant;
 }

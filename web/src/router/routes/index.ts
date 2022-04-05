@@ -36,9 +36,19 @@ export const LoginRoute: AppRouteRecordRaw = {
   },
 };
 
+export const ConsentRoute: AppRouteRecordRaw = {
+  path: '/consent',
+  name: 'Consent',
+  component: () => import('/@/views/sys/consent/index.vue'),
+  meta: {
+    title: t('routes.basic.consent'),
+  },
+};
+
 // Basic routing without permission
 export const basicRoutes = [
   LoginRoute,
+  ConsentRoute,
   RootRoute,
   ...mainOutRoutes,
   REDIRECT_ROUTE,

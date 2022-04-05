@@ -5,6 +5,10 @@ export const UserDropDown = createAsyncComponent(() => import('./user-dropdown/i
   loading: true,
 });
 
+export const TenantDropDown = createAsyncComponent(() => import('./tenant-dropdown/index.vue'), {
+  loading: true,
+});
+
 export const LayoutBreadcrumb = createAsyncComponent(() => import('./Breadcrumb.vue'));
 
 export const Notify = createAsyncComponent(() => import('./notify/index.vue'));

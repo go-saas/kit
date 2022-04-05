@@ -7,6 +7,7 @@ export enum UploadResultStatus {
 }
 
 export interface FileItem {
+  id?: string;
   thumbUrl?: string;
   name: string;
   size: string | number;
@@ -16,6 +17,7 @@ export interface FileItem {
   status?: UploadResultStatus;
   responseData?: UploadApiResult;
   uuid: string;
+  url?: string;
 }
 
 export interface PreviewFileItem {

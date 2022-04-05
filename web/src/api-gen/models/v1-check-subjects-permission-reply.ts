@@ -22,8 +22,8 @@ import { V1Effect } from './v1-effect';
 export interface V1CheckSubjectsPermissionReply {
   /**
    *
-   * @type {V1Effect}
+   * @type {Array<V1Effect>}
    * @memberof V1CheckSubjectsPermissionReply
    */
-  effect?: V1Effect;
+  effectList?: Array<V1Effect>;
 }

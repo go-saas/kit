@@ -81,6 +81,10 @@ export function useFormEvents({
         } else {
           formModel[key] = value;
         }
+        if (schema?.displayTransformer) {
+          formModel[key] = schema.displayTransformer(value);
+        }
+
         validKeys.push(key);
       }
     });
@@ -210,12 +214,34 @@ export function useFormEvents({
     });
   }
 
+  async function transformFieldValues(values: any) {
+    const fields = unref(getSchema)
+      .map((item) => item.field)
+      .filter(Boolean);
+
+    Object.keys(values).forEach((key) => {
+      const schema = unref(getSchema).find((item) => item.field === key);
+      const value = values[key];
+
+      const hasKey = Reflect.has(values, key);
+
+      if (hasKey && fields.includes(key)) {
+        if (schema?.valueTransformer) {
+          values[key] = schema.valueTransformer(value);
+        }
+      }
+    });
+    return values;
+  }
+
   async function validateFields(nameList?: NamePath[] | undefined) {
-    return unref(formElRef)?.validateFields(nameList);
+    const res = unref(formElRef)?.validateFields(nameList);
+    return transformFieldValues(res);
   }
 
   async function validate(nameList?: NamePath[] | undefined) {
-    return await unref(formElRef)?.validate(nameList);
+    const res = await unref(formElRef)?.validate(nameList);
+    return transformFieldValues(res);
   }
 
   async function clearValidate(name?: string | string[]) {

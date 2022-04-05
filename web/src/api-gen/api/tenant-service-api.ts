@@ -33,15 +33,19 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 // @ts-ignore
 import { RpcStatus } from '../models';
 // @ts-ignore
-import { Tenantv1Tenant } from '../models';
-// @ts-ignore
 import { V1CreateTenantRequest } from '../models';
 // @ts-ignore
 import { V1DeleteTenantReply } from '../models';
 // @ts-ignore
+import { V1GetCurrentTenantReply } from '../models';
+// @ts-ignore
 import { V1ListTenantReply } from '../models';
 // @ts-ignore
 import { V1ListTenantRequest } from '../models';
+// @ts-ignore
+import { V1Tenant } from '../models';
+// @ts-ignore
+import { V1TenantInfo } from '../models';
 // @ts-ignore
 import { V1UpdateTenantRequest } from '../models';
 /**
@@ -52,7 +56,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
   return {
     /**
      *
-     * @summary authz: saas.tenant,*,create
+     * @summary CreateTenant  authz: saas.tenant,*,create
      * @param {V1CreateTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -74,6 +78,9 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -97,7 +104,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},delete
+     * @summary DeleteTenant  authz: saas.tenant,{id},delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -123,6 +130,9 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = {
@@ -138,7 +148,44 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},get
+     * @summary GetCurrentTenant
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    tenantServiceGetCurrentTenant: async (
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/v1/saas/current`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary GetTenant  authz: saas.tenant,{id},get
      * @param {string} idOrName
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -164,6 +211,9 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = {
@@ -179,7 +229,51 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
+     * @summary GetTenant  authz: saas.tenant,{id},get
+     * @param {string} idOrName
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    tenantServiceGetTenantPublic: async (
+      idOrName: string,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'idOrName' is not null or undefined
+      assertParamExists('tenantServiceGetTenantPublic', 'idOrName', idOrName);
+      const localVarPath = `/v1/saas/tenant/{idOrName}/public`.replace(
+        `{${'idOrName'}}`,
+        encodeURIComponent(String(idOrName)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary ListTenant  authz: saas.tenant,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -215,6 +309,9 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
       const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       if (pageOffset !== undefined) {
         localVarQueryParameter['pageOffset'] = pageOffset;
@@ -267,7 +364,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
+     * @summary ListTenant  authz: saas.tenant,*,list
      * @param {V1ListTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -289,6 +386,9 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
       const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -312,7 +412,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
+     * @summary UpdateTenant  authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -342,6 +442,9 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -364,7 +467,7 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
+     * @summary UpdateTenant  authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -393,6 +496,9 @@ export const TenantServiceApiAxiosParamCreator = function (configuration?: Confi
       const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+
+      // authentication bearer required
+      await setApiKeyToObject(localVarHeaderParameter, 'Authorization', configuration);
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -426,7 +532,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
-     * @summary authz: saas.tenant,*,create
+     * @summary CreateTenant  authz: saas.tenant,*,create
      * @param {V1CreateTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -434,7 +540,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     async tenantServiceCreateTenant(
       body: V1CreateTenantRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Tenant>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceCreateTenant(
         body,
         options,
@@ -443,7 +549,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},delete
+     * @summary DeleteTenant  authz: saas.tenant,{id},delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -460,7 +566,23 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},get
+     * @summary GetCurrentTenant
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async tenantServiceGetCurrentTenant(
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1GetCurrentTenantReply>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceGetCurrentTenant(
+        options,
+      );
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
+     * @summary GetTenant  authz: saas.tenant,{id},get
      * @param {string} idOrName
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -468,7 +590,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     async tenantServiceGetTenant(
       idOrName: string,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Tenant>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceGetTenant(
         idOrName,
         options,
@@ -477,7 +599,24 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
+     * @summary GetTenant  authz: saas.tenant,{id},get
+     * @param {string} idOrName
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async tenantServiceGetTenantPublic(
+      idOrName: string,
+      options?: AxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1TenantInfo>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceGetTenantPublic(
+        idOrName,
+        options,
+      );
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
+     * @summary ListTenant  authz: saas.tenant,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -518,7 +657,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
+     * @summary ListTenant  authz: saas.tenant,*,list
      * @param {V1ListTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -535,7 +674,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
+     * @summary UpdateTenant  authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -545,7 +684,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
       tenantId: string,
       body: V1UpdateTenantRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Tenant>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceUpdateTenant(
         tenantId,
         body,
@@ -555,7 +694,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
+     * @summary UpdateTenant  authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -565,7 +704,7 @@ export const TenantServiceApiFp = function (configuration?: Configuration) {
       tenantId: string,
       body: V1UpdateTenantRequest,
       options?: AxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tenantv1Tenant>> {
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V1Tenant>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.tenantServiceUpdateTenant2(
         tenantId,
         body,
@@ -589,22 +728,19 @@ export const TenantServiceApiFactory = function (
   return {
     /**
      *
-     * @summary authz: saas.tenant,*,create
+     * @summary CreateTenant  authz: saas.tenant,*,create
      * @param {V1CreateTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceCreateTenant(
-      body: V1CreateTenantRequest,
-      options?: any,
-    ): AxiosPromise<Tenantv1Tenant> {
+    tenantServiceCreateTenant(body: V1CreateTenantRequest, options?: any): AxiosPromise<V1Tenant> {
       return localVarFp
         .tenantServiceCreateTenant(body, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},delete
+     * @summary DeleteTenant  authz: saas.tenant,{id},delete
      * @param {string} id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -616,19 +752,42 @@ export const TenantServiceApiFactory = function (
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},get
+     * @summary GetCurrentTenant
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    tenantServiceGetCurrentTenant(options?: any): AxiosPromise<V1GetCurrentTenantReply> {
+      return localVarFp
+        .tenantServiceGetCurrentTenant(options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary GetTenant  authz: saas.tenant,{id},get
      * @param {string} idOrName
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    tenantServiceGetTenant(idOrName: string, options?: any): AxiosPromise<Tenantv1Tenant> {
+    tenantServiceGetTenant(idOrName: string, options?: any): AxiosPromise<V1Tenant> {
       return localVarFp
         .tenantServiceGetTenant(idOrName, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
+     * @summary GetTenant  authz: saas.tenant,{id},get
+     * @param {string} idOrName
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    tenantServiceGetTenantPublic(idOrName: string, options?: any): AxiosPromise<V1TenantInfo> {
+      return localVarFp
+        .tenantServiceGetTenantPublic(idOrName, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary ListTenant  authz: saas.tenant,*,list
      * @param {number} [pageOffset]
      * @param {number} [pageSize]
      * @param {string} [search]
@@ -670,7 +829,7 @@ export const TenantServiceApiFactory = function (
     },
     /**
      *
-     * @summary authz: saas.tenant,*,list
+     * @summary ListTenant  authz: saas.tenant,*,list
      * @param {V1ListTenantRequest} body
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -685,7 +844,7 @@ export const TenantServiceApiFactory = function (
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
+     * @summary UpdateTenant  authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -695,14 +854,14 @@ export const TenantServiceApiFactory = function (
       tenantId: string,
       body: V1UpdateTenantRequest,
       options?: any,
-    ): AxiosPromise<Tenantv1Tenant> {
+    ): AxiosPromise<V1Tenant> {
       return localVarFp
         .tenantServiceUpdateTenant(tenantId, body, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary authz: saas.tenant,{id},update
+     * @summary UpdateTenant  authz: saas.tenant,{id},update
      * @param {string} tenantId
      * @param {V1UpdateTenantRequest} body
      * @param {*} [options] Override http request option.
@@ -712,7 +871,7 @@ export const TenantServiceApiFactory = function (
       tenantId: string,
       body: V1UpdateTenantRequest,
       options?: any,
-    ): AxiosPromise<Tenantv1Tenant> {
+    ): AxiosPromise<V1Tenant> {
       return localVarFp
         .tenantServiceUpdateTenant2(tenantId, body, options)
         .then((request) => request(axios, basePath));
@@ -758,6 +917,20 @@ export interface TenantServiceApiTenantServiceGetTenantRequest {
    *
    * @type {string}
    * @memberof TenantServiceApiTenantServiceGetTenant
+   */
+  readonly idOrName: string;
+}
+
+/**
+ * Request parameters for tenantServiceGetTenantPublic operation in TenantServiceApi.
+ * @export
+ * @interface TenantServiceApiTenantServiceGetTenantPublicRequest
+ */
+export interface TenantServiceApiTenantServiceGetTenantPublicRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof TenantServiceApiTenantServiceGetTenantPublic
    */
   readonly idOrName: string;
 }
@@ -897,7 +1070,7 @@ export interface TenantServiceApiTenantServiceUpdateTenant2Request {
 export class TenantServiceApi extends BaseAPI {
   /**
    *
-   * @summary authz: saas.tenant,*,create
+   * @summary CreateTenant  authz: saas.tenant,*,create
    * @param {TenantServiceApiTenantServiceCreateTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -914,7 +1087,7 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: saas.tenant,{id},delete
+   * @summary DeleteTenant  authz: saas.tenant,{id},delete
    * @param {TenantServiceApiTenantServiceDeleteTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -931,7 +1104,20 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: saas.tenant,{id},get
+   * @summary GetCurrentTenant
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TenantServiceApi
+   */
+  public tenantServiceGetCurrentTenant(options?: AxiosRequestConfig) {
+    return TenantServiceApiFp(this.configuration)
+      .tenantServiceGetCurrentTenant(options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary GetTenant  authz: saas.tenant,{id},get
    * @param {TenantServiceApiTenantServiceGetTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -948,7 +1134,24 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: saas.tenant,*,list
+   * @summary GetTenant  authz: saas.tenant,{id},get
+   * @param {TenantServiceApiTenantServiceGetTenantPublicRequest} requestParameters Request parameters.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TenantServiceApi
+   */
+  public tenantServiceGetTenantPublic(
+    requestParameters: TenantServiceApiTenantServiceGetTenantPublicRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return TenantServiceApiFp(this.configuration)
+      .tenantServiceGetTenantPublic(requestParameters.idOrName, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary ListTenant  authz: saas.tenant,*,list
    * @param {TenantServiceApiTenantServiceListTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -976,7 +1179,7 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: saas.tenant,*,list
+   * @summary ListTenant  authz: saas.tenant,*,list
    * @param {TenantServiceApiTenantServiceListTenant2Request} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -993,7 +1196,7 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: saas.tenant,{id},update
+   * @summary UpdateTenant  authz: saas.tenant,{id},update
    * @param {TenantServiceApiTenantServiceUpdateTenantRequest} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -1010,7 +1213,7 @@ export class TenantServiceApi extends BaseAPI {
 
   /**
    *
-   * @summary authz: saas.tenant,{id},update
+   * @summary UpdateTenant  authz: saas.tenant,{id},update
    * @param {TenantServiceApiTenantServiceUpdateTenant2Request} requestParameters Request parameters.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
