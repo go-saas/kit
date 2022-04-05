@@ -89,7 +89,7 @@ upstreams:
   -
     id: web
     nodes:
-      "web:80": 1
+      "web:8080": 1
     type: roundrobin
 
   - id: jaeger
