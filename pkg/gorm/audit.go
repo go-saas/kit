@@ -73,7 +73,14 @@ func assignCreatedBy(db *gorm.DB) {
 	if isAuditable(db) {
 		if user, ok := getCurrentUser(db); ok {
 			f := db.Statement.Schema.FieldsByName["CreatedBy"]
-			f.Set(db.Statement.Context, db.Statement.ReflectValue, &user)
+			switch db.Statement.ReflectValue.Kind() {
+			case reflect.Slice, reflect.Array:
+				for i := 0; i < db.Statement.ReflectValue.Len(); i++ {
+					f.Set(db.Statement.Context, db.Statement.ReflectValue.Index(i), &user)
+				}
+			case reflect.Struct:
+				f.Set(db.Statement.Context, db.Statement.ReflectValue, &user)
+			}
 		}
 	}
 }
@@ -82,7 +89,14 @@ func assignUpdatedBy(db *gorm.DB) {
 	if isAuditable(db) {
 		if user, ok := getCurrentUser(db); ok {
 			f := db.Statement.Schema.FieldsByName["UpdatedBy"]
-			f.Set(db.Statement.Context, db.Statement.ReflectValue, &user)
+			switch db.Statement.ReflectValue.Kind() {
+			case reflect.Slice, reflect.Array:
+				for i := 0; i < db.Statement.ReflectValue.Len(); i++ {
+					f.Set(db.Statement.Context, db.Statement.ReflectValue.Index(i), &user)
+				}
+			case reflect.Struct:
+				f.Set(db.Statement.Context, db.Statement.ReflectValue, &user)
+			}
 		}
 	}
 }

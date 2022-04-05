@@ -96,7 +96,9 @@ func buildUserTenantsScope() func(db *gorm.DB) *gorm.DB {
 
 func (u *UserRepo) List(ctx context.Context, query *v1.ListUsersRequest) ([]*biz.User, error) {
 	db := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope())
-	db = db.Scopes(buildUserScope(query.Filter), gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
+	db = db.Scopes(buildUserScope(query.Filter), func(db *gorm.DB) *gorm.DB {
+		return db.Preload("Roles")
+	}, gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
 	var items []*biz.User
 	res := db.Find(&items)
 	return items, res.Error
@@ -239,10 +241,8 @@ func (u *UserRepo) GetRoles(ctx context.Context, user *biz.User) ([]biz.Role, er
 func (u *UserRepo) UpdateRoles(ctx context.Context, user *biz.User, roles []biz.Role) error {
 	//delete all previous
 	db := u.GetDb(ctx)
-	if err := db.Model(&user).Association("Roles").Clear(); err != nil {
-		return err
-	}
-	if err := db.Model(&user).Association("Roles").Append(roles); err != nil {
+	user.Roles = roles
+	if err := db.Model(&user).Association("Roles").Replace(roles); err != nil {
 		return err
 	}
 	return nil

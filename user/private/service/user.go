@@ -464,10 +464,9 @@ func MapBizUserToApi(ctx context.Context, u *biz.User, b blob.Factory) *pb.User 
 	}
 	if u.Roles != nil {
 		var returnRoles = lo.Map(u.Roles, func(i biz.Role, _ int) *v1.Role {
-			return &v1.Role{
-				Id:   i.ID.String(),
-				Name: i.Name,
-			}
+			r := &v1.Role{}
+			MapBizRoleToApi(&i, r)
+			return r
 		})
 		res.Roles = returnRoles
 	}
