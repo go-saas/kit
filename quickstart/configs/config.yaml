@@ -89,7 +89,7 @@ user:
   password_score_min: 0
   admin:
     username: admin
-    password: 123456
+    password: "123456"
   permission:
     groups:
       - name: "permission.cms.post"

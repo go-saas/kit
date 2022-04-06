@@ -3,6 +3,7 @@
 # go-saas-kit
 
 Microservice architecture kit for golang sass project
+Demo address http://106.75.239.46:8600
 
 # Architecture
 
