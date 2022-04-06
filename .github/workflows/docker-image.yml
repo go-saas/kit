@@ -61,7 +61,7 @@ jobs:
           port: ${{ secrets.PORT }}
           envs: DOCKER_TAG
           script: |
-            
+            echo "$DOCKER_TAG"
             cd /app/go-saas-kit
             docker-compose -f docker-compose.yml -f docker-compose.tracing.yml pull
             docker-compose -f docker-compose.yml -f docker-compose.tracing.yml up -d
