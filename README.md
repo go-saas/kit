@@ -11,16 +11,16 @@ Microservice architecture kit for golang sass project
 # Quick Start
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.tracing.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose.tracing.yml up -d
 ```
 With hydra
 ```
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.hydra.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose.hydra.yml up -d
 ```
 
 Open `http://localhost:8600` to see the web ui
 
 Username: admin
-Password: youShouldChangeThis@123
+Password: 123456
 
 Open `http://localhost:8600/swagger` to see the api documentation
