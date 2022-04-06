@@ -10,54 +10,42 @@ import { FormSchema } from '/@/components/Form/src/types/form';
 import { BasicColumn } from '/@/components/Table/src/types/table';
 import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();
-const defaultRequirement = {
-  namespace: '*',
-  resource: '*',
-  action: '*',
-};
+
 export function getPermissiontColumns(): BasicColumn[] {
   return [
     {
       title: t('routes.system.permission.namespace'),
       dataIndex: 'namespace',
-      requirement: defaultRequirement,
     },
     {
       title: t('routes.system.permission.subject'),
       dataIndex: 'subject',
-      requirement: defaultRequirement,
     },
     {
       title: t('routes.system.permission.resource'),
       dataIndex: 'resource',
-      requirement: defaultRequirement,
     },
     {
       title: t('routes.system.permission.tenantId'),
       dataIndex: 'tenantId',
-      requirement: defaultRequirement,
     },
     {
       title: t('routes.system.permission.effect'),
       dataIndex: 'effect',
-      requirement: defaultRequirement,
     },
     {
       title: t('routes.system.permission.createdAt'),
       dataIndex: 'createdAt',
-      requirement: defaultRequirement,
       format: 'date|YYYY-MM-DD HH:mm:ss',
     },
     {
       title: t('routes.system.permission.updatedAt'),
       dataIndex: 'updatedAt',
-      requirement: defaultRequirement,
       format: 'date|YYYY-MM-DD HH:mm:ss',
     },
     {
       width: 60,
       title: t('routes.system.permission.action'),
-      requirement: defaultRequirement,
       dataIndex: 'action',
       slots: { customRender: 'action' },
       fixed: undefined,

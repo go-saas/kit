@@ -2,7 +2,11 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> {{ t('user.user.create') }} </a-button>
+        <Authority :value="[{ namespace: 'user.role', resource: '*', action: 'create' }]">
+          <a-button type="primary" @click="handleCreate">
+            {{ t('user.user.create') }}
+          </a-button>
+        </Authority>
       </template>
       <template #avatar="{ record }">
         <img :src="record.avatar?.url" alt="" />
@@ -62,12 +66,13 @@
   import { getRoleName } from '../role/data';
   import UserDrawer from './UserDrawer.vue';
   import { Tag } from 'ant-design-vue';
+  import { Authority } from '/@/components/Authority';
   export default defineComponent({
-    components: { BasicTable, UserDrawer, Tag, TableAction },
+    components: { BasicTable, UserDrawer, Tag, TableAction, Authority },
     setup() {
       const { t } = useI18n();
       const [registerDrawer, { openDrawer }] = useDrawer();
-      const [registerTable, { reload }] = useTable({
+      const [registerTable, { reload, updateTableDataRecord }] = useTable({
         title: t('user.user.list'),
         api: getUsertData,
         columns: getUsertColumns(),
@@ -102,11 +107,12 @@
       //   // };
       //   // // 删除
       // }
-      function handleSuccess() {
-        // if (isUpdate) {
-        //   updateTableDataRecord(values.id, values);
-        // }
-        reload();
+      async function handleSuccess({ isUpdate, values }) {
+        if (isUpdate) {
+          updateTableDataRecord(values.id, values);
+        } else {
+          await reload();
+        }
       }
       // onMounted(() => {
       // });

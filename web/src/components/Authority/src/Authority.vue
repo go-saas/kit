@@ -17,7 +17,7 @@
        * @default ''
        */
       value: {
-        type: Object as PropType<Nullable<PermissionRequirement>>,
+        type: Object as PropType<Nullable<PermissionRequirement[] | PermissionRequirement>>,
         default: null,
       },
     },

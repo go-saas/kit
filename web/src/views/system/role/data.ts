@@ -10,18 +10,12 @@ import { FormSchema } from '/@/components/Form/src/types/form';
 import { BasicColumn } from '/@/components/Table/src/types/table';
 import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();
-const defaultRequirement = {
-  namespace: '*',
-  resource: '*',
-  action: '*',
-};
 
 export function getRoleColumns(): BasicColumn[] {
   return [
     {
       title: t('role.role.name'),
       dataIndex: 'name',
-      requirement: defaultRequirement,
       slots: { customRender: 'name' },
     },
   ];

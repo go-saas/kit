@@ -76,8 +76,8 @@
 
       const showDropdown = computed(() => getAvailableTenants.value.length > 0);
 
-      function handleChangeTenant(e: { key?: string }) {
-        const { key } = e;
+      function handleChangeTenant(info) {
+        const { key } = info;
         userStore.changeTenant(key);
       }
       const getDisplayName = (userTenant: UserTenantInfo) => {

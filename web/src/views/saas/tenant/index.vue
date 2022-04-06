@@ -2,7 +2,11 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> {{ t('saas.tenant.create') }} </a-button>
+        <Authority :value="[{ namespace: 'saas.tenant', resource: '*', action: 'create' }]">
+          <a-button type="primary" @click="handleCreate">
+            {{ t('saas.tenant.create') }}
+          </a-button></Authority
+        >
       </template>
       <template #logo="{ record }">
         <img :src="record.logo?.url" alt="" />
@@ -15,7 +19,8 @@
               icon: 'clarity:switch-line',
               onClick: handleChangeTenant.bind(null, record),
               tooltip: t('saas.tenant.change'),
-              auth: [{ namespace: '*', resource: '*', action: '*', hostOnly: true }],
+              disabled: record.separateDb,
+              auth: [{ namespace: '*', resource: '*', action: '*' }],
             },
             {
               icon: 'ant-design:delete-outlined',
@@ -24,6 +29,7 @@
                 title: t('common.confirmDelete'),
                 confirm: handleDelete.bind(null, record),
               },
+              auth: [{ namespace: 'saas.tenant', resource: '*', action: 'delete' }],
             },
           ]"
         />
@@ -41,16 +47,12 @@
   import TenantDrawer from './TenantDrawer.vue';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useUserStore } from '/@/store/modules/user';
+  import { Authority } from '/@/components/Authority';
   export default defineComponent({
-    components: { BasicTable, TableAction, TenantDrawer },
+    components: { BasicTable, TableAction, TenantDrawer, Authority },
     setup() {
       const { t } = useI18n();
       const userStore = useUserStore();
-      const defaultRequirement = {
-        namespace: '*',
-        resource: '*',
-        action: '*',
-      };
       const [registerDrawer, { openDrawer }] = useDrawer();
       const [registerTable, { reload, updateTableDataRecord }] = useTable({
         title: t('saas.tenant.list'),
@@ -64,7 +66,6 @@
         actionColumn: {
           width: 120,
           title: t('common.operating'),
-          requirement: defaultRequirement,
           slots: { customRender: 'action' },
           fixed: undefined,
         },
@@ -92,11 +93,12 @@
         postDeleteTenantData(deleteId as TenantServiceApiTenantServiceDeleteTenantRequest);
         reload();
       }
-      function handleSuccess({ isUpdate, values }) {
+      async function handleSuccess({ isUpdate, values }) {
         if (isUpdate) {
           updateTableDataRecord(values.id, values);
+        } else {
+          await reload();
         }
-        reload();
       }
       function handleChangeTenant(record: Recordable) {
         userStore.changeTenant(record.id!);

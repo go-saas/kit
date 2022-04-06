@@ -13,50 +13,39 @@ import { uploadApi } from '/@/api/sys/upload';
 import { UploadFileParams } from '/#/axios';
 import { FileItem } from '/@/components/Upload/src/typing';
 const { t } = useI18n();
-const defaultRequirement = {
-  namespace: '*',
-  resource: '*',
-  action: '*',
-};
+
 export function getTenantColumns(): BasicColumn[] {
   return [
     // {
     //   title: 'Logo',
     //   dataIndex: 'logo',
-    //   requirement: defaultRequirement,
     // },
     {
       title: t('saas.tenant.logo'),
       dataIndex: 'logo',
       width: 100,
-      requirement: defaultRequirement,
       slots: { customRender: 'logo' },
     },
     {
       title: t('saas.tenant.name'),
       dataIndex: 'name',
-      requirement: defaultRequirement,
     },
     {
       title: t('saas.tenant.region'),
       dataIndex: 'region',
-      requirement: defaultRequirement,
     },
     {
       title: t('saas.tenant.displayName'),
       dataIndex: 'displayName',
-      requirement: defaultRequirement,
     },
     {
       title: t('saas.tenant.createdAt'),
       dataIndex: 'createdAt',
-      requirement: defaultRequirement,
       format: 'date|YYYY-MM-DD HH:mm:ss',
     },
     {
       title: t('saas.tenant.updatedAt'),
       dataIndex: 'updatedAt',
-      requirement: defaultRequirement,
       format: 'date|YYYY-MM-DD HH:mm:ss',
     },
   ];

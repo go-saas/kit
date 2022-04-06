@@ -2,7 +2,9 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate">{{ t('menu.menu.create') }} </a-button>
+        <Authority :value="[{ namespace: 'sys.menu', resource: '*', action: 'create' }]">
+          <a-button type="primary" @click="handleCreate">{{ t('menu.menu.create') }} </a-button>
+        </Authority>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -10,6 +12,7 @@
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
+              auth: [{ namespace: 'sys.menu', resource: '*', action: 'update' }],
             },
             {
               icon: 'ant-design:delete-outlined',
@@ -18,6 +21,7 @@
                 title: t('common.confirmDelete'),
                 confirm: handleDelete.bind(null, record),
               },
+              auth: [{ namespace: 'sys.menu', resource: '*', action: 'delete' }],
             },
           ]"
         />
@@ -33,14 +37,10 @@
   import { getMenuColumns, getMenuData, postDeleteMenuData } from './data';
   import MenuDrawer from './MenuDrawer.vue';
   import { useI18n } from '/@/hooks/web/useI18n';
+  import { Authority } from '/@/components/Authority';
   export default defineComponent({
-    components: { BasicTable, TableAction, MenuDrawer },
+    components: { BasicTable, TableAction, MenuDrawer, Authority },
     setup() {
-      const defaultRequirement = {
-        namespace: '*',
-        resource: '*',
-        action: '*',
-      };
       const { t } = useI18n();
       const [registerDrawer, { openDrawer }] = useDrawer();
       const [registerTable, { reload, updateTableDataRecord, getRawDataSource }] = useTable({
@@ -55,7 +55,6 @@
         actionColumn: {
           width: 80,
           title: t('common.operating'),
-          requirement: defaultRequirement,
           dataIndex: 'action',
           slots: { customRender: 'action' },
           fixed: undefined,
@@ -85,11 +84,12 @@
         postDeleteMenuData({ id: record.id });
         reload();
       }
-      function handleSuccess({ isUpdate, values }) {
+      async function handleSuccess({ isUpdate, values }) {
         if (isUpdate) {
           updateTableDataRecord(values.id, values);
+        } else {
+          await reload();
         }
-        reload();
       }
       return {
         handleCreate,

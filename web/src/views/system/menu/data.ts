@@ -14,25 +14,18 @@ import { useI18n } from '/@/hooks/web/useI18n';
 import { transformObjToAppRouteRecordRaw } from '/@/router/helper/routeHelper';
 import { AppRouteRecordRaw } from '/@/router/types';
 const { t } = useI18n();
-export const defaultRequirement = {
-  namespace: '*',
-  resource: '*',
-  action: '*',
-};
 
 export function getMenuColumns(): BasicColumn[] {
   return [
     {
       title: t('routes.system.menu.name'),
       dataIndex: 'name',
-      requirement: defaultRequirement,
       align: 'left',
     },
     {
       title: t('routes.system.menu.icon'),
       dataIndex: 'icon',
       width: 50,
-      requirement: defaultRequirement,
       customRender: ({ record }) => {
         return h(Icon, { icon: record.meta.icon });
       },
@@ -40,17 +33,14 @@ export function getMenuColumns(): BasicColumn[] {
     {
       title: t('routes.system.menu.component'),
       dataIndex: 'component',
-      requirement: defaultRequirement,
     },
     {
       title: t('routes.system.menu.path'),
       dataIndex: 'path',
-      requirement: defaultRequirement,
     },
     {
       title: t('routes.system.menu.redirect'),
       dataIndex: 'redirect',
-      requirement: defaultRequirement,
     },
   ];
 }

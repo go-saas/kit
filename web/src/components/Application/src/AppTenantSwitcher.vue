@@ -3,19 +3,21 @@
  * @Description: logo component
 -->
 <template>
-  <Input.Search
-    :placeholder="t('saas.tenant.name')"
-    size="small"
-    allowClear
-    v-model:value="searchValue"
-    @search="handleChangeTenant"
-  >
-    <template #enterButton>
-      <Button> {{ t('saas.tenant.change') }} </Button>
-    </template>
-  </Input.Search>
-  <div class="anticon" v-if="!loading">
-    {{ getDisplayName(currentTenant!) }}
+  <div class="wrap">
+    <div class="anticon" v-if="!loading">
+      {{ getDisplayName(currentTenant!) }}
+    </div>
+    <Input.Search
+      :placeholder="t('saas.tenant.name')"
+      size="large"
+      allowClear
+      v-model:value="searchValue"
+      @search="handleChangeTenant"
+    >
+      <template #enterButton>
+        <Button> {{ t('saas.tenant.change') }} </Button>
+      </template>
+    </Input.Search>
   </div>
 </template>
 <script lang="ts" setup>
@@ -24,6 +26,7 @@
   import { useUserStore } from '/@/store/modules/user';
   import { TenantServiceApi, V1GetCurrentTenantReply } from '/@/api-gen';
   import { useI18n } from '/@/hooks/web/useI18n';
+
   const { t } = useI18n();
   // const props = defineProps({});
   const loading = ref(true);
@@ -49,4 +52,15 @@
     return tenanReply?.tenant?.displayName ?? '';
   };
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+  .wrap {
+    margin-bottom: 80px;
+
+    .anticon {
+      font-weight: bold;
+      font-size: 20px;
+      display: inline-block;
+      margin-bottom: 25px;
+    }
+  }
+</style>

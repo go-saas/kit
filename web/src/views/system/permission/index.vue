@@ -37,7 +37,7 @@
     setup() {
       const { t } = useI18n();
       const [registerDrawer, { openDrawer }] = useDrawer();
-      const [registerTable, { reload }] = useTable({
+      const [registerTable, { reload, updateTableDataRecord }] = useTable({
         title: t('permission.permission.list'),
         api: getPermissiontData,
         columns: getPermissiontColumns(),
@@ -74,8 +74,12 @@
         postDeletePermissiontData(deleteParameter as V1RemoveSubjectPermissionRequest);
         reload();
       }
-      function handleSuccess() {
-        reload();
+      async function handleSuccess({ isUpdate, values }) {
+        if (isUpdate) {
+          updateTableDataRecord(values.id, values);
+        } else {
+          await reload();
+        }
       }
       // onMounted(() => {
       // });

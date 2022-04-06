@@ -7,7 +7,9 @@
         </Tag>
       </template>
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> {{ t('role.role.create') }} </a-button>
+        <Authority :value="[{ namespace: 'user.role', resource: '*', action: 'create' }]">
+          <a-button type="primary" @click="handleCreate"> {{ t('role.role.create') }} </a-button>
+        </Authority>
       </template>
       <template #action="{ record }">
         <TableAction
@@ -20,6 +22,7 @@
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),
               disabled: record.isPreserved ?? false,
+              auth: [{ namespace: 'user.role', resource: '*', action: 'update' }],
             },
             {
               icon: 'ant-design:delete-outlined',
@@ -28,6 +31,7 @@
                 title: t('common.confirmDelete'),
                 confirm: handleDelete.bind(null, record),
               },
+              auth: [{ namespace: 'user.role', resource: '*', action: 'delete' }],
             },
           ]"
         />
@@ -46,16 +50,12 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useGo } from '/@/hooks/web/usePage';
   import { Tag } from 'ant-design-vue';
+  import { Authority } from '/@/components/Authority';
   export default defineComponent({
-    components: { BasicTable, TableAction, RoleDrawer, Tag },
+    components: { BasicTable, TableAction, RoleDrawer, Tag, Authority },
     setup() {
       const go = useGo();
       const { t } = useI18n();
-      const defaultRequirement = {
-        namespace: '*',
-        resource: '*',
-        action: '*',
-      };
       const [registerDrawer, { openDrawer }] = useDrawer();
       const [registerTable, { reload, updateTableDataRecord }] = useTable({
         title: t('role.role.list'),
@@ -69,7 +69,6 @@
         actionColumn: {
           width: 120,
           title: t('common.operating'),
-          requirement: defaultRequirement,
           dataIndex: 'action',
           slots: { customRender: 'action' },
           fixed: undefined,
@@ -101,8 +100,9 @@
       async function handleSuccess({ isUpdate, values }) {
         if (isUpdate) {
           updateTableDataRecord(values.id, values);
+        } else {
+          await reload();
         }
-        reload();
       }
       // /system/role/AccountDetail
       // onMounted(() => {

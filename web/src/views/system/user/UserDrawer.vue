@@ -61,7 +61,7 @@
               email: values.email,
               gender: values.gender,
               birthday: values.birthday,
-              rolesId: [...values.roles],
+              rolesId: [...(values.roles ?? [])],
             },
           };
           console.log(createUserParamas);

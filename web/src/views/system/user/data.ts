@@ -13,50 +13,42 @@ import { uploadApi } from '/@/api/sys/upload';
 import { UploadFileParams } from '/#/axios';
 
 const { t } = useI18n();
-const defaultRequirement = {
-  namespace: '*',
-  resource: '*',
-  action: '*',
-};
+
 export function getUsertColumns(): BasicColumn[] {
   return [
     {
       title: t('routes.system.user.avatar'),
       dataIndex: 'avatar',
-      requirement: defaultRequirement,
+
       slots: { customRender: 'avatar' },
     },
 
     {
       title: t('routes.system.user.username'),
       dataIndex: 'username',
-      requirement: defaultRequirement,
     },
     {
       title: t('routes.system.user.phone'),
       dataIndex: 'phone',
-      requirement: defaultRequirement,
     },
     {
       title: t('routes.system.user.email'),
       dataIndex: 'email',
-      requirement: defaultRequirement,
     },
     {
       title: t('user.user.role'),
       dataIndex: 'roles',
-      requirement: defaultRequirement,
+
       slots: { customRender: 'roles' },
     },
     {
       title: t('routes.system.user.name'),
       dataIndex: 'name',
-      requirement: defaultRequirement,
     },
     {
       title: t('user.gender.gender'),
       dataIndex: 'gender',
-      requirement: defaultRequirement,
+
       format: (text: string, _record: Recordable, _index: number) => {
         return t(`user.gender.${text.toLowerCase()}`);
       },
@@ -64,19 +56,19 @@ export function getUsertColumns(): BasicColumn[] {
     {
       title: t('routes.system.user.birthday'),
       dataIndex: 'birthday',
-      requirement: defaultRequirement,
+
       format: 'date|YYYY-MM-DD HH:mm:ss',
     },
     {
       title: t('common.createdAt'),
       dataIndex: 'createdAt',
-      requirement: defaultRequirement,
+
       format: 'date|YYYY-MM-DD HH:mm:ss',
     },
     {
       title: t('common.updatedAt'),
       dataIndex: 'updatedAt',
-      requirement: defaultRequirement,
+
       format: 'date|YYYY-MM-DD HH:mm:ss',
     },
   ];
@@ -146,7 +138,7 @@ export const formSchema: FormSchema[] = [
         },
       ],
     },
-    required: true,
+    defaultValue: 'OTHER',
   },
   {
     field: 'roles',
@@ -227,7 +219,6 @@ export async function getUsertData(param: BasicPageParams): Promise<BasicFetchRe
         total: response.data.totalSize!,
         items: response.data.items!,
       };
-      console.log(userData);
       return userData;
     });
 }

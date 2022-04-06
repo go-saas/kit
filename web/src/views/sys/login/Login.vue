@@ -6,7 +6,6 @@
       v-if="!sessionTimeout && showLocale"
     />
     <AppDarkModeToggle class="absolute top-3 right-7 enter-x" v-if="!sessionTimeout" />
-    <AppTenantSwitcher />
     <span class="-enter-x xl:hidden">
       <AppLogo :alwaysShowTitle="true" />
     </span>
@@ -50,6 +49,7 @@
               enter-x
             "
           >
+            <AppTenantSwitcher />
             <Loading :loading="loading" :absolute="true" />
             <LoginForm />
             <ForgetPasswordForm />
@@ -64,7 +64,7 @@
 </template>
 <script lang="ts" setup>
   import { computed, onMounted, ref } from 'vue';
-  import { AppLogo, AppTenantSwitcher } from '/@/components/Application';
+  import { AppTenantSwitcher } from '/@/components/Application';
   import { AppLocalePicker, AppDarkModeToggle } from '/@/components/Application';
   import LoginForm from './LoginForm.vue';
   import ForgetPasswordForm from './ForgetPasswordForm.vue';

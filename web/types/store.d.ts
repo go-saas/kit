@@ -72,7 +72,6 @@ export interface PermissionRequirement {
   namespace: string;
   resource: string;
   action: string;
-  hostOnly?: bool;
 }
 
 export interface BeforeMiniState {
