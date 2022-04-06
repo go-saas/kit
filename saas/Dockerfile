@@ -3,7 +3,7 @@ FROM golang:1.18 AS builder
 COPY . /src
 WORKDIR /src
 
-RUN GOPROXY=https://goproxy.cn make -f ./saas/Makefile build
+RUN make -f ./saas/Makefile build
 
 FROM debian:stable-slim
 
