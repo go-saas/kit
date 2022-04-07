@@ -155,6 +155,18 @@ func ErrorRememberTokenNotFound(format string, args ...interface{}) *errors.Erro
 	return errors.New(403, ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String(), fmt.Sprintf(format, args...))
 }
 
+func IsRememberTokenUsed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_REMEMBER_TOKEN_USED.String() && e.Code == 403
+}
+
+func ErrorRememberTokenUsed(format string, args ...interface{}) *errors.Error {
+	return errors.New(403, ErrorReason_REMEMBER_TOKEN_USED.String(), fmt.Sprintf(format, args...))
+}
+
 func IsUserDeleted(err error) bool {
 	if err == nil {
 		return false

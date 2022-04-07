@@ -18,7 +18,11 @@ func NewRefreshProvider(client v1.AuthClient, logger klog.Logger) session.Refres
 					return err
 				} else {
 					l.Errorf("fail to refresh with error %v", err)
-					//just clean remember token
+					if v1.IsRememberTokenUsed(err) {
+						//for concurrent refresh, just ignore
+						return nil
+					}
+					//clean remember token
 					err = writer.SignOutRememberToken(ctx)
 					if err != nil {
 						return err

@@ -337,7 +337,7 @@ func (s *AuthService) refresh(ctx context.Context, refreshToken string) (*tokenM
 			return nil, err
 		}
 		//delete pre
-		if err := s.refreshTokenRepo.Revoke(ctx, refreshToken); err != nil {
+		if err := s.refreshTokenRepo.Revoke(ctx, refreshToken, true); err != nil {
 			return nil, err
 		}
 		return &tokenModel{accessToken: t.accessToken, expiresIn: t.expiresIn, refreshToken: t.refreshToken}, nil

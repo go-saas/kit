@@ -25,6 +25,8 @@ enum ErrorReason {
 
   CONFIRM_PASSWORD_MISMATCH= 10[(errors.code) = 400];
   REMEMBER_TOKEN_NOT_FOUND = 11[(errors.code) = 403];
+  REMEMBER_TOKEN_USED = 14[(errors.code) = 403];
+
 
   USER_DELETED=12 [(errors.code) = 403];
 

@@ -43,7 +43,8 @@ func (r *RefreshTokenRepo) Find(ctx context.Context, token string, validOnly boo
 	return &t, nil
 }
 
-func (r *RefreshTokenRepo) Revoke(ctx context.Context, token string) (err error) {
-	err = r.GetDb(ctx).Delete(&biz.RefreshToken{}, "token = ? ", token).Error
+func (r *RefreshTokenRepo) Revoke(ctx context.Context, token string, used bool) (err error) {
+	currTime := time.Now()
+	err = r.GetDb(ctx).Where("token = ?", token).Updates(map[string]interface{}{"expires": &currTime, "used": used}).Error
 	return
 }

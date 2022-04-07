@@ -313,10 +313,16 @@ func (um *UserManager) GenerateRememberToken(ctx context.Context, duration time.
 
 func (um *UserManager) RefreshRememberToken(ctx context.Context, token string, duration time.Duration) (*User, string, error) {
 	//find token
-	if t, err := um.refreshTokenRepo.Find(ctx, token, true); err != nil {
+	if t, err := um.refreshTokenRepo.Find(ctx, token, false); err != nil {
 		return nil, "", err
 	} else {
 		if t == nil {
+			return nil, "", v12.ErrorRememberTokenNotFound("")
+		}
+		if t.Used {
+			return nil, "", v12.ErrorRememberTokenUsed("")
+		}
+		if !t.Valid() {
 			return nil, "", v12.ErrorRememberTokenNotFound("")
 		}
 		//find user
@@ -333,7 +339,7 @@ func (um *UserManager) RefreshRememberToken(ctx context.Context, token string, d
 		if err != nil {
 			return nil, "", err
 		}
-		err = um.refreshTokenRepo.Revoke(ctx, token)
+		err = um.refreshTokenRepo.Revoke(ctx, token, true)
 		if err != nil {
 			return user, "", err
 		}

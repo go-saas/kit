@@ -7,6 +7,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/errors"
+	v1 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	"github.com/goxiaoy/sessions"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"net/http"
@@ -64,7 +65,11 @@ func Refresh(errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider, va
 								errEncoder(w, r, err)
 								return
 							} else {
-								//just clean remember token
+								if v1.IsRememberTokenUsed(err) {
+									//for concurrent refresh,  ignore
+									return
+								}
+								//clean remember token
 								stateWriter.SignOutRememberToken(ctx)
 								stateWriter.Save(ctx)
 							}

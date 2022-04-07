@@ -3,7 +3,6 @@ package biz
 import (
 	"context"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -13,7 +12,7 @@ type RefreshToken struct {
 	Expires   *time.Time
 	Ip        string
 	UserAgent string
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	Used      bool
 }
 
 func NewRefreshToken(userId uuid.UUID, duration time.Duration, userAgent string, ip string) *RefreshToken {
@@ -43,5 +42,5 @@ type RefreshTokenRepo interface {
 	Create(ctx context.Context, t *RefreshToken) (err error)
 	Find(ctx context.Context, token string, validOnly bool) (*RefreshToken, error)
 	// Revoke refresh token
-	Revoke(ctx context.Context, token string) (err error)
+	Revoke(ctx context.Context, token string, used bool) (err error)
 }
