@@ -35,5 +35,8 @@ export default {
     redirect: 'Redirect',
     parent: 'Parent',
     icon: 'Icon',
+    title: 'Title',
+    priority: 'Priority',
+    iframe: 'Iframe',
   },
 };

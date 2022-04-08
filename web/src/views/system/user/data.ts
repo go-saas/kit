@@ -219,6 +219,7 @@ export async function getUsertData(param: BasicPageParams): Promise<BasicFetchRe
         total: response.data.totalSize!,
         items: response.data.items!,
       };
+      console.log(userData);
       return userData;
     });
 }

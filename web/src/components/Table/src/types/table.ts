@@ -5,7 +5,7 @@ import type { TableRowSelection as ITableRowSelection } from 'ant-design-vue/lib
 import type { ColumnProps } from 'ant-design-vue/lib/table';
 import { ComponentType } from './componentType';
 import { VueNode } from '/@/utils/propTypes';
-import { PermissionRequirement } from '/#/store';
+import { PermissionRequirement } from '@kit/core';
 
 export declare type SortOrder = 'ascend' | 'descend';
 

@@ -6,7 +6,7 @@
   import { defineComponent } from 'vue';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { getSlot } from '/@/utils/helper/tsxHelper';
-  import { PermissionRequirement } from '/#/store';
+  import { PermissionRequirement } from '@kit/core';
   export default defineComponent({
     name: 'Authority',
     props: {

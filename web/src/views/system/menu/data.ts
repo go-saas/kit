@@ -4,8 +4,8 @@ import {
   MenuServiceApiMenuServiceCreateMenuRequest,
   MenuServiceApiMenuServiceDeleteMenuRequest,
   MenuServiceApiMenuServiceUpdateMenuRequest,
-} from '/@/api-gen/api/menu-service-api';
-import { V1UpdateMenu } from '/@/api-gen/models/v1-update-menu';
+} from '/@/api-gen';
+import { V1UpdateMenu } from '/@/api-gen';
 import { BasicFetchResult, BasicPageParams } from '/@/api/model/baseModel';
 import { FormSchema } from '/@/components/Form/src/types/form';
 import Icon from '/@/components/Icon';
@@ -55,8 +55,28 @@ export const formSchema: FormSchema[] = [
   {
     field: 'component',
     label: t('routes.system.menu.component'),
-    component: 'Input',
     required: true,
+    component: 'AutoComplete',
+    componentProps: {
+      options: [
+        {
+          label: 'LAYOUT',
+          value: 'LAYOUT',
+          key: 'LAYOUT',
+        },
+        {
+          label: 'IFRAME',
+          value: 'IFRAME',
+          key: 'IFRAME',
+        },
+        {
+          label: 'MICROAPP',
+          value: 'MICROAPP',
+          key: 'MICROAPP',
+        },
+      ],
+    },
+    defaultValue: 'LAYOUT',
   },
   {
     field: 'path',
@@ -65,28 +85,47 @@ export const formSchema: FormSchema[] = [
     required: true,
   },
   {
+    field: 'iframe',
+    label: t('routes.system.menu.iframe'),
+    component: 'Input',
+    required: (callback) => {
+      return callback.values['component'] == 'IFRAME';
+    },
+    ifShow: (callback) => {
+      return callback.values['component'] == 'IFRAME';
+    },
+  },
+  {
+    field: 'microApp',
+    label: 'MicroApp',
+    component: 'Input',
+    required: (callback) => {
+      return callback.values['component'] == 'MICROAPP';
+    },
+    ifShow: (callback) => {
+      return callback.values['component'] == 'MICROAPP';
+    },
+  },
+  {
     field: 'redirect',
     label: t('routes.system.menu.redirect'),
     component: 'Input',
   },
   {
     field: 'icon',
-    label: '图标',
+    label: t('routes.system.menu.icon'),
     component: 'IconPicker',
   },
   {
     field: 'title',
-    label: 'title',
+    label: t('routes.system.menu.title'),
     component: 'Input',
+    required: true,
   },
-  {
-    field: 'microApp',
-    label: 'microApp',
-    component: 'Input',
-  },
+
   {
     field: 'priority',
-    label: 'priority',
+    label: t('routes.system.menu.priority'),
     component: 'InputNumber',
   },
   {

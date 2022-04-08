@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BasicTable @register="registerTable">
+    <BasicTable @register="registerTable" @fetch-success="onFetchSuccess">
       <template #toolbar>
         <Authority :value="[{ namespace: 'sys.menu', resource: '*', action: 'create' }]">
           <a-button type="primary" @click="handleCreate">{{ t('menu.menu.create') }} </a-button>
@@ -31,7 +31,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent } from 'vue';
+  import { defineComponent, nextTick } from 'vue';
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { useDrawer } from '/@/components/Drawer';
   import { getMenuColumns, getMenuData, postDeleteMenuData } from './data';
@@ -43,26 +43,27 @@
     setup() {
       const { t } = useI18n();
       const [registerDrawer, { openDrawer }] = useDrawer();
-      const [registerTable, { reload, updateTableDataRecord, getRawDataSource }] = useTable({
-        title: t('menu.menu.list'),
-        api: getMenuData,
-        columns: getMenuColumns(),
-        isTreeTable: true,
-        striped: false,
-        bordered: true,
-        canResize: false,
-        rowKey: 'id',
-        actionColumn: {
-          width: 80,
-          title: t('common.operating'),
-          dataIndex: 'action',
-          slots: { customRender: 'action' },
-          fixed: undefined,
-        },
-        handleSearchInfoFn(info) {
-          console.log(info);
-        },
-      });
+      const [registerTable, { reload, updateTableDataRecord, getRawDataSource, expandAll }] =
+        useTable({
+          title: t('menu.menu.list'),
+          api: getMenuData,
+          columns: getMenuColumns(),
+          isTreeTable: true,
+          striped: false,
+          bordered: true,
+          canResize: false,
+          rowKey: 'id',
+          actionColumn: {
+            width: 80,
+            title: t('common.operating'),
+            dataIndex: 'action',
+            slots: { customRender: 'action' },
+            fixed: undefined,
+          },
+          handleSearchInfoFn(info) {
+            console.log(info);
+          },
+        });
       function handleCreate(record: Recordable) {
         const rawData = getRawDataSource();
         openDrawer(true, {
@@ -80,9 +81,11 @@
         });
       }
       function handleDelete(record: Recordable) {
-        // 删除
         postDeleteMenuData({ id: record.id });
         reload();
+      }
+      function onFetchSuccess() {
+        nextTick(expandAll);
       }
       async function handleSuccess({ isUpdate, values }) {
         if (isUpdate) {
@@ -99,6 +102,7 @@
         registerDrawer,
         registerTable,
         t,
+        onFetchSuccess,
       };
     },
   });

@@ -1,5 +1,5 @@
 export {};
-import { PermissionRequirement } from '/#/store';
+import { PermissionRequirement } from '@kit/core';
 declare module 'vue-router' {
   interface RouteMeta extends Record<string | number | symbol, unknown> {
     orderNo?: number;
@@ -41,6 +41,5 @@ declare module 'vue-router' {
     ignoreRoute?: boolean;
     // Hide path for children
     hidePathForChildren?: boolean;
-    microApp?: string;
   }
 }

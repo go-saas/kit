@@ -5,7 +5,7 @@ import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT } from '/@/router/constant
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '/@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
-import { V1Menu } from '/@/api-gen/models';
+import { V1Menu } from '/@/api-gen';
 import { getDynamicComponent } from '/@/utils/dynamicComponent';
 
 export type LayoutMapKey = 'LAYOUT';
@@ -123,9 +123,7 @@ export function transformObjToAppRouteRecordRaw(
         orderNo: menu.priority,
         ignoreAuth: menu.ignoreAuth,
         frameSrc: menu.iframe,
-        microApp: menu.microApp,
       },
-
       icon: menu.icon ?? '',
       microApp: menu.microApp ?? '',
       title: menu.title ?? '',

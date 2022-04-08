@@ -4,7 +4,7 @@ import {
   TenantServiceApiTenantServiceDeleteTenantRequest,
   TenantServiceApiTenantServiceUpdateTenantRequest,
 } from '/@/api-gen';
-import { V1Tenant } from '/@/api-gen/models/v1-tenant';
+import { V1Tenant } from '/@/api-gen';
 import { BasicFetchResult, BasicPageParams } from '/@/api/model/baseModel';
 import { FormSchema } from '/@/components/Form/src/types/form';
 import { BasicColumn } from '/@/components/Table/src/types/table';

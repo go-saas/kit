@@ -9,19 +9,19 @@ import {
   transformObjToRoute,
 } from '/@/router/helper/routeHelper';
 import { transformRouteToMenu } from '/@/router/helper/menuHelper';
-import { PermissionAcl } from '/#/store';
-import { PermissionEffect } from '/@/enums/permissionEnum';
+import { PermissionAcl } from '@kit/core';
+import { PermissionEffect } from '@kit/core';
 
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import { ERROR_LOG_ROUTE, PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 
 import { filter } from '/@/utils/helper/treeHelper';
 
-import { PermissionServiceApi, MenuServiceApi } from '/@/api-gen/api';
+import { PermissionServiceApi, MenuServiceApi } from '/@/api-gen';
 import { PERMISSION_KEY } from '/@/enums/cacheEnum';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { PageEnum } from '/@/enums/pageEnum';
-import { isGrant } from '/@/utils/permission';
+import { isGrant } from '@kit/core';
 
 interface PermissionState {
   permissionList: PermissionAcl[];

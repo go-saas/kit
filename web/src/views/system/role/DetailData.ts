@@ -4,7 +4,7 @@ import {
   RoleServiceApiRoleServiceGetRoleRequest,
   RoleServiceApiRoleServiceUpdateRolePermissionRequest,
   RoleServiceApiRoleServiceUpdateRoleRequest,
-} from '/@/api-gen/api/role-service-api';
+} from '/@/api-gen';
 import { FormSchema } from '/@/components/Form/src/types/form';
 import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();

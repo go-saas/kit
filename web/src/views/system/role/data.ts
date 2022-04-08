@@ -3,8 +3,8 @@ import {
   RoleServiceApiRoleServiceCreateRoleRequest,
   RoleServiceApiRoleServiceDeleteRoleRequest,
   RoleServiceApiRoleServiceUpdateRoleRequest,
-} from '/@/api-gen/api/role-service-api';
-import { V1Role } from '/@/api-gen/models/v1-role';
+} from '/@/api-gen';
+import { V1Role } from '/@/api-gen';
 import { BasicFetchResult, BasicPageParams } from '/@/api/model/baseModel';
 import { FormSchema } from '/@/components/Form/src/types/form';
 import { BasicColumn } from '/@/components/Table/src/types/table';

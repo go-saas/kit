@@ -38,6 +38,7 @@
         if (unref(isUpdate)) {
           setFieldsValue({
             ...data.record,
+            iframe: data.record?.meta?.frameSrc,
           });
         }
         const treeData = data.rawData.items;

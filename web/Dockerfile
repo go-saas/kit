@@ -10,7 +10,7 @@ RUN pnpm fetch
 
 COPY . .
 
-RUN pnpm install --offline
+RUN pnpm install -r --offline
 RUN pnpm run build
 
 FROM nginx:alpine

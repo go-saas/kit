@@ -21,10 +21,3 @@ yarn serve
 ```bash
 yarn build
 ```
-
-### API generator
-
-```
-openapi-generator-cli generate -i ../openapi/merged.swagger.json -g typescript-axios -o ./src/api-gen/ -c ./tools/config.json
-
-```

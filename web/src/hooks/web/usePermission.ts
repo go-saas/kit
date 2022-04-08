@@ -9,8 +9,8 @@ import { router, resetRouter } from '/@/router';
 
 import { useMultipleTabStore } from '/@/store/modules/multipleTab';
 
-import { PermissionRequirement } from '/#/store';
-import { isGrant } from '/@/utils/permission';
+import { PermissionRequirement } from '@kit/core';
+import { isGrant } from '@kit/core';
 
 // User permissions related operations
 export function usePermission() {

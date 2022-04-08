@@ -35,5 +35,8 @@ export default {
     redirect: '跳转',
     parent: '父菜单',
     icon: '图标',
+    title: '标题',
+    priority: '优先级',
+    iframe: 'Iframe',
   },
 };

@@ -1,6 +1,6 @@
 import { ButtonProps } from 'ant-design-vue/es/button/buttonTypes';
 import { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip';
-import { PermissionRequirement } from '/#/store';
+import { PermissionRequirement } from '@kit/core';
 export interface ActionItem extends ButtonProps {
   onClick?: Fn;
   label?: string;

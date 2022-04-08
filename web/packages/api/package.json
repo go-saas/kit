@@ -1,0 +1,17 @@
+{
+  "name": "@kit/api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "openapi": "openapi-generator-cli generate -i merged.swagger.json -g typescript-axios -o . -c ./tools/config.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.4.26",
+    "typescript": "^4.4.4"
+  }
+}
