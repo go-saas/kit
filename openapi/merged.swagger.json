@@ -2738,6 +2738,53 @@
         }
       }
     },
+    "permissionv1PermissionDef": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "side": {
+          "$ref": "#/definitions/v1PermissionSide"
+        },
+        "extra": {
+          "type": "object"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "granted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "permissionv1PermissionDefGroup": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "side": {
+          "$ref": "#/definitions/v1PermissionSide"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "def": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/permissionv1PermissionDef"
+          }
+        },
+        "extra": {
+          "type": "object"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -3380,7 +3427,7 @@
         "defGroups": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/v1PermissionDefGroup"
+            "$ref": "#/definitions/permissionv1PermissionDefGroup"
           }
         }
       }
@@ -3573,7 +3620,7 @@
         "defGroups": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/v1PermissionDefGroup"
+            "$ref": "#/definitions/permissionv1PermissionDefGroup"
           }
         }
       }
@@ -3935,53 +3982,6 @@
         },
         "tenantId": {
           "type": "string"
-        }
-      }
-    },
-    "v1PermissionDef": {
-      "type": "object",
-      "properties": {
-        "displayName": {
-          "type": "string"
-        },
-        "side": {
-          "$ref": "#/definitions/v1PermissionSide"
-        },
-        "extra": {
-          "type": "object"
-        },
-        "namespace": {
-          "type": "string"
-        },
-        "action": {
-          "type": "string"
-        },
-        "granted": {
-          "type": "boolean"
-        }
-      }
-    },
-    "v1PermissionDefGroup": {
-      "type": "object",
-      "properties": {
-        "displayName": {
-          "type": "string"
-        },
-        "side": {
-          "$ref": "#/definitions/v1PermissionSide"
-        },
-        "priority": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "def": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1PermissionDef"
-          }
-        },
-        "extra": {
-          "type": "object"
         }
       }
     },
