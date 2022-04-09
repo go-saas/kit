@@ -10,6 +10,8 @@ import (
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v3"
+	"io"
+	"os"
 	"reflect"
 	"strings"
 )
@@ -29,9 +31,35 @@ func NewMenuSeed(dbProvider gorm.DbProvider, menuRepo MenuRepo) *MenuSeed {
 }
 
 func (m *MenuSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
+	if err := m.seedBytes(ctx, menuData); err != nil {
+		return err
+	}
+	if seedPath, ok := sCtx.Extra[SeedPathKey]; ok {
+		if path, ok := seedPath.(string); ok {
+			b, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			if err := m.seedBytes(ctx, b); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (m *MenuSeed) seedBytes(ctx context.Context, data []byte) error {
 	var v = make(map[string]interface{})
-	dec := yaml.NewDecoder(bytes.NewReader(menuData))
-	for dec.Decode(v) == nil {
+	dec := yaml.NewDecoder(bytes.NewReader(data))
+	for {
+		err := dec.Decode(v)
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			} else {
+				return err
+			}
+		}
 		if menus, ok := v["menus"]; ok {
 			err := m.upsertMenus(ctx, "", menus)
 			if err != nil {

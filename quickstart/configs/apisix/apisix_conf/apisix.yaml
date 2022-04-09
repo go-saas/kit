@@ -9,6 +9,11 @@ routes:
   -
     uri: /swagger*
     upstream_id: api-docs
+    plugins:
+      ext-plugin-pre-req:
+        conf:
+          - name: "kit_authz"
+            value: "{\"requirement\":[{\"namespace\":\"dev.docs\",\"resource\":\"*\",\"action\":\"*\"}]}"
 
   -
     uri: /jaeger*

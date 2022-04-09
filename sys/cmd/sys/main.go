@@ -7,6 +7,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
+	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	"github.com/goxiaoy/go-saas-kit/sys/private/data"
 	shttp "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/seed"
@@ -32,14 +33,21 @@ var (
 	flagconf string
 
 	id, _ = os.Hostname()
+
+	seedPath string
 )
 
 func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+	flag.StringVar(&seedPath, "seed", "", "seed path, eg: -seed config.yaml")
 }
 
 func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.Seeder) *kratos.App {
-	if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("")); err != nil {
+	extra := map[string]interface{}{}
+	if len(seedPath) > 0 {
+		extra[biz.SeedPathKey] = seedPath
+	}
+	if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("").WithExtra(extra)); err != nil {
 		panic(err)
 	}
 	return kratos.New(

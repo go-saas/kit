@@ -53,4 +53,6 @@ func (m *Menu) MergeWithPreservedFields(p *Menu) {
 	m.FullPath = p.FullPath
 	m.Redirect = p.Redirect
 	m.IsPreserved = p.IsPreserved
+	m.Path = p.Path
+	m.Priority = p.Priority
 }

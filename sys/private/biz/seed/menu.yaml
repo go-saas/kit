@@ -12,9 +12,22 @@ menus:
         resource: "*"
         action: "*"
     children:
-      - name: "tracing"
-        path: "http://localhost:8600/jaeger"
+      - name: "docs"
+        icon: "ant-design:api-outlined"
+        path: "/dev/docs"
         component: "IFRAME"
+        iframe: "/swagger"
+        title: "routes.dev.docs"
+        is_preserved: true
+        requirement:
+          - namespace: "dev.docs"
+            resource: "*"
+            action: "*"
+      - name: "tracing"
+        icon: "ant-design:eye-outlined"
+        path: "/dev/jaeger"
+        component: "IFRAME"
+        is_preserved: true
         iframe: "/jaeger"
         title: "routes.dev.jaeger"
         requirement:
