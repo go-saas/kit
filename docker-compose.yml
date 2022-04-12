@@ -41,9 +41,9 @@ services:
 
   user:
     image: ${DOCKER_REGISTRY}go-saas-kit-user:${DOCKER_TAG:-latest}
-    ports:
-      - "8500"
-      - "8501"
+#    ports:
+#      - "8500"
+#      - "8501"
     depends_on:
       - mysqld
       - redis
@@ -53,9 +53,9 @@ services:
 
   saas:
     image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
-    ports:
-      - "8520"
-      - "8521"
+#    ports:
+#      - "8520"
+#      - "8521"
     depends_on:
       - mysqld
       - kafka
@@ -67,9 +67,9 @@ services:
 
   sys:
     image: ${DOCKER_REGISTRY}go-saas-kit-sys:${DOCKER_TAG:-latest}
-    ports:
-      - "8530"
-      - "8531"
+#    ports:
+#      - "8530"
+#      - "8531"
     depends_on:
       - mysqld
 #      - saas
@@ -99,8 +99,8 @@ services:
   zoo1:
     image: wurstmeister/zookeeper
     hostname: zoo1
-    ports:
-      - "2181:2181"
+#    ports:
+#      - "2181:2181"
     restart: always
 
   kafka:

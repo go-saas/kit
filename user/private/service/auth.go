@@ -61,6 +61,7 @@ func NewAuthService(um *biz.UserManager,
 		emailer:          emailer,
 		security:         security,
 		auth:             authz,
+		trust:            trust,
 		logger:           klog.NewHelper(klog.With(logger, "module", "AuthService")),
 	}
 }

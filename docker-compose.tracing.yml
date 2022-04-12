@@ -3,10 +3,10 @@ services:
   # Jaeger
   jaeger-all-in-one:
     image: jaegertracing/all-in-one:latest
-    ports:
-      - "16686:16686" # jaeger ui port
-      - "14268"
-      - "14250"
+#    ports:
+#      - "16686:16686" # jaeger ui port
+#      - "14268"
+#      - "14250"
     environment:
       - QUERY_BASE_PATH=/jaeger
 
@@ -16,14 +16,14 @@ services:
     volumes:
       - ./quickstart/configs/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml
 
-    ports:
-      - "1888"   # pprof extension
-      - "8888:8888"   # Prometheus metrics exposed by the collector
-      - "8889:8889"   # Prometheus exporter metrics
-      - "13133:13133" # health_check extension
-      - "4317:4317"        # OTLP gRPC receiver
-      - "4318:4318"   # Add OTLP HTTP Receiver port mapping
-      - "55670:55679" # zpages extension
+#    ports:
+#      - "1888"   # pprof extension
+#      - "8888:8888"   # Prometheus metrics exposed by the collector
+#      - "8889:8889"   # Prometheus exporter metrics
+#      - "13133:13133" # health_check extension
+#      - "4317:4317"        # OTLP gRPC receiver
+#      - "4318:4318"   # Add OTLP HTTP Receiver port mapping
+#      - "55670:55679" # zpages extension
 
     depends_on:
       - jaeger-all-in-one

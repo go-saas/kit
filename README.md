@@ -23,6 +23,10 @@ With hydra
 ```
 docker-compose -f docker-compose.yml -f docker-compose.hydra.yml up -d
 ```
+Or with build
+```
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.tracing.yml up -d --build
+```
 
 Open `http://localhost:8600` to see the web ui
 
