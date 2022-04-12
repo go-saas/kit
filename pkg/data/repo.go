@@ -15,6 +15,7 @@ type Repo[TEntity any, TKey any, TQuery any] interface {
 	Create(ctx context.Context, entity *TEntity) error
 	BatchCreate(ctx context.Context, entity []*TEntity, batchSize int) error
 	Update(ctx context.Context, id TKey, entity *TEntity, p query.Select) error
+	Upsert(ctx context.Context, entity *TEntity) error
 	Delete(ctx context.Context, id TKey) error
 }
 

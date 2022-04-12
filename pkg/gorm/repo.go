@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	kerrors "github.com/go-kratos/kratos/v2/errors"
+	"gorm.io/gorm/clause"
 
 	eventbus "github.com/goxiaoy/go-eventbus"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
@@ -175,7 +176,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Create(ctx context.Context, entity *TEntit
 	if err := eventbus.Publish[*data.BeforeCreate[*TEntity]](r.Eventbus)(ctx, data.NewBeforeCreate(entity)); err != nil {
 		return err
 	}
-	if err := r.getDb(ctx).Create(entity).Error; err != nil {
+	if err := r.getDb(ctx).Session(&gorm.Session{FullSaveAssociations: true}).Create(entity).Error; err != nil {
 		return err
 	}
 	if err := eventbus.Publish[*data.AfterCreate[*TEntity]](r.Eventbus)(ctx, data.NewAfterCreate(entity)); err != nil {
@@ -216,7 +217,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entit
 			return err
 		}
 	}
-	updateRet := db.Where("id = ?", id).Updates(entity)
+	updateRet := db.Where("id = ?", id).Select("*").Updates(entity)
 	if err := updateRet.Error; err != nil {
 		return err
 	}
@@ -229,6 +230,15 @@ func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entit
 	}
 	return nil
 }
+
+func (r *Repo[TEntity, TKey, TQuery]) Upsert(ctx context.Context, entity *TEntity) error {
+	var e TEntity
+	db := r.getDb(ctx).Model(&e)
+	return db.Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Session(&gorm.Session{FullSaveAssociations: true}).Create(entity).Error
+}
+
 func (r *Repo[TEntity, TKey, TQuery]) Delete(ctx context.Context, id TKey) error {
 	var entity TEntity
 	err := r.getDb(ctx).Model(&entity).First(&entity, "id = ?", id).Error

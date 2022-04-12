@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/goxiaoy/go-eventbus"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v1 "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1"
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	sgorm "github.com/goxiaoy/go-saas/gorm"
@@ -81,13 +80,13 @@ func (c *MenuRepo) FindByName(ctx context.Context, name string) (*biz.Menu, erro
 	return &item, nil
 }
 
-func (c *MenuRepo) Update(ctx context.Context, id string, entity *biz.Menu, p query.Select) error {
+func (c *MenuRepo) UpdateAssociation(ctx context.Context, entity *biz.Menu) error {
 	if entity.Requirement != nil {
 		if err := c.GetDb(ctx).Model(entity).Association("Requirement").Replace(entity.Requirement); err != nil {
 			return err
 		}
 	}
-	return c.Repo.Update(ctx, id, entity, p)
+	return nil
 }
 
 func (c *MenuRepo) Delete(ctx context.Context, id string) error {
