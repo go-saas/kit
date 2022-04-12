@@ -60,6 +60,7 @@ func (m *RegisterAuthRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return RegisterAuthRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -161,6 +162,7 @@ func (m *RegisterAuthReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return RegisterAuthReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -286,6 +288,7 @@ func (m *LoginAuthRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return LoginAuthRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -402,6 +405,7 @@ func (m *TokenRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return TokenRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -515,6 +519,7 @@ func (m *TokenReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return TokenReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -625,6 +630,7 @@ func (m *LoginAuthReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return LoginAuthReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -735,6 +741,7 @@ func (m *RefreshTokenAuthRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return RefreshTokenAuthRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -844,6 +851,7 @@ func (m *RefreshTokenAuthReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return RefreshTokenAuthReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1003,6 +1011,7 @@ func (m *PasswordlessTokenAuthRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return PasswordlessTokenAuthRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1134,6 +1143,7 @@ func (m *PasswordlessTokenAuthReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return PasswordlessTokenAuthReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1304,6 +1314,7 @@ func (m *LoginPasswordlessRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return LoginPasswordlessRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1413,6 +1424,7 @@ func (m *LoginPasswordlessReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return LoginPasswordlessReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1572,6 +1584,7 @@ func (m *ForgetPasswordTokenRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return ForgetPasswordTokenRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1702,6 +1715,7 @@ func (m *ForgetPasswordTokenReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return ForgetPasswordTokenReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1863,6 +1877,7 @@ func (m *ForgetPasswordRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return ForgetPasswordRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1966,6 +1981,7 @@ func (m *ForgetPasswordReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return ForgetPasswordReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2069,6 +2085,7 @@ func (m *ValidatePasswordRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return ValidatePasswordRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2172,6 +2189,7 @@ func (m *ValidatePasswordReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return ValidatePasswordReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2277,6 +2295,7 @@ func (m *GetLoginRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetLoginRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2416,6 +2435,7 @@ func (m *GetLoginResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetLoginResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2517,6 +2537,7 @@ func (m *OAuthProvider) validate(all bool) error {
 	if len(errors) > 0 {
 		return OAuthProviderMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2616,6 +2637,7 @@ func (m *GetCsrfTokenRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetCsrfTokenRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2719,6 +2741,7 @@ func (m *GetCsrfTokenResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetCsrfTokenResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2822,6 +2845,7 @@ func (m *LogoutRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return LogoutRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2923,6 +2947,7 @@ func (m *LogoutResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return LogoutResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -3050,6 +3075,7 @@ func (m *WebLoginAuthRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return WebLoginAuthRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -3163,6 +3189,7 @@ func (m *WebLoginAuthReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return WebLoginAuthReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -3297,6 +3324,7 @@ func (m *ChangePasswordByForgetRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return ChangePasswordByForgetRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -3399,6 +3427,7 @@ func (m *ChangePasswordByForgetReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return ChangePasswordByForgetReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -3534,6 +3563,7 @@ func (m *ChangePasswordByPreRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return ChangePasswordByPreRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -3635,6 +3665,7 @@ func (m *ChangePasswordByPreReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return ChangePasswordByPreReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -3738,6 +3769,7 @@ func (m *RefreshRememberTokenRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return RefreshRememberTokenRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -3844,6 +3876,7 @@ func (m *RefreshRememberTokenReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return RefreshRememberTokenReplyMultiError(errors)
 	}
+
 	return nil
 }
 

@@ -74,6 +74,7 @@ func (m *TenantCreatedEvent) validate(all bool) error {
 	if len(errors) > 0 {
 		return TenantCreatedEventMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -179,6 +180,7 @@ func (m *TenantReadyEvent) validate(all bool) error {
 	if len(errors) > 0 {
 		return TenantReadyEventMultiError(errors)
 	}
+
 	return nil
 }
 

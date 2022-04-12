@@ -164,6 +164,7 @@ func (m *CreateTenantRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return CreateTenantRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -386,6 +387,7 @@ func (m *UpdateTenantRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateTenantRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -592,6 +594,7 @@ func (m *UpdateTenant) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateTenantMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -694,6 +697,7 @@ func (m *DeleteTenantRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return DeleteTenantRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -797,6 +801,7 @@ func (m *DeleteTenantReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return DeleteTenantReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -900,6 +905,7 @@ func (m *GetTenantRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetTenantRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1001,6 +1007,7 @@ func (m *GetTenantPublicRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetTenantPublicRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1104,6 +1111,7 @@ func (m *TenantFilter) validate(all bool) error {
 	if len(errors) > 0 {
 		return TenantFilterMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1266,6 +1274,7 @@ func (m *ListTenantRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return ListTenantRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1405,6 +1414,7 @@ func (m *ListTenantReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return ListTenantReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1668,6 +1678,7 @@ func (m *Tenant) validate(all bool) error {
 	if len(errors) > 0 {
 		return TenantMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1770,6 +1781,7 @@ func (m *TenantConnectionString) validate(all bool) error {
 	if len(errors) > 0 {
 		return TenantConnectionStringMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1875,6 +1887,7 @@ func (m *TenantFeature) validate(all bool) error {
 	if len(errors) > 0 {
 		return TenantFeatureMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2011,6 +2024,7 @@ func (m *TenantInfo) validate(all bool) error {
 	if len(errors) > 0 {
 		return TenantInfoMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2109,6 +2123,7 @@ func (m *GetCurrentTenantRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetCurrentTenantRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2241,6 +2256,7 @@ func (m *GetCurrentTenantReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetCurrentTenantReplyMultiError(errors)
 	}
+
 	return nil
 }
 

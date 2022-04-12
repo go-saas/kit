@@ -62,6 +62,7 @@ func (m *GetLogoutRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetLogoutRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -163,6 +164,7 @@ func (m *GetLogoutResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetLogoutResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -266,6 +268,7 @@ func (m *GetConsentRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetConsentRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -411,6 +414,7 @@ func (m *GetConsentResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetConsentResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -516,6 +520,7 @@ func (m *GrantConsentRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GrantConsentRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -619,6 +624,7 @@ func (m *GrantConsentResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return GrantConsentResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -755,6 +761,7 @@ func (m *OAuthClient) validate(all bool) error {
 	if len(errors) > 0 {
 		return OAuthClientMultiError(errors)
 	}
+
 	return nil
 }
 

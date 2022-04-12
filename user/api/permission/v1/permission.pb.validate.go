@@ -60,6 +60,7 @@ func (m *GetCurrentPermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetCurrentPermissionRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -196,6 +197,7 @@ func (m *GetCurrentPermissionReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetCurrentPermissionReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -330,6 +332,7 @@ func (m *CheckPermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return CheckPermissionRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -433,6 +436,7 @@ func (m *CheckPermissionReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return CheckPermissionReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -570,6 +574,7 @@ func (m *CheckSubjectsPermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return CheckSubjectsPermissionRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -672,6 +677,7 @@ func (m *CheckSubjectsPermissionReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return CheckSubjectsPermissionReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -786,6 +792,7 @@ func (m *Permission) validate(all bool) error {
 	if len(errors) > 0 {
 		return PermissionMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -929,6 +936,7 @@ func (m *UpdateSubjectPermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateSubjectPermissionRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1068,6 +1076,7 @@ func (m *UpdateSubjectPermissionAcl) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateSubjectPermissionAclMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1203,6 +1212,7 @@ func (m *UpdateSubjectPermissionResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateSubjectPermissionResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1351,6 +1361,7 @@ func (m *RemoveSubjectPermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return RemoveSubjectPermissionRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1453,6 +1464,7 @@ func (m *RemoveSubjectPermissionReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return RemoveSubjectPermissionReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1612,6 +1624,7 @@ func (m *AddSubjectPermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return AddSubjectPermissionRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1719,6 +1732,7 @@ func (m *AddSubjectPermissionResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return AddSubjectPermissionResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1821,6 +1835,7 @@ func (m *ListSubjectPermissionRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return ListSubjectPermissionRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1991,6 +2006,7 @@ func (m *ListSubjectPermissionResponse) validate(all bool) error {
 	if len(errors) > 0 {
 		return ListSubjectPermissionResponseMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2126,6 +2142,7 @@ func (m *PermissionRequirement) validate(all bool) error {
 	if len(errors) > 0 {
 		return PermissionRequirementMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2296,6 +2313,7 @@ func (m *PermissionDefGroup) validate(all bool) error {
 	if len(errors) > 0 {
 		return PermissionDefGroupMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -2436,6 +2454,7 @@ func (m *PermissionDef) validate(all bool) error {
 	if len(errors) > 0 {
 		return PermissionDefMultiError(errors)
 	}
+
 	return nil
 }
 

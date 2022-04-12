@@ -187,6 +187,7 @@ func (m *CreateMenuRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return CreateMenuRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -357,6 +358,7 @@ func (m *UpdateMenuRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateMenuRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -596,6 +598,7 @@ func (m *UpdateMenu) validate(all bool) error {
 	if len(errors) > 0 {
 		return UpdateMenuMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -696,6 +699,7 @@ func (m *DeleteMenuRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return DeleteMenuRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -801,6 +805,7 @@ func (m *DeleteMenuReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return DeleteMenuReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -911,6 +916,7 @@ func (m *GetMenuRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetMenuRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1010,6 +1016,7 @@ func (m *MenuFilter) validate(all bool) error {
 	if len(errors) > 0 {
 		return MenuFilterMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1172,6 +1179,7 @@ func (m *ListMenuRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return ListMenuRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1309,6 +1317,7 @@ func (m *ListMenuReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return ListMenuReplyMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1556,6 +1565,7 @@ func (m *Menu) validate(all bool) error {
 	if len(errors) > 0 {
 		return MenuMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1654,6 +1664,7 @@ func (m *GetAvailableMenusRequest) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetAvailableMenusRequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -1789,6 +1800,7 @@ func (m *GetAvailableMenusReply) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetAvailableMenusReplyMultiError(errors)
 	}
+
 	return nil
 }
 
