@@ -5,6 +5,11 @@ services:
     image: ${DOCKER_REGISTRY}go-saas-kit-web:${DOCKER_TAG:-latest}
     restart: always
 
+  api_docs:
+    image: ${DOCKER_REGISTRY}go-saas-kit-swagger:${DOCKER_TAG:-latest}
+    environment:
+      - BASE_URL="/swagger"
+
   apisix:
     image: apache/apisix:dev
     restart: always
@@ -27,22 +32,10 @@ services:
       - ./quickstart/configs:/data/conf
     environment:
       - APISIX_LISTEN_ADDRESS=unix:/tmp/runner/runner.sock
-    #    depends_on:
-    #      - etcd
 
-
-  api_docs:
-    image: ${DOCKER_REGISTRY}go-saas-kit-swagger:${DOCKER_TAG:-latest}
-    ports:
-      - "8080"
-    environment:
-      - BASE_URL="/swagger"
 
   user:
     image: ${DOCKER_REGISTRY}go-saas-kit-user:${DOCKER_TAG:-latest}
-#    ports:
-#      - "8500"
-#      - "8501"
     depends_on:
       - mysqld
       - redis
@@ -52,13 +45,10 @@ services:
 
   saas:
     image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
-#    ports:
-#      - "8520"
-#      - "8521"
     depends_on:
       - mysqld
       - kafka
-#      - user
+      - user
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
@@ -66,12 +56,8 @@ services:
 
   sys:
     image: ${DOCKER_REGISTRY}go-saas-kit-sys:${DOCKER_TAG:-latest}
-#    ports:
-#      - "8530"
-#      - "8531"
     depends_on:
       - mysqld
-#      - saas
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets

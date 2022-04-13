@@ -40,10 +40,11 @@ func NewGrpcConn(
 
 	var clientCfg = proto.Clone(defaultClientCfg).(*conf.Client)
 
-	if c, ok := services.Clients[string(clientName)]; !ok {
-		panic(errors.New(fmt.Sprintf(" %v client not found", clientName)))
-	} else {
+	if c, ok := services.Clients[string(clientName)]; ok {
 		proto.Merge(clientCfg, c)
+	}
+	if len(clientCfg.ClientId) == 0 {
+		clientCfg.ClientId = string(clientName)
 	}
 	var conn *grpcx.ClientConn
 	var err error
@@ -76,18 +77,26 @@ func NewGrpcConn(
 }
 
 // NewHttpClient create new http client from name
-func NewHttpClient(clientName ClientName, serviceName string,
-	services *conf.Services, opt *Option, tokenMgr TokenManager,
+func NewHttpClient(
+	clientName ClientName,
+	serviceName string,
+	services *conf.Services,
+	opt *Option,
+	tokenMgr TokenManager,
 	logger log.Logger,
-	opts ...http.ClientOption) (*http.Client, func()) {
+	opts ...http.ClientOption,
+) (*http.Client, func()) {
+
 	endpoint, ok := services.Services[serviceName]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", serviceName)))
 	}
-
-	clientCfg, ok := services.Clients[string(clientName)]
-	if !ok {
-		panic(errors.New(fmt.Sprintf(" %v client not found", clientName)))
+	var clientCfg = proto.Clone(defaultClientCfg).(*conf.Client)
+	if c, ok := services.Clients[string(clientName)]; ok {
+		proto.Merge(clientCfg, c)
+	}
+	if len(clientCfg.ClientId) == 0 {
+		clientCfg.ClientId = string(clientName)
 	}
 
 	fOpts := []http.ClientOption{

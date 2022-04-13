@@ -24,8 +24,11 @@ import (
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/sessions"
 	"go.opentelemetry.io/otel/propagation"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/durationpb"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func init() {
@@ -75,9 +78,13 @@ func Init(
 ) error {
 	tokenizer = t
 	tokenManager = tmr
-	clientCfg, ok := services.Clients[string(clientName)]
-	if !ok {
-		return errors.New(fmt.Sprintf(" %v client not found", clientName))
+
+	clientCfg := &conf2.Client{Timeout: durationpb.New(1 * time.Second)}
+	if c, ok := services.Clients[string(clientName)]; ok {
+		proto.Merge(clientCfg, c)
+	}
+	if len(clientCfg.ClientId) == 0 {
+		clientCfg.ClientId = string(clientName)
 	}
 	apiClient = clientCfg
 	apiOpt = api.NewOption(true, api.NewUserPropagator(logger), api.NewClientPropagator(false, logger)).WithInsecure()

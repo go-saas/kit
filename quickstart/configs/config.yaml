@@ -10,15 +10,6 @@ services:
       grpc_endpoint: user:9081
     saas:
       grpc_endpoint: saas:9081
-  clients:
-    user:
-      client_id: user-golang
-    saas:
-      client_id: saas-golang
-    sys:
-      client_id: sys-golang
-    apisix:
-      client_id: apisix-golang
 
 data:
   endpoints:

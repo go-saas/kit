@@ -43,3 +43,10 @@ all:
 # generate api proto
 api:
 	buf generate ./proto
+
+.PHONY: build
+build:
+	cd user && $(MAKE) build
+	cd saas && $(MAKE) build
+	cd sys && $(MAKE) build
+	cd gateway/apisix && $(MAKE) build

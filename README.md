@@ -33,4 +33,14 @@ Open `http://localhost:8600` to see the web ui
 Username: admin
 Password: 123456
 
-Open `http://localhost:8600/swagger` to see the api documentation
+# Development
+
+```shell
+make init
+```
+```shell
+make all
+```
+```shell
+make build
+```
