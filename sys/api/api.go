@@ -17,7 +17,7 @@ type HttpClient *http.Client
 const ServiceName = "sys"
 
 func NewGrpcConn(clientName api.ClientName, services *conf.Services, opt *api.Option, tokenMgr api.TokenManager, logger log.Logger, opts ...grpc2.ClientOption) (GrpcConn, func()) {
-	return api.NewGrpcConn(clientName, ServiceName, services, true, opt, tokenMgr, logger, opts...)
+	return api.NewGrpcConn(clientName, ServiceName, services, opt, tokenMgr, logger, opts...)
 }
 
 func NewHttpClient(clientName api.ClientName, services *conf.Services, opt *api.Option, tokenMgr api.TokenManager, logger log.Logger, opts ...http.ClientOption) (HttpClient, func()) {

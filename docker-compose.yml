@@ -15,10 +15,9 @@ services:
     depends_on:
       - apisix-plugin
     ports:
-      - "8600:9080"
-      - "9091:9091"
-      - "9443:9443"
-      - "9092"
+      - "8600:9080" #Http
+      - "9091:9091" #Prometheus
+      - "9443:9443" #Https
 
   apisix-plugin:
     image: ${DOCKER_REGISTRY}go-saas-kit-apisix-plugin:${DOCKER_TAG:-latest}

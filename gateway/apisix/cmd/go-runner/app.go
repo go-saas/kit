@@ -83,7 +83,7 @@ func NewSelfClientOption(logger log.Logger) *api.Option {
 		api.NewUserPropagator(logger),
 		//do not propagate client
 		api.NewClientPropagator(true, logger),
-	)
+	).WithInsecure()
 }
 
 func NewAuthorizationOption() *authz.Option {

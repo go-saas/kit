@@ -113,7 +113,7 @@ func NewHTTPServer(c *conf.Services,
 }
 
 func NewRefreshTokenProvider(sign *biz.SignInManager) session.RefreshTokenProvider {
-	return func(ctx context.Context, token string) (err error) {
+	return session.RefreshTokenProviderFunc(func(ctx context.Context, token, userId string) (err error) {
 		return sign.RefreshSignIn(ctx, token)
-	}
+	})
 }

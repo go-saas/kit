@@ -56,34 +56,34 @@ upstreams:
   -
     id: user-http
     nodes:
-      "user:8500": 1
+      "user:9080": 1
     type: roundrobin
   -
     id: user-grpc
     nodes:
-      "user:8501": 1
+      "user:9081": 1
     type: roundrobin
     scheme: grpc
   -
     id: saas-http
     nodes:
-      "saas:8520": 1
+      "saas:9080": 1
     type: roundrobin
   -
     id: saas-grpc
     nodes:
-      "saas:8521": 1
+      "saas:9081": 1
     type: roundrobin
     scheme: grpc
   -
     id: sys-http
     nodes:
-      "sys:8530": 1
+      "sys:9080": 1
     type: roundrobin
   -
     id: sys-grpc
     nodes:
-      "sys:8531": 1
+      "sys:9081": 1
     type: roundrobin
     scheme: grpc
   -

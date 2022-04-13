@@ -313,13 +313,15 @@ func (um *UserManager) GenerateRememberToken(ctx context.Context, duration time.
 
 func (um *UserManager) RefreshRememberToken(ctx context.Context, token string, duration time.Duration) (*User, string, error) {
 	//find token
+	currTime := time.Now()
 	if t, err := um.refreshTokenRepo.Find(ctx, token, false); err != nil {
 		return nil, "", err
 	} else {
 		if t == nil {
 			return nil, "", v12.ErrorRememberTokenNotFound("")
 		}
-		if t.Used {
+		if t.Used && t.Expires.After(currTime.Add(-time.Minute*3)) {
+			//for some concurrency refreshing
 			return nil, "", v12.ErrorRememberTokenUsed("")
 		}
 		if !t.Valid() {
@@ -331,6 +333,7 @@ func (um *UserManager) RefreshRememberToken(ctx context.Context, token string, d
 			return nil, "", err
 		}
 		if user == nil {
+			//user not found
 			return nil, "", v12.ErrorRememberTokenNotFound("")
 		}
 		//TODO check locked?

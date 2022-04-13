@@ -17,7 +17,9 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/sessions"
@@ -78,7 +80,7 @@ func Init(
 		return errors.New(fmt.Sprintf(" %v client not found", clientName))
 	}
 	apiClient = clientCfg
-	apiOpt = api.NewOption(true, api.NewUserPropagator(logger), api.NewClientPropagator(false, logger))
+	apiOpt = api.NewOption(true, api.NewUserPropagator(logger), api.NewClientPropagator(false, logger)).WithInsecure()
 	securityCfg = security
 	sessionInfoStore = session.NewSessionInfoStore(security)
 	rememberStore = session.NewRememberStore(security)
@@ -153,22 +155,33 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	state := session.NewClientState(s, rs)
 	ctx = session.NewClientStateContext(ctx, state)
 
-	if len(state.GetUid()) == 0 && len(state.GetRememberToken()) > 0 {
+	if len(state.GetUid()) > 0 {
+		//set uid from cookie
+		uid = state.GetUid()
+	}
+
+	rmToken := state.GetRememberToken()
+	if len(state.GetUid()) == 0 && rmToken != nil {
 		//call refresh
 		log.Infof("call refresh token")
-		err := refreshProvider(ctx, state.GetRememberToken())
+		err := refreshProvider.Refresh(ctx, rmToken.Token, rmToken.Uid)
 		if err != nil {
+			err = kerrors.FromError(err)
 			log.Errorf("refresh fail %v", err)
-			//abort with error
-			abortWithError(err, w)
-			return
+			if errors2.NotBizError(err) {
+				//abort with error
+				abortWithError(err, w)
+				return
+			}
+			if v12.IsRememberTokenUsed(err) {
+				//for concurrent refresh, treat as logged in
+				uid = rmToken.Uid
+			}
+		} else {
+			uid = rmToken.Uid
 		}
 
 	}
-
-	//set uid from cookie
-	uid = state.GetUid()
-	ctx = authn.NewUserContext(ctx, authn.NewUserInfo(uid))
 
 	//extract token
 	var t = ""
@@ -202,10 +215,10 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	log.Infof("resolve user: %s client: %s tenantId: %s", uid, clientId, ti.GetId())
 	err = userTenantValidator.Resolve(trCtx)
 	if err != nil {
-		log.Errorf("%s", err)
 		// user can not in this tenant
 		// use error codec
 		fr := kerrors.FromError(err)
+		log.Errorf("%s", fr)
 		w.WriteHeader(int(fr.Code))
 		khttp.DefaultErrorEncoder(w, &http.Request{}, err)
 		return

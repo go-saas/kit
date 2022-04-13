@@ -2,7 +2,7 @@ package remote
 
 import (
 	"context"
-	"errors"
+	kerrors "github.com/go-kratos/kratos/v2/errors"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
@@ -11,27 +11,23 @@ import (
 
 func NewRefreshProvider(client v1.AuthClient, logger klog.Logger) session.RefreshTokenProvider {
 	l := klog.NewHelper(klog.With(logger, "module", "remote.RefreshTokenProvider"))
-	return func(ctx context.Context, token string) (err error) {
+	return session.RefreshTokenProviderFunc(func(ctx context.Context, token, userId string) (err error) {
 		if writer, ok := session.FromClientStateWriterContext(ctx); ok {
 			handlerError := func(err error) error {
+				err = kerrors.FromError(err)
 				if errors2.NotBizError(err) {
 					return err
 				} else {
-					l.Errorf("fail to refresh with error %v", err)
-					if v1.IsRememberTokenUsed(err) {
-						//for concurrent refresh, just ignore
-						return nil
+					if !v1.IsRememberTokenUsed(err) {
+						//clean remember token
+						if err := writer.SignOutRememberToken(ctx); err != nil {
+							return err
+						}
+						if err := writer.Save(ctx); err != nil {
+							return err
+						}
 					}
-					//clean remember token
-					err = writer.SignOutRememberToken(ctx)
-					if err != nil {
-						return err
-					}
-					err = writer.Save(ctx)
-					if err != nil {
-						return err
-					}
-					return nil
+					return err
 				}
 			}
 
@@ -43,18 +39,16 @@ func NewRefreshProvider(client v1.AuthClient, logger klog.Logger) session.Refres
 			if err := writer.SetUid(ctx, rep.UserId); err != nil {
 				return err
 			}
-			err = writer.SetRememberToken(ctx, rep.NewRmToken)
-			if err != nil {
+			if err := writer.SetRememberToken(ctx, rep.NewRmToken, userId); err != nil {
 				return err
 			}
-			err = writer.Save(ctx)
-			if err != nil {
+			if err := writer.Save(ctx); err != nil {
 				return err
 			}
 			return nil
 
 		} else {
-			return errors.New("writer not found")
+			panic("writer not found")
 		}
-	}
+	})
 }

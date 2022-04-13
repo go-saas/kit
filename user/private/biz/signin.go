@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	"time"
 )
@@ -54,13 +55,27 @@ func (s *SignInManager) RefreshSignIn(ctx context.Context, refreshToken string) 
 		//find refresh token
 		u, newToken, err := s.um.RefreshRememberToken(ctx, refreshToken, time.Duration(duration)*time.Second)
 		if err != nil {
-			return err
+			if errors2.NotBizError(err) {
+				return err
+			} else {
+				if !v12.IsRememberTokenUsed(err) {
+					//clean outdated remember token
+					if err := writer.SignOutRememberToken(ctx); err != nil {
+						return err
+					}
+					if err := writer.Save(ctx); err != nil {
+						return err
+					}
+					return err
+				}
+				return err
+			}
 		}
+		//refresh successfully
 		if err := writer.SetUid(ctx, u.ID.String()); err != nil {
 			return err
 		}
-		err = writer.SetRememberToken(ctx, newToken)
-		if err != nil {
+		if err := writer.SetRememberToken(ctx, newToken, u.ID.String()); err != nil {
 			return err
 		}
 		//save session
@@ -85,7 +100,7 @@ func (s *SignInManager) SignIn(ctx context.Context, u *User, isPersistent bool) 
 			if err != nil {
 				return err
 			}
-			err = writer.SetRememberToken(ctx, rememberToken)
+			err = writer.SetRememberToken(ctx, rememberToken, u.ID.String())
 			if err != nil {
 				return err
 			}

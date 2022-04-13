@@ -14,14 +14,25 @@ import (
 type Option struct {
 	Propagators []Propagator
 	BypassToken bool
+	Insecure    bool
 }
 
 func NewOption(bypassToken bool, propagators ...Propagator) *Option {
 	return &Option{BypassToken: bypassToken, Propagators: propagators}
 }
 
+func (o *Option) WithInsecure() *Option {
+	o.Insecure = true
+	return o
+}
+
 func NewDefaultOption(logger log.Logger) *Option {
-	return NewOption(false, NewSaasPropagator(logger), NewUserPropagator(logger), NewClientPropagator(true, logger))
+	return NewOption(
+		false,
+		NewSaasPropagator(logger),
+		NewUserPropagator(logger),
+		NewClientPropagator(true, logger),
+	).WithInsecure()
 }
 
 type Header interface {

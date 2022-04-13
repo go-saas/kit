@@ -12,22 +12,38 @@ import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	grpcx "google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/durationpb"
+	"time"
 )
 
 type ClientName string
 
+var (
+	defaultClientCfg = &conf.Client{Timeout: durationpb.New(5 * time.Second)}
+)
+
 // NewGrpcConn create new grpc client from name
-func NewGrpcConn(clientName ClientName, serviceName string,
-	services *conf.Services, insecure bool, opt *Option, tokenMgr TokenManager,
+func NewGrpcConn(
+	clientName ClientName,
+	serviceName string,
+	services *conf.Services,
+	opt *Option,
+	tokenMgr TokenManager,
 	logger log.Logger,
-	opts ...grpc.ClientOption) (grpcx.ClientConnInterface, func()) {
+	opts ...grpc.ClientOption,
+) (grpcx.ClientConnInterface, func()) {
 	endpoint, ok := services.Services[serviceName]
 	if !ok {
 		panic(errors.New(fmt.Sprintf(" %v service not found", serviceName)))
 	}
-	clientCfg, ok := services.Clients[string(clientName)]
-	if !ok {
+
+	var clientCfg = proto.Clone(defaultClientCfg).(*conf.Client)
+
+	if c, ok := services.Clients[string(clientName)]; !ok {
 		panic(errors.New(fmt.Sprintf(" %v client not found", clientName)))
+	} else {
+		proto.Merge(clientCfg, c)
 	}
 	var conn *grpcx.ClientConn
 	var err error
@@ -44,7 +60,7 @@ func NewGrpcConn(clientName ClientName, serviceName string,
 	if clientCfg.Timeout != nil {
 		fOpts = append(fOpts, grpc.WithTimeout(clientCfg.Timeout.AsDuration()))
 	}
-	if insecure {
+	if opt.Insecure {
 		fOpts = append(fOpts, opts...)
 		conn, err = grpc.DialInsecure(context.Background(), fOpts...)
 	} else {

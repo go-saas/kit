@@ -18,7 +18,15 @@ const (
 	defaultRememberName = "kit_user_rm"
 )
 
-type RefreshTokenProvider = func(ctx context.Context, token string) (err error)
+type RefreshTokenProviderFunc func(ctx context.Context, token, userId string) error
+
+func (r RefreshTokenProviderFunc) Refresh(ctx context.Context, token, userId string) error {
+	return r(ctx, token, userId)
+}
+
+type RefreshTokenProvider interface {
+	Refresh(ctx context.Context, token, userId string) error
+}
 
 func Auth(cfg *conf.Security, validator api.TrustedContextValidator) func(http.Handler) http.Handler {
 
@@ -55,29 +63,29 @@ func Refresh(errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider, va
 				return
 			}
 			if state, ok := FromClientStateContext(ctx); ok {
-				if stateWriter, ok := FromClientStateWriterContext(ctx); ok {
-					if len(state.GetUid()) == 0 && len(state.GetRememberToken()) > 0 {
-						//call refresh
-						err := provider(ctx, state.GetRememberToken())
-						if err != nil {
-							if errors.NotBizError(err) {
-								//abort with error
-								errEncoder(w, r, err)
-								return
-							} else {
-								if v1.IsRememberTokenUsed(err) {
-									//for concurrent refresh,  ignore
-									return
-								}
-								//clean remember token
-								stateWriter.SignOutRememberToken(ctx)
-								stateWriter.Save(ctx)
-							}
+
+				if len(state.GetUid()) == 0 && state.GetRememberToken() != nil {
+					//call refresh
+					err := provider.Refresh(ctx, state.GetRememberToken().Token, state.GetRememberToken().Uid)
+					if err != nil {
+						if errors.NotBizError(err) {
+							//abort with error
+							errEncoder(w, r, err)
+							return
 						} else {
-							ctx = authn.NewUserContext(ctx, authn.NewUserInfo(state.GetUid()))
+							if v1.IsRememberTokenUsed(err) {
+								//for concurrent refresh, ignore and
+								//treat as logged in
+								ctx = authn.NewUserContext(ctx, authn.NewUserInfo(state.GetUid()))
+								return
+							}
 						}
+					} else {
+						//refresh successfully
+						ctx = authn.NewUserContext(ctx, authn.NewUserInfo(state.GetUid()))
 					}
 				}
+
 			}
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})

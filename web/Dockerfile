@@ -16,3 +16,4 @@ RUN pnpm run build
 FROM nginx:alpine
 COPY --from=build /usr/app/dist/ /usr/share/nginx/html/
 COPY ./docker/nginx/nginx.conf /etc/nginx/conf.d/
+EXPOSE 8080

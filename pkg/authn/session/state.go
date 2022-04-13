@@ -13,6 +13,7 @@ const (
 	sessionNameTwoFactorProvider   = sessionNamePrefix + ".tfa_provider"
 	sessionNameTwoFactorRememberMe = sessionNamePrefix + ".tfa_rm"
 	sessionNameRememberToken       = sessionNamePrefix + ".rm"
+	sessionNameRememberTokenUserId = sessionNameRememberToken + ".uid"
 	sessionNameExternal            = sessionNamePrefix + ".external"
 )
 
@@ -22,13 +23,17 @@ type ClientState interface {
 	//GetSecurityStamp return SecurityStamp
 	GetSecurityStamp() string
 	GetTwoFactorClientRemembered() bool
-	GetTFAInfo() TFAInfo
-	GetRememberToken() string
+	GetTFAInfo() *TFAInfo
+	GetRememberToken() *RememberTokenInfo
 }
 
 type TFAInfo struct {
 	UserId        string
 	LoginProvider string
+}
+type RememberTokenInfo struct {
+	Token string
+	Uid   string
 }
 
 type ClientStateImpl struct {
@@ -66,24 +71,28 @@ func (c *ClientStateImpl) GetTwoFactorClientRemembered() bool {
 	}
 }
 
-func (c *ClientStateImpl) GetTFAInfo() TFAInfo {
+func (c *ClientStateImpl) GetTFAInfo() *TFAInfo {
 	if tfaId, ok := c.s.Values[sessionNameTwoFactorUserId].(string); ok {
 		if tfaProvider, ok := c.s.Values[sessionNameTwoFactorProvider].(string); ok {
-			return TFAInfo{
+			return &TFAInfo{
 				UserId:        tfaId,
 				LoginProvider: tfaProvider,
 			}
 		}
 	}
-	return TFAInfo{}
+	return nil
 }
 
-func (c *ClientStateImpl) GetRememberToken() string {
+func (c *ClientStateImpl) GetRememberToken() *RememberTokenInfo {
 	if v, ok := c.rs.Values[sessionNameRememberToken].(string); ok {
-		return v
-	} else {
-		return ""
+		if u, ok := c.rs.Values[sessionNameRememberTokenUserId].(string); ok {
+			return &RememberTokenInfo{
+				Token: v,
+				Uid:   u,
+			}
+		}
 	}
+	return nil
 }
 
 type ClientStateWriter interface {
@@ -100,7 +109,7 @@ type ClientStateWriter interface {
 	SetTFAInfo(ctx context.Context, t TFAInfo) error
 	SignOutTFAInfo(ctx context.Context) error
 
-	SetRememberToken(ctx context.Context, r string) error
+	SetRememberToken(ctx context.Context, token, uid string) error
 	SignOutRememberToken(ctx context.Context) error
 
 	Clear(ctx context.Context) error
@@ -151,11 +160,12 @@ func (c *ClientStateWriterImpl) SetTFAInfo(ctx context.Context, t TFAInfo) error
 	return nil
 }
 
-func (c *ClientStateWriterImpl) SetRememberToken(ctx context.Context, r string) error {
-	if len(r) == 0 {
+func (c *ClientStateWriterImpl) SetRememberToken(ctx context.Context, token, uid string) error {
+	if len(token) == 0 {
 		return c.SignOutRememberToken(ctx)
 	}
-	c.rs.Values[sessionNameRememberToken] = r
+	c.rs.Values[sessionNameRememberToken] = token
+	c.rs.Values[sessionNameRememberTokenUserId] = uid
 	c.rsChanged = true
 	return nil
 }

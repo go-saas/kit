@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
@@ -14,9 +13,11 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/csrf"
 	"github.com/spf13/afero"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/durationpb"
 	"net"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func ResolveHttpRequest(ctx context.Context) (*http.Request, bool) {
@@ -28,7 +29,22 @@ func ResolveHttpRequest(ctx context.Context) (*http.Request, bool) {
 	return nil, false
 }
 
-const defaultSrvName = "default"
+const (
+	defaultSrvName = "default"
+)
+
+var (
+	defaultServiceConfig = &conf.Server{
+		Http: &conf.Server_HTTP{
+			Addr:    ":9080",
+			Timeout: durationpb.New(5 * time.Second),
+		},
+		Grpc: &conf.Server_GRPC{
+			Addr:    ":9081",
+			Timeout: durationpb.New(5 * time.Second),
+		},
+	}
+)
 
 // PatchHttpOpts Patch khttp options with given service name and configs. f use global filters
 func PatchHttpOpts(l log.Logger,
@@ -40,18 +56,15 @@ func PatchHttpOpts(l log.Logger,
 	resEncoder khttp.EncodeResponseFunc,
 	errEncoder khttp.EncodeErrorFunc,
 	f ...khttp.FilterFunc) []khttp.ServerOption {
-	var server *conf.Server
-	if s, ok := services.Servers[name]; ok {
-		server = s
-	}
+	//default config
+	server := proto.Clone(defaultServiceConfig).(*conf.Server)
 	if def, ok := services.Servers[defaultSrvName]; ok {
-		if server != nil {
-			proto.Merge(server, def)
-		} else {
-			server = def
-		}
-	} else if server == nil {
-		panic(errors.New(fmt.Sprintf("both %v and %s server not found", name, defaultSrvName)))
+		//merge default config
+		proto.Merge(server, def)
+	}
+	if s, ok := services.Servers[name]; ok {
+		//merge service config
+		proto.Merge(server, s)
 	}
 
 	if server.Http.Network != "" {
