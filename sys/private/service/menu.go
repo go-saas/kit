@@ -81,7 +81,7 @@ func (s *MenuService) CreateMenu(ctx context.Context, req *pb.CreateMenuRequest)
 	if dbP, err := s.repo.FindByName(ctx, normalizeName(req.Name)); err != nil {
 		return nil, err
 	} else if dbP != nil {
-		return nil, pb.ErrorMenuNameDuplicate("", "")
+		return nil, pb.ErrorMenuNameDuplicate("")
 	}
 	e := &biz.Menu{}
 	MapCreatePbMenu2Biz(req, e)
@@ -101,7 +101,7 @@ func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest)
 	if dbP, err := s.repo.FindByName(ctx, normalizeName(req.Menu.Name)); err != nil {
 		return nil, err
 	} else if dbP != nil && dbP.ID.String() != req.Menu.Id {
-		return nil, pb.ErrorMenuNameDuplicate("", "")
+		return nil, pb.ErrorMenuNameDuplicate("")
 	}
 
 	g, err := s.repo.Get(ctx, req.Menu.Id)
@@ -112,7 +112,7 @@ func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest)
 		return nil, errors.NotFound("", "")
 	}
 	if g.IsPreserved {
-		return nil, pb.ErrorMenuPreserved("", "")
+		return nil, pb.ErrorMenuPreserved("")
 	}
 	MapUpdatePbMenu2Biz(req.Menu, g)
 	if err := s.repo.Update(ctx, g.ID.String(), g, nil); err != nil {
@@ -135,7 +135,7 @@ func (s *MenuService) DeleteMenu(ctx context.Context, req *pb.DeleteMenuRequest)
 		return nil, errors.NotFound("", "")
 	}
 	if g.IsPreserved {
-		return nil, pb.ErrorMenuPreserved("", "")
+		return nil, pb.ErrorMenuPreserved("")
 	}
 	err = s.repo.Delete(ctx, req.Id)
 	if err != nil {

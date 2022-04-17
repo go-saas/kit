@@ -4,4 +4,4 @@ plugins:
     out: ./openapi
     opt:
       - allow_merge=true
-      - merge_file_name=merged
+      - merge_file_name=kit-merged
