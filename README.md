@@ -8,7 +8,7 @@ Microservice architecture kit for golang sass project
 ![Architecture](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/go-saas-kit.drawio.png?raw=true)
 
 # Demo 
-address http://106.75.239.46:8600
+address http://106.75.239.46:8600 (Shanghai)
 - **Host** Username:admin  Password:123456
 - **Separate Storage Tenant** domain:separateDbDemo Username:admin  Password:123456
 - **Shared Storage Tenant** domain:sharedDbDemo Username:admin  Password:123456
