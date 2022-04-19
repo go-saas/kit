@@ -112,8 +112,8 @@ message UserFilter{
   repeated string id_in =1;
   repeated string gender_in=2;
 
-  google.protobuf.Timestamp birthday_gte=3;
-  google.protobuf.Timestamp birthday_lte=4;
+  optional google.protobuf.Timestamp birthday_gte=3;
+  optional google.protobuf.Timestamp birthday_lte=4;
 
   .user.api.role.v1.RoleFilter roles =5;
 
@@ -138,11 +138,11 @@ message GetUserRequest{
 
 message User{
   string  id=1;
-  google.protobuf.StringValue username =2;
-  google.protobuf.StringValue name=3;
-  google.protobuf.StringValue phone =4;
-  google.protobuf.StringValue email=5;
-  google.protobuf.Timestamp birthday=6;
+  optional google.protobuf.StringValue username =2;
+  optional google.protobuf.StringValue name=3;
+  optional google.protobuf.StringValue phone =4;
+  optional google.protobuf.StringValue email=5;
+  optional google.protobuf.Timestamp birthday=6;
   //
   Gender gender=7;
   repeated .user.api.role.v1.Role roles=8;
@@ -160,14 +160,14 @@ message ListUsersResponse{
 }
 
 message CreateUserRequest{
-    google.protobuf.StringValue username =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-    google.protobuf.StringValue name=2;
-    google.protobuf.StringValue phone =3;
-    google.protobuf.StringValue email=4 [(validate.rules).string.email = true];
+    optional google.protobuf.StringValue username =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+    optional google.protobuf.StringValue name=2;
+    optional google.protobuf.StringValue phone =3;
+    optional google.protobuf.StringValue email=4 [(validate.rules).string.email = true];
 
     string password=5;
     string confirm_password=6;
-    google.protobuf.Timestamp birthday=7;
+    optional google.protobuf.Timestamp birthday=7;
     //
     Gender gender=8;
     string avatar=9;
@@ -189,11 +189,11 @@ message UpdateUserRequest{
 message UpdateUser{
   string id =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 
-  google.protobuf.StringValue username =2;
-  google.protobuf.StringValue name=3;
-  google.protobuf.StringValue phone =4;
-  google.protobuf.StringValue email=5;
-  google.protobuf.Timestamp birthday=6;
+  optional google.protobuf.StringValue username =2;
+  optional google.protobuf.StringValue name=3;
+  optional google.protobuf.StringValue phone =4;
+  optional google.protobuf.StringValue email=5;
+  optional google.protobuf.Timestamp birthday=6;
   //
   Gender gender=7;
 

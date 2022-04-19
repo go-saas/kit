@@ -164,7 +164,7 @@ message ListMenuReply {
 message Menu{
   string id=1;
   string name=2;
-  google.protobuf.Timestamp created_at =4;
+  optional google.protobuf.Timestamp created_at =4;
   string desc=5;
   string component=6;
   repeated .user.api.permission.v1.PermissionRequirement requirement=7;

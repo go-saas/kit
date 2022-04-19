@@ -534,13 +534,16 @@
           "type": "boolean"
         },
         "adminEmail": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "adminUsername": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "adminPassword": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       },
       "required": [
@@ -630,11 +633,13 @@
         },
         "createdAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "updatedAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "conn": {
           "type": "array",

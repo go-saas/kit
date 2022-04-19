@@ -8,131 +8,131 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/goxiaoy/go-saas-kit/pkg/query;query";
 
 message StringFilterOperation{
-  google.protobuf.StringValue eq =1 [json_name="$eq"];
-  google.protobuf.StringValue neq=2 [json_name="$neq"];
+  optional google.protobuf.StringValue eq =1 [json_name="$eq"];
+  optional google.protobuf.StringValue neq=2 [json_name="$neq"];
 
-  google.protobuf.StringValue contains=3 [json_name="$contains"];
-  google.protobuf.StringValue starts_with = 4 [json_name="$starts_with"];
-  google.protobuf.StringValue nstarts_with=5 [json_name="$nstarts_with"];
-  google.protobuf.StringValue ends_with=6 [json_name="$ends_with"];
-  google.protobuf.StringValue nends_with=7 [json_name="$nends_with"];
+  optional google.protobuf.StringValue contains=3 [json_name="$contains"];
+  optional google.protobuf.StringValue starts_with = 4 [json_name="$starts_with"];
+  optional google.protobuf.StringValue nstarts_with=5 [json_name="$nstarts_with"];
+  optional google.protobuf.StringValue ends_with=6 [json_name="$ends_with"];
+  optional google.protobuf.StringValue nends_with=7 [json_name="$nends_with"];
 
   repeated google.protobuf.StringValue in=8 [json_name="$in"];
   repeated google.protobuf.StringValue nin=9 [json_name="$nin"];
-  google.protobuf.BoolValue  null=10 [json_name="$null"];
-  google.protobuf.BoolValue nnull=11 [json_name="$nnull"];
+  optional google.protobuf.BoolValue  null=10 [json_name="$null"];
+  optional google.protobuf.BoolValue nnull=11 [json_name="$nnull"];
 
-  google.protobuf.BoolValue empty=12 [json_name="$empty"];
-  google.protobuf.BoolValue nempty=13 [json_name="$nempty"];
+  optional google.protobuf.BoolValue empty=12 [json_name="$empty"];
+  optional google.protobuf.BoolValue nempty=13 [json_name="$nempty"];
 
-  google.protobuf.StringValue like=14 [json_name="$like"];
+  optional google.protobuf.StringValue like=14 [json_name="$like"];
 }
 
 message BooleanFilterOperators{
-  google.protobuf.BoolValue eq =1 [json_name="$eq"];
-  google.protobuf.BoolValue neq=2 [json_name="$neq"];
-  google.protobuf.BoolValue  null=3 [json_name="$null"];
-  google.protobuf.BoolValue nnull=4 [json_name="$nnull"];
+  optional google.protobuf.BoolValue eq =1 [json_name="$eq"];
+  optional google.protobuf.BoolValue neq=2 [json_name="$neq"];
+  optional google.protobuf.BoolValue  null=3 [json_name="$null"];
+  optional google.protobuf.BoolValue nnull=4 [json_name="$nnull"];
 }
 
 message NullFilterOperators{
-  google.protobuf.BoolValue  null=7 [json_name="$null"];
-  google.protobuf.BoolValue nnull=8 [json_name="$nnull"];
+  optional google.protobuf.BoolValue  null=7 [json_name="$null"];
+  optional google.protobuf.BoolValue nnull=8 [json_name="$nnull"];
 }
 
 message DateFilterOperators{
-  google.protobuf.Timestamp eq =1 [json_name="$eq"];
-  google.protobuf.Timestamp neq=2 [json_name="$neq"];
-  google.protobuf.Timestamp gt =3 [json_name="$gt"];
-  google.protobuf.Timestamp gte =4 [json_name="$gte"];
-  google.protobuf.Timestamp lt =5 [json_name="$lt"];
-  google.protobuf.Timestamp lte =6 [json_name="$lte"];
-  google.protobuf.BoolValue  null=7 [json_name="$null"];
-  google.protobuf.BoolValue nnull=8 [json_name="$nnull"];
+  optional google.protobuf.Timestamp eq =1 [json_name="$eq"];
+  optional google.protobuf.Timestamp neq=2 [json_name="$neq"];
+  optional google.protobuf.Timestamp gt =3 [json_name="$gt"];
+  optional google.protobuf.Timestamp gte =4 [json_name="$gte"];
+  optional google.protobuf.Timestamp lt =5 [json_name="$lt"];
+  optional google.protobuf.Timestamp lte =6 [json_name="$lte"];
+  optional google.protobuf.BoolValue  null=7 [json_name="$null"];
+  optional google.protobuf.BoolValue nnull=8 [json_name="$nnull"];
 }
 
 message DoubleFilterOperators{
-  google.protobuf.DoubleValue  eq =1 [json_name="$eq"];
-  google.protobuf.DoubleValue  neq=2 [json_name="$neq"];
+  optional google.protobuf.DoubleValue  eq =1 [json_name="$eq"];
+  optional google.protobuf.DoubleValue  neq=2 [json_name="$neq"];
   repeated google.protobuf.DoubleValue  in=3 [json_name="$in"];
   repeated google.protobuf.DoubleValue  nin=4 [json_name="$nin"];
-  google.protobuf.DoubleValue  gt =5 [json_name="$gt"];
-  google.protobuf.DoubleValue  gte =6 [json_name="$gte"];
-  google.protobuf.DoubleValue  lt =7 [json_name="$lt"];
-  google.protobuf.DoubleValue  lte =8 [json_name="$lte"];
+  optional google.protobuf.DoubleValue  gt =5 [json_name="$gt"];
+  optional google.protobuf.DoubleValue  gte =6 [json_name="$gte"];
+  optional google.protobuf.DoubleValue  lt =7 [json_name="$lt"];
+  optional google.protobuf.DoubleValue  lte =8 [json_name="$lte"];
 
-  google.protobuf.BoolValue  null=9 [json_name="$null"];
-  google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
+  optional google.protobuf.BoolValue  null=9 [json_name="$null"];
+  optional google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
 
 }
 message FloatFilterOperators{
-  google.protobuf.FloatValue   eq =1 [json_name="$eq"];
-  google.protobuf.FloatValue   neq= 2 [json_name="$neq"];
+  optional google.protobuf.FloatValue   eq =1 [json_name="$eq"];
+  optional google.protobuf.FloatValue   neq= 2 [json_name="$neq"];
   repeated google.protobuf.FloatValue   in=3 [json_name="$in"];
   repeated google.protobuf.FloatValue   nin=4 [json_name="$nin"];
-  google.protobuf.FloatValue   gt =5 [json_name="$gt"];
-  google.protobuf.FloatValue   gte =6 [json_name="$gte"];
-  google.protobuf.FloatValue   lt =7 [json_name="$lt"];
-  google.protobuf.FloatValue   lte =8 [json_name="$lte"];
+  optional google.protobuf.FloatValue   gt =5 [json_name="$gt"];
+  optional google.protobuf.FloatValue   gte =6 [json_name="$gte"];
+  optional google.protobuf.FloatValue   lt =7 [json_name="$lt"];
+  optional google.protobuf.FloatValue   lte =8 [json_name="$lte"];
 
-  google.protobuf.BoolValue  null=9 [json_name="$null"];
-  google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
+  optional google.protobuf.BoolValue  null=9 [json_name="$null"];
+  optional google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
 
 }
 message Int64FilterOperators{
-  google.protobuf.Int64Value    eq =1 [json_name="$eq"];
-  google.protobuf.Int64Value    neq=2 [json_name="$neq"];
+  optional google.protobuf.Int64Value    eq =1 [json_name="$eq"];
+  optional google.protobuf.Int64Value    neq=2 [json_name="$neq"];
   repeated google.protobuf.Int64Value    in=3 [json_name="$in"];
   repeated google.protobuf.Int64Value    nin=4 [json_name="$nin"];
-  google.protobuf.Int64Value    gt =5 [json_name="$gt"];
-  google.protobuf.Int64Value    gte =6 [json_name="$gte"];
-  google.protobuf.Int64Value    lt =7 [json_name="$lt"];
-  google.protobuf.Int64Value    lte =8 [json_name="$lte"];
+  optional google.protobuf.Int64Value    gt =5 [json_name="$gt"];
+  optional google.protobuf.Int64Value    gte =6 [json_name="$gte"];
+  optional google.protobuf.Int64Value    lt =7 [json_name="$lt"];
+  optional google.protobuf.Int64Value    lte =8 [json_name="$lte"];
 
-  google.protobuf.BoolValue  null=9 [json_name="$null"];
-  google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
+  optional google.protobuf.BoolValue  null=9 [json_name="$null"];
+  optional google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
 
 }
 
 //message UInt64FilterOperators{
-//  google.protobuf.UInt64Value    eq =1 [json_name="$eq"];
-//  google.protobuf.UInt64Value    neq=2 [json_name="$neq"];
+//  optional google.protobuf.UInt64Value    eq =1 [json_name="$eq"];
+//  optional google.protobuf.UInt64Value    neq=2 [json_name="$neq"];
 //  repeated google.protobuf.UInt64Value    in=3 [json_name="$in"];
 //  repeated google.protobuf.UInt64Value    nin=4 [json_name="$nin"];
-//  google.protobuf.UInt64Value    gt =5 [json_name="$gt"];
-//  google.protobuf.UInt64Value    gte =6 [json_name="$gte"];
-//  google.protobuf.UInt64Value    lt =7 [json_name="$lt"];
-//  google.protobuf.UInt64Value    lte =8 [json_name="$lte"];
+//  optional google.protobuf.UInt64Value    gt =5 [json_name="$gt"];
+//  optional google.protobuf.UInt64Value    gte =6 [json_name="$gte"];
+//  optional google.protobuf.UInt64Value    lt =7 [json_name="$lt"];
+//  optional google.protobuf.UInt64Value    lte =8 [json_name="$lte"];
 //
-//  google.protobuf.BoolValue  null=9 [json_name="$null"];
-//  google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
+//  optional google.protobuf.BoolValue  null=9 [json_name="$null"];
+//  optional google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
 //
 //}
 message Int32FilterOperators{
-  google.protobuf.Int32Value    eq =1 [json_name="$eq"];
-  google.protobuf.Int32Value    neq=2 [json_name="$neq"];
+  optional google.protobuf.Int32Value    eq =1 [json_name="$eq"];
+  optional google.protobuf.Int32Value    neq=2 [json_name="$neq"];
   repeated google.protobuf.Int32Value    in=3 [json_name="$in"];
   repeated google.protobuf.Int32Value    nin=4 [json_name="$nin"];
-  google.protobuf.Int32Value    gt =5 [json_name="$gt"];
-  google.protobuf.Int32Value    gte =6 [json_name="$gte"];
-  google.protobuf.Int32Value    lt =7 [json_name="$lt"];
-  google.protobuf.Int32Value    lte =8 [json_name="$lte"];
+  optional google.protobuf.Int32Value    gt =5 [json_name="$gt"];
+  optional google.protobuf.Int32Value    gte =6 [json_name="$gte"];
+  optional google.protobuf.Int32Value    lt =7 [json_name="$lt"];
+  optional google.protobuf.Int32Value    lte =8 [json_name="$lte"];
 
-  google.protobuf.BoolValue  null=9 [json_name="$null"];
-  google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
+  optional google.protobuf.BoolValue  null=9 [json_name="$null"];
+  optional google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
 
 }
 //message UInt32FilterOperators{
-//  google.protobuf.UInt32Value    eq =1 [json_name="$eq"];
-//  google.protobuf.UInt32Value    neq=2 [json_name="$neq"];
+//  optional google.protobuf.UInt32Value    eq =1 [json_name="$eq"];
+//  optional google.protobuf.UInt32Value    neq=2 [json_name="$neq"];
 //  repeated google.protobuf.UInt32Value    in=3 [json_name="$in"];
 //  repeated google.protobuf.UInt32Value    nin=4 [json_name="$nin"];
-//  google.protobuf.UInt32Value    gt =5 [json_name="$gt"];
-//  google.protobuf.UInt32Value    gte =6 [json_name="$gte"];
-//  google.protobuf.UInt32Value    lt =7 [json_name="$lt"];
-//  google.protobuf.UInt32Value    lte =8  [json_name="$lte"];
+//  optional google.protobuf.UInt32Value    gt =5 [json_name="$gt"];
+//  optional google.protobuf.UInt32Value    gte =6 [json_name="$gte"];
+//  optional google.protobuf.UInt32Value    lt =7 [json_name="$lt"];
+//  optional google.protobuf.UInt32Value    lte =8  [json_name="$lte"];
 //
-//  google.protobuf.BoolValue  null=9 [json_name="$null"];
-//  google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
+//  optional google.protobuf.BoolValue  null=9 [json_name="$null"];
+//  optional google.protobuf.BoolValue nnull=10 [json_name="$nnull"];
 //
 //}

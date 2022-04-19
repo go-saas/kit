@@ -175,8 +175,8 @@ message RefreshTokenAuthReply{
 }
 
 message PasswordlessTokenAuthRequest{
-    google.protobuf.StringValue phone =4;
-    google.protobuf.StringValue email=5;
+    optional google.protobuf.StringValue phone =4;
+    optional google.protobuf.StringValue email=5;
 }
 
 message PasswordlessTokenAuthReply{
@@ -185,8 +185,8 @@ message PasswordlessTokenAuthReply{
 }
 
 message LoginPasswordlessRequest{
-    google.protobuf.StringValue phone =4;
-    google.protobuf.StringValue email=5;
+    optional google.protobuf.StringValue phone =4;
+    optional google.protobuf.StringValue email=5;
     string  token=10 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
 
@@ -201,8 +201,8 @@ message LoginPasswordlessReply{
 }
 
 message ForgetPasswordTokenRequest{
-    google.protobuf.StringValue phone =4;
-    google.protobuf.StringValue email=5;
+    optional google.protobuf.StringValue phone =4;
+    optional google.protobuf.StringValue email=5;
 
 }
 
@@ -212,8 +212,8 @@ message ForgetPasswordTokenReply{
 }
 
 message ForgetPasswordRequest{
-    google.protobuf.StringValue phone =4;
-    google.protobuf.StringValue email=5;
+    optional google.protobuf.StringValue phone =4;
+    optional google.protobuf.StringValue email=5;
     string token=10;
 }
 

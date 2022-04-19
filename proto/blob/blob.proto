@@ -27,7 +27,7 @@ message BlobProviderS3{
 }
 
 message BlobProviderOs{
-  google.protobuf.StringValue dir=1;
+  optional google.protobuf.StringValue dir=1;
 }
 
 message BlobFile{

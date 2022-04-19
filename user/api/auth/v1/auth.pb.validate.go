@@ -950,62 +950,70 @@ func (m *PasswordlessTokenAuthRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPhone()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, PasswordlessTokenAuthRequestValidationError{
-					field:  "Phone",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Phone != nil {
+
+		if all {
+			switch v := interface{}(m.GetPhone()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PasswordlessTokenAuthRequestValidationError{
+						field:  "Phone",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PasswordlessTokenAuthRequestValidationError{
+						field:  "Phone",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, PasswordlessTokenAuthRequestValidationError{
+				return PasswordlessTokenAuthRequestValidationError{
 					field:  "Phone",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return PasswordlessTokenAuthRequestValidationError{
-				field:  "Phone",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
-	if all {
-		switch v := interface{}(m.GetEmail()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, PasswordlessTokenAuthRequestValidationError{
-					field:  "Email",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Email != nil {
+
+		if all {
+			switch v := interface{}(m.GetEmail()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PasswordlessTokenAuthRequestValidationError{
+						field:  "Email",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PasswordlessTokenAuthRequestValidationError{
+						field:  "Email",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, PasswordlessTokenAuthRequestValidationError{
+				return PasswordlessTokenAuthRequestValidationError{
 					field:  "Email",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return PasswordlessTokenAuthRequestValidationError{
-				field:  "Email",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -1242,64 +1250,6 @@ func (m *LoginPasswordlessRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPhone()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, LoginPasswordlessRequestValidationError{
-					field:  "Phone",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, LoginPasswordlessRequestValidationError{
-					field:  "Phone",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return LoginPasswordlessRequestValidationError{
-				field:  "Phone",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetEmail()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, LoginPasswordlessRequestValidationError{
-					field:  "Email",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, LoginPasswordlessRequestValidationError{
-					field:  "Email",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return LoginPasswordlessRequestValidationError{
-				field:  "Email",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if utf8.RuneCountInString(m.GetToken()) < 1 {
 		err := LoginPasswordlessRequestValidationError{
 			field:  "Token",
@@ -1309,6 +1259,72 @@ func (m *LoginPasswordlessRequest) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.Phone != nil {
+
+		if all {
+			switch v := interface{}(m.GetPhone()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, LoginPasswordlessRequestValidationError{
+						field:  "Phone",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, LoginPasswordlessRequestValidationError{
+						field:  "Phone",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return LoginPasswordlessRequestValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Email != nil {
+
+		if all {
+			switch v := interface{}(m.GetEmail()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, LoginPasswordlessRequestValidationError{
+						field:  "Email",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, LoginPasswordlessRequestValidationError{
+						field:  "Email",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return LoginPasswordlessRequestValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -1523,62 +1539,70 @@ func (m *ForgetPasswordTokenRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPhone()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ForgetPasswordTokenRequestValidationError{
-					field:  "Phone",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Phone != nil {
+
+		if all {
+			switch v := interface{}(m.GetPhone()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ForgetPasswordTokenRequestValidationError{
+						field:  "Phone",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ForgetPasswordTokenRequestValidationError{
+						field:  "Phone",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, ForgetPasswordTokenRequestValidationError{
+				return ForgetPasswordTokenRequestValidationError{
 					field:  "Phone",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ForgetPasswordTokenRequestValidationError{
-				field:  "Phone",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
-	if all {
-		switch v := interface{}(m.GetEmail()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ForgetPasswordTokenRequestValidationError{
-					field:  "Email",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Email != nil {
+
+		if all {
+			switch v := interface{}(m.GetEmail()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ForgetPasswordTokenRequestValidationError{
+						field:  "Email",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ForgetPasswordTokenRequestValidationError{
+						field:  "Email",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, ForgetPasswordTokenRequestValidationError{
+				return ForgetPasswordTokenRequestValidationError{
 					field:  "Email",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ForgetPasswordTokenRequestValidationError{
-				field:  "Email",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -1814,65 +1838,73 @@ func (m *ForgetPasswordRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPhone()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ForgetPasswordRequestValidationError{
-					field:  "Phone",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, ForgetPasswordRequestValidationError{
-					field:  "Phone",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ForgetPasswordRequestValidationError{
-				field:  "Phone",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetEmail()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ForgetPasswordRequestValidationError{
-					field:  "Email",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, ForgetPasswordRequestValidationError{
-					field:  "Email",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ForgetPasswordRequestValidationError{
-				field:  "Email",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	// no validation rules for Token
+
+	if m.Phone != nil {
+
+		if all {
+			switch v := interface{}(m.GetPhone()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ForgetPasswordRequestValidationError{
+						field:  "Phone",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ForgetPasswordRequestValidationError{
+						field:  "Phone",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ForgetPasswordRequestValidationError{
+					field:  "Phone",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Email != nil {
+
+		if all {
+			switch v := interface{}(m.GetEmail()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ForgetPasswordRequestValidationError{
+						field:  "Email",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ForgetPasswordRequestValidationError{
+						field:  "Email",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ForgetPasswordRequestValidationError{
+					field:  "Email",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return ForgetPasswordRequestMultiError(errors)

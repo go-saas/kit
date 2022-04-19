@@ -2689,25 +2689,32 @@
       "type": "object",
       "properties": {
         "$eq": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "$neq": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "$contains": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "$starts_with": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "$nstarts_with": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "$ends_with": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "$nends_with": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "$in": {
           "type": "array",
@@ -2722,19 +2729,24 @@
           }
         },
         "$null": {
-          "type": "boolean"
+          "type": "boolean",
+          "x-nullable": true
         },
         "$nnull": {
-          "type": "boolean"
+          "type": "boolean",
+          "x-nullable": true
         },
         "$empty": {
-          "type": "boolean"
+          "type": "boolean",
+          "x-nullable": true
         },
         "$nempty": {
-          "type": "boolean"
+          "type": "boolean",
+          "x-nullable": true
         },
         "$like": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       }
     },
@@ -3111,13 +3123,16 @@
           "type": "boolean"
         },
         "adminEmail": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "adminUsername": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "adminPassword": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       },
       "required": [
@@ -3129,18 +3144,22 @@
       "properties": {
         "username": {
           "type": "string",
+          "x-nullable": true,
           "required": [
             "username"
           ]
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "phone": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "password": {
           "type": "string"
@@ -3150,7 +3169,8 @@
         },
         "birthday": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "gender": {
           "$ref": "#/definitions/v1Gender"
@@ -3219,10 +3239,12 @@
       "type": "object",
       "properties": {
         "phone": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "token": {
           "type": "string"
@@ -3242,10 +3264,12 @@
       "type": "object",
       "properties": {
         "phone": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       }
     },
@@ -3376,20 +3400,25 @@
           "type": "string"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "phone": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "birthday": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "gender": {
           "$ref": "#/definitions/v1Gender"
@@ -3797,10 +3826,12 @@
       "type": "object",
       "properties": {
         "phone": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "token": {
           "type": "string",
@@ -3840,7 +3871,8 @@
         },
         "createdAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "desc": {
           "type": "string"
@@ -3955,10 +3987,12 @@
       "type": "object",
       "properties": {
         "phone": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       }
     },
@@ -4188,11 +4222,13 @@
         },
         "createdAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "updatedAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "conn": {
           "type": "array",
@@ -4447,10 +4483,12 @@
       "type": "object",
       "properties": {
         "username": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "gender": {
           "$ref": "#/definitions/v1Gender"
@@ -4673,20 +4711,25 @@
           ]
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "phone": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "birthday": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "gender": {
           "$ref": "#/definitions/v1Gender"
@@ -4730,20 +4773,25 @@
           "type": "string"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "phone": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "birthday": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "gender": {
           "$ref": "#/definitions/v1Gender"
@@ -4799,11 +4847,13 @@
         },
         "birthdayGte": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "birthdayLte": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "x-nullable": true
         },
         "roles": {
           "$ref": "#/definitions/v1RoleFilter"

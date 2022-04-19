@@ -119,9 +119,9 @@ message CreateTenantRequest {
 
 	bool separate_db=6;
 
-	google.protobuf.StringValue admin_email = 7 [(validate.rules).string.email=true];
-	google.protobuf.StringValue admin_username=8;
-	google.protobuf.StringValue admin_password=9;
+	optional google.protobuf.StringValue admin_email = 7 [(validate.rules).string.email=true];
+	optional google.protobuf.StringValue admin_username=8;
+	optional google.protobuf.StringValue admin_password=9;
 }
 
 message UpdateTenantRequest {
@@ -184,8 +184,8 @@ message Tenant{
 	string name=2;
 	string display_name=3;
 	string region=4;
-	google.protobuf.Timestamp created_at=5;
-	google.protobuf.Timestamp updated_at=6;
+	optional google.protobuf.Timestamp created_at=5;
+	optional google.protobuf.Timestamp updated_at=6;
 
 	repeated TenantConnectionString conn=7;
 	repeated TenantFeature features=8;

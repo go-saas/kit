@@ -38,7 +38,7 @@ message UserConf{
   google.protobuf.Duration email_recover_expiry = 7;
   google.protobuf.Duration phone_recover_expiry = 8;
 
-  google.protobuf.StringValue totp_2fa_issuer=9;
+  optional google.protobuf.StringValue totp_2fa_issuer=9;
 
   authz.PermissionConf permission=10;
 }

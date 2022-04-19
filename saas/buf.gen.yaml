@@ -22,4 +22,5 @@ plugins:
     out: ../openapi
     opt:
       - allow_merge=true
+      - proto3_optional_nullable=true
       - merge_file_name=saas

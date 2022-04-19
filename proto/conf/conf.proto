@@ -17,8 +17,8 @@ message Server {
 
     message Csrf{
       Cookie cookie=10;
-      google.protobuf.StringValue request_header=17;
-      google.protobuf.StringValue field_name =18;
+      optional google.protobuf.StringValue request_header=17;
+      optional google.protobuf.StringValue field_name =18;
       repeated string trusted_origins=20;
     }
 
@@ -60,7 +60,7 @@ message Database {
   string driver = 1;
   string source = 2;
   bool debug = 3;
-  google.protobuf.StringValue table_prefix = 4;
+  optional google.protobuf.StringValue table_prefix = 4;
 }
 
 message Endpoints{
@@ -72,14 +72,14 @@ message Endpoints{
 }
 
 message Redis {
-  google.protobuf.StringValue network = 1;
+  optional google.protobuf.StringValue network = 1;
   string addr = 2;
   google.protobuf.Duration read_timeout = 3;
   google.protobuf.Duration write_timeout = 4;
-  google.protobuf.StringValue username = 5;
-  google.protobuf.StringValue password = 6;
-  google.protobuf.Int32Value  db = 7;
-  google.protobuf.Int32Value max_retries = 8;
+  optional google.protobuf.StringValue username = 5;
+  optional google.protobuf.StringValue password = 6;
+  optional google.protobuf.Int32Value  db = 7;
+  optional google.protobuf.Int32Value max_retries = 8;
   google.protobuf.Duration min_retry_backoff = 9;
   google.protobuf.Duration max_retry_backoff = 10;
   google.protobuf.Duration dial_timeout = 11;
@@ -91,7 +91,7 @@ message Event{
   string topic=3;
   string group=4;
   message Kafka{
-    google.protobuf.StringValue version=1;
+    optional google.protobuf.StringValue version=1;
   }
   Kafka kafka=10;
 }
@@ -105,7 +105,7 @@ message Security{
   }
   message CookieKey{
     string hash_key=1;
-    google.protobuf.StringValue block_key=2;
+    optional google.protobuf.StringValue block_key=2;
   }
   Jwt jwt=1;
   CookieKey security_cookie=2;
@@ -124,13 +124,13 @@ enum SameSiteMode{
 }
 
 message Cookie{
-  google.protobuf.StringValue name=10;
+  optional google.protobuf.StringValue name=10;
 
-  google.protobuf.Int32Value max_age=11;
-  google.protobuf.StringValue domain=12;
-  google.protobuf.StringValue path=13;
-  google.protobuf.BoolValue http_only =14;
-  google.protobuf.BoolValue secure =15;
+  optional google.protobuf.Int32Value max_age=11;
+  optional google.protobuf.StringValue domain=12;
+  optional google.protobuf.StringValue path=13;
+  optional google.protobuf.BoolValue http_only =14;
+  optional google.protobuf.BoolValue secure =15;
   SameSiteMode same_site=16;
 }
 
@@ -179,8 +179,8 @@ message Email{
     }
     Encryption encryption=5;
     bool keep_alive=6;
-    google.protobuf.Int32Value connect_timeout=7;
-    google.protobuf.Int32Value send_timeout=8;
+    optional google.protobuf.Int32Value connect_timeout=7;
+    optional google.protobuf.Int32Value send_timeout=8;
     bool tls_skip_verify=9;
   }
   SMTP smtp=100;

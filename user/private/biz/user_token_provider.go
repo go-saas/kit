@@ -156,7 +156,7 @@ func (p *TwoStepTokenProvider) Generate(ctx context.Context, purpose TokenPurpos
 		Ctx:   ctx,
 		Key:   key,
 		Value: payload,
-		TTL:   duration,
+		TTL:   &duration,
 	})
 	if err != nil {
 		return "", err
