@@ -9,6 +9,7 @@ import "google/protobuf/wrappers.proto";
 import "user/api/permission/v1/permission.proto";
 import "validate/validate.proto";
 import "google/api/field_behavior.proto";
+import "query/operation.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/role/v1;v1";
 
@@ -72,8 +73,8 @@ service RoleService{
 }
 
 message RoleFilter{
-  repeated string id_in=1;
-  repeated string name_in =2;
+  query.operation.StringFilterOperation id=1;
+  query.operation.StringFilterOperation name =2;
 }
 
 message ListRolesRequest{

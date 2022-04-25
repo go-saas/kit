@@ -56,22 +56,9 @@ func buildUserScope(filter *v1.UserFilter) func(db *gorm.DB) *gorm.DB {
 				ret = ret.Or(buildUserScope(filter)(db.Session(&gorm.Session{NewDB: true})))
 			}
 		}
-
-		if filter.GenderIn != nil {
-			ret = ret.Where("gender IN ?", filter.GetGenderIn())
-		}
-		if filter.BirthdayLte != nil {
-			ret = ret.Where("birthday <= ?", filter.BirthdayLte.AsTime())
-		}
-
-		if filter.BirthdayGte != nil {
-			ret = ret.Where("birthday >= ?", filter.BirthdayGte.AsTime())
-		}
-
-		if filter.IdIn != nil {
-			ret = ret.Where("id In ?", filter.IdIn)
-		}
-
+		ret = ret.Scopes(gorm2.BuildStringFilter("`id`", filter.Id))
+		ret = ret.Scopes(gorm2.BuildStringFilter("`gender`", filter.Gender))
+		ret = ret.Scopes(gorm2.BuildDateFilter("`birthday`", filter.Birthday))
 		return ret
 	}
 }

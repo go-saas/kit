@@ -10,6 +10,7 @@ import "validate/validate.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "blob/blob.proto";
 import "google/api/field_behavior.proto";
+import "query/operation.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1;v1";
 
@@ -156,11 +157,9 @@ message GetTenantPublicRequest{
 }
 
 message TenantFilter{
-	repeated string id_in=1;
-	repeated string name_in =2;
-	string name_like=3;
-	repeated string region_in=4;
-
+	query.operation.StringFilterOperation id=1;
+	query.operation.StringFilterOperation name =2;
+	query.operation.StringFilterOperation region=4;
 }
 
 message ListTenantRequest {

@@ -53,20 +53,9 @@ func (g *TenantRepo) BuildFilterScope(q *v1.ListTenantRequest) func(db *gg.DB) *
 		if filter == nil {
 			return ret
 		}
-		if filter.IdIn != nil {
-			ret = ret.Where("id IN ?", filter.IdIn)
-		}
-		if filter.NameIn != nil {
-			ret = ret.Where("name IN ?", filter.NameIn)
-		}
-		if filter.NameLike != "" {
-			ret = ret.Where("name like ?", fmt.Sprintf("%%%v%%", filter.NameLike))
-		}
-
-		if filter.RegionIn != nil {
-			ret = ret.Where("region IN ?", filter.RegionIn)
-		}
-
+		ret = ret.Scopes(kitgorm.BuildStringFilter("`id`", filter.Id))
+		ret = ret.Scopes(kitgorm.BuildStringFilter("`name`", filter.Name))
+		ret = ret.Scopes(kitgorm.BuildStringFilter("`region`", filter.Region))
 		return ret
 	}
 }

@@ -11,6 +11,7 @@ import "validate/validate.proto";
 import "google/api/field_behavior.proto";
 import "user/api/role/v1/role.proto";
 import "blob/blob.proto";
+import "query/operation.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/user/api/user/v1;v1";
 
@@ -109,11 +110,10 @@ service UserService{
 }
 
 message UserFilter{
-  repeated string id_in =1;
-  repeated string gender_in=2;
+  query.operation.StringFilterOperation id =1;
+  query.operation.StringFilterOperation gender=2;
 
-  optional google.protobuf.Timestamp birthday_gte=3;
-  optional google.protobuf.Timestamp birthday_lte=4;
+  query.operation.DateFilterOperators birthday=3;
 
   .user.api.role.v1.RoleFilter roles =5;
 

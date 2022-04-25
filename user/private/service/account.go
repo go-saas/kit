@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
+	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	"google.golang.org/protobuf/types/known/structpb"
 	"io"
 	"os"
@@ -101,7 +102,11 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	if len(tenantIds) > 0 {
 		//change to host side
 		ctx = common.NewCurrentTenant(ctx, "", "")
-		tenants, err := s.tenantService.ListTenant(ctx, &v13.ListTenantRequest{Filter: &v13.TenantFilter{IdIn: tenantIds}})
+		tenants, err := s.tenantService.ListTenant(ctx,
+			&v13.ListTenantRequest{Filter: &v13.TenantFilter{
+				Id: &query.StringFilterOperation{In: lo.Map(tenantIds, func(t string, _ int) *wrapperspb.StringValue {
+					return &wrapperspb.StringValue{Value: t}
+				})}}})
 		if err != nil {
 			return nil, err
 		}

@@ -58,6 +58,93 @@ func (m *UserFilter) validate(all bool) error {
 	var errors []error
 
 	if all {
+		switch v := interface{}(m.GetId()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "Id",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "Id",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetId()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserFilterValidationError{
+				field:  "Id",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetGender()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "Gender",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "Gender",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetGender()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserFilterValidationError{
+				field:  "Gender",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetBirthday()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "Birthday",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserFilterValidationError{
+					field:  "Birthday",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBirthday()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserFilterValidationError{
+				field:  "Birthday",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
 		switch v := interface{}(m.GetRoles()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -146,72 +233,6 @@ func (m *UserFilter) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return UserFilterValidationError{
 					field:  fmt.Sprintf("Or[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.BirthdayGte != nil {
-
-		if all {
-			switch v := interface{}(m.GetBirthdayGte()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserFilterValidationError{
-						field:  "BirthdayGte",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserFilterValidationError{
-						field:  "BirthdayGte",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetBirthdayGte()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserFilterValidationError{
-					field:  "BirthdayGte",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.BirthdayLte != nil {
-
-		if all {
-			switch v := interface{}(m.GetBirthdayLte()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserFilterValidationError{
-						field:  "BirthdayLte",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserFilterValidationError{
-						field:  "BirthdayLte",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetBirthdayLte()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserFilterValidationError{
-					field:  "BirthdayLte",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

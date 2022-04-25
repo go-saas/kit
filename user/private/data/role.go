@@ -33,12 +33,8 @@ func (r *RoleRepo) BuildFilterScope(q *v12.ListRolesRequest) func(db *gorm.DB) *
 			return db
 		}
 		ret := db
-		if filter.IdIn != nil {
-			ret = ret.Where("id IN ?", filter.IdIn)
-		}
-		if filter.NameIn != nil {
-			ret = ret.Where("name IN ?", filter.NameIn)
-		}
+		ret = ret.Scopes(kitgorm.BuildStringFilter("`id`", filter.Id))
+		ret = ret.Scopes(kitgorm.BuildStringFilter("`name`", filter.Name))
 		return ret
 	}
 }

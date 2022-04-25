@@ -49,15 +49,10 @@ func (c *MenuRepo) BuildFilterScope(q *v1.ListMenuRequest) func(db *gorm.DB) *go
 			return ret
 		}
 
-		if filter.IdIn != nil {
-			ret = ret.Where("id IN ?", filter.IdIn)
-		}
-		if filter.NameIn != nil {
-			ret = ret.Where("name IN ?", filter.NameIn)
-		}
-		if filter.ParentIn != nil {
-			ret = ret.Where("parent IN ?", filter.ParentIn)
-		}
+		ret = ret.Scopes(kitgorm.BuildStringFilter("`id`", filter.Id))
+		ret = ret.Scopes(kitgorm.BuildStringFilter("`name`", filter.Name))
+		ret = ret.Scopes(kitgorm.BuildStringFilter("`parent`", filter.Parent))
+
 		return ret
 	}
 }

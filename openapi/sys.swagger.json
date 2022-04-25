@@ -267,7 +267,49 @@
             "type": "string"
           },
           {
-            "name": "filter.idIn",
+            "name": "filter.id.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$contains",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$starts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$nstarts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$ends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$nends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$in",
             "in": "query",
             "required": false,
             "type": "array",
@@ -277,7 +319,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "filter.nameIn",
+            "name": "filter.id.$nin",
             "in": "query",
             "required": false,
             "type": "array",
@@ -287,7 +329,79 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "filter.parentIn",
+            "name": "filter.id.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$empty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$nempty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$like",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$contains",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$starts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$nstarts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$ends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$nends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$in",
             "in": "query",
             "required": false,
             "type": "array",
@@ -295,6 +409,138 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.name.$nin",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.name.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.name.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.name.$empty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.name.$nempty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.name.$like",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.parent.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.parent.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.parent.$contains",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.parent.$starts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.parent.$nstarts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.parent.$ends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.parent.$nends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.parent.$in",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.parent.$nin",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.parent.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.parent.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.parent.$empty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.parent.$nempty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.parent.$like",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -326,6 +572,71 @@
     }
   },
   "definitions": {
+    "operationStringFilterOperation": {
+      "type": "object",
+      "properties": {
+        "$eq": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "$neq": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "$contains": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "$starts_with": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "$nstarts_with": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "$ends_with": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "$nends_with": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "$in": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "$nin": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "$null": {
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "$nnull": {
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "$empty": {
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "$nempty": {
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "$like": {
+          "type": "string",
+          "x-nullable": true
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -563,23 +874,14 @@
     "v1MenuFilter": {
       "type": "object",
       "properties": {
-        "idIn": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "id": {
+          "$ref": "#/definitions/operationStringFilterOperation"
         },
-        "nameIn": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "name": {
+          "$ref": "#/definitions/operationStringFilterOperation"
         },
-        "parentIn": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "parent": {
+          "$ref": "#/definitions/operationStringFilterOperation"
         }
       }
     },
