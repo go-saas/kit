@@ -3,6 +3,9 @@ name: Push Buf Proto
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches:
+      - 'main'
   workflow_dispatch:
 
 
@@ -13,7 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: bufbuild/buf-setup-action@v0.6.0
+      - name: test buf build
+        run: buf build ./proto
       - uses: bufbuild/buf-push-action@v1
+        if: |
+          github.event_name == 'push'
+          && github.repository == 'Goxiaoy/go-saas-kit'
         with:
           input: 'proto'
           buf_token: ${{ secrets.BUF_TOKEN }}
