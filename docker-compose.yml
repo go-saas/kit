@@ -32,7 +32,9 @@ services:
       - ./quickstart/configs:/data/conf
     environment:
       - APISIX_LISTEN_ADDRESS=unix:/tmp/runner/runner.sock
-
+    depends_on:
+      - user
+      - saas
 
   user:
     image: ${DOCKER_REGISTRY}go-saas-kit-user:${DOCKER_TAG:-latest}
@@ -47,22 +49,22 @@ services:
   saas:
     image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
     depends_on:
-      - mysqld
       - kafka
       - user
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
 
-
   sys:
     image: ${DOCKER_REGISTRY}go-saas-kit-sys:${DOCKER_TAG:-latest}
     depends_on:
-      - mysqld
+      - user
+      - saas
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
     command: ["./sys", "-conf", "/data/conf","-seed","/data/conf/seed/sys.yaml"]
+
 
   mysqld:
     image: mysql:8.0
@@ -83,6 +85,11 @@ services:
     image: redis:6.0
     restart: always
     command: redis-server --requirepass youShouldChangeThis
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 30
     ports:
       - "7379:6379"
 

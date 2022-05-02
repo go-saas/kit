@@ -120,3 +120,32 @@ var _ Subject = (*SubjectStr)(nil)
 func (s SubjectStr) GetIdentity() string {
 	return string(s)
 }
+
+type TenantSubject struct {
+	id string
+}
+
+var _ Subject = (*TenantSubject)(nil)
+
+func ParseTenantSubject(subject Subject) (*TenantSubject, bool) {
+	if strings.HasPrefix(subject.GetIdentity(), "tenant/") {
+		return NewTenantSubject(strings.TrimPrefix(subject.GetIdentity(), "tenant/")), true
+	}
+	return nil, false
+}
+
+func NewTenantSubject(id string) *TenantSubject {
+	return &TenantSubject{id: id}
+}
+
+func (r *TenantSubject) GetIdentity() string {
+	return fmt.Sprintf("%s/%s", r.GetName(), r.id)
+}
+
+func (r *TenantSubject) GetName() string {
+	return "tenant"
+}
+
+func (r *TenantSubject) GetTenantId() string {
+	return r.id
+}
