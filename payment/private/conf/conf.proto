@@ -1,0 +1,21 @@
+syntax = "proto3";
+package kratos.api;
+
+option go_package = "github.com/goxiaoy/go-saas-kit/payment/private/conf;conf";
+
+import "conf/conf.proto";
+import "blob/blob.proto";
+
+message Bootstrap {
+  Data data = 2;
+  conf.Security security=3;
+  conf.Services services =4;
+  conf.Logging logging=6;
+  conf.Tracers tracing=7;
+}
+
+message Data {
+  conf.Endpoints endpoints = 1;
+  map<string,blob.BlobConfig> blobs=2;
+}
+
