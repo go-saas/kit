@@ -5,7 +5,7 @@ import (
 	grpc2 "github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
-	v1 "github.com/goxiaoy/go-saas-kit/payment/api/post/v1"
+	v1 "github.com/goxiaoy/go-saas-kit/payment/api/order/v1"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"google.golang.org/grpc"
@@ -24,13 +24,13 @@ func NewHttpClient(clientName api.ClientName, services *conf.Services, opt *api.
 	return api.NewHttpClient(clientName, ServiceName, services, opt, tokenMgr, logger, opts...)
 }
 
-var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewPostGrpcClient)
-var HttpProviderSet = wire.NewSet(NewHttpClient, NewPostHttpClient)
+var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewOrderGrpcClient)
+var HttpProviderSet = wire.NewSet(NewHttpClient, NewOrderHttpClient)
 
-func NewPostGrpcClient(conn GrpcConn) v1.PostServiceClient {
-	return v1.NewPostServiceClient(conn)
+func NewOrderGrpcClient(conn GrpcConn) v1.OrderServiceClient {
+	return v1.NewOrderServiceClient(conn)
 }
 
-func NewPostHttpClient(http HttpClient) v1.PostServiceHTTPClient {
-	return v1.NewPostServiceHTTPClient(http)
+func NewOrderHttpClient(http HttpClient) v1.OrderServiceHTTPClient {
+	return v1.NewOrderServiceHTTPClient(http)
 }

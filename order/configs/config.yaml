@@ -1,0 +1,42 @@
+services:
+  servers:
+    default:
+      http:
+        timeout: 200s
+        cors:
+          allowed_origins: [ "*" ]
+    order:
+      http:
+        addr: 0.0.0.0:9500
+      grpc:
+        addr: 0.0.0.0:9501
+  services:
+    user:
+      grpc_endpoint: localhost:8501
+    saas:
+      grpc_endpoint: localhost:8521
+  clients:
+    order:
+      client_id: order-golang
+
+data:
+  endpoints:
+    databases:
+        default:
+          driver: sqlite
+          source: "file::memory:?loc=Local"
+          table_prefix: ""
+  blobs:
+    order:
+      provider: os
+      public_url: http://localhost:9500
+      base_path: "assets/order"
+      os:
+        dir: "./.temp"
+
+security:
+  jwt:
+    expire_in: 2592000s #    30 days
+    secret: 6efa4458-b245-40a3-9685-6b30d5dcda49
+  security_cookie:
+    hash: gt35ofggk07kdt7ief99bl51avd7pbhe

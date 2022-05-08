@@ -10,4 +10,4 @@ func NewAuthorizationOption() *authz.Option {
 }
 
 // ProviderSet is service providers.
-var ProviderSet = wire.NewSet(NewAuthorizationOption, NewPostServiceService)
+var ProviderSet = wire.NewSet(NewAuthorizationOption, NewOrderServiceService)

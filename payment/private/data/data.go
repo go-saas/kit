@@ -28,7 +28,7 @@ var ProviderSet = wire.NewSet(
 	suow.NewUowManager,
 	NewBlobFactory,
 	NewMigrate,
-	NewPostRepo,
+	NewOrderRepo,
 )
 
 const ConnName = "payment"

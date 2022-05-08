@@ -11,7 +11,7 @@ import (
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gorilla/mux"
 	"github.com/goxiaoy/go-saas-kit/payment/api"
-	v12 "github.com/goxiaoy/go-saas-kit/payment/api/post/v1"
+	v12 "github.com/goxiaoy/go-saas-kit/payment/api/order/v1"
 	"github.com/goxiaoy/go-saas-kit/payment/private/conf"
 	"github.com/goxiaoy/go-saas-kit/payment/private/service"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
@@ -39,7 +39,7 @@ func NewHTTPServer(c *conf2.Services,
 	dataCfg *conf.Data,
 	mOpt *shttp.WebMultiTenancyOption,
 	apiOpt *api2.Option,
-	post *service.PostServiceService,
+	order *service.OrderServiceService,
 	validator sapi.TrustedContextValidator,
 	logger log.Logger) *khttp.Server {
 	var opts []khttp.ServerOption
@@ -69,6 +69,6 @@ func NewHTTPServer(c *conf2.Services,
 
 	server.HandleBlobs("", dataCfg.Blobs, srv, factory)
 
-	v12.RegisterPostServiceHTTPServer(srv, post)
+	v12.RegisterOrderServiceHTTPServer(srv, order)
 	return srv
 }

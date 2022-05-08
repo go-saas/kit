@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "api/post/v1/post.proto",
+    "title": "payment/api/order/v1/order.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "PostService"
+      "name": "OrderService"
     }
   ],
   "consumes": [
@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/v1/payment/post": {
+    "/v1/payment/order": {
       "post": {
-        "operationId": "PostService_CreatePost",
+        "operationId": "OrderService_CreateOrder",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Post"
+              "$ref": "#/definitions/v1Order"
             }
           },
           "default": {
@@ -39,23 +39,23 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1CreatePostRequest"
+              "$ref": "#/definitions/v1CreateOrderRequest"
             }
           }
         ],
         "tags": [
-          "PostService"
+          "OrderService"
         ]
       }
     },
-    "/v1/payment/post/list": {
+    "/v1/payment/order/list": {
       "post": {
-        "operationId": "PostService_ListPost2",
+        "operationId": "OrderService_ListOrder2",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ListPostReply"
+              "$ref": "#/definitions/v1ListOrderReply"
             }
           },
           "default": {
@@ -71,23 +71,23 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1ListPostRequest"
+              "$ref": "#/definitions/v1ListOrderRequest"
             }
           }
         ],
         "tags": [
-          "PostService"
+          "OrderService"
         ]
       }
     },
-    "/v1/payment/post/{id}": {
+    "/v1/payment/order/{id}": {
       "get": {
-        "operationId": "PostService_GetPost",
+        "operationId": "OrderService_GetOrder",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Post"
+              "$ref": "#/definitions/v1Order"
             }
           },
           "default": {
@@ -106,16 +106,16 @@
           }
         ],
         "tags": [
-          "PostService"
+          "OrderService"
         ]
       },
       "delete": {
-        "operationId": "PostService_DeletePost",
+        "operationId": "OrderService_DeleteOrder",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1DeletePostReply"
+              "$ref": "#/definitions/v1DeleteOrderReply"
             }
           },
           "default": {
@@ -134,18 +134,18 @@
           }
         ],
         "tags": [
-          "PostService"
+          "OrderService"
         ]
       }
     },
-    "/v1/payment/post/{post.id}": {
+    "/v1/payment/order/{order.id}": {
       "put": {
-        "operationId": "PostService_UpdatePost",
+        "operationId": "OrderService_UpdateOrder",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Post"
+              "$ref": "#/definitions/v1Order"
             }
           },
           "default": {
@@ -157,7 +157,7 @@
         },
         "parameters": [
           {
-            "name": "post.id",
+            "name": "order.id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -167,21 +167,21 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdatePostRequest"
+              "$ref": "#/definitions/v1UpdateOrderRequest"
             }
           }
         ],
         "tags": [
-          "PostService"
+          "OrderService"
         ]
       },
       "patch": {
-        "operationId": "PostService_UpdatePost2",
+        "operationId": "OrderService_UpdateOrder2",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Post"
+              "$ref": "#/definitions/v1Order"
             }
           },
           "default": {
@@ -193,7 +193,7 @@
         },
         "parameters": [
           {
-            "name": "post.id",
+            "name": "order.id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -203,23 +203,23 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdatePostRequest"
+              "$ref": "#/definitions/v1UpdateOrderRequest"
             }
           }
         ],
         "tags": [
-          "PostService"
+          "OrderService"
         ]
       }
     },
-    "/v1/payment/posts": {
+    "/v1/payment/orders": {
       "get": {
-        "operationId": "PostService_ListPost",
+        "operationId": "OrderService_ListOrder",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ListPostReply"
+              "$ref": "#/definitions/v1ListOrderReply"
             }
           },
           "default": {
@@ -452,7 +452,7 @@
           }
         ],
         "tags": [
-          "PostService"
+          "OrderService"
         ]
       }
     }
@@ -550,7 +550,7 @@
         }
       }
     },
-    "v1CreatePostRequest": {
+    "v1CreateOrderRequest": {
       "type": "object",
       "properties": {
         "name": {
@@ -564,7 +564,7 @@
         "name"
       ]
     },
-    "v1DeletePostReply": {
+    "v1DeleteOrderReply": {
       "type": "object",
       "properties": {
         "id": {
@@ -575,7 +575,7 @@
         }
       }
     },
-    "v1ListPostReply": {
+    "v1ListOrderReply": {
       "type": "object",
       "properties": {
         "totalSize": {
@@ -589,12 +589,12 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/v1Post"
+            "$ref": "#/definitions/v1Order"
           }
         }
       }
     },
-    "v1ListPostRequest": {
+    "v1ListOrderRequest": {
       "type": "object",
       "properties": {
         "pageOffset": {
@@ -618,11 +618,11 @@
           "type": "string"
         },
         "filter": {
-          "$ref": "#/definitions/v1PostFilter"
+          "$ref": "#/definitions/v1OrderFilter"
         }
       }
     },
-    "v1Post": {
+    "v1Order": {
       "type": "object",
       "properties": {
         "id": {
@@ -637,7 +637,7 @@
         }
       }
     },
-    "v1PostFilter": {
+    "v1OrderFilter": {
       "type": "object",
       "properties": {
         "id": {
@@ -648,7 +648,7 @@
         }
       }
     },
-    "v1UpdatePost": {
+    "v1UpdateOrder": {
       "type": "object",
       "properties": {
         "id": {
@@ -665,11 +665,11 @@
         "id"
       ]
     },
-    "v1UpdatePostRequest": {
+    "v1UpdateOrderRequest": {
       "type": "object",
       "properties": {
-        "post": {
-          "$ref": "#/definitions/v1UpdatePost"
+        "order": {
+          "$ref": "#/definitions/v1UpdateOrder"
         },
         "updateMask": {
           "type": "string"

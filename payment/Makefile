@@ -10,7 +10,7 @@ config:
 .PHONY: api
 # generate api proto
 api:
-	buf generate . --path ./api
+	buf generate ../proto --path ../proto/payment
 
 .PHONY: build
 # build

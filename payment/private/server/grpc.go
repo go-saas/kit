@@ -9,7 +9,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/goxiaoy/go-saas-kit/payment/api"
-	v12 "github.com/goxiaoy/go-saas-kit/payment/api/post/v1"
+	v12 "github.com/goxiaoy/go-saas-kit/payment/api/order/v1"
 	"github.com/goxiaoy/go-saas-kit/payment/private/service"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
@@ -30,7 +30,7 @@ func NewGRPCServer(
 	uowMgr uow2.Manager,
 	mOpt *http.WebMultiTenancyOption,
 	apiOpt *api2.Option,
-	post *service.PostServiceService,
+	order *service.OrderServiceService,
 	validator sapi.TrustedContextValidator,
 	logger log.Logger,
 ) *grpc.Server {
@@ -49,6 +49,6 @@ func NewGRPCServer(
 	}
 	opts = server.PatchGrpcOpts(logger, opts, api.ServiceName, c)
 	srv := grpc.NewServer(opts...)
-	v12.RegisterPostServiceServer(srv, post)
+	v12.RegisterOrderServiceServer(srv, order)
 	return srv
 }
