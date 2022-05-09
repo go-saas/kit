@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/uuid"
+	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
@@ -167,12 +168,12 @@ func (um *UserManager) CheckPassword(ctx context.Context, user *User, password s
 		return err
 	}
 	//fail
-	return v12.ErrorInvalidCredentials("")
+	return v12.ErrorInvalidCredentialsLocalized(localize.FromContext(ctx), nil, nil)
 }
 
 func (um *UserManager) ChangePassword(ctx context.Context, user *User, current string, newPwd string) error {
 	if v := um.checkPassword(ctx, user, current); v == PasswordVerificationFail {
-		return v12.ErrorInvalidCredentials("")
+		return v12.ErrorInvalidCredentialsLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	if err := um.updatePassword(ctx, user, &newPwd, true); err != nil {
 		return err

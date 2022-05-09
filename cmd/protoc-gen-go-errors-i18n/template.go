@@ -9,16 +9,16 @@ var errorsTemplate = `
 {{ range .Errors }}
 
 func Error{{.CamelValue}}Localized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
-     msg,err := localizer.Localize(&i18n.LocalizeConfig{
+     msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "{{.MsgKey}}",
 		},
 		TemplateData: data,
 		PluralCount: pluralCount,
 	})
-	if err!=nil{
+	if err == nil{
 		return errors.New({{.HTTPCode}}, {{.Name}}_{{.Value}}.String(), msg)
-	}else{
+	} else {
 		return errors.New({{.HTTPCode}}, {{.Name}}_{{.Value}}.String(), "")
 	}
 	

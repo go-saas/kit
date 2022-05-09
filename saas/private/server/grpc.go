@@ -11,10 +11,12 @@ import (
 	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/api"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	"github.com/goxiaoy/go-saas-kit/saas/i18n"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
 	"github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
@@ -36,6 +38,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 			logging.Server(logger),
 			metrics.Server(),
 			validate.Validator(),
+			localize.I18N(i18n.Files...),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 			sapi.ServerPropagation(apiOpt, validator, logger),
 			server.Saas(mOpt, ts, validator, func(o *common.TenantResolveOption) {

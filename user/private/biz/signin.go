@@ -6,6 +6,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
+	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	"time"
 )
@@ -130,7 +131,7 @@ func (s *SignInManager) ValidateSecurityStamp(ctx context.Context, u *User, secu
 
 func (s *SignInManager) PasswordSignIn(ctx context.Context, u *User, pwd string, isPersistent bool, tryLockoutOnFailure bool) error {
 	if u == nil {
-		return v12.ErrorInvalidCredentials("")
+		return v12.ErrorInvalidCredentialsLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	err := s.um.CheckPassword(ctx, u, pwd)
 	if err != nil {

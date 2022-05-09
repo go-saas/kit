@@ -11,10 +11,12 @@ import (
 	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/sys/api"
 	v1 "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1"
+	"github.com/goxiaoy/go-saas-kit/sys/i18n"
 	"github.com/goxiaoy/go-saas-kit/sys/private/service"
 	"github.com/goxiaoy/go-saas/common"
 	uow2 "github.com/goxiaoy/uow"
@@ -38,6 +40,7 @@ func NewGRPCServer(
 			logging.Server(logger),
 			metrics.Server(),
 			validate.Validator(),
+			localize.I18N(i18n.Files...),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 			sapi.ServerPropagation(apiOpt, validator, logger),
 			uow.Uow(logger, uowMgr),

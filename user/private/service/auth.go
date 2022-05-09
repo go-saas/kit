@@ -14,6 +14,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
@@ -352,7 +353,7 @@ func FindUserByUsernameAndValidatePwd(ctx context.Context, um *biz.UserManager, 
 		return nil, err
 	}
 	if user == nil {
-		return nil, pb.ErrorInvalidCredentials("")
+		return nil, pb.ErrorInvalidCredentialsLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	// check password
 	err = um.CheckPassword(ctx, user, password)

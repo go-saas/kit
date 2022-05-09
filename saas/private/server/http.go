@@ -12,10 +12,12 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/api"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	"github.com/goxiaoy/go-saas-kit/saas/i18n"
 	conf2 "github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
 	"github.com/goxiaoy/go-saas-kit/user/remote"
@@ -50,6 +52,7 @@ func NewHTTPServer(c *conf.Services,
 			logging.Server(logger),
 			metrics.Server(),
 			validate.Validator(),
+			localize.I18N(i18n.Files...),
 			jwt.ServerExtractAndAuth(tokenizer, logger),
 			sapi.ServerPropagation(apiOpt, validator, logger),
 			server.Saas(mOpt, ts, validator, func(o *common.TenantResolveOption) {
