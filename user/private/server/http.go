@@ -16,6 +16,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	localize "github.com/goxiaoy/go-saas-kit/pkg/i18n"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/api"
@@ -24,6 +25,7 @@ import (
 	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	"github.com/goxiaoy/go-saas-kit/user/i18n"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	uhttp "github.com/goxiaoy/go-saas-kit/user/private/server/http"
@@ -69,6 +71,7 @@ func NewHTTPServer(c *conf.Services,
 		logging.Server(logger),
 		metrics.Server(),
 		validate.Validator(),
+		localize.I18N(i18n.Files...),
 		jwt.ServerExtractAndAuth(tokenizer, logger),
 		sapi.ServerPropagation(apiOpt, validator, logger),
 		server.Saas(mOpt, ts, validator, func(o *common.TenantResolveOption) {
