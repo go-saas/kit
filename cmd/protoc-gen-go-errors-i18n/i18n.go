@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	fmtPackage  = protogen.GoImportPath("fmt")
-	i18nPackage = protogen.GoImportPath("github.com/nicksnyder/go-i18n/v2/i18n")
+	errorsPackage = protogen.GoImportPath("github.com/go-kratos/kratos/v2/errors")
+	i18nPackage   = protogen.GoImportPath("github.com/nicksnyder/go-i18n/v2/i18n")
 )
 
 // generateFile generates a _errors.pb.go file containing kratos errors definitions.
@@ -25,7 +25,6 @@ func generateFile(gen *protogen.Plugin, file *protogen.File) *protogen.Generated
 	g.P()
 	g.P("package ", file.GoPackageName)
 	g.P()
-	g.QualifiedGoIdent(fmtPackage.Ident(""))
 	g.QualifiedGoIdent(i18nPackage.Ident(""))
 	generateFileContent(gen, file, g)
 	return g
@@ -37,6 +36,10 @@ func generateFileContent(gen *protogen.Plugin, file *protogen.File, g *protogen.
 		return
 	}
 
+	g.P("// This is a compile-time assertion to ensure that this generated file")
+	g.P("// is compatible with the kratos package it is being compiled against.")
+	g.P("const _ = ", errorsPackage.Ident("SupportPackageIsVersion1"))
+	g.P()
 	g.P()
 	index := 0
 	for _, enum := range file.Enums {

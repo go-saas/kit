@@ -11,7 +11,7 @@ var errorsTemplate = `
 func Error{{.CamelValue}}Localized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
      msg,err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
-			ID: {{.MsgKey}},
+			ID: "{{.MsgKey}}",
 		},
 		TemplateData: data,
 		PluralCount: pluralCount,
