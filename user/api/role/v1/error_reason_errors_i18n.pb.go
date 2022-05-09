@@ -19,7 +19,7 @@ func ErrorRolePreservedLocalized(localizer *i18n.Localizer, data map[string]inte
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_ROLE_PRESERVED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_ROLE_PRESERVED.String(), "")

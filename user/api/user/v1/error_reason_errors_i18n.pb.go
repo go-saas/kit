@@ -19,7 +19,7 @@ func ErrorConfirmPasswordMismatchLocalized(localizer *i18n.Localizer, data map[s
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), "")
@@ -35,7 +35,7 @@ func ErrorPasswordInsufficientStrengthLocalized(localizer *i18n.Localizer, data 
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_PASSWORD_INSUFFICIENT_STRENGTH.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_PASSWORD_INSUFFICIENT_STRENGTH.String(), "")
@@ -51,7 +51,7 @@ func ErrorInvalidPasswordLocalized(localizer *i18n.Localizer, data map[string]in
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_INVALID_PASSWORD.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_INVALID_PASSWORD.String(), "")
@@ -67,7 +67,7 @@ func ErrorDuplicateUsernameLocalized(localizer *i18n.Localizer, data map[string]
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_DUPLICATE_USERNAME.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_DUPLICATE_USERNAME.String(), "")
@@ -83,7 +83,7 @@ func ErrorDuplicateEmailLocalized(localizer *i18n.Localizer, data map[string]int
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_DUPLICATE_EMAIL.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_DUPLICATE_EMAIL.String(), "")
@@ -99,7 +99,7 @@ func ErrorDuplicatePhoneLocalized(localizer *i18n.Localizer, data map[string]int
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_DUPLICATE_PHONE.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_DUPLICATE_PHONE.String(), "")
@@ -115,7 +115,7 @@ func ErrorInvalidEmailLocalized(localizer *i18n.Localizer, data map[string]inter
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_INVALID_EMAIL.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_INVALID_EMAIL.String(), "")
@@ -131,7 +131,7 @@ func ErrorInvalidPhoneLocalized(localizer *i18n.Localizer, data map[string]inter
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_INVALID_PHONE.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_INVALID_PHONE.String(), "")
@@ -147,7 +147,7 @@ func ErrorInvalidUsernameLocalized(localizer *i18n.Localizer, data map[string]in
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_INVALID_USERNAME.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_INVALID_USERNAME.String(), "")
@@ -163,7 +163,7 @@ func ErrorUserNotFoundLocalized(localizer *i18n.Localizer, data map[string]inter
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(404, ErrorReason_USER_NOT_FOUND.String(), msg)
 	} else {
 		return errors.New(404, ErrorReason_USER_NOT_FOUND.String(), "")

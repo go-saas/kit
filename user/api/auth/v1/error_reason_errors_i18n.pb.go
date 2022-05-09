@@ -19,7 +19,7 @@ func ErrorInvalidCredentialsLocalized(localizer *i18n.Localizer, data map[string
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_INVALID_CREDENTIALS.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_INVALID_CREDENTIALS.String(), "")
@@ -35,7 +35,7 @@ func ErrorInvalidOperationLocalized(localizer *i18n.Localizer, data map[string]i
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_INVALID_OPERATION.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_INVALID_OPERATION.String(), "")
@@ -51,7 +51,7 @@ func ErrorUserLockedLocalized(localizer *i18n.Localizer, data map[string]interfa
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_USER_LOCKED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_USER_LOCKED.String(), "")
@@ -67,7 +67,7 @@ func ErrorEmailNotConfirmedLocalized(localizer *i18n.Localizer, data map[string]
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_EMAIL_NOT_CONFIRMED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_EMAIL_NOT_CONFIRMED.String(), "")
@@ -83,7 +83,7 @@ func ErrorPhoneNotConfirmedLocalized(localizer *i18n.Localizer, data map[string]
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_PHONE_NOT_CONFIRMED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_PHONE_NOT_CONFIRMED.String(), "")
@@ -99,7 +99,7 @@ func ErrorEmailRecoverFailedLocalized(localizer *i18n.Localizer, data map[string
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_EMAIL_RECOVER_FAILED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_EMAIL_RECOVER_FAILED.String(), "")
@@ -115,7 +115,7 @@ func ErrorEmailConfirmFailedLocalized(localizer *i18n.Localizer, data map[string
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_EMAIL_CONFIRM_FAILED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_EMAIL_CONFIRM_FAILED.String(), "")
@@ -131,7 +131,7 @@ func ErrorPhoneRecoverFailedLocalized(localizer *i18n.Localizer, data map[string
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_PHONE_RECOVER_FAILED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_PHONE_RECOVER_FAILED.String(), "")
@@ -147,7 +147,7 @@ func ErrorPhoneConfirmFailedLocalized(localizer *i18n.Localizer, data map[string
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_PHONE_CONFIRM_FAILED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_PHONE_CONFIRM_FAILED.String(), "")
@@ -163,7 +163,7 @@ func ErrorTwoStepFailedLocalized(localizer *i18n.Localizer, data map[string]inte
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), "")
@@ -179,7 +179,7 @@ func ErrorConfirmPasswordMismatchLocalized(localizer *i18n.Localizer, data map[s
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), msg)
 	} else {
 		return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), "")
@@ -195,7 +195,7 @@ func ErrorRememberTokenNotFoundLocalized(localizer *i18n.Localizer, data map[str
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String(), "")
@@ -211,7 +211,7 @@ func ErrorRememberTokenUsedLocalized(localizer *i18n.Localizer, data map[string]
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_REMEMBER_TOKEN_USED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_REMEMBER_TOKEN_USED.String(), "")
@@ -227,7 +227,7 @@ func ErrorUserDeletedLocalized(localizer *i18n.Localizer, data map[string]interf
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(403, ErrorReason_USER_DELETED.String(), msg)
 	} else {
 		return errors.New(403, ErrorReason_USER_DELETED.String(), "")
@@ -243,7 +243,7 @@ func ErrorRefreshTokenInvalidLocalized(localizer *i18n.Localizer, data map[strin
 		TemplateData: data,
 		PluralCount:  pluralCount,
 	})
-	if err != nil {
+	if err == nil {
 		return errors.New(401, ErrorReason_REFRESH_TOKEN_INVALID.String(), msg)
 	} else {
 		return errors.New(401, ErrorReason_REFRESH_TOKEN_INVALID.String(), "")
