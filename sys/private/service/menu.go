@@ -342,8 +342,8 @@ func normalizeName(name string) string {
 }
 
 func normalizePath(path string) string {
-	if !strings.HasPrefix(path, "/") {
-		return fmt.Sprintf("/%s", path)
+	if strings.HasSuffix(path, "/") {
+		return strings.TrimSuffix(path, "/")
 	} else {
 		return path
 	}
