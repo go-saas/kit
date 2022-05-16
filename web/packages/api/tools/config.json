@@ -1,7 +1,0 @@
-{
-  "withSeparateModelsAndApi": true,
-  "enablePostProcessFile": true,
-  "useSingleRequestParameter": true,
-  "apiPackage": "api",
-  "modelPackage": "models"
-}

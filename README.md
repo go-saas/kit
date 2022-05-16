@@ -4,6 +4,7 @@
 
 Microservice architecture kit for golang sass project
 
+Frontend: https://github.com/Goxiaoy/go-saas-kit-frontend
 # Architecture
 ![Architecture](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/go-saas-kit.drawio.png?raw=true)
 
