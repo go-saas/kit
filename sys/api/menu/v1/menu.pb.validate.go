@@ -184,6 +184,10 @@ func (m *CreateMenuRequest) validate(all bool) error {
 
 	// no validation rules for Redirect
 
+	// no validation rules for MicroAppName
+
+	// no validation rules for MicroAppBaseRoute
+
 	if len(errors) > 0 {
 		return CreateMenuRequestMultiError(errors)
 	}
@@ -594,6 +598,10 @@ func (m *UpdateMenu) validate(all bool) error {
 	// no validation rules for Path
 
 	// no validation rules for Redirect
+
+	// no validation rules for MicroAppName
+
+	// no validation rules for MicroAppBaseRoute
 
 	if len(errors) > 0 {
 		return UpdateMenuMultiError(errors)
@@ -1619,6 +1627,10 @@ func (m *Menu) validate(all bool) error {
 	// no validation rules for Path
 
 	// no validation rules for Redirect
+
+	// no validation rules for MicroAppName
+
+	// no validation rules for MicroAppBaseRoute
 
 	if m.CreatedAt != nil {
 

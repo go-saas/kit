@@ -730,6 +730,12 @@
         },
         "redirect": {
           "type": "string"
+        },
+        "microAppName": {
+          "type": "string"
+        },
+        "microAppBaseRoute": {
+          "type": "string"
         }
       },
       "required": [
@@ -868,6 +874,12 @@
         },
         "redirect": {
           "type": "string"
+        },
+        "microAppName": {
+          "type": "string"
+        },
+        "microAppBaseRoute": {
+          "type": "string"
         }
       }
     },
@@ -976,6 +988,12 @@
           "type": "string"
         },
         "redirect": {
+          "type": "string"
+        },
+        "microAppName": {
+          "type": "string"
+        },
+        "microAppBaseRoute": {
           "type": "string"
         }
       },

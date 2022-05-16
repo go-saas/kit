@@ -254,6 +254,8 @@ func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
 	b.Icon = a.Icon
 	b.Iframe = a.Iframe
 	b.MicroApp = a.MicroApp
+	b.MicroAppName = a.MicroAppName
+	b.MicroAppBaseRoute = a.MicroAppBaseRoute
 	if a.Meta != nil {
 		b.Meta, _ = structpb.NewStruct(a.Meta)
 	}
@@ -288,12 +290,14 @@ func MapUpdatePbMenu2Biz(a *pb.UpdateMenu, b *biz.Menu) {
 	b.Icon = a.Icon
 	b.Iframe = a.Iframe
 	b.MicroApp = a.MicroApp
+	b.MicroAppName = a.MicroAppName
+	b.MicroAppBaseRoute = a.MicroAppBaseRoute
 	if a.Meta != nil {
 		b.Meta = a.Meta.AsMap()
 	}
 	b.Title = a.Title
 	b.Title = a.Title
-	b.Path = a.Path
+	b.Path = normalizePath(a.Path)
 	b.Redirect = a.Redirect
 }
 
@@ -322,15 +326,25 @@ func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
 	b.Icon = a.Icon
 	b.Iframe = a.Iframe
 	b.MicroApp = a.MicroApp
+	b.MicroAppName = a.MicroAppName
+	b.MicroAppBaseRoute = a.MicroAppBaseRoute
 	if a.Meta != nil {
 		b.Meta = a.Meta.AsMap()
 	}
 	b.Title = a.Title
 	b.Title = a.Title
-	b.Path = a.Path
+	b.Path = normalizePath(a.Path)
 	b.Redirect = a.Redirect
 }
 
 func normalizeName(name string) string {
 	return strings.ToLower(name)
+}
+
+func normalizePath(path string) string {
+	if !strings.HasPrefix(path, "/") {
+		return fmt.Sprintf("/%s", path)
+	} else {
+		return path
+	}
 }

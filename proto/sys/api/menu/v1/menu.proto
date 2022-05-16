@@ -101,6 +101,8 @@ message CreateMenuRequest {
   string title=17;
   string path=18;
   string redirect=19;
+  string micro_app_name=20;
+  string micro_app_base_route=21;
 }
 
 message UpdateMenuRequest {
@@ -128,6 +130,8 @@ message UpdateMenu{
   string title=17;
   string path=18;
   string redirect=19;
+  string micro_app_name=20;
+  string micro_app_base_route=21;
 }
 
 
@@ -182,6 +186,8 @@ message Menu{
   string title=17;
   string path=18;
   string redirect=19;
+  string micro_app_name=20;
+  string micro_app_base_route=21;
 }
 
 message GetAvailableMenusRequest{
