@@ -27,7 +27,10 @@ func normalizeHost(ctx context.Context, app *conf.AppConfig, name string) string
 				return ""
 			}
 			reg := regexp.MustCompile(app.DomainFormat.Value)
-			return reg.ReplaceAllString(host, name)
+			m := reg.FindAllStringSubmatchIndex(host, -1)
+			if m != nil {
+				return host[:m[0][2]] + name + host[m[0][3]:]
+			}
 		}
 	}
 	return ""
