@@ -16,16 +16,15 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
+	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas-kit/saas/private/data"
-	"github.com/goxiaoy/go-saas-kit/saas/private/server"
+	server2 "github.com/goxiaoy/go-saas-kit/saas/private/server"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
 	api2 "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/remote"
-	"github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
 )
@@ -33,7 +32,7 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, security *conf.Security, confData *conf2.Data, saasConf *conf2.SaasConf, logger log.Logger, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, security *conf.Security, confData *conf2.Data, saasConf *conf2.SaasConf, logger log.Logger, config *uow.Config, gormConfig *gorm.Config, appConfig *conf.AppConfig, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	eventBus := _wireEventBusValue
@@ -61,14 +60,15 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
 	trustedContextValidator := api.NewClientTrustedContextValidator()
 	factory := data.NewBlobFactory(confData)
-	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService, trustedContextValidator, factory)
+	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService, trustedContextValidator, factory, appConfig)
+	webMultiTenancyOption := server.NewWebMultiTenancyOption(appConfig)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
 	userServiceClient := api2.NewUserGrpcClient(grpcConn)
 	userTenantContributor := remote.NewUserTenantContributor(userServiceClient)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, logger, trustedContextValidator, userTenantContributor)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, tenantService, userTenantContributor, trustedContextValidator, logger)
+	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, logger, trustedContextValidator, userTenantContributor)
+	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, tenantService, userTenantContributor, trustedContextValidator, logger)
 	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup3()
@@ -77,7 +77,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 		return nil, nil, err
 	}
 	migrate := data.NewMigrate(dataData)
-	seeder := server.NewSeeder(manager, migrate)
+	seeder := server2.NewSeeder(manager, migrate)
 	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
 	handler := biz.NewRemoteEventHandler(logger, manager, tenantReadyEventHandler)
 	receiver, cleanup5, err := data.NewRemoteEventReceiver(confData, logger, handler)
@@ -110,8 +110,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 
 var (
 	_wireEventBusValue           = eventbus.Default
-	_wireClientNameValue         = server.ClientName
-	_wireDecodeRequestFuncValue  = server2.ReqDecode
-	_wireEncodeResponseFuncValue = server2.ResEncoder
-	_wireEncodeErrorFuncValue    = server2.ErrEncoder
+	_wireClientNameValue         = server2.ClientName
+	_wireDecodeRequestFuncValue  = server.ReqDecode
+	_wireEncodeResponseFuncValue = server.ResEncoder
+	_wireEncodeErrorFuncValue    = server.ErrEncoder
 )

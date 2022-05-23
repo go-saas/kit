@@ -191,6 +191,7 @@ message Tenant{
 
 	blob.BlobFile logo = 9;
 	bool separate_db=10;
+	string host=11;
 
 }
 
@@ -211,6 +212,7 @@ message TenantInfo{
 	string display_name=3;
 	string region=4;
 	blob.BlobFile logo = 9;
+	string host=10;
 }
 
 

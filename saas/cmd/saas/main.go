@@ -88,7 +88,7 @@ func main() {
 	defer shutdown()
 	app, cleanup, err := initApp(bc.Services, bc.Security, bc.Data, bc.Saas, logger, &uow.Config{
 		SupportNestedTransaction: false,
-	}, gorm.NewGormConfig(bc.Data.Endpoints, data.ConnName), server.NewWebMultiTenancyOption(bc.App))
+	}, gorm.NewGormConfig(bc.Data.Endpoints, data.ConnName), bc.App)
 	if err != nil {
 		panic(err)
 	}

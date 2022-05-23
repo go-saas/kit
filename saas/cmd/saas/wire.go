@@ -22,14 +22,13 @@ import (
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
 	uapi "github.com/goxiaoy/go-saas-kit/user/api"
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
-	shttp "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
 )
 
 // initApp init kratos application.
-func initApp(*sconf.Services, *sconf.Security, *conf.Data, *conf.SaasConf, log.Logger, *uow.Config, *gorm.Config, *shttp.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(*sconf.Services, *sconf.Security, *conf.Data, *conf.SaasConf, log.Logger, *uow.Config, *gorm.Config, *sconf.AppConfig, ...grpc.ClientOption) (*kratos.App, func(), error) {
 	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, server2.DefaultCodecProviderSet, api2.DefaultProviderSet,
 		uapi.GrpcProviderSet, uremote.GrpcProviderSet,
-		server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+		server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp, server2.NewWebMultiTenancyOption))
 }

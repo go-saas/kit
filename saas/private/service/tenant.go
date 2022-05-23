@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
+	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	"io"
 	"os"
@@ -30,10 +31,11 @@ type TenantService struct {
 	auth    authz.Service
 	blob    blob.Factory
 	trusted sapi.TrustedContextValidator
+	app     *conf.AppConfig
 }
 
-func NewTenantService(useCase *biz.TenantUseCase, auth authz.Service, trusted sapi.TrustedContextValidator, blob blob.Factory) *TenantService {
-	return &TenantService{useCase: useCase, auth: auth, trusted: trusted, blob: blob}
+func NewTenantService(useCase *biz.TenantUseCase, auth authz.Service, trusted sapi.TrustedContextValidator, blob blob.Factory, app *conf.AppConfig) *TenantService {
+	return &TenantService{useCase: useCase, auth: auth, trusted: trusted, blob: blob, app: app}
 }
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {
@@ -67,7 +69,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		return nil, err
 	}
 
-	return mapBizTenantToApi(ctx, s.blob, t), nil
+	return s.mapBizTenantToApi(ctx, s.blob, t), nil
 }
 func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRequest) (*pb.Tenant, error) {
 
@@ -105,7 +107,7 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 	if err := s.useCase.Update(ctx, t, query.NewField(req.UpdateMask)); err != nil {
 		return nil, err
 	}
-	return mapBizTenantToApi(ctx, s.blob, t), nil
+	return s.mapBizTenantToApi(ctx, s.blob, t), nil
 }
 func (s *TenantService) DeleteTenant(ctx context.Context, req *pb.DeleteTenantRequest) (*pb.DeleteTenantReply, error) {
 
@@ -132,7 +134,7 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 		return nil, err
 	}
 
-	return mapBizTenantToApi(ctx, s.blob, t), nil
+	return s.mapBizTenantToApi(ctx, s.blob, t), nil
 }
 
 func (s *TenantService) GetTenantInternal(ctx context.Context, req *pb.GetTenantRequest) (*pb.Tenant, error) {
@@ -150,7 +152,7 @@ func (s *TenantService) GetTenantInternal(ctx context.Context, req *pb.GetTenant
 		return nil, errors.NotFound("", "")
 	}
 
-	return mapBizTenantToApi(ctx, s.blob, t), nil
+	return s.mapBizTenantToApi(ctx, s.blob, t), nil
 }
 
 //GetTenantPublic return public info of tenant
@@ -177,15 +179,17 @@ func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrent
 		if t == nil {
 			return nil, pb.ErrorTenantNotFound("")
 		}
+		info := &pb.TenantInfo{
+			Id:          t.ID.String(),
+			Name:        t.Name,
+			DisplayName: t.DisplayName,
+			Region:      t.Region,
+			Logo:        mapLogo(ctx, s.blob, t),
+		}
+		info.NormalizeHost(ctx, s.app)
 		return &pb.GetCurrentTenantReply{
 			IsHost: false,
-			Tenant: &pb.TenantInfo{
-				Id:          t.ID.String(),
-				Name:        t.Name,
-				DisplayName: t.DisplayName,
-				Region:      t.Region,
-				Logo:        mapLogo(ctx, s.blob, t),
-			},
+			Tenant: info,
 		}, nil
 	}
 }
@@ -210,7 +214,7 @@ func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantReques
 	if err != nil {
 		return ret, err
 	}
-	rItems := lo.Map(items, func(g *biz.Tenant, _ int) *pb.Tenant { return mapBizTenantToApi(ctx, s.blob, g) })
+	rItems := lo.Map(items, func(g *biz.Tenant, _ int) *pb.Tenant { return s.mapBizTenantToApi(ctx, s.blob, g) })
 	ret.Items = rItems
 	return ret, nil
 }
@@ -289,7 +293,7 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 	return ctx.Result(201, out)
 }
 
-func mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenant) *pb.Tenant {
+func (s *TenantService) mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenant) *pb.Tenant {
 	conns := lo.Map(tenant.Conn, func(con biz.TenantConn, _ int) *pb.TenantConnectionString {
 		return &pb.TenantConnectionString{
 			Key:   con.Key,
@@ -316,7 +320,7 @@ func mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenan
 		Logo:        mapLogo(ctx, blob, tenant),
 		SeparateDb:  tenant.SeparateDb,
 	}
-
+	res.NormalizeHost(ctx, s.app)
 	return res
 }
 

@@ -963,6 +963,9 @@
         },
         "separateDb": {
           "type": "boolean"
+        },
+        "host": {
+          "type": "string"
         }
       }
     },
@@ -1019,6 +1022,9 @@
         },
         "logo": {
           "$ref": "#/definitions/blobBlobFile"
+        },
+        "host": {
+          "type": "string"
         }
       },
       "title": "TenantInfo public tenant information"

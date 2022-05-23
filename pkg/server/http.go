@@ -158,6 +158,13 @@ func ClientUserAgent(ctx context.Context) string {
 	return ""
 }
 
+func Host(ctx context.Context) string {
+	if r, ok := ResolveHttpRequest(ctx); ok {
+		return r.Host
+	}
+	return ""
+}
+
 func IsSecure(ctx context.Context) bool {
 	if r, ok := ResolveHttpRequest(ctx); ok {
 		return r.URL.Scheme == "https"

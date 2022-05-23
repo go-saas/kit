@@ -1714,6 +1714,8 @@ func (m *Tenant) validate(all bool) error {
 
 	// no validation rules for SeparateDb
 
+	// no validation rules for Host
+
 	if m.CreatedAt != nil {
 
 		if all {
@@ -2125,6 +2127,8 @@ func (m *TenantInfo) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for Host
 
 	if len(errors) > 0 {
 		return TenantInfoMultiError(errors)
