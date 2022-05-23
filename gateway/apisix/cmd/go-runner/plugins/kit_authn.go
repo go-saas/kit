@@ -22,6 +22,7 @@ import (
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
+	shttp "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/sessions"
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/protobuf/proto"
@@ -61,14 +62,17 @@ var (
 	ts                  common.TenantStore
 	authService         authz.Service
 	subjectResolver     authz.SubjectResolver
+	saasWebConfig       *shttp.WebMultiTenancyOption
 )
 
 func Init(
 	t jwt.Tokenizer,
 	tmr api.TokenManager,
+	tenantConfig *shttp.WebMultiTenancyOption,
 	clientName api.ClientName,
 	services *conf2.Services,
 	security *conf2.Security,
+
 	userTenant *uremote.UserTenantContributor,
 	tenantStore common.TenantStore,
 	refreshTokenProvider session.RefreshTokenProvider,
@@ -78,7 +82,7 @@ func Init(
 ) error {
 	tokenizer = t
 	tokenManager = tmr
-
+	saasWebConfig = tenantConfig
 	clientCfg := &conf2.Client{Timeout: durationpb.New(1 * time.Second)}
 	if c, ok := services.Clients[string(clientName)]; ok {
 		proto.Merge(clientCfg, c)
@@ -134,7 +138,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	propagator := propagation.NewCompositeTextMapPropagator(tracing.Metadata{}, propagation.Baggage{}, propagation.TraceContext{})
 	ctx = propagator.Extract(ctx, propagation.HeaderCarrier(r.Header().View()))
 
-	ctx, err = Saas(ctx, ts, "", w, r)
+	ctx, err = Saas(ctx, ts, saasWebConfig.DomainFormat, w, r)
 	//format error
 	if err != nil {
 		if errors.Is(err, common.ErrTenantNotFound) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
 	"github.com/goxiaoy/go-saas/common"
+	"net/url"
 	"regexp"
 )
 
@@ -33,11 +34,15 @@ func (r *Resolver) Resolve(ctx context.Context) (common.TenantResolveResult, con
 		t = v
 	}
 	if len(r.pathRegex) > 0 {
-		reg := regexp.MustCompile(r.pathRegex)
-		f := reg.FindAllStringSubmatch(string(r.r.Path()), -1)
-		if f != nil {
-			t = f[0][1]
+		u, err := url.Parse(string(r.r.Path()))
+		if err == nil {
+			reg := regexp.MustCompile(r.pathRegex)
+			f := reg.FindAllStringSubmatch(u.Hostname(), -1)
+			if f != nil {
+				t = f[0][1]
+			}
 		}
+
 	}
 	res := &common.TenantResolveResult{TenantIdOrName: t}
 	ctx = common.NewTenantResolveRes(ctx, res)

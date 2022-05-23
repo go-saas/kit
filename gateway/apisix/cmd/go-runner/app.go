@@ -41,6 +41,7 @@ func newApp(tenantStore common.TenantStore,
 	refreshProvider session.RefreshTokenProvider,
 	authService authz.Service,
 	subjectResolver authz.SubjectResolver,
+
 	logger klog.Logger) (*App, error) {
 	ret := &App{tenantStore: tenantStore,
 		userTenant:      userTenant,
@@ -61,6 +62,7 @@ func (a *App) load() error {
 	if err := plugins.Init(
 		a.tokenizer,
 		a.tokenManager,
+		a.tenantCfg,
 		a.clientName,
 		a.services,
 		a.security,
