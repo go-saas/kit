@@ -9,7 +9,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
-	shttp "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
 	"os"
@@ -89,7 +88,7 @@ func main() {
 	defer shutdown()
 	app, cleanup, err := initApp(bc.Services, bc.Security, bc.Data, bc.Saas, logger, &uow.Config{
 		SupportNestedTransaction: false,
-	}, gorm.NewGormConfig(bc.Data.Endpoints, data.ConnName), shttp.NewDefaultWebMultiTenancyOption())
+	}, gorm.NewGormConfig(bc.Data.Endpoints, data.ConnName), server.NewWebMultiTenancyOption(bc.App))
 	if err != nil {
 		panic(err)
 	}

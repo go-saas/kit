@@ -17,8 +17,9 @@ import (
 	sremote "github.com/goxiaoy/go-saas-kit/saas/remote"
 	uapi "github.com/goxiaoy/go-saas-kit/user/api"
 	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
+	shttp "github.com/goxiaoy/go-saas/common/http"
 )
 
-func initApp(*conf2.Services, *conf2.Security, api.ClientName, klog.Logger, ...grpc.ClientOption) (*App, func(), error) {
+func initApp(*conf2.Services, *conf2.Security, *shttp.WebMultiTenancyOption, api.ClientName, klog.Logger, ...grpc.ClientOption) (*App, func(), error) {
 	panic(wire.Build(ProviderSet, authz.ProviderSet, sapi.GrpcProviderSet, sremote.GrpcProviderSet, uapi.GrpcProviderSet, uremote.GrpcProviderSet, jwt.ProviderSet, newApp))
 }

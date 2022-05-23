@@ -12,8 +12,10 @@ message Bootstrap {
   conf.Services services =4;
   conf.Logging logging=6;
   conf.Tracers tracing=7;
-
+  conf.AppConfig app=8;
+  
   SaasConf saas=20;
+
 }
 
 message Data {

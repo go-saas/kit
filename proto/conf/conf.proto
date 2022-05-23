@@ -196,3 +196,8 @@ message Tracers{
   }
   Otel otel=1;
 }
+
+message AppConfig{
+  google.protobuf.StringValue tenant_key=1;
+  google.protobuf.StringValue domain_format=2;
+}

@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
+	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
@@ -27,4 +28,21 @@ func ErrorFormatter() func(err error) (interface{}, error) {
 			return nil, err
 		}
 	}
+}
+
+func NewWebMultiTenancyOption(opt *conf.AppConfig) *shttp.WebMultiTenancyOption {
+	ret := &shttp.WebMultiTenancyOption{
+		TenantKey:    "",
+		DomainFormat: "",
+	}
+	if opt == nil {
+		return ret
+	}
+	if opt.TenantKey != nil {
+		ret.TenantKey = opt.TenantKey.Value
+	}
+	if opt.DomainFormat != nil {
+		ret.DomainFormat = opt.DomainFormat.Value
+	}
+	return ret
 }

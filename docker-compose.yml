@@ -21,7 +21,7 @@ services:
       - user
       - saas
     ports:
-      - "8600:9080" #Http
+      - "80:9080" #Http
       - "9091:9091" #Prometheus
       - "9443:9443" #Https
 

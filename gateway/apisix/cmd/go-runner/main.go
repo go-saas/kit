@@ -171,7 +171,7 @@ func newRunCommand() *cobra.Command {
 			defer shutdown()
 
 			//init all
-			_, clean, err := initApp(bc.Services, bc.Security, api.ClientName(clientName), logger)
+			_, clean, err := initApp(bc.Services, bc.Security, server.NewWebMultiTenancyOption(bc.App), api.ClientName(clientName), logger)
 			if err != nil {
 				panic(err)
 			}

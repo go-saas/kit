@@ -26,7 +26,7 @@ import (
 
 // Injectors from wire.go:
 
-func initApp(services *conf.Services, security *conf.Security, clientName api.ClientName, logger log.Logger, arg ...grpc.ClientOption) (*App, func(), error) {
+func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOption *http.WebMultiTenancyOption, clientName api.ClientName, logger log.Logger, arg ...grpc.ClientOption) (*App, func(), error) {
 	option := NewSelfClientOption(logger)
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
@@ -37,7 +37,6 @@ func initApp(services *conf.Services, security *conf.Security, clientName api.Cl
 	apiGrpcConn, cleanup2 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	userServiceClient := api3.NewUserGrpcClient(apiGrpcConn)
 	userTenantContributor := remote2.NewUserTenantContributor(userServiceClient)
-	webMultiTenancyOption := http.NewDefaultWebMultiTenancyOption()
 	authClient := api3.NewAuthGrpcClient(apiGrpcConn)
 	refreshTokenProvider := remote2.NewRefreshProvider(authClient, logger)
 	permissionServiceClient := api3.NewPermissionGrpcClient(apiGrpcConn)

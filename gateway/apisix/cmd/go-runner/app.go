@@ -91,4 +91,4 @@ func NewAuthorizationOption() *authz.Option {
 }
 
 var ProviderSet = wire.NewSet(api.NewInMemoryTokenManager, NewSelfClientOption,
-	wire.Bind(new(api.TokenManager), new(*api.InMemoryTokenManager)), shttp.NewDefaultWebMultiTenancyOption, NewAuthorizationOption)
+	wire.Bind(new(api.TokenManager), new(*api.InMemoryTokenManager)), NewAuthorizationOption)

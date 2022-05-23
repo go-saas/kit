@@ -1,3 +1,5 @@
+app:
+  domain_format: ([-a-z0-9]+)\.saas\.nihaosaoya\.com
 services:
   servers:
     default:

@@ -16,6 +16,7 @@ message Bootstrap {
   UserConf user=5;
   conf.Logging logging=6;
   conf.Tracers tracing=7;
+  conf.AppConfig app=8;
 }
 
 message Data {
