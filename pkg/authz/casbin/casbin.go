@@ -40,7 +40,7 @@ func (p *EnforcerProvider) Get(ctx context.Context) (*casbin.SyncedEnforcer, err
 
 	var adapter *gormadapter.Adapter
 	var err error
-	adapter, err = gormadapter.NewAdapterByDB(db.WithContext(gormadapter.NewDisableAutoMigration(db.Statement.Context)))
+	adapter, err = gormadapter.NewAdapterByDB(gormadapter.TurnOffAutoMigrate(db))
 	if err != nil {
 		return nil, err
 	}

@@ -11,30 +11,19 @@ services:
       - BASE_URL="/swagger"
 
   apisix:
-    image: apache/apisix:dev
+    image: ${DOCKER_REGISTRY}go-saas-kit-apisix:${DOCKER_TAG:-latest}
     restart: always
     volumes:
       - ./quickstart/configs/apisix/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
       - ./quickstart/configs/apisix/apisix_conf/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
-      - apisix_runner:/tmp/runner #config for plugin
+      - ./quickstart/configs:/data/conf
     depends_on:
-      - apisix-plugin
+      - user
+      - saas
     ports:
       - "8600:9080" #Http
       - "9091:9091" #Prometheus
       - "9443:9443" #Https
-
-  apisix-plugin:
-    image: ${DOCKER_REGISTRY}go-saas-kit-apisix-plugin:${DOCKER_TAG:-latest}
-    restart: always
-    volumes:
-      - apisix_runner:/tmp/runner
-      - ./quickstart/configs:/data/conf
-    environment:
-      - APISIX_LISTEN_ADDRESS=unix:/tmp/runner/runner.sock
-    depends_on:
-      - user
-      - saas
 
   user:
     image: ${DOCKER_REGISTRY}go-saas-kit-user:${DOCKER_TAG:-latest}

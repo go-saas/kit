@@ -40,7 +40,7 @@ apisix:
     port: 9092
 
 ext-plugin:
-  path_for_test: /tmp/runner/runner.sock
+  cmd: ["/app/go-runner", "run","-c /data/conf"]
 
 #etcd:
 #  host:                           # it's possible to define multiple etcd hosts addresses of the same etcd cluster.

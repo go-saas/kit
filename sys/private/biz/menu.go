@@ -49,7 +49,7 @@ func (m *Menu) MergeWithPreservedFields(p *Menu) {
 	m.Name = p.Name
 	m.Component = p.Component
 	m.Requirement = p.Requirement
-	m.MicroApp = p.MicroApp
+	//m.MicroApp = p.MicroApp
 	m.Iframe = p.Iframe
 	m.Parent = p.Parent
 	m.FullPath = p.FullPath

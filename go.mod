@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
 	github.com/casbin/casbin/v2 v2.42.0
-	github.com/casbin/gorm-adapter/v3 v3.5.0
+	github.com/casbin/gorm-adapter/v3 v3.7.1
 	github.com/envoyproxy/protoc-gen-validate v0.6.7
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-kratos/kratos/v2 v2.2.0
@@ -24,11 +24,11 @@ require (
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354
 	github.com/stretchr/testify v1.7.1
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
-	golang.org/x/sys v0.0.0-20220315194320-039c03cc5b86 // indirect
+	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	google.golang.org/genproto v0.0.0-20220314164441-57ef72a4c106
 	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.27.1
-	gorm.io/driver/mysql v1.3.3-0.20220223060847-68a051989967
+	gorm.io/driver/mysql v1.3.3
 	gorm.io/driver/sqlite v1.3.1
 	gorm.io/gorm v1.23.4
 )
@@ -71,6 +71,8 @@ require (
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
+	github.com/glebarez/go-sqlite v1.16.0 // indirect
+	github.com/glebarez/sqlite v1.4.3 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
@@ -98,15 +100,17 @@ require (
 	github.com/jcmturner/gokrb5/v8 v8.4.2 // indirect
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.4 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/compress v1.15.1 // indirect
 	github.com/lib/pq v1.10.4 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-sqlite3 v1.14.12 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/toorop/go-dkim v0.0.0-20201103131630-e1cd1a0a5208 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.1.10 // indirect
 	github.com/vmihailenco/go-tinylfu v0.2.2 // indirect
@@ -117,16 +121,18 @@ require (
 	go.opentelemetry.io/otel/internal/metric v0.27.0 // indirect
 	go.opentelemetry.io/otel/metric v0.27.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.12.0 // indirect
-	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd // indirect
+	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
 	golang.org/x/exp v0.0.0-20220314205449-43aec2f8a4e7 // indirect
 	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	gorm.io/driver/postgres v1.3.1 // indirect
-	gorm.io/driver/sqlserver v1.3.1 // indirect
+	gorm.io/driver/postgres v1.3.4 // indirect
+	gorm.io/driver/sqlserver v1.3.2 // indirect
 	gorm.io/plugin/dbresolver v1.1.0 // indirect
+	modernc.org/libc v1.15.1 // indirect
+	modernc.org/mathutil v1.4.1 // indirect
+	modernc.org/memory v1.0.7 // indirect
+	modernc.org/sqlite v1.16.0 // indirect
 )
-
-replace github.com/casbin/gorm-adapter/v3 => github.com/Goxiaoy/gorm-adapter/v3 v3.5.1-0.20220326110105-403c86d95e88
 
 replace github.com/go-redis/cache/v8 => github.com/Goxiaoy/cache/v8 v8.4.4-0.20220418161131-a691bbf092a2

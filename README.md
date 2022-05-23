@@ -20,9 +20,12 @@ address http://106.75.239.46:8600 (Shanghai)
 ```
 docker-compose -f docker-compose.yml -f docker-compose.tracing.yml up -d
 ```
-With hydra
-```
-docker-compose -f docker-compose.yml -f docker-compose.hydra.yml up -d
+
+[//]: # (With hydra)
+
+[//]: # (```)
+
+[//]: # (docker-compose -f docker-compose.yml -f docker-compose.hydra.yml up -d)
 ```
 Or with build
 ```

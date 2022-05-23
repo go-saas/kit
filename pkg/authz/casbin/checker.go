@@ -3,6 +3,7 @@ package casbin
 import (
 	"context"
 	"github.com/casbin/casbin/v2"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 )
 
@@ -29,7 +30,15 @@ func (p *PermissionService) IsGrantTenant(ctx context.Context, requirements auth
 func (p *PermissionService) isGrantTenant(ctx context.Context, enforcer *casbin.SyncedEnforcer, resource authz.Resource, action authz.Action, tenantID string, subjects ...authz.Subject) (authz.Effect, error) {
 	//find permission definition of current resource and action
 
-	def := authz.MustFindDef(resource.GetNamespace(), action)
+	def, err := authz.FindDef(resource.GetNamespace(), action, false)
+	if err != nil {
+		if errors.Reason(err) == authz.DefNotFoundReason {
+			//just forbid
+			return authz.EffectForbidden, nil
+		} else {
+			return authz.EffectForbidden, err
+		}
+	}
 
 	if (def.Side == authz.PermissionAllowSide_HOST_ONLY && len(tenantID) != 0) || (def.Side == authz.PermissionAllowSide_TENANT_ONLY && len(tenantID) == 0) {
 		//just forbid
