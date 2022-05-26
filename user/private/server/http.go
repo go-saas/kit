@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
-	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
@@ -66,7 +65,7 @@ func NewHTTPServer(c *conf.Services,
 		session.Auth(sCfg, validator),
 		session.Refresh(errEncoder, refreshProvider, validator),
 	)
-	middlewares := middleware.Chain(recovery.Recovery(),
+	middlewares := middleware.Chain(server.Recovery(),
 		tracing.Server(),
 		logging.Server(logger),
 		metrics.Server(),
