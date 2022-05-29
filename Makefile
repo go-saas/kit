@@ -34,9 +34,9 @@ apisix:
 
 
 all:
+	make api
 	make user
 	make saas
-	make api
 	make sys
 	make apisix
 

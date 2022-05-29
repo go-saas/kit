@@ -736,6 +736,9 @@
         },
         "microAppBaseRoute": {
           "type": "string"
+        },
+        "microAppDev": {
+          "type": "string"
         }
       },
       "required": [
@@ -880,6 +883,9 @@
         },
         "microAppBaseRoute": {
           "type": "string"
+        },
+        "microAppDev": {
+          "type": "string"
         }
       }
     },
@@ -994,6 +1000,9 @@
           "type": "string"
         },
         "microAppBaseRoute": {
+          "type": "string"
+        },
+        "microAppDev": {
           "type": "string"
         }
       },

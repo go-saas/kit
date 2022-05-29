@@ -23,6 +23,7 @@ type Menu struct {
 	Icon              string                      `json:"icon"`
 	Iframe            string                      `json:"iframe"`
 	MicroApp          string                      `json:"micro_app"`
+	MicroAppDev       string                      `json:"micro_app_dev"`
 	MicroAppName      string                      `json:"micro_app_name"`
 	MicroAppBaseRoute string                      `json:"micro_app_base_route"`
 	Meta              data.JSONMap                `json:"meta"`

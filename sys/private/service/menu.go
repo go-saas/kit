@@ -254,6 +254,7 @@ func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
 	b.Icon = a.Icon
 	b.Iframe = a.Iframe
 	b.MicroApp = a.MicroApp
+	b.MicroAppDev = a.MicroAppDev
 	b.MicroAppName = a.MicroAppName
 	b.MicroAppBaseRoute = a.MicroAppBaseRoute
 	if a.Meta != nil {
@@ -290,6 +291,7 @@ func MapUpdatePbMenu2Biz(a *pb.UpdateMenu, b *biz.Menu) {
 	b.Icon = a.Icon
 	b.Iframe = a.Iframe
 	b.MicroApp = a.MicroApp
+	b.MicroAppDev = a.MicroAppDev
 	b.MicroAppName = a.MicroAppName
 	b.MicroAppBaseRoute = a.MicroAppBaseRoute
 	if a.Meta != nil {
@@ -326,6 +328,7 @@ func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
 	b.Icon = a.Icon
 	b.Iframe = a.Iframe
 	b.MicroApp = a.MicroApp
+	b.MicroAppDev = a.MicroAppDev
 	b.MicroAppName = a.MicroAppName
 	b.MicroAppBaseRoute = a.MicroAppBaseRoute
 	if a.Meta != nil {
