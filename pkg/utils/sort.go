@@ -12,3 +12,7 @@ func SortBy[T comparable, R any](a []T, b []R, f func(r R) T) []R {
 	}
 	return ret
 }
+
+func SortById[T comparable, R interface{ GetId() T }](a []T, b []R) []R {
+	return SortBy[T, R](a, b, func(r R) T { return r.GetId() })
+}

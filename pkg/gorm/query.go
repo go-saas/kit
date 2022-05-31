@@ -36,14 +36,14 @@ func BuildStringFilter(field string, filter *query.StringFilterOperation) func(d
 			res = res.Where(fmt.Sprintf("%s NOT LIKE ?", field), fmt.Sprintf("%v%%", filter.EndsWith.Value))
 		}
 		if filter.In != nil {
-			res = res.Where(fmt.Sprintf("%s IN (?)", field), lo.Map(filter.In, func(t *wrapperspb.StringValue, _ int) string {
+			res = res.Where(fmt.Sprintf("%s IN (?)", field), lo.Uniq(lo.Map(filter.In, func(t *wrapperspb.StringValue, _ int) string {
 				return t.Value
-			}))
+			})))
 		}
 		if filter.Nin != nil {
-			res = res.Where(fmt.Sprintf("%s NOT IN (?)", field), lo.Map(filter.Nin, func(t *wrapperspb.StringValue, _ int) string {
+			res = res.Where(fmt.Sprintf("%s NOT IN (?)", field), lo.Uniq(lo.Map(filter.Nin, func(t *wrapperspb.StringValue, _ int) string {
 				return t.Value
-			}))
+			})))
 		}
 		if filter.Null != nil {
 			res = res.Where(fmt.Sprintf("%s IS NULL ", field))
@@ -150,14 +150,14 @@ func BuildDoubleFilter(field string, filter *query.DoubleFilterOperators) func(d
 			res = res.Where(fmt.Sprintf("%s <> ?", field), filter.Neq.Value)
 		}
 		if filter.In != nil {
-			res = res.Where(fmt.Sprintf("%s IN (?)", field), lo.Map(filter.In, func(t *wrapperspb.DoubleValue, _ int) float64 {
+			res = res.Where(fmt.Sprintf("%s IN (?)", field), lo.Uniq(lo.Map(filter.In, func(t *wrapperspb.DoubleValue, _ int) float64 {
 				return t.Value
-			}))
+			})))
 		}
 		if filter.Nin != nil {
-			res = res.Where(fmt.Sprintf("%s NOT IN (?)", field), lo.Map(filter.Nin, func(t *wrapperspb.DoubleValue, _ int) float64 {
+			res = res.Where(fmt.Sprintf("%s NOT IN (?)", field), lo.Uniq(lo.Map(filter.Nin, func(t *wrapperspb.DoubleValue, _ int) float64 {
 				return t.Value
-			}))
+			})))
 		}
 		if filter.Gt != nil {
 			res = res.Where(fmt.Sprintf("%s > ?", field), filter.Gt.Value)
@@ -196,14 +196,14 @@ func BuildFloatFilter(field string, filter *query.FloatFilterOperators) func(db 
 			res = res.Where(fmt.Sprintf("%s <> ?", field), filter.Neq.Value)
 		}
 		if filter.In != nil {
-			res = res.Where(fmt.Sprintf("%s IN (?)", field), lo.Map(filter.In, func(t *wrapperspb.FloatValue, _ int) float32 {
+			res = res.Where(fmt.Sprintf("%s IN (?)", field), lo.Uniq(lo.Map(filter.In, func(t *wrapperspb.FloatValue, _ int) float32 {
 				return t.Value
-			}))
+			})))
 		}
 		if filter.Nin != nil {
-			res = res.Where(fmt.Sprintf("%s NOT IN (?)", field), lo.Map(filter.Nin, func(t *wrapperspb.FloatValue, _ int) float32 {
+			res = res.Where(fmt.Sprintf("%s NOT IN (?)", field), lo.Uniq(lo.Map(filter.Nin, func(t *wrapperspb.FloatValue, _ int) float32 {
 				return t.Value
-			}))
+			})))
 		}
 		if filter.Gt != nil {
 			res = res.Where(fmt.Sprintf("%s > ?", field), filter.Gt.Value)
@@ -241,14 +241,14 @@ func BuildInt32Filter(field string, filter *query.Int32FilterOperators) func(db 
 			res = res.Where(fmt.Sprintf("%s <> ?", field), filter.Neq.Value)
 		}
 		if filter.In != nil {
-			res = res.Where(fmt.Sprintf("%s IN (?)", field), lo.Map(filter.In, func(t *wrapperspb.Int32Value, _ int) int32 {
+			res = res.Where(fmt.Sprintf("%s IN (?)", field), lo.Uniq(lo.Map(filter.In, func(t *wrapperspb.Int32Value, _ int) int32 {
 				return t.Value
-			}))
+			})))
 		}
 		if filter.Nin != nil {
-			res = res.Where(fmt.Sprintf("%s NOT IN (?)", field), lo.Map(filter.Nin, func(t *wrapperspb.Int32Value, _ int) int32 {
+			res = res.Where(fmt.Sprintf("%s NOT IN (?)", field), lo.Uniq(lo.Map(filter.Nin, func(t *wrapperspb.Int32Value, _ int) int32 {
 				return t.Value
-			}))
+			})))
 		}
 		if filter.Gt != nil {
 			res = res.Where(fmt.Sprintf("%s > ?", field), filter.Gt.Value)
@@ -286,14 +286,14 @@ func BuildInt64Filter(field string, filter *query.Int64FilterOperators) func(db 
 			res = res.Where(fmt.Sprintf("%s <> ?", field), filter.Neq.Value)
 		}
 		if filter.In != nil {
-			res = res.Where(fmt.Sprintf("%s IN (?)", field), lo.Map(filter.In, func(t *wrapperspb.Int64Value, _ int) int64 {
+			res = res.Where(fmt.Sprintf("%s IN (?)", field), lo.Uniq(lo.Map(filter.In, func(t *wrapperspb.Int64Value, _ int) int64 {
 				return t.Value
-			}))
+			})))
 		}
 		if filter.Nin != nil {
-			res = res.Where(fmt.Sprintf("%s NOT IN (?)", field), lo.Map(filter.Nin, func(t *wrapperspb.Int64Value, _ int) int64 {
+			res = res.Where(fmt.Sprintf("%s NOT IN (?)", field), lo.Uniq(lo.Map(filter.Nin, func(t *wrapperspb.Int64Value, _ int) int64 {
 				return t.Value
-			}))
+			})))
 		}
 		if filter.Gt != nil {
 			res = res.Where(fmt.Sprintf("%s > ?", field), filter.Gt.Value)
