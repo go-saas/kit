@@ -36,14 +36,14 @@ func NewSaasPropagator(logger log.Logger) *SaasPropagator {
 func (s *SaasPropagator) Extract(ctx context.Context, headers Header) (context.Context, error) {
 	if headers.HasKey(TenantKey) {
 		tenantId := headers.Get(TenantKey)
-		s.l.Infof("recover tenant: %s", tenantId)
+		s.l.Debugf("recover tenant: %s", tenantId)
 		ctx = common.NewCurrentTenant(ctx, tenantId, "")
 	}
 	if headers.HasKey(TenantInfoKey) {
 		if infoJson, err := base64.StdEncoding.DecodeString(headers.Get(TenantInfoKey)); err == nil {
 			tenantConfig := &common.TenantConfig{}
 			if err := json.Unmarshal(infoJson, tenantConfig); err == nil {
-				s.l.Infof("recover tenant config: %s", infoJson)
+				s.l.Debugf("recover tenant config: %s", infoJson)
 				ctx = common.NewTenantConfigContext(ctx, tenantConfig.ID, tenantConfig)
 			}
 		}
@@ -107,7 +107,7 @@ func (u *UserPropagator) Extract(ctx context.Context, headers Header) (context.C
 		return ctx, nil
 	}
 	user := headers.Get(UserKey)
-	u.l.Infof("recover user: %s", user)
+	u.l.Debugf("recover user: %s", user)
 	return authn.NewUserContext(ctx, authn.NewUserInfo(user)), nil
 }
 
@@ -147,7 +147,7 @@ func (u *ClientPropagator) Extract(ctx context.Context, headers Header) (context
 		//can not set empty value header in gateway
 		client = ""
 	}
-	u.l.Infof("recover client: %s", client)
+	u.l.Debugf("recover client: %s", client)
 	return authn.NewClientContext(ctx, client), nil
 }
 
