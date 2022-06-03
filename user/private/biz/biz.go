@@ -34,5 +34,5 @@ func ProfileBlob(ctx context.Context, factory blob.Factory) blob.Blob {
 
 //NewRemoteEventHandler handler for remote event
 func NewRemoteEventHandler(l klog.Logger, uowMgr uow.Manager, tenantSeed TenantSeedEventHandler) event.Handler {
-	return event.RecoverHandler(l, event.UowHandler(uowMgr, event.ChainHandler(event.Handler(tenantSeed))))
+	return event.RecoverHandler(event.UowHandler(uowMgr, event.ChainHandler(event.Handler(tenantSeed))), event.WithLogger(l))
 }

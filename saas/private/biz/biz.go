@@ -34,5 +34,5 @@ func NewLocalEventHook(sender event.Sender) (EventHook, func(), error) {
 
 //NewRemoteEventHandler handler for remote event
 func NewRemoteEventHandler(l klog.Logger, uowMgr uow.Manager, tenantReady TenantReadyEventHandler) event.Handler {
-	return event.RecoverHandler(l, event.UowHandler(uowMgr, event.ChainHandler(event.Handler(tenantReady))))
+	return event.RecoverHandler(event.UowHandler(uowMgr, event.ChainHandler(event.Handler(tenantReady))), event.WithLogger(l))
 }

@@ -53,7 +53,7 @@ type Receiver interface {
 	Close() error
 }
 
-//ChainHandler cmobine multiple handler one by one
+//ChainHandler combine multiple handlers
 func ChainHandler(h ...Handler) Handler {
 	return func(ctx context.Context, event Event) error {
 		for _, handler := range h {
@@ -65,18 +65,57 @@ func ChainHandler(h ...Handler) Handler {
 	}
 }
 
+type RecoverOption func(*recoverOptions)
+
+type recoverOptions struct {
+	formatter ErrFormatFunc
+	logger    klog.Logger
+}
+
+type ErrFormatFunc func(ctx context.Context, err error) error
+
+func WithErrorFormatter(f ErrFormatFunc) RecoverOption {
+	return func(o *recoverOptions) {
+		o.formatter = f
+	}
+}
+
+func WithLogger(logger klog.Logger) RecoverOption {
+	return func(o *recoverOptions) {
+		o.logger = logger
+	}
+}
+
 //RecoverHandler wrap next with recover. prevent consumer panic
-func RecoverHandler(l klog.Logger, next Handler) Handler {
-	logger := klog.NewHelper(l)
+func RecoverHandler(next Handler, opt ...RecoverOption) Handler {
+	op := recoverOptions{
+		logger: klog.GetLogger(),
+		formatter: func(ctx context.Context, err error) error {
+			return err
+		},
+	}
+	for _, o := range opt {
+		o(&op)
+	}
+	logger := klog.NewHelper(op.logger)
 	return func(ctx context.Context, event Event) (err error) {
 		defer func() {
 			if rerr := recover(); rerr != nil {
 				stack := errors.Stack(0)
-				err = fmt.Errorf("panic recovered: %s\n %s", rerr, stack)
-				logger.Error(err)
+				logger.Errorf("panic recovered: %s\n %s", rerr, stack)
+				if rrerr, ok := rerr.(error); ok {
+					err = op.formatter(ctx, rrerr)
+				} else {
+					err = fmt.Errorf("panic recovered: %s\n %s", rerr, stack)
+					err = op.formatter(ctx, err)
+				}
 			}
 		}()
-		return next(ctx, event)
+		err = next(ctx, event)
+		if err == nil {
+			return nil
+		}
+		return op.formatter(ctx, err)
 	}
 }
 
