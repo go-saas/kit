@@ -1,33 +1,52 @@
 package conf
 
-import "fmt"
+import (
+	"fmt"
+	"google.golang.org/protobuf/proto"
+)
+
+const (
+	defaultKey = "default"
+)
 
 func (x *Endpoints) GetEventMergedDefault(name string) *Event {
 	var res *Event
-	var ok bool
 	if name != "" {
-		res, ok = x.Events[name]
+		res, _ = x.Events[name]
 	}
-	if !ok {
-		res, ok = x.Events["default"]
-		if !ok {
-			panic(fmt.Sprintf("cannot resolve event %s", name))
+	if def, ok := x.Events[defaultKey]; ok {
+		if res == nil {
+			res = def
+		} else {
+			c := proto.Clone(def).(*Event)
+			proto.Merge(c, res)
+			res = c
 		}
+	}
+	if res == nil {
+		panic(fmt.Sprintf("cannot resolve event %s or default", name))
 	}
 	return res
 }
 
-func (x *Endpoints) GetDatabaseOrDefault(name string) *Database {
+func (x *Endpoints) GetDatabaseMergedDefault(name string) *Database {
 	var res *Database
-	var ok bool
+
 	if name != "" {
-		res, ok = x.Databases[name]
+		res, _ = x.Databases[name]
 	}
-	if !ok {
-		res, ok = x.Databases["default"]
-		if !ok {
-			panic(fmt.Sprintf("cannot resolve event %s", name))
+
+	if def, ok := x.Databases[defaultKey]; ok {
+		if res == nil {
+			res = def
+		} else {
+			c := proto.Clone(def).(*Database)
+			proto.Merge(c, res)
+			res = c
 		}
+	}
+	if res == nil {
+		panic(fmt.Sprintf("cannot resolve database %s or default", name))
 	}
 	return res
 }
