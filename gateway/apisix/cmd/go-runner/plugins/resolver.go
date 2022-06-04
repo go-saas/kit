@@ -4,6 +4,7 @@ import (
 	"context"
 	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
 	"github.com/goxiaoy/go-saas/common"
+	"github.com/goxiaoy/sessions"
 	"regexp"
 )
 
@@ -31,6 +32,9 @@ func (r *Resolver) Resolve(ctx context.Context) (common.TenantResolveResult, con
 	}
 	if v := r.r.Args().Get(r.key); len(v) > 0 {
 		t = v
+	}
+	if c, err := sessions.ReadCookie(r.r.Header().View(), r.key); err == nil {
+		t = c.Value
 	}
 	if len(r.pathRegex) > 0 {
 		host := r.r.Header().Get("Host")
