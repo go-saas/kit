@@ -2,7 +2,7 @@ package conf
 
 import "fmt"
 
-func (x *Endpoints) GetEventOrDefault(name string) *Event {
+func (x *Endpoints) GetEventMergedDefault(name string) *Event {
 	var res *Event
 	var ok bool
 	if name != "" {

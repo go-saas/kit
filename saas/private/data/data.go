@@ -72,11 +72,11 @@ func NewBlobFactory(c *conf.Data) blob.Factory {
 }
 
 func NewEventSender(c *conf.Data, logger log.Logger) (event.Sender, func(), error) {
-	e := c.Endpoints.GetEventOrDefault(ConnName)
+	e := c.Endpoints.GetEventMergedDefault(ConnName)
 	return event2.NewEventSender(e, logger)
 }
 
 func NewRemoteEventReceiver(c *conf.Data, logger log.Logger, handler event.Handler) (event.Receiver, func(), error) {
-	e := c.Endpoints.GetEventOrDefault(ConnName)
+	e := c.Endpoints.GetEventMergedDefault(ConnName)
 	return event2.NewEventReceiver(e, handler, logger)
 }

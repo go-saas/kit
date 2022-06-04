@@ -27,20 +27,15 @@ data:
       smtp:
         host: localhost
     events:
-      saas:
+      default:
         type: kafka
         addr: kafka:9092
         topic: kit
+      saas:
         group: saas-golang
       user:
-        type: kafka
-        addr: kafka:9092
-        topic: kit
         group: user-golang
       sys:
-        type: kafka
-        addr: kafka:9092
-        topic: kit
         group: sys-golang
   blobs:
     user:
