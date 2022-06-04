@@ -35,21 +35,29 @@ var (
 	Version string
 	// flagconf is the config flag.
 	flagconf string
+	ifSeed   bool
 
 	id, _ = os.Hostname()
 )
 
 func init() {
-	flag.StringVar(&flagconf, "conf", "../../../configs", "config path, eg: -conf config.yaml")
+	flag.StringVar(&flagconf, "conf", "./configs", "config path, eg: -conf config.yaml")
+	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
 }
 
 func newApp(c *conf.UserConf, logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.Seeder, _ event.Receiver) *kratos.App {
-	if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("").WithExtra(map[string]interface{}{
-		biz.AdminUsernameKey: c.Admin.GetUsername(),
-		biz.AdminPasswordKey: c.Admin.GetPassword(),
-	})); err != nil {
-		panic(err)
+	if ifSeed {
+		if err := seeder.Seed(context.Background(),
+			seed.NewSeedOption().
+				WithTenantId("").
+				WithExtra(map[string]interface{}{
+					biz.AdminUsernameKey: c.Admin.GetUsername(),
+					biz.AdminPasswordKey: c.Admin.GetPassword(),
+				})); err != nil {
+			panic(err)
+		}
 	}
+
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
