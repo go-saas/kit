@@ -15,7 +15,6 @@ import (
 	event2 "github.com/goxiaoy/go-saas-kit/pkg/event"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	"github.com/goxiaoy/go-saas-kit/pkg/lazy"
 	kitredis "github.com/goxiaoy/go-saas-kit/pkg/redis"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -23,7 +22,6 @@ import (
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/data"
 	"github.com/goxiaoy/go-saas/gorm"
-	mail "github.com/xhit/go-simple-mail/v2"
 	g "gorm.io/gorm"
 )
 
@@ -96,7 +94,7 @@ func NewRedis(c *conf.Data) *redis.Client {
 	return kitredis.NewRedisClient(r)
 }
 
-func NewEmailer(c *conf.Data) *lazy.Of[*mail.SMTPClient] {
+func NewEmailer(c *conf.Data) email.LazyClient {
 	return email.NewLazyClient(c.Endpoints)
 }
 

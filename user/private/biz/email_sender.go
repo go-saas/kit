@@ -3,7 +3,7 @@ package biz
 import (
 	"context"
 	"fmt"
-	"github.com/goxiaoy/go-saas-kit/pkg/lazy"
+	"github.com/goxiaoy/go-saas-kit/pkg/email"
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
 	mail "github.com/xhit/go-simple-mail/v2"
 )
@@ -17,11 +17,11 @@ type EmailSender interface {
 
 //DefaultEmailSender TODO template?
 type DefaultEmailSender struct {
-	emailer *lazy.Of[*mail.SMTPClient]
+	emailer email.LazyClient
 	cfg     *conf.Data
 }
 
-func NewEmailSender(emailer *lazy.Of[*mail.SMTPClient], cfg *conf.Data) EmailSender {
+func NewEmailSender(emailer email.LazyClient, cfg *conf.Data) EmailSender {
 	return &DefaultEmailSender{emailer: emailer, cfg: cfg}
 }
 

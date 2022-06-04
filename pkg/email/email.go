@@ -9,8 +9,10 @@ import (
 	"time"
 )
 
+type LazyClient lazy.Of[*mail.SMTPClient]
+
 //NewLazyClient create lazy client for email . TODO provider?
-func NewLazyClient(cfg *conf.Endpoints) *lazy.Of[*mail.SMTPClient] {
+func NewLazyClient(cfg *conf.Endpoints) LazyClient {
 	if cfg.Email == nil || cfg.Email.Smtp == nil {
 		panic("endpoints.email.smtp required")
 	}
@@ -49,4 +51,5 @@ func NewLazyClient(cfg *conf.Endpoints) *lazy.Of[*mail.SMTPClient] {
 		server.TLSConfig = &tls.Config{InsecureSkipVerify: smtp.TlsSkipVerify}
 		return server.Connect()
 	})
+
 }
