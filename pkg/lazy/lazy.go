@@ -5,13 +5,17 @@ import (
 	"sync"
 )
 
-type Of[T any] struct {
+type Of[T any] interface {
+	Value(ctx context.Context) (T, error)
+}
+
+type of[T any] struct {
 	factory  func(ctx context.Context) (T, error)
 	lockItem sync.Mutex
 	value    T
 }
 
-func (l *Of[T]) Value(ctx context.Context) (T, error) {
+func (l *of[T]) Value(ctx context.Context) (T, error) {
 	l.lockItem.Lock()
 	defer l.lockItem.Unlock()
 	var err error
@@ -26,6 +30,6 @@ func (l *Of[T]) Value(ctx context.Context) (T, error) {
 	return l.value, err
 }
 
-func New[T any](factory func(ctx context.Context) (T, error)) *Of[T] {
-	return &Of[T]{factory: factory}
+func New[T any](factory func(ctx context.Context) (T, error)) Of[T] {
+	return &of[T]{factory: factory}
 }
