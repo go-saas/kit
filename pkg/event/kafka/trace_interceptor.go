@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport"
 	"go.opentelemetry.io/otel"
@@ -81,7 +82,13 @@ func (oi *OTelInterceptor) OnSend(msg *sarama.ProducerMessage) {
 		}
 	}
 	ctx = oi.propagator.Extract(ctx, header)
-	ctx, span := oi.tracer.Start(ctx, msg.Topic)
+	var msgKey = ""
+	if msg.Key != nil {
+		if b, err := msg.Key.Encode(); err == nil {
+			msgKey = string(b)
+		}
+	}
+	ctx, span := oi.tracer.Start(ctx, fmt.Sprintf("%s-%s", msg.Topic, msgKey))
 	msg.Metadata = ctx
 	defer func() { span.End() }()
 
@@ -92,10 +99,8 @@ func (oi *OTelInterceptor) OnSend(msg *sarama.ProducerMessage) {
 		attribute.String("messaging.destination", msg.Topic),
 		attribute.String("messaging.message_id", spanContext.SpanID().String()),
 	)
-	if msg.Key != nil {
-		if b, err := msg.Key.Encode(); err == nil {
-			attWithTopic = append(attWithTopic, attribute.String("messaging.kafka.message_key", string(b)))
-		}
+	if len(msgKey) > 0 {
+		attWithTopic = append(attWithTopic, attribute.String("messaging.kafka.message_key", msgKey))
 	}
 	attWithTopic = append(attWithTopic, attribute.Int("messaging.kafka.partition", int(msg.Partition)))
 
