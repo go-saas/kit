@@ -37,34 +37,34 @@ jobs:
 
         run: docker-compose -f docker-compose.yml -f docker-compose.dev.yml push
 
-      - name: Publish to demo server
-        if: |
-          github.event_name == 'push'
-          && github.repository == 'Goxiaoy/go-saas-kit'
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          source: "quickstart/,.env,docker-compose.yml,docker-compose.tracing.yml,docker-compose.hydra.yml"
-          target: "/app/go-saas-kit"
-      - name: Update demo server
-        if: |
-          github.event_name == 'push'
-          && github.repository == 'Goxiaoy/go-saas-kit'
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          envs: DOCKER_TAG
-          script: |
-            echo "$DOCKER_TAG"
-            cd /app/go-saas-kit
-            docker-compose -f docker-compose.yml -f docker-compose.tracing.yml pull
-            docker-compose -f docker-compose.yml -f docker-compose.tracing.yml up -d --remove-orphans
+#      - name: Publish to demo server
+#        if: |
+#          github.event_name == 'push'
+#          && github.repository == 'Goxiaoy/go-saas-kit'
+#        uses: appleboy/scp-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          password: ${{ secrets.PASSWORD }}
+#          port: ${{ secrets.PORT }}
+#          source: "quickstart/,.env,docker-compose.yml,docker-compose.tracing.yml,docker-compose.hydra.yml"
+#          target: "/app/go-saas-kit"
+#      - name: Update demo server
+#        if: |
+#          github.event_name == 'push'
+#          && github.repository == 'Goxiaoy/go-saas-kit'
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          password: ${{ secrets.PASSWORD }}
+#          port: ${{ secrets.PORT }}
+#          envs: DOCKER_TAG
+#          script: |
+#            echo "$DOCKER_TAG"
+#            cd /app/go-saas-kit
+#            docker-compose -f docker-compose.yml -f docker-compose.tracing.yml pull
+#            docker-compose -f docker-compose.yml -f docker-compose.tracing.yml up -d --remove-orphans
      
 
           
