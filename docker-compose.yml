@@ -3,16 +3,16 @@ services:
 
   web:
     image: ${DOCKER_REGISTRY}go-saas-kit-web:${DOCKER_TAG:-latest}
-    restart: always
+    restart: on-failure
 
   api_docs:
     image: ${DOCKER_REGISTRY}go-saas-kit-swagger:${DOCKER_TAG:-latest}
     environment:
       - BASE_URL="/swagger"
+    restart: on-failure
 
   apisix:
     image: ${DOCKER_REGISTRY}go-saas-kit-apisix:${DOCKER_TAG:-latest}
-    restart: always
     volumes:
       - ./quickstart/configs/apisix/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
       - ./quickstart/configs/apisix/apisix_conf/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
@@ -24,6 +24,7 @@ services:
       - "80:9080" #Http
       - "9091:9091" #Prometheus
       - "9443:9443" #Https
+    restart: on-failure
 
   user:
     image: ${DOCKER_REGISTRY}go-saas-kit-user:${DOCKER_TAG:-latest}
@@ -34,6 +35,7 @@ services:
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
+    restart: on-failure
 
   saas:
     image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
@@ -43,6 +45,7 @@ services:
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
+    restart: on-failure
 
   sys:
     image: ${DOCKER_REGISTRY}go-saas-kit-sys:${DOCKER_TAG:-latest}
@@ -53,7 +56,7 @@ services:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
     command: ["./sys", "-conf", "/data/conf","-seed.path","/data/conf/seed/sys.yaml"]
-
+    restart: on-failure
 
   mysqld:
     image: mysql:8.0

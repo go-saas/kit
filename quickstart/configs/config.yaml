@@ -1,11 +1,6 @@
 app:
   domain_format: ([-a-z0-9]+)\.saas\.nihaosaoya\.com
 services:
-  servers:
-    default:
-      http:
-        cors:
-          allowed_origins: [ "*" ]
 
   services:
     user:

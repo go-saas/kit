@@ -117,4 +117,9 @@ global_rules:
         conf:
           - name: "kit_authn"
             value:  "{}"
+  -
+    id: 3
+    plugins:
+      cors:
+        allow_origins: "*"
 #END
