@@ -35,3 +35,15 @@ func normalizeHost(ctx context.Context, app *conf.AppConfig, name string) string
 	}
 	return ""
 }
+
+//ToTenantInfo todo better mapper?
+func (x *Tenant) ToTenantInfo() *TenantInfo {
+	return &TenantInfo{
+		Id:          x.Id,
+		Name:        x.Name,
+		DisplayName: x.DisplayName,
+		Region:      x.Region,
+		Logo:        x.Logo,
+		Host:        x.Host,
+	}
+}
