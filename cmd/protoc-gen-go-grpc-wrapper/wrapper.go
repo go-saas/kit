@@ -43,17 +43,17 @@ func genService(gen *protogen.Plugin, file *protogen.File, g *protogen.Generated
 	clientName := service.GoName + "Client"
 	serverName := service.GoName + "Server"
 	structName := service.GoName + "ClientWrapper"
-	g.P("var _ ", serverName, " = ", "(nil)(*", structName, "")
+	g.P("var _ ", serverName, " = ", "(nil)(*", unexport(structName), ")")
 	g.P("// ", unexport(structName), " is the wrapper to turn ", service.GoName, " client to server interface.")
 	g.P("//")
 
 	// Client interface.
 	g.P("type ", unexport(structName), " struct {")
-	g.P("cc ", grpcPackage.Ident(clientName))
+	g.P("cc ", clientName)
 	g.P("}")
 	g.P()
 
-	g.P("func New", structName, " (cc ", grpcPackage.Ident("clientName"), ") ", serverName, " {")
+	g.P("func New", structName, " (cc ", clientName, ") ", serverName, " {")
 	g.P("return &", unexport(structName), "{cc}")
 	g.P("}")
 	g.P()
