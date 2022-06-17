@@ -30,9 +30,10 @@ build:
 .PHONY: all
 # generate all
 all:
-	make generate
 	make api;
 	make config;
+	make generate
+
 
 # show help
 help:

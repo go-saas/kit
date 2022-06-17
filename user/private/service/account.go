@@ -31,14 +31,14 @@ import (
 type AccountService struct {
 	pb.UnimplementedAccountServer
 	um            *biz.UserManager
-	tenantService v13.TenantServiceClient
+	tenantService v13.TenantServiceServer
 	blob          blob.Factory
 	userSetting   biz.UserSettingRepo
 	userAddr      biz.UserAddressRepo
 	normalizer    biz.LookupNormalizer
 }
 
-func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13.TenantServiceClient, userSetting biz.UserSettingRepo, userAddr biz.UserAddressRepo, normalizer biz.LookupNormalizer) *AccountService {
+func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13.TenantServiceServer, userSetting biz.UserSettingRepo, userAddr biz.UserAddressRepo, normalizer biz.LookupNormalizer) *AccountService {
 	return &AccountService{
 		um:            um,
 		blob:          blob,

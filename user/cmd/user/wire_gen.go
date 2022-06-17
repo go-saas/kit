@@ -50,8 +50,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	clientName := _wireClientNameValue
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
-	tenantServiceClient := api2.NewTenantGrpcClient(grpcConn)
-	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceClient)
+	tenantServiceServer := api2.NewTenantGrpcClient(grpcConn)
+	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceServer)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
@@ -97,7 +97,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userService := service.NewUserService(userManager, roleManager, defaultAuthorizationService, factory, trustedContextValidator, logger)
 	userSettingRepo := data.NewUserSettingRepo(dataData, eventBus)
 	userAddressRepo := data.NewUserAddrRepo(dataData, eventBus)
-	accountService := service.NewAccountService(userManager, factory, tenantServiceClient, userSettingRepo, userAddressRepo, lookupNormalizer)
+	accountService := service.NewAccountService(userManager, factory, tenantServiceServer, userSettingRepo, userAddressRepo, lookupNormalizer)
 	lazyClient := data.NewEmailer(confData)
 	emailSender := biz.NewEmailSender(lazyClient, confData)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, defaultAuthorizationService, trustedContextValidator, logger)

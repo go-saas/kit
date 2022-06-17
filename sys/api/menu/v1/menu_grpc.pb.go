@@ -93,7 +93,7 @@ func (c *menuServiceClient) GetAvailableMenus(ctx context.Context, in *GetAvaila
 }
 
 // MenuServiceServer is the server API for MenuService service.
-// All implementations must embed UnimplementedMenuServiceServer
+// All implementations should embed UnimplementedMenuServiceServer
 // for forward compatibility
 type MenuServiceServer interface {
 	ListMenu(context.Context, *ListMenuRequest) (*ListMenuReply, error)
@@ -102,10 +102,9 @@ type MenuServiceServer interface {
 	UpdateMenu(context.Context, *UpdateMenuRequest) (*Menu, error)
 	DeleteMenu(context.Context, *DeleteMenuRequest) (*DeleteMenuReply, error)
 	GetAvailableMenus(context.Context, *GetAvailableMenusRequest) (*GetAvailableMenusReply, error)
-	mustEmbedUnimplementedMenuServiceServer()
 }
 
-// UnimplementedMenuServiceServer must be embedded to have forward compatible implementations.
+// UnimplementedMenuServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedMenuServiceServer struct {
 }
 
@@ -127,7 +126,6 @@ func (UnimplementedMenuServiceServer) DeleteMenu(context.Context, *DeleteMenuReq
 func (UnimplementedMenuServiceServer) GetAvailableMenus(context.Context, *GetAvailableMenusRequest) (*GetAvailableMenusReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAvailableMenus not implemented")
 }
-func (UnimplementedMenuServiceServer) mustEmbedUnimplementedMenuServiceServer() {}
 
 // UnsafeMenuServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to MenuServiceServer will

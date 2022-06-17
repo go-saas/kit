@@ -53,8 +53,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	option := api.NewDefaultOption(logger)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup3 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
-	permissionServiceClient := api2.NewPermissionGrpcClient(grpcConn)
-	permissionChecker := remote.NewRemotePermissionChecker(permissionServiceClient)
+	permissionServiceServer := api2.NewPermissionGrpcClient(grpcConn)
+	permissionChecker := remote.NewRemotePermissionChecker(permissionServiceServer)
 	authzOption := service.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
@@ -65,8 +65,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
-	userServiceClient := api2.NewUserGrpcClient(grpcConn)
-	userTenantContributor := remote.NewUserTenantContributor(userServiceClient)
+	userServiceServer := api2.NewUserGrpcClient(grpcConn)
+	userTenantContributor := remote.NewUserTenantContributor(userServiceServer)
 	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, logger, trustedContextValidator, userTenantContributor)
 	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, tenantService, userTenantContributor, trustedContextValidator, logger)
 	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)

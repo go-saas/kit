@@ -29,44 +29,23 @@ func NewHttpClient(clientName api.ClientName, services *conf.Services, opt *api.
 }
 
 var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient)
-var HttpProviderSet = wire.NewSet(NewHttpClient, NewUserHttpClient, NewAuthHttpClient, NewAccountHttpClient, NewRoleHttpClient, NewPermissionHttpClient)
 
-func NewUserGrpcClient(conn GrpcConn) v1.UserServiceClient {
-	return v1.NewUserServiceClient(conn)
+func NewUserGrpcClient(conn GrpcConn) v1.UserServiceServer {
+	return v1.NewUserServiceClientProxy(v1.NewUserServiceClient(conn))
 }
 
-func NewPermissionGrpcClient(conn GrpcConn) v15.PermissionServiceClient {
-	return v15.NewPermissionServiceClient(conn)
+func NewPermissionGrpcClient(conn GrpcConn) v15.PermissionServiceServer {
+	return v15.NewPermissionServiceClientProxy(v15.NewPermissionServiceClient(conn))
 }
 
-func NewPermissionHttpClient(http HttpClient) v15.PermissionServiceHTTPClient {
-	return v15.NewPermissionServiceHTTPClient(http)
+func NewAuthGrpcClient(conn GrpcConn) v12.AuthServer {
+	return v12.NewAuthClientProxy(v12.NewAuthClient(conn))
 }
 
-func NewUserHttpClient(http HttpClient) v1.UserServiceHTTPClient {
-	return v1.NewUserServiceHTTPClient(http)
+func NewAccountGrpcClient(conn GrpcConn) v13.AccountServer {
+	return v13.NewAccountClientProxy(v13.NewAccountClient(conn))
 }
 
-func NewAuthGrpcClient(conn GrpcConn) v12.AuthClient {
-	return v12.NewAuthClient(conn)
-}
-
-func NewAuthHttpClient(http HttpClient) v12.AuthHTTPClient {
-	return v12.NewAuthHTTPClient(http)
-}
-
-func NewAccountGrpcClient(conn GrpcConn) v13.AccountClient {
-	return v13.NewAccountClient(conn)
-}
-
-func NewAccountHttpClient(http HttpClient) v13.AccountHTTPClient {
-	return v13.NewAccountHTTPClient(http)
-}
-
-func NewRoleGrpcClient(conn GrpcConn) v14.RoleServiceClient {
-	return v14.NewRoleServiceClient(conn)
-}
-
-func NewRoleHttpClient(http HttpClient) v14.RoleServiceHTTPClient {
-	return v14.NewRoleServiceHTTPClient(http)
+func NewRoleGrpcClient(conn GrpcConn) v14.RoleServiceServer {
+	return v14.NewRoleServiceClientProxy(v14.NewRoleServiceClient(conn))
 }

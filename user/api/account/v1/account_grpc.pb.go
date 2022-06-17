@@ -115,7 +115,7 @@ func (c *accountClient) DeleteAddresses(ctx context.Context, in *DeleteAddressRe
 }
 
 // AccountServer is the server API for Account service.
-// All implementations must embed UnimplementedAccountServer
+// All implementations should embed UnimplementedAccountServer
 // for forward compatibility
 type AccountServer interface {
 	GetProfile(context.Context, *GetProfileRequest) (*GetProfileResponse, error)
@@ -128,10 +128,9 @@ type AccountServer interface {
 	CreateAddresses(context.Context, *CreateAddressesRequest) (*CreateAddressReply, error)
 	UpdateAddresses(context.Context, *UpdateAddressesRequest) (*UpdateAddressesReply, error)
 	DeleteAddresses(context.Context, *DeleteAddressRequest) (*DeleteAddressesReply, error)
-	mustEmbedUnimplementedAccountServer()
 }
 
-// UnimplementedAccountServer must be embedded to have forward compatible implementations.
+// UnimplementedAccountServer should be embedded to have forward compatible implementations.
 type UnimplementedAccountServer struct {
 }
 
@@ -159,7 +158,6 @@ func (UnimplementedAccountServer) UpdateAddresses(context.Context, *UpdateAddres
 func (UnimplementedAccountServer) DeleteAddresses(context.Context, *DeleteAddressRequest) (*DeleteAddressesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAddresses not implemented")
 }
-func (UnimplementedAccountServer) mustEmbedUnimplementedAccountServer() {}
 
 // UnsafeAccountServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to AccountServer will

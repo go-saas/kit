@@ -108,7 +108,7 @@ func (c *roleServiceClient) UpdateRolePermission(ctx context.Context, in *Update
 }
 
 // RoleServiceServer is the server API for RoleService service.
-// All implementations must embed UnimplementedRoleServiceServer
+// All implementations should embed UnimplementedRoleServiceServer
 // for forward compatibility
 type RoleServiceServer interface {
 	// authz: user.role,*,list
@@ -123,10 +123,9 @@ type RoleServiceServer interface {
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
 	GetRolePermission(context.Context, *GetRolePermissionRequest) (*GetRolePermissionResponse, error)
 	UpdateRolePermission(context.Context, *UpdateRolePermissionRequest) (*UpdateRolePermissionResponse, error)
-	mustEmbedUnimplementedRoleServiceServer()
 }
 
-// UnimplementedRoleServiceServer must be embedded to have forward compatible implementations.
+// UnimplementedRoleServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedRoleServiceServer struct {
 }
 
@@ -151,7 +150,6 @@ func (UnimplementedRoleServiceServer) GetRolePermission(context.Context, *GetRol
 func (UnimplementedRoleServiceServer) UpdateRolePermission(context.Context, *UpdateRolePermissionRequest) (*UpdateRolePermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRolePermission not implemented")
 }
-func (UnimplementedRoleServiceServer) mustEmbedUnimplementedRoleServiceServer() {}
 
 // UnsafeRoleServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to RoleServiceServer will

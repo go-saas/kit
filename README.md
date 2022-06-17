@@ -41,6 +41,8 @@ Open `http://localhost:80` to see the web ui
 Username: admin
 Password: 123456
 
+Open `http://localhost:80/dev/docs` to see swagger openapi
+Open `http://localhost:80/dev/jeager` to see jaeger tracing
 # Development
 
 ```shell

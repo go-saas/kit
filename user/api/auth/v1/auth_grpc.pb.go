@@ -178,7 +178,7 @@ func (c *authClient) RefreshRememberToken(ctx context.Context, in *RefreshRememb
 }
 
 // AuthServer is the server API for Auth service.
-// All implementations must embed UnimplementedAuthServer
+// All implementations should embed UnimplementedAuthServer
 // for forward compatibility
 type AuthServer interface {
 	Register(context.Context, *RegisterAuthRequest) (*RegisterAuthReply, error)
@@ -200,10 +200,9 @@ type AuthServer interface {
 	GetCsrfToken(context.Context, *GetCsrfTokenRequest) (*GetCsrfTokenResponse, error)
 	//RefreshRememberToken internal api for refresh remember token
 	RefreshRememberToken(context.Context, *RefreshRememberTokenRequest) (*RefreshRememberTokenReply, error)
-	mustEmbedUnimplementedAuthServer()
 }
 
-// UnimplementedAuthServer must be embedded to have forward compatible implementations.
+// UnimplementedAuthServer should be embedded to have forward compatible implementations.
 type UnimplementedAuthServer struct {
 }
 
@@ -249,7 +248,6 @@ func (UnimplementedAuthServer) GetCsrfToken(context.Context, *GetCsrfTokenReques
 func (UnimplementedAuthServer) RefreshRememberToken(context.Context, *RefreshRememberTokenRequest) (*RefreshRememberTokenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshRememberToken not implemented")
 }
-func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 
 // UnsafeAuthServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to AuthServer will

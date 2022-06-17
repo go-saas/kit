@@ -8,10 +8,10 @@ import (
 )
 
 type UserTenantContributor struct {
-	client v1.UserServiceClient
+	client v1.UserServiceServer
 }
 
-func NewUserTenantContributor(client v1.UserServiceClient) *UserTenantContributor {
+func NewUserTenantContributor(client v1.UserServiceServer) *UserTenantContributor {
 	return &UserTenantContributor{
 		client: client,
 	}

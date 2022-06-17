@@ -30,12 +30,7 @@ func NewHttpClient(clientName api.ClientName, services *conf.Services,
 }
 
 var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewTenantGrpcClient)
-var HttpProviderSet = wire.NewSet(NewHttpClient, NewTenantHttpClient)
 
-func NewTenantGrpcClient(conn GrpcConn) v1.TenantServiceClient {
-	return v1.NewTenantServiceClient(conn)
-}
-
-func NewTenantHttpClient(http HttpClient) v1.TenantServiceHTTPClient {
-	return v1.NewTenantServiceHTTPClient(http)
+func NewTenantGrpcClient(conn GrpcConn) v1.TenantServiceServer {
+	return v1.NewTenantServiceClientProxy(v1.NewTenantServiceClient(conn))
 }

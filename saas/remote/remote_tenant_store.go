@@ -8,12 +8,12 @@ import (
 )
 
 type GrpcTenantStore struct {
-	client v1.TenantServiceClient
+	client v1.TenantServiceServer
 }
 
 var _ common.TenantStore = (*GrpcTenantStore)(nil)
 
-func NewRemoteGrpcTenantStore(client v1.TenantServiceClient) common.TenantStore {
+func NewRemoteGrpcTenantStore(client v1.TenantServiceServer) common.TenantStore {
 	return common.NewCachedTenantStore(&GrpcTenantStore{client: client})
 }
 

@@ -108,7 +108,7 @@ func (c *permissionServiceClient) RemoveSubjectPermission(ctx context.Context, i
 }
 
 // PermissionServiceServer is the server API for PermissionService service.
-// All implementations must embed UnimplementedPermissionServiceServer
+// All implementations should embed UnimplementedPermissionServiceServer
 // for forward compatibility
 type PermissionServiceServer interface {
 	// Get current permission
@@ -123,10 +123,9 @@ type PermissionServiceServer interface {
 	UpdateSubjectPermission(context.Context, *UpdateSubjectPermissionRequest) (*UpdateSubjectPermissionResponse, error)
 	//management remove
 	RemoveSubjectPermission(context.Context, *RemoveSubjectPermissionRequest) (*RemoveSubjectPermissionReply, error)
-	mustEmbedUnimplementedPermissionServiceServer()
 }
 
-// UnimplementedPermissionServiceServer must be embedded to have forward compatible implementations.
+// UnimplementedPermissionServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedPermissionServiceServer struct {
 }
 
@@ -151,7 +150,6 @@ func (UnimplementedPermissionServiceServer) UpdateSubjectPermission(context.Cont
 func (UnimplementedPermissionServiceServer) RemoveSubjectPermission(context.Context, *RemoveSubjectPermissionRequest) (*RemoveSubjectPermissionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveSubjectPermission not implemented")
 }
-func (UnimplementedPermissionServiceServer) mustEmbedUnimplementedPermissionServiceServer() {}
 
 // UnsafePermissionServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to PermissionServiceServer will

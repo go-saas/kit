@@ -93,7 +93,7 @@ func (c *authWebClient) GrantConsent(ctx context.Context, in *GrantConsentReques
 }
 
 // AuthWebServer is the server API for AuthWeb service.
-// All implementations must embed UnimplementedAuthWebServer
+// All implementations should embed UnimplementedAuthWebServer
 // for forward compatibility
 type AuthWebServer interface {
 	GetWebLogin(context.Context, *GetLoginRequest) (*GetLoginResponse, error)
@@ -102,10 +102,9 @@ type AuthWebServer interface {
 	WebLogout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	GetConsent(context.Context, *GetConsentRequest) (*GetConsentResponse, error)
 	GrantConsent(context.Context, *GrantConsentRequest) (*GrantConsentResponse, error)
-	mustEmbedUnimplementedAuthWebServer()
 }
 
-// UnimplementedAuthWebServer must be embedded to have forward compatible implementations.
+// UnimplementedAuthWebServer should be embedded to have forward compatible implementations.
 type UnimplementedAuthWebServer struct {
 }
 
@@ -127,7 +126,6 @@ func (UnimplementedAuthWebServer) GetConsent(context.Context, *GetConsentRequest
 func (UnimplementedAuthWebServer) GrantConsent(context.Context, *GrantConsentRequest) (*GrantConsentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GrantConsent not implemented")
 }
-func (UnimplementedAuthWebServer) mustEmbedUnimplementedAuthWebServer() {}
 
 // UnsafeAuthWebServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to AuthWebServer will

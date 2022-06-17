@@ -127,7 +127,7 @@ func (c *tenantServiceClient) GetTenantInternal(ctx context.Context, in *GetTena
 }
 
 // TenantServiceServer is the server API for TenantService service.
-// All implementations must embed UnimplementedTenantServiceServer
+// All implementations should embed UnimplementedTenantServiceServer
 // for forward compatibility
 type TenantServiceServer interface {
 	//CreateTenant
@@ -152,10 +152,9 @@ type TenantServiceServer interface {
 	GetCurrentTenant(context.Context, *GetCurrentTenantRequest) (*GetCurrentTenantReply, error)
 	//GetTenantInternal internal api for remote tenant store
 	GetTenantInternal(context.Context, *GetTenantRequest) (*Tenant, error)
-	mustEmbedUnimplementedTenantServiceServer()
 }
 
-// UnimplementedTenantServiceServer must be embedded to have forward compatible implementations.
+// UnimplementedTenantServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedTenantServiceServer struct {
 }
 
@@ -183,7 +182,6 @@ func (UnimplementedTenantServiceServer) GetCurrentTenant(context.Context, *GetCu
 func (UnimplementedTenantServiceServer) GetTenantInternal(context.Context, *GetTenantRequest) (*Tenant, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTenantInternal not implemented")
 }
-func (UnimplementedTenantServiceServer) mustEmbedUnimplementedTenantServiceServer() {}
 
 // UnsafeTenantServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to TenantServiceServer will

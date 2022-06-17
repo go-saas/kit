@@ -25,12 +25,7 @@ func NewHttpClient(clientName api.ClientName, services *conf.Services, opt *api.
 }
 
 var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewMenuGrpcClient)
-var HttpProviderSet = wire.NewSet(NewHttpClient, NewMenuServiceHttpClient)
 
-func NewMenuGrpcClient(conn GrpcConn) v1.MenuServiceClient {
-	return v1.NewMenuServiceClient(conn)
-}
-
-func NewMenuServiceHttpClient(http HttpClient) v1.MenuServiceHTTPClient {
-	return v1.NewMenuServiceHTTPClient(http)
+func NewMenuGrpcClient(conn GrpcConn) v1.MenuServiceServer {
+	return v1.NewMenuServiceClientProxy(v1.NewMenuServiceClient(conn))
 }

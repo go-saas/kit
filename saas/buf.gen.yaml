@@ -8,7 +8,13 @@ plugins:
     opt: paths=source_relative
   - name: go-grpc
     out: ../
-    opt: paths=source_relative
+    opt:
+      - paths=source_relative
+      - require_unimplemented_servers=false
+  - name: go-grpc-proxy
+    out: ../
+    opt:
+      - paths=source_relative
   - name: validate
     out: ../
     opt:

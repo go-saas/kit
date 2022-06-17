@@ -128,7 +128,7 @@ func (c *userServiceClient) CheckUserTenant(ctx context.Context, in *CheckUserTe
 }
 
 // UserServiceServer is the server API for UserService service.
-// All implementations must embed UnimplementedUserServiceServer
+// All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
 	//ListUsers
@@ -154,10 +154,9 @@ type UserServiceServer interface {
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error)
 	//CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error)
-	mustEmbedUnimplementedUserServiceServer()
 }
 
-// UnimplementedUserServiceServer must be embedded to have forward compatible implementations.
+// UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedUserServiceServer struct {
 }
 
@@ -185,7 +184,6 @@ func (UnimplementedUserServiceServer) InviteUser(context.Context, *InviteUserReq
 func (UnimplementedUserServiceServer) CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckUserTenant not implemented")
 }
-func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to UserServiceServer will

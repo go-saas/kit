@@ -9,7 +9,7 @@ import (
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 )
 
-func NewRefreshProvider(client v1.AuthClient, logger klog.Logger) session.RefreshTokenProvider {
+func NewRefreshProvider(client v1.AuthServer, logger klog.Logger) session.RefreshTokenProvider {
 	l := klog.NewHelper(klog.With(logger, "module", "remote.RefreshTokenProvider"))
 	return session.RefreshTokenProviderFunc(func(ctx context.Context, token, userId string) (err error) {
 		if writer, ok := session.FromClientStateWriterContext(ctx); ok {

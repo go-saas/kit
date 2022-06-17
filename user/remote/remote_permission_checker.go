@@ -9,13 +9,13 @@ import (
 )
 
 type PermissionChecker struct {
-	client v1.PermissionServiceClient
+	client v1.PermissionServiceServer
 }
 
 var _ authz.PermissionChecker = (*PermissionChecker)(nil)
 var _ authz.PermissionManagementService = (*PermissionChecker)(nil)
 
-func NewRemotePermissionChecker(client v1.PermissionServiceClient) *PermissionChecker {
+func NewRemotePermissionChecker(client v1.PermissionServiceServer) *PermissionChecker {
 	return &PermissionChecker{
 		client: client,
 	}
