@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
@@ -14,11 +15,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/api"
-	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
-	v14 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
-	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
-	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/i18n"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common"
@@ -35,36 +31,33 @@ func NewGRPCServer(
 	mOpt *http2.WebMultiTenancyOption,
 	apiOpt *sapi.Option,
 	logger log.Logger,
-	user *service.UserService,
-	account *service.AccountService,
-	auth *service.AuthService,
-	role *service.RoleService,
-	permission *service.PermissionService,
 	validator sapi.TrustedContextValidator,
 	userTenant *service.UserTenantContributor,
+	register service.GrpcServerRegister,
 ) *grpc.Server {
+	m := middleware.Chain(
+		server.Recovery(),
+		tracing.Server(),
+		logging.Server(logger),
+		metrics.Server(),
+		validate.Validator(),
+		localize.I18N(i18n.Files...),
+		jwt.ServerExtractAndAuth(tokenizer, logger),
+		sapi.ServerPropagation(apiOpt, validator, logger),
+		server.Saas(mOpt, ts, validator, func(o *common.TenantResolveOption) {
+			o.AppendContributors(userTenant)
+		}),
+		uow.Uow(logger, uowMgr),
+	)
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
-			server.Recovery(),
-			tracing.Server(),
-			logging.Server(logger),
-			metrics.Server(),
-			validate.Validator(),
-			localize.I18N(i18n.Files...),
-			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerPropagation(apiOpt, validator, logger),
-			server.Saas(mOpt, ts, validator, func(o *common.TenantResolveOption) {
-				o.AppendContributors(userTenant)
-			}),
-			uow.Uow(logger, uowMgr),
+			m,
 		),
 	}
 	opts = server.PatchGrpcOpts(logger, opts, api.ServiceName, c)
 	srv := grpc.NewServer(opts...)
-	v12.RegisterUserServiceServer(srv, user)
-	v13.RegisterAccountServer(srv, account)
-	v14.RegisterAuthServer(srv, auth)
-	v1.RegisterRoleServiceServer(srv, role)
-	v15.RegisterPermissionServiceServer(srv, permission)
+
+	register.Register(srv, m)
+
 	return srv
 }

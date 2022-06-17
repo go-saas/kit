@@ -5,8 +5,7 @@ import (
 	"github.com/google/wire"
 )
 
-var DefaultCodecProviderSet = wire.NewSet(wire.Value(ReqDecode), wire.Value(ResEncoder), wire.Value(ErrEncoder),
-	NewDefaultErrorHandler, wire.Bind(new(ErrorHandler), new(*DefaultErrorHandler)))
+var DefaultCodecProviderSet = wire.NewSet(wire.Value(ReqDecode), wire.Value(ResEncoder), wire.Value(ErrEncoder))
 
 var (
 	ReqDecode  http.DecodeRequestFunc  = http.DefaultRequestDecoder

@@ -1,8 +1,6 @@
 package server
 
 import (
-	"context"
-	"github.com/go-chi/chi/v5"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
@@ -13,26 +11,16 @@ import (
 	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
-	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/user/api"
-	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
-	v14 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
-	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
-	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/i18n"
-	"github.com/goxiaoy/go-saas-kit/user/private/biz"
-	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
-	uhttp "github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
 	uow2 "github.com/goxiaoy/uow"
-	"net/http"
 )
 
 // NewHTTPServer new a HTTP server.
@@ -47,18 +35,10 @@ func NewHTTPServer(c *conf.Services,
 	resEncoder khttp.EncodeResponseFunc,
 	errEncoder khttp.EncodeErrorFunc,
 	logger log.Logger,
-	user *service.UserService,
-	account *service.AccountService,
-	auth *service.AuthService,
-	role *service.RoleService,
-	permission *service.PermissionService,
-	authHttp *uhttp.Auth,
-	errorHandler server.ErrorHandler,
-	dataCfg *conf2.Data,
-	factory blob.Factory,
 	userTenant *service.UserTenantContributor,
 	validator sapi.TrustedContextValidator,
 	refreshProvider session.RefreshTokenProvider,
+	register service.HttpServerRegister,
 ) *khttp.Server {
 	var opts []khttp.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
@@ -81,41 +61,8 @@ func NewHTTPServer(c *conf.Services,
 		khttp.Middleware(middlewares),
 	}...)
 
-	router := chi.NewRouter()
-
-	//global filter
-	router.Use(
-		server.MiddlewareConvert(errEncoder, middlewares))
-
-	router.Group(func(router chi.Router) {
-		router.Get("/login", server.HandlerWrap(resEncoder, authHttp.LoginGet))
-		router.Post("/login", server.HandlerWrap(resEncoder, authHttp.LoginPost))
-		router.Get("/logout", server.HandlerWrap(resEncoder, authHttp.LoginOutGet))
-		router.Post("/logout", server.HandlerWrap(resEncoder, authHttp.Logout))
-		router.Get("/consent", server.HandlerWrap(resEncoder, authHttp.ConsentGet))
-		router.Post("/consent", server.HandlerWrap(resEncoder, authHttp.Consent))
-	})
-
 	srv := khttp.NewServer(opts...)
-	server.HandleBlobs("", dataCfg.Blobs, srv, factory)
-	srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", router))
 
-	v12.RegisterUserServiceHTTPServer(srv, user)
-
-	v13.RegisterAccountHTTPServer(srv, account)
-	route := srv.Route("/")
-
-	route.POST("/v1/account/avatar", account.UpdateAvatar)
-	route.POST("/v1/user/avatar", user.UpdateAvatar)
-
-	v14.RegisterAuthHTTPServer(srv, auth)
-	v1.RegisterRoleServiceHTTPServer(srv, role)
-	v15.RegisterPermissionServiceHTTPServer(srv, permission)
+	register.Register(srv, middlewares)
 	return srv
-}
-
-func NewRefreshTokenProvider(sign *biz.SignInManager) session.RefreshTokenProvider {
-	return session.RefreshTokenProviderFunc(func(ctx context.Context, token, userId string) (err error) {
-		return sign.RefreshSignIn(ctx, token)
-	})
 }

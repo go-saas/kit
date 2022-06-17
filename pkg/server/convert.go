@@ -18,6 +18,7 @@ type (
 	errorKey struct{}
 )
 
+// MiddlewareConvert convert kratos middleware into standard http middleware
 func MiddlewareConvert(errEncoder khttp.EncodeErrorFunc, m ...middleware.Middleware) func(handler http.Handler) http.Handler {
 	chain := middleware.Chain(m...)
 	return func(handler http.Handler) http.Handler {

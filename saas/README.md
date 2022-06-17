@@ -1,5 +1,11 @@
-# Saas module
+# Saas
+
+| -              | -                      |
+|----------------|------------------------|
+| type           | service module         |
+| saas           | :x:                 |
+| desc           | manage/resolve tenants |
 
 Features
-- [ ] management tenants
-- [ ] provide remote tenant store api
+- [x] management tenants
+- [x] provide remote tenant store api

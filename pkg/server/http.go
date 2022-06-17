@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gorilla/handlers"
@@ -19,15 +20,6 @@ import (
 	"strings"
 	"time"
 )
-
-func ResolveHttpRequest(ctx context.Context) (*http.Request, bool) {
-	if t, ok := transport.FromServerContext(ctx); ok {
-		if ht, ok := t.(*khttp.Transport); ok {
-			return ht.Request(), true
-		}
-	}
-	return nil, false
-}
 
 const (
 	defaultSrvName = "default"
@@ -45,6 +37,18 @@ var (
 		},
 	}
 )
+
+type (
+	// HttpServiceRegister register http handler into http server
+	HttpServiceRegister interface {
+		Register(server *khttp.Server, middleware middleware.Middleware)
+	}
+	HttpServiceRegisterFunc func(server *khttp.Server, middleware middleware.Middleware)
+)
+
+func (f HttpServiceRegisterFunc) Register(server *khttp.Server, middleware middleware.Middleware) {
+	f(server, middleware)
+}
 
 // PatchHttpOpts Patch khttp options with given service name and configs. f use global filters
 func PatchHttpOpts(l log.Logger,
@@ -131,6 +135,15 @@ func handleBlob(name string, config *blob.BlobConfig, factory blob.Factory, rout
 
 }
 
+func ResolveHttpRequest(ctx context.Context) (*http.Request, bool) {
+	if t, ok := transport.FromServerContext(ctx); ok {
+		if ht, ok := t.(*khttp.Transport); ok {
+			return ht.Request(), true
+		}
+	}
+	return nil, false
+}
+
 func ClientIP(ctx context.Context) string {
 	if r, ok := ResolveHttpRequest(ctx); ok {
 		xForwardedFor := r.Header.Get("X-Forwarded-For")
@@ -186,37 +199,4 @@ func IsAjax(ctx context.Context) bool {
 		return len(h) > 0 && h[0] == "XMLHttpRequest"
 	}
 	return false
-}
-
-func SetCookie(ctx context.Context, value string) bool {
-	if t, ok := transport.FromServerContext(ctx); ok {
-		if ht, ok := t.(*khttp.Transport); ok {
-			ht.ReplyHeader().Set("Set-Cookie", value)
-			return true
-		}
-	}
-	return false
-}
-
-type ErrorHandler interface {
-	Wrap(func(w http.ResponseWriter, r *http.Request) error) http.Handler
-}
-
-type DefaultErrorHandler struct {
-	errEncoder khttp.EncodeErrorFunc
-}
-
-var _ ErrorHandler = (*DefaultErrorHandler)(nil)
-
-func NewDefaultErrorHandler(errEncoder khttp.EncodeErrorFunc) *DefaultErrorHandler {
-	return &DefaultErrorHandler{errEncoder: errEncoder}
-}
-
-func (e *DefaultErrorHandler) Wrap(f func(w http.ResponseWriter, r *http.Request) error) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if err := f(w, r); err != nil {
-			e.errEncoder(w, r, err)
-			return
-		}
-	})
 }

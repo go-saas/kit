@@ -2,9 +2,10 @@
 
 # go-saas-kit
 
-Microservice architecture kit for golang sass project
+Kit for golang sass project
 
-Frontend: https://github.com/Goxiaoy/go-saas-kit-frontend
+Frontend Repo: https://github.com/Goxiaoy/go-saas-kit-frontend
+
 # Architecture
 ![Architecture](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/go-saas-kit.drawio.png?raw=true)
 
@@ -18,6 +19,12 @@ Frontend: https://github.com/Goxiaoy/go-saas-kit-frontend
 
 [//]: # (- **Shared Storage Tenant** domain:sharedDbDemo Username:admin  Password:123456)
 
+
+# Feature
+
+-[x] Saas
+-[x] Modularity
+-[x] Microservice/Monolithic compatible
 
 # Quick Start
 
@@ -41,7 +48,7 @@ Open `http://localhost:80` to see the web ui
 Username: admin
 Password: 123456
 
-Open `http://localhost:80/dev/docs` to see swagger openapi
+Open `http://localhost:80/dev/docs` to see swagger openapi  
 Open `http://localhost:80/dev/jeager` to see jaeger tracing
 # Development
 

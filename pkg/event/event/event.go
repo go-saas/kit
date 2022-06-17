@@ -53,7 +53,7 @@ type Receiver interface {
 	Close() error
 }
 
-//ChainHandler combine multiple handlers
+//ChainHandler combine multiple handlers like http middleware
 func ChainHandler(h ...Handler) Handler {
 	return func(ctx context.Context, event Event) error {
 		for _, handler := range h {

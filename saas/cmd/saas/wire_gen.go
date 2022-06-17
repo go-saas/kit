@@ -42,33 +42,36 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	tenantRepo := data.NewTenantRepo(eventBus, dbProvider)
 	tenantStore := data.NewTenantStore(tenantRepo)
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
+	webMultiTenancyOption := server.NewWebMultiTenancyOption(appConfig)
+	option := api.NewDefaultOption(logger)
+	decodeRequestFunc := _wireDecodeRequestFuncValue
+	encodeResponseFunc := _wireEncodeResponseFuncValue
+	encodeErrorFunc := _wireEncodeErrorFuncValue
+	trustedContextValidator := api.NewClientTrustedContextValidator()
+	clientName := _wireClientNameValue
+	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
+	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
+	userServiceServer := api2.NewUserGrpcClient(grpcConn)
+	userTenantContributor := remote.NewUserTenantContributor(userServiceServer)
 	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
-	sender, cleanup2, err := data.NewEventSender(confData, logger)
+	sender, cleanup3, err := data.NewEventSender(confData, logger)
 	if err != nil {
+		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
 	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, sender)
-	clientName := _wireClientNameValue
-	option := api.NewDefaultOption(logger)
-	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup3 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	permissionServiceServer := api2.NewPermissionGrpcClient(grpcConn)
 	permissionChecker := remote.NewRemotePermissionChecker(permissionServiceServer)
 	authzOption := service.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
-	trustedContextValidator := api.NewClientTrustedContextValidator()
 	factory := data.NewBlobFactory(confData)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService, trustedContextValidator, factory, appConfig)
-	webMultiTenancyOption := server.NewWebMultiTenancyOption(appConfig)
-	decodeRequestFunc := _wireDecodeRequestFuncValue
-	encodeResponseFunc := _wireEncodeResponseFuncValue
-	encodeErrorFunc := _wireEncodeErrorFuncValue
-	userServiceServer := api2.NewUserGrpcClient(grpcConn)
-	userTenantContributor := remote.NewUserTenantContributor(userServiceServer)
-	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, tenantService, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, logger, trustedContextValidator, userTenantContributor)
-	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, tenantService, userTenantContributor, trustedContextValidator, logger)
+	httpServerRegister := service.NewHttpServerRegister(tenantService, factory, confData)
+	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, trustedContextValidator, userTenantContributor, httpServerRegister)
+	grpcServerRegister := service.NewGrpcServerRegister(tenantService)
+	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, userTenantContributor, trustedContextValidator, grpcServerRegister, logger)
 	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup3()
@@ -110,8 +113,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 
 var (
 	_wireEventBusValue           = eventbus.Default
-	_wireClientNameValue         = server2.ClientName
 	_wireDecodeRequestFuncValue  = server.ReqDecode
 	_wireEncodeResponseFuncValue = server.ResEncoder
 	_wireEncodeErrorFuncValue    = server.ErrEncoder
+	_wireClientNameValue         = server2.ClientName
 )

@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
@@ -14,10 +15,8 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/sys/api"
-	v1 "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1"
 	"github.com/goxiaoy/go-saas-kit/sys/i18n"
 	"github.com/goxiaoy/go-saas-kit/sys/private/service"
-	"github.com/goxiaoy/go-saas/common"
 	uow2 "github.com/goxiaoy/uow"
 )
 
@@ -25,29 +24,31 @@ import (
 func NewGRPCServer(
 	c *conf2.Services,
 	tokenizer jwt.Tokenizer,
-	ts common.TenantStore,
 	uowMgr uow2.Manager,
 	apiOpt *sapi.Option,
 	logger log.Logger,
-	menu *service.MenuService,
 	validator sapi.TrustedContextValidator,
+	register service.GrpcServerRegister,
 ) *grpc.Server {
+	m := middleware.Chain(
+		server.Recovery(),
+		tracing.Server(),
+		logging.Server(logger),
+		metrics.Server(),
+		validate.Validator(),
+		localize.I18N(i18n.Files...),
+		jwt.ServerExtractAndAuth(tokenizer, logger),
+		sapi.ServerPropagation(apiOpt, validator, logger),
+		uow.Uow(logger, uowMgr),
+	)
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
-			server.Recovery(),
-			tracing.Server(),
-			logging.Server(logger),
-			metrics.Server(),
-			validate.Validator(),
-			localize.I18N(i18n.Files...),
-			jwt.ServerExtractAndAuth(tokenizer, logger),
-			sapi.ServerPropagation(apiOpt, validator, logger),
-			uow.Uow(logger, uowMgr),
+			m,
 		),
 	}
 	opts = server.PatchGrpcOpts(logger, opts, api.ServiceName, c)
 	srv := grpc.NewServer(opts...)
+	register.Register(srv, m)
 
-	v1.RegisterMenuServiceServer(srv, menu)
 	return srv
 }

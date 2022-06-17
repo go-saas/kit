@@ -17,15 +17,13 @@ import (
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
-	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
-	"github.com/goxiaoy/go-saas-kit/saas/remote"
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/sys/private/conf"
 	"github.com/goxiaoy/go-saas-kit/sys/private/data"
 	"github.com/goxiaoy/go-saas-kit/sys/private/server"
 	"github.com/goxiaoy/go-saas-kit/sys/private/service"
-	api3 "github.com/goxiaoy/go-saas-kit/user/api"
-	remote2 "github.com/goxiaoy/go-saas-kit/user/remote"
+	api2 "github.com/goxiaoy/go-saas-kit/user/api"
+	"github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
@@ -37,22 +35,18 @@ import (
 func initApp(services *conf.Services, security *conf.Security, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption, confData *conf2.Data, logger log.Logger, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
-	clientName := _wireClientNameValue
-	option := api.NewDefaultOption(logger)
-	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
-	tenantServiceServer := api2.NewTenantGrpcClient(grpcConn)
-	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceServer)
-	dbOpener, cleanup2 := gorm2.NewDbOpener()
+	dbOpener, cleanup := gorm2.NewDbOpener()
 	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
-	factory := data.NewBlobFactory(confData)
+	option := api.NewDefaultOption(logger)
 	trustedContextValidator := api.NewClientTrustedContextValidator()
-	apiGrpcConn, cleanup3 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
-	permissionServiceServer := api3.NewPermissionGrpcClient(apiGrpcConn)
-	permissionChecker := remote2.NewRemotePermissionChecker(permissionServiceServer)
+	clientName := _wireClientNameValue
+	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
+	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
+	permissionServiceServer := api2.NewPermissionGrpcClient(grpcConn)
+	permissionChecker := remote.NewRemotePermissionChecker(permissionServiceServer)
 	authzOption := service.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
@@ -61,11 +55,13 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	eventBus := data.NewEventbus()
 	menuRepo := data.NewMenuRepo(dbProvider, eventBus)
 	menuService := service.NewMenuService(defaultAuthorizationService, menuRepo, logger)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, tenantStore, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, factory, confData, option, logger, trustedContextValidator, menuService)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, option, logger, menuService, trustedContextValidator)
-	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
+	factory := data.NewBlobFactory(confData)
+	httpServerRegister := service.NewHttpServerRegister(menuService, factory, confData)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, option, logger, trustedContextValidator, httpServerRegister)
+	grpcServerRegister := service.NewGrpcServerRegister(menuService)
+	grpcServer := server.NewGRPCServer(services, tokenizer, manager, option, logger, trustedContextValidator, grpcServerRegister)
+	dataData, cleanup3, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
-		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
@@ -75,7 +71,6 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 	seeder := server.NewSeeder(manager, migrate, menuSeed)
 	app := newApp(logger, httpServer, grpcServer, seeder)
 	return app, func() {
-		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -83,8 +78,8 @@ func initApp(services *conf.Services, security *conf.Security, config *uow.Confi
 }
 
 var (
-	_wireClientNameValue         = server.ClientName
 	_wireDecodeRequestFuncValue  = server2.ReqDecode
 	_wireEncodeResponseFuncValue = server2.ResEncoder
 	_wireEncodeErrorFuncValue    = server2.ErrEncoder
+	_wireClientNameValue         = server.ClientName
 )

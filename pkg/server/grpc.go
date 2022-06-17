@@ -2,10 +2,23 @@ package server
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"google.golang.org/protobuf/proto"
 )
+
+type (
+	// GrpcServiceRegister register grpc handler into grpc server
+	GrpcServiceRegister interface {
+		Register(server *grpc.Server, middleware middleware.Middleware)
+	}
+	GrpcServiceRegisterFunc func(server *grpc.Server, middleware middleware.Middleware)
+)
+
+func (f GrpcServiceRegisterFunc) Register(server *grpc.Server, middleware middleware.Middleware) {
+	f(server, middleware)
+}
 
 // PatchGrpcOpts Patch grpc options with given service name and configs
 func PatchGrpcOpts(l log.Logger, opts []grpc.ServerOption, name string, services *conf.Services) []grpc.ServerOption {
