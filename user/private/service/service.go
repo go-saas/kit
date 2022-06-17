@@ -6,22 +6,17 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	kconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 	v14 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
-	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
-	uhttp "github.com/goxiaoy/go-saas-kit/user/private/server/http"
+	uhttp "github.com/goxiaoy/go-saas-kit/user/private/service/http"
 	"net/http"
 )
-
-func NewAuthorizationOption(userRole *UserRoleContributor) *authz.Option {
-	return authz.NewAuthorizationOption(userRole)
-}
 
 // ProviderSet is service providers.
 var ProviderSet = wire.NewSet(
@@ -29,12 +24,17 @@ var ProviderSet = wire.NewSet(
 	NewHttpServerRegister,
 	NewUserTenantContributor,
 	NewUserRoleContributor,
-	NewAuthorizationOption,
 	NewUserService,
+	NewUserServiceServer,
 	NewAccountService,
+	NewAccountServiceServer,
 	NewAuthService,
+	NewAuthServiceServer,
 	NewRoleServiceService,
-	NewPermissionService)
+	NewRoleServiceServer,
+	NewPermissionService,
+	NewPermissionServiceServer,
+	uhttp.NewAuth)
 
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister
@@ -47,7 +47,7 @@ func NewHttpServerRegister(user *UserService,
 	role *RoleService,
 	permission *PermissionService,
 	authHttp *uhttp.Auth,
-	dataCfg *conf2.Data,
+	dataCfg *kconf.Data,
 	factory blob.Factory) HttpServerRegister {
 	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware middleware.Middleware) {
 

@@ -34,9 +34,11 @@ func ProfileBlob(ctx context.Context, factory blob.Factory) blob.Blob {
 	return factory.Get(ctx, "user", false)
 }
 
+type UserEventHandler event.Handler
+
 //NewRemoteEventHandler handler for remote event
-func NewRemoteEventHandler(l klog.Logger, uowMgr uow.Manager, tenantSeed TenantSeedEventHandler) event.Handler {
-	return event.RecoverHandler(event.UowHandler(uowMgr, event.ChainHandler(event.Handler(tenantSeed))), event.WithLogger(l))
+func NewRemoteEventHandler(l klog.Logger, uowMgr uow.Manager, tenantSeed TenantSeedEventHandler) UserEventHandler {
+	return UserEventHandler(event.RecoverHandler(event.UowHandler(uowMgr, event.ChainHandler(event.Handler(tenantSeed))), event.WithLogger(l)))
 }
 
 func NewRefreshTokenProvider(sign *SignInManager) session.RefreshTokenProvider {

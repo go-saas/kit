@@ -44,6 +44,11 @@ api:
 generate:
 	go generate ./pkg/...
 
+.PHONY: examples
+# generate
+examples:
+	cd examples/monolithic && $(MAKE) all
+
 .PHONY: build
 build:
 	cd user && $(MAKE) build

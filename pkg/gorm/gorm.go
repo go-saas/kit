@@ -40,7 +40,8 @@ func NewDbProvider(cs data.ConnStrResolver, c *sgorm.Config, opener sgorm.DbOpen
 }
 
 //NewGormConfig generate config from database endpoint by name.
-func NewGormConfig(databases *conf.Endpoints, name string) *sgorm.Config {
+func NewGormConfig(d *conf.Data, name string) *sgorm.Config {
+	databases := d.Endpoints
 	var c *conf.Database
 	var ok bool
 	c, ok = databases.Databases[name]

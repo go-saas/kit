@@ -5,12 +5,10 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
-	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"github.com/goxiaoy/go-saas/seed"
-	"github.com/goxiaoy/uow"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
@@ -20,7 +18,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
-	"github.com/goxiaoy/go-saas-kit/saas/private/data"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
@@ -89,9 +86,7 @@ func main() {
 		log.Error(err)
 	}
 	defer shutdown()
-	app, cleanup, err := initApp(bc.Services, bc.Security, bc.Data, bc.Saas, logger, &uow.Config{
-		SupportNestedTransaction: false,
-	}, gorm.NewGormConfig(bc.Data.Endpoints, data.ConnName), bc.App)
+	app, cleanup, err := initApp(bc.Services, bc.Security, bc.Data, bc.Saas, logger, bc.App)
 	if err != nil {
 		panic(err)
 	}

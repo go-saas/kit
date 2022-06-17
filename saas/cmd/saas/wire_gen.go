@@ -15,9 +15,10 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/dal"
+	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
-	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
+	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas-kit/saas/private/data"
@@ -25,23 +26,29 @@ import (
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
 	api2 "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/remote"
-	"github.com/goxiaoy/go-saas/gorm"
-	"github.com/goxiaoy/uow"
 )
 
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, security *conf.Security, confData *conf2.Data, saasConf *conf2.SaasConf, logger log.Logger, config *uow.Config, gormConfig *gorm.Config, appConfig *conf.AppConfig, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, security *conf.Security, confData *conf.Data, saasConf *conf2.SaasConf, logger log.Logger, appConfig *conf.AppConfig, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	eventBus := _wireEventBusValue
-	connStrResolver := data.NewConnStrResolver(confData)
-	dbOpener, cleanup := gorm2.NewDbOpener()
-	dbProvider := gorm2.NewDbProvider(connStrResolver, gormConfig, dbOpener)
-	tenantRepo := data.NewTenantRepo(eventBus, dbProvider)
+	constConnStrResolver := dal.NewConstantConnStrResolver(confData)
+	connName := _wireConnNameValue
+	config := dal.NewGormConfig(confData, connName)
+	dbOpener, cleanup := gorm.NewDbOpener()
+	constDbProvider := dal.NewConstDbProvider(constConnStrResolver, config, dbOpener)
+	dataData, cleanup2, err := data.NewData(confData, constDbProvider, logger)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	tenantRepo := data.NewTenantRepo(eventBus, dataData)
 	tenantStore := data.NewTenantStore(tenantRepo)
-	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
+	uowConfig := _wireConfigValue
+	manager := uow.NewUowManager(config, uowConfig, dbOpener)
 	webMultiTenancyOption := server.NewWebMultiTenancyOption(appConfig)
 	option := api.NewDefaultOption(logger)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
@@ -50,12 +57,13 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	trustedContextValidator := api.NewClientTrustedContextValidator()
 	clientName := _wireClientNameValue
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
+	grpcConn, cleanup3 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	userServiceServer := api2.NewUserGrpcClient(grpcConn)
 	userTenantContributor := remote.NewUserTenantContributor(userServiceServer)
 	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
-	sender, cleanup3, err := data.NewEventSender(confData, logger)
+	sender, cleanup4, err := dal.NewEventSender(confData, logger, connName)
 	if err != nil {
+		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
@@ -63,27 +71,22 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, sender)
 	permissionServiceServer := api2.NewPermissionGrpcClient(grpcConn)
 	permissionChecker := remote.NewRemotePermissionChecker(permissionServiceServer)
-	authzOption := service.NewAuthorizationOption()
+	authzOption := server2.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
-	factory := data.NewBlobFactory(confData)
+	factory := dal.NewBlobFactory(confData)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService, trustedContextValidator, factory, appConfig)
 	httpServerRegister := service.NewHttpServerRegister(tenantService, factory, confData)
 	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, trustedContextValidator, userTenantContributor, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(tenantService)
 	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, userTenantContributor, trustedContextValidator, grpcServerRegister, logger)
-	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
-	if err != nil {
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
 	migrate := data.NewMigrate(dataData)
-	seeder := server2.NewSeeder(manager, migrate)
+	seeding := server2.NewSeeding(manager, migrate)
+	seeder := server2.NewSeeder(seeding)
 	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
-	handler := biz.NewRemoteEventHandler(logger, manager, tenantReadyEventHandler)
-	receiver, cleanup5, err := data.NewRemoteEventReceiver(confData, logger, handler)
+	saasEventHandler := biz.NewRemoteEventHandler(logger, manager, tenantReadyEventHandler)
+	handler := server2.NewEventHandler(saasEventHandler)
+	receiver, cleanup5, err := dal.NewRemoteEventReceiver(confData, logger, handler, connName)
 	if err != nil {
 		cleanup4()
 		cleanup3()
@@ -113,6 +116,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf2.D
 
 var (
 	_wireEventBusValue           = eventbus.Default
+	_wireConnNameValue           = data.ConnName
+	_wireConfigValue             = dal.UowCfg
 	_wireDecodeRequestFuncValue  = server.ReqDecode
 	_wireEncodeResponseFuncValue = server.ResEncoder
 	_wireEncodeErrorFuncValue    = server.ErrEncoder

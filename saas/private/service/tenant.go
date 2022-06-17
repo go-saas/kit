@@ -34,6 +34,10 @@ type TenantService struct {
 	app     *conf.AppConfig
 }
 
+func NewTenantServiceServer(tenant *TenantService) pb.TenantServiceServer {
+	return tenant
+}
+
 func NewTenantService(useCase *biz.TenantUseCase, auth authz.Service, trusted sapi.TrustedContextValidator, blob blob.Factory, app *conf.AppConfig) *TenantService {
 	return &TenantService{useCase: useCase, auth: auth, trusted: trusted, blob: blob, app: app}
 }

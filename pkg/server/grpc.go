@@ -20,6 +20,14 @@ func (f GrpcServiceRegisterFunc) Register(server *grpc.Server, middleware middle
 	f(server, middleware)
 }
 
+func ChainGrpcServiceRegister(r ...GrpcServiceRegister) GrpcServiceRegister {
+	return GrpcServiceRegisterFunc(func(server *grpc.Server, middleware middleware.Middleware) {
+		for _, register := range r {
+			register.Register(server, middleware)
+		}
+	})
+}
+
 // PatchGrpcOpts Patch grpc options with given service name and configs
 func PatchGrpcOpts(l log.Logger, opts []grpc.ServerOption, name string, services *conf.Services) []grpc.ServerOption {
 	//default config

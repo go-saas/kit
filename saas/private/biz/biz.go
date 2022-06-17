@@ -32,7 +32,9 @@ func NewLocalEventHook(sender event.Sender) (EventHook, func(), error) {
 	return nil, cleanup, nil
 }
 
+type SaasEventHandler event.Handler
+
 //NewRemoteEventHandler handler for remote event
-func NewRemoteEventHandler(l klog.Logger, uowMgr uow.Manager, tenantReady TenantReadyEventHandler) event.Handler {
-	return event.RecoverHandler(event.UowHandler(uowMgr, event.ChainHandler(event.Handler(tenantReady))), event.WithLogger(l))
+func NewRemoteEventHandler(l klog.Logger, uowMgr uow.Manager, tenantReady TenantReadyEventHandler) SaasEventHandler {
+	return SaasEventHandler(event.RecoverHandler(event.UowHandler(uowMgr, event.ChainHandler(event.Handler(tenantReady))), event.WithLogger(l)))
 }

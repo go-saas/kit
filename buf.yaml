@@ -13,3 +13,4 @@ build:
   excludes:
     - proto
     - pkg
+    - examples

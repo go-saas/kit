@@ -50,6 +50,14 @@ func (f HttpServiceRegisterFunc) Register(server *khttp.Server, middleware middl
 	f(server, middleware)
 }
 
+func ChainHttpServiceRegister(r ...HttpServiceRegister) HttpServiceRegister {
+	return HttpServiceRegisterFunc(func(server *khttp.Server, middleware middleware.Middleware) {
+		for _, register := range r {
+			register.Register(server, middleware)
+		}
+	})
+}
+
 // PatchHttpOpts Patch khttp options with given service name and configs. f use global filters
 func PatchHttpOpts(l log.Logger,
 	opts []khttp.ServerOption,

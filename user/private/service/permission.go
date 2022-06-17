@@ -25,6 +25,10 @@ func NewPermissionService(auth authz.Service, permissionMgr authz.PermissionMana
 	return &PermissionService{auth: auth, permissionMgr: permissionMgr, sr: sr, trust: trust}
 }
 
+func NewPermissionServiceServer(v *PermissionService) pb.PermissionServiceServer {
+	return v
+}
+
 func (s *PermissionService) GetCurrent(ctx context.Context, req *pb.GetCurrentPermissionRequest) (*pb.GetCurrentPermissionReply, error) {
 	subjects, err := s.sr.ResolveFromContext(ctx)
 	if err != nil {

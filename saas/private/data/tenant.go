@@ -9,7 +9,6 @@ import (
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
-	"github.com/goxiaoy/go-saas/gorm"
 	gg "gorm.io/gorm"
 )
 
@@ -17,9 +16,9 @@ type TenantRepo struct {
 	*kitgorm.Repo[biz.Tenant, string, v1.ListTenantRequest]
 }
 
-func NewTenantRepo(eventbus *eventbus.EventBus, dbProvider gorm.DbProvider) biz.TenantRepo {
+func NewTenantRepo(eventbus *eventbus.EventBus, data *Data) biz.TenantRepo {
 	res := &TenantRepo{}
-	res.Repo = kitgorm.NewRepo[biz.Tenant, string, v1.ListTenantRequest](dbProvider, eventbus, res)
+	res.Repo = kitgorm.NewRepo[biz.Tenant, string, v1.ListTenantRequest](data.DbProvider, eventbus, res)
 	return res
 }
 

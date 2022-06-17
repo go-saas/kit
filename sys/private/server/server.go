@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	api2 "github.com/goxiaoy/go-saas-kit/sys/api"
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	"github.com/goxiaoy/go-saas-kit/sys/private/data"
@@ -11,10 +12,20 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewSeeder, wire.Value(ClientName))
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewSeeder, wire.Value(ClientName), wire.Value(data.ConnName), NewSeeding, NewAuthorizationOption)
 
 var ClientName api.ClientName = api2.ServiceName
 
-func NewSeeder(uow uow.Manager, migrate *data.Migrate, menu *biz.MenuSeed) seed.Seeder {
-	return seed.NewDefaultSeeder(seed.NewUowContributor(uow, seed.Chain(migrate, menu)))
+type Seeding seed.Contributor
+
+func NewSeeding(uow uow.Manager, migrate *data.Migrate, menu *biz.MenuSeed) Seeding {
+	return seed.NewUowContributor(uow, seed.Chain(migrate, menu))
+}
+
+func NewSeeder(ss Seeding) seed.Seeder {
+	return seed.NewDefaultSeeder(ss)
+}
+
+func NewAuthorizationOption() *authz.Option {
+	return authz.NewAuthorizationOption()
 }

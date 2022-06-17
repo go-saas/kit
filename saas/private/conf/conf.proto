@@ -7,7 +7,7 @@ import "conf/conf.proto";
 import "blob/blob.proto";
 
 message Bootstrap {
-  Data data = 2;
+  conf.Data data = 2;
   conf.Security security=3;
   conf.Services services =4;
   conf.Logging logging=6;
@@ -18,10 +18,6 @@ message Bootstrap {
 
 }
 
-message Data {
-  conf.Endpoints endpoints = 1;
-  map<string,blob.BlobConfig> blobs=2;
-}
 
 message SaasConf{
     repeated DatabaseTemplate database = 1;

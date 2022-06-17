@@ -16,21 +16,20 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/casbin"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/dal"
+	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/redis"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
-	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
+	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/remote"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
 	"github.com/goxiaoy/go-saas-kit/user/private/server"
-	http2 "github.com/goxiaoy/go-saas-kit/user/private/server/http"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
+	http2 "github.com/goxiaoy/go-saas-kit/user/private/service/http"
 	"github.com/goxiaoy/go-saas/common/http"
-	"github.com/goxiaoy/go-saas/gorm"
-	"github.com/goxiaoy/uow"
 )
 
 import (
@@ -41,11 +40,14 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, security *conf.Security, userConf *conf2.UserConf, confData *conf2.Data, logger log.Logger, config *uow.Config, gormConfig *gorm.Config, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, security *conf.Security, userConf *conf2.UserConf, confData *conf.Data, logger log.Logger, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
-	dbOpener, cleanup := gorm2.NewDbOpener()
-	manager := uow2.NewUowManager(gormConfig, config, dbOpener)
+	connName := _wireConnNameValue
+	config := dal.NewGormConfig(confData, connName)
+	uowConfig := _wireConfigValue
+	dbOpener, cleanup := gorm.NewDbOpener()
+	manager := uow.NewUowManager(config, uowConfig, dbOpener)
 	option := api.NewDefaultOption(logger)
 	clientName := _wireClientNameValue
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
@@ -55,8 +57,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
-	connStrResolver := data.NewConnStrResolver(confData, tenantStore)
-	dbProvider := gorm2.NewDbProvider(connStrResolver, gormConfig, dbOpener)
+	connStrResolver := dal.NewConnStrResolver(confData, tenantStore)
+	dbProvider := gorm.NewDbProvider(connStrResolver, config, dbOpener)
 	dataData, cleanup3, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup2()
@@ -71,7 +73,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userTokenRepo := data.NewUserTokenRepo(dataData)
 	refreshTokenRepo := data.NewRefreshTokenRepo(dataData)
 	userTenantRepo := data.NewUserTenantRepo(dataData)
-	client := data.NewRedis(confData)
+	client := dal.NewRedis(confData, connName)
 	emailTokenProvider := biz.NewEmailTokenProvider(client)
 	phoneTokenProvider := biz.NewPhoneTokenProvider(client)
 	cache := redis.NewCache(client)
@@ -89,10 +91,10 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	}
 	permissionService := casbin.NewPermissionService(enforcerProvider)
 	userRoleContributor := service.NewUserRoleContributor(userRepo)
-	authzOption := service.NewAuthorizationOption(userRoleContributor)
+	authzOption := server.NewAuthorizationOption(userRoleContributor)
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionService, subjectResolverImpl, logger)
-	factory := data.NewBlobFactory(confData)
+	factory := dal.NewBlobFactory(confData)
 	trustedContextValidator := api.NewClientTrustedContextValidator()
 	userService := service.NewUserService(userManager, roleManager, defaultAuthorizationService, factory, trustedContextValidator, logger)
 	userTenantContributor := service.NewUserTenantContributor(userService)
@@ -101,7 +103,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userSettingRepo := data.NewUserSettingRepo(dataData, eventBus)
 	userAddressRepo := data.NewUserAddrRepo(dataData, eventBus)
 	accountService := service.NewAccountService(userManager, factory, tenantServiceServer, userSettingRepo, userAddressRepo, lookupNormalizer)
-	lazyClient := data.NewEmailer(confData)
+	lazyClient := dal.NewEmailer(confData)
 	emailSender := biz.NewEmailSender(lazyClient, confData)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, defaultAuthorizationService, trustedContextValidator, logger)
 	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService, permissionService)
@@ -116,8 +118,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
-	seeder := server.NewSeeder(userConf, manager, migrate, roleSeed, userSeed, permissionSeeder)
-	sender, cleanup4, err := data.NewEventSender(confData, logger)
+	seeding := server.NewSeeding(manager, migrate, roleSeed, userSeed, permissionSeeder)
+	seeder := server.NewSeeder(seeding)
+	sender, cleanup4, err := dal.NewEventSender(confData, logger, connName)
 	if err != nil {
 		cleanup3()
 		cleanup2()
@@ -125,8 +128,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 		return nil, nil, err
 	}
 	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(seeder, sender)
-	handler := biz.NewRemoteEventHandler(logger, manager, tenantSeedEventHandler)
-	receiver, cleanup5, err := data.NewRemoteEventReceiver(confData, logger, handler)
+	userEventHandler := biz.NewRemoteEventHandler(logger, manager, tenantSeedEventHandler)
+	handler := server.NewEventHandler(userEventHandler)
+	receiver, cleanup5, err := dal.NewRemoteEventReceiver(confData, logger, handler, connName)
 	if err != nil {
 		cleanup4()
 		cleanup3()
@@ -145,6 +149,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 }
 
 var (
+	_wireConnNameValue           = data.ConnName
+	_wireConfigValue             = dal.UowCfg
 	_wireClientNameValue         = server.ClientName
 	_wireDecodeRequestFuncValue  = server2.ReqDecode
 	_wireEncodeResponseFuncValue = server2.ResEncoder

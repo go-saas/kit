@@ -4,6 +4,8 @@ package conf;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/wrappers.proto";
+import "blob/blob.proto";
+
 option go_package = "github.com/goxiaoy/go-saas-kit/pkg/conf;conf";
 
 message Server {
@@ -200,4 +202,10 @@ message Tracers{
 message AppConfig{
   google.protobuf.StringValue tenant_key=1;
   google.protobuf.StringValue domain_format=2;
+}
+
+
+message Data {
+  conf.Endpoints endpoints = 1;
+  map<string,blob.BlobConfig> blobs=2;
 }

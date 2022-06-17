@@ -10,7 +10,7 @@ import "google/protobuf/duration.proto";
 import "authz/authz/def.proto";
 
 message Bootstrap {
-  Data data = 2;
+  conf.Data data = 2;
   conf.Security security=3;
   conf.Services services =4;
   UserConf user=5;
@@ -19,10 +19,6 @@ message Bootstrap {
   conf.AppConfig app=8;
 }
 
-message Data {
-  conf.Endpoints endpoints = 1;
-  map<string,blob.BlobConfig> blobs=2;
-}
 
 message Admin{
   string username =1;

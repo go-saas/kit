@@ -30,6 +30,9 @@ type MenuService struct {
 func NewMenuService(auth authz.Service, repo biz.MenuRepo, logger klog.Logger) *MenuService {
 	return &MenuService{auth: auth, repo: repo, logger: klog.NewHelper(klog.With(logger, "module", "MenuService"))}
 }
+func NewMenuServiceServer(v *MenuService) pb.MenuServiceServer {
+	return v
+}
 
 func (s *MenuService) ListMenu(ctx context.Context, req *pb.ListMenuRequest) (*pb.ListMenuReply, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceMenu, "*"), authz.ReadAction); err != nil {

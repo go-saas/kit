@@ -6,13 +6,10 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
-	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
-	"github.com/goxiaoy/go-saas-kit/user/private/data"
 	"github.com/goxiaoy/go-saas/seed"
-	"github.com/goxiaoy/uow"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
@@ -108,9 +105,7 @@ func main() {
 		authz.LoadFromConf(bc.User.Permission)
 	}
 
-	app, cleanup, err := initApp(bc.Services, bc.Security, bc.User, bc.Data, logger, &uow.Config{
-		SupportNestedTransaction: false,
-	}, gorm.NewGormConfig(bc.Data.Endpoints, data.ConnName), server.NewWebMultiTenancyOption(bc.App))
+	app, cleanup, err := initApp(bc.Services, bc.Security, bc.User, bc.Data, logger, server.NewWebMultiTenancyOption(bc.App))
 	if err != nil {
 		panic(err)
 	}
