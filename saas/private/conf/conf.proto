@@ -1,5 +1,5 @@
 syntax = "proto3";
-package kratos.api;
+package saas.internal;
 
 option go_package = "github.com/goxiaoy/go-saas-kit/saas/private/conf;conf";
 

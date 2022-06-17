@@ -1,16 +1,10 @@
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
-API_PROTO_FILES=$(shell find api -name *.proto)
-
-.PHONY: config
-# generate internal proto
-config:
-	 buf generate .  --path ./private/conf --template buf.config.gen.yaml
 
 .PHONY: api
 # generate api proto
 api:
-	buf generate ../proto --path ../proto/sys
+	cd .. && buf generate --path ./sys --template ./sys/buf.gen.yaml
 
 .PHONY: build
 # build
@@ -27,7 +21,6 @@ generate:
 # generate all
 all:
 	make api;
-	make config;
 	make generate;
 
 # show help

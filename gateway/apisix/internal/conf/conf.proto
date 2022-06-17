@@ -1,5 +1,5 @@
 syntax = "proto3";
-package kratos.api;
+package apisix.internal;
 
 option go_package = "github.com/goxiaoy/go-saas-kit/gateway/apisix/internal/conf;conf";
 

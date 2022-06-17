@@ -34,17 +34,15 @@ apisix:
 	cd gateway/apisix && $(MAKE) all
 
 
-all:
-	make api
-	make user
-	make saas
-	make sys
-	make apisix
-
 .PHONY: api
 # generate api proto
 api:
-	buf generate ./proto
+	buf generate
+
+.PHONY: generate
+# generate
+generate:
+	go generate ./pkg/...
 
 .PHONY: build
 build:
@@ -52,3 +50,12 @@ build:
 	cd saas && $(MAKE) build
 	cd sys && $(MAKE) build
 	cd gateway/apisix && $(MAKE) build
+
+
+.PHONY: all
+all:
+	make api
+	make user
+	make saas
+	make sys
+	make apisix

@@ -1,6 +1,5 @@
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
-INTERNAL_PROTO_FILES=$(shell find private -name *.proto)
 
 .PHONY: generate
 # generate
@@ -8,18 +7,10 @@ generate:
 	go get -d github.com/google/wire/cmd/wire@v0.5.0
 	go generate ./...
 
-.PHONY: config
-# generate internal proto
-config:
-	protoc --proto_path=. \
-	       --proto_path=../proto \
- 	       --go_out=paths=source_relative:. \
-	       $(INTERNAL_PROTO_FILES)
-
 .PHONY: api
 # generate api proto
 api:
-	buf generate ../proto --path ../proto/user
+	cd .. && buf generate --path ./user --template ./user/buf.gen.yaml
 
 .PHONY: build
 # build
@@ -30,9 +21,7 @@ build:
 # generate all
 all:
 	make api;
-	make config;
 	make generate
-
 
 # show help
 help:

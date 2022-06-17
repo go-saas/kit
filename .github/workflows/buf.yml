@@ -25,3 +25,16 @@ jobs:
         with:
           input: 'proto'
           buf_token: ${{ secrets.BUF_TOKEN }}
+      - uses: bufbuild/buf-push-action@v1
+        if: |
+          github.event_name == 'push'
+          && github.repository == 'Goxiaoy/go-saas-kit'
+        with:
+          input: 'pkg'
+          buf_token: ${{ secrets.BUF_TOKEN }}
+      - uses: bufbuild/buf-push-action@v1
+        if: |
+          github.event_name == 'push'
+          && github.repository == 'Goxiaoy/go-saas-kit'
+        with:
+          buf_token: ${{ secrets.BUF_TOKEN }}
