@@ -15,24 +15,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: bufbuild/buf-setup-action@v0.6.0
+      - uses: bufbuild/buf-setup-action@v1.5.0
       - name: test buf build
         run: buf build ./proto
-      - uses: bufbuild/buf-push-action@v1
+      - uses: bufbuild/buf-push-action@v1.0.1
         if: |
           github.event_name == 'push'
           && github.repository == 'Goxiaoy/go-saas-kit'
         with:
           input: 'proto'
           buf_token: ${{ secrets.BUF_TOKEN }}
-      - uses: bufbuild/buf-push-action@v1
+      - uses: bufbuild/buf-push-action@v1.0.1
         if: |
           github.event_name == 'push'
           && github.repository == 'Goxiaoy/go-saas-kit'
         with:
           input: 'pkg'
           buf_token: ${{ secrets.BUF_TOKEN }}
-      - uses: bufbuild/buf-push-action@v1
+      - uses: bufbuild/buf-push-action@v1.0.1
         if: |
           github.event_name == 'push'
           && github.repository == 'Goxiaoy/go-saas-kit'
