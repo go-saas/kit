@@ -8,16 +8,17 @@ import (
 	"github.com/samber/lo"
 )
 
+//PermissionChecker impl authz.PermissionChecker and authz.PermissionManagementService from calling remote service
 type PermissionChecker struct {
-	client v1.PermissionServiceServer
+	srv v1.PermissionServiceServer
 }
 
 var _ authz.PermissionChecker = (*PermissionChecker)(nil)
 var _ authz.PermissionManagementService = (*PermissionChecker)(nil)
 
-func NewRemotePermissionChecker(client v1.PermissionServiceServer) *PermissionChecker {
+func NewRemotePermissionChecker(srv v1.PermissionServiceServer) *PermissionChecker {
 	return &PermissionChecker{
-		client: client,
+		srv: srv,
 	}
 }
 
@@ -26,7 +27,7 @@ func (r *PermissionChecker) IsGrantTenant(ctx context.Context, requirements auth
 	for i, subject := range subjects {
 		protoSubs[i] = subject.GetIdentity()
 	}
-	grantResp, err := r.client.CheckForSubjects(ctx, &v1.CheckSubjectsPermissionRequest{
+	grantResp, err := r.srv.CheckForSubjects(ctx, &v1.CheckSubjectsPermissionRequest{
 		Requirements: lo.Map(requirements, func(t *authz.Requirement, _ int) *v1.PermissionRequirement {
 			return &v1.PermissionRequirement{
 				Namespace: t.Resource.GetNamespace(),
@@ -55,7 +56,7 @@ func (r *PermissionChecker) IsGrantTenant(ctx context.Context, requirements auth
 }
 
 func (r *PermissionChecker) AddGrant(ctx context.Context, resource authz.Resource, action authz.Action, subject authz.Subject, tenantID string, effect authz.Effect) error {
-	_, err := r.client.AddSubjectPermission(ctx, &v1.AddSubjectPermissionRequest{
+	_, err := r.srv.AddSubjectPermission(ctx, &v1.AddSubjectPermissionRequest{
 		Namespace: resource.GetNamespace(),
 		Resource:  resource.GetIdentity(),
 		Action:    action.GetIdentity(),
@@ -71,7 +72,7 @@ func (r *PermissionChecker) ListAcl(ctx context.Context, subjects ...authz.Subje
 	for i, subject := range subjects {
 		subs[i] = subject.GetIdentity()
 	}
-	acl, err := r.client.ListSubjectPermission(ctx, &v1.ListSubjectPermissionRequest{Subjects: subs})
+	acl, err := r.srv.ListSubjectPermission(ctx, &v1.ListSubjectPermissionRequest{Subjects: subs})
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +95,7 @@ func (r *PermissionChecker) UpdateGrant(ctx context.Context, subject authz.Subje
 			TenantId:  a.TenantID,
 		}
 	})
-	_, err := r.client.UpdateSubjectPermission(ctx, &v1.UpdateSubjectPermissionRequest{
+	_, err := r.srv.UpdateSubjectPermission(ctx, &v1.UpdateSubjectPermissionRequest{
 		Subject: subject.GetIdentity(),
 		Acl:     pbAcl,
 	})
@@ -105,7 +106,7 @@ func (r *PermissionChecker) RemoveGrant(ctx context.Context, resource authz.Reso
 	var effs = lo.Map(effects, func(e authz.Effect, _ int) v1.Effect {
 		return util.MapAuthEffect2PbEffect(e)
 	})
-	_, err := r.client.RemoveSubjectPermission(ctx, &v1.RemoveSubjectPermissionRequest{
+	_, err := r.srv.RemoveSubjectPermission(ctx, &v1.RemoveSubjectPermissionRequest{
 		Namespace: resource.GetNamespace(),
 		Resource:  resource.GetIdentity(),
 		Action:    action.GetIdentity(),

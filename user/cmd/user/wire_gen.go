@@ -23,6 +23,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/remote"
+	api3 "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
@@ -97,7 +98,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	factory := dal.NewBlobFactory(confData)
 	trustedContextValidator := api.NewClientTrustedContextValidator()
 	userService := service.NewUserService(userManager, roleManager, defaultAuthorizationService, factory, trustedContextValidator, logger)
-	userTenantContributor := service.NewUserTenantContributor(userService)
+	userServiceServer := service.NewUserServiceServer(userService)
+	userTenantContributor := api3.NewUserTenantContributor(userServiceServer)
 	signInManager := biz.NewSignInManager(userManager, security)
 	refreshTokenProvider := biz.NewRefreshTokenProvider(signInManager)
 	userSettingRepo := data.NewUserSettingRepo(dataData, eventBus)

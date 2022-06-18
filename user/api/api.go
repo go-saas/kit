@@ -28,7 +28,7 @@ func NewHttpClient(clientName api.ClientName, services *conf.Services, opt *api.
 	return api.NewHttpClient(clientName, ServiceName, services, opt, tokenMgr, logger, opts...)
 }
 
-var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient)
+var GrpcProviderSet = wire.NewSet(NewUserTenantContributor, NewGrpcConn, NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient)
 
 func NewUserGrpcClient(conn GrpcConn) v1.UserServiceServer {
 	return v1.NewUserServiceClientProxy(v1.NewUserServiceClient(conn))

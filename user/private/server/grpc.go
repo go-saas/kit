@@ -32,7 +32,7 @@ func NewGRPCServer(
 	apiOpt *sapi.Option,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
-	userTenant *service.UserTenantContributor,
+	userTenant *api.UserTenantContributor,
 	register service.GrpcServerRegister,
 ) *grpc.Server {
 	m := middleware.Chain(

@@ -9,6 +9,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	kconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
+	"github.com/goxiaoy/go-saas-kit/user/api"
 	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 	v14 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v15 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
@@ -22,7 +23,6 @@ import (
 var ProviderSet = wire.NewSet(
 	NewGrpcServerRegister,
 	NewHttpServerRegister,
-	NewUserTenantContributor,
 	NewUserRoleContributor,
 	NewUserService,
 	NewUserServiceServer,
@@ -34,6 +34,7 @@ var ProviderSet = wire.NewSet(
 	NewRoleServiceServer,
 	NewPermissionService,
 	NewPermissionServiceServer,
+	api.NewUserTenantContributor,
 	uhttp.NewAuth)
 
 type HttpServerRegister server.HttpServiceRegister
