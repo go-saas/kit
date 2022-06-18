@@ -10,7 +10,7 @@ generate:
 .PHONY: api
 # generate api proto
 api:
-	cd .. && buf generate --path ./saas --template ./saas/buf.gen.yaml
+	cd .. && buf generate --path ./buf/saas --template ./saas/buf.gen.yaml
 
 .PHONY: build
 # build

@@ -1,10 +1,20 @@
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
-BUF_VERSION=v1.3.0
+BUF_VERSION=v1.5.0
+DIR=$(shell pwd)
+
+.PHONY: link
+# link proto
+link:
+	mkdir -p buf
+	ln -sf $(DIR)/user $(DIR)/buf/user
+	ln -sf $(DIR)/sys $(DIR)/buf/sys
+	ln -sf $(DIR)/saas $(DIR)/buf/saas
 
 .PHONY: init
 # init env
 init:
+	make link
 	go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest

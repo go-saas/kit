@@ -1,8 +1,0 @@
-version: v1
-name: buf.build/goxy/go-saas-kit-pkg
-lint:
-  use:
-    - DEFAULT
-breaking:
-  use:
-    - FILE
