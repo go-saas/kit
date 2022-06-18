@@ -7,9 +7,9 @@ DIR=$(shell pwd)
 # link proto
 link:
 	mkdir -p buf
-	ln -sf $(DIR)/user $(DIR)/buf/user
-	ln -sf $(DIR)/sys $(DIR)/buf/sys
-	ln -sf $(DIR)/saas $(DIR)/buf/saas
+	ln -sfn $(DIR)/user $(DIR)/buf/user
+	ln -sfn $(DIR)/sys $(DIR)/buf/sys
+	ln -sfn $(DIR)/saas $(DIR)/buf/saas
 
 .PHONY: init
 # init env
