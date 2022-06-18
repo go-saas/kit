@@ -70,6 +70,7 @@ func (PermissionAllowSide) EnumDescriptor() ([]byte, []int) {
 	return file_authz_authz_def_proto_rawDescGZIP(), []int{0}
 }
 
+// PermissionDefGroup group multiple permission definition
 type PermissionDefGroup struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -162,13 +163,15 @@ type PermissionDef struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// name user friendly name
 	Name      string              `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Side      PermissionAllowSide `protobuf:"varint,2,opt,name=side,proto3,enum=authz.PermissionAllowSide" json:"side,omitempty"`
 	Namespace string              `protobuf:"bytes,3,opt,name=namespace,proto3" json:"namespace,omitempty"`
 	Action    string              `protobuf:"bytes,4,opt,name=action,proto3" json:"action,omitempty"`
 	Extra     *structpb.Struct    `protobuf:"bytes,5,opt,name=extra,proto3" json:"extra,omitempty"`
-	Internal  bool                `protobuf:"varint,6,opt,name=internal,proto3" json:"internal,omitempty"`
-	Priority  int32               `protobuf:"varint,7,opt,name=priority,proto3" json:"priority,omitempty"`
+	// internal will not be displayed by ui
+	Internal bool  `protobuf:"varint,6,opt,name=internal,proto3" json:"internal,omitempty"`
+	Priority int32 `protobuf:"varint,7,opt,name=priority,proto3" json:"priority,omitempty"`
 }
 
 func (x *PermissionDef) Reset() {

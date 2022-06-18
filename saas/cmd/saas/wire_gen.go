@@ -25,7 +25,6 @@ import (
 	server2 "github.com/goxiaoy/go-saas-kit/saas/private/server"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
 	api2 "github.com/goxiaoy/go-saas-kit/user/api"
-	"github.com/goxiaoy/go-saas-kit/user/remote"
 )
 
 // Injectors from wire.go:
@@ -59,7 +58,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup3 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	userServiceServer := api2.NewUserGrpcClient(grpcConn)
-	userTenantContributor := remote.NewUserTenantContributor(userServiceServer)
+	userTenantContributor := api2.NewUserTenantContributor(userServiceServer)
 	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
 	sender, cleanup4, err := dal.NewEventSender(confData, logger, connName)
 	if err != nil {
@@ -70,7 +69,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	}
 	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, sender)
 	permissionServiceServer := api2.NewPermissionGrpcClient(grpcConn)
-	permissionChecker := remote.NewRemotePermissionChecker(permissionServiceServer)
+	permissionChecker := api2.NewRemotePermissionChecker(permissionServiceServer)
 	authzOption := server2.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)

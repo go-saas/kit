@@ -20,13 +20,11 @@ import (
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api3 "github.com/goxiaoy/go-saas-kit/saas/api"
-	remote2 "github.com/goxiaoy/go-saas-kit/saas/remote"
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	"github.com/goxiaoy/go-saas-kit/sys/private/data"
 	"github.com/goxiaoy/go-saas-kit/sys/private/server"
 	"github.com/goxiaoy/go-saas-kit/sys/private/service"
 	api2 "github.com/goxiaoy/go-saas-kit/user/api"
-	"github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common/http"
 )
 
@@ -50,13 +48,13 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	permissionServiceServer := api2.NewPermissionGrpcClient(grpcConn)
-	permissionChecker := remote.NewRemotePermissionChecker(permissionServiceServer)
+	permissionChecker := api2.NewRemotePermissionChecker(permissionServiceServer)
 	authzOption := server.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
 	apiGrpcConn, cleanup3 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	tenantServiceServer := api3.NewTenantGrpcClient(apiGrpcConn)
-	tenantStore := remote2.NewRemoteGrpcTenantStore(tenantServiceServer)
+	tenantStore := api3.NewTenantStore(tenantServiceServer)
 	connStrResolver := dal.NewConnStrResolver(confData, tenantStore)
 	dbProvider := gorm.NewDbProvider(connStrResolver, config, dbOpener)
 	eventBus := _wireEventBusValue

@@ -1,17 +1,23 @@
-package remote
+package api
 
 import (
 	"context"
 	kerrors "github.com/go-kratos/kratos/v2/errors"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 )
 
-func NewRefreshProvider(client v1.AuthServer, logger klog.Logger) session.RefreshTokenProvider {
+// NewRefreshProvider return session.RefreshTokenProvider
+//
+// Read session -> Call v1.AuthServer to exchange token -> invalid, sign out.
+func NewRefreshProvider(srv v1.AuthServer, logger klog.Logger) session.RefreshTokenProvider {
 	l := klog.NewHelper(klog.With(logger, "module", "remote.RefreshTokenProvider"))
-	return session.RefreshTokenProviderFunc(func(ctx context.Context, token, userId string) (err error) {
+	return session.RefreshTokenProviderFunc(func(ctx context.Context, token string) (*session.RefreshNewToken, error) {
+		//replace withe trusted environment to skip trusted check if in same process
+		ctx = api.NewTrustedContext(ctx)
 		if writer, ok := session.FromClientStateWriterContext(ctx); ok {
 			handlerError := func(err error) error {
 				err = kerrors.FromError(err)
@@ -30,22 +36,26 @@ func NewRefreshProvider(client v1.AuthServer, logger klog.Logger) session.Refres
 					return err
 				}
 			}
-
-			rep, err := client.RefreshRememberToken(ctx, &v1.RefreshRememberTokenRequest{RmToken: token})
+			// call remote or local service to exchange token
+			rep, err := srv.RefreshRememberToken(ctx, &v1.RefreshRememberTokenRequest{RmToken: token})
 			if err != nil {
-				return handlerError(err)
+				return nil, handlerError(err)
+			}
+			t := &session.RefreshNewToken{
+				UserId:   rep.UserId,
+				NewToken: rep.NewRmToken,
 			}
 			l.Infof("refresh user %s remember token successfully", rep.UserId)
 			if err := writer.SetUid(ctx, rep.UserId); err != nil {
-				return err
+				return t, err
 			}
-			if err := writer.SetRememberToken(ctx, rep.NewRmToken, userId); err != nil {
-				return err
+			if err := writer.SetRememberToken(ctx, rep.NewRmToken, t.UserId); err != nil {
+				return t, err
 			}
 			if err := writer.Save(ctx); err != nil {
-				return err
+				return t, err
 			}
-			return nil
+			return t, nil
 
 		} else {
 			panic("writer not found")

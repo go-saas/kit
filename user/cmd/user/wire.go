@@ -18,7 +18,6 @@ import (
 	kdal "github.com/goxiaoy/go-saas-kit/pkg/dal"
 	kserver "github.com/goxiaoy/go-saas-kit/pkg/server"
 	sapi "github.com/goxiaoy/go-saas-kit/saas/api"
-	sremote "github.com/goxiaoy/go-saas-kit/saas/remote"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
@@ -30,6 +29,6 @@ import (
 // initApp init kratos application.
 func initApp(*kconf.Services, *kconf.Security, *conf.UserConf, *kconf.Data, log.Logger, *http.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
 	panic(wire.Build(authz.ProviderSet, kserver.DefaultCodecProviderSet, jwt.ProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
-		sapi.GrpcProviderSet, sremote.GrpcProviderSet,
+		sapi.GrpcProviderSet,
 		casbin.PermissionProviderSet, server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }

@@ -11,6 +11,7 @@ enum PermissionAllowSide{
   TENANT_ONLY=2;
 }
 
+// PermissionDefGroup group multiple permission definition
 message PermissionDefGroup{
   string name=1;
   PermissionAllowSide side=2;
@@ -20,12 +21,15 @@ message PermissionDefGroup{
   int32 priority=6;
 }
 
+
 message PermissionDef{
+  // name user friendly name
   string name=1;
   PermissionAllowSide side=2;
   string namespace=3;
   string action=4;
   google.protobuf.Struct extra=5;
+  // internal will not be displayed by ui
   bool  internal=6;
   int32 priority=7;
 }

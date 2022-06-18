@@ -18,14 +18,19 @@ const (
 	defaultRememberName = "kit_user_rm"
 )
 
-type RefreshTokenProviderFunc func(ctx context.Context, token, userId string) error
+type RefreshNewToken struct {
+	UserId   string
+	NewToken string
+}
 
-func (r RefreshTokenProviderFunc) Refresh(ctx context.Context, token, userId string) error {
-	return r(ctx, token, userId)
+type RefreshTokenProviderFunc func(ctx context.Context, token string) (t *RefreshNewToken, err error)
+
+func (r RefreshTokenProviderFunc) Refresh(ctx context.Context, token string) (t *RefreshNewToken, err error) {
+	return r(ctx, token)
 }
 
 type RefreshTokenProvider interface {
-	Refresh(ctx context.Context, token, userId string) error
+	Refresh(ctx context.Context, token string) (t *RefreshNewToken, err error)
 }
 
 func Auth(cfg *conf.Security, validator api.TrustedContextValidator) func(http.Handler) http.Handler {
@@ -66,7 +71,7 @@ func Refresh(errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider, va
 
 				if len(state.GetUid()) == 0 && state.GetRememberToken() != nil {
 					//call refresh
-					err := provider.Refresh(ctx, state.GetRememberToken().Token, state.GetRememberToken().Uid)
+					_, err := provider.Refresh(ctx, state.GetRememberToken().Token)
 					if err != nil {
 						if errors.NotBizError(err) {
 							//abort with error

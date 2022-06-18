@@ -31,6 +31,7 @@ import (
 	data3 "github.com/goxiaoy/go-saas-kit/sys/private/data"
 	server4 "github.com/goxiaoy/go-saas-kit/sys/private/server"
 	service3 "github.com/goxiaoy/go-saas-kit/sys/private/service"
+	api2 "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf3 "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	data2 "github.com/goxiaoy/go-saas-kit/user/private/data"
@@ -104,9 +105,13 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	factory := dal.NewBlobFactory(confData)
 	trustedContextValidator := api.NewClientTrustedContextValidator()
 	userService := service.NewUserService(userManager, roleManager, defaultAuthorizationService, factory, trustedContextValidator, logger)
-	userTenantContributor := service.NewUserTenantContributor(userService)
-	signInManager := biz.NewSignInManager(userManager, security)
-	refreshTokenProvider := biz.NewRefreshTokenProvider(signInManager)
+	userServiceServer := service.NewUserServiceServer(userService)
+	userTenantContributor := api2.NewUserTenantContributor(userServiceServer)
+	lazyClient := dal.NewEmailer(confData)
+	emailSender := biz.NewEmailSender(lazyClient, confData)
+	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, defaultAuthorizationService, trustedContextValidator, logger)
+	authServer := service.NewAuthServiceServer(authService)
+	refreshTokenProvider := api2.NewRefreshProvider(authServer, logger)
 	connStrGenerator := biz2.NewConfigConnStrGenerator(saasConf)
 	sender, cleanup4, err := dal.NewEventSender(confData, logger, connName)
 	if err != nil {
@@ -121,11 +126,9 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	userSettingRepo := data2.NewUserSettingRepo(data4, eventBus)
 	userAddressRepo := data2.NewUserAddrRepo(data4, eventBus)
 	accountService := service.NewAccountService(userManager, factory, tenantServiceServer, userSettingRepo, userAddressRepo, lookupNormalizer)
-	lazyClient := dal.NewEmailer(confData)
-	emailSender := biz.NewEmailSender(lazyClient, confData)
-	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, defaultAuthorizationService, trustedContextValidator, logger)
 	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService, permissionService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl, trustedContextValidator)
+	signInManager := biz.NewSignInManager(userManager, security)
 	apiClient := server3.NewHydra(security)
 	auth := http.NewAuth(decodeRequestFunc, userManager, logger, signInManager, apiClient)
 	httpServerRegister := service.NewHttpServerRegister(userService, encodeResponseFunc, encodeErrorFunc, accountService, authService, roleService, servicePermissionService, auth, confData, factory)

@@ -14,11 +14,10 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
-	"github.com/goxiaoy/go-saas-kit/user/api"
+	uapi "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/i18n"
-	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common"
-	http2 "github.com/goxiaoy/go-saas/common/http"
+	shttp "github.com/goxiaoy/go-saas/common/http"
 	uow2 "github.com/goxiaoy/uow"
 )
 
@@ -28,11 +27,11 @@ func NewGRPCServer(
 	tokenizer jwt.Tokenizer,
 	ts common.TenantStore,
 	uowMgr uow2.Manager,
-	mOpt *http2.WebMultiTenancyOption,
+	mOpt *shttp.WebMultiTenancyOption,
 	apiOpt *sapi.Option,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
-	userTenant *service.UserTenantContributor,
+	userTenant *uapi.UserTenantContributor,
 	register GrpcServerRegister,
 ) *grpc.Server {
 	m := middleware.Chain(
@@ -55,7 +54,7 @@ func NewGRPCServer(
 			m,
 		),
 	}
-	opts = server.PatchGrpcOpts(logger, opts, api.ServiceName, c)
+	opts = server.PatchGrpcOpts(logger, opts, uapi.ServiceName, c)
 	srv := grpc.NewServer(opts...)
 
 	register.Register(srv, m)

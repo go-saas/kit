@@ -15,9 +15,8 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
-	"github.com/goxiaoy/go-saas-kit/user/api"
+	uapi "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/i18n"
-	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
 	uow2 "github.com/goxiaoy/uow"
@@ -35,13 +34,13 @@ func NewHTTPServer(c *conf.Services,
 	resEncoder khttp.EncodeResponseFunc,
 	errEncoder khttp.EncodeErrorFunc,
 	logger log.Logger,
-	userTenant *service.UserTenantContributor,
+	userTenant *uapi.UserTenantContributor,
 	validator sapi.TrustedContextValidator,
 	refreshProvider session.RefreshTokenProvider,
 	register HttpServerRegister,
 ) *khttp.Server {
 	var opts []khttp.ServerOption
-	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
+	opts = server.PatchHttpOpts(logger, opts, uapi.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
 		session.Auth(sCfg, validator),
 		session.Refresh(errEncoder, refreshProvider, validator),
 	)

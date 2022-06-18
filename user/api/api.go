@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	v13 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
@@ -24,11 +25,13 @@ func NewGrpcConn(clientName api.ClientName, services *conf.Services, opt *api.Op
 	return api.NewGrpcConn(clientName, ServiceName, services, opt, tokenMgr, logger, opts...)
 }
 
-func NewHttpClient(clientName api.ClientName, services *conf.Services, opt *api.Option, tokenMgr api.TokenManager, logger log.Logger, opts ...http.ClientOption) (HttpClient, func()) {
-	return api.NewHttpClient(clientName, ServiceName, services, opt, tokenMgr, logger, opts...)
-}
-
-var GrpcProviderSet = wire.NewSet(NewUserTenantContributor, NewGrpcConn, NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient)
+var GrpcProviderSet = wire.NewSet(
+	NewUserTenantContributor, NewRefreshProvider,
+	NewRemotePermissionChecker,
+	wire.Bind(new(authz.PermissionChecker), new(*PermissionChecker)),
+	wire.Bind(new(authz.PermissionManagementService), new(*PermissionChecker)),
+	NewGrpcConn,
+	NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient)
 
 func NewUserGrpcClient(conn GrpcConn) v1.UserServiceServer {
 	return v1.NewUserServiceClientProxy(v1.NewUserServiceClient(conn))

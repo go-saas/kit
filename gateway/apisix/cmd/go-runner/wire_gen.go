@@ -14,9 +14,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
-	"github.com/goxiaoy/go-saas-kit/saas/remote"
 	api3 "github.com/goxiaoy/go-saas-kit/user/api"
-	remote2 "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common/http"
 )
 
@@ -33,14 +31,14 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	tenantServiceServer := api2.NewTenantGrpcClient(grpcConn)
-	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceServer)
+	tenantStore := api2.NewTenantStore(tenantServiceServer)
 	apiGrpcConn, cleanup2 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	userServiceServer := api3.NewUserGrpcClient(apiGrpcConn)
-	userTenantContributor := remote2.NewUserTenantContributor(userServiceServer)
+	userTenantContributor := api3.NewUserTenantContributor(userServiceServer)
 	authServer := api3.NewAuthGrpcClient(apiGrpcConn)
-	refreshTokenProvider := remote2.NewRefreshProvider(authServer, logger)
+	refreshTokenProvider := api3.NewRefreshProvider(authServer, logger)
 	permissionServiceServer := api3.NewPermissionGrpcClient(apiGrpcConn)
-	permissionChecker := remote2.NewRemotePermissionChecker(permissionServiceServer)
+	permissionChecker := api3.NewRemotePermissionChecker(permissionServiceServer)
 	authzOption := NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)

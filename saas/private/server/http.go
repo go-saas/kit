@@ -17,7 +17,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/i18n"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
-	"github.com/goxiaoy/go-saas-kit/user/remote"
+	uapi "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas/common"
 	http2 "github.com/goxiaoy/go-saas/common/http"
 	uow2 "github.com/goxiaoy/uow"
@@ -36,7 +36,7 @@ func NewHTTPServer(c *conf.Services,
 	errEncoder http.EncodeErrorFunc,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
-	userTenant *remote.UserTenantContributor,
+	userTenant *uapi.UserTenantContributor,
 	register service.HttpServerRegister) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)

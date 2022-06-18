@@ -21,6 +21,7 @@ func NewClientTrustedContextValidator() TrustedContextValidator {
 	return &ClientTrustedContextValidator{}
 }
 
+// NewTrustedContext create a trusted (or not) context without propaganda to other services
 func NewTrustedContext(ctx context.Context, trust ...bool) context.Context {
 	t := true
 	if len(trust) > 0 {

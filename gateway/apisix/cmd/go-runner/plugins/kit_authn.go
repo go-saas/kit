@@ -19,8 +19,8 @@ import (
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	uapi "github.com/goxiaoy/go-saas-kit/user/api"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
-	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
 	"github.com/goxiaoy/sessions"
@@ -57,7 +57,7 @@ var (
 	sessionInfoStore    sessions.Store
 	rememberStore       sessions.Store
 	securityCfg         *conf2.Security
-	userTenantValidator *uremote.UserTenantContributor
+	userTenantValidator *uapi.UserTenantContributor
 	refreshProvider     session.RefreshTokenProvider
 	ts                  common.TenantStore
 	authService         authz.Service
@@ -73,7 +73,7 @@ func Init(
 	services *conf2.Services,
 	security *conf2.Security,
 
-	userTenant *uremote.UserTenantContributor,
+	userTenant *uapi.UserTenantContributor,
 	tenantStore common.TenantStore,
 	refreshTokenProvider session.RefreshTokenProvider,
 	as authz.Service,
@@ -175,7 +175,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	if len(state.GetUid()) == 0 && rmToken != nil {
 		//call refresh
 		log.Infof("call refresh token")
-		err := refreshProvider.Refresh(ctx, rmToken.Token, rmToken.Uid)
+		_, err := refreshProvider.Refresh(ctx, rmToken.Token)
 		if err != nil {
 			err = kerrors.FromError(err)
 			log.Errorf("refresh fail %v", err)

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	"time"
@@ -43,47 +42,6 @@ func (s *SignInManager) CheckCanSignIn(ctx context.Context, u *User) error {
 		return v12.ErrorUserLocked("")
 	}
 	return nil
-}
-
-//RefreshSignIn refresh sign in
-func (s *SignInManager) RefreshSignIn(ctx context.Context, refreshToken string) error {
-	if writer, ok := session.FromClientStateWriterContext(ctx); ok {
-		duration := 0
-		if s.securityCfg != nil && s.securityCfg.RememberCookie != nil && s.securityCfg.RememberCookie.MaxAge != nil {
-			duration = int(s.securityCfg.RememberCookie.MaxAge.Value)
-		}
-		duration = session.RememberMeExpireSecondsOrDefault(duration)
-		//find refresh token
-		u, newToken, err := s.um.RefreshRememberToken(ctx, refreshToken, time.Duration(duration)*time.Second)
-		if err != nil {
-			if errors2.NotBizError(err) {
-				return err
-			} else {
-				if !v12.IsRememberTokenUsed(err) {
-					//clean outdated remember token
-					if err := writer.SignOutRememberToken(ctx); err != nil {
-						return err
-					}
-					if err := writer.Save(ctx); err != nil {
-						return err
-					}
-					return err
-				}
-				return err
-			}
-		}
-		//refresh successfully
-		if err := writer.SetUid(ctx, u.ID.String()); err != nil {
-			return err
-		}
-		if err := writer.SetRememberToken(ctx, newToken, u.ID.String()); err != nil {
-			return err
-		}
-		//save session
-		return writer.Save(ctx)
-	} else {
-		panic(ErrWriterNotFound)
-	}
 }
 
 func (s *SignInManager) SignIn(ctx context.Context, u *User, isPersistent bool) error {

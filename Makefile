@@ -55,12 +55,15 @@ build:
 	cd saas && $(MAKE) build
 	cd sys && $(MAKE) build
 	cd gateway/apisix && $(MAKE) build
+	cd examples/monolithic && $(MAKE) build
 
 
 .PHONY: all
 all:
+	make generate
 	make api
 	make user
 	make saas
 	make sys
 	make apisix
+	make examples

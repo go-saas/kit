@@ -10,7 +10,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	uremote "github.com/goxiaoy/go-saas-kit/user/remote"
+	uapi "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas/common"
 	shttp "github.com/goxiaoy/go-saas/common/http"
 )
@@ -24,14 +24,14 @@ type App struct {
 	logger          klog.Logger
 	tenantCfg       *shttp.WebMultiTenancyOption
 	security        *conf.Security
-	userTenant      *uremote.UserTenantContributor
+	userTenant      *uapi.UserTenantContributor
 	refreshProvider session.RefreshTokenProvider
 	authService     authz.Service
 	subjectResolver authz.SubjectResolver
 }
 
 func newApp(tenantStore common.TenantStore,
-	userTenant *uremote.UserTenantContributor,
+	userTenant *uapi.UserTenantContributor,
 	t jwt.Tokenizer,
 	tmr api.TokenManager,
 	services *conf.Services,

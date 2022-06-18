@@ -35,6 +35,7 @@ var ProviderSet = wire.NewSet(
 	NewPermissionService,
 	NewPermissionServiceServer,
 	api.NewUserTenantContributor,
+	api.NewRefreshProvider,
 	uhttp.NewAuth)
 
 type HttpServerRegister server.HttpServiceRegister

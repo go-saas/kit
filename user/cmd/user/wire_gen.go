@@ -22,7 +22,6 @@ import (
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
-	"github.com/goxiaoy/go-saas-kit/saas/remote"
 	api3 "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
@@ -54,7 +53,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	tenantServiceServer := api2.NewTenantGrpcClient(grpcConn)
-	tenantStore := remote.NewRemoteGrpcTenantStore(tenantServiceServer)
+	tenantStore := api2.NewTenantStore(tenantServiceServer)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
@@ -100,16 +99,17 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userService := service.NewUserService(userManager, roleManager, defaultAuthorizationService, factory, trustedContextValidator, logger)
 	userServiceServer := service.NewUserServiceServer(userService)
 	userTenantContributor := api3.NewUserTenantContributor(userServiceServer)
-	signInManager := biz.NewSignInManager(userManager, security)
-	refreshTokenProvider := biz.NewRefreshTokenProvider(signInManager)
-	userSettingRepo := data.NewUserSettingRepo(dataData, eventBus)
-	userAddressRepo := data.NewUserAddrRepo(dataData, eventBus)
-	accountService := service.NewAccountService(userManager, factory, tenantServiceServer, userSettingRepo, userAddressRepo, lookupNormalizer)
 	lazyClient := dal.NewEmailer(confData)
 	emailSender := biz.NewEmailSender(lazyClient, confData)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, defaultAuthorizationService, trustedContextValidator, logger)
+	authServer := service.NewAuthServiceServer(authService)
+	refreshTokenProvider := api3.NewRefreshProvider(authServer, logger)
+	userSettingRepo := data.NewUserSettingRepo(dataData, eventBus)
+	userAddressRepo := data.NewUserAddrRepo(dataData, eventBus)
+	accountService := service.NewAccountService(userManager, factory, tenantServiceServer, userSettingRepo, userAddressRepo, lookupNormalizer)
 	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService, permissionService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl, trustedContextValidator)
+	signInManager := biz.NewSignInManager(userManager, security)
 	apiClient := server.NewHydra(security)
 	auth := http2.NewAuth(decodeRequestFunc, userManager, logger, signInManager, apiClient)
 	httpServerRegister := service.NewHttpServerRegister(userService, encodeResponseFunc, encodeErrorFunc, accountService, authService, roleService, servicePermissionService, auth, confData, factory)

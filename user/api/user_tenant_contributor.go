@@ -30,7 +30,7 @@ func (u *UserTenantContributor) Name() string {
 func (u *UserTenantContributor) Resolve(trCtx *common.TenantResolveContext) error {
 	ui, _ := authn.FromUserContext(trCtx.Context())
 	if len(ui.GetId()) > 0 { //user logged in
-		//replace withe trusted environment to skip trusted check in same process
+		//replace withe trusted environment to skip trusted check if in same process
 		trCtx.WithContext(api.NewTrustedContext(trCtx.Context()))
 		ok, err := u.srv.CheckUserTenant(trCtx.Context(), &v1.CheckUserTenantRequest{
 			UserId:   ui.GetId(),

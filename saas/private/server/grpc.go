@@ -17,7 +17,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/i18n"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
-	"github.com/goxiaoy/go-saas-kit/user/remote"
+	uapi "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/common/http"
 	uow2 "github.com/goxiaoy/uow"
@@ -26,7 +26,7 @@ import (
 // NewGRPCServer new a gRPC server.
 func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantStore, uowMgr uow2.Manager,
 	mOpt *http.WebMultiTenancyOption, apiOpt *sapi.Option,
-	userTenant *remote.UserTenantContributor,
+	userTenant *uapi.UserTenantContributor,
 	validator sapi.TrustedContextValidator,
 	register service.GrpcServerRegister,
 	logger log.Logger) *grpc.Server {
