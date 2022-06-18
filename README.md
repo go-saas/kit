@@ -22,9 +22,9 @@ Frontend Repo: https://github.com/Goxiaoy/go-saas-kit-frontend
 
 # Feature
 
--[x] Saas
--[x] Modularity
--[x] Microservice/Monolithic compatible
+* [x] Saas
+* [x] Modularity
+* [x] Microservice/Monolithic compatible
 
 # Quick Start
 
@@ -61,3 +61,18 @@ make all
 ```shell
 make build
 ```
+
+# Modularity
+
+Module design: 
+
+![Minimal](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/minimal-module-design.drawio.png?raw=true)
+
+For Microservice:
+
+![Minimal](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/microservice.drawio.png?raw=true)
+
+
+For Monolithic:
+
+![Minimal](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/monolithic.drawio.png?raw=true)
