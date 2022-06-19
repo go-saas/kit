@@ -68,9 +68,29 @@ Module design:
 
 ![Minimal](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/minimal-module-design.drawio.png?raw=true)
 
+
+**Api:** Protobuf definition for public/internal service and models
+
+**Event:** Protobuf definition for distributed event bus
+
+**Biz:** Domain layer, definition for all entities and repository interface
+
+**Service:** Business logic, depends on biz repository interface
+
+**Data:** Data access layer, implement biz repository interface, init databases( mysql ,redis), init event bus (kafka ), expose migration function
+
+**Conf:** Protobuf configuration definition
+
+**Server:** Set up http and grpc server. register all services, set up middlewares. set up distributed  event handler, seeding behavior
+
+**Host:** Process entry point, read configuration, set up tracing, logging
+
+
+
 For Microservice:
 
 ![Minimal](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/microservice.drawio.png?raw=true)
+
 
 
 For Monolithic:
