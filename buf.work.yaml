@@ -3,3 +3,4 @@ directories:
   - buf
   - proto
   - pkg
+  - examples

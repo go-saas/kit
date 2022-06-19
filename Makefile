@@ -3,6 +3,8 @@ VERSION=$(shell git describe --tags --always)
 BUF_VERSION=v1.5.0
 DIR=$(shell pwd)
 
+
+
 .PHONY: link
 # link proto
 link:
@@ -70,6 +72,7 @@ build:
 
 .PHONY: all
 all:
+	make init
 	make generate
 	make api
 	make user

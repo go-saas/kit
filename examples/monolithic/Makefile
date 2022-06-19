@@ -10,7 +10,7 @@ generate:
 .PHONY: api
 # generate api proto
 api:
-	buf generate
+	cd ../../ && buf generate --path ./examples/monolithic --template ./examples/monolithic/buf.gen.yaml
 
 .PHONY: build
 # build
