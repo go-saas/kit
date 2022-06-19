@@ -17,7 +17,7 @@ import (
 func NewDbOpener() (sgorm.DbOpener, func()) {
 	return sgorm.NewDbOpener(func(db *gorm.DB) *gorm.DB {
 		RegisterCallbacks(db)
-		if err := db.Use(otelgorm.NewPlugin()); err != nil {
+		if err := db.Use(otelgorm.NewPlugin(otelgorm.WithoutQueryVariables())); err != nil {
 			panic(err)
 		}
 		return db
