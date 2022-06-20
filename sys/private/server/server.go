@@ -4,6 +4,7 @@ import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
+	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/sys/api"
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	"github.com/goxiaoy/go-saas-kit/sys/private/data"
@@ -19,7 +20,7 @@ var ClientName api.ClientName = api2.ServiceName
 type Seeding seed.Contributor
 
 func NewSeeding(uow uow.Manager, migrate *data.Migrate, menu *biz.MenuSeed) Seeding {
-	return seed.NewUowContributor(uow, seed.Chain(migrate, menu))
+	return uow2.NewUowContributor(uow, seed.Chain(migrate, menu))
 }
 
 func NewSeeder(ss Seeding) seed.Seeder {

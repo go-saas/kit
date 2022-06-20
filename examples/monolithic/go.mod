@@ -8,9 +8,9 @@ require (
 	github.com/go-kratos/kratos/v2 v2.3.1
 	github.com/google/wire v0.5.0
 	github.com/goxiaoy/go-eventbus v0.0.5
-	github.com/goxiaoy/go-saas v0.1.1-0.20220402162851-7116458f7dea
+	github.com/goxiaoy/go-saas v0.4.2-0.20220620080754-a74c1bd17fb0
 	github.com/goxiaoy/go-saas-kit v0.0.0-00010101000000-000000000000
-	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
+	github.com/goxiaoy/uow v0.0.0-20220620110744-e5619dd7a74c
 	google.golang.org/protobuf v1.28.0
 )
 
@@ -118,12 +118,12 @@ require (
 	golang.org/x/sync v0.0.0-20220513210516-0976fa681c29 // indirect
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.9 // indirect
+	golang.org/x/tools v0.1.8-0.20211029000441-d6a9af8af023 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	google.golang.org/grpc v1.46.2 // indirect
-	gopkg.in/yaml.v3 v3.0.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.3.3 // indirect
 	gorm.io/driver/postgres v1.3.4 // indirect
 	gorm.io/driver/sqlite v1.3.1 // indirect

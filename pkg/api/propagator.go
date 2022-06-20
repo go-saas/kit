@@ -50,20 +50,12 @@ func (s *SaasPropagator) Extract(ctx context.Context, headers Header) (context.C
 	}
 	if headers.HasKey(TenantFilterKey) {
 		if v, err := strconv.ParseBool(headers.Get(TenantInfoKey)); err == nil {
-			if v {
-				ctx = data.NewEnableMultiTenancyDataFilter(ctx)
-			} else {
-				ctx = data.NewDisableMultiTenancyDataFilter(ctx)
-			}
+			ctx = data.NewMultiTenancyDataFilter(ctx, v)
 		}
 	}
 	if headers.HasKey(TenantAutoSetKey) {
 		if v, err := strconv.ParseBool(headers.Get(TenantAutoSetKey)); err == nil {
-			if v {
-				ctx = data.NewEnableAutoSetTenantId(ctx)
-			} else {
-				ctx = data.NewDisableAutoSetTenantId(ctx)
-			}
+			ctx = data.NewAutoSetTenantId(ctx, v)
 		}
 	}
 	return ctx, nil

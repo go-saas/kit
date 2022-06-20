@@ -15,9 +15,9 @@ require (
 	github.com/gorilla/csrf v1.7.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/goxiaoy/go-eventbus v0.0.5
-	github.com/goxiaoy/go-saas v0.1.1-0.20220402162851-7116458f7dea
+	github.com/goxiaoy/go-saas v0.4.2-0.20220620080754-a74c1bd17fb0
 	github.com/goxiaoy/gorm-concurrency v1.0.5
-	github.com/goxiaoy/uow v0.0.0-20210815151702-b0032203778a
+	github.com/goxiaoy/uow v0.0.0-20220620110744-e5619dd7a74c
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0
 	github.com/mennanov/fmutils v0.1.1
 	github.com/mitchellh/mapstructure v1.4.3
@@ -56,7 +56,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.6.0
 	go.opentelemetry.io/otel/trace v1.6.0
 	golang.org/x/text v0.3.7
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -127,7 +127,7 @@ require (
 	golang.org/x/mod v0.6.0-dev.0.20211013180041-c96bc1413d57 // indirect
 	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/tools v0.1.9 // indirect
+	golang.org/x/tools v0.1.8-0.20211029000441-d6a9af8af023 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	gorm.io/driver/postgres v1.3.4 // indirect

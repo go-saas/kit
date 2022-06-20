@@ -6,6 +6,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
@@ -27,7 +28,7 @@ func NewSeeding(uow uow.Manager,
 	roleSeed *biz.RoleSeed,
 	userSeed *biz.UserSeed,
 	p *biz.PermissionSeeder) Seeding {
-	return seed.Chain(migrate, seed.NewUowContributor(uow, seed.Chain(roleSeed, userSeed, p)))
+	return seed.Chain(migrate, uow2.NewUowContributor(uow, seed.Chain(roleSeed, userSeed, p)))
 }
 
 func NewSeeder(us Seeding) seed.Seeder {

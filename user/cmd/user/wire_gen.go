@@ -43,11 +43,9 @@ import (
 func initApp(services *conf.Services, security *conf.Security, userConf *conf2.UserConf, confData *conf.Data, logger log.Logger, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
-	connName := _wireConnNameValue
-	config := dal.NewGormConfig(confData, connName)
-	uowConfig := _wireConfigValue
-	dbOpener, cleanup := gorm.NewDbOpener()
-	manager := uow.NewUowManager(config, uowConfig, dbOpener)
+	config := _wireConfigValue
+	dbCache, cleanup := gorm.NewDbCache(confData)
+	manager := uow.NewUowManager(config, dbCache)
 	option := api.NewDefaultOption(logger)
 	clientName := _wireClientNameValue
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
@@ -58,7 +56,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
 	connStrResolver := dal.NewConnStrResolver(confData, tenantStore)
-	dbProvider := gorm.NewDbProvider(connStrResolver, config, dbOpener)
+	dbProvider := gorm.NewDbProvider(dbCache, connStrResolver, confData)
 	dataData, cleanup3, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup2()
@@ -73,6 +71,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userTokenRepo := data.NewUserTokenRepo(dataData)
 	refreshTokenRepo := data.NewRefreshTokenRepo(dataData)
 	userTenantRepo := data.NewUserTenantRepo(dataData)
+	connName := _wireConnNameValue
 	client := dal.NewRedis(confData, connName)
 	emailTokenProvider := biz.NewEmailTokenProvider(client)
 	phoneTokenProvider := biz.NewPhoneTokenProvider(client)
@@ -151,11 +150,11 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 }
 
 var (
-	_wireConnNameValue           = data.ConnName
 	_wireConfigValue             = dal.UowCfg
 	_wireClientNameValue         = server.ClientName
 	_wireDecodeRequestFuncValue  = server2.ReqDecode
 	_wireEncodeResponseFuncValue = server2.ResEncoder
 	_wireEncodeErrorFuncValue    = server2.ErrEncoder
+	_wireConnNameValue           = data.ConnName
 	_wireEventBusValue           = eventbus.Default
 )

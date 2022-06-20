@@ -34,11 +34,9 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	eventBus := _wireEventBusValue
+	dbCache, cleanup := gorm.NewDbCache(confData)
 	constConnStrResolver := dal.NewConstantConnStrResolver(confData)
-	connName := _wireConnNameValue
-	config := dal.NewGormConfig(confData, connName)
-	dbOpener, cleanup := gorm.NewDbOpener()
-	constDbProvider := dal.NewConstDbProvider(constConnStrResolver, config, dbOpener)
+	constDbProvider := dal.NewConstDbProvider(dbCache, constConnStrResolver, confData)
 	dataData, cleanup2, err := data.NewData(confData, constDbProvider, logger)
 	if err != nil {
 		cleanup()
@@ -46,8 +44,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	}
 	tenantRepo := data.NewTenantRepo(eventBus, dataData)
 	tenantStore := data.NewTenantStore(tenantRepo)
-	uowConfig := _wireConfigValue
-	manager := uow.NewUowManager(config, uowConfig, dbOpener)
+	config := _wireConfigValue
+	manager := uow.NewUowManager(config, dbCache)
 	webMultiTenancyOption := server.NewWebMultiTenancyOption(appConfig)
 	option := api.NewDefaultOption(logger)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
@@ -60,6 +58,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	userServiceServer := api2.NewUserGrpcClient(grpcConn)
 	userTenantContributor := api2.NewUserTenantContributor(userServiceServer)
 	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
+	connName := _wireConnNameValue
 	sender, cleanup4, err := dal.NewEventSender(confData, logger, connName)
 	if err != nil {
 		cleanup3()
@@ -115,10 +114,10 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 
 var (
 	_wireEventBusValue           = eventbus.Default
-	_wireConnNameValue           = data.ConnName
 	_wireConfigValue             = dal.UowCfg
 	_wireDecodeRequestFuncValue  = server.ReqDecode
 	_wireEncodeResponseFuncValue = server.ResEncoder
 	_wireEncodeErrorFuncValue    = server.ErrEncoder
 	_wireClientNameValue         = server2.ClientName
+	_wireConnNameValue           = data.ConnName
 )

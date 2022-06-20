@@ -8,16 +8,23 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/goxiaoy/go-saas/gorm"
+	gorm3 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/uow"
 	gorm2 "github.com/goxiaoy/uow/gorm"
 	"strings"
 )
 
-func NewUowManager(cfg *gorm.Config, config *uow.Config, opener gorm.DbOpener) uow.Manager {
-	return uow.NewManager(config, func(ctx context.Context, kind, key string) uow.TransactionalDb {
-		if kind == gorm.DbKind {
-			db, err := opener.Open(cfg, key)
+const (
+	gormKind = "gorm"
+)
+
+func NewUowManager(config *uow.Config, cache *gorm3.DbCache) uow.Manager {
+	return uow.NewManager(config, func(ctx context.Context, keys []string) uow.TransactionalDb {
+		kind := keys[0]
+		key := keys[1]
+		connStr := keys[2]
+		if kind == gormKind {
+			db, err := cache.GetOrSet(ctx, key, connStr)
 			if err != nil {
 				panic(err)
 			}

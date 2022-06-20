@@ -5,6 +5,7 @@ import (
 	kapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	"github.com/goxiaoy/go-saas-kit/saas/private/data"
@@ -20,7 +21,7 @@ var ClientName kapi.ClientName = api.ServiceName
 type Seeding seed.Contributor
 
 func NewSeeding(uow uow.Manager, migrate *data.Migrate) Seeding {
-	return seed.NewUowContributor(uow, seed.Chain(migrate))
+	return uow2.NewUowContributor(uow, seed.Chain(migrate))
 }
 
 func NewSeeder(ss Seeding) seed.Seeder {

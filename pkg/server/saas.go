@@ -13,8 +13,8 @@ import (
 	"github.com/goxiaoy/go-saas/kratos/saas"
 )
 
-func Saas(hmtOpt *shttp.WebMultiTenancyOption, ts common.TenantStore, trustedContextValidator api.TrustedContextValidator, options ...common.PatchTenantResolveOption) middleware.Middleware {
-	return selector.Server(saas.Server(hmtOpt, ts, ErrorFormatter(), options...)).Match(func(ctx context.Context, operation string) bool {
+func Saas(hmtOpt *shttp.WebMultiTenancyOption, ts common.TenantStore, trustedContextValidator api.TrustedContextValidator, options ...common.ResolveOption) middleware.Middleware {
+	return selector.Server(saas.Server(ts, saas.WithMultiTenancyOption(hmtOpt), saas.WithErrorFormatter(ErrorFormatter()), saas.WithResolveOption(options...))).Match(func(ctx context.Context, operation string) bool {
 		ok, _ := trustedContextValidator.Trusted(ctx)
 		return !ok
 	}).Build()
@@ -31,10 +31,7 @@ func ErrorFormatter() func(err error) (interface{}, error) {
 }
 
 func NewWebMultiTenancyOption(opt *conf.AppConfig) *shttp.WebMultiTenancyOption {
-	ret := &shttp.WebMultiTenancyOption{
-		TenantKey:    "",
-		DomainFormat: "",
-	}
+	ret := shttp.NewDefaultWebMultiTenancyOption()
 	if opt == nil {
 		return ret
 	}

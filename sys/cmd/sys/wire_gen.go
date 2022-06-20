@@ -34,11 +34,9 @@ import (
 func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOption *http.WebMultiTenancyOption, confData *conf.Data, logger log.Logger, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
-	connName := _wireConnNameValue
-	config := dal.NewGormConfig(confData, connName)
-	uowConfig := _wireConfigValue
-	dbOpener, cleanup := gorm.NewDbOpener()
-	manager := uow.NewUowManager(config, uowConfig, dbOpener)
+	config := _wireConfigValue
+	dbCache, cleanup := gorm.NewDbCache(confData)
+	manager := uow.NewUowManager(config, dbCache)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
@@ -56,7 +54,7 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	tenantServiceServer := api3.NewTenantGrpcClient(apiGrpcConn)
 	tenantStore := api3.NewTenantStore(tenantServiceServer)
 	connStrResolver := dal.NewConnStrResolver(confData, tenantStore)
-	dbProvider := gorm.NewDbProvider(connStrResolver, config, dbOpener)
+	dbProvider := gorm.NewDbProvider(dbCache, connStrResolver, confData)
 	eventBus := _wireEventBusValue
 	menuRepo := data.NewMenuRepo(dbProvider, eventBus)
 	menuService := service.NewMenuService(defaultAuthorizationService, menuRepo, logger)
@@ -86,7 +84,6 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 }
 
 var (
-	_wireConnNameValue           = data.ConnName
 	_wireConfigValue             = dal.UowCfg
 	_wireDecodeRequestFuncValue  = server2.ReqDecode
 	_wireEncodeResponseFuncValue = server2.ResEncoder

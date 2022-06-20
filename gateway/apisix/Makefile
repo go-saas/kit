@@ -14,6 +14,7 @@ build:
 
 .PHONY: all
 all:
+	go mod tidy
 	make generate
 
 # show help

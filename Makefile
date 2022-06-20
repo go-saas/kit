@@ -72,6 +72,7 @@ build:
 
 .PHONY: all
 all:
+	go mod tidy
 	make init
 	make generate
 	make api

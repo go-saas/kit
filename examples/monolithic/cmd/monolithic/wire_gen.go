@@ -46,16 +46,14 @@ import (
 func initApp(services *conf.Services, security *conf.Security, confData *conf.Data, saasConf *conf2.SaasConf, userConf *conf3.UserConf, logger log.Logger, appConfig *conf.AppConfig, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
-	connName := _wireConnNameValue
-	config := dal.NewGormConfig(confData, connName)
-	uowConfig := _wireConfigValue
-	dbOpener, cleanup := gorm.NewDbOpener()
-	manager := uow.NewUowManager(config, uowConfig, dbOpener)
+	config := _wireConfigValue
+	dbCache, cleanup := gorm.NewDbCache(confData)
+	manager := uow.NewUowManager(config, dbCache)
 	webMultiTenancyOption := server.NewWebMultiTenancyOption(appConfig)
 	option := api.NewDefaultOption(logger)
 	eventBus := _wireEventBusValue
 	constConnStrResolver := dal.NewConstantConnStrResolver(confData)
-	constDbProvider := dal.NewConstDbProvider(constConnStrResolver, config, dbOpener)
+	constDbProvider := dal.NewConstDbProvider(dbCache, constConnStrResolver, confData)
 	dataData, cleanup2, err := data.NewData(confData, constDbProvider, logger)
 	if err != nil {
 		cleanup()
@@ -67,7 +65,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
 	connStrResolver := dal.NewConnStrResolver(confData, tenantStore)
-	dbProvider := gorm.NewDbProvider(connStrResolver, config, dbOpener)
+	dbProvider := gorm.NewDbProvider(dbCache, connStrResolver, confData)
 	data4, cleanup3, err := data2.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup2()
@@ -82,6 +80,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	userTokenRepo := data2.NewUserTokenRepo(data4)
 	refreshTokenRepo := data2.NewRefreshTokenRepo(data4)
 	userTenantRepo := data2.NewUserTenantRepo(data4)
+	connName := _wireConnNameValue
 	client := dal.NewRedis(confData, connName)
 	emailTokenProvider := biz.NewEmailTokenProvider(client)
 	phoneTokenProvider := biz.NewPhoneTokenProvider(client)
@@ -199,10 +198,10 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 }
 
 var (
-	_wireConnNameValue           = dal.ConnName("default")
 	_wireConfigValue             = dal.UowCfg
 	_wireEventBusValue           = eventbus.Default
 	_wireDecodeRequestFuncValue  = server.ReqDecode
 	_wireEncodeResponseFuncValue = server.ResEncoder
 	_wireEncodeErrorFuncValue    = server.ErrEncoder
+	_wireConnNameValue           = dal.ConnName("default")
 )

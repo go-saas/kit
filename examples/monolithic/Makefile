@@ -20,6 +20,7 @@ build:
 .PHONY: all
 # generate all
 all:
+	go mod tidy
 	make api;
 	make generate
 

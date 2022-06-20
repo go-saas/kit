@@ -30,8 +30,7 @@ var (
 	DefaultProviderSet = wire.NewSet(
 		NewConnStrResolver,
 		NewConstantConnStrResolver,
-		kitgorm.NewDbOpener,
-		NewGormConfig,
+		kitgorm.NewDbCache,
 
 		kitgorm.NewDbProvider,
 		NewConstDbProvider,
@@ -71,17 +70,13 @@ func NewConstantConnStrResolver(c *kitconf.Data) ConstConnStrResolver {
 	return data.NewDefaultConnStrResolver(data.NewConnStrOption(conn))
 }
 
-// NewConstDbProvider  ignore multi-tenancy
-func NewConstDbProvider(cs ConstConnStrResolver, c *sgorm.Config, opener sgorm.DbOpener) ConstDbProvider {
-	return sgorm.NewDefaultDbProvider(cs, c, opener)
+// NewConstDbProvider ignore multi-tenancy
+func NewConstDbProvider(cache *kitgorm.DbCache, cs ConstConnStrResolver, d *kitconf.Data) ConstDbProvider {
+	return kitgorm.NewDbProvider(cache, cs, d)
 }
 
 func NewBlobFactory(c *kitconf.Data) blob.Factory {
 	return blob.NewFactory(c.Blobs)
-}
-
-func NewGormConfig(d *kitconf.Data, name ConnName) *sgorm.Config {
-	return kitgorm.NewGormConfig(d, string(name))
 }
 
 func NewRedis(c *kitconf.Data, name ConnName) *redis.Client {
