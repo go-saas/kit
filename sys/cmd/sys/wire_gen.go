@@ -17,6 +17,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/dal"
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/job"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api3 "github.com/goxiaoy/go-saas-kit/saas/api"
@@ -59,7 +60,10 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	menuRepo := data.NewMenuRepo(dbProvider, eventBus)
 	menuService := service.NewMenuService(defaultAuthorizationService, menuRepo, logger)
 	factory := dal.NewBlobFactory(confData)
-	httpServerRegister := service.NewHttpServerRegister(menuService, factory, confData)
+	connName := _wireConnNameValue
+	client := dal.NewRedis(confData, connName)
+	redisConnOpt := job.NewAsynqClientOpt(client)
+	httpServerRegister := service.NewHttpServerRegister(menuService, factory, confData, redisConnOpt)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, option, logger, trustedContextValidator, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(menuService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, manager, option, logger, trustedContextValidator, grpcServerRegister)
@@ -90,4 +94,5 @@ var (
 	_wireEncodeErrorFuncValue    = server2.ErrEncoder
 	_wireClientNameValue         = server.ClientName
 	_wireEventBusValue           = eventbus.Default
+	_wireConnNameValue           = data.ConnName
 )

@@ -33,3 +33,6 @@ groups:
       - name: "permission.dev.docs"
         namespace: "dev.docs"
         action: "*"
+      - name: "permission.dev.jobs"
+        namespace: "dev.jobs"
+        action: "*"

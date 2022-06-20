@@ -66,7 +66,7 @@ func (p *KitAuthz) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		return authz.NewRequirement(authz.NewEntityResource(t.Namespace, t.Resource), authz.ActionStr(t.Action))
 	}))
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
+		abortWithError(err, w)
 		return
 	}
 	for _, result := range resultList {

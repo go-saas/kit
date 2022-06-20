@@ -45,6 +45,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/goxiaoy/sessions v1.2.2-0.20220327125603-baf0b311512e
 	github.com/hibiken/asynq v0.23.0
+	github.com/hibiken/asynqmon v0.7.1
 	github.com/nicksnyder/go-i18n/v2 v2.2.0
 	github.com/nyaruka/phonenumbers v1.0.74
 	github.com/ory/hydra-client-go v1.11.7
@@ -114,7 +115,7 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
-	github.com/spf13/cast v1.3.1 // indirect
+	github.com/spf13/cast v1.4.1 // indirect
 	github.com/toorop/go-dkim v0.0.0-20201103131630-e1cd1a0a5208 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.1.10 // indirect
 	github.com/vmihailenco/go-tinylfu v0.2.2 // indirect
@@ -130,7 +131,7 @@ require (
 	golang.org/x/mod v0.6.0-dev.0.20211013180041-c96bc1413d57 // indirect
 	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
+	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
 	golang.org/x/tools v0.1.8-0.20211029000441-d6a9af8af023 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
@@ -143,4 +144,7 @@ require (
 	modernc.org/sqlite v1.16.0 // indirect
 )
 
-replace github.com/go-redis/cache/v8 => github.com/Goxiaoy/cache/v8 v8.4.4-0.20220418161131-a691bbf092a2
+replace (
+	github.com/go-redis/cache/v8 => github.com/Goxiaoy/cache/v8 v8.4.4-0.20220418161131-a691bbf092a2
+	github.com/hibiken/asynqmon => github.com/Goxiaoy/asynqmon v0.7.2-0.20220620161318-80231130441b
+)

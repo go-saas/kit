@@ -23,9 +23,20 @@ routes:
         conf:
           - name: "kit_authz"
             value: "{\"requirement\":[{\"namespace\":\"dev.jaeger\",\"resource\":\"*\",\"action\":\"*\"}]}"
+
+  -
+    uri: /v1/sys/asynqmon*
+    upstream_id: sys-http
+    plugins:
+      ext-plugin-pre-req:
+        conf:
+          - name: "kit_authz"
+            value: "{\"requirement\":[{\"namespace\":\"dev.jobs\",\"resource\":\"*\",\"action\":\"*\"}]}"
+
   -
     uri: /v1/sys/*
     upstream_id: sys-http
+
 
   -
     uri: /v1/*

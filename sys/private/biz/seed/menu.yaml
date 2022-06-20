@@ -34,6 +34,16 @@ menus:
           - namespace: "dev.jaeger"
             resource: "*"
             action: "*"
+      - name: "jobs"
+        icon: "ant-design:eye-outlined"
+        path: "/dev/jobs"
+        redirect: "/v1/sys/asynqmon"
+        is_preserved: true
+        title: "routes.dev.jobs"
+        requirement:
+          - namespace: "dev.jobs"
+            resource: "*"
+            action: "*"
   - name: "saas"
     path: "/saas"
     component: "LAYOUT"
