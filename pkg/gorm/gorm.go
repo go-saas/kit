@@ -39,6 +39,26 @@ func (d DbProviderFunc) Get(ctx context.Context, key string) *gorm.DB {
 }
 
 type ensureDbExistFunc func(string) error
+type dbGuardianKey struct{}
+
+// NewDbGuardianContext  flag for database auto creation
+func NewDbGuardianContext(ctx context.Context, enable ...bool) context.Context {
+	v := true
+	if len(enable) > 0 {
+		v = enable[0]
+	}
+	return context.WithValue(ctx, dbGuardianKey{}, v)
+}
+
+func isDbGuardianEnabled(ctx context.Context) bool {
+	if common.GetMultiTenantSide(ctx) == common.Host {
+		return true
+	}
+	if v, ok := ctx.Value(dbGuardianKey{}).(bool); ok {
+		return v
+	}
+	return false
+}
 
 type DbCache struct {
 	*common.Cache[string, *sgorm.DbWrap]
@@ -97,7 +117,7 @@ func (c *DbCache) GetOrSet(ctx context.Context, key, connStr string) (*gorm.DB, 
 			panic("driver unsupported")
 		}
 
-		if dbGuardian != nil {
+		if isDbGuardianEnabled(ctx) && dbGuardian != nil {
 			if err := dbGuardian(connStr); err != nil {
 				return nil, err
 			}

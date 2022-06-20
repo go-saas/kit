@@ -23,6 +23,5 @@ func (m *Migrate) Seed(ctx context.Context, sCtx *seed.Context) error {
 }
 
 func migrateDb(db *gorm.DB) error {
-	//TDOO migrate
 	return db.AutoMigrate(&biz.Menu{}, &biz.MenuPermissionRequirement{})
 }

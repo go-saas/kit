@@ -86,7 +86,7 @@ func WithLogger(logger klog.Logger) RecoverOption {
 	}
 }
 
-//RecoverHandler wrap next with recover. prevent consumer panic
+//RecoverHandler wrap next with recover. prevent consumer from panic
 func RecoverHandler(next Handler, opt ...RecoverOption) Handler {
 	op := recoverOptions{
 		logger: klog.GetLogger(),
@@ -119,7 +119,7 @@ func RecoverHandler(next Handler, opt ...RecoverOption) Handler {
 	}
 }
 
-//UowHandler wrap handler into a unit of work
+//UowHandler wrap handler into a unit of work (transaction)
 func UowHandler(uowMgr uow.Manager, handler Handler) Handler {
 	return func(ctx context.Context, event Event) error {
 		return uowMgr.WithNew(ctx, func(ctx context.Context) error {

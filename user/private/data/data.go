@@ -9,7 +9,6 @@ import (
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/os"
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/s3"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/dal"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas/gorm"
 	g "gorm.io/gorm"
@@ -29,15 +28,13 @@ var ProviderSet = wire.NewSet(
 	NewUserAddrRepo,
 )
 
-const ConnName dal.ConnName = "user"
-
 // Data .
 type Data struct {
 	DbProvider gorm.DbProvider
 }
 
 func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
-	db := provider.Get(ctx, string(ConnName))
+	db := provider.Get(ctx, string(biz.ConnName))
 	if err := db.SetupJoinTable(&biz.User{}, "Roles", &biz.UserRole{}); err != nil {
 		panic(err)
 	}
@@ -55,5 +52,5 @@ func NewData(c *conf2.Data, dbProvider gorm.DbProvider, logger log.Logger) (*Dat
 }
 
 func NewEnforcerProvider(logger log.Logger, dbProvider gorm.DbProvider) (*casbin.EnforcerProvider, error) {
-	return casbin.NewEnforcerProvider(logger, dbProvider, string(ConnName))
+	return casbin.NewEnforcerProvider(logger, dbProvider, string(biz.ConnName))
 }

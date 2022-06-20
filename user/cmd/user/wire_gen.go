@@ -18,6 +18,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/dal"
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/job"
 	"github.com/goxiaoy/go-saas-kit/pkg/redis"
 	server2 "github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -115,6 +116,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContributor, trustedContextValidator, refreshTokenProvider, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(userService, accountService, authService, roleService, servicePermissionService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContributor, grpcServerRegister)
+	redisConnOpt := job.NewAsynqClientOpt(client)
+	lazyAsynqServer := job.NewAsynqServer(redisConnOpt, connName)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
@@ -128,19 +131,24 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 		cleanup()
 		return nil, nil, err
 	}
-	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(seeder, sender)
+	userMigrationTaskHandler := biz.NewUserMigrationTaskHandler(seeder, sender)
+	jobServer := server.NewJobServer(lazyAsynqServer, userMigrationTaskHandler)
+	asynqClient, cleanup5 := job.NewAsynqClient(redisConnOpt)
+	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(asynqClient)
 	userEventHandler := biz.NewRemoteEventHandler(logger, manager, tenantSeedEventHandler)
 	handler := server.NewEventHandler(userEventHandler)
-	receiver, cleanup5, err := dal.NewRemoteEventReceiver(confData, logger, handler, connName)
+	receiver, cleanup6, err := dal.NewRemoteEventReceiver(confData, logger, handler, connName)
 	if err != nil {
+		cleanup5()
 		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(userConf, logger, httpServer, grpcServer, seeder, receiver)
+	app := newApp(userConf, logger, httpServer, grpcServer, jobServer, seeder, receiver)
 	return app, func() {
+		cleanup6()
 		cleanup5()
 		cleanup4()
 		cleanup3()
@@ -155,6 +163,6 @@ var (
 	_wireDecodeRequestFuncValue  = server2.ReqDecode
 	_wireEncodeResponseFuncValue = server2.ResEncoder
 	_wireEncodeErrorFuncValue    = server2.ErrEncoder
-	_wireConnNameValue           = data.ConnName
+	_wireConnNameValue           = biz.ConnName
 	_wireEventBusValue           = eventbus.Default
 )

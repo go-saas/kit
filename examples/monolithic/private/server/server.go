@@ -21,6 +21,7 @@ import (
 var ProviderSet = wire.NewSet(
 	NewHTTPServer,
 	NewGRPCServer,
+	NewJobServer,
 	NewHttpServiceRegister,
 	NewGrpcServiceRegister,
 	NewSeeder,

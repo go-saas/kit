@@ -25,6 +25,9 @@ Frontend Repo: https://github.com/Goxiaoy/go-saas-kit-frontend
 * [x] Saas
 * [x] Modularity
 * [x] Microservice/Monolithic compatible
+* [x] Distributed Eventbus: kafka
+* [x] Cache (Redis)
+* [x] Background Job: [asynq](https://github.com/hibiken/asynq)
 
 # Quick Start
 
