@@ -37,7 +37,8 @@ menus:
       - name: "jobs"
         icon: "ant-design:eye-outlined"
         path: "/dev/jobs"
-        redirect: "/v1/sys/asynqmon/"
+        component: "IFRAME"
+        iframe: "/v1/sys/asynqmon/"
         is_preserved: true
         title: "routes.dev.jobs"
         requirement:
