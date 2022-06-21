@@ -15,7 +15,7 @@ func NewJobServer(opt asynq.RedisConnOpt, log klog.Logger, handler ubiz.UserMigr
 		string(sbiz.ConnName):   1,
 		string(sysbiz.ConnName): 1,
 	}))
-	srv.Use(job.Logging(log), job.Stack())
+	srv.Use(job.TracingServer(), job.Logging(log), job.Stack())
 	srv.HandleFunc(ubiz.JobTypeUserMigration, handler)
 	return srv
 }
