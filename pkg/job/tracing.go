@@ -3,8 +3,6 @@ package job
 import (
 	"context"
 	"fmt"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/hibiken/asynq"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -25,7 +23,7 @@ var (
 		attribute.String("job.system", "asynq"),
 	}
 	tracer     = otel.Tracer("asynq/tasks")
-	propagator = propagation.NewCompositeTextMapPropagator(tracing.Metadata{}, propagation.Baggage{}, propagation.TraceContext{})
+	propagator = propagation.NewCompositeTextMapPropagator(propagation.Baggage{}, propagation.TraceContext{})
 )
 
 func TracingServer() asynq.MiddlewareFunc {
@@ -56,7 +54,7 @@ func TracingServer() asynq.MiddlewareFunc {
 
 func SetTracingOption(ctx context.Context) asynq.Option {
 	//recover header
-	var header transport.Header = propagation.HeaderCarrier(http.Header{})
+	var header = propagation.HeaderCarrier(http.Header{})
 	ctx = propagator.Extract(ctx, header)
 	//TODO ability to set header
 	panic("unimplemented")
