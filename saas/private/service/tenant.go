@@ -6,6 +6,7 @@ import (
 	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
+	ubiz "github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"io"
 	"os"
 	"path/filepath"
@@ -27,11 +28,12 @@ import (
 
 type TenantService struct {
 	pb.UnimplementedTenantServiceServer
-	useCase *biz.TenantUseCase
-	auth    authz.Service
-	blob    blob.Factory
-	trusted sapi.TrustedContextValidator
-	app     *conf.AppConfig
+	useCase    *biz.TenantUseCase
+	auth       authz.Service
+	blob       blob.Factory
+	trusted    sapi.TrustedContextValidator
+	app        *conf.AppConfig
+	normalizer ubiz.LookupNormalizer
 }
 
 func NewTenantServiceServer(tenant *TenantService) pb.TenantServiceServer {
@@ -39,7 +41,7 @@ func NewTenantServiceServer(tenant *TenantService) pb.TenantServiceServer {
 }
 
 func NewTenantService(useCase *biz.TenantUseCase, auth authz.Service, trusted sapi.TrustedContextValidator, blob blob.Factory, app *conf.AppConfig) *TenantService {
-	return &TenantService{useCase: useCase, auth: auth, trusted: trusted, blob: blob, app: app}
+	return &TenantService{useCase: useCase, auth: auth, trusted: trusted, blob: blob, app: app, normalizer: ubiz.NewLookupNormalizer()}
 }
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {
@@ -59,16 +61,36 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		Logo:        req.Logo,
 		SeparateDb:  req.SeparateDb,
 	}
-	adminInfo := &biz.AdminInfo{}
-	if req.AdminUsername != nil {
-		adminInfo.Username = req.AdminUsername.Value
+	var adminInfo *biz.AdminInfo
+	if req.SeparateDb {
+		//TODO better to call user service api
+		if req.AdminEmail == nil && req.AdminEmail == nil {
+			return nil, pb.ErrorAdminIdentityRequired("")
+		}
+		if req.AdminPassword == nil {
+			return nil, pb.ErrorAdminPasswordRequired("")
+		}
+		adminInfo = &biz.AdminInfo{}
+		if req.AdminUsername != nil {
+			adminInfo.Username = req.AdminUsername.Value
+			_, err := s.normalizer.Name(adminInfo.Username)
+			if err != nil {
+				return nil, pb.ErrorAdminUsernameInvalid("")
+			}
+		}
+		if req.AdminEmail != nil {
+			adminInfo.Email = req.AdminEmail.Value
+			_, err := s.normalizer.Email(adminInfo.Email)
+			if err != nil {
+				return nil, pb.ErrorAdminEmailInvalid("")
+			}
+		}
+		if req.AdminPassword != nil {
+			adminInfo.Password = req.AdminPassword.Value
+		}
+
 	}
-	if req.AdminEmail != nil {
-		adminInfo.Email = req.AdminEmail.Value
-	}
-	if req.AdminPassword != nil {
-		adminInfo.Password = req.AdminPassword.Value
-	}
+
 	if err := s.useCase.CreateWithAdmin(ctx, t, adminInfo); err != nil {
 		return nil, err
 	}

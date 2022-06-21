@@ -13,4 +13,10 @@ enum ErrorReason {
   TENANT_NOT_FOUND = 1[(errors.code) = 404];
   TENANT_FORBIDDEN = 2[(errors.code) = 403];
   TENANT_NOT_READY = 3[(errors.code) = 403];
+
+  ADMIN_IDENTITY_REQUIRED =4[(errors.code) = 400];
+  ADMIN_PASSWORD_REQUIRED =5[(errors.code) = 400];
+
+  ADMIN_USERNAME_INVALID =6[(errors.code) = 400];
+  ADMIN_EMAIL_INVALID =7[(errors.code) = 400];
 }

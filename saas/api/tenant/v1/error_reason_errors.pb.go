@@ -58,3 +58,51 @@ func IsTenantNotReady(err error) bool {
 func ErrorTenantNotReady(format string, args ...interface{}) *errors.Error {
 	return errors.New(403, ErrorReason_TENANT_NOT_READY.String(), fmt.Sprintf(format, args...))
 }
+
+func IsAdminIdentityRequired(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_ADMIN_IDENTITY_REQUIRED.String() && e.Code == 400
+}
+
+func ErrorAdminIdentityRequired(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_ADMIN_IDENTITY_REQUIRED.String(), fmt.Sprintf(format, args...))
+}
+
+func IsAdminPasswordRequired(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_ADMIN_PASSWORD_REQUIRED.String() && e.Code == 400
+}
+
+func ErrorAdminPasswordRequired(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_ADMIN_PASSWORD_REQUIRED.String(), fmt.Sprintf(format, args...))
+}
+
+func IsAdminUsernameInvalid(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_ADMIN_USERNAME_INVALID.String() && e.Code == 400
+}
+
+func ErrorAdminUsernameInvalid(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_ADMIN_USERNAME_INVALID.String(), fmt.Sprintf(format, args...))
+}
+
+func IsAdminEmailInvalid(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_ADMIN_EMAIL_INVALID.String() && e.Code == 400
+}
+
+func ErrorAdminEmailInvalid(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_ADMIN_EMAIL_INVALID.String(), fmt.Sprintf(format, args...))
+}

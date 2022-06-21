@@ -74,3 +74,67 @@ func ErrorTenantNotReadyLocalized(localizer *i18n.Localizer, data map[string]int
 	}
 
 }
+
+func ErrorAdminIdentityRequiredLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "AdminIdentityRequired",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_ADMIN_IDENTITY_REQUIRED.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_ADMIN_IDENTITY_REQUIRED.String(), "")
+	}
+
+}
+
+func ErrorAdminPasswordRequiredLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "AdminPasswordRequired",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_ADMIN_PASSWORD_REQUIRED.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_ADMIN_PASSWORD_REQUIRED.String(), "")
+	}
+
+}
+
+func ErrorAdminUsernameInvalidLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "AdminUsernameInvalid",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_ADMIN_USERNAME_INVALID.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_ADMIN_USERNAME_INVALID.String(), "")
+	}
+
+}
+
+func ErrorAdminEmailInvalidLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "AdminEmailInvalid",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_ADMIN_EMAIL_INVALID.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_ADMIN_EMAIL_INVALID.String(), "")
+	}
+
+}
