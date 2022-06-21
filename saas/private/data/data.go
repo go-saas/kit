@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	kconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/dal"
+	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	g "gorm.io/gorm"
 
 	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/memory"
@@ -21,15 +22,13 @@ var ProviderSet = wire.NewSet(
 	NewTenantStore,
 )
 
-const ConnName dal.ConnName = "saas"
-
 // Data .
 type Data struct {
 	DbProvider dal.ConstDbProvider
 }
 
 func GetDb(ctx context.Context, provider dal.ConstDbProvider) *g.DB {
-	db := provider.Get(ctx, string(ConnName))
+	db := provider.Get(ctx, string(biz.ConnName))
 	return db
 }
 

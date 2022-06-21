@@ -13,7 +13,7 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewSeeder, wire.Value(ClientName), wire.Value(data.ConnName), NewSeeding, NewAuthorizationOption)
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewSeeder, wire.Value(ClientName), wire.Value(biz.ConnName), NewSeeding, NewAuthorizationOption)
 
 var ClientName api.ClientName = api2.ServiceName
 

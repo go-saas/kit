@@ -30,7 +30,7 @@ func NewUserMigrationTask(msg *v1.TenantCreatedEvent) (*asynq.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	return asynq.NewTask(JobTypeUserMigration, payload), nil
+	return asynq.NewTask(JobTypeUserMigration, payload, asynq.Queue(string(ConnName))), nil
 }
 
 type UserMigrationTaskHandler func(ctx context.Context, t *asynq.Task) error

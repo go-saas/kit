@@ -79,16 +79,16 @@ func NewBlobFactory(c *kitconf.Data) blob.Factory {
 	return blob.NewFactory(c.Blobs)
 }
 
+func NewEmailer(c *kitconf.Data) email.LazyClient {
+	return email.NewLazyClient(c.Endpoints)
+}
+
 func NewRedis(c *kitconf.Data, name ConnName) *redis.Client {
 	if c.Endpoints.Redis == nil {
 		panic("redis endpoints required")
 	}
 	r := kitredis.ResolveRedisEndpointOrDefault(c.Endpoints.Redis, string(name))
 	return kitredis.NewRedisClient(r)
-}
-
-func NewEmailer(c *kitconf.Data) email.LazyClient {
-	return email.NewLazyClient(c.Endpoints)
 }
 
 func NewEventSender(c *kitconf.Data, logger log.Logger, name ConnName) (event.Sender, func(), error) {

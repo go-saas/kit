@@ -52,7 +52,9 @@ Username: admin
 Password: 123456
 
 Open `http://localhost:80/dev/docs` to see swagger openapi  
-Open `http://localhost:80/dev/jeager` to see jaeger tracing
+Open `http://localhost:80/dev/jaeger` to see jaeger tracing  
+Open `http://localhost:80/dev/jobs` to see background job status
+
 # Development
 
 ```shell

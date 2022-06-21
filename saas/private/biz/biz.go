@@ -5,6 +5,7 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	"github.com/goxiaoy/go-saas-kit/pkg/dal"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	"github.com/goxiaoy/uow"
 )
@@ -17,6 +18,8 @@ var ProviderSet = wire.NewSet(
 	NewTenantReadyEventHandler,
 	NewConfigConnStrGenerator,
 )
+
+const ConnName dal.ConnName = "saas"
 
 func LogoBlob(ctx context.Context, factory blob.Factory) blob.Blob {
 	return factory.Get(ctx, "saas", false)

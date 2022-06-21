@@ -14,7 +14,7 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewSeeder, wire.Value(ClientName), wire.Value(data.ConnName), NewSeeding, NewEventHandler, NewAuthorizationOption)
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewSeeder, wire.Value(ClientName), wire.Value(biz.ConnName), NewSeeding, NewEventHandler, NewAuthorizationOption)
 
 var ClientName kapi.ClientName = api.ServiceName
 

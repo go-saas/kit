@@ -11,6 +11,7 @@ require (
 	github.com/goxiaoy/go-saas v0.4.2-0.20220620080754-a74c1bd17fb0
 	github.com/goxiaoy/go-saas-kit v0.0.0-00010101000000-000000000000
 	github.com/goxiaoy/uow v0.0.0-20220620110744-e5619dd7a74c
+	github.com/hibiken/asynq v0.23.0
 	google.golang.org/protobuf v1.28.0
 )
 
@@ -61,7 +62,6 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.2 // indirect
-	github.com/hibiken/asynq v0.23.0 // indirect
 	github.com/hibiken/asynqmon v0.7.1 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect

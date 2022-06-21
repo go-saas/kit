@@ -117,7 +117,6 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	grpcServerRegister := service.NewGrpcServerRegister(userService, accountService, authService, roleService, servicePermissionService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContributor, grpcServerRegister)
 	redisConnOpt := job.NewAsynqClientOpt(client)
-	lazyAsynqServer := job.NewAsynqServer(redisConnOpt, connName)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
@@ -132,7 +131,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 		return nil, nil, err
 	}
 	userMigrationTaskHandler := biz.NewUserMigrationTaskHandler(seeder, sender)
-	jobServer := server.NewJobServer(lazyAsynqServer, userMigrationTaskHandler)
+	jobServer := server.NewJobServer(redisConnOpt, userMigrationTaskHandler)
 	asynqClient, cleanup5 := job.NewAsynqClient(redisConnOpt)
 	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(asynqClient)
 	userEventHandler := biz.NewRemoteEventHandler(logger, manager, tenantSeedEventHandler)
