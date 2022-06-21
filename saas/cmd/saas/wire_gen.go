@@ -17,6 +17,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/dal"
 	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/goxiaoy/go-saas-kit/pkg/job"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
@@ -35,8 +36,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	eventBus := _wireEventBusValue
 	dbCache, cleanup := gorm.NewDbCache(confData)
-	constConnStrResolver := dal.NewConstantConnStrResolver(confData)
-	constDbProvider := dal.NewConstDbProvider(dbCache, constConnStrResolver, confData)
+	connStrings := dal.NewConstantConnStrResolver(confData)
+	constDbProvider := dal.NewConstDbProvider(dbCache, connStrings, confData)
 	dataData, cleanup2, err := data.NewData(confData, constDbProvider, logger)
 	if err != nil {
 		cleanup()
@@ -78,9 +79,12 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, trustedContextValidator, userTenantContributor, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(tenantService)
 	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, userTenantContributor, trustedContextValidator, grpcServerRegister, logger)
+	client := dal.NewRedis(confData, connName)
+	redisConnOpt := job.NewAsynqClientOpt(client)
+	jobServer := server2.NewJobServer(redisConnOpt, logger)
 	migrate := data.NewMigrate(dataData)
 	seeding := server2.NewSeeding(manager, migrate)
-	seeder := server2.NewSeeder(seeding)
+	seeder := server2.NewSeeder(tenantStore, seeding)
 	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
 	saasEventHandler := biz.NewRemoteEventHandler(logger, manager, tenantReadyEventHandler)
 	handler := server2.NewEventHandler(saasEventHandler)
@@ -92,7 +96,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(logger, httpServer, grpcServer, seeder, receiver)
+	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, receiver)
 	return app, func() {
 		cleanup5()
 		cleanup4()

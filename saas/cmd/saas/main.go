@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	"github.com/goxiaoy/go-saas-kit/pkg/job"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	"github.com/goxiaoy/go-saas/seed"
@@ -36,7 +37,7 @@ func init() {
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.Seeder, _ event.Receiver) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, seeder seed.Seeder, _ event.Receiver) *kratos.App {
 	if ifSeed {
 		if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("")); err != nil {
 			panic(err)
@@ -51,6 +52,7 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.See
 		kratos.Server(
 			hs,
 			gs,
+			js,
 		),
 	)
 }

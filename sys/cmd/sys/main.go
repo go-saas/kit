@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"github.com/go-kratos/kratos/v2"
+	"github.com/goxiaoy/go-saas-kit/pkg/job"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
@@ -39,7 +40,7 @@ func init() {
 	flag.StringVar(&seedPath, "seed.path", "", "seed file path")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.Seeder) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, seeder seed.Seeder) *kratos.App {
 	if ifSeed {
 		extra := map[string]interface{}{}
 		if len(seedPath) > 0 {
@@ -58,6 +59,7 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, seeder seed.See
 		kratos.Server(
 			hs,
 			gs,
+			js,
 		),
 	)
 }

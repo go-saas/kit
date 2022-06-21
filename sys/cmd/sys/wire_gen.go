@@ -67,6 +67,7 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, option, logger, trustedContextValidator, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(menuService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, manager, option, logger, trustedContextValidator, grpcServerRegister)
+	jobServer := server.NewJobServer(redisConnOpt, logger)
 	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup3()
@@ -77,8 +78,8 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	migrate := data.NewMigrate(dataData)
 	menuSeed := biz.NewMenuSeed(dbProvider, menuRepo)
 	seeding := server.NewSeeding(manager, migrate, menuSeed)
-	seeder := server.NewSeeder(seeding)
-	app := newApp(logger, httpServer, grpcServer, seeder)
+	seeder := server.NewSeeder(tenantStore, seeding)
+	app := newApp(logger, httpServer, grpcServer, jobServer, seeder)
 	return app, func() {
 		cleanup4()
 		cleanup3()

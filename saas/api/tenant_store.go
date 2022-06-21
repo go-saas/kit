@@ -15,7 +15,7 @@ type TenantStore struct {
 var _ common.TenantStore = (*TenantStore)(nil)
 
 func NewTenantStore(srv v1.TenantServiceServer) common.TenantStore {
-	return common.NewCachedTenantStore(&TenantStore{srv: srv})
+	return &TenantStore{srv: srv}
 }
 
 func (r *TenantStore) GetByNameOrId(ctx context.Context, nameOrId string) (*common.TenantConfig, error) {

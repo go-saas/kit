@@ -5,11 +5,13 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	"github.com/goxiaoy/go-saas-kit/pkg/saas"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
+	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
 )
@@ -26,11 +28,11 @@ func NewSeeding(uow uow.Manager,
 	roleSeed *biz.RoleSeed,
 	userSeed *biz.UserSeed,
 	p *biz.PermissionSeeder) Seeding {
-	return seed.Chain(migrate, uow2.NewUowContributor(uow, seed.Chain(roleSeed, userSeed, p)))
+	return seed.Chain(migrate, uow2.NewUowContributor(uow, roleSeed, userSeed, p))
 }
 
-func NewSeeder(us Seeding) seed.Seeder {
-	res := seed.NewDefaultSeeder(us)
+func NewSeeder(ts common.TenantStore, us Seeding) seed.Seeder {
+	res := seed.NewDefaultSeeder(saas.SeedChangeTenant(ts, us))
 	return res
 }
 

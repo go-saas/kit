@@ -284,8 +284,8 @@ github.com/gorilla/securecookie v1.1.1/go.mod h1:ra0sb63/xPlUeL+yeDciTfxMRAA+MP+
 github.com/gorilla/sessions v1.2.1/go.mod h1:dk2InVEVJ0sfLlnXv9EAgkf6ecYs/i80K/zI+bUmuGM=
 github.com/goxiaoy/go-eventbus v0.0.5 h1:i+/btPzl+YTAjix8StqTVF3b6NIXMGn8SEVnrwSBXic=
 github.com/goxiaoy/go-eventbus v0.0.5/go.mod h1:b5yykGpYE+OOVJC/0nlJRzulL5GSyVPPp4Msmwi4vYY=
-github.com/goxiaoy/go-saas v0.4.2-0.20220620080754-a74c1bd17fb0 h1:kCMsuFNAzq5ZDl9P1/qnyrl2jWCmPU+X6sa5Yx4hf3A=
-github.com/goxiaoy/go-saas v0.4.2-0.20220620080754-a74c1bd17fb0/go.mod h1:KJSg5sDNAgFR8rtoybW/MSkAKKdOzQNg2/XtaIXajus=
+github.com/goxiaoy/go-saas v0.4.2-0.20220621162042-ec5654f2c57f h1:NvaWtHZy8Nm8omEyPOD9d8tKxBlTdFK4ltp34d7xsDU=
+github.com/goxiaoy/go-saas v0.4.2-0.20220621162042-ec5654f2c57f/go.mod h1:KJSg5sDNAgFR8rtoybW/MSkAKKdOzQNg2/XtaIXajus=
 github.com/goxiaoy/gorm-concurrency v1.0.5 h1:Smcbn0xJLU0J9ycomUzY5IUIGwHu9UGpmxCSsRJ2OE4=
 github.com/goxiaoy/gorm-concurrency v1.0.5/go.mod h1:0rkcYgZ6OLLYLWT7QfYZkDrnIcTMWStwyLVNQdd8lGw=
 github.com/goxiaoy/sessions v1.2.2-0.20220327125603-baf0b311512e h1:tKvF7rNf7tSape+3HC9fb6n0uqRtGIhDt0Hn6gmWDpg=

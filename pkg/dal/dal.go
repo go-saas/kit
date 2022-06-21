@@ -20,9 +20,8 @@ import (
 )
 
 type (
-	ConnName             string
-	ConstConnStrResolver data.ConnStrResolver
-	ConstDbProvider      sgorm.DbProvider
+	ConnName        string
+	ConstDbProvider sgorm.DbProvider
 )
 
 var (
@@ -61,17 +60,17 @@ func NewConnStrResolver(c *kitconf.Data, ts common.TenantStore) data.ConnStrReso
 }
 
 // NewConstantConnStrResolver ignore multi-tenancy
-func NewConstantConnStrResolver(c *kitconf.Data) ConstConnStrResolver {
+func NewConstantConnStrResolver(c *kitconf.Data) data.ConnStrings {
 	// ignore multi-tenancy
 	conn := make(data.ConnStrings, 1)
 	for k, v := range c.Endpoints.Databases {
 		conn[k] = v.Source
 	}
-	return data.NewDefaultConnStrResolver(data.NewConnStrOption(conn))
+	return conn
 }
 
 // NewConstDbProvider ignore multi-tenancy
-func NewConstDbProvider(cache *kitgorm.DbCache, cs ConstConnStrResolver, d *kitconf.Data) ConstDbProvider {
+func NewConstDbProvider(cache *kitgorm.DbCache, cs data.ConnStrings, d *kitconf.Data) ConstDbProvider {
 	return kitgorm.NewDbProvider(cache, cs, d)
 }
 

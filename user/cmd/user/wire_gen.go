@@ -122,7 +122,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
 	seeding := server.NewSeeding(manager, migrate, roleSeed, userSeed, permissionSeeder)
-	seeder := server.NewSeeder(seeding)
+	seeder := server.NewSeeder(tenantStore, seeding)
 	sender, cleanup4, err := dal.NewEventSender(confData, logger, connName)
 	if err != nil {
 		cleanup3()

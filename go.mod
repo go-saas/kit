@@ -15,7 +15,7 @@ require (
 	github.com/gorilla/csrf v1.7.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/goxiaoy/go-eventbus v0.0.5
-	github.com/goxiaoy/go-saas v0.4.2-0.20220620080754-a74c1bd17fb0
+	github.com/goxiaoy/go-saas v0.4.2-0.20220621162042-ec5654f2c57f
 	github.com/goxiaoy/gorm-concurrency v1.0.5
 	github.com/goxiaoy/uow v0.0.0-20220620110744-e5619dd7a74c
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0
