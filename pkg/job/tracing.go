@@ -29,7 +29,7 @@ var (
 func TracingServer() asynq.MiddlewareFunc {
 	kind := KindConsumer
 	return func(h asynq.Handler) asynq.Handler {
-		return asynq.HandlerFunc(func(ctx context.Context, t *asynq.Task) error {
+		return asynq.HandlerFunc(func(ctx context.Context, t *asynq.Task) (err error) {
 			//TODO recover context from header?
 			//ctx = propagator.Extract(ctx, propagation.HeaderCarrier(t.Header))
 			ctx, span := tracer.Start(ctx, fmt.Sprintf("job-%s", t.Type()))
@@ -46,8 +46,17 @@ func TracingServer() asynq.MiddlewareFunc {
 				attribute.Int("job.retry_count", retryCount),
 			)
 			span.SetAttributes(attrs...)
-			defer span.End()
-			return h.ProcessTask(ctx, t)
+			defer func() {
+				if err != nil {
+					span.RecordError(err)
+					span.SetStatus(codes.Error, err.Error())
+				} else {
+					span.SetStatus(codes.Ok, "OK")
+				}
+				span.End()
+			}()
+			err = h.ProcessTask(ctx, t)
+			return
 		})
 	}
 }
@@ -60,7 +69,7 @@ func SetTracingOption(ctx context.Context) asynq.Option {
 	panic("unimplemented")
 }
 
-func EnqueueTracing(ctx context.Context, client *asynq.Client, task *asynq.Task, opts ...asynq.Option) (taskinfo *asynq.TaskInfo, err error) {
+func EnqueueWithTracing(ctx context.Context, client *asynq.Client, task *asynq.Task, opts ...asynq.Option) (taskinfo *asynq.TaskInfo, err error) {
 	ctx, span := tracer.Start(ctx, fmt.Sprintf("job-%s", task.Type()))
 	defer func() {
 		attrs := append(
@@ -83,5 +92,6 @@ func EnqueueTracing(ctx context.Context, client *asynq.Client, task *asynq.Task,
 	}()
 
 	opts = append(opts, SetTracingOption(ctx))
-	return client.EnqueueContext(ctx, task, opts...)
+	taskinfo, err = client.EnqueueContext(ctx, task, opts...)
+	return
 }
