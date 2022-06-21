@@ -64,7 +64,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 	var adminInfo *biz.AdminInfo
 	if req.SeparateDb {
 		//TODO better to call user service api
-		if req.AdminEmail == nil && req.AdminEmail == nil {
+		if req.AdminUsername == nil && req.AdminEmail == nil {
 			return nil, pb.ErrorAdminIdentityRequired("")
 		}
 		if req.AdminPassword == nil {
