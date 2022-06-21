@@ -140,7 +140,9 @@ func (oi *OTelInterceptor) StartConsumerSpan(ctx context.Context, group string, 
 		}
 	}
 	ctx = oi.propagator.Extract(ctx, propagation.HeaderCarrier(header))
-	ctx, span := oi.tracer.Start(ctx, msg.Topic)
+	msgKey := string(msg.Key)
+
+	ctx, span := oi.tracer.Start(ctx, fmt.Sprintf("%s-%s", msg.Topic, msgKey))
 
 	//https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/messaging.md#apache-kafka
 	attWithTopic := append(
