@@ -129,7 +129,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService, permissionService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl, trustedContextValidator)
 	signInManager := biz.NewSignInManager(userManager, security)
-	apiClient := server3.NewHydra(security)
+	apiClient := service.NewHydra(security)
 	auth := http.NewAuth(decodeRequestFunc, userManager, logger, signInManager, apiClient)
 	httpServerRegister := service.NewHttpServerRegister(userService, encodeResponseFunc, encodeErrorFunc, accountService, authService, roleService, servicePermissionService, auth, confData, factory)
 	menuRepo := data3.NewMenuRepo(dbProvider, eventBus)
@@ -164,7 +164,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	seeding2 := server5.NewSeeding(manager, migrate2)
 	seeder := server2.NewSeeder(seeding, serverSeeding, seeding2)
 	userMigrationTaskHandler := biz.NewUserMigrationTaskHandler(seeder, sender)
-	jobServer := server2.NewJobServer(redisConnOpt, connName, userMigrationTaskHandler)
+	jobServer := server2.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
 	asynqClient, cleanup6 := job.NewAsynqClient(redisConnOpt)
 	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(asynqClient)
 	userEventHandler := biz.NewRemoteEventHandler(logger, manager, tenantSeedEventHandler)
@@ -181,20 +181,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	eventHook, cleanup8, err := biz2.NewLocalEventHook(sender)
-	if err != nil {
-		cleanup7()
-		cleanup6()
-		cleanup5()
-		cleanup4()
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, receiver, eventHook)
+	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, receiver)
 	return app, func() {
-		cleanup8()
 		cleanup7()
 		cleanup6()
 		cleanup5()

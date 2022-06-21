@@ -4,7 +4,6 @@ import (
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	api2 "github.com/goxiaoy/go-saas-kit/user/api"
@@ -13,11 +12,10 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/goxiaoy/uow"
-	client "github.com/ory/hydra-client-go"
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewJobServer, wire.Value(ClientName), wire.Value(biz.ConnName), NewSeeding, NewSeeder, NewHydra, NewAuthorizationOption, NewEventHandler)
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewJobServer, wire.Value(ClientName), wire.Value(biz.ConnName), NewSeeding, NewSeeder, NewAuthorizationOption, NewEventHandler)
 
 var ClientName api.ClientName = api2.ServiceName
 
@@ -34,16 +32,6 @@ func NewSeeding(uow uow.Manager,
 func NewSeeder(us Seeding) seed.Seeder {
 	res := seed.NewDefaultSeeder(us)
 	return res
-}
-
-func NewHydra(c *conf2.Security) *client.APIClient {
-	cfg := client.NewConfiguration()
-	cfg.Servers = client.ServerConfigurations{
-		{
-			URL: c.Oidc.Hydra.AdminUrl,
-		},
-	}
-	return client.NewAPIClient(cfg)
 }
 
 func NewAuthorizationOption(userRole *service.UserRoleContributor) *authz.Option {

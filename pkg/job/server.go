@@ -3,6 +3,7 @@ package job
 import (
 	"context"
 	"fmt"
+	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
 	kerrors "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/lazy"
@@ -32,7 +33,11 @@ func WithConcurrency(c int) ServerOption {
 
 func NewServer(opt asynq.RedisConnOpt, opts ...ServerOption) *Server {
 	ret := &Server{server: newAsynqServer(opt, opts...), ServeMux: asynq.NewServeMux()}
-	ret.Use(func(handler asynq.Handler) asynq.Handler {
+	return ret
+}
+
+func Stack() asynq.MiddlewareFunc {
+	return func(handler asynq.Handler) asynq.Handler {
 		return asynq.HandlerFunc(func(ctx context.Context, task *asynq.Task) error {
 			err := handler.ProcessTask(ctx, task)
 			if err == nil {
@@ -40,9 +45,24 @@ func NewServer(opt asynq.RedisConnOpt, opts ...ServerOption) *Server {
 			}
 			return fmt.Errorf("%w\n,%s", err, kerrors.Stack(0))
 		})
-	})
+	}
+}
 
-	return ret
+func Logging(logger klog.Logger) asynq.MiddlewareFunc {
+	return func(handler asynq.Handler) asynq.Handler {
+		return asynq.HandlerFunc(func(ctx context.Context, task *asynq.Task) error {
+			err := handler.ProcessTask(ctx, task)
+			if err != nil {
+				_ = klog.WithContext(ctx, logger).Log(klog.LevelError,
+					klog.DefaultMessageKey, err.Error(),
+					"task", task.Type())
+			} else {
+				_ = klog.WithContext(ctx, logger).Log(klog.LevelInfo,
+					"task", task.Type())
+			}
+			return err
+		})
+	}
 }
 
 func (s *Server) Start(ctx context.Context) error {

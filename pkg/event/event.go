@@ -29,7 +29,7 @@ func NewEventReceiver(cfg *conf.Event, handler event.Handler, logger log.Logger)
 	if err != nil {
 		return nil, func() {}, err
 	}
-	err = ret.Receive(context.Background(), handler)
+	err = ret.Receive(context.Background(), event.LoggingHandler(event.StackHandler(handler), logger))
 	return ret, clean, err
 }
 

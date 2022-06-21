@@ -92,18 +92,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	eventHook, cleanup6, err := biz.NewLocalEventHook(sender)
-	if err != nil {
-		cleanup5()
-		cleanup4()
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	app := newApp(logger, httpServer, grpcServer, seeder, receiver, eventHook)
+	app := newApp(logger, httpServer, grpcServer, seeder, receiver)
 	return app, func() {
-		cleanup6()
 		cleanup5()
 		cleanup4()
 		cleanup3()

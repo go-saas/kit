@@ -110,7 +110,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	roleService := service.NewRoleServiceService(roleManager, defaultAuthorizationService, permissionService)
 	servicePermissionService := service.NewPermissionService(defaultAuthorizationService, permissionService, subjectResolverImpl, trustedContextValidator)
 	signInManager := biz.NewSignInManager(userManager, security)
-	apiClient := server.NewHydra(security)
+	apiClient := service.NewHydra(security)
 	auth := http2.NewAuth(decodeRequestFunc, userManager, logger, signInManager, apiClient)
 	httpServerRegister := service.NewHttpServerRegister(userService, encodeResponseFunc, encodeErrorFunc, accountService, authService, roleService, servicePermissionService, auth, confData, factory)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContributor, trustedContextValidator, refreshTokenProvider, httpServerRegister)
@@ -131,7 +131,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 		return nil, nil, err
 	}
 	userMigrationTaskHandler := biz.NewUserMigrationTaskHandler(seeder, sender)
-	jobServer := server.NewJobServer(redisConnOpt, userMigrationTaskHandler)
+	jobServer := server.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
 	asynqClient, cleanup5 := job.NewAsynqClient(redisConnOpt)
 	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(asynqClient)
 	userEventHandler := biz.NewRemoteEventHandler(logger, manager, tenantSeedEventHandler)

@@ -16,6 +16,7 @@ import (
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	uhttp "github.com/goxiaoy/go-saas-kit/user/private/service/http"
+	client "github.com/ory/hydra-client-go"
 	"net/http"
 )
 
@@ -34,6 +35,7 @@ var ProviderSet = wire.NewSet(
 	NewRoleServiceServer,
 	NewPermissionService,
 	NewPermissionServiceServer,
+	NewHydra,
 	api.NewUserTenantContributor,
 	api.NewRefreshProvider,
 	uhttp.NewAuth)
@@ -97,4 +99,14 @@ func NewGrpcServerRegister(user *UserService,
 		v1.RegisterRoleServiceServer(srv, role)
 		v15.RegisterPermissionServiceServer(srv, permission)
 	})
+}
+
+func NewHydra(c *kconf.Security) *client.APIClient {
+	cfg := client.NewConfiguration()
+	cfg.Servers = client.ServerConfigurations{
+		{
+			URL: c.Oidc.Hydra.AdminUrl,
+		},
+	}
+	return client.NewAPIClient(cfg)
 }

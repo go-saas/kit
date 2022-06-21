@@ -51,9 +51,6 @@ func NewDbGuardianContext(ctx context.Context, enable ...bool) context.Context {
 }
 
 func isDbGuardianEnabled(ctx context.Context) bool {
-	if common.GetMultiTenantSide(ctx) == common.Host {
-		return true
-	}
 	if v, ok := ctx.Value(dbGuardianKey{}).(bool); ok {
 		return v
 	}

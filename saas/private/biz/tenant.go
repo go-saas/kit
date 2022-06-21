@@ -44,6 +44,7 @@ type TenantConn struct {
 	Value     string    `gorm:"column:value;size:1000;"`
 	CreatedAt time.Time `gorm:"column:created_at;index;"`
 	UpdatedAt time.Time `gorm:"column:updated_at;index;"`
+	Ready     bool      `gorm:"column:ready"`
 }
 
 type TenantFeature struct {

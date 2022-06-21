@@ -86,6 +86,31 @@ func WithLogger(logger klog.Logger) RecoverOption {
 	}
 }
 
+func LoggingHandler(next Handler, logger klog.Logger) Handler {
+	return func(ctx context.Context, event Event) error {
+		err := next(ctx, event)
+		if err != nil {
+			_ = klog.WithContext(ctx, logger).Log(klog.LevelError,
+				klog.DefaultMessageKey, err.Error(),
+				"event", event.Key())
+		} else {
+			_ = klog.WithContext(ctx, logger).Log(klog.LevelInfo,
+				"event", event.Key())
+		}
+		return err
+	}
+}
+
+func StackHandler(next Handler) Handler {
+	return func(ctx context.Context, event Event) error {
+		err := next(ctx, event)
+		if err == nil {
+			return err
+		}
+		return fmt.Errorf("%w\n,%s", err, kerrors.Stack(0))
+	}
+}
+
 //RecoverHandler wrap next with recover. prevent consumer from panic
 func RecoverHandler(next Handler, opt ...RecoverOption) Handler {
 	op := recoverOptions{

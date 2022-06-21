@@ -47,7 +47,7 @@ func newApp(c *conf.UserConf, logger log.Logger, hs *http.Server, gs *grpc.Serve
 	if ifSeed {
 		if err := seeder.Seed(context.Background(),
 			seed.NewSeedOption().
-				WithTenantId("").
+				WithTenantId("1d34cd5a-1b4a-4892-b55d-ebe7aaba8636").
 				WithExtra(map[string]interface{}{
 					biz.AdminUsernameKey: c.Admin.GetUsername(),
 					biz.AdminPasswordKey: c.Admin.GetPassword(),

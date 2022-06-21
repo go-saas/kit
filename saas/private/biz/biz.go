@@ -13,7 +13,6 @@ import (
 // ProviderSet is biz providers.
 var ProviderSet = wire.NewSet(
 	NewTenantUserCase,
-	NewLocalEventHook,
 	NewRemoteEventHandler,
 	NewTenantReadyEventHandler,
 	NewConfigConnStrGenerator,
@@ -23,16 +22,6 @@ const ConnName dal.ConnName = "saas"
 
 func LogoBlob(ctx context.Context, factory blob.Factory) blob.Blob {
 	return factory.Get(ctx, "saas", false)
-}
-
-type EventHook interface {
-}
-
-//NewLocalEventHook hook with local event
-func NewLocalEventHook(sender event.Sender) (EventHook, func(), error) {
-	var cleanup = func() {
-	}
-	return nil, cleanup, nil
 }
 
 type SaasEventHandler event.Handler
