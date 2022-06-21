@@ -94,5 +94,5 @@ var (
 	_wireEncodeErrorFuncValue    = server2.ErrEncoder
 	_wireClientNameValue         = server.ClientName
 	_wireEventBusValue           = eventbus.Default
-	_wireConnNameValue           = data.ConnName
+	_wireConnNameValue           = biz.ConnName
 )
