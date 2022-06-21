@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/goxiaoy/go-saas-kit/pkg/errors"
+	kerrors "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	"github.com/goxiaoy/uow"
 )
 
@@ -101,10 +101,10 @@ func RecoverHandler(next Handler, opt ...RecoverOption) Handler {
 	return func(ctx context.Context, event Event) (err error) {
 		defer func() {
 			if rerr := recover(); rerr != nil {
-				stack := errors.Stack(0)
+				stack := kerrors.Stack(0)
 				logger.Errorf("panic recovered: %s\n %s", rerr, stack)
 				if rrerr, ok := rerr.(error); ok {
-					err = op.formatter(ctx, rrerr)
+					err = op.formatter(ctx, fmt.Errorf("panic recovered: %w\n %s", rrerr, stack))
 				} else {
 					err = fmt.Errorf("panic recovered: %s\n %s", rerr, stack)
 					err = op.formatter(ctx, err)

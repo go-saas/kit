@@ -47,6 +47,7 @@ func NewHTTPServer(c *conf.Services,
 	middlewares := middleware.Chain(server.Recovery(),
 		tracing.Server(),
 		logging.Server(logger),
+		server.Stack(),
 		metrics.Server(),
 		validate.Validator(),
 		//TODO combine i18n

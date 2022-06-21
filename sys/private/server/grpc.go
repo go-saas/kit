@@ -34,6 +34,7 @@ func NewGRPCServer(
 		server.Recovery(),
 		tracing.Server(),
 		logging.Server(logger),
+		server.Stack(),
 		metrics.Server(),
 		validate.Validator(),
 		localize.I18N(i18n.Files...),

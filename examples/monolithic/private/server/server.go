@@ -28,7 +28,6 @@ var ProviderSet = wire.NewSet(
 	NewEventHandler,
 	wire.Value(dal.ConnName("default")),
 	NewAuthorizationOption,
-	userver.NewHydra,
 	userver.NewSeeding,
 	sserver.NewSeeding,
 	sysserver.NewSeeding,

@@ -2,7 +2,9 @@ package job
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/transport"
+	kerrors "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/lazy"
 	"github.com/hibiken/asynq"
 )
@@ -29,7 +31,18 @@ func WithConcurrency(c int) ServerOption {
 }
 
 func NewServer(opt asynq.RedisConnOpt, opts ...ServerOption) *Server {
-	return &Server{server: newAsynqServer(opt, opts...), ServeMux: asynq.NewServeMux()}
+	ret := &Server{server: newAsynqServer(opt, opts...), ServeMux: asynq.NewServeMux()}
+	ret.Use(func(handler asynq.Handler) asynq.Handler {
+		return asynq.HandlerFunc(func(ctx context.Context, task *asynq.Task) error {
+			err := handler.ProcessTask(ctx, task)
+			if err == nil {
+				return err
+			}
+			return fmt.Errorf("%w\n,%s", err, kerrors.Stack(0))
+		})
+	})
+
+	return ret
 }
 
 func (s *Server) Start(ctx context.Context) error {

@@ -33,6 +33,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts common.TenantSt
 	m := middleware.Chain(server.Recovery(),
 		tracing.Server(),
 		logging.Server(logger),
+		server.Stack(),
 		metrics.Server(),
 		validate.Validator(),
 		localize.I18N(i18n.Files...),
