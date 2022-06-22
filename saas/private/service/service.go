@@ -12,7 +12,8 @@ import (
 )
 
 // ProviderSet is service providers.
-var ProviderSet = wire.NewSet(NewHttpServerRegister, NewGrpcServerRegister, NewTenantService, NewTenantServiceServer)
+var ProviderSet = wire.NewSet(NewHttpServerRegister, NewGrpcServerRegister,
+	NewTenantService, wire.Bind(new(v1.TenantServiceServer), new(*TenantService)))
 
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister

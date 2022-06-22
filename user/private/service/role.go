@@ -26,10 +26,6 @@ func NewRoleServiceService(repo *biz.RoleManager, auth authz.Service, permission
 	return &RoleService{mgr: repo, auth: auth, permissionMgr: permissionMgr}
 }
 
-func NewRoleServiceServer(v *RoleService) pb.RoleServiceServer {
-	return v
-}
-
 func (s *RoleService) ListRoles(ctx context.Context, req *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
 	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceRole, "*"), authz.ReadAction); err != nil {
 		return nil, err

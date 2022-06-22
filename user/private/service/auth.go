@@ -67,10 +67,6 @@ func NewAuthService(um *biz.UserManager,
 	}
 }
 
-func NewAuthServiceServer(v *AuthService) pb.AuthServer {
-	return v
-}
-
 func (s *AuthService) Register(ctx context.Context, req *pb.RegisterAuthRequest) (*pb.RegisterAuthReply, error) {
 
 	return &pb.RegisterAuthReply{}, nil

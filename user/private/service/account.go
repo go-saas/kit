@@ -49,10 +49,6 @@ func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13
 	}
 }
 
-func NewAccountServiceServer(v *AccountService) pb.AccountServer {
-	return v
-}
-
 func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileRequest) (*pb.GetProfileResponse, error) {
 	//TODO clean
 

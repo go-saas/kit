@@ -52,10 +52,6 @@ func NewUserService(um *biz.UserManager, rm *biz.RoleManager, auth authz.Service
 	}
 }
 
-func NewUserServiceServer(v *UserService) pb.UserServiceServer {
-	return v
-}
-
 func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, "*"), authz.ReadAction); err != nil {
 		return nil, err
