@@ -9,7 +9,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
-	"github.com/samber/lo"
 )
 
 type TenantInternalService struct {
@@ -33,10 +32,6 @@ func (s *TenantInternalService) GetTenant(ctx context.Context, req *pb.GetTenant
 	}
 	if t == nil {
 		return nil, pb.ErrorTenantNotFoundLocalized(localize.FromContext(ctx), nil, nil)
-	}
-	//check db ready
-	if lo.ContainsBy(t.Conn, func(c biz.TenantConn) bool { return !c.Ready }) {
-		return nil, pb.ErrorTenantNotReadyLocalized(localize.FromContext(ctx), nil, nil)
 	}
 
 	return mapBizTenantToApi(ctx, s.App, s.Blob, t), nil
