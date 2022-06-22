@@ -23,8 +23,12 @@ func NewGrpcConn(clientName api.ClientName, services *conf.Services,
 	return api.NewGrpcConn(clientName, ServiceName, services, opt, tokenMgr, logger, opts...)
 }
 
-var GrpcProviderSet = wire.NewSet(NewTenantStore, NewGrpcConn, NewTenantGrpcClient)
+var GrpcProviderSet = wire.NewSet(NewTenantStore, NewGrpcConn, NewTenantGrpcClient, NewTenantInternalGrpcClient)
 
 func NewTenantGrpcClient(conn GrpcConn) v1.TenantServiceServer {
 	return v1.NewTenantServiceClientProxy(v1.NewTenantServiceClient(conn))
+}
+
+func NewTenantInternalGrpcClient(conn GrpcConn) v1.TenantInternalServiceServer {
+	return v1.NewTenantInternalServiceClientProxy(v1.NewTenantInternalServiceClient(conn))
 }

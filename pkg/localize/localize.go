@@ -42,7 +42,10 @@ func I18N(files ...FileBundle) middleware.Middleware {
 	}
 }
 
+// FromContext resolve *i18n.Localizer from context. return nil if not found
 func FromContext(ctx context.Context) *i18n.Localizer {
-	ret := ctx.Value(localizerKey{}).(*i18n.Localizer)
-	return ret
+	if ret, ok := ctx.Value(localizerKey{}).(*i18n.Localizer); ok {
+		return ret
+	}
+	return nil
 }

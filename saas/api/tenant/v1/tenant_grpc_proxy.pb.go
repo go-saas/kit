@@ -49,6 +49,19 @@ func (c *tenantServiceClientProxy) ListTenant(ctx context.Context, in *ListTenan
 func (c *tenantServiceClientProxy) GetCurrentTenant(ctx context.Context, in *GetCurrentTenantRequest) (*GetCurrentTenantReply, error) {
 	return c.cc.GetCurrentTenant(ctx, in)
 }
-func (c *tenantServiceClientProxy) GetTenantInternal(ctx context.Context, in *GetTenantRequest) (*Tenant, error) {
-	return c.cc.GetTenantInternal(ctx, in)
+
+var _ TenantInternalServiceServer = (*tenantInternalServiceClientProxy)(nil)
+
+// tenantInternalServiceClientProxy is the proxy to turn TenantInternalService client to server interface.
+//
+type tenantInternalServiceClientProxy struct {
+	cc TenantInternalServiceClient
+}
+
+func NewTenantInternalServiceClientProxy(cc TenantInternalServiceClient) TenantInternalServiceServer {
+	return &tenantInternalServiceClientProxy{cc}
+}
+
+func (c *tenantInternalServiceClientProxy) GetTenant(ctx context.Context, in *GetTenantRequest) (*Tenant, error) {
+	return c.cc.GetTenant(ctx, in)
 }

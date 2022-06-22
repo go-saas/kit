@@ -9,6 +9,7 @@ import (
 	"github.com/goxiaoy/go-saas/seed"
 	"github.com/hibiken/asynq"
 	"google.golang.org/protobuf/encoding/protojson"
+	"time"
 )
 
 type TenantSeedEventHandler event.Handler
@@ -30,7 +31,7 @@ func NewUserMigrationTask(msg *v1.TenantCreatedEvent) (*asynq.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	return asynq.NewTask(JobTypeUserMigration, payload, asynq.Queue(string(ConnName))), nil
+	return asynq.NewTask(JobTypeUserMigration, payload, asynq.Queue(string(ConnName)), asynq.Retention(time.Hour*24*30)), nil
 }
 
 type UserMigrationTaskHandler func(ctx context.Context, t *asynq.Task) error

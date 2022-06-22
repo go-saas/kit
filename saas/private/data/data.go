@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	kconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/dal"
+	"github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	g "gorm.io/gorm"
 
@@ -19,7 +20,7 @@ var ProviderSet = wire.NewSet(
 	NewData,
 	NewTenantRepo,
 	NewMigrate,
-	NewTenantStore,
+	api.NewTenantStore,
 )
 
 // Data .

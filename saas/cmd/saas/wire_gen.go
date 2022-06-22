@@ -20,12 +20,13 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/job"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
+	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	conf2 "github.com/goxiaoy/go-saas-kit/saas/private/conf"
 	"github.com/goxiaoy/go-saas-kit/saas/private/data"
 	server2 "github.com/goxiaoy/go-saas-kit/saas/private/server"
 	"github.com/goxiaoy/go-saas-kit/saas/private/service"
-	api2 "github.com/goxiaoy/go-saas-kit/user/api"
+	api3 "github.com/goxiaoy/go-saas-kit/user/api"
 )
 
 // Injectors from wire.go:
@@ -34,6 +35,7 @@ import (
 func initApp(services *conf.Services, security *conf.Security, confData *conf.Data, saasConf *conf2.SaasConf, logger log.Logger, appConfig *conf.AppConfig, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
+	trustedContextValidator := api.NewClientTrustedContextValidator()
 	eventBus := _wireEventBusValue
 	dbCache, cleanup := gorm.NewDbCache(confData)
 	connStrings := dal.NewConstantConnStrResolver(confData)
@@ -44,7 +46,23 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		return nil, nil, err
 	}
 	tenantRepo := data.NewTenantRepo(eventBus, dataData)
-	tenantStore := data.NewTenantStore(tenantRepo)
+	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
+	connName := _wireConnNameValue
+	sender, cleanup3, err := dal.NewEventSender(confData, logger, connName)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, sender)
+	factory := dal.NewBlobFactory(confData)
+	tenantInternalService := &service.TenantInternalService{
+		Trusted: trustedContextValidator,
+		UseCase: tenantUseCase,
+		App:     appConfig,
+		Blob:    factory,
+	}
+	tenantStore := api2.NewTenantStore(tenantInternalService)
 	config := _wireConfigValue
 	manager := uow.NewUowManager(config, dbCache)
 	webMultiTenancyOption := server.NewWebMultiTenancyOption(appConfig)
@@ -52,28 +70,16 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
-	trustedContextValidator := api.NewClientTrustedContextValidator()
 	clientName := _wireClientNameValue
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup3 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
-	userServiceServer := api2.NewUserGrpcClient(grpcConn)
-	userTenantContributor := api2.NewUserTenantContributor(userServiceServer)
-	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
-	connName := _wireConnNameValue
-	sender, cleanup4, err := dal.NewEventSender(confData, logger, connName)
-	if err != nil {
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, sender)
-	permissionServiceServer := api2.NewPermissionGrpcClient(grpcConn)
-	permissionChecker := api2.NewRemotePermissionChecker(permissionServiceServer)
+	grpcConn, cleanup4 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
+	userServiceServer := api3.NewUserGrpcClient(grpcConn)
+	userTenantContributor := api3.NewUserTenantContributor(userServiceServer)
+	permissionServiceServer := api3.NewPermissionGrpcClient(grpcConn)
+	permissionChecker := api3.NewRemotePermissionChecker(permissionServiceServer)
 	authzOption := server2.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
-	factory := dal.NewBlobFactory(confData)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService, trustedContextValidator, factory, appConfig)
 	httpServerRegister := service.NewHttpServerRegister(tenantService, factory, confData)
 	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, trustedContextValidator, userTenantContributor, httpServerRegister)
@@ -108,10 +114,10 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 
 var (
 	_wireEventBusValue           = eventbus.Default
+	_wireConnNameValue           = biz.ConnName
 	_wireConfigValue             = dal.UowCfg
 	_wireDecodeRequestFuncValue  = server.ReqDecode
 	_wireEncodeResponseFuncValue = server.ResEncoder
 	_wireEncodeErrorFuncValue    = server.ErrEncoder
 	_wireClientNameValue         = server2.ClientName
-	_wireConnNameValue           = biz.ConnName
 )

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/event/v1"
+	"github.com/samber/lo"
 )
 
 type TenantReadyEventHandler event.Handler
@@ -22,6 +23,9 @@ func NewTenantReadyEventHandler(useCase *TenantUseCase) TenantReadyEventHandler 
 		}
 		if len(msg.ServiceName) > 0 {
 			tenant.Extra[fmt.Sprintf("%s_status", msg.ServiceName)] = "READY"
+		}
+		if c, ok := lo.Find(tenant.Conn, func(c TenantConn) bool { return c.Key == msg.ServiceName }); ok {
+			c.Ready = true
 		}
 		return useCase.Update(ctx, tenant, nil)
 	}))

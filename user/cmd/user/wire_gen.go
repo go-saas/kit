@@ -51,8 +51,8 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	clientName := _wireClientNameValue
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
 	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
-	tenantServiceServer := api2.NewTenantGrpcClient(grpcConn)
-	tenantStore := api2.NewTenantStore(tenantServiceServer)
+	tenantInternalServiceServer := api2.NewTenantInternalGrpcClient(grpcConn)
+	tenantStore := api2.NewTenantStore(tenantInternalServiceServer)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
@@ -102,6 +102,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	emailSender := biz.NewEmailSender(lazyClient, confData)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, defaultAuthorizationService, trustedContextValidator, logger)
 	refreshTokenProvider := api3.NewRefreshProvider(authService, logger)
+	tenantServiceServer := api2.NewTenantGrpcClient(grpcConn)
 	userSettingRepo := data.NewUserSettingRepo(dataData, eventBus)
 	userAddressRepo := data.NewUserAddrRepo(dataData, eventBus)
 	accountService := service.NewAccountService(userManager, factory, tenantServiceServer, userSettingRepo, userAddressRepo, lookupNormalizer)

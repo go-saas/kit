@@ -7,6 +7,9 @@
   "tags": [
     {
       "name": "TenantService"
+    },
+    {
+      "name": "TenantInternalService"
     }
   ],
   "consumes": [

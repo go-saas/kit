@@ -21,6 +21,7 @@ var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewJobServer, wire.V
 
 var ClientName api.ClientName = api2.ServiceName
 
+// Seeding workaround for https://github.com/google/wire/issues/207
 type Seeding seed.Contributor
 
 func NewSeeding(uow uow.Manager,

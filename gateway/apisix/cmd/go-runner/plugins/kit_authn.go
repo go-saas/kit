@@ -2,7 +2,6 @@ package plugins
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
 	"github.com/apache/apisix-go-plugin-runner/pkg/log"
@@ -18,7 +17,6 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	conf2 "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
-	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	uapi "github.com/goxiaoy/go-saas-kit/user/api"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	"github.com/goxiaoy/go-saas/common"
@@ -141,9 +139,6 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	ctx, err = Saas(ctx, ts, saasWebConfig.DomainFormat, w, r)
 	//format error
 	if err != nil {
-		if errors.Is(err, common.ErrTenantNotFound) {
-			err = v1.ErrorTenantNotFound("")
-		}
 		abortWithError(err, w)
 		//stop
 		return

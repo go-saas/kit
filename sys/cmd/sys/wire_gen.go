@@ -52,8 +52,8 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
 	apiGrpcConn, cleanup3 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
-	tenantServiceServer := api3.NewTenantGrpcClient(apiGrpcConn)
-	tenantStore := api3.NewTenantStore(tenantServiceServer)
+	tenantInternalServiceServer := api3.NewTenantInternalGrpcClient(apiGrpcConn)
+	tenantStore := api3.NewTenantStore(tenantInternalServiceServer)
 	connStrResolver := dal.NewConnStrResolver(confData, tenantStore)
 	dbProvider := gorm.NewDbProvider(dbCache, connStrResolver, confData)
 	eventBus := _wireEventBusValue

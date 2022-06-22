@@ -9,6 +9,9 @@
       "name": "TenantService"
     },
     {
+      "name": "TenantInternalService"
+    },
+    {
       "name": "PermissionService"
     },
     {

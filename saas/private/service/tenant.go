@@ -91,7 +91,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		return nil, err
 	}
 
-	return s.mapBizTenantToApi(ctx, s.blob, t), nil
+	return mapBizTenantToApi(ctx, s.app, s.blob, t), nil
 }
 func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRequest) (*pb.Tenant, error) {
 
@@ -129,7 +129,7 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 	if err := s.useCase.Update(ctx, t, query.NewField(req.UpdateMask)); err != nil {
 		return nil, err
 	}
-	return s.mapBizTenantToApi(ctx, s.blob, t), nil
+	return mapBizTenantToApi(ctx, s.app, s.blob, t), nil
 }
 func (s *TenantService) DeleteTenant(ctx context.Context, req *pb.DeleteTenantRequest) (*pb.DeleteTenantReply, error) {
 
@@ -156,25 +156,7 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 		return nil, err
 	}
 
-	return s.mapBizTenantToApi(ctx, s.blob, t), nil
-}
-
-func (s *TenantService) GetTenantInternal(ctx context.Context, req *pb.GetTenantRequest) (*pb.Tenant, error) {
-	if ok, err := s.trusted.Trusted(ctx); err != nil {
-		return nil, err
-	} else if !ok {
-		//internal api call
-		return nil, errors.Forbidden("", "")
-	}
-	t, err := s.useCase.FindByIdOrName(ctx, req.IdOrName)
-	if err != nil {
-		return nil, err
-	}
-	if t == nil {
-		return nil, errors.NotFound("", "")
-	}
-
-	return s.mapBizTenantToApi(ctx, s.blob, t), nil
+	return mapBizTenantToApi(ctx, s.app, s.blob, t), nil
 }
 
 //GetTenantPublic return public info of tenant
@@ -236,7 +218,7 @@ func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantReques
 	if err != nil {
 		return ret, err
 	}
-	rItems := lo.Map(items, func(g *biz.Tenant, _ int) *pb.Tenant { return s.mapBizTenantToApi(ctx, s.blob, g) })
+	rItems := lo.Map(items, func(g *biz.Tenant, _ int) *pb.Tenant { return mapBizTenantToApi(ctx, s.app, s.blob, g) })
 	ret.Items = rItems
 	return ret, nil
 }
@@ -315,7 +297,7 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 	return ctx.Result(201, out)
 }
 
-func (s *TenantService) mapBizTenantToApi(ctx context.Context, blob blob.Factory, tenant *biz.Tenant) *pb.Tenant {
+func mapBizTenantToApi(ctx context.Context, app *conf.AppConfig, blob blob.Factory, tenant *biz.Tenant) *pb.Tenant {
 	conns := lo.Map(tenant.Conn, func(con biz.TenantConn, _ int) *pb.TenantConnectionString {
 		return &pb.TenantConnectionString{
 			Key:   con.Key,
@@ -342,7 +324,7 @@ func (s *TenantService) mapBizTenantToApi(ctx context.Context, blob blob.Factory
 		Logo:        mapLogo(ctx, blob, tenant),
 		SeparateDb:  tenant.SeparateDb,
 	}
-	res.NormalizeHost(ctx, s.app)
+	res.NormalizeHost(ctx, app)
 	return res
 }
 

@@ -32,6 +32,7 @@ Frontend Repo: https://github.com/Goxiaoy/go-saas-kit-frontend
 # Quick Start
 
 ```
+docker-compose -f docker-compose.yml -f docker-compose.tracing.yml pull
 docker-compose -f docker-compose.yml -f docker-compose.tracing.yml up -d
 ```
 
