@@ -19,19 +19,21 @@ var ProviderSet = wire.NewSet(NewHttpServerRegister, NewGrpcServerRegister,
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister
 
-func NewHttpServerRegister(tenant *TenantService, factory blob.Factory,
+func NewHttpServerRegister(tenant *TenantService, factory blob.Factory, tenantInternal *TenantInternalService,
 	dataCfg *kconf.Data) HttpServerRegister {
 	return server.HttpServiceRegisterFunc(func(srv *http.Server, middleware middleware.Middleware) {
 		route := srv.Route("/")
 
 		route.POST("/v1/saas/tenant/logo", tenant.UpdateLogo)
 		server.HandleBlobs("", dataCfg.Blobs, srv, factory)
+
 		v1.RegisterTenantServiceHTTPServer(srv, tenant)
 	})
 }
 
-func NewGrpcServerRegister(tenant *TenantService) GrpcServerRegister {
+func NewGrpcServerRegister(tenant *TenantService, tenantInternal *TenantInternalService) GrpcServerRegister {
 	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware middleware.Middleware) {
+		v1.RegisterTenantInternalServiceServer(srv, tenantInternal)
 		v1.RegisterTenantServiceServer(srv, tenant)
 	})
 }
