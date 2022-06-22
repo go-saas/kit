@@ -186,7 +186,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, receiver)
+	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, seeder, receiver)
 	return app, func() {
 		cleanup7()
 		cleanup6()

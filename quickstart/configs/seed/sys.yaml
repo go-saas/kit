@@ -15,3 +15,15 @@ menus:
         component: "/dashboard/workbench/index"
         title: "Workbench"
         is_preserved: true
+      - name: "go_saas_kit"
+        icon: "ant-design:api-outlined"
+        path: "sources"
+        redirect: "https://github.com/Goxiaoy/go-saas-kit"
+        title: "GO-SAAS-KIT"
+        is_preserved: true
+      - name: "go_saas"
+        icon: "ant-design:api-outlined"
+        path: "saas"
+        redirect: "https://github.com/Goxiaoy/go-saas"
+        title: "GO-SAAS-KIT"
+        is_preserved: true

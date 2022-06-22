@@ -72,7 +72,7 @@ func NewDbCache(d *conf.Data) (*DbCache, func()) {
 
 func (c *DbCache) GetOrSet(ctx context.Context, key, connStr string) (*gorm.DB, error) {
 
-	client, _, err := c.Cache.GetOrSet(connStr, func() (*sgorm.DbWrap, error) {
+	client, _, err := c.Cache.GetOrSet(fmt.Sprintf("%s/%s", key, connStr), func() (*sgorm.DbWrap, error) {
 		//find config
 		dbConfig := c.d.Endpoints.GetDatabaseMergedDefault(key)
 		var dbGuardian ensureDbExistFunc

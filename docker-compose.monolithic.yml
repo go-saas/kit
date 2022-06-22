@@ -20,4 +20,4 @@ services:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
     restart: on-failure
-    command: ["./  monolithic", "-conf", "/data/conf","seed.menu.path","/data/conf/seed/sys.yaml"]
+    command: ["./monolithic", "-conf", "/data/conf","seed.menu.path","/data/conf/seed/sys.yaml"]

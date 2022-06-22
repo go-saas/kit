@@ -11,6 +11,8 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	sysbiz "github.com/goxiaoy/go-saas-kit/sys/private/biz"
+	ubiz "github.com/goxiaoy/go-saas-kit/user/private/biz"
+	uconf "github.com/goxiaoy/go-saas-kit/user/private/conf"
 	"github.com/goxiaoy/go-saas/seed"
 	"os"
 
@@ -41,14 +43,15 @@ func init() {
 	flag.StringVar(&seedPath, sysbiz.SeedPathKey, "", "menu seed file path")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, seeder seed.Seeder, _ event.Receiver) *kratos.App {
+func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Server, js *job.Server, seeder seed.Seeder, _ event.Receiver) *kratos.App {
 	if ifSeed {
 		extra := map[string]interface{}{}
 		if len(seedPath) > 0 {
 			extra[sysbiz.SeedPathKey] = seedPath
 		}
-
-		if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("")); err != nil {
+		extra[ubiz.AdminUsernameKey] = c.Admin.GetUsername()
+		extra[ubiz.AdminPasswordKey] = c.Admin.GetPassword()
+		if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("").WithExtra(extra)); err != nil {
 			panic(err)
 		}
 	}
