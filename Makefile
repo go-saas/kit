@@ -20,10 +20,10 @@ init:
 	go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	go install github.com/goxiaoy/go-saas-kit/cmd/protoc-gen-go-grpc-proxy@main
+	go install github.com/goxiaoy/go-saas-kit/cmd/protoc-gen-go-grpc-proxy@91bd4c33353a0340a78ef68a531590f31a7b504e
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2@latest
-	go install github.com/goxiaoy/go-saas-kit/cmd/protoc-gen-go-errors-i18n/v2@main
+	go install github.com/goxiaoy/go-saas-kit/cmd/protoc-gen-go-errors-i18n/v2@91bd4c33353a0340a78ef68a531590f31a7b504e
 	go install github.com/envoyproxy/protoc-gen-validate@v0.6.7
 	go install github.com/bufbuild/buf/cmd/buf@$(BUF_VERSION)
 	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@$(BUF_VERSION)
@@ -81,3 +81,22 @@ all:
 	make sys
 	make apisix
 	make examples
+
+# show help
+help:
+	@echo ''
+	@echo 'Usage:'
+	@echo ' make [target]'
+	@echo ''
+	@echo 'Targets:'
+	@awk '/^[a-zA-Z\-\_0-9]+:/ { \
+	helpMessage = match(lastLine, /^# (.*)/); \
+		if (helpMessage) { \
+			helpCommand = substr($$1, 0, index($$1, ":")-1); \
+			helpMessage = substr(lastLine, RSTART + 2, RLENGTH); \
+			printf "\033[36m%-22s\033[0m %s\n", helpCommand,helpMessage; \
+		} \
+	} \
+	{ lastLine = $$0 }' $(MAKEFILE_LIST)
+
+.DEFAULT_GOAL := all

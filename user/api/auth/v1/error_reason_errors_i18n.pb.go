@@ -12,6 +12,9 @@ import (
 const _ = errors.SupportPackageIsVersion1
 
 func ErrorInvalidCredentialsLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_INVALID_CREDENTIALS.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "InvalidCredentials",
@@ -28,6 +31,9 @@ func ErrorInvalidCredentialsLocalized(localizer *i18n.Localizer, data map[string
 }
 
 func ErrorInvalidOperationLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_INVALID_OPERATION.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "InvalidOperation",
@@ -44,6 +50,9 @@ func ErrorInvalidOperationLocalized(localizer *i18n.Localizer, data map[string]i
 }
 
 func ErrorUserLockedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_USER_LOCKED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "UserLocked",
@@ -60,6 +69,9 @@ func ErrorUserLockedLocalized(localizer *i18n.Localizer, data map[string]interfa
 }
 
 func ErrorEmailNotConfirmedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_EMAIL_NOT_CONFIRMED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "EmailNotConfirmed",
@@ -76,6 +88,9 @@ func ErrorEmailNotConfirmedLocalized(localizer *i18n.Localizer, data map[string]
 }
 
 func ErrorPhoneNotConfirmedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_PHONE_NOT_CONFIRMED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "PhoneNotConfirmed",
@@ -92,6 +107,9 @@ func ErrorPhoneNotConfirmedLocalized(localizer *i18n.Localizer, data map[string]
 }
 
 func ErrorEmailRecoverFailedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_EMAIL_RECOVER_FAILED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "EmailRecoverFailed",
@@ -108,6 +126,9 @@ func ErrorEmailRecoverFailedLocalized(localizer *i18n.Localizer, data map[string
 }
 
 func ErrorEmailConfirmFailedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_EMAIL_CONFIRM_FAILED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "EmailConfirmFailed",
@@ -124,6 +145,9 @@ func ErrorEmailConfirmFailedLocalized(localizer *i18n.Localizer, data map[string
 }
 
 func ErrorPhoneRecoverFailedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_PHONE_RECOVER_FAILED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "PhoneRecoverFailed",
@@ -140,6 +164,9 @@ func ErrorPhoneRecoverFailedLocalized(localizer *i18n.Localizer, data map[string
 }
 
 func ErrorPhoneConfirmFailedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_PHONE_CONFIRM_FAILED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "PhoneConfirmFailed",
@@ -156,6 +183,9 @@ func ErrorPhoneConfirmFailedLocalized(localizer *i18n.Localizer, data map[string
 }
 
 func ErrorTwoStepFailedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "TwoStepFailed",
@@ -172,6 +202,9 @@ func ErrorTwoStepFailedLocalized(localizer *i18n.Localizer, data map[string]inte
 }
 
 func ErrorConfirmPasswordMismatchLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "ConfirmPasswordMismatch",
@@ -188,6 +221,9 @@ func ErrorConfirmPasswordMismatchLocalized(localizer *i18n.Localizer, data map[s
 }
 
 func ErrorRememberTokenNotFoundLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "RememberTokenNotFound",
@@ -204,6 +240,9 @@ func ErrorRememberTokenNotFoundLocalized(localizer *i18n.Localizer, data map[str
 }
 
 func ErrorRememberTokenUsedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_REMEMBER_TOKEN_USED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "RememberTokenUsed",
@@ -220,6 +259,9 @@ func ErrorRememberTokenUsedLocalized(localizer *i18n.Localizer, data map[string]
 }
 
 func ErrorUserDeletedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_USER_DELETED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "UserDeleted",
@@ -236,6 +278,9 @@ func ErrorUserDeletedLocalized(localizer *i18n.Localizer, data map[string]interf
 }
 
 func ErrorRefreshTokenInvalidLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(401, ErrorReason_REFRESH_TOKEN_INVALID.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "RefreshTokenInvalid",

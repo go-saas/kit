@@ -12,6 +12,9 @@ import (
 const _ = errors.SupportPackageIsVersion1
 
 func ErrorDuplicateTenantNameLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_DUPLICATE_TENANT_NAME.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "DuplicateTenantName",
@@ -28,6 +31,9 @@ func ErrorDuplicateTenantNameLocalized(localizer *i18n.Localizer, data map[strin
 }
 
 func ErrorTenantNotFoundLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(404, ErrorReason_TENANT_NOT_FOUND.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "TenantNotFound",
@@ -44,6 +50,9 @@ func ErrorTenantNotFoundLocalized(localizer *i18n.Localizer, data map[string]int
 }
 
 func ErrorTenantForbiddenLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_TENANT_FORBIDDEN.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "TenantForbidden",
@@ -60,6 +69,9 @@ func ErrorTenantForbiddenLocalized(localizer *i18n.Localizer, data map[string]in
 }
 
 func ErrorTenantNotReadyLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_TENANT_NOT_READY.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "TenantNotReady",
@@ -76,6 +88,9 @@ func ErrorTenantNotReadyLocalized(localizer *i18n.Localizer, data map[string]int
 }
 
 func ErrorAdminIdentityRequiredLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_ADMIN_IDENTITY_REQUIRED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "AdminIdentityRequired",
@@ -92,6 +107,9 @@ func ErrorAdminIdentityRequiredLocalized(localizer *i18n.Localizer, data map[str
 }
 
 func ErrorAdminPasswordRequiredLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_ADMIN_PASSWORD_REQUIRED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "AdminPasswordRequired",
@@ -108,6 +126,9 @@ func ErrorAdminPasswordRequiredLocalized(localizer *i18n.Localizer, data map[str
 }
 
 func ErrorAdminUsernameInvalidLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_ADMIN_USERNAME_INVALID.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "AdminUsernameInvalid",
@@ -124,6 +145,9 @@ func ErrorAdminUsernameInvalidLocalized(localizer *i18n.Localizer, data map[stri
 }
 
 func ErrorAdminEmailInvalidLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_ADMIN_EMAIL_INVALID.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "AdminEmailInvalid",

@@ -12,6 +12,9 @@ import (
 const _ = errors.SupportPackageIsVersion1
 
 func ErrorRolePreservedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_ROLE_PRESERVED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "RolePreserved",

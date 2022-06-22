@@ -12,6 +12,9 @@ import (
 const _ = errors.SupportPackageIsVersion1
 
 func ErrorConfirmPasswordMismatchLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "ConfirmPasswordMismatch",
@@ -28,6 +31,9 @@ func ErrorConfirmPasswordMismatchLocalized(localizer *i18n.Localizer, data map[s
 }
 
 func ErrorPasswordInsufficientStrengthLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_PASSWORD_INSUFFICIENT_STRENGTH.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "PasswordInsufficientStrength",
@@ -44,6 +50,9 @@ func ErrorPasswordInsufficientStrengthLocalized(localizer *i18n.Localizer, data 
 }
 
 func ErrorInvalidPasswordLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_INVALID_PASSWORD.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "InvalidPassword",
@@ -60,6 +69,9 @@ func ErrorInvalidPasswordLocalized(localizer *i18n.Localizer, data map[string]in
 }
 
 func ErrorDuplicateUsernameLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_DUPLICATE_USERNAME.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "DuplicateUsername",
@@ -76,6 +88,9 @@ func ErrorDuplicateUsernameLocalized(localizer *i18n.Localizer, data map[string]
 }
 
 func ErrorDuplicateEmailLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_DUPLICATE_EMAIL.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "DuplicateEmail",
@@ -92,6 +107,9 @@ func ErrorDuplicateEmailLocalized(localizer *i18n.Localizer, data map[string]int
 }
 
 func ErrorDuplicatePhoneLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_DUPLICATE_PHONE.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "DuplicatePhone",
@@ -108,6 +126,9 @@ func ErrorDuplicatePhoneLocalized(localizer *i18n.Localizer, data map[string]int
 }
 
 func ErrorInvalidEmailLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_INVALID_EMAIL.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "InvalidEmail",
@@ -124,6 +145,9 @@ func ErrorInvalidEmailLocalized(localizer *i18n.Localizer, data map[string]inter
 }
 
 func ErrorInvalidPhoneLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_INVALID_PHONE.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "InvalidPhone",
@@ -140,6 +164,9 @@ func ErrorInvalidPhoneLocalized(localizer *i18n.Localizer, data map[string]inter
 }
 
 func ErrorInvalidUsernameLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_INVALID_USERNAME.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "InvalidUsername",
@@ -156,6 +183,9 @@ func ErrorInvalidUsernameLocalized(localizer *i18n.Localizer, data map[string]in
 }
 
 func ErrorUserNotFoundLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(404, ErrorReason_USER_NOT_FOUND.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "UserNotFound",

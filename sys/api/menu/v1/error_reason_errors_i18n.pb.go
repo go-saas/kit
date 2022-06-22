@@ -12,6 +12,9 @@ import (
 const _ = errors.SupportPackageIsVersion1
 
 func ErrorMenuNameDuplicateLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_MENU_NAME_DUPLICATE.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "MenuNameDuplicate",
@@ -28,6 +31,9 @@ func ErrorMenuNameDuplicateLocalized(localizer *i18n.Localizer, data map[string]
 }
 
 func ErrorMenuPreservedLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(403, ErrorReason_MENU_PRESERVED.String(), "")
+	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
 			ID: "MenuPreserved",
