@@ -92,22 +92,13 @@ func LoggingHandler(next Handler, logger klog.Logger) Handler {
 		if err != nil {
 			_ = klog.WithContext(ctx, logger).Log(klog.LevelError,
 				klog.DefaultMessageKey, err.Error(),
+				"stack", kerrors.Stack(0),
 				"event", event.Key())
 		} else {
 			_ = klog.WithContext(ctx, logger).Log(klog.LevelInfo,
 				"event", event.Key())
 		}
 		return err
-	}
-}
-
-func StackHandler(next Handler) Handler {
-	return func(ctx context.Context, event Event) error {
-		err := next(ctx, event)
-		if err == nil {
-			return err
-		}
-		return fmt.Errorf("%w\n,%s", err, kerrors.Stack(0))
 	}
 }
 
@@ -140,6 +131,7 @@ func RecoverHandler(next Handler, opt ...RecoverOption) Handler {
 		if err == nil {
 			return nil
 		}
+		logger.Error(fmt.Errorf("%w\n,%s", err, kerrors.Stack(0)))
 		return op.formatter(ctx, err)
 	}
 }

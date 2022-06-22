@@ -55,7 +55,8 @@ func Logging(logger klog.Logger) asynq.MiddlewareFunc {
 			if err != nil {
 				_ = klog.WithContext(ctx, logger).Log(klog.LevelError,
 					klog.DefaultMessageKey, err.Error(),
-					"task", task.Type())
+					"task", task.Type(),
+					"stack", kerrors.Stack(0))
 			} else {
 				_ = klog.WithContext(ctx, logger).Log(klog.LevelInfo,
 					"task", task.Type())

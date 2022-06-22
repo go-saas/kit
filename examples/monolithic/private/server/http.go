@@ -3,7 +3,6 @@ package server
 import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
@@ -13,6 +12,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/localize"
+	"github.com/goxiaoy/go-saas-kit/pkg/logging"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/uow"
 	uapi "github.com/goxiaoy/go-saas-kit/user/api"
@@ -47,7 +47,6 @@ func NewHTTPServer(c *conf.Services,
 	middlewares := middleware.Chain(server.Recovery(),
 		tracing.Server(),
 		logging.Server(logger),
-		server.Stack(),
 		metrics.Server(),
 		validate.Validator(),
 		//TODO combine i18n
