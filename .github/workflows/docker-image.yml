@@ -1,4 +1,4 @@
-name: Docker Image Microservice CI
+name: Docker Image CI
 
 on:
   push:

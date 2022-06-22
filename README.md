@@ -4,7 +4,8 @@
 
 Kit for golang sass project
 
-Frontend Repo: https://github.com/Goxiaoy/go-saas-kit-frontend
+Frontend Repo: https://github.com/Goxiaoy/go-saas-kit-frontend  
+Layout Repo( For creating new service): https://github.com/Goxiaoy/go-saas-kit-layout
 
 # Architecture
 ![Architecture](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/go-saas-kit.drawio.png?raw=true)
