@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image Microservice CI
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the docker image
-        run: docker-compose -f docker-compose.yml -f docker-compose.dev.yml build
+        run: docker-compose -f docker-compose.yml -f docker-compose.ms.yml build
 
       - name: Docker login
         if: |
@@ -35,7 +35,7 @@ jobs:
           github.event_name == 'push'
           && github.repository == 'Goxiaoy/go-saas-kit'
 
-        run: docker-compose -f docker-compose.yml -f docker-compose.dev.yml push
+        run: docker-compose -f docker-compose.yml -f docker-compose.ms.yml push
 
 #      - name: Publish to demo server
 #        if: |

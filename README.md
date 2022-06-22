@@ -31,9 +31,25 @@ Frontend Repo: https://github.com/Goxiaoy/go-saas-kit-frontend
 
 # Quick Start
 
+### For Microservice
+
 ```
-docker-compose -f docker-compose.yml -f docker-compose.tracing.yml pull
-docker-compose -f docker-compose.yml -f docker-compose.tracing.yml up -d
+docker-compose -f docker-compose.yml -f docker-compose.ms.yml  -f docker-compose.tracing.yml up -d
+```
+
+Or with build
+```
+docker-compose -f docker-compose.yml -f docker-compose.ms.yml  -f docker-compose.tracing.yml up -d --build
+```
+
+### For Monolithic
+
+```
+docker-compose -f docker-compose.yml -f docker-compose.monolithic.yml  -f docker-compose.tracing.yml up -d
+```
+Or with build
+```
+docker-compose -f docker-compose.yml -f docker-compose.monolithic.yml  -f docker-compose.tracing.yml up -d --build
 ```
 
 [//]: # (With hydra)
@@ -42,19 +58,17 @@ docker-compose -f docker-compose.yml -f docker-compose.tracing.yml up -d
 
 [//]: # (docker-compose -f docker-compose.yml -f docker-compose.hydra.yml up -d)
 [//]: # (```)
-Or with build
-```
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.tracing.yml up -d --build
-```
+
+### Demo
 
 Open `http://localhost:80` to see the web ui
 
-Username: admin
+Username: admin  
 Password: 123456
 
 Open `http://localhost:80/dev/docs` to see swagger openapi  
 Open `http://localhost:80/dev/jaeger` to see jaeger tracing  
-Open `http://localhost:80/dev/jobs` to see background job status
+Open `http://localhost:80/dev/jobs` to see background job status  
 
 # Development
 

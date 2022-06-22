@@ -9,6 +9,6 @@ import (
 var ProviderSet = wire.NewSet(NewMenuSeed)
 
 const (
-	SeedPathKey              = "seed.path"
+	SeedPathKey              = "seed.menu.path"
 	ConnName    dal.ConnName = "sys"
 )

@@ -1,4 +1,4 @@
 saas:
   database:
-    - name: user
-      template: root:youShouldChangeThis@tcp(mysqld:3306)/user-%s?parseTime=true&loc=Local&charset=utf8mb4
+    - name: default
+      template: root:youShouldChangeThis@tcp(mysqld:3306)/kit-%s?parseTime=true&loc=Local&charset=utf8mb4

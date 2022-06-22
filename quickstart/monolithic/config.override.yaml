@@ -1,0 +1,7 @@
+services:
+
+  services:
+    user:
+      grpc_endpoint: monolithic:9081
+    saas:
+      grpc_endpoint: monolithic:9081

@@ -54,19 +54,19 @@ upstreams:
   -
     id: user-http
     nodes:
-      "user:9080": 1
+      "monolithic:9080": 1
     type: roundrobin
 
   -
     id: saas-http
     nodes:
-      "saas:9080": 1
+      "monolithic:9080": 1
     type: roundrobin
 
   -
     id: sys-http
     nodes:
-      "sys:9080": 1
+      "monolithic:9080": 1
     type: roundrobin
 
   -

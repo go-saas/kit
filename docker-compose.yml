@@ -10,53 +10,21 @@ services:
     environment:
       - BASE_URL="/swagger"
     restart: on-failure
+    build:
+      context: .
+      dockerfile: ./openapi/Dockerfile
 
   apisix:
     image: ${DOCKER_REGISTRY}go-saas-kit-apisix:${DOCKER_TAG:-latest}
-    volumes:
-      - ./quickstart/configs/apisix/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
-      - ./quickstart/configs/apisix/apisix_conf/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
-      - ./quickstart/configs:/data/conf
-    depends_on:
-      - user
-      - saas
     ports:
       - "80:9080" #Http
       - "9091:9091" #Prometheus
       - "9443:9443" #Https
     restart: on-failure
+    build:
+      context: .
+      dockerfile: ./gateway/apisix/Dockerfile
 
-  user:
-    image: ${DOCKER_REGISTRY}go-saas-kit-user:${DOCKER_TAG:-latest}
-    depends_on:
-      - mysqld
-      - redis
-      - kafka
-    volumes:
-      - ./quickstart/configs:/data/conf
-      - ./quickstart/.assets:/app/.assets
-    restart: on-failure
-
-  saas:
-    image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
-    depends_on:
-      - kafka
-      - user
-    volumes:
-      - ./quickstart/configs:/data/conf
-      - ./quickstart/.assets:/app/.assets
-    restart: on-failure
-
-  sys:
-    image: ${DOCKER_REGISTRY}go-saas-kit-sys:${DOCKER_TAG:-latest}
-    depends_on:
-      - user
-      - saas
-    volumes:
-      - ./quickstart/configs:/data/conf
-      - ./quickstart/.assets:/app/.assets
-    command: ["./sys", "-conf", "/data/conf","-seed.path","/data/conf/seed/sys.yaml"]
-    restart: on-failure
 
   mysqld:
     image: mysql:8.0

@@ -1,0 +1,54 @@
+version: '3.7'
+services:
+
+  apisix:
+    volumes:
+      - ./quickstart/configs/apisix/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - ./quickstart/configs/apisix/apisix_conf/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
+      - ./quickstart/configs:/data/conf
+    depends_on:
+      - user
+      - saas
+
+  user:
+    image: ${DOCKER_REGISTRY}go-saas-kit-user:${DOCKER_TAG:-latest}
+    depends_on:
+      - mysqld
+      - redis
+      - kafka
+    volumes:
+      - ./quickstart/configs:/data/conf
+      - ./quickstart/.assets:/app/.assets
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./user/Dockerfile
+
+  saas:
+    image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
+    depends_on:
+      - kafka
+      - user
+    volumes:
+      - ./quickstart/configs:/data/conf
+      - ./quickstart/.assets:/app/.assets
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./saas/Dockerfile
+
+  sys:
+    image: ${DOCKER_REGISTRY}go-saas-kit-sys:${DOCKER_TAG:-latest}
+    depends_on:
+      - user
+      - saas
+    volumes:
+      - ./quickstart/configs:/data/conf
+      - ./quickstart/.assets:/app/.assets
+    command: ["./sys", "-conf", "/data/conf","seed.menu.path","/data/conf/seed/sys.yaml"]
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./sys/Dockerfile
+
+

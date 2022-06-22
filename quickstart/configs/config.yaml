@@ -26,6 +26,7 @@ data:
         type: kafka
         addr: kafka:9092
         topic: kit
+        group: golang
       saas:
         group: saas-golang
       user:

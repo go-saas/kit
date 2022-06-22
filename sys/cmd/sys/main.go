@@ -37,7 +37,7 @@ var (
 func init() {
 	flag.StringVar(&flagconf, "conf", "./configs", "config path, eg: -conf config.yaml")
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
-	flag.StringVar(&seedPath, "seed.path", "", "seed file path")
+	flag.StringVar(&seedPath, biz.SeedPathKey, "", "menu seed file path")
 }
 
 func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, seeder seed.Seeder) *kratos.App {

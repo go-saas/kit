@@ -10,6 +10,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/job"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
+	sysbiz "github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	"github.com/goxiaoy/go-saas/seed"
 	"os"
 
@@ -30,15 +31,23 @@ var (
 	flagconf string
 	ifSeed   bool
 	id, _    = os.Hostname()
+
+	seedPath string
 )
 
 func init() {
 	flag.StringVar(&flagconf, "conf", "./configs", "config path, eg: -conf config.yaml")
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
+	flag.StringVar(&seedPath, sysbiz.SeedPathKey, "", "menu seed file path")
 }
 
 func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, seeder seed.Seeder, _ event.Receiver) *kratos.App {
 	if ifSeed {
+		extra := map[string]interface{}{}
+		if len(seedPath) > 0 {
+			extra[sysbiz.SeedPathKey] = seedPath
+		}
+
 		if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("")); err != nil {
 			panic(err)
 		}

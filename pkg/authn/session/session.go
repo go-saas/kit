@@ -91,6 +91,8 @@ func Refresh(errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider, va
 					}
 				}
 
+			} else {
+				panic("refresh require Auth middleware")
 			}
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
