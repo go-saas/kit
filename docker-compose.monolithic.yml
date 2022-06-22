@@ -1,0 +1,7 @@
+version: '3.7'
+services:
+  monolithic:
+    image: ${DOCKER_REGISTRY}go-saas-kit-monolithic:${DOCKER_TAG:-latest}
+    build:
+      context: .
+      dockerfile: ./examples/monolithic/Dockerfile
