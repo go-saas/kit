@@ -37,7 +37,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	trustedContextValidator := api.NewClientTrustedContextValidator()
 	eventBus := _wireEventBusValue
-	dbCache, cleanup := gorm.NewDbCache(confData)
+	dbCache, cleanup := gorm.NewDbCache(confData, logger)
 	connStrings := dal.NewConstantConnStrResolver(confData)
 	constDbProvider := dal.NewConstDbProvider(dbCache, connStrings, confData)
 	dataData, cleanup2, err := data.NewData(confData, constDbProvider, logger)
@@ -85,7 +85,14 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, trustedContextValidator, userTenantContrib, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(tenantService, tenantInternalService)
 	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, userTenantContrib, trustedContextValidator, grpcServerRegister, logger)
-	client := dal.NewRedis(confData, connName)
+	client, err := dal.NewRedis(confData, connName)
+	if err != nil {
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	redisConnOpt := job.NewAsynqClientOpt(client)
 	jobServer := server2.NewJobServer(redisConnOpt, logger)
 	migrate := data.NewMigrate(dataData)

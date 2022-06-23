@@ -36,7 +36,7 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	config := _wireConfigValue
-	dbCache, cleanup := gorm.NewDbCache(confData)
+	dbCache, cleanup := gorm.NewDbCache(confData, logger)
 	manager := uow.NewUowManager(config, dbCache)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
@@ -61,7 +61,13 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	menuService := service.NewMenuService(defaultAuthorizationService, menuRepo, logger)
 	factory := dal.NewBlobFactory(confData)
 	connName := _wireConnNameValue
-	client := dal.NewRedis(confData, connName)
+	client, err := dal.NewRedis(confData, connName)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	redisConnOpt := job.NewAsynqClientOpt(client)
 	httpServerRegister := service.NewHttpServerRegister(menuService, factory, confData, redisConnOpt)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, option, logger, trustedContextValidator, httpServerRegister)

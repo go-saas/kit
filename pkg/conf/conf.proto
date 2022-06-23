@@ -3,6 +3,7 @@ syntax = "proto3";
 package conf;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 import "blob/blob.proto";
 
@@ -74,17 +75,8 @@ message Endpoints{
 }
 
 message Redis {
-  optional google.protobuf.StringValue network = 1;
-  string addr = 2;
-  google.protobuf.Duration read_timeout = 3;
-  google.protobuf.Duration write_timeout = 4;
-  optional google.protobuf.StringValue username = 5;
-  optional google.protobuf.StringValue password = 6;
-  optional google.protobuf.Int32Value  db = 7;
-  optional google.protobuf.Int32Value max_retries = 8;
-  google.protobuf.Duration min_retry_backoff = 9;
-  google.protobuf.Duration max_retry_backoff = 10;
-  google.protobuf.Duration dial_timeout = 11;
+  // Url see redis.ParseURL (https://github.com/go-redis/redis/blob/27f0addeb2e6997bdd2faa1b48f6a989f83c4751/options.go#L225)
+  string url = 1;
 }
 
 message Event{
@@ -148,20 +140,8 @@ message Hydra{
 
 
 message Logging{
-  enum Level{
-    ALL=0;
-    DEBUG=1;
-    INFO=2;
-    WARN=3;
-    ERROR=4;
-    FATAL=5;
-  }
-  message Filter{
-    oneof by{
-     Level level=1;
-    }
-  }
-  repeated Filter filter=1;
+  // Zap config, see https://github.com/uber-go/zap/blob/78c80fbae8e745f49704cca337f9ad0eca1ca93f/config.go#L58
+  google.protobuf.Struct zap=100;
 }
 
 

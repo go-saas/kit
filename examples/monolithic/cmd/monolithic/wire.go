@@ -37,7 +37,7 @@ import (
 
 // initApp init kratos application.
 func initApp(*kitconf.Services, *kitconf.Security, *kitconf.Data, *sconf.SaasConf, *uconf.UserConf, log.Logger, *kitconf.AppConfig, ...grpc.ClientOption) (*kratos.App, func(), error) {
-	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultCodecProviderSet, kserver.NewWebMultiTenancyOption, kapi.DefaultProviderSet, kdal.DefaultProviderSet, job.DefaultProviderSet,
+	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kserver.NewWebMultiTenancyOption, kapi.DefaultProviderSet, kdal.DefaultProviderSet, job.DefaultProviderSet,
 		sdata.ProviderSet, sbiz.ProviderSet, sservice.ProviderSet,
 		sysdata.ProviderSet, sysbiz.ProviderSet, sysservice.ProviderSet,
 		udata.ProviderSet, ubiz.ProviderSet, uservice.ProviderSet,

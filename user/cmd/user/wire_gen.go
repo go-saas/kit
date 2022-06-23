@@ -45,7 +45,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	config := _wireConfigValue
-	dbCache, cleanup := gorm.NewDbCache(confData)
+	dbCache, cleanup := gorm.NewDbCache(confData, logger)
 	manager := uow.NewUowManager(config, dbCache)
 	option := api.NewDefaultOption(logger)
 	clientName := _wireClientNameValue
@@ -73,7 +73,13 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	refreshTokenRepo := data.NewRefreshTokenRepo(dataData)
 	userTenantRepo := data.NewUserTenantRepo(dataData)
 	connName := _wireConnNameValue
-	client := dal.NewRedis(confData, connName)
+	client, err := dal.NewRedis(confData, connName)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	emailTokenProvider := biz.NewEmailTokenProvider(client)
 	phoneTokenProvider := biz.NewPhoneTokenProvider(client)
 	cache := redis.NewCache(client)

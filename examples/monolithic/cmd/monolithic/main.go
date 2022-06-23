@@ -8,7 +8,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/examples/monolithic/private/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	"github.com/goxiaoy/go-saas-kit/pkg/job"
-	"github.com/goxiaoy/go-saas-kit/pkg/server"
+	"github.com/goxiaoy/go-saas-kit/pkg/logging"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	sysbiz "github.com/goxiaoy/go-saas-kit/sys/private/biz"
 	ubiz "github.com/goxiaoy/go-saas-kit/user/private/biz"
@@ -85,7 +85,12 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-	logger := log.With(server.PatchFilter(log.NewStdLogger(os.Stdout), bc.Logging),
+	l, lc, err := logging.NewLogger(bc.Logging)
+	if err != nil {
+		panic(err)
+	}
+	defer lc()
+	logger := log.With(l,
 		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,
 		"service.id", id,

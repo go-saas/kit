@@ -24,6 +24,7 @@ import (
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/goxiaoy/go-saas-kit/gateway/apisix/internal/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
+	"github.com/goxiaoy/go-saas-kit/pkg/logging"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
 	"go.uber.org/zap/zapcore"
@@ -158,8 +159,12 @@ func newRunCommand() *cobra.Command {
 			if err := c.Scan(&bc); err != nil {
 				panic(err)
 			}
-
-			logger := klog.With(server.PatchFilter(klog.NewStdLogger(os.Stdout), bc.Logging),
+			l, lc, err := logging.NewLogger(bc.Logging)
+			if err != nil {
+				panic(err)
+			}
+			defer lc()
+			logger := klog.With(l,
 				"ts", klog.DefaultTimestamp,
 				"caller", klog.DefaultCaller,
 			)

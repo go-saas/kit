@@ -49,7 +49,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	config := _wireConfigValue
-	dbCache, cleanup := gorm.NewDbCache(confData)
+	dbCache, cleanup := gorm.NewDbCache(confData, logger)
 	manager := uow.NewUowManager(config, dbCache)
 	webMultiTenancyOption := server.NewWebMultiTenancyOption(appConfig)
 	option := api.NewDefaultOption(logger)
@@ -100,7 +100,14 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	userTokenRepo := data2.NewUserTokenRepo(data4)
 	refreshTokenRepo := data2.NewRefreshTokenRepo(data4)
 	userTenantRepo := data2.NewUserTenantRepo(data4)
-	client := dal.NewRedis(confData, connName)
+	client, err := dal.NewRedis(confData, connName)
+	if err != nil {
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	emailTokenProvider := biz2.NewEmailTokenProvider(client)
 	phoneTokenProvider := biz2.NewPhoneTokenProvider(client)
 	cache := redis.NewCache(client)

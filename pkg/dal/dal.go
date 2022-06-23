@@ -83,12 +83,12 @@ func NewEmailer(c *kitconf.Data) email.LazyClient {
 	return email.NewLazyClient(c.Endpoints)
 }
 
-func NewRedis(c *kitconf.Data, name ConnName) *redis.Client {
+func NewRedis(c *kitconf.Data, name ConnName) (*redis.Client, error) {
 	if c.Endpoints.Redis == nil {
 		panic("redis endpoints required")
 	}
-	r := kitredis.ResolveRedisEndpointOrDefault(c.Endpoints.Redis, string(name))
-	return kitredis.NewRedisClient(r)
+	r, err := kitredis.ResolveRedisEndpointOrDefault(c.Endpoints.Redis, string(name))
+	return kitredis.NewRedisClient(r), err
 }
 
 func NewEventSender(c *kitconf.Data, logger log.Logger, name ConnName) (event.Sender, func(), error) {

@@ -3,10 +3,10 @@ package gorm
 import (
 	"context"
 	"fmt"
+	klog "github.com/go-kratos/kratos/v2/log"
 	mysql2 "github.com/go-sql-driver/mysql"
 	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-
 	"github.com/goxiaoy/go-saas/data"
 	sgorm "github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
@@ -15,6 +15,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 )
 
@@ -59,12 +60,13 @@ func isDbGuardianEnabled(ctx context.Context) bool {
 type DbCache struct {
 	*saas.Cache[string, *sgorm.DbWrap]
 	d *conf.Data
+	l klog.Logger
 }
 
 // NewDbCache create a shared gorm.Db cache by dsn
-func NewDbCache(d *conf.Data) (*DbCache, func()) {
+func NewDbCache(d *conf.Data, l klog.Logger) (*DbCache, func()) {
 	c := saas.NewCache[string, *sgorm.DbWrap]()
-	return &DbCache{Cache: c, d: d}, func() {
+	return &DbCache{Cache: c, d: d, l: l}, func() {
 		c.Flush()
 	}
 }
@@ -120,9 +122,14 @@ func (c *DbCache) GetOrSet(ctx context.Context, key, connStr string) (*gorm.DB, 
 		}
 
 		gormConf := &gorm.Config{
+			Logger: &Logger{
+				Logger:   c.l,
+				LogLevel: logger.Info,
+			},
 			NamingStrategy: schema.NamingStrategy{
 				TablePrefix: tp,
 			}}
+
 		client, err := gorm.Open(dial, gormConf)
 		if err != nil {
 			return nil, err
