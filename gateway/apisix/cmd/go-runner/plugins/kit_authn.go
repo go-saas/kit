@@ -215,7 +215,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 
 	//check tenant and user mismatch
 	ti, _ := saas.FromCurrentTenant(ctx)
-	trCtx := saas.NewContext(ctx)
+	trCtx := saas.NewTenantResolveContext(ctx)
 	trCtx.TenantIdOrName = ti.GetId()
 
 	log.Infof("resolve user: %s client: %s tenantId: %s", uid, clientId, ti.GetId())
