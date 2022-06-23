@@ -2,10 +2,11 @@ package data
 
 import (
 	"errors"
+	"github.com/goxiaoy/go-saas"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
-	"github.com/goxiaoy/go-saas/common"
+
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"gorm.io/gorm"
@@ -68,7 +69,7 @@ func buildUserTenantsScope() func(db *gorm.DB) *gorm.DB {
 		if !biz.FromEnableUserTenantContext(db.Statement.Context) {
 			return db
 		}
-		ti, _ := common.FromCurrentTenant(db.Statement.Context)
+		ti, _ := saas.FromCurrentTenant(db.Statement.Context)
 		subQuery := db.Session(&gorm.Session{NewDB: true}).Model(new(biz.UserTenant))
 		if len(ti.GetId()) == 0 {
 			subQuery = subQuery.Where("tenant_id IS NULL")

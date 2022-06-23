@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 	mysql2 "github.com/go-sql-driver/mysql"
+	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas/common"
+
 	"github.com/goxiaoy/go-saas/data"
 	sgorm "github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
@@ -21,14 +22,12 @@ const (
 	gormKind = "gorm"
 )
 
-func NewConnStrResolver(c *conf.Endpoints, ts common.TenantStore) data.ConnStrResolver {
+func NewConnStrResolver(c *conf.Endpoints, ts saas.TenantStore) data.ConnStrResolver {
 	conn := make(data.ConnStrings, 1)
 	for k, v := range c.Databases {
 		conn[k] = v.Source
 	}
-	mr := common.NewMultiTenancyConnStrResolver(func() common.TenantStore {
-		return ts
-	}, conn)
+	mr := saas.NewMultiTenancyConnStrResolver(ts, conn)
 	return mr
 }
 
@@ -58,13 +57,13 @@ func isDbGuardianEnabled(ctx context.Context) bool {
 }
 
 type DbCache struct {
-	*common.Cache[string, *sgorm.DbWrap]
+	*saas.Cache[string, *sgorm.DbWrap]
 	d *conf.Data
 }
 
 // NewDbCache create a shared gorm.Db cache by dsn
 func NewDbCache(d *conf.Data) (*DbCache, func()) {
-	c := common.NewCache[string, *sgorm.DbWrap]()
+	c := saas.NewCache[string, *sgorm.DbWrap]()
 	return &DbCache{Cache: c, d: d}, func() {
 		c.Flush()
 	}

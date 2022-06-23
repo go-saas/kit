@@ -30,7 +30,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/private/server"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
 	http2 "github.com/goxiaoy/go-saas-kit/user/private/service/http"
-	"github.com/goxiaoy/go-saas/common/http"
+	"github.com/goxiaoy/go-saas/http"
 )
 
 import (
@@ -90,14 +90,14 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 		return nil, nil, err
 	}
 	permissionService := casbin.NewPermissionService(enforcerProvider)
-	userRoleContributor := service.NewUserRoleContributor(userRepo)
-	authzOption := server.NewAuthorizationOption(userRoleContributor)
+	userRoleContrib := service.NewUserRoleContrib(userRepo)
+	authzOption := server.NewAuthorizationOption(userRoleContrib)
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionService, subjectResolverImpl, logger)
 	factory := dal.NewBlobFactory(confData)
 	trustedContextValidator := api.NewClientTrustedContextValidator()
 	userService := service.NewUserService(userManager, roleManager, defaultAuthorizationService, factory, trustedContextValidator, logger)
-	userTenantContributor := api3.NewUserTenantContributor(userService)
+	userTenantContrib := api3.NewUserTenantContrib(userService)
 	lazyClient := dal.NewEmailer(confData)
 	emailSender := biz.NewEmailSender(lazyClient, confData)
 	authService := service.NewAuthService(userManager, roleManager, tokenizer, tokenizerConfig, passwordValidator, refreshTokenRepo, emailSender, security, defaultAuthorizationService, trustedContextValidator, logger)
@@ -112,9 +112,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	apiClient := service.NewHydra(security)
 	auth := http2.NewAuth(decodeRequestFunc, userManager, logger, signInManager, apiClient)
 	httpServerRegister := service.NewHttpServerRegister(userService, encodeResponseFunc, encodeErrorFunc, accountService, authService, roleService, servicePermissionService, auth, confData, factory)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContributor, trustedContextValidator, refreshTokenProvider, httpServerRegister)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContrib, trustedContextValidator, refreshTokenProvider, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(userService, accountService, authService, roleService, servicePermissionService)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContributor, grpcServerRegister)
+	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContrib, grpcServerRegister)
 	redisConnOpt := job.NewAsynqClientOpt(client)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)

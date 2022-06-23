@@ -225,8 +225,8 @@ github.com/gorilla/securecookie v1.1.1 h1:miw7JPhV+b/lAHSXz4qd/nN9jRiAFV5FwjeKyC
 github.com/gorilla/securecookie v1.1.1/go.mod h1:ra0sb63/xPlUeL+yeDciTfxMRAA+MP+HVt/4epWDjd4=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
-github.com/goxiaoy/go-saas v0.4.2-0.20220621162042-ec5654f2c57f h1:NvaWtHZy8Nm8omEyPOD9d8tKxBlTdFK4ltp34d7xsDU=
-github.com/goxiaoy/go-saas v0.4.2-0.20220621162042-ec5654f2c57f/go.mod h1:KJSg5sDNAgFR8rtoybW/MSkAKKdOzQNg2/XtaIXajus=
+github.com/goxiaoy/go-saas v0.5.0 h1:ausObvGAXq4UkjHS/D7943WLhhDOrP8D0ErGt3icKLU=
+github.com/goxiaoy/go-saas v0.5.0/go.mod h1:KJSg5sDNAgFR8rtoybW/MSkAKKdOzQNg2/XtaIXajus=
 github.com/goxiaoy/sessions v1.2.2-0.20220327125603-baf0b311512e h1:tKvF7rNf7tSape+3HC9fb6n0uqRtGIhDt0Hn6gmWDpg=
 github.com/goxiaoy/sessions v1.2.2-0.20220327125603-baf0b311512e/go.mod h1:eGlJVX1aOtwJk0cajdAbltTc3Fk1KclMji1K6UmJ640=
 github.com/grpc-ecosystem/go-grpc-middleware v1.0.0/go.mod h1:FiyG127CGDf3tlThmgyCl78X/SZQqEOJBCDaAfeWzPs=

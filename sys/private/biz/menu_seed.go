@@ -21,7 +21,7 @@ type MenuSeed struct {
 	menuRepo   MenuRepo
 }
 
-var _ seed.Contributor = (*MenuSeed)(nil)
+var _ seed.Contrib = (*MenuSeed)(nil)
 
 //go:embed seed/menu.yaml
 var menuData []byte

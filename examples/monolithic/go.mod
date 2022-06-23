@@ -8,7 +8,7 @@ require (
 	github.com/go-kratos/kratos/v2 v2.3.1
 	github.com/google/wire v0.5.0
 	github.com/goxiaoy/go-eventbus v0.0.5
-	github.com/goxiaoy/go-saas v0.4.2-0.20220621162042-ec5654f2c57f
+	github.com/goxiaoy/go-saas v0.5.0
 	github.com/goxiaoy/go-saas-kit v0.0.0-00010101000000-000000000000
 	github.com/goxiaoy/uow v0.0.0-20220620110744-e5619dd7a74c
 	github.com/hibiken/asynq v0.23.0

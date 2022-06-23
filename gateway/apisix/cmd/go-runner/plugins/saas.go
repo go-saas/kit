@@ -6,25 +6,25 @@ import (
 	"encoding/json"
 	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
 	"github.com/apache/apisix-go-plugin-runner/pkg/log"
+	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas/common"
-	shttp "github.com/goxiaoy/go-saas/common/http"
+	shttp "github.com/goxiaoy/go-saas/http"
 	"net/http"
 )
 
-func Saas(ctx context.Context, tenantStore common.TenantStore, pathRegex string, w http.ResponseWriter, r pkgHTTP.Request) (context.Context, error) {
+func Saas(ctx context.Context, tenantStore saas.TenantStore, pathRegex string, w http.ResponseWriter, r pkgHTTP.Request) (context.Context, error) {
 
 	key := shttp.KeyOrDefault("")
 
 	//get tenant config
-	tenantConfigProvider := common.NewDefaultTenantConfigProvider(NewResolver(r, key, pathRegex), tenantStore)
+	tenantConfigProvider := saas.NewDefaultTenantConfigProvider(NewResolver(r, key, pathRegex), tenantStore)
 	tenantConfig, ctx, err := tenantConfigProvider.Get(ctx)
 	if err != nil {
 		return ctx, err
 	}
 
 	//extract previous id or name for logging
-	resolveValue := common.FromTenantResolveRes(ctx)
+	resolveValue := saas.FromTenantResolveRes(ctx)
 	idOrName := ""
 	if resolveValue != nil {
 		idOrName = resolveValue.TenantIdOrName
@@ -34,5 +34,5 @@ func Saas(ctx context.Context, tenantStore common.TenantStore, pathRegex string,
 
 	b, _ := json.Marshal(tenantConfig)
 	r.Header().Set(api.TenantInfoKey, base64.StdEncoding.EncodeToString(b))
-	return common.NewCurrentTenant(ctx, tenantConfig.ID, tenantConfig.Name), nil
+	return saas.NewCurrentTenant(ctx, tenantConfig.ID, tenantConfig.Name), nil
 }

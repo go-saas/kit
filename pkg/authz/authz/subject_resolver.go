@@ -57,7 +57,7 @@ func (s *SubjectResolverImpl) ResolveProcessed(ctx context.Context, subjects ...
 		if i == len(subjectList) {
 			break
 		}
-		for _, contributor := range s.opt.SubjectContributorList {
+		for _, contributor := range s.opt.SubjectContribList {
 			if subjects, err := contributor.Process(ctx, subjectList[i]); err != nil {
 				return nil, err
 			} else {

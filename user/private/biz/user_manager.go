@@ -4,12 +4,13 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/uuid"
+	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/localize"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/conf"
-	"github.com/goxiaoy/go-saas/common"
+
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"time"
 )
@@ -79,7 +80,7 @@ func (um *UserManager) Create(ctx context.Context, u *User) (err error) {
 	if err := um.userRepo.Create(ctx, u); err != nil {
 		return err
 	}
-	ct, _ := common.FromCurrentTenant(ctx)
+	ct, _ := saas.FromCurrentTenant(ctx)
 	if err := um.JoinTenant(ctx, u.UIDBase.ID.String(), ct.GetId()); err != nil {
 		return err
 	}
@@ -399,7 +400,7 @@ func (um *UserManager) normalize(ctx context.Context, u *User) error {
 		}
 		u.Phone = &phone
 	}
-	t, _ := common.FromCurrentTenant(ctx)
+	t, _ := saas.FromCurrentTenant(ctx)
 	if len(t.GetId()) > 0 {
 		ti := t.GetId()
 		u.CreatedTenant = &ti

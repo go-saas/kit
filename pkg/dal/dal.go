@@ -5,6 +5,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-eventbus"
+	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	kitconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/email"
@@ -13,7 +14,7 @@ import (
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	kitredis "github.com/goxiaoy/go-saas-kit/pkg/redis"
 	kituow "github.com/goxiaoy/go-saas-kit/pkg/uow"
-	"github.com/goxiaoy/go-saas/common"
+
 	"github.com/goxiaoy/go-saas/data"
 	sgorm "github.com/goxiaoy/go-saas/gorm"
 	"github.com/goxiaoy/uow"
@@ -55,7 +56,7 @@ var (
 	}
 )
 
-func NewConnStrResolver(c *kitconf.Data, ts common.TenantStore) data.ConnStrResolver {
+func NewConnStrResolver(c *kitconf.Data, ts saas.TenantStore) data.ConnStrResolver {
 	return kitgorm.NewConnStrResolver(c.Endpoints, ts)
 }
 

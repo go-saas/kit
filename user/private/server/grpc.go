@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/goxiaoy/go-saas"
 	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
@@ -17,8 +18,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/i18n"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
-	"github.com/goxiaoy/go-saas/common"
-	http2 "github.com/goxiaoy/go-saas/common/http"
+	http2 "github.com/goxiaoy/go-saas/http"
 	uow2 "github.com/goxiaoy/uow"
 )
 
@@ -26,13 +26,13 @@ import (
 func NewGRPCServer(
 	c *conf.Services,
 	tokenizer jwt.Tokenizer,
-	ts common.TenantStore,
+	ts saas.TenantStore,
 	uowMgr uow2.Manager,
 	mOpt *http2.WebMultiTenancyOption,
 	apiOpt *sapi.Option,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
-	userTenant *api.UserTenantContributor,
+	userTenant *api.UserTenantContrib,
 	register service.GrpcServerRegister,
 ) *grpc.Server {
 	m := middleware.Chain(
@@ -44,8 +44,8 @@ func NewGRPCServer(
 		localize.I18N(i18n.Files...),
 		jwt.ServerExtractAndAuth(tokenizer, logger),
 		sapi.ServerPropagation(apiOpt, validator, logger),
-		server.Saas(mOpt, ts, validator, func(o *common.TenantResolveOption) {
-			o.AppendContributors(userTenant)
+		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
+			o.AppendContribs(userTenant)
 		}),
 		uow.Uow(logger, uowMgr),
 	)

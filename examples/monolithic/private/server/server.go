@@ -2,10 +2,11 @@ package server
 
 import (
 	"github.com/google/wire"
+	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/dal"
 	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
-	saas2 "github.com/goxiaoy/go-saas-kit/pkg/saas"
+	ksaas "github.com/goxiaoy/go-saas-kit/pkg/saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
 	sbiz "github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	sserver "github.com/goxiaoy/go-saas-kit/saas/private/server"
@@ -15,7 +16,6 @@ import (
 	ubiz "github.com/goxiaoy/go-saas-kit/user/private/biz"
 	userver "github.com/goxiaoy/go-saas-kit/user/private/server"
 	uservice "github.com/goxiaoy/go-saas-kit/user/private/service"
-	"github.com/goxiaoy/go-saas/common"
 	"github.com/goxiaoy/go-saas/seed"
 )
 
@@ -38,8 +38,8 @@ var ProviderSet = wire.NewSet(
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister
 
-func NewSeeder(ts common.TenantStore, user userver.Seeding, sys sysserver.Seeding, saas sserver.Seeding) seed.Seeder {
-	return seed.NewDefaultSeeder(saas2.SeedChangeTenant(ts, user, sys, saas))
+func NewSeeder(ts saas.TenantStore, user userver.Seeding, sys sysserver.Seeding, saas sserver.Seeding) seed.Seeder {
+	return seed.NewDefaultSeeder(ksaas.SeedChangeTenant(ts, user, sys, saas))
 }
 
 func NewHttpServiceRegister(user uservice.HttpServerRegister, sys sysservice.HttpServerRegister, saas sservice.HttpServerRegister) HttpServerRegister {
@@ -54,6 +54,6 @@ func NewEventHandler(user ubiz.UserEventHandler, saas sbiz.SaasEventHandler) eve
 	return event.ChainHandler(event.Handler(user), event.Handler(saas))
 }
 
-func NewAuthorizationOption(userRole *uservice.UserRoleContributor) *authz.Option {
+func NewAuthorizationOption(userRole *uservice.UserRoleContrib) *authz.Option {
 	return authz.NewAuthorizationOption(userRole)
 }

@@ -7,7 +7,8 @@ import (
 	"github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/goxiaoy/go-saas/common"
+	"github.com/goxiaoy/go-saas"
+
 	sgorm "github.com/goxiaoy/go-saas/gorm"
 )
 
@@ -45,7 +46,7 @@ func (p *EnforcerProvider) Get(ctx context.Context) (*casbin.SyncedEnforcer, err
 		return nil, err
 	}
 	//every time reload policy by tenant
-	tenantInfo, _ := common.FromCurrentTenant(ctx)
+	tenantInfo, _ := saas.FromCurrentTenant(ctx)
 	filter := gormadapter.Filter{
 		V4: []string{tenantInfo.GetId(), "*"},
 	}

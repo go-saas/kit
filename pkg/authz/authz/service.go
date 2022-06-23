@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas/common"
+	"github.com/goxiaoy/go-saas"
 	"github.com/samber/lo"
 )
 
@@ -36,17 +36,17 @@ type SubjectList []Subject
 
 type ResultList []*Result
 
-// SubjectContributor receive one Subject and retrieve as list of subjects
-type SubjectContributor interface {
+// SubjectContrib receive one Subject and retrieve as list of subjects
+type SubjectContrib interface {
 	Process(ctx context.Context, subject Subject) ([]Subject, error)
 }
 
 type Option struct {
-	SubjectContributorList []SubjectContributor
+	SubjectContribList []SubjectContrib
 }
 
-func NewAuthorizationOption(subjectContributorList ...SubjectContributor) *Option {
-	return &Option{SubjectContributorList: subjectContributorList}
+func NewAuthorizationOption(subjectContribList ...SubjectContrib) *Option {
+	return &Option{SubjectContribList: subjectContribList}
 }
 
 type DefaultAuthorizationService struct {
@@ -126,7 +126,7 @@ func (a *DefaultAuthorizationService) check(ctx context.Context, requirements Re
 }
 
 func (a *DefaultAuthorizationService) BatchCheckForSubjects(ctx context.Context, requirement RequirementList, subjects ...Subject) (ResultList, error) {
-	ti, _ := common.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	return a.check(ctx, requirement, ti.GetId(), subjects...)
 }
 
@@ -135,7 +135,7 @@ func (a *DefaultAuthorizationService) BatchCheck(ctx context.Context, requiremen
 	if err != nil {
 		return nil, err
 	}
-	ti, _ := common.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	return a.check(ctx, requirement, ti.GetId(), subjects...)
 }
 

@@ -10,7 +10,7 @@ import (
 var _ authz.PermissionChecker = (*PermissionService)(nil)
 
 func (p *PermissionService) IsGrantTenant(ctx context.Context, requirements authz.RequirementList, tenantID string, subjects ...authz.Subject) ([]authz.Effect, error) {
-	res := []authz.Effect{}
+	var res []authz.Effect
 
 	enforcer, err := p.enforcer.Get(ctx)
 	if err != nil {

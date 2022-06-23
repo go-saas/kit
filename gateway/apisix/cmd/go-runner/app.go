@@ -4,6 +4,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
@@ -11,12 +12,11 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	uapi "github.com/goxiaoy/go-saas-kit/user/api"
-	"github.com/goxiaoy/go-saas/common"
-	shttp "github.com/goxiaoy/go-saas/common/http"
+	shttp "github.com/goxiaoy/go-saas/http"
 )
 
 type App struct {
-	tenantStore     common.TenantStore
+	tenantStore     saas.TenantStore
 	tokenizer       jwt.Tokenizer
 	tokenManager    api.TokenManager
 	services        *conf.Services
@@ -24,14 +24,14 @@ type App struct {
 	logger          klog.Logger
 	tenantCfg       *shttp.WebMultiTenancyOption
 	security        *conf.Security
-	userTenant      *uapi.UserTenantContributor
+	userTenant      *uapi.UserTenantContrib
 	refreshProvider session.RefreshTokenProvider
 	authService     authz.Service
 	subjectResolver authz.SubjectResolver
 }
 
-func newApp(tenantStore common.TenantStore,
-	userTenant *uapi.UserTenantContributor,
+func newApp(tenantStore saas.TenantStore,
+	userTenant *uapi.UserTenantContrib,
 	t jwt.Tokenizer,
 	tmr api.TokenManager,
 	services *conf.Services,

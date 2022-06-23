@@ -3,8 +3,9 @@ package biz
 import (
 	"context"
 	"errors"
+	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas/common"
+
 	"github.com/goxiaoy/go-saas/seed"
 )
 
@@ -20,7 +21,7 @@ func NewPermissionSeeder(permission authz.PermissionManagementService, checker a
 
 func (p *PermissionSeeder) Seed(ctx context.Context, sCtx *seed.Context) error {
 
-	tenantInfo, _ := common.FromCurrentTenant(ctx)
+	tenantInfo, _ := saas.FromCurrentTenant(ctx)
 	err := authz.EnsureGrant(ctx, p.permission, p.checker,
 		authz.NewEntityResource("*", "*"),
 		authz.ActionStr("*"),

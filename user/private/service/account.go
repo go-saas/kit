@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -19,7 +20,6 @@ import (
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
-	"github.com/goxiaoy/go-saas/common"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -96,12 +96,12 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	tenantIds = lo.Map(u.Tenants, func(t biz.UserTenant, _ int) string {
 		return t.GetTenantId()
 	})
-	currentTenant, _ := common.FromCurrentTenant(ctx)
+	currentTenant, _ := saas.FromCurrentTenant(ctx)
 	tenantIds = append(tenantIds, currentTenant.GetId())
 
 	if len(tenantIds) > 0 {
 		//change to host side
-		ctx = common.NewCurrentTenant(ctx, "", "")
+		ctx = saas.NewCurrentTenant(ctx, "", "")
 		tenants, err := s.tenantService.ListTenant(ctx,
 			&v13.ListTenantRequest{Filter: &v13.TenantFilter{
 				Id: &query.StringFilterOperation{In: lo.Map(tenantIds, func(t string, _ int) *wrapperspb.StringValue {
@@ -111,7 +111,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 			return nil, err
 		}
 		//back to current
-		ctx = common.NewCurrentTenant(ctx, currentTenant.GetId(), currentTenant.GetName())
+		ctx = saas.NewCurrentTenant(ctx, currentTenant.GetId(), currentTenant.GetName())
 
 		reTenants := lo.Map(u.Tenants, func(ut biz.UserTenant, _ int) *pb.UserTenant {
 			//get tenant info

@@ -10,6 +10,7 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
@@ -19,8 +20,7 @@ import (
 	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	uapi "github.com/goxiaoy/go-saas-kit/user/api"
 	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
-	"github.com/goxiaoy/go-saas/common"
-	shttp "github.com/goxiaoy/go-saas/common/http"
+	shttp "github.com/goxiaoy/go-saas/http"
 	"github.com/goxiaoy/sessions"
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/protobuf/proto"
@@ -55,9 +55,9 @@ var (
 	sessionInfoStore    sessions.Store
 	rememberStore       sessions.Store
 	securityCfg         *conf2.Security
-	userTenantValidator *uapi.UserTenantContributor
+	userTenantValidator *uapi.UserTenantContrib
 	refreshProvider     session.RefreshTokenProvider
-	ts                  common.TenantStore
+	ts                  saas.TenantStore
 	authService         authz.Service
 	subjectResolver     authz.SubjectResolver
 	saasWebConfig       *shttp.WebMultiTenancyOption
@@ -71,8 +71,8 @@ func Init(
 	services *conf2.Services,
 	security *conf2.Security,
 
-	userTenant *uapi.UserTenantContributor,
-	tenantStore common.TenantStore,
+	userTenant *uapi.UserTenantContrib,
+	tenantStore saas.TenantStore,
 	refreshTokenProvider session.RefreshTokenProvider,
 	as authz.Service,
 	sr authz.SubjectResolver,
@@ -214,8 +214,8 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	ctx = authn.NewUserContext(ctx, authn.NewUserInfo(uid))
 
 	//check tenant and user mismatch
-	ti, _ := common.FromCurrentTenant(ctx)
-	trCtx := common.NewTenantResolveContext(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
+	trCtx := saas.NewContext(ctx)
 	trCtx.TenantIdOrName = ti.GetId()
 
 	log.Infof("resolve user: %s client: %s tenantId: %s", uid, clientId, ti.GetId())

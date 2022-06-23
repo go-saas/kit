@@ -24,7 +24,7 @@ import (
 var ProviderSet = wire.NewSet(
 	NewGrpcServerRegister,
 	NewHttpServerRegister,
-	NewUserRoleContributor,
+	NewUserRoleContrib,
 	NewUserService,
 	wire.Bind(new(v12.UserServiceServer), new(*UserService)),
 	NewAccountService,
@@ -36,7 +36,7 @@ var ProviderSet = wire.NewSet(
 	NewPermissionService,
 	wire.Bind(new(v15.PermissionServiceServer), new(*PermissionService)),
 	NewHydra,
-	api.NewUserTenantContributor,
+	api.NewUserTenantContrib,
 	api.NewRefreshProvider,
 	uhttp.NewAuth)
 

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/goxiaoy/go-saas"
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
@@ -10,7 +11,7 @@ import (
 	pb "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
 	"github.com/goxiaoy/go-saas-kit/user/private/biz"
 	"github.com/goxiaoy/go-saas-kit/user/util"
-	"github.com/goxiaoy/go-saas/common"
+
 	"github.com/mennanov/fmutils"
 	"github.com/samber/lo"
 )
@@ -155,7 +156,7 @@ func (s *RoleService) GetRolePermission(ctx context.Context, req *pb.GetRolePerm
 	res := &pb.GetRolePermissionResponse{
 		Acl: resItems,
 	}
-	ti, _ := common.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	var groups []*v1.PermissionDefGroup
 	authz.WalkGroups(len(ti.GetId()) == 0, true, func(group *authz.PermissionDefGroup) {
 		g := &v1.PermissionDefGroup{}
@@ -205,7 +206,7 @@ func (s *RoleService) UpdateRolePermission(ctx context.Context, req *pb.UpdateRo
 	if r.IsPreserved {
 		return nil, pb.ErrorRolePreserved("")
 	}
-	ti, _ := common.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	var acl = lo.Map(req.Acl, func(a *pb.UpdateRolePermissionAcl, _ int) authz.UpdateSubjectPermission {
 		effect := util.MapPbEffect2AuthEffect(a.Effect)
 		return authz.UpdateSubjectPermission{

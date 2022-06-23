@@ -26,7 +26,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/sys/private/server"
 	"github.com/goxiaoy/go-saas-kit/sys/private/service"
 	api2 "github.com/goxiaoy/go-saas-kit/user/api"
-	"github.com/goxiaoy/go-saas/common/http"
+	"github.com/goxiaoy/go-saas/http"
 )
 
 // Injectors from wire.go:

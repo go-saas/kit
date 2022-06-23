@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas/common"
+	"github.com/goxiaoy/go-saas"
+
 	"github.com/spf13/afero"
 	"net/url"
 	"path"
@@ -65,7 +66,7 @@ func (f *FactoryImpl) Get(ctx context.Context, name string, tenancy bool) Blob {
 	}
 	opt := *cfg
 	if tenancy {
-		ti, _ := common.FromCurrentTenant(ctx)
+		ti, _ := saas.FromCurrentTenant(ctx)
 		t := ti.GetId()
 		if t == "" {
 			t = "_"

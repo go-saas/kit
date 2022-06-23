@@ -22,7 +22,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/sys/private/server"
 	"github.com/goxiaoy/go-saas-kit/sys/private/service"
 	uapi "github.com/goxiaoy/go-saas-kit/user/api"
-	shttp "github.com/goxiaoy/go-saas/common/http"
+	shttp "github.com/goxiaoy/go-saas/http"
 
 	sapi "github.com/goxiaoy/go-saas-kit/saas/api"
 )

@@ -24,7 +24,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/private/data"
 	"github.com/goxiaoy/go-saas-kit/user/private/server"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
-	"github.com/goxiaoy/go-saas/common/http"
+	"github.com/goxiaoy/go-saas/http"
 )
 
 // initApp init kratos application.

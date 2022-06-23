@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/goxiaoy/go-saas"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/errors"
 	v12 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
@@ -20,7 +21,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	v1 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
-	"github.com/goxiaoy/go-saas/common"
+
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -253,7 +254,7 @@ func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 	if u == nil {
 		return nil, errors2.NotFound("", "")
 	}
-	ti, _ := common.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	if req.Force {
 
 		creatorId := ""
@@ -317,7 +318,7 @@ func (s *UserService) InviteUser(ctx context.Context, req *pb.InviteUserRequest)
 	if u == nil {
 		return nil, errors2.NotFound("", "")
 	}
-	ti, _ := common.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	//TODO confirm??
 	err = s.um.JoinTenant(ctx, u.ID.String(), ti.GetId())
 	if err != nil {
@@ -343,7 +344,7 @@ func (s *UserService) CheckUserTenant(ctx context.Context, req *pb.CheckUserTena
 
 func (s *UserService) CheckUserTenantInternal(ctx context.Context, userId, tenantId string) (bool, error) {
 	//change to the request tenant
-	ctx = common.NewCurrentTenant(ctx, tenantId, "")
+	ctx = saas.NewCurrentTenant(ctx, tenantId, "")
 	ok, err := s.um.IsInTenant(ctx, userId, tenantId)
 	if err != nil {
 		return false, err

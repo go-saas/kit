@@ -7,15 +7,15 @@ import (
 	"github.com/goxiaoy/go-saas/data"
 )
 
-type UserRoleContributor struct {
+type UserRoleContrib struct {
 	userRepo biz.UserRepo
 }
 
-func NewUserRoleContributor(userRepo biz.UserRepo) *UserRoleContributor {
-	return &UserRoleContributor{userRepo: userRepo}
+func NewUserRoleContrib(userRepo biz.UserRepo) *UserRoleContrib {
+	return &UserRoleContrib{userRepo: userRepo}
 }
 
-func (u *UserRoleContributor) Process(ctx context.Context, subject authz.Subject) ([]authz.Subject, error) {
+func (u *UserRoleContrib) Process(ctx context.Context, subject authz.Subject) ([]authz.Subject, error) {
 	if us, ok := authz.ParseUserSubject(subject); ok {
 		if us.GetUserId() != "" {
 			//TODO ?
@@ -37,4 +37,4 @@ func (u *UserRoleContributor) Process(ctx context.Context, subject authz.Subject
 	return nil, nil
 }
 
-var _ authz.SubjectContributor = (*UserRoleContributor)(nil)
+var _ authz.SubjectContrib = (*UserRoleContrib)(nil)

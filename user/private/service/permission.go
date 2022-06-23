@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/goxiaoy/go-saas"
 	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/user/api"
 	pb "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
 	"github.com/goxiaoy/go-saas-kit/user/util"
-	"github.com/goxiaoy/go-saas/common"
+
 	"github.com/samber/lo"
 )
 
@@ -125,7 +126,7 @@ func (s *PermissionService) ListSubjectPermission(ctx context.Context, req *pb.L
 	res := &pb.ListSubjectPermissionResponse{
 		Acl: resItems,
 	}
-	ti, _ := common.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	var groups []*pb.PermissionDefGroup
 	authz.WalkGroups(len(ti.GetId()) == 0, true, func(group *authz.PermissionDefGroup) {
 		g := &pb.PermissionDefGroup{}
@@ -191,7 +192,7 @@ func (s *PermissionService) findAnyValidateModifyPermissionDef(ctx context.Conte
 	if err != nil {
 		return err
 	}
-	ti, _ := common.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	if (def.Side == authz.PermissionAllowSide_HOST_ONLY && len(ti.GetId()) != 0) || (def.Side == authz.PermissionAllowSide_TENANT_ONLY && len(ti.GetId()) == 0) {
 		return errors.New(400, authz.DefNotFoundReason, fmt.Sprintf("action %s in %s side mismatch", action, namespace))
 	}

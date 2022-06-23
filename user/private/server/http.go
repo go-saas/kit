@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/goxiaoy/go-saas"
 	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
 	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
@@ -18,8 +19,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas-kit/user/i18n"
 	"github.com/goxiaoy/go-saas-kit/user/private/service"
-	"github.com/goxiaoy/go-saas/common"
-	shttp "github.com/goxiaoy/go-saas/common/http"
+	shttp "github.com/goxiaoy/go-saas/http"
 	uow2 "github.com/goxiaoy/uow"
 )
 
@@ -30,12 +30,12 @@ func NewHTTPServer(c *conf.Services,
 	uowMgr uow2.Manager,
 	mOpt *shttp.WebMultiTenancyOption,
 	apiOpt *sapi.Option,
-	ts common.TenantStore,
+	ts saas.TenantStore,
 	reqDecoder khttp.DecodeRequestFunc,
 	resEncoder khttp.EncodeResponseFunc,
 	errEncoder khttp.EncodeErrorFunc,
 	logger log.Logger,
-	userTenant *api.UserTenantContributor,
+	userTenant *api.UserTenantContrib,
 	validator sapi.TrustedContextValidator,
 	refreshProvider session.RefreshTokenProvider,
 	register service.HttpServerRegister,
@@ -53,8 +53,8 @@ func NewHTTPServer(c *conf.Services,
 		localize.I18N(i18n.Files...),
 		jwt.ServerExtractAndAuth(tokenizer, logger),
 		sapi.ServerPropagation(apiOpt, validator, logger),
-		server.Saas(mOpt, ts, validator, func(o *common.TenantResolveOption) {
-			o.AppendContributors(userTenant)
+		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
+			o.AppendContribs(userTenant)
 		}),
 		uow.Uow(logger, uowMgr))
 	opts = append(opts, []khttp.ServerOption{

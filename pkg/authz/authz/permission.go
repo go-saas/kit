@@ -2,7 +2,7 @@ package authz
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas/common"
+	"github.com/goxiaoy/go-saas"
 )
 
 type PermissionManagementService interface {
@@ -42,7 +42,7 @@ func EnsureForbidden(ctx context.Context, mgr PermissionManagementService, check
 }
 
 func NormalizeTenantId(ctx context.Context, tenantId string) string {
-	ti, _ := common.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	if ti.GetId() == "" {
 		//host side
 		return tenantId

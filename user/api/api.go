@@ -26,7 +26,7 @@ func NewGrpcConn(clientName api.ClientName, services *conf.Services, opt *api.Op
 }
 
 var GrpcProviderSet = wire.NewSet(
-	NewUserTenantContributor, NewRefreshProvider,
+	NewUserTenantContrib, NewRefreshProvider,
 	NewRemotePermissionChecker,
 	wire.Bind(new(authz.PermissionChecker), new(*PermissionChecker)),
 	wire.Bind(new(authz.PermissionManagementService), new(*PermissionChecker)),

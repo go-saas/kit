@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/goxiaoy/go-saas"
 	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
@@ -20,7 +21,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/saas/api"
 	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
 	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
-	"github.com/goxiaoy/go-saas/common"
+
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -172,7 +173,7 @@ func (s *TenantService) GetTenantPublic(ctx context.Context, req *pb.GetTenantPu
 }
 
 func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrentTenantRequest) (*pb.GetCurrentTenantReply, error) {
-	ti, _ := common.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	if len(ti.GetId()) == 0 {
 		return &pb.GetCurrentTenantReply{IsHost: true}, nil
 	} else {

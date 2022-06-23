@@ -15,7 +15,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
 	api3 "github.com/goxiaoy/go-saas-kit/user/api"
-	"github.com/goxiaoy/go-saas/common/http"
+	"github.com/goxiaoy/go-saas/http"
 )
 
 import (
@@ -34,7 +34,7 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	tenantStore := api2.NewTenantStore(tenantInternalServiceServer)
 	apiGrpcConn, cleanup2 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
 	userServiceServer := api3.NewUserGrpcClient(apiGrpcConn)
-	userTenantContributor := api3.NewUserTenantContributor(userServiceServer)
+	userTenantContrib := api3.NewUserTenantContrib(userServiceServer)
 	authServer := api3.NewAuthGrpcClient(apiGrpcConn)
 	refreshTokenProvider := api3.NewRefreshProvider(authServer, logger)
 	permissionServiceServer := api3.NewPermissionGrpcClient(apiGrpcConn)
@@ -42,7 +42,7 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	authzOption := NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
-	app, err := newApp(tenantStore, userTenantContributor, tokenizer, inMemoryTokenManager, services, clientName, webMultiTenancyOption, security, refreshTokenProvider, defaultAuthorizationService, subjectResolverImpl, logger)
+	app, err := newApp(tenantStore, userTenantContrib, tokenizer, inMemoryTokenManager, services, clientName, webMultiTenancyOption, security, refreshTokenProvider, defaultAuthorizationService, subjectResolverImpl, logger)
 	if err != nil {
 		cleanup2()
 		cleanup()
