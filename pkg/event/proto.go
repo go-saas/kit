@@ -1,6 +1,9 @@
 package event
 
-import "google.golang.org/protobuf/proto"
+import (
+	"context"
+	"google.golang.org/protobuf/proto"
+)
 
 func NewMessageFromProto(msg proto.Message) (Event, error) {
 	key, v, err := KVFromProto(msg)
@@ -19,10 +22,10 @@ func KVFromProto(msg proto.Message) (string, []byte, error) {
 	return key, data, nil
 }
 
-func ProtoHandler[T proto.Message](msg T, next HandlerOf[T]) Handler {
+func ProtoHandler[T proto.Message](msg T, h HandlerOf[T]) Handler {
 	key := string(msg.ProtoReflect().Descriptor().FullName())
-	return FilterKeyHandler(key, TransformHandler(func(event Event) (T, error) {
+	return FilterKey(key, NewTransformer(func(_ context.Context, event Event) (T, error) {
 		err := proto.Unmarshal(event.Value(), msg)
 		return msg, err
-	}, next))
+	}, h))
 }

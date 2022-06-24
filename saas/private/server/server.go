@@ -5,7 +5,6 @@ import (
 	"github.com/goxiaoy/go-saas"
 	kapi "github.com/goxiaoy/go-saas-kit/pkg/api"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	ksaas "github.com/goxiaoy/go-saas-kit/pkg/saas"
 	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
 	"github.com/goxiaoy/go-saas-kit/saas/api"
@@ -17,7 +16,7 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewJobServer, NewSeeder, wire.Value(ClientName), wire.Value(biz.ConnName), NewSeeding, NewEventHandler, NewAuthorizationOption)
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewJobServer, NewEventServer, NewSeeder, wire.Value(ClientName), wire.Value(biz.ConnName), NewSeeding, NewAuthorizationOption)
 
 var ClientName kapi.ClientName = api.ServiceName
 
@@ -34,8 +33,4 @@ func NewSeeder(ts saas.TenantStore, ss Seeding) seed.Seeder {
 
 func NewAuthorizationOption() *authz.Option {
 	return authz.NewAuthorizationOption()
-}
-
-func NewEventHandler(saas biz.SaasEventHandler) event.Handler {
-	return event.Handler(saas)
 }

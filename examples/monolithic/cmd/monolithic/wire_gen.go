@@ -42,6 +42,10 @@ import (
 	"github.com/goxiaoy/go-saas-kit/user/private/service/http"
 )
 
+import (
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
+)
+
 // Injectors from wire.go:
 
 // initApp init kratos application.
@@ -65,7 +69,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	tenantRepo := data.NewTenantRepo(eventBus, dataData)
 	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
 	connName := _wireConnNameValue
-	sender, cleanup3, err := dal.NewEventSender(confData, logger, connName)
+	sender, cleanup3, err := dal.NewEventSender(confData, connName)
 	if err != nil {
 		cleanup2()
 		cleanup()
@@ -177,25 +181,12 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	seeder := server2.NewSeeder(tenantStore, seeding, serverSeeding, seeding2)
 	userMigrationTaskHandler := biz2.NewUserMigrationTaskHandler(seeder, sender)
 	jobServer := server2.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
+	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
 	asynqClient, cleanup6 := job.NewAsynqClient(redisConnOpt)
 	tenantSeedEventHandler := biz2.NewTenantSeedEventHandler(asynqClient)
-	userEventHandler := biz2.NewRemoteEventHandler(logger, manager, tenantSeedEventHandler)
-	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
-	saasEventHandler := biz.NewRemoteEventHandler(logger, manager, tenantReadyEventHandler)
-	handler := server2.NewEventHandler(userEventHandler, saasEventHandler)
-	receiver, cleanup7, err := dal.NewRemoteEventReceiver(confData, logger, handler, connName)
-	if err != nil {
-		cleanup6()
-		cleanup5()
-		cleanup4()
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, seeder, receiver)
+	factoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler, tenantSeedEventHandler)
+	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, factoryServer, seeder)
 	return app, func() {
-		cleanup7()
 		cleanup6()
 		cleanup5()
 		cleanup4()

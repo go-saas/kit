@@ -6,7 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/goxiaoy/go-saas-kit/examples/monolithic/private/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	"github.com/goxiaoy/go-saas-kit/pkg/event"
 	"github.com/goxiaoy/go-saas-kit/pkg/job"
 	"github.com/goxiaoy/go-saas-kit/pkg/logging"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
@@ -21,6 +21,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
@@ -43,7 +45,7 @@ func init() {
 	flag.StringVar(&seedPath, sysbiz.SeedPathKey, "", "menu seed file path")
 }
 
-func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Server, js *job.Server, seeder seed.Seeder, _ event.Receiver) *kratos.App {
+func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.FactoryServer, seeder seed.Seeder) *kratos.App {
 	if ifSeed {
 		extra := map[string]interface{}{}
 		if len(seedPath) > 0 {
@@ -65,6 +67,7 @@ func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Serv
 			hs,
 			gs,
 			js,
+			es,
 		),
 	)
 }

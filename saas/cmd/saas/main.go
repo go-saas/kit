@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	"github.com/goxiaoy/go-saas-kit/pkg/event"
 	"github.com/goxiaoy/go-saas-kit/pkg/job"
 	"github.com/goxiaoy/go-saas-kit/pkg/logging"
 	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
@@ -18,6 +18,8 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
+
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
@@ -37,7 +39,7 @@ func init() {
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, seeder seed.Seeder, _ event.Receiver) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.FactoryServer, seeder seed.Seeder) *kratos.App {
 	if ifSeed {
 		if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("")); err != nil {
 			panic(err)
@@ -53,6 +55,7 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server,
 			hs,
 			gs,
 			js,
+			es,
 		),
 	)
 }

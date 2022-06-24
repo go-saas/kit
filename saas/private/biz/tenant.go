@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/goxiaoy/go-saas-kit/pkg/data"
-	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	event2 "github.com/goxiaoy/go-saas-kit/pkg/event"
 	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	"github.com/goxiaoy/go-saas-kit/pkg/query"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
@@ -65,10 +65,10 @@ type TenantRepo interface {
 type TenantUseCase struct {
 	repo             TenantRepo
 	connStrGenerator ConnStrGenerator
-	sender           event.Sender
+	sender           event2.Sender
 }
 
-func NewTenantUserCase(repo TenantRepo, connStrGenerator ConnStrGenerator, sender event.Sender) *TenantUseCase {
+func NewTenantUserCase(repo TenantRepo, connStrGenerator ConnStrGenerator, sender event2.Sender) *TenantUseCase {
 	return &TenantUseCase{repo: repo, connStrGenerator: connStrGenerator, sender: sender}
 }
 
@@ -136,7 +136,7 @@ func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adm
 		remoteEvent.AdminUsername = adminInfo.Username
 		remoteEvent.AdminPassword = adminInfo.Password
 	}
-	e, _ := event.NewMessageFromProto(remoteEvent)
+	e, _ := event2.NewMessageFromProto(remoteEvent)
 	return t.sender.Send(ctx, e)
 }
 

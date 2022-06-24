@@ -74,6 +74,12 @@ func NewDbCache(d *conf.Data, l klog.Logger) (*DbCache, func()) {
 func (c *DbCache) GetOrSet(ctx context.Context, key, connStr string) (*gorm.DB, error) {
 
 	client, _, err := c.Cache.GetOrSet(fmt.Sprintf("%s/%s", key, connStr), func() (*sgorm.DbWrap, error) {
+
+		dbLogger := &Logger{
+			Logger:   c.l,
+			LogLevel: logger.Info,
+		}
+
 		//find config
 		dbConfig := c.d.Endpoints.GetDatabaseMergedDefault(key)
 		var dbGuardian ensureDbExistFunc
@@ -98,7 +104,7 @@ func (c *DbCache) GetOrSet(ctx context.Context, key, connStr string) (*gorm.DB, 
 				dbname := dsn.DBName
 				dsn.DBName = ""
 				//open without db name
-				db, err := gorm.Open(mysql.Open(dsn.FormatDSN()), &gorm.Config{})
+				db, err := gorm.Open(mysql.Open(dsn.FormatDSN()), &gorm.Config{Logger: dbLogger})
 				if err != nil {
 					return err
 				}
@@ -122,10 +128,7 @@ func (c *DbCache) GetOrSet(ctx context.Context, key, connStr string) (*gorm.DB, 
 		}
 
 		gormConf := &gorm.Config{
-			Logger: &Logger{
-				Logger:   c.l,
-				LogLevel: logger.Info,
-			},
+			Logger: dbLogger,
 			NamingStrategy: schema.NamingStrategy{
 				TablePrefix: tp,
 			}}

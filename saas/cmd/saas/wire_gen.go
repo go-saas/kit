@@ -29,6 +29,10 @@ import (
 	api3 "github.com/goxiaoy/go-saas-kit/user/api"
 )
 
+import (
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
+)
+
 // Injectors from wire.go:
 
 // initApp init kratos application.
@@ -48,7 +52,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	tenantRepo := data.NewTenantRepo(eventBus, dataData)
 	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
 	connName := _wireConnNameValue
-	sender, cleanup3, err := dal.NewEventSender(confData, logger, connName)
+	sender, cleanup3, err := dal.NewEventSender(confData, connName)
 	if err != nil {
 		cleanup2()
 		cleanup()
@@ -95,23 +99,13 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	}
 	redisConnOpt := job.NewAsynqClientOpt(client)
 	jobServer := server2.NewJobServer(redisConnOpt, logger)
+	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
+	factoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler)
 	migrate := data.NewMigrate(dataData)
 	seeding := server2.NewSeeding(manager, migrate)
 	seeder := server2.NewSeeder(tenantStore, seeding)
-	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
-	saasEventHandler := biz.NewRemoteEventHandler(logger, manager, tenantReadyEventHandler)
-	handler := server2.NewEventHandler(saasEventHandler)
-	receiver, cleanup5, err := dal.NewRemoteEventReceiver(confData, logger, handler, connName)
-	if err != nil {
-		cleanup4()
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, receiver)
+	app := newApp(logger, httpServer, grpcServer, jobServer, factoryServer, seeder)
 	return app, func() {
-		cleanup5()
 		cleanup4()
 		cleanup3()
 		cleanup2()

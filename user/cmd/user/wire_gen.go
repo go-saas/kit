@@ -34,6 +34,7 @@ import (
 )
 
 import (
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
 	_ "github.com/goxiaoy/go-saas-kit/saas/api"
 	_ "github.com/goxiaoy/go-saas-kit/sys/api"
 )
@@ -128,7 +129,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
 	seeding := server.NewSeeding(manager, migrate, roleSeed, userSeed, permissionSeeder)
 	seeder := server.NewSeeder(tenantStore, seeding)
-	sender, cleanup4, err := dal.NewEventSender(confData, logger, connName)
+	sender, cleanup4, err := dal.NewEventSender(confData, connName)
 	if err != nil {
 		cleanup3()
 		cleanup2()
@@ -139,20 +140,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	jobServer := server.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
 	asynqClient, cleanup5 := job.NewAsynqClient(redisConnOpt)
 	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(asynqClient)
-	userEventHandler := biz.NewRemoteEventHandler(logger, manager, tenantSeedEventHandler)
-	handler := server.NewEventHandler(userEventHandler)
-	receiver, cleanup6, err := dal.NewRemoteEventReceiver(confData, logger, handler, connName)
-	if err != nil {
-		cleanup5()
-		cleanup4()
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	app := newApp(userConf, logger, httpServer, grpcServer, jobServer, seeder, receiver)
+	factoryServer := server.NewEventServer(confData, connName, logger, manager, tenantSeedEventHandler)
+	app := newApp(userConf, logger, httpServer, grpcServer, jobServer, factoryServer, seeder)
 	return app, func() {
-		cleanup6()
 		cleanup5()
 		cleanup4()
 		cleanup3()

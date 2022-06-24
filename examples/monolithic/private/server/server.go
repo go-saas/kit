@@ -5,15 +5,12 @@ import (
 	"github.com/goxiaoy/go-saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/dal"
-	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
 	ksaas "github.com/goxiaoy/go-saas-kit/pkg/saas"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
-	sbiz "github.com/goxiaoy/go-saas-kit/saas/private/biz"
 	sserver "github.com/goxiaoy/go-saas-kit/saas/private/server"
 	sservice "github.com/goxiaoy/go-saas-kit/saas/private/service"
 	sysserver "github.com/goxiaoy/go-saas-kit/sys/private/server"
 	sysservice "github.com/goxiaoy/go-saas-kit/sys/private/service"
-	ubiz "github.com/goxiaoy/go-saas-kit/user/private/biz"
 	userver "github.com/goxiaoy/go-saas-kit/user/private/server"
 	uservice "github.com/goxiaoy/go-saas-kit/user/private/service"
 	"github.com/goxiaoy/go-saas/seed"
@@ -24,10 +21,10 @@ var ProviderSet = wire.NewSet(
 	NewHTTPServer,
 	NewGRPCServer,
 	NewJobServer,
+	NewEventServer,
 	NewHttpServiceRegister,
 	NewGrpcServiceRegister,
 	NewSeeder,
-	NewEventHandler,
 	wire.Value(dal.ConnName("default")),
 	NewAuthorizationOption,
 	userver.NewSeeding,
@@ -48,10 +45,6 @@ func NewHttpServiceRegister(user uservice.HttpServerRegister, sys sysservice.Htt
 
 func NewGrpcServiceRegister(user uservice.GrpcServerRegister, sys sysservice.GrpcServerRegister, saas sservice.GrpcServerRegister) GrpcServerRegister {
 	return server.ChainGrpcServiceRegister(user, sys, saas)
-}
-
-func NewEventHandler(user ubiz.UserEventHandler, saas sbiz.SaasEventHandler) event.Handler {
-	return event.ChainHandler(event.Handler(user), event.Handler(saas))
 }
 
 func NewAuthorizationOption(userRole *uservice.UserRoleContrib) *authz.Option {

@@ -19,6 +19,8 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/goxiaoy/go-saas-kit/sys/private/conf"
+
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
@@ -89,7 +91,7 @@ func main() {
 		panic(err)
 	}
 	defer lc()
-	
+
 	logger := log.With(l,
 		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,

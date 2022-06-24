@@ -1,7 +1,6 @@
 package dal
 
 import (
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-eventbus"
@@ -9,8 +8,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	kitconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/email"
-	event2 "github.com/goxiaoy/go-saas-kit/pkg/event"
-	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	event "github.com/goxiaoy/go-saas-kit/pkg/event"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	kitredis "github.com/goxiaoy/go-saas-kit/pkg/redis"
 	kituow "github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -45,7 +43,6 @@ var (
 
 		NewEmailer,
 		NewEventSender,
-		NewRemoteEventReceiver,
 		wire.Value(eventbus.Default),
 	)
 )
@@ -91,12 +88,7 @@ func NewRedis(c *kitconf.Data, name ConnName) (*redis.Client, error) {
 	return kitredis.NewRedisClient(r), err
 }
 
-func NewEventSender(c *kitconf.Data, logger log.Logger, name ConnName) (event.Sender, func(), error) {
+func NewEventSender(c *kitconf.Data, name ConnName) (event.Sender, func(), error) {
 	e := c.Endpoints.GetEventMergedDefault(string(name))
-	return event2.NewEventSender(e, logger)
-}
-
-func NewRemoteEventReceiver(c *kitconf.Data, logger log.Logger, handler event.Handler, name ConnName) (event.Receiver, func(), error) {
-	e := c.Endpoints.GetEventMergedDefault(string(name))
-	return event2.NewEventReceiver(e, handler, logger)
+	return event.NewFactorySender(e)
 }

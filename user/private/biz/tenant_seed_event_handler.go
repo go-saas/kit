@@ -3,7 +3,7 @@ package biz
 import (
 	"context"
 	"fmt"
-	"github.com/goxiaoy/go-saas-kit/pkg/event/event"
+	event2 "github.com/goxiaoy/go-saas-kit/pkg/event"
 	v1 "github.com/goxiaoy/go-saas-kit/saas/event/v1"
 	"github.com/goxiaoy/go-saas-kit/user/api"
 	"github.com/goxiaoy/go-saas/seed"
@@ -12,11 +12,11 @@ import (
 	"time"
 )
 
-type TenantSeedEventHandler event.Handler
+type TenantSeedEventHandler event2.Handler
 
 func NewTenantSeedEventHandler(client *asynq.Client) TenantSeedEventHandler {
 	msg := &v1.TenantCreatedEvent{}
-	return TenantSeedEventHandler(event.ProtoHandler[*v1.TenantCreatedEvent](msg, func(ctx context.Context, msg *v1.TenantCreatedEvent) error {
+	return event2.ProtoHandler[*v1.TenantCreatedEvent](msg, event2.HandlerFuncOf[*v1.TenantCreatedEvent](func(ctx context.Context, msg *v1.TenantCreatedEvent) error {
 		t, err := NewUserMigrationTask(msg)
 		if err != nil {
 			return err
@@ -36,7 +36,7 @@ func NewUserMigrationTask(msg *v1.TenantCreatedEvent) (*asynq.Task, error) {
 
 type UserMigrationTaskHandler func(ctx context.Context, t *asynq.Task) error
 
-func NewUserMigrationTaskHandler(seeder seed.Seeder, sender event.Sender) UserMigrationTaskHandler {
+func NewUserMigrationTaskHandler(seeder seed.Seeder, sender event2.Sender) UserMigrationTaskHandler {
 	return func(ctx context.Context, t *asynq.Task) error {
 		msg := &v1.TenantCreatedEvent{}
 		if err := protojson.Unmarshal(t.Payload(), msg); err != nil {
@@ -59,7 +59,7 @@ func NewUserMigrationTaskHandler(seeder seed.Seeder, sender event.Sender) UserMi
 			Id:          msg.Id,
 			ServiceName: api.ServiceName,
 		}
-		ee, _ := event.NewMessageFromProto(e)
+		ee, _ := event2.NewMessageFromProto(e)
 		return sender.Send(ctx, ee)
 	}
 }

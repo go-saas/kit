@@ -29,6 +29,10 @@ import (
 	"github.com/goxiaoy/go-saas/http"
 )
 
+import (
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
+)
+
 // Injectors from wire.go:
 
 // initApp init kratos application.
