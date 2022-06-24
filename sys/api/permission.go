@@ -10,6 +10,8 @@ const (
 	ResourceDev  = "dev"
 
 	ResourceDevJaeger = "dev.jaeger"
+
+	ResourceDevJob = "dev.jobs"
 )
 
 //go:embed permission.yaml

@@ -1,11 +1,14 @@
 package service
 
 import (
+	_ "embed"
+	"github.com/flowchartsman/swaggerui"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	kconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/server"
@@ -19,6 +22,9 @@ import (
 	client "github.com/ory/hydra-client-go"
 	"net/http"
 )
+
+//go:embed openapi/api.swagger.json
+var spec []byte
 
 // ProviderSet is service providers.
 var ProviderSet = wire.NewSet(
@@ -52,6 +58,7 @@ func NewHttpServerRegister(user *UserService,
 	permission *PermissionService,
 	authHttp *uhttp.Auth,
 	dataCfg *kconf.Data,
+	authzSrv authz.Service,
 	factory blob.Factory) HttpServerRegister {
 	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware middleware.Middleware) {
 
@@ -61,7 +68,7 @@ func NewHttpServerRegister(user *UserService,
 		router.Use(
 			server.MiddlewareConvert(errEncoder, middleware))
 
-		router.Group(func(router chi.Router) {
+		authRouter := router.Group(func(router chi.Router) {
 			router.Get("/login", server.HandlerWrap(resEncoder, authHttp.LoginGet))
 			router.Post("/login", server.HandlerWrap(resEncoder, authHttp.LoginPost))
 			router.Get("/logout", server.HandlerWrap(resEncoder, authHttp.LoginOutGet))
@@ -71,11 +78,12 @@ func NewHttpServerRegister(user *UserService,
 		})
 
 		server.HandleBlobs("", dataCfg.Blobs, srv, factory)
-		srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", router))
+		srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", authRouter))
 
 		v12.RegisterUserServiceHTTPServer(srv, user)
 
 		v13.RegisterAccountHTTPServer(srv, account)
+
 		route := srv.Route("/")
 
 		route.POST("/v1/account/avatar", account.UpdateAvatar)
@@ -84,6 +92,17 @@ func NewHttpServerRegister(user *UserService,
 		v14.RegisterAuthHTTPServer(srv, auth)
 		v1.RegisterRoleServiceHTTPServer(srv, role)
 		v15.RegisterPermissionServiceHTTPServer(srv, permission)
+
+		const apiPrefix = "/v1/user/dev/swagger"
+		swaggerRouter := router.Group(func(router chi.Router) {
+			router.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, server.AuthzGuardian(
+				authzSrv, authz.RequirementList{
+					authz.NewRequirement(authz.NewEntityResource("dev", "user"), authz.AnyAction),
+				}, errEncoder, swaggerui.Handler(spec),
+			)))
+		})
+
+		srv.HandlePrefix(apiPrefix, swaggerRouter)
 	})
 }
 

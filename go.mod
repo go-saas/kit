@@ -38,6 +38,7 @@ require (
 	github.com/Shopify/sarama v1.32.0
 	github.com/aws/aws-sdk-go v1.43.19
 	github.com/fclairamb/afero-s3 v0.3.1
+	github.com/flowchartsman/swaggerui v0.0.0-20210303154956-0e71c297862e
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20220619121658-a0e624c0b860
 	github.com/go-redis/cache/v8 v8.4.3
 	github.com/go-redis/redis/extra/redisotel/v8 v8.11.5

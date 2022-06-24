@@ -57,11 +57,6 @@ func (p *KitAuthz) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		ctx, _ = contributor.Extract(ctx, headers)
 	}
 
-	subjects, _ := subjectResolver.ResolveFromContext(ctx)
-	log.Infof("subjects: %s", strings.Join(lo.Map(subjects, func(t authz.Subject, _ int) string {
-		return t.GetIdentity()
-	}), ","))
-
 	resultList, err := authService.BatchCheck(ctx, lo.Map(requirement, func(t Requirement, _ int) *authz.Requirement {
 		return authz.NewRequirement(authz.NewEntityResource(t.Namespace, t.Resource), authz.ActionStr(t.Action))
 	}))
@@ -71,7 +66,7 @@ func (p *KitAuthz) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	}
 	for _, result := range resultList {
 		if !result.Allowed {
-			abortWithError(authz.FormatError(ctx, result, subjects...), w)
+			abortWithError(authService.FormatError(ctx, result), w)
 			return
 		}
 	}

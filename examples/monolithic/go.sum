@@ -132,6 +132,8 @@ github.com/fclairamb/afero-s3 v0.3.1/go.mod h1:VZ/bvRox6Bq3U+vTGa12uyDu+5UJb40M7
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/felixge/httpsnoop v1.0.2 h1:+nS9g82KMXccJ/wp0zyRW9ZBHFETmMGtkk+2CTTrW4o=
 github.com/felixge/httpsnoop v1.0.2/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
+github.com/flowchartsman/swaggerui v0.0.0-20210303154956-0e71c297862e h1:mCAEwRtKhX9uPANjQO4laenisp7njuqwupRmvZcBfsE=
+github.com/flowchartsman/swaggerui v0.0.0-20210303154956-0e71c297862e/go.mod h1:/RJwPD5L4xWgCbqQ1L5cB12ndgfKKT54n9cZFf+8pus=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
 github.com/frankban/quicktest v1.14.2 h1:SPb1KFFmM+ybpEjPUhCCkZOM5xlovT5UbrMvWnXyBns=

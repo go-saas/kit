@@ -85,7 +85,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService, trustedContextValidator, factory, appConfig)
-	httpServerRegister := service.NewHttpServerRegister(tenantService, factory, tenantInternalService, confData)
+	httpServerRegister := service.NewHttpServerRegister(tenantService, factory, defaultAuthorizationService, encodeErrorFunc, tenantInternalService, confData)
 	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, trustedContextValidator, userTenantContrib, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(tenantService, tenantInternalService)
 	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, userTenantContrib, trustedContextValidator, grpcServerRegister, logger)

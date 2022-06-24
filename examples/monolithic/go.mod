@@ -34,6 +34,7 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v0.6.7 // indirect
 	github.com/fclairamb/afero-s3 v0.3.1 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
+	github.com/flowchartsman/swaggerui v0.0.0-20210303154956-0e71c297862e // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/glebarez/go-sqlite v1.16.0 // indirect
 	github.com/glebarez/sqlite v1.4.3 // indirect

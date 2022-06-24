@@ -9,6 +9,7 @@ import (
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
 	"github.com/goxiaoy/go-saas-kit/pkg/blob"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/csrf"
@@ -207,4 +208,22 @@ func IsAjax(ctx context.Context) bool {
 		return len(h) > 0 && h[0] == "XMLHttpRequest"
 	}
 	return false
+}
+
+// AuthzGuardian guard http.Handler with authz
+func AuthzGuardian(srv authz.Service, requirement authz.RequirementList, encoder khttp.EncodeErrorFunc, handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		r, err := srv.BatchCheck(request.Context(), requirement)
+		if err != nil {
+			encoder(writer, request, err)
+			return
+		}
+		for _, result := range r {
+			if !result.Allowed {
+				encoder(writer, request, srv.FormatError(request.Context(), result))
+				return
+			}
+		}
+		handler.ServeHTTP(writer, request)
+	})
 }

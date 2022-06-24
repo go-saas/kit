@@ -2,6 +2,7 @@ package authz
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-saas"
@@ -16,6 +17,8 @@ type Service interface {
 
 	BatchCheckForSubjects(ctx context.Context, requirement RequirementList, subjects ...Subject) (ResultList, error)
 	BatchCheck(ctx context.Context, requirement RequirementList) (ResultList, error)
+
+	FormatError(ctx context.Context, result *Result, subjects ...Subject) error
 }
 
 type Requirement struct {
@@ -71,7 +74,7 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 	if err != nil {
 		return res, err
 	}
-	return res, FormatError(ctx, res)
+	return res, a.FormatError(ctx, res)
 }
 
 func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action) (*Result, error) {
@@ -85,7 +88,7 @@ func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resour
 		return res, err
 	}
 	subjects, _ := a.sr.ResolveFromContext(ctx)
-	return res, FormatError(ctx, res, subjects...)
+	return res, a.FormatError(ctx, res, subjects...)
 }
 
 func (a *DefaultAuthorizationService) check(ctx context.Context, requirements RequirementList, tenant string, subject ...Subject) (ResultList, error) {
@@ -137,6 +140,37 @@ func (a *DefaultAuthorizationService) BatchCheck(ctx context.Context, requiremen
 	}
 	ti, _ := saas.FromCurrentTenant(ctx)
 	return a.check(ctx, requirement, ti.GetId(), subjects...)
+}
+
+func (a *DefaultAuthorizationService) FormatError(ctx context.Context, result *Result, subjects ...Subject) (err error) {
+	if len(subjects) == 0 {
+		subjects, err = a.sr.ResolveFromContext(ctx)
+		if err != nil {
+			return
+		}
+	}
+	if result.Allowed {
+		return nil
+	}
+	var authed bool
+	for _, sub := range subjects {
+		if s, ok := ParseUserSubject(sub); ok {
+			if len(s.GetUserId()) > 0 {
+				authed = true
+			}
+		}
+		if s, ok := ParseClientSubject(sub); ok {
+			if len(s.GetClientId()) > 0 {
+				authed = true
+			}
+		}
+	}
+	if authed {
+		//TODO format error
+		return errors.Forbidden("", "")
+	}
+	//no claims
+	return errors.Unauthorized("", "")
 }
 
 var ProviderSet = wire.NewSet(NewDefaultAuthorizationService,

@@ -118,7 +118,7 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	signInManager := biz.NewSignInManager(userManager, security)
 	apiClient := service.NewHydra(security)
 	auth := http2.NewAuth(decodeRequestFunc, userManager, logger, signInManager, apiClient)
-	httpServerRegister := service.NewHttpServerRegister(userService, encodeResponseFunc, encodeErrorFunc, accountService, authService, roleService, servicePermissionService, auth, confData, factory)
+	httpServerRegister := service.NewHttpServerRegister(userService, encodeResponseFunc, encodeErrorFunc, accountService, authService, roleService, servicePermissionService, auth, confData, defaultAuthorizationService, factory)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContrib, trustedContextValidator, refreshTokenProvider, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(userService, accountService, authService, roleService, servicePermissionService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContrib, grpcServerRegister)
