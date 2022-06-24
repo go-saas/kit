@@ -48,14 +48,12 @@ func NewHttpServerRegister(
 		router.Use(
 			server.MiddlewareConvert(errEncoder, middleware))
 		const apiPrefix = "/v1/saas/dev/swagger"
-		swaggerRouter := router.Group(func(router chi.Router) {
-			router.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, server.AuthzGuardian(
-				authzSrv, authz.RequirementList{
-					authz.NewRequirement(authz.NewEntityResource("dev", "saas"), authz.AnyAction),
-				}, errEncoder, swaggerui.Handler(spec),
-			)))
-		})
-		srv.HandlePrefix(apiPrefix, swaggerRouter)
+		router.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, server.AuthzGuardian(
+			authzSrv, authz.RequirementList{
+				authz.NewRequirement(authz.NewEntityResource("dev", "saas"), authz.AnyAction),
+			}, errEncoder, swaggerui.Handler(spec),
+		)))
+		srv.HandlePrefix(apiPrefix, router)
 	})
 }
 

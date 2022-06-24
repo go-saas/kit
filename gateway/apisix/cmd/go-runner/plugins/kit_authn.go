@@ -261,10 +261,5 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		r.Header().Set(k, v)
 	}
 
-	//https://github.com/apache/apisix-go-plugin-runner/issues/74
-	//if len(r.RespHeader().Values("Set-Cookie")) > 0 {
-	//	r.RespHeader().Set("Set-Cookie", strings.Join(r.RespHeader().Values("Set-Cookie"), ", "))
-	//}
-	//continue request
 	return
 }

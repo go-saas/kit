@@ -68,17 +68,15 @@ func NewHttpServerRegister(user *UserService,
 		router.Use(
 			server.MiddlewareConvert(errEncoder, middleware))
 
-		authRouter := router.Group(func(router chi.Router) {
-			router.Get("/login", server.HandlerWrap(resEncoder, authHttp.LoginGet))
-			router.Post("/login", server.HandlerWrap(resEncoder, authHttp.LoginPost))
-			router.Get("/logout", server.HandlerWrap(resEncoder, authHttp.LoginOutGet))
-			router.Post("/logout", server.HandlerWrap(resEncoder, authHttp.Logout))
-			router.Get("/consent", server.HandlerWrap(resEncoder, authHttp.ConsentGet))
-			router.Post("/consent", server.HandlerWrap(resEncoder, authHttp.Consent))
-		})
+		router.Get("/login", server.HandlerWrap(resEncoder, authHttp.LoginGet))
+		router.Post("/login", server.HandlerWrap(resEncoder, authHttp.LoginPost))
+		router.Get("/logout", server.HandlerWrap(resEncoder, authHttp.LoginOutGet))
+		router.Post("/logout", server.HandlerWrap(resEncoder, authHttp.Logout))
+		router.Get("/consent", server.HandlerWrap(resEncoder, authHttp.ConsentGet))
+		router.Post("/consent", server.HandlerWrap(resEncoder, authHttp.Consent))
 
 		server.HandleBlobs("", dataCfg.Blobs, srv, factory)
-		srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", authRouter))
+		srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", router))
 
 		v12.RegisterUserServiceHTTPServer(srv, user)
 
@@ -93,14 +91,13 @@ func NewHttpServerRegister(user *UserService,
 		v1.RegisterRoleServiceHTTPServer(srv, role)
 		v15.RegisterPermissionServiceHTTPServer(srv, permission)
 
+		swaggerRouter := chi.NewRouter()
 		const apiPrefix = "/v1/user/dev/swagger"
-		swaggerRouter := router.Group(func(router chi.Router) {
-			router.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, server.AuthzGuardian(
-				authzSrv, authz.RequirementList{
-					authz.NewRequirement(authz.NewEntityResource("dev", "user"), authz.AnyAction),
-				}, errEncoder, swaggerui.Handler(spec),
-			)))
-		})
+		swaggerRouter.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, server.AuthzGuardian(
+			authzSrv, authz.RequirementList{
+				authz.NewRequirement(authz.NewEntityResource("dev", "user"), authz.AnyAction),
+			}, errEncoder, swaggerui.Handler(spec),
+		)))
 
 		srv.HandlePrefix(apiPrefix, swaggerRouter)
 	})
