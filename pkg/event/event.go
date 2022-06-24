@@ -244,12 +244,18 @@ func (mux *ServeMux) Process(ctx context.Context, event Event) error {
 
 	//push receiver into context
 	ctx = NewReceiverContext(ctx, mux.r)
-	for _, handle := range mux.handles {
-		if err := handle.Process(ctx, event); err != nil {
-			return err
+
+	c := Chain(mux.mws...)
+	h := c(HandlerFunc(func(ctx context.Context, e Event) error {
+		for _, handle := range mux.handles {
+			if err := handle.Process(ctx, event); err != nil {
+				return err
+			}
 		}
-	}
-	return nil
+		return nil
+	}))
+	return h.Process(ctx, event)
+
 }
 
 func NewFactorySender(cfg *conf.Event) (Sender, func(), error) {

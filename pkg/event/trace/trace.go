@@ -114,7 +114,9 @@ func Receive() event.MiddlewareFunc {
 		return event.HandlerFunc(func(ctx context.Context, e event.Event) (err error) {
 			//recover ctx
 			header := propagation.HeaderCarrier{}
-
+			for _, k := range e.Header().Keys() {
+				header.Set(k, e.Header().Get(k))
+			}
 			ctx = propagator.Extract(ctx, header)
 			msgKey := e.Key()
 
