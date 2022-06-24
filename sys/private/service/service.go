@@ -41,15 +41,10 @@ func NewHttpServerRegister(
 		server.HandleBlobs("", dataCfg.Blobs, srv, factory)
 		v1.RegisterMenuServiceHTTPServer(srv, menu)
 
-		srv.HandlePrefix("/v1/sys/asynqmon", server.AuthzGuardian(
-			authzSrv, authz.RequirementList{
-				authz.NewRequirement(authz.NewEntityResource(api.ResourceDevJob, "*"), authz.AnyAction),
-			}, errEncoder, job.NewUi("/v1/sys/asynqmon", opt),
-		))
-
 		router := chi.NewRouter()
 		router.Use(
 			server.MiddlewareConvert(errEncoder, middleware))
+
 		const apiPrefix = "/v1/sys/dev/swagger"
 
 		router.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, server.AuthzGuardian(
@@ -57,7 +52,14 @@ func NewHttpServerRegister(
 				authz.NewRequirement(authz.NewEntityResource("dev", "sys"), authz.AnyAction),
 			}, errEncoder, swaggerui.Handler(spec),
 		)))
+		const asynqPrefix = "/v1/sys/asynqmon"
+		router.Handle(asynqPrefix+"*", server.AuthzGuardian(
+			authzSrv, authz.RequirementList{
+				authz.NewRequirement(authz.NewEntityResource(api.ResourceDevJob, "*"), authz.AnyAction),
+			}, errEncoder, job.NewUi(asynqPrefix, opt),
+		))
 		srv.HandlePrefix(apiPrefix, router)
+		srv.HandlePrefix(asynqPrefix, router)
 
 	})
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	kerrors "github.com/goxiaoy/go-saas-kit/pkg/errors"
 	"time"
 )
@@ -24,11 +25,17 @@ func Server(logger log.Logger) middleware.Middleware {
 				reason    string
 				kind      string
 				operation string
+				url       string
 			)
 			startTime := time.Now()
 			if info, ok := transport.FromServerContext(ctx); ok {
 				kind = info.Kind().String()
 				operation = info.Operation()
+
+				if ht, ok := info.(*khttp.Transport); ok {
+					url = ht.Request().URL.String()
+				}
+
 			}
 			reply, err = handler(ctx, req)
 			if se := errors.FromError(err); se != nil {
@@ -44,6 +51,7 @@ func Server(logger log.Logger) middleware.Middleware {
 				"code", code,
 				"reason", reason,
 				"stack", stack,
+				"url", url,
 				"latency", time.Since(startTime).Seconds(),
 			)
 			return
