@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+
+  pulsar:
+    image: "apachepulsar/pulsar:2.10.0"
+    command: bin/pulsar standalone
+    environment:
+      PULSAR_MEM: " -Xms512m -Xmx512m -XX:MaxDirectMemorySize=1g"
+    volumes:
+      - type: bind
+        source: ./pulsardata
+        target: /pulsar/data
+#      - pulsarconf:/pulsar/conf
+    ports:
+      - "6650:6650"
+      - "8080:8080"
+    restart: unless-stopped
+
+  pulsar-manager:
+    image: "apachepulsar/pulsar-manager:v0.2.0"
+    ports:
+      - "9527:9527"
+      - "7750:7750"
+    depends_on:
+      - pulsar
+    links:
+      - pulsar
+    environment:
+      SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
+
+
+volumes:
+  pulsardata:
+
+#  pulsarconf:

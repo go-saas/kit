@@ -26,7 +26,7 @@ Layout Repo( For creating new service): https://github.com/Goxiaoy/go-saas-kit-l
 * [x] Saas
 * [x] Modularity
 * [x] Microservice/Monolithic compatible
-* [x] Distributed Eventbus: kafka
+* [x] Distributed Eventbus: [kafka](https://kafka.apache.org/), [pulsar](https://pulsar.apache.org/)
 * [x] Cache (Redis)
 * [x] Background Job: [asynq](https://github.com/hibiken/asynq)
 
@@ -35,22 +35,22 @@ Layout Repo( For creating new service): https://github.com/Goxiaoy/go-saas-kit-l
 ### For Microservice
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.ms.yml  -f docker-compose.tracing.yml up -d
+docker-compose -f docker-compose.yml -f docker-compose.ms.yml -f docker-compose.pulsar.yml -f docker-compose.tracing.yml up -d
 ```
 
 Or with build
 ```
-docker-compose -f docker-compose.yml -f docker-compose.ms.yml  -f docker-compose.tracing.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose.ms.yml -f docker-compose.pulsar.yml  -f docker-compose.tracing.yml up -d --build
 ```
 
 ### For Monolithic
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.monolithic.yml  -f docker-compose.tracing.yml up -d
+docker-compose -f docker-compose.yml -f docker-compose.monolithic.yml -f docker-compose.pulsar.yml  -f docker-compose.tracing.yml up -d
 ```
 Or with build
 ```
-docker-compose -f docker-compose.yml -f docker-compose.monolithic.yml  -f docker-compose.tracing.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose.monolithic.yml -f docker-compose.pulsar.yml  -f docker-compose.tracing.yml up -d --build
 ```
 
 [//]: # (With hydra)

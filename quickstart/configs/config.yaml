@@ -22,10 +22,13 @@ data:
         host: localhost
     events:
       default:
-        type: kafka
-        addr: kafka:9092
         topic: kit
         group: golang
+        # If you would like to use kafka
+        # addr: kafka:9092
+        # type: kafka
+        type: pulsar
+        addr: pulsar://localhost:6650
       saas:
         group: saas-golang
       user:

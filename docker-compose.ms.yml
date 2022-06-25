@@ -16,7 +16,6 @@ services:
     depends_on:
       - mysqld
       - redis
-      - kafka
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
@@ -28,7 +27,6 @@ services:
   saas:
     image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
     depends_on:
-      - kafka
       - user
     volumes:
       - ./quickstart/configs:/data/conf
