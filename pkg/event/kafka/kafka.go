@@ -4,36 +4,35 @@ import (
 	"context"
 	"github.com/Shopify/sarama"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/event"
 	"strings"
 	"sync"
 )
 
 var (
-	_ event.Producer = (*kafkaSender)(nil)
-	_ event.Consumer = (*kafkaReceiver)(nil)
+	_ event.Producer = (*Producer)(nil)
+	_ event.Consumer = (*Consumer)(nil)
 )
 
 func init() {
-	event.RegisterConsumer("kafka", func(ctx context.Context, cfg *conf.Event) (event.Consumer, error) {
+	event.RegisterConsumer("kafka", func(ctx context.Context, cfg *event.Config) (event.Consumer, error) {
 		var addr []string
 		if cfg.Addr != "" {
 			addr = strings.Split(cfg.Addr, ";")
 		} else {
 			addr = []string{"localhost:9092"}
 		}
-		return NewKafkaReceiver(addr, cfg.Topic, cfg.Group, cfg.Kafka)
+		return NewConsumer(addr, cfg.Topic, cfg.Group, cfg.Kafka)
 	})
 
-	event.RegisterProducer("kafka", func(cfg *conf.Event) (*event.ProducerMux, error) {
+	event.RegisterProducer("kafka", func(cfg *event.Config) (*event.ProducerMux, error) {
 		var addr []string
 		if cfg.Addr != "" {
 			addr = strings.Split(cfg.Addr, ";")
 		} else {
 			addr = []string{"localhost:9092"}
 		}
-		sender, err := NewKafkaSender(addr, cfg.Topic, cfg.Kafka)
+		sender, err := NewProducer(addr, cfg.Topic, cfg.Kafka)
 		if err != nil {
 			return nil, err
 		}
@@ -42,13 +41,13 @@ func init() {
 	})
 }
 
-type kafkaSender struct {
-	writer  sarama.SyncProducer
+type Producer struct {
+	sarama.SyncProducer
 	topic   string
 	address []string
 }
 
-func NewKafkaSender(address []string, topic string, cfg *conf.Event_Kafka) (*kafkaSender, error) {
+func NewProducer(address []string, topic string, cfg *event.Config_Kafka) (*Producer, error) {
 	conf := sarama.NewConfig()
 
 	conf.Producer.Return.Successes = true
@@ -62,27 +61,27 @@ func NewKafkaSender(address []string, topic string, cfg *conf.Event_Kafka) (*kaf
 	if err != nil {
 		return nil, err
 	}
-	s := &kafkaSender{writer: w, topic: topic, address: address}
+	s := &Producer{SyncProducer: w, topic: topic, address: address}
 	return s, nil
 }
 
-func (s *kafkaSender) Send(ctx context.Context, message event.Event) error {
-	_, _, err := s.writer.SendMessage(s.toMsg(ctx, message))
+func (s *Producer) Send(ctx context.Context, message event.Event) error {
+	_, _, err := s.SyncProducer.SendMessage(s.toMsg(ctx, message))
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *kafkaSender) BatchSend(ctx context.Context, message []event.Event) error {
+func (s *Producer) BatchSend(ctx context.Context, message []event.Event) error {
 	msgs := make([]*sarama.ProducerMessage, len(message))
 	for i, e := range message {
 		msgs[i] = s.toMsg(ctx, e)
 	}
-	return s.writer.SendMessages(msgs)
+	return s.SyncProducer.SendMessages(msgs)
 }
 
-func (s *kafkaSender) toMsg(ctx context.Context, message event.Event) *sarama.ProducerMessage {
+func (s *Producer) toMsg(ctx context.Context, message event.Event) *sarama.ProducerMessage {
 	ret := &sarama.ProducerMessage{
 		Topic:    s.topic,
 		Key:      sarama.StringEncoder(message.Key()),
@@ -100,16 +99,16 @@ func (s *kafkaSender) toMsg(ctx context.Context, message event.Event) *sarama.Pr
 	return ret
 }
 
-func (s *kafkaSender) Close() error {
-	err := s.writer.Close()
+func (s *Producer) Close() error {
+	err := s.SyncProducer.Close()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-type kafkaReceiver struct {
-	reader  sarama.ConsumerGroup
+type Consumer struct {
+	sarama.ConsumerGroup
 	topic   string
 	group   string
 	cancel  context.CancelFunc
@@ -117,8 +116,8 @@ type kafkaReceiver struct {
 	address []string
 }
 
-func NewKafkaReceiver(address []string, topic string, group string, cfg *conf.Event_Kafka) (event.Consumer, error) {
-	res := &kafkaReceiver{topic: topic, group: group, address: address}
+func NewConsumer(address []string, topic string, group string, cfg *event.Config_Kafka) (event.Consumer, error) {
+	res := &Consumer{topic: topic, group: group, address: address}
 	config := sarama.NewConfig()
 
 	err := patchConf(config, cfg)
@@ -129,13 +128,13 @@ func NewKafkaReceiver(address []string, topic string, group string, cfg *conf.Ev
 	if err != nil {
 		return nil, err
 	}
-	res.reader = cg
+	res.ConsumerGroup = cg
 
 	return res, nil
 
 }
 
-func (k *kafkaReceiver) Process(ctx context.Context, handler event.ConsumerHandler) error {
+func (k *Consumer) Process(ctx context.Context, handler event.ConsumerHandler) error {
 	ctx, cancel := context.WithCancel(ctx)
 	k.cancel = cancel
 	wg := &sync.WaitGroup{}
@@ -146,13 +145,13 @@ func (k *kafkaReceiver) Process(ctx context.Context, handler event.ConsumerHandl
 		defer wg.Done()
 		for {
 			// `Process` should be called inside an infinite loop, when a
-			// server-side rebalance happens, the consumer session will need to be
+			// server-side rebalance happens, the Consumer session will need to be
 			// recreated to get the new claims
-			if err := k.reader.Consume(ctx, topics, newConsumerGroupHandler(k.group, handler)); err != nil {
+			if err := k.ConsumerGroup.Consume(ctx, topics, newConsumerGroupHandler(k.group, handler)); err != nil {
 				log.Error(err)
 				//TODO panic?
 			}
-			// check if context was cancelled, signaling that the consumer should stop
+			// check if context was cancelled, signaling that the Consumer should stop
 			if ctx.Err() != nil {
 				return
 			}
@@ -161,10 +160,10 @@ func (k *kafkaReceiver) Process(ctx context.Context, handler event.ConsumerHandl
 	return nil
 }
 
-func (k *kafkaReceiver) Close() error {
+func (k *Consumer) Close() error {
 	k.cancel()
 	k.wg.Wait()
-	err := k.reader.Close()
+	err := k.ConsumerGroup.Close()
 	if err != nil {
 		return err
 	}
@@ -176,7 +175,7 @@ type consumerGroupHandler struct {
 	group   string
 }
 
-func patchConf(config *sarama.Config, cfg *conf.Event_Kafka) error {
+func patchConf(config *sarama.Config, cfg *event.Config_Kafka) error {
 	if cfg != nil {
 		if cfg.Version != nil {
 			v, err := sarama.ParseKafkaVersion(cfg.Version.Value)

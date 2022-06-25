@@ -35,6 +35,7 @@ import (
 
 import (
 	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/pulsar"
 	_ "github.com/goxiaoy/go-saas-kit/saas/api"
 	_ "github.com/goxiaoy/go-saas-kit/sys/api"
 )

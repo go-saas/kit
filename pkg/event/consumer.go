@@ -3,13 +3,13 @@ package event
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/transport"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"io"
 	"sync"
 )
 
 type Consumer interface {
 	io.Closer
+	// Process start process event with handler
 	Process(ctx context.Context, handler ConsumerHandler) error
 }
 
@@ -101,17 +101,22 @@ func (mux *ServeMux) Process(ctx context.Context, event Event) error {
 type ConsumerFactoryServer struct {
 	*ServeMux
 	lr  LazyConsumer
-	cfg *conf.Event
+	cfg *Config
 }
 
 var _ transport.Server = (*ConsumerFactoryServer)(nil)
 
-func NewConsumerFactoryServer(cfg *conf.Event) *ConsumerFactoryServer {
+func NewConsumerFactoryServer(cfg *Config) *ConsumerFactoryServer {
 	_typeConsumerMux.RLock()
 	defer _typeConsumerMux.RUnlock()
 	var r LazyConsumer
 	var ok bool
-	if r, ok = _typeConsumerRegister[cfg.Type]; !ok {
+	t, err := resolveType(cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	if r, ok = _typeConsumerRegister[t]; !ok {
 		panic(cfg.Type + " event server not registered")
 	}
 	return &ConsumerFactoryServer{

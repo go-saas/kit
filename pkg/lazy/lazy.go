@@ -7,6 +7,7 @@ import (
 
 type Of[T any] interface {
 	Value(ctx context.Context) (T, error)
+	Initialized() bool
 }
 
 type of[T any] struct {
@@ -30,6 +31,15 @@ func (l *of[T]) Value(ctx context.Context) (T, error) {
 	return l.value, err
 }
 
+func (l *of[T]) Initialized() bool {
+	l.lockItem.Lock()
+	defer l.lockItem.Unlock()
+	return l.factory == nil
+}
+
 func New[T any](factory func(ctx context.Context) (T, error)) Of[T] {
+	if factory == nil {
+		panic("factory can not be nil")
+	}
 	return &of[T]{factory: factory}
 }

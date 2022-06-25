@@ -44,6 +44,7 @@ import (
 
 import (
 	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/pulsar"
 )
 
 // Injectors from wire.go:

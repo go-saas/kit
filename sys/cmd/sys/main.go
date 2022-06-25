@@ -21,6 +21,7 @@ import (
 	"github.com/goxiaoy/go-saas-kit/sys/private/conf"
 
 	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/pulsar"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"

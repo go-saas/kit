@@ -2,7 +2,6 @@ package event
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"io"
 	"sync"
 )
@@ -19,10 +18,14 @@ type ProducerMux struct {
 	mws []ProducerMiddlewareFunc
 }
 
-func NewFactoryProducer(cfg *conf.Event) (*ProducerMux, error) {
+func NewFactoryProducer(cfg *Config) (*ProducerMux, error) {
 	_typeProducerMux.RLock()
 	defer _typeProducerMux.RUnlock()
-	if r, ok := _typeProducerRegister[cfg.Type]; !ok {
+	t, err := resolveType(cfg)
+	if err != nil {
+		panic(err)
+	}
+	if r, ok := _typeProducerRegister[t]; !ok {
 		panic(cfg.Type + " event producer not registered")
 	} else {
 		return r(cfg)

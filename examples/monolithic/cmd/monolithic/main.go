@@ -23,6 +23,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 
 	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
+	_ "github.com/goxiaoy/go-saas-kit/pkg/event/pulsar"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"

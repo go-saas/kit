@@ -24,11 +24,11 @@ var (
 	}
 )
 
-func (s *kafkaSender) GetTracer() trace.Tracer {
+func (s *Producer) GetTracer() trace.Tracer {
 	return tracer
 }
 
-func (s *kafkaSender) ReportSpanAttr() []attribute.KeyValue {
+func (s *Producer) ReportSpanAttr() []attribute.KeyValue {
 	fixedAttrs := fixedAttrsFun(s.address)
 	fixedAttrs = append(fixedAttrs,
 		attribute.String("messaging.destination", s.topic),
@@ -36,10 +36,10 @@ func (s *kafkaSender) ReportSpanAttr() []attribute.KeyValue {
 	return fixedAttrs
 }
 
-func (k *kafkaReceiver) GetTracer() trace.Tracer {
+func (k *Consumer) GetTracer() trace.Tracer {
 	return tracer
 }
-func (k *kafkaReceiver) ReportSpanAttr() []attribute.KeyValue {
+func (k *Consumer) ReportSpanAttr() []attribute.KeyValue {
 	fixedAttrs := fixedAttrsFun(k.address)
 	fixedAttrs = append(fixedAttrs,
 		attribute.String("messaging.kafka.consumer_group", k.group),

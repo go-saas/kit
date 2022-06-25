@@ -2,12 +2,12 @@ package event
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"fmt"
 	"sync"
 )
 
-type LazyConsumer func(ctx context.Context, c *conf.Event) (Consumer, error)
-type LazyProducer func(c *conf.Event) (*ProducerMux, error)
+type LazyConsumer func(ctx context.Context, c *Config) (Consumer, error)
+type LazyProducer func(c *Config) (*ProducerMux, error)
 
 var (
 	_typeConsumerMux      sync.RWMutex
@@ -38,4 +38,20 @@ func RegisterProducer(kind string, e LazyProducer) {
 		panic("kind is required")
 	}
 	_typeProducerRegister[kind] = e
+}
+
+func resolveType(cfg *Config) (string, error) {
+	t := cfg.Type
+	if len(t) > 0 {
+		return t, nil
+	}
+	if cfg.Kafka != nil {
+		t = "kafka"
+	} else if cfg.Pulsar != nil {
+		t = "pulsar"
+	}
+	if len(t) == 0 {
+		return t, fmt.Errorf("can not reolve event type %s", t)
+	}
+	return t, nil
 }

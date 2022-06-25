@@ -6,6 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 import "blob/blob.proto";
+import "event/event.proto";
 
 option go_package = "github.com/goxiaoy/go-saas-kit/pkg/conf;conf";
 
@@ -68,7 +69,7 @@ message Database {
 
 message Endpoints{
   map<string, Database> databases = 1;
-  map<string,Event> events=2;
+  map<string,event.Config> events=2;
   map<string,Redis> redis=3;
   Email email=4;
   Sms sms=5;
@@ -79,16 +80,7 @@ message Redis {
   string url = 1;
 }
 
-message Event{
-  string type=1;
-  string addr=2;
-  string topic=3;
-  string group=4;
-  message Kafka{
-    optional google.protobuf.StringValue version=1;
-  }
-  Kafka kafka=10;
-}
+
 
 message Security{
   message Jwt{

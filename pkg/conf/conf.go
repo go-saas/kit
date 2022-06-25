@@ -2,6 +2,7 @@ package conf
 
 import (
 	"fmt"
+	"github.com/goxiaoy/go-saas-kit/pkg/event"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -9,8 +10,8 @@ const (
 	defaultKey = "default"
 )
 
-func (x *Endpoints) GetEventMergedDefault(name string) *Event {
-	var res *Event
+func (x *Endpoints) GetEventMergedDefault(name string) *event.Config {
+	var res *event.Config
 	if name != "" {
 		res, _ = x.Events[name]
 	}
@@ -18,7 +19,7 @@ func (x *Endpoints) GetEventMergedDefault(name string) *Event {
 		if res == nil {
 			res = def
 		} else {
-			c := proto.Clone(def).(*Event)
+			c := proto.Clone(def).(*event.Config)
 			proto.Merge(c, res)
 			res = c
 		}
