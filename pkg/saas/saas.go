@@ -3,8 +3,9 @@ package saas
 import (
 	"context"
 	"github.com/goxiaoy/go-saas"
-
 	"github.com/goxiaoy/go-saas/seed"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/codes"
 )
 
 // RunWithTenantCache  get tenant config and cached into context
@@ -28,5 +29,25 @@ func SeedChangeTenant(store saas.TenantStore, next ...seed.Contrib) seed.Contrib
 		return RunWithTenantCache(ctx, store, func(ctx context.Context) error {
 			return seed.Chain(next...).Seed(ctx, sCtx)
 		})
+	})
+}
+
+func NewTraceContrib(next ...seed.Contrib) seed.Contrib {
+	tracer := otel.Tracer("seeder")
+	return SeedFunc(func(ctx context.Context, sCtx *seed.Context) (err error) {
+		ctx, span := tracer.Start(ctx,
+			"seed",
+		)
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			} else {
+				span.SetStatus(codes.Ok, "OK")
+			}
+			span.End()
+		}()
+		err = seed.Chain(next...).Seed(ctx, sCtx)
+		return
 	})
 }

@@ -36,7 +36,7 @@ type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister
 
 func NewSeeder(ts saas.TenantStore, user userver.Seeding, sys sysserver.Seeding, saas sserver.Seeding) seed.Seeder {
-	return seed.NewDefaultSeeder(ksaas.SeedChangeTenant(ts, user, sys, saas))
+	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, user, sys, saas)))
 }
 
 func NewHttpServiceRegister(user uservice.HttpServerRegister, sys sysservice.HttpServerRegister, saas sservice.HttpServerRegister) HttpServerRegister {

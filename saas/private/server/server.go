@@ -28,7 +28,7 @@ func NewSeeding(uow uow.Manager, migrate *data.Migrate) Seeding {
 }
 
 func NewSeeder(ts saas.TenantStore, ss Seeding) seed.Seeder {
-	return seed.NewDefaultSeeder(ksaas.SeedChangeTenant(ts, ss))
+	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, ss)))
 }
 
 func NewAuthorizationOption() *authz.Option {

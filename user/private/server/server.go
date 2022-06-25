@@ -33,7 +33,7 @@ func NewSeeding(uow uow.Manager,
 }
 
 func NewSeeder(ts saas.TenantStore, us Seeding) seed.Seeder {
-	res := seed.NewDefaultSeeder(ksaas.SeedChangeTenant(ts, us))
+	res := seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, us)))
 	return res
 }
 
