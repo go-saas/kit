@@ -8,7 +8,7 @@ import (
 	"github.com/samber/lo"
 )
 
-type TenantReadyEventHandler event.Handler
+type TenantReadyEventHandler event.ConsumerHandler
 
 func NewTenantReadyEventHandler(useCase *TenantUseCase) TenantReadyEventHandler {
 	msg := &v1.TenantReadyEvent{}

@@ -3,23 +3,23 @@ package event
 import "context"
 
 type (
-	receiverKey struct{}
-	senderKey   struct{}
+	consumerKey struct{}
+	producerKey struct{}
 )
 
-func NewReceiverContext(ctx context.Context, r Receiver) context.Context {
-	return context.WithValue(ctx, receiverKey{}, r)
+func NewConsumerContext(ctx context.Context, r Consumer) context.Context {
+	return context.WithValue(ctx, consumerKey{}, r)
 }
 
-func FromReceiverContext(ctx context.Context) (Receiver, bool) {
-	v, ok := ctx.Value(receiverKey{}).(Receiver)
+func FromConsumerContext(ctx context.Context) (Consumer, bool) {
+	v, ok := ctx.Value(consumerKey{}).(Consumer)
 	return v, ok
 }
-func NewSenderContext(ctx context.Context, r Sender) context.Context {
-	return context.WithValue(ctx, senderKey{}, r)
+func NewProducerContext(ctx context.Context, r Producer) context.Context {
+	return context.WithValue(ctx, producerKey{}, r)
 }
 
-func FromSenderContext(ctx context.Context) (Sender, bool) {
-	v, ok := ctx.Value(senderKey{}).(Sender)
+func FromProducerContext(ctx context.Context) (Producer, bool) {
+	v, ok := ctx.Value(producerKey{}).(Producer)
 	return v, ok
 }

@@ -39,7 +39,7 @@ func init() {
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.FactoryServer, seeder seed.Seeder) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.ConsumerFactoryServer, seeder seed.Seeder) *kratos.App {
 	if ifSeed {
 		if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("")); err != nil {
 			panic(err)

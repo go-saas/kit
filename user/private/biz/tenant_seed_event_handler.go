@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-type TenantSeedEventHandler event2.Handler
+type TenantSeedEventHandler event2.ConsumerHandler
 
 func NewTenantSeedEventHandler(client *asynq.Client) TenantSeedEventHandler {
 	msg := &v1.TenantCreatedEvent{}
@@ -36,7 +36,7 @@ func NewUserMigrationTask(msg *v1.TenantCreatedEvent) (*asynq.Task, error) {
 
 type UserMigrationTaskHandler func(ctx context.Context, t *asynq.Task) error
 
-func NewUserMigrationTaskHandler(seeder seed.Seeder, sender event2.Sender) UserMigrationTaskHandler {
+func NewUserMigrationTaskHandler(seeder seed.Seeder, sender event2.Producer) UserMigrationTaskHandler {
 	return func(ctx context.Context, t *asynq.Task) error {
 		msg := &v1.TenantCreatedEvent{}
 		if err := protojson.Unmarshal(t.Payload(), msg); err != nil {

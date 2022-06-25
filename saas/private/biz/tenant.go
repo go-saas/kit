@@ -65,10 +65,10 @@ type TenantRepo interface {
 type TenantUseCase struct {
 	repo             TenantRepo
 	connStrGenerator ConnStrGenerator
-	sender           event2.Sender
+	sender           event2.Producer
 }
 
-func NewTenantUserCase(repo TenantRepo, connStrGenerator ConnStrGenerator, sender event2.Sender) *TenantUseCase {
+func NewTenantUserCase(repo TenantRepo, connStrGenerator ConnStrGenerator, sender event2.Producer) *TenantUseCase {
 	return &TenantUseCase{repo: repo, connStrGenerator: connStrGenerator, sender: sender}
 }
 

@@ -9,6 +9,7 @@ import (
 	kitconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/email"
 	event "github.com/goxiaoy/go-saas-kit/pkg/event"
+	"github.com/goxiaoy/go-saas-kit/pkg/event/trace"
 	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
 	kitredis "github.com/goxiaoy/go-saas-kit/pkg/redis"
 	kituow "github.com/goxiaoy/go-saas-kit/pkg/uow"
@@ -88,7 +89,15 @@ func NewRedis(c *kitconf.Data, name ConnName) (*redis.Client, error) {
 	return kitredis.NewRedisClient(r), err
 }
 
-func NewEventSender(c *kitconf.Data, name ConnName) (event.Sender, func(), error) {
+func NewEventSender(c *kitconf.Data, name ConnName) (event.Producer, func(), error) {
 	e := c.Endpoints.GetEventMergedDefault(string(name))
-	return event.NewFactorySender(e)
+	ret, err := event.NewFactoryProducer(e)
+	if err != nil {
+		return nil, func() {}, err
+	}
+	ret.Use(trace.Send())
+	return ret, func() {
+		ret.Close()
+	}, nil
+
 }

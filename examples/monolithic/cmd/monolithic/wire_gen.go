@@ -69,13 +69,13 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	tenantRepo := data.NewTenantRepo(eventBus, dataData)
 	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
 	connName := _wireConnNameValue
-	sender, cleanup3, err := dal.NewEventSender(confData, connName)
+	producer, cleanup3, err := dal.NewEventSender(confData, connName)
 	if err != nil {
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, sender)
+	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, producer)
 	factory := dal.NewBlobFactory(confData)
 	tenantInternalService := &service.TenantInternalService{
 		Trusted: trustedContextValidator,
@@ -179,13 +179,13 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	migrate2 := data.NewMigrate(dataData)
 	seeding2 := server5.NewSeeding(manager, migrate2)
 	seeder := server2.NewSeeder(tenantStore, seeding, serverSeeding, seeding2)
-	userMigrationTaskHandler := biz2.NewUserMigrationTaskHandler(seeder, sender)
+	userMigrationTaskHandler := biz2.NewUserMigrationTaskHandler(seeder, producer)
 	jobServer := server2.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
 	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
 	asynqClient, cleanup6 := job.NewAsynqClient(redisConnOpt)
 	tenantSeedEventHandler := biz2.NewTenantSeedEventHandler(asynqClient)
-	factoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler, tenantSeedEventHandler)
-	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, factoryServer, seeder)
+	consumerFactoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler, tenantSeedEventHandler)
+	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder)
 	return app, func() {
 		cleanup6()
 		cleanup5()

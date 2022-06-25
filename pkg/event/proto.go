@@ -22,7 +22,7 @@ func KVFromProto(msg proto.Message) (string, []byte, error) {
 	return key, data, nil
 }
 
-func ProtoHandler[T proto.Message](msg T, h HandlerOf[T]) Handler {
+func ProtoHandler[T proto.Message](msg T, h HandlerOf[T]) ConsumerHandler {
 	key := string(msg.ProtoReflect().Descriptor().FullName())
 	return FilterKey(key, NewTransformer(func(_ context.Context, event Event) (T, error) {
 		err := proto.Unmarshal(event.Value(), msg)

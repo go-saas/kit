@@ -32,12 +32,12 @@ type Reporter interface {
 }
 
 func getTracerOrDefault(ctx context.Context) trace.Tracer {
-	if r, ok := event.FromReceiverContext(ctx); ok {
+	if r, ok := event.FromConsumerContext(ctx); ok {
 		if getter, ok := r.(GetTracer); ok {
 			return getter.GetTracer()
 		}
 	}
-	if r, ok := event.FromSenderContext(ctx); ok {
+	if r, ok := event.FromProducerContext(ctx); ok {
 		if getter, ok := r.(GetTracer); ok {
 			return getter.GetTracer()
 		}
@@ -47,12 +47,12 @@ func getTracerOrDefault(ctx context.Context) trace.Tracer {
 }
 
 func getAttr(ctx context.Context) []attribute.KeyValue {
-	if r, ok := event.FromReceiverContext(ctx); ok {
+	if r, ok := event.FromConsumerContext(ctx); ok {
 		if getter, ok := r.(Reporter); ok {
 			return getter.ReportSpanAttr()
 		}
 	}
-	if r, ok := event.FromSenderContext(ctx); ok {
+	if r, ok := event.FromProducerContext(ctx); ok {
 		if getter, ok := r.(Reporter); ok {
 			return getter.ReportSpanAttr()
 		}
@@ -60,8 +60,7 @@ func getAttr(ctx context.Context) []attribute.KeyValue {
 	return nil
 }
 
-func Send() event.SendMiddlewareFunc {
-
+func Send() event.ProducerMiddlewareFunc {
 	return func(next event.HandlerOf[any]) event.HandlerOf[any] {
 		return event.HandlerFuncOf[any](func(ctx context.Context, e interface{}) (err error) {
 			var events []event.Event
@@ -109,9 +108,9 @@ func Send() event.SendMiddlewareFunc {
 }
 
 // Receive receive middleware
-func Receive() event.MiddlewareFunc {
-	return func(next event.Handler) event.Handler {
-		return event.HandlerFunc(func(ctx context.Context, e event.Event) (err error) {
+func Receive() event.ConsumerMiddlewareFunc {
+	return func(next event.ConsumerHandler) event.ConsumerHandler {
+		return event.ConsumerHandlerFunc(func(ctx context.Context, e event.Event) (err error) {
 			//recover ctx
 			header := propagation.HeaderCarrier{}
 			for _, k := range e.Header().Keys() {

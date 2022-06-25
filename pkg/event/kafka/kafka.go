@@ -6,18 +6,17 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/goxiaoy/go-saas-kit/pkg/conf"
 	"github.com/goxiaoy/go-saas-kit/pkg/event"
-	"github.com/goxiaoy/go-saas-kit/pkg/event/trace"
 	"strings"
 	"sync"
 )
 
 var (
-	_ event.Sender   = (*kafkaSender)(nil)
-	_ event.Receiver = (*kafkaReceiver)(nil)
+	_ event.Producer = (*kafkaSender)(nil)
+	_ event.Consumer = (*kafkaReceiver)(nil)
 )
 
 func init() {
-	event.RegisterReceiver("kafka", func(ctx context.Context, cfg *conf.Event) (event.Receiver, error) {
+	event.RegisterConsumer("kafka", func(ctx context.Context, cfg *conf.Event) (event.Consumer, error) {
 		var addr []string
 		if cfg.Addr != "" {
 			addr = strings.Split(cfg.Addr, ";")
@@ -27,20 +26,19 @@ func init() {
 		return NewKafkaReceiver(addr, cfg.Topic, cfg.Group, cfg.Kafka)
 	})
 
-	event.RegisterSender("kafka", func(cfg *conf.Event) (event.Sender, func(), error) {
+	event.RegisterProducer("kafka", func(cfg *conf.Event) (*event.ProducerMux, error) {
 		var addr []string
 		if cfg.Addr != "" {
 			addr = strings.Split(cfg.Addr, ";")
 		} else {
 			addr = []string{"localhost:9092"}
 		}
-		sender, c, err := NewKafkaSender(addr, cfg.Topic, cfg.Kafka)
+		sender, err := NewKafkaSender(addr, cfg.Topic, cfg.Kafka)
 		if err != nil {
-			return nil, c, err
+			return nil, err
 		}
-		res := event.NewSender(sender)
-		res.Use(trace.Send())
-		return res, c, nil
+		res := event.NewProducer(sender)
+		return res, nil
 	})
 }
 
@@ -50,26 +48,22 @@ type kafkaSender struct {
 	address []string
 }
 
-func NewKafkaSender(address []string, topic string, cfg *conf.Event_Kafka) (*kafkaSender, func(), error) {
+func NewKafkaSender(address []string, topic string, cfg *conf.Event_Kafka) (*kafkaSender, error) {
 	conf := sarama.NewConfig()
 
 	conf.Producer.Return.Successes = true
 	conf.Producer.Return.Errors = true
-	var cleanup = func() {
 
-	}
 	err := patchConf(conf, cfg)
 	if err != nil {
-		return nil, cleanup, err
+		return nil, err
 	}
 	w, err := sarama.NewSyncProducer(address, conf)
 	if err != nil {
-		return nil, cleanup, err
+		return nil, err
 	}
 	s := &kafkaSender{writer: w, topic: topic, address: address}
-	return s, func() {
-		s.Close()
-	}, nil
+	return s, nil
 }
 
 func (s *kafkaSender) Send(ctx context.Context, message event.Event) error {
@@ -123,7 +117,7 @@ type kafkaReceiver struct {
 	address []string
 }
 
-func NewKafkaReceiver(address []string, topic string, group string, cfg *conf.Event_Kafka) (event.Receiver, error) {
+func NewKafkaReceiver(address []string, topic string, group string, cfg *conf.Event_Kafka) (event.Consumer, error) {
 	res := &kafkaReceiver{topic: topic, group: group, address: address}
 	config := sarama.NewConfig()
 
@@ -141,7 +135,7 @@ func NewKafkaReceiver(address []string, topic string, group string, cfg *conf.Ev
 
 }
 
-func (k *kafkaReceiver) Receive(ctx context.Context, handler event.Handler) error {
+func (k *kafkaReceiver) Process(ctx context.Context, handler event.ConsumerHandler) error {
 	ctx, cancel := context.WithCancel(ctx)
 	k.cancel = cancel
 	wg := &sync.WaitGroup{}
@@ -151,7 +145,7 @@ func (k *kafkaReceiver) Receive(ctx context.Context, handler event.Handler) erro
 	go func() {
 		defer wg.Done()
 		for {
-			// `Consume` should be called inside an infinite loop, when a
+			// `Process` should be called inside an infinite loop, when a
 			// server-side rebalance happens, the consumer session will need to be
 			// recreated to get the new claims
 			if err := k.reader.Consume(ctx, topics, newConsumerGroupHandler(k.group, handler)); err != nil {
@@ -178,7 +172,7 @@ func (k *kafkaReceiver) Close() error {
 }
 
 type consumerGroupHandler struct {
-	handler event.Handler
+	handler event.ConsumerHandler
 	group   string
 }
 
@@ -195,7 +189,7 @@ func patchConf(config *sarama.Config, cfg *conf.Event_Kafka) error {
 	return nil
 }
 
-func newConsumerGroupHandler(group string, handler event.Handler) *consumerGroupHandler {
+func newConsumerGroupHandler(group string, handler event.ConsumerHandler) *consumerGroupHandler {
 	return &consumerGroupHandler{group: group, handler: handler}
 }
 func (*consumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error   { return nil }

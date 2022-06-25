@@ -6,51 +6,36 @@ import (
 	"sync"
 )
 
-type LazyReceiver func(ctx context.Context, c *conf.Event) (Receiver, error)
-type LazySender func(c *conf.Event) (Sender, func(), error)
+type LazyConsumer func(ctx context.Context, c *conf.Event) (Consumer, error)
+type LazyProducer func(c *conf.Event) (*ProducerMux, error)
 
 var (
-	_typeReceiverMux sync.RWMutex
-	_typeRegister    map[string]LazyReceiver
+	_typeConsumerMux      sync.RWMutex
+	_typeConsumerRegister map[string]LazyConsumer
 
-	_typeSenderMux      sync.RWMutex
-	_typeSenderRegister map[string]LazySender
+	_typeProducerMux      sync.RWMutex
+	_typeProducerRegister map[string]LazyProducer
 )
 
 func init() {
-	_typeRegister = map[string]LazyReceiver{}
-	_typeSenderRegister = map[string]LazySender{}
+	_typeConsumerRegister = map[string]LazyConsumer{}
+	_typeProducerRegister = map[string]LazyProducer{}
 }
 
-func RegisterReceiver(kind string, e LazyReceiver) {
-	_typeReceiverMux.Lock()
-	defer _typeReceiverMux.Unlock()
+func RegisterConsumer(kind string, e LazyConsumer) {
+	_typeConsumerMux.Lock()
+	defer _typeConsumerMux.Unlock()
 	if len(kind) == 0 {
 		panic("kind is required")
 	}
-	_typeRegister[kind] = e
+	_typeConsumerRegister[kind] = e
 }
 
-func RegisterSender(kind string, e LazySender) {
-	_typeSenderMux.Lock()
-	defer _typeSenderMux.Unlock()
+func RegisterProducer(kind string, e LazyProducer) {
+	_typeProducerMux.Lock()
+	defer _typeProducerMux.Unlock()
 	if len(kind) == 0 {
 		panic("kind is required")
 	}
-	_typeSenderRegister[kind] = e
-}
-
-func NewFactoryServer(cfg *conf.Event) *FactoryServer {
-	_typeReceiverMux.RLock()
-	defer _typeReceiverMux.RUnlock()
-	var r LazyReceiver
-	var ok bool
-	if r, ok = _typeRegister[cfg.Type]; !ok {
-		panic(cfg.Type + " event server not registered")
-	}
-	return &FactoryServer{
-		ServeMux: &ServeMux{},
-		cfg:      cfg,
-		lr:       r,
-	}
+	_typeProducerRegister[kind] = e
 }

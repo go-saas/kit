@@ -45,7 +45,7 @@ func init() {
 	flag.StringVar(&seedPath, sysbiz.SeedPathKey, "", "menu seed file path")
 }
 
-func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.FactoryServer, seeder seed.Seeder) *kratos.App {
+func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.ConsumerFactoryServer, seeder seed.Seeder) *kratos.App {
 	if ifSeed {
 		extra := map[string]interface{}{}
 		if len(seedPath) > 0 {

@@ -52,13 +52,13 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	tenantRepo := data.NewTenantRepo(eventBus, dataData)
 	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
 	connName := _wireConnNameValue
-	sender, cleanup3, err := dal.NewEventSender(confData, connName)
+	producer, cleanup3, err := dal.NewEventSender(confData, connName)
 	if err != nil {
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, sender)
+	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, producer)
 	factory := dal.NewBlobFactory(confData)
 	tenantInternalService := &service.TenantInternalService{
 		Trusted: trustedContextValidator,
@@ -100,11 +100,11 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	redisConnOpt := job.NewAsynqClientOpt(client)
 	jobServer := server2.NewJobServer(redisConnOpt, logger)
 	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
-	factoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler)
+	consumerFactoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler)
 	migrate := data.NewMigrate(dataData)
 	seeding := server2.NewSeeding(manager, migrate)
 	seeder := server2.NewSeeder(tenantStore, seeding)
-	app := newApp(logger, httpServer, grpcServer, jobServer, factoryServer, seeder)
+	app := newApp(logger, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder)
 	return app, func() {
 		cleanup4()
 		cleanup3()

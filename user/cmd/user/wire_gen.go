@@ -129,19 +129,19 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
 	seeding := server.NewSeeding(manager, migrate, roleSeed, userSeed, permissionSeeder)
 	seeder := server.NewSeeder(tenantStore, seeding)
-	sender, cleanup4, err := dal.NewEventSender(confData, connName)
+	producer, cleanup4, err := dal.NewEventSender(confData, connName)
 	if err != nil {
 		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	userMigrationTaskHandler := biz.NewUserMigrationTaskHandler(seeder, sender)
+	userMigrationTaskHandler := biz.NewUserMigrationTaskHandler(seeder, producer)
 	jobServer := server.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
 	asynqClient, cleanup5 := job.NewAsynqClient(redisConnOpt)
 	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(asynqClient)
-	factoryServer := server.NewEventServer(confData, connName, logger, manager, tenantSeedEventHandler)
-	app := newApp(userConf, logger, httpServer, grpcServer, jobServer, factoryServer, seeder)
+	consumerFactoryServer := server.NewEventServer(confData, connName, logger, manager, tenantSeedEventHandler)
+	app := newApp(userConf, logger, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder)
 	return app, func() {
 		cleanup5()
 		cleanup4()

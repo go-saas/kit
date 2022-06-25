@@ -10,10 +10,10 @@ import (
 	uow2 "github.com/goxiaoy/uow"
 )
 
-func NewEventServer(c *kitconf.Data, conn dal.ConnName, logger klog.Logger, uowMgr uow2.Manager, tenantReady biz.TenantReadyEventHandler) *event.FactoryServer {
+func NewEventServer(c *kitconf.Data, conn dal.ConnName, logger klog.Logger, uowMgr uow2.Manager, tenantReady biz.TenantReadyEventHandler) *event.ConsumerFactoryServer {
 	e := c.Endpoints.GetEventMergedDefault(string(conn))
-	srv := event.NewFactoryServer(e)
-	srv.Use(event.Recover(event.WithLogger(logger)), trace.Receive(), event.Logging(logger), event.Uow(uowMgr))
+	srv := event.NewConsumerFactoryServer(e)
+	srv.Use(event.ConsumerRecover(event.WithLogger(logger)), trace.Receive(), event.Logging(logger), event.ConsumerUow(uowMgr))
 	srv.Append(tenantReady)
 	return srv
 }
