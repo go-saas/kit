@@ -67,8 +67,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		Blob:    factory,
 	}
 	tenantStore := api2.NewTenantStore(tenantInternalService)
-	config := _wireConfigValue
-	manager := uow.NewUowManager(config, dbCache)
+	manager := uow.NewUowManager(dbCache)
 	webMultiTenancyOption := server.NewWebMultiTenancyOption(appConfig)
 	option := api.NewDefaultOption(logger)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
@@ -116,7 +115,6 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 var (
 	_wireEventBusValue           = eventbus.Default
 	_wireConnNameValue           = biz.ConnName
-	_wireConfigValue             = dal.UowCfg
 	_wireDecodeRequestFuncValue  = server.ReqDecode
 	_wireEncodeResponseFuncValue = server.ResEncoder
 	_wireEncodeErrorFuncValue    = server.ErrEncoder

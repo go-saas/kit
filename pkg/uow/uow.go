@@ -18,8 +18,8 @@ const (
 	gormKind = "gorm"
 )
 
-func NewUowManager(config *uow.Config, cache *gorm3.DbCache) uow.Manager {
-	return uow.NewManager(config, func(ctx context.Context, keys []string) uow.TransactionalDb {
+func NewUowManager(cache *gorm3.DbCache) uow.Manager {
+	return uow.NewManager(func(ctx context.Context, keys ...string) uow.TransactionalDb {
 		kind := keys[0]
 		key := keys[1]
 		connStr := keys[2]

@@ -52,9 +52,8 @@ import (
 func initApp(services *conf.Services, security *conf.Security, confData *conf.Data, saasConf *conf2.SaasConf, userConf *conf3.UserConf, logger log.Logger, appConfig *conf.AppConfig, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
-	config := _wireConfigValue
 	dbCache, cleanup := gorm.NewDbCache(confData, logger)
-	manager := uow.NewUowManager(config, dbCache)
+	manager := uow.NewUowManager(dbCache)
 	webMultiTenancyOption := server.NewWebMultiTenancyOption(appConfig)
 	option := api.NewDefaultOption(logger)
 	trustedContextValidator := api.NewClientTrustedContextValidator()
@@ -197,7 +196,6 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 }
 
 var (
-	_wireConfigValue             = dal.UowCfg
 	_wireEventBusValue           = eventbus.Default
 	_wireConnNameValue           = dal.ConnName("default")
 	_wireDecodeRequestFuncValue  = server.ReqDecode

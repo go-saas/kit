@@ -53,7 +53,7 @@ func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Serv
 		}
 		extra[ubiz.AdminUsernameKey] = c.Admin.GetUsername()
 		extra[ubiz.AdminPasswordKey] = c.Admin.GetPassword()
-		if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("").WithExtra(extra)); err != nil {
+		if err := seeder.Seed(context.Background(), seed.AddHost(), seed.WithExtra(extra)); err != nil {
 			panic(err)
 		}
 	}

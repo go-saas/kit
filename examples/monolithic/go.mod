@@ -8,9 +8,9 @@ require (
 	github.com/go-kratos/kratos/v2 v2.3.1
 	github.com/google/wire v0.5.0
 	github.com/goxiaoy/go-eventbus v0.0.5
-	github.com/goxiaoy/go-saas v0.5.0
+	github.com/goxiaoy/go-saas v0.5.1-0.20220624173249-80d8d39c493a
 	github.com/goxiaoy/go-saas-kit v0.0.0-00010101000000-000000000000
-	github.com/goxiaoy/uow v0.0.0-20220620110744-e5619dd7a74c
+	github.com/goxiaoy/uow v0.0.1
 	github.com/hibiken/asynq v0.23.0
 	google.golang.org/protobuf v1.28.0
 )
@@ -139,7 +139,7 @@ require (
 	gorm.io/driver/postgres v1.3.4 // indirect
 	gorm.io/driver/sqlite v1.3.1 // indirect
 	gorm.io/driver/sqlserver v1.3.2 // indirect
-	gorm.io/gorm v1.23.4 // indirect
+	gorm.io/gorm v1.23.6 // indirect
 	gorm.io/plugin/dbresolver v1.1.0 // indirect
 	modernc.org/libc v1.15.1 // indirect
 	modernc.org/mathutil v1.4.1 // indirect

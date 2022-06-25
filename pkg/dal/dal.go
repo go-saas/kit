@@ -16,7 +16,6 @@ import (
 
 	"github.com/goxiaoy/go-saas/data"
 	sgorm "github.com/goxiaoy/go-saas/gorm"
-	"github.com/goxiaoy/uow"
 )
 
 type (
@@ -34,7 +33,6 @@ var (
 		kitgorm.NewDbProvider,
 		NewConstDbProvider,
 
-		wire.Value(UowCfg),
 		kituow.NewUowManager,
 
 		NewBlobFactory,
@@ -46,12 +44,6 @@ var (
 		NewEventSender,
 		wire.Value(eventbus.Default),
 	)
-)
-
-var (
-	UowCfg = &uow.Config{
-		SupportNestedTransaction: false,
-	}
 )
 
 func NewConnStrResolver(c *kitconf.Data, ts saas.TenantStore) data.ConnStrResolver {

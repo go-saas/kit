@@ -49,12 +49,10 @@ func init() {
 func newApp(c *conf.UserConf, logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.ConsumerFactoryServer, seeder seed.Seeder) *kratos.App {
 	if ifSeed {
 		if err := seeder.Seed(context.Background(),
-			seed.NewSeedOption().
-				WithTenantId("").
-				WithExtra(map[string]interface{}{
-					biz.AdminUsernameKey: c.Admin.GetUsername(),
-					biz.AdminPasswordKey: c.Admin.GetPassword(),
-				})); err != nil {
+			seed.AddHost(),
+			seed.SetExtra(biz.AdminUsernameKey, c.Admin.GetUsername()),
+			seed.SetExtra(biz.AdminPasswordKey, c.Admin.GetPassword()),
+		); err != nil {
 			panic(err)
 		}
 	}

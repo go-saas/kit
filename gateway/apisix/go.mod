@@ -6,7 +6,7 @@ require (
 	github.com/apache/apisix-go-plugin-runner v0.3.0
 	github.com/go-kratos/kratos/v2 v2.3.1
 	github.com/google/wire v0.5.0
-	github.com/goxiaoy/go-saas v0.5.0
+	github.com/goxiaoy/go-saas v0.5.1-0.20220624173249-80d8d39c493a
 	github.com/goxiaoy/go-saas-kit v0.0.1
 	github.com/goxiaoy/sessions v1.2.2-0.20220327125603-baf0b311512e
 	github.com/samber/lo v1.10.1
@@ -73,7 +73,7 @@ require (
 	google.golang.org/grpc v1.46.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.3.3 // indirect
-	gorm.io/gorm v1.23.4 // indirect
+	gorm.io/gorm v1.23.6 // indirect
 )
 
 replace github.com/goxiaoy/go-saas-kit => ../../

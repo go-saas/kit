@@ -49,7 +49,7 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server,
 		if len(seedPath) > 0 {
 			extra[biz.SeedPathKey] = seedPath
 		}
-		if err := seeder.Seed(context.Background(), seed.NewSeedOption().WithTenantId("").WithExtra(extra)); err != nil {
+		if err := seeder.Seed(context.Background(), seed.AddHost(), seed.WithExtra(extra)); err != nil {
 			panic(err)
 		}
 	}

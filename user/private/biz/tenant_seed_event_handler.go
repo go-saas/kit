@@ -52,7 +52,7 @@ func NewUserMigrationTaskHandler(seeder seed.Seeder, sender event2.Producer) Use
 		if len(msg.AdminPassword) > 0 {
 			extra[AdminPasswordKey] = msg.AdminPassword
 		}
-		if err := seeder.Seed(ctx, seed.NewSeedOption().WithTenantId(msg.Id).WithExtra(extra)); err != nil {
+		if err := seeder.Seed(ctx, seed.AddTenant(msg.Id), seed.WithExtra(extra)); err != nil {
 			return err
 		}
 		e := &v1.TenantReadyEvent{
