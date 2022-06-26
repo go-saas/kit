@@ -7,19 +7,19 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	uow2 "github.com/go-saas/uow"
-	"github.com/go-saas/saas"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
-	"github.com/go-saas/kit/pkg/uow"
 	"github.com/go-saas/kit/user/api"
 	"github.com/go-saas/kit/user/i18n"
 	"github.com/go-saas/kit/user/private/service"
+	"github.com/go-saas/saas"
 	http2 "github.com/go-saas/saas/http"
+	uow2 "github.com/go-saas/uow"
+	kuow "github.com/go-saas/uow/kratos"
 )
 
 // NewGRPCServer new a gRPC server.
@@ -35,7 +35,7 @@ func NewGRPCServer(
 	userTenant *api.UserTenantContrib,
 	register service.GrpcServerRegister,
 ) *grpc.Server {
-	m := middleware.Chain(
+	m := []middleware.Middleware{
 		server.Recovery(),
 		tracing.Server(),
 		logging.Server(logger),
@@ -47,17 +47,17 @@ func NewGRPCServer(
 		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
 			o.AppendContribs(userTenant)
 		}),
-		uow.Uow(logger, uowMgr),
-	)
+		kuow.Uow(uowMgr, kuow.WithLogger(logger)),
+	}
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
-			m,
+			m...,
 		),
 	}
 	opts = server.PatchGrpcOpts(logger, opts, api.ServiceName, c)
 	srv := grpc.NewServer(opts...)
 
-	register.Register(srv, m)
+	register.Register(srv, middleware.Chain(m...))
 
 	return srv
 }

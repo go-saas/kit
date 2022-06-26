@@ -10,7 +10,6 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/goxiaoy/go-eventbus"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
@@ -27,6 +26,7 @@ import (
 	server2 "github.com/go-saas/kit/saas/private/server"
 	"github.com/go-saas/kit/saas/private/service"
 	api3 "github.com/go-saas/kit/user/api"
+	"github.com/goxiaoy/go-eventbus"
 )
 
 import (

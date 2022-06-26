@@ -7,20 +7,20 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	uow2 "github.com/go-saas/uow"
-	"github.com/go-saas/saas"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
-	"github.com/go-saas/kit/pkg/uow"
 	"github.com/go-saas/kit/saas/api"
 	"github.com/go-saas/kit/saas/i18n"
 	"github.com/go-saas/kit/saas/private/service"
 	uapi "github.com/go-saas/kit/user/api"
+	"github.com/go-saas/saas"
 	"github.com/go-saas/saas/http"
+	uow2 "github.com/go-saas/uow"
+	kuow "github.com/go-saas/uow/kratos"
 )
 
 // NewGRPCServer new a gRPC server.
@@ -41,7 +41,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts saas.TenantStor
 		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
 			o.AppendContribs(userTenant)
 		}),
-		uow.Uow(logger, uowMgr))
+		kuow.Uow(uowMgr, kuow.WithLogger(logger)))
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			m,
