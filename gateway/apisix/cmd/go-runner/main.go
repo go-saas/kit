@@ -194,10 +194,8 @@ func newRunCommand() *cobra.Command {
 		"mode", "m",
 		"the runner's run mode; can be 'prod' or 'dev', default to 'dev'")
 	cmd.PersistentFlags().StringVarP(&clientName, "client", "n", "apisix", "client name")
-	flagconfP := cmd.PersistentFlags().StringArrayP("conf", "c", []string{"./configs"}, "config path, eg: -conf config.yaml")
-	if flagconfP != nil {
-		flagconf = *flagconfP
-	}
+	cmd.PersistentFlags().StringSliceVarP(&flagconf, "conf", "c", []string{"./configs"}, "config path, eg: -conf config.yaml")
+
 	return cmd
 }
 
