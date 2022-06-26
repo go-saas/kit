@@ -4,11 +4,11 @@ services:
   apisix:
     image: ${DOCKER_REGISTRY}go-saas-kit-apisix:${DOCKER_TAG:-latest}
     volumes:
-      - ./quickstart/configs/apisix/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - ./quickstart/monolithic/apisix/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
       - ./quickstart/monolithic/apisix/apisix_conf/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
       - ./quickstart/configs:/data/conf
       #override service config
-      - ./quickstart/monolithic/config.override.yaml:/data/conf/config.override.yaml
+      - ./quickstart/monolithic:/data/conf.override
     depends_on:
       - monolithic
 

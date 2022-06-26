@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/config"
+	"github.com/go-kratos/kratos/v2/config/env"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-saas/kit/gateway/apisix/internal/conf"
 	"github.com/go-saas/kit/pkg/api"
@@ -104,7 +105,7 @@ func openFileToWrite(name string) (*os.File, error) {
 func newRunCommand() *cobra.Command {
 	var mode RunMode
 	var clientName string
-	var flagconf string
+	var flagconf []string
 
 	cmd := &cobra.Command{
 		Use:   "run",
@@ -146,11 +147,14 @@ func newRunCommand() *cobra.Command {
 					}
 				}()
 			}
-			c := config.New(
-				config.WithSource(
-					file.NewSource(strings.TrimSpace(flagconf)),
-				),
-			)
+
+			source := []config.Source{
+				env.NewSource("KRATOS_"),
+			}
+			for _, s := range flagconf {
+				source = append(source, file.NewSource(strings.TrimSpace(s)))
+			}
+			c := config.New(config.WithSource(source...))
 			if err := c.Load(); err != nil {
 				panic(err)
 			}
@@ -190,7 +194,10 @@ func newRunCommand() *cobra.Command {
 		"mode", "m",
 		"the runner's run mode; can be 'prod' or 'dev', default to 'dev'")
 	cmd.PersistentFlags().StringVarP(&clientName, "client", "n", "apisix", "client name")
-	cmd.PersistentFlags().StringVarP(&flagconf, "conf", "c", "../../configs", "config path, eg: -conf config.yaml")
+	flagconfP := cmd.PersistentFlags().StringArrayP("conf", "c", []string{"./configs"}, "config path, eg: -conf config.yaml")
+	if flagconfP != nil {
+		flagconf = *flagconfP
+	}
 	return cmd
 }
 

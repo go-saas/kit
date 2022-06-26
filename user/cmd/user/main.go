@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/go-kratos/kratos/v2/config/env"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/event"
@@ -13,6 +14,7 @@ import (
 	"github.com/go-saas/kit/user/private/biz"
 	"github.com/go-saas/saas/seed"
 	"os"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -36,14 +38,14 @@ var (
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
-	flagconf string
+	flagconf arrayFlags
 	ifSeed   bool
 
 	id, _ = os.Hostname()
 )
 
 func init() {
-	flag.StringVar(&flagconf, "conf", "./configs", "config path, eg: -conf config.yaml")
+	flag.Var(&flagconf, "conf", "config path, eg: -conf config.yaml")
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
 }
 
@@ -73,14 +75,35 @@ func newApp(c *conf.UserConf, logger log.Logger, hs *http.Server, gs *grpc.Serve
 	)
 }
 
+type arrayFlags []string
+
+func (i *arrayFlags) String() string {
+	return "my string representation"
+}
+
+func (i *arrayFlags) Set(value string) error {
+	*i = append(*i, value)
+	return nil
+}
+
 func main() {
 	flag.Parse()
 
+	source := []config.Source{
+		env.NewSource("KRATOS_"),
+	}
+	if flagconf != nil {
+		for _, s := range flagconf {
+			source = append(source, file.NewSource(strings.TrimSpace(s)))
+		}
+	}
+
 	c := config.New(
 		config.WithSource(
-			file.NewSource(flagconf),
+			source...,
 		),
 	)
+	defer c.Close()
 	if err := c.Load(); err != nil {
 		panic(err)
 	}
