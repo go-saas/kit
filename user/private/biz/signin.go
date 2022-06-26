@@ -3,10 +3,10 @@ package biz
 import (
 	"context"
 	"errors"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/localize"
-	v12 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
+	"github.com/go-saas/kit/pkg/authn/session"
+	"github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/localize"
+	v12 "github.com/go-saas/kit/user/api/auth/v1"
 	"time"
 )
 

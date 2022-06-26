@@ -5,8 +5,8 @@ import (
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
-	kerrors "github.com/goxiaoy/go-saas-kit/pkg/errors"
-	"github.com/goxiaoy/go-saas-kit/pkg/lazy"
+	kerrors "github.com/go-saas/kit/pkg/errors"
+	"github.com/go-saas/kit/pkg/lazy"
 	"github.com/hibiken/asynq"
 )
 

@@ -10,7 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/conf"
 	grpcx "google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/durationpb"

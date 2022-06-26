@@ -5,7 +5,7 @@ package query.operation;
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/goxiaoy/go-saas-kit/pkg/query;query";
+option go_package = "github.com/go-saas/kit/pkg/query;query";
 
 message StringFilterOperation{
   optional google.protobuf.StringValue eq =1 [json_name="$eq"];

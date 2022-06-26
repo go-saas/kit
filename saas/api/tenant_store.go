@@ -2,9 +2,9 @@ package api
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas"
-	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	"github.com/go-saas/saas"
+	"github.com/go-saas/kit/pkg/api"
+	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 )
 
 type TenantStore struct {

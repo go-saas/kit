@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/authn/jwt"
+	"github.com/go-saas/kit/pkg/conf"
 	"time"
 )
 

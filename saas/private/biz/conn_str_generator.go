@@ -3,7 +3,7 @@ package biz
 import (
 	"context"
 	"fmt"
-	"github.com/goxiaoy/go-saas-kit/saas/private/conf"
+	"github.com/go-saas/kit/saas/private/conf"
 )
 
 type ConnStrGenerator interface {

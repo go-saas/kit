@@ -2,7 +2,7 @@ package gorm
 
 import (
 	"fmt"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn"
+	"github.com/go-saas/kit/pkg/authn"
 	"gorm.io/gorm"
 	"reflect"
 	"time"

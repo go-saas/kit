@@ -1,7 +1,7 @@
 syntax = "proto3";
 package apisix.internal;
 
-option go_package = "github.com/goxiaoy/go-saas-kit/gateway/apisix/internal/conf;conf";
+option go_package = "github.com/go-saas/kit/gateway/apisix/internal/conf;conf";
 
 import "conf/conf.proto";
 

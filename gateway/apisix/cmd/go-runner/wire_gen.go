@@ -9,17 +9,17 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	api2 "github.com/goxiaoy/go-saas-kit/saas/api"
-	api3 "github.com/goxiaoy/go-saas-kit/user/api"
-	"github.com/goxiaoy/go-saas/http"
+	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/authn/jwt"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/conf"
+	api2 "github.com/go-saas/kit/saas/api"
+	api3 "github.com/go-saas/kit/user/api"
+	"github.com/go-saas/saas/http"
 )
 
 import (
-	_ "github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
+	_ "github.com/go-saas/kit/gateway/apisix/cmd/go-runner/plugins"
 )
 
 // Injectors from wire.go:

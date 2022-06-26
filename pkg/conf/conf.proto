@@ -8,7 +8,7 @@ import "google/protobuf/wrappers.proto";
 import "blob/blob.proto";
 import "event/event.proto";
 
-option go_package = "github.com/goxiaoy/go-saas-kit/pkg/conf;conf";
+option go_package = "github.com/go-saas/kit/pkg/conf;conf";
 
 message Server {
   message HTTP {

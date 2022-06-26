@@ -4,7 +4,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/conf"
 	"google.golang.org/protobuf/proto"
 )
 

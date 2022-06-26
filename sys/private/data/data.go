@@ -4,12 +4,12 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/memory"
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/os"
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/s3"
-	kconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
-	"github.com/goxiaoy/go-saas/gorm"
+	_ "github.com/go-saas/kit/pkg/blob/memory"
+	_ "github.com/go-saas/kit/pkg/blob/os"
+	_ "github.com/go-saas/kit/pkg/blob/s3"
+	kconf "github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/kit/sys/private/biz"
+	"github.com/go-saas/saas/gorm"
 	g "gorm.io/gorm"
 )
 

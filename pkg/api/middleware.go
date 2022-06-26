@@ -6,8 +6,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/authn/jwt"
+	"github.com/go-saas/kit/pkg/conf"
 	"strings"
 )
 

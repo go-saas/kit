@@ -8,8 +8,8 @@ package v1
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	query "github.com/goxiaoy/go-saas-kit/pkg/query"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
+	query "github.com/go-saas/kit/pkg/query"
+	v1 "github.com/go-saas/kit/user/api/permission/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"

@@ -8,9 +8,9 @@ package v1
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob"
-	query "github.com/goxiaoy/go-saas-kit/pkg/query"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
+	_ "github.com/go-saas/kit/pkg/blob"
+	query "github.com/go-saas/kit/pkg/query"
+	v1 "github.com/go-saas/kit/user/api/permission/v1"
 	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"

@@ -13,7 +13,7 @@ import "google/api/field_behavior.proto";
 import "user/api/permission/v1/permission.proto";
 import "query/operation.proto";
 
-option go_package = "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1;v1";
+option go_package = "github.com/go-saas/kit/sys/api/menu/v1;v1";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {

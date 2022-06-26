@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/casbin/casbin/v2"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/authz/authz"
 )
 
 var _ authz.PermissionChecker = (*PermissionService)(nil)

@@ -2,9 +2,9 @@ package uow
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/saas"
-	"github.com/goxiaoy/go-saas/seed"
-	"github.com/goxiaoy/uow"
+	"github.com/go-saas/uow"
+	"github.com/go-saas/kit/pkg/saas"
+	"github.com/go-saas/saas/seed"
 )
 
 func NewUowContrib(uow uow.Manager, next ...seed.Contrib) seed.Contrib {

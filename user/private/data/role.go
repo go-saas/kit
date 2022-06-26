@@ -5,9 +5,9 @@ import (
 	"errors"
 	"github.com/goxiaoy/go-eventbus"
 
-	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
-	"github.com/goxiaoy/go-saas-kit/user/private/biz"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	v12 "github.com/go-saas/kit/user/api/role/v1"
+	"github.com/go-saas/kit/user/private/biz"
 	"gorm.io/gorm"
 )
 

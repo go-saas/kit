@@ -2,7 +2,7 @@ package biz
 
 import (
 	"context"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	v1 "github.com/go-saas/kit/user/api/user/v1"
 )
 
 // UserValidator validate user before create and update

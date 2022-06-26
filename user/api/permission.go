@@ -2,7 +2,7 @@ package api
 
 import (
 	_ "embed"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/authz/authz"
 )
 
 const (

@@ -24,7 +24,7 @@ jobs:
       - name: Docker login
         if: |
           github.event_name == 'push'
-          && github.repository == 'Goxiaoy/go-saas-kit'
+          && github.repository == 'go-saas/kit'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -33,14 +33,14 @@ jobs:
       - name: Push docker image
         if: |
           github.event_name == 'push'
-          && github.repository == 'Goxiaoy/go-saas-kit'
+          && github.repository == 'go-saas/kit'
 
         run: docker-compose -f docker-compose.yml push
 
 #      - name: Publish to demo server
 #        if: |
 #          github.event_name == 'push'
-#          && github.repository == 'Goxiaoy/go-saas-kit'
+#          && github.repository == 'go-saas/kit'
 #        uses: appleboy/scp-action@master
 #        with:
 #          host: ${{ secrets.HOST }}
@@ -52,7 +52,7 @@ jobs:
 #      - name: Update demo server
 #        if: |
 #          github.event_name == 'push'
-#          && github.repository == 'Goxiaoy/go-saas-kit'
+#          && github.repository == 'go-saas/kit'
 #        uses: appleboy/ssh-action@master
 #        with:
 #          host: ${{ secrets.HOST }}

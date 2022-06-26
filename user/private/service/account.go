@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/goxiaoy/go-saas"
-	"github.com/goxiaoy/go-saas-kit/pkg/data"
-	"github.com/goxiaoy/go-saas-kit/pkg/query"
+	"github.com/go-saas/saas"
+	"github.com/go-saas/kit/pkg/data"
+	"github.com/go-saas/kit/pkg/query"
 	"google.golang.org/protobuf/types/known/structpb"
 	"io"
 	"os"
@@ -14,18 +14,18 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/uuid"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn"
-	"github.com/goxiaoy/go-saas-kit/pkg/blob"
-	v13 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
-	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
-	"github.com/goxiaoy/go-saas-kit/user/private/biz"
+	"github.com/go-saas/kit/pkg/authn"
+	"github.com/go-saas/kit/pkg/blob"
+	v13 "github.com/go-saas/kit/saas/api/tenant/v1"
+	v12 "github.com/go-saas/kit/user/api/role/v1"
+	v1 "github.com/go-saas/kit/user/api/user/v1"
+	"github.com/go-saas/kit/user/private/biz"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
-	pb "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
+	pb "github.com/go-saas/kit/user/api/account/v1"
 )
 
 type AccountService struct {

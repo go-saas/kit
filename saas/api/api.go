@@ -5,9 +5,9 @@ import (
 	grpc2 "github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/conf"
+	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"google.golang.org/grpc"
 )
 

@@ -7,7 +7,7 @@
 package data
 
 import (
-	query "github.com/goxiaoy/go-saas-kit/pkg/query"
+	query "github.com/go-saas/kit/pkg/query"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	structpb "google.golang.org/protobuf/types/known/structpb"

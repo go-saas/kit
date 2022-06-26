@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn"
+	"github.com/go-saas/kit/pkg/authn"
 )
 
 func ServerExtractAndAuth(tokenizer Tokenizer, logger log.Logger) middleware.Middleware {

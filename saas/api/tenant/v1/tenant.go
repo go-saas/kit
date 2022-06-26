@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/conf"
 	"regexp"
 )
 

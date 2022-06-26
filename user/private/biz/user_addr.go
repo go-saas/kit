@@ -2,8 +2,8 @@ package biz
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/data"
-	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/go-saas/kit/pkg/data"
+	"github.com/go-saas/kit/pkg/gorm"
 )
 
 type UserAddress struct {

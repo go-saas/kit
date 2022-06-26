@@ -3,8 +3,8 @@ package biz
 import (
 	"context"
 	"fmt"
-	event "github.com/goxiaoy/go-saas-kit/pkg/event"
-	v1 "github.com/goxiaoy/go-saas-kit/saas/event/v1"
+	event "github.com/go-saas/kit/pkg/event"
+	v1 "github.com/go-saas/kit/saas/event/v1"
 	"github.com/samber/lo"
 )
 

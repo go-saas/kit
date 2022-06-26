@@ -4,12 +4,12 @@ import (
 	"context"
 	"flag"
 	"github.com/go-kratos/kratos/v2"
-	"github.com/goxiaoy/go-saas-kit/pkg/job"
-	"github.com/goxiaoy/go-saas-kit/pkg/logging"
-	"github.com/goxiaoy/go-saas-kit/pkg/server"
-	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
-	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
-	"github.com/goxiaoy/go-saas/seed"
+	"github.com/go-saas/kit/pkg/job"
+	"github.com/go-saas/kit/pkg/logging"
+	"github.com/go-saas/kit/pkg/server"
+	"github.com/go-saas/kit/pkg/tracers"
+	"github.com/go-saas/kit/sys/private/biz"
+	"github.com/go-saas/saas/seed"
 	"os"
 
 	"github.com/go-kratos/kratos/v2/config"
@@ -18,10 +18,10 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/goxiaoy/go-saas-kit/sys/private/conf"
+	"github.com/go-saas/kit/sys/private/conf"
 
-	_ "github.com/goxiaoy/go-saas-kit/pkg/event/kafka"
-	_ "github.com/goxiaoy/go-saas-kit/pkg/event/pulsar"
+	_ "github.com/go-saas/kit/pkg/event/kafka"
+	_ "github.com/go-saas/kit/pkg/event/pulsar"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"

@@ -2,17 +2,17 @@ package server
 
 import (
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas"
-	kapi "github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	ksaas "github.com/goxiaoy/go-saas-kit/pkg/saas"
-	uow2 "github.com/goxiaoy/go-saas-kit/pkg/uow"
-	"github.com/goxiaoy/go-saas-kit/saas/api"
-	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
-	"github.com/goxiaoy/go-saas-kit/saas/private/data"
+	"github.com/go-saas/saas"
+	kapi "github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	ksaas "github.com/go-saas/kit/pkg/saas"
+	uow2 "github.com/go-saas/kit/pkg/uow"
+	"github.com/go-saas/kit/saas/api"
+	"github.com/go-saas/kit/saas/private/biz"
+	"github.com/go-saas/kit/saas/private/data"
 
-	"github.com/goxiaoy/go-saas/seed"
-	"github.com/goxiaoy/uow"
+	"github.com/go-saas/uow"
+	"github.com/go-saas/saas/seed"
 )
 
 // ProviderSet is server providers.

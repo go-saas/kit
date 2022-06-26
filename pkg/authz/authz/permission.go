@@ -2,7 +2,7 @@ package authz
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas"
+	"github.com/go-saas/saas"
 )
 
 type PermissionManagementService interface {

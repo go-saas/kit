@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas"
-	api2 "github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas-kit/user/api"
-	pb "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
-	"github.com/goxiaoy/go-saas-kit/user/util"
+	"github.com/go-saas/saas"
+	api2 "github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/user/api"
+	pb "github.com/go-saas/kit/user/api/permission/v1"
+	"github.com/go-saas/kit/user/util"
 
 	"github.com/samber/lo"
 )

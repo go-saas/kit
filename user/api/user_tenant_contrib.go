@@ -1,11 +1,11 @@
 package api
 
 import (
-	"github.com/goxiaoy/go-saas"
-	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn"
-	v12 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	"github.com/go-saas/saas"
+	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/authn"
+	v12 "github.com/go-saas/kit/saas/api/tenant/v1"
+	v1 "github.com/go-saas/kit/user/api/user/v1"
 )
 
 // UserTenantContrib impl saas.TenantResolveContrib from calling remote or local service.

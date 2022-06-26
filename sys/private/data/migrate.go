@@ -2,10 +2,10 @@ package data
 
 import (
 	"context"
-	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
 
-	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
-	"github.com/goxiaoy/go-saas/seed"
+	"github.com/go-saas/kit/sys/private/biz"
+	"github.com/go-saas/saas/seed"
 	"gorm.io/gorm"
 )
 

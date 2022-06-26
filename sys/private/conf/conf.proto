@@ -1,7 +1,7 @@
 syntax = "proto3";
 package sys.internal;
 
-option go_package = "github.com/goxiaoy/go-saas-kit/sys/private/conf;conf";
+option go_package = "github.com/go-saas/kit/sys/private/conf;conf";
 
 import "conf/conf.proto";
 import "blob/blob.proto";

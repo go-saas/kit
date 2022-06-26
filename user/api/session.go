@@ -4,10 +4,10 @@ import (
 	"context"
 	kerrors "github.com/go-kratos/kratos/v2/errors"
 	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
-	errors2 "github.com/goxiaoy/go-saas-kit/pkg/errors"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
+	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/authn/session"
+	errors2 "github.com/go-saas/kit/pkg/errors"
+	v1 "github.com/go-saas/kit/user/api/auth/v1"
 )
 
 // NewRefreshProvider return session.RefreshTokenProvider

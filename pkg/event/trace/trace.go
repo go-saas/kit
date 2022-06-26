@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"github.com/goxiaoy/go-saas-kit/pkg/event"
+	"github.com/go-saas/kit/pkg/event"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

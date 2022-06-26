@@ -4,7 +4,7 @@ import (
 	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis/extra/redisotel/v8"
 	"github.com/go-redis/redis/v8"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/conf"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 

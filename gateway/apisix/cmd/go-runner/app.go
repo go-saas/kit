@@ -3,16 +3,16 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2/log"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-saas/kit/gateway/apisix/cmd/go-runner/plugins"
+	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/authn/jwt"
+	"github.com/go-saas/kit/pkg/authn/session"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/conf"
+	uapi "github.com/go-saas/kit/user/api"
+	"github.com/go-saas/saas"
+	shttp "github.com/go-saas/saas/http"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas"
-	"github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
-	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/session"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	uapi "github.com/goxiaoy/go-saas-kit/user/api"
-	shttp "github.com/goxiaoy/go-saas/http"
 )
 
 type App struct {

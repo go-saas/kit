@@ -2,20 +2,20 @@ package dal
 
 import (
 	"github.com/go-redis/redis/v8"
+	"github.com/go-saas/saas"
 	"github.com/google/wire"
 	"github.com/goxiaoy/go-eventbus"
-	"github.com/goxiaoy/go-saas"
-	"github.com/goxiaoy/go-saas-kit/pkg/blob"
-	kitconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/email"
-	event "github.com/goxiaoy/go-saas-kit/pkg/event"
-	"github.com/goxiaoy/go-saas-kit/pkg/event/trace"
-	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	kitredis "github.com/goxiaoy/go-saas-kit/pkg/redis"
-	kituow "github.com/goxiaoy/go-saas-kit/pkg/uow"
+	"github.com/go-saas/kit/pkg/blob"
+	kitconf "github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/email"
+	event "github.com/go-saas/kit/pkg/event"
+	"github.com/go-saas/kit/pkg/event/trace"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	kitredis "github.com/go-saas/kit/pkg/redis"
+	kituow "github.com/go-saas/kit/pkg/uow"
 
-	"github.com/goxiaoy/go-saas/data"
-	sgorm "github.com/goxiaoy/go-saas/gorm"
+	"github.com/go-saas/saas/data"
+	sgorm "github.com/go-saas/saas/gorm"
 )
 
 type (

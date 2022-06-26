@@ -3,12 +3,12 @@ package session
 import (
 	"context"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/errors"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
-	"github.com/goxiaoy/sessions"
+	"github.com/go-saas/sessions"
+	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/authn"
+	"github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/errors"
+	v1 "github.com/go-saas/kit/user/api/auth/v1"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"net/http"
 )

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/goxiaoy/go-eventbus"
-	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
-	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
+	"github.com/go-saas/kit/saas/private/biz"
 	gg "gorm.io/gorm"
 )
 

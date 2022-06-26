@@ -6,7 +6,7 @@ import (
 	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/auth/v1"
+	v1 "github.com/go-saas/kit/user/api/auth/v1"
 	"time"
 )
 

@@ -2,15 +2,15 @@ package service
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas"
+	"github.com/go-saas/saas"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas-kit/user/api"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
-	pb "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
-	"github.com/goxiaoy/go-saas-kit/user/private/biz"
-	"github.com/goxiaoy/go-saas-kit/user/util"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/user/api"
+	v1 "github.com/go-saas/kit/user/api/permission/v1"
+	pb "github.com/go-saas/kit/user/api/role/v1"
+	"github.com/go-saas/kit/user/private/biz"
+	"github.com/go-saas/kit/user/util"
 
 	"github.com/mennanov/fmutils"
 	"github.com/samber/lo"

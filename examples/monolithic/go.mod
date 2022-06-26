@@ -1,16 +1,16 @@
-module github.com/goxiaoy/go-saas-kit/examples/monolithic
+module github.com/go-saas/kit/examples/monolithic
 
 go 1.18
 
-replace github.com/goxiaoy/go-saas-kit => ../../
+replace github.com/go-saas/kit => ../../
 
 require (
 	github.com/go-kratos/kratos/v2 v2.3.1
+	github.com/go-saas/kit v0.0.0-00010101000000-000000000000
+	github.com/go-saas/saas v0.5.1-0.20220626074657-d010c1b28e67
+	github.com/go-saas/uow v0.0.3
 	github.com/google/wire v0.5.0
 	github.com/goxiaoy/go-eventbus v0.0.5
-	github.com/goxiaoy/go-saas v0.5.1-0.20220624173249-80d8d39c493a
-	github.com/goxiaoy/go-saas-kit v0.0.0-00010101000000-000000000000
-	github.com/goxiaoy/uow v0.0.1
 	github.com/hibiken/asynq v0.23.0
 	google.golang.org/protobuf v1.28.0
 )
@@ -56,6 +56,7 @@ require (
 	github.com/go-redis/redis/extra/rediscmd/v8 v8.11.5 // indirect
 	github.com/go-redis/redis/extra/redisotel/v8 v8.11.5 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
+	github.com/go-saas/sessions v1.2.2-0.20220626044315-a7a87c87f120 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -64,14 +65,12 @@ require (
 	github.com/golang-sql/sqlexp v0.0.0-20170517235910-f1bb20e5a188 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/subcommands v1.0.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/csrf v1.7.1 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/goxiaoy/gorm-concurrency v1.0.5 // indirect
-	github.com/goxiaoy/sessions v1.2.2-0.20220327125603-baf0b311512e // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
@@ -146,7 +145,6 @@ require (
 	go.uber.org/zap v1.21.0 // indirect
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
 	golang.org/x/exp v0.0.0-20220314205449-43aec2f8a4e7 // indirect
-	golang.org/x/mod v0.6.0-dev.0.20211013180041-c96bc1413d57 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a // indirect
 	golang.org/x/sync v0.0.0-20220513210516-0976fa681c29 // indirect
@@ -154,15 +152,13 @@ require (
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
-	golang.org/x/tools v0.1.8-0.20211029000441-d6a9af8af023 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	google.golang.org/grpc v1.46.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.3.3 // indirect
 	gorm.io/driver/postgres v1.3.4 // indirect
-	gorm.io/driver/sqlite v1.3.1 // indirect
+	gorm.io/driver/sqlite v1.3.4 // indirect
 	gorm.io/driver/sqlserver v1.3.2 // indirect
 	gorm.io/gorm v1.23.6 // indirect
 	gorm.io/plugin/dbresolver v1.1.0 // indirect

@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn/jwt"
+	"github.com/go-saas/kit/pkg/authn/jwt"
 )
 
 type (

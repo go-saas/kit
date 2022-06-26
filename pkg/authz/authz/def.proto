@@ -3,7 +3,7 @@ syntax = "proto3";
 package authz;
 
 import "google/protobuf/struct.proto";
-option go_package = "github.com/goxiaoy/go-saas-kit/pkg/authz/authz;authz";
+option go_package = "github.com/go-saas/kit/pkg/authz/authz;authz";
 
 enum PermissionAllowSide{
   BOTH=0;

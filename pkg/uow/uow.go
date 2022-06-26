@@ -8,9 +8,9 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	gorm3 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	"github.com/goxiaoy/uow"
-	gorm2 "github.com/goxiaoy/uow/gorm"
+	"github.com/go-saas/uow"
+	gorm2 "github.com/go-saas/uow/gorm"
+	gorm3 "github.com/go-saas/kit/pkg/gorm"
 	"strings"
 )
 

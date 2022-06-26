@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas"
+	"github.com/go-saas/saas"
 
 	"github.com/spf13/afero"
 	"net/url"

@@ -2,7 +2,7 @@ package biz
 
 import (
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/pkg/dal"
+	"github.com/go-saas/kit/pkg/dal"
 )
 
 // ProviderSet is biz providers.

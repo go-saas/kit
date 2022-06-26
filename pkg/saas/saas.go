@@ -2,8 +2,8 @@ package saas
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas"
-	"github.com/goxiaoy/go-saas/seed"
+	"github.com/go-saas/saas"
+	"github.com/go-saas/saas/seed"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )

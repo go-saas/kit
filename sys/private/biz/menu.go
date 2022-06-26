@@ -3,9 +3,9 @@ package biz
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/goxiaoy/go-saas-kit/pkg/data"
-	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	v1 "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1"
+	"github.com/go-saas/kit/pkg/data"
+	"github.com/go-saas/kit/pkg/gorm"
+	v1 "github.com/go-saas/kit/sys/api/menu/v1"
 )
 
 type Menu struct {

@@ -7,11 +7,11 @@
 package conf
 
 import (
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob"
-	conf "github.com/goxiaoy/go-saas-kit/pkg/conf"
-	conf1 "github.com/goxiaoy/go-saas-kit/saas/private/conf"
-	_ "github.com/goxiaoy/go-saas-kit/sys/private/conf"
-	conf2 "github.com/goxiaoy/go-saas-kit/user/private/conf"
+	_ "github.com/go-saas/kit/pkg/blob"
+	conf "github.com/go-saas/kit/pkg/conf"
+	conf1 "github.com/go-saas/kit/saas/private/conf"
+	_ "github.com/go-saas/kit/sys/private/conf"
+	conf2 "github.com/go-saas/kit/user/private/conf"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

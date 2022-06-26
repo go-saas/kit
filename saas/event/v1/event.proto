@@ -9,7 +9,7 @@ import "validate/validate.proto";
 
 import "google/api/field_behavior.proto";
 
-option go_package = "github.com/goxiaoy/go-saas-kit/saas/event/v1;v1";
+option go_package = "github.com/go-saas/kit/saas/event/v1;v1";
 
 message TenantCreatedEvent{
   string id=1;

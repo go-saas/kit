@@ -18,7 +18,7 @@ import "data/data.proto";
 import "data/address.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/goxiaoy/go-saas-kit/user/api/account/v1;v1";
+option go_package = "github.com/go-saas/kit/user/api/account/v1;v1";
 
 service Account{
   rpc GetProfile(GetProfileRequest)returns(GetProfileResponse){

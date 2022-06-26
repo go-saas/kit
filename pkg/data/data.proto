@@ -5,7 +5,7 @@ package data;
 import "google/protobuf/struct.proto";
 import "query/operation.proto";
 
-option go_package = "github.com/goxiaoy/go-saas-kit/pkg/data;data";
+option go_package = "github.com/go-saas/kit/pkg/data;data";
 
 message DynamicValue{
   oneof value{

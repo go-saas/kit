@@ -7,9 +7,9 @@ import (
 	"github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/goxiaoy/go-saas"
+	"github.com/go-saas/saas"
 
-	sgorm "github.com/goxiaoy/go-saas/gorm"
+	sgorm "github.com/go-saas/saas/gorm"
 )
 
 type EnforcerProvider struct {

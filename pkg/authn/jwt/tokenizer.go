@@ -2,7 +2,7 @@ package jwt
 
 import (
 	"github.com/golang-jwt/jwt"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/conf"
 	"time"
 )
 

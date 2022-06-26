@@ -22,11 +22,11 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
-	"github.com/goxiaoy/go-saas-kit/gateway/apisix/internal/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/logging"
-	"github.com/goxiaoy/go-saas-kit/pkg/server"
-	"github.com/goxiaoy/go-saas-kit/pkg/tracers"
+	"github.com/go-saas/kit/gateway/apisix/internal/conf"
+	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/logging"
+	"github.com/go-saas/kit/pkg/server"
+	"github.com/go-saas/kit/pkg/tracers"
 	"go.uber.org/zap/zapcore"
 	"io"
 	"os"
@@ -43,7 +43,7 @@ import (
 
 	klog "github.com/go-kratos/kratos/v2/log"
 
-	_ "github.com/goxiaoy/go-saas-kit/gateway/apisix/cmd/go-runner/plugins"
+	_ "github.com/go-saas/kit/gateway/apisix/cmd/go-runner/plugins"
 )
 
 var (

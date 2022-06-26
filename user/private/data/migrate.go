@@ -3,9 +3,9 @@ package data
 import (
 	"context"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
-	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	"github.com/goxiaoy/go-saas-kit/user/private/biz"
-	"github.com/goxiaoy/go-saas/seed"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	"github.com/go-saas/kit/user/private/biz"
+	"github.com/go-saas/saas/seed"
 	"gorm.io/gorm"
 )
 

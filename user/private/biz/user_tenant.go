@@ -2,8 +2,8 @@ package biz
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/data"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
+	"github.com/go-saas/kit/pkg/data"
+	gorm2 "github.com/go-saas/kit/pkg/gorm"
 	gg "gorm.io/gorm"
 	"time"
 )

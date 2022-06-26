@@ -6,18 +6,18 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"strings"
 
-	"github.com/goxiaoy/go-saas-kit/sys/api"
+	"github.com/go-saas/kit/sys/api"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas-kit/sys/private/biz"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
+	"github.com/go-saas/kit/pkg/authn"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/sys/private/biz"
+	v1 "github.com/go-saas/kit/user/api/permission/v1"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	pb "github.com/goxiaoy/go-saas-kit/sys/api/menu/v1"
+	pb "github.com/go-saas/kit/sys/api/menu/v1"
 )
 
 type MenuService struct {

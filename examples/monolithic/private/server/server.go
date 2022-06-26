@@ -2,18 +2,18 @@ package server
 
 import (
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas-kit/pkg/dal"
-	ksaas "github.com/goxiaoy/go-saas-kit/pkg/saas"
-	"github.com/goxiaoy/go-saas-kit/pkg/server"
-	sserver "github.com/goxiaoy/go-saas-kit/saas/private/server"
-	sservice "github.com/goxiaoy/go-saas-kit/saas/private/service"
-	sysserver "github.com/goxiaoy/go-saas-kit/sys/private/server"
-	sysservice "github.com/goxiaoy/go-saas-kit/sys/private/service"
-	userver "github.com/goxiaoy/go-saas-kit/user/private/server"
-	uservice "github.com/goxiaoy/go-saas-kit/user/private/service"
-	"github.com/goxiaoy/go-saas/seed"
+	"github.com/go-saas/saas"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/dal"
+	ksaas "github.com/go-saas/kit/pkg/saas"
+	"github.com/go-saas/kit/pkg/server"
+	sserver "github.com/go-saas/kit/saas/private/server"
+	sservice "github.com/go-saas/kit/saas/private/service"
+	sysserver "github.com/go-saas/kit/sys/private/server"
+	sysservice "github.com/go-saas/kit/sys/private/service"
+	userver "github.com/go-saas/kit/user/private/server"
+	uservice "github.com/go-saas/kit/user/private/service"
+	"github.com/go-saas/saas/seed"
 )
 
 // ProviderSet is server providers.

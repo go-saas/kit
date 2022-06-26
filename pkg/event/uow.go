@@ -2,7 +2,7 @@ package event
 
 import (
 	"context"
-	"github.com/goxiaoy/uow"
+	"github.com/go-saas/uow"
 )
 
 //ConsumerUow wrap handler into a unit of work (transaction)

@@ -8,7 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	kerrors "github.com/goxiaoy/go-saas-kit/pkg/errors"
+	kerrors "github.com/go-saas/kit/pkg/errors"
 	"time"
 )
 

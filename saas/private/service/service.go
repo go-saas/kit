@@ -8,11 +8,11 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas-kit/pkg/blob"
-	kconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/server"
-	v1 "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/blob"
+	kconf "github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/server"
+	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"net/http"
 )
 

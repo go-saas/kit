@@ -1,7 +1,7 @@
 package os
 
 import (
-	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	"github.com/go-saas/kit/pkg/blob"
 	"github.com/spf13/afero"
 )
 

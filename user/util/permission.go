@@ -1,8 +1,8 @@
 package util
 
 import (
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	pb "github.com/goxiaoy/go-saas-kit/user/api/permission/v1"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	pb "github.com/go-saas/kit/user/api/permission/v1"
 )
 
 func MapPermissionBeanToPb(bean authz.PermissionBean, t *pb.Permission) {

@@ -2,7 +2,7 @@ package authz
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn"
+	"github.com/go-saas/kit/pkg/authn"
 )
 
 type SubjectResolver interface {

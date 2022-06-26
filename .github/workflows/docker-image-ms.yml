@@ -24,7 +24,7 @@ jobs:
       - name: Docker login
         if: |
           github.event_name == 'push'
-          && github.repository == 'Goxiaoy/go-saas-kit'
+          && github.repository == 'go-saas/kit'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -33,7 +33,7 @@ jobs:
       - name: Push docker image
         if: |
           github.event_name == 'push'
-          && github.repository == 'Goxiaoy/go-saas-kit'
+          && github.repository == 'go-saas/kit'
 
         run: docker-compose -f docker-compose.yml -f docker-compose.ms.yml push user saas sys
 

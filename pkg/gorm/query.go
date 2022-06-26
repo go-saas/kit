@@ -2,7 +2,7 @@ package gorm
 
 import (
 	"fmt"
-	"github.com/goxiaoy/go-saas-kit/pkg/query"
+	"github.com/go-saas/kit/pkg/query"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"gorm.io/gorm"

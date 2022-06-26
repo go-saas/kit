@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package localize;
 
-option go_package = "github.com/goxiaoy/go-saas-kit/pkg/localize;localize";
+option go_package = "github.com/go-saas/kit/pkg/localize;localize";
 
 import "google/protobuf/descriptor.proto";
 

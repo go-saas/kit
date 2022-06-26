@@ -5,7 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	"github.com/goxiaoy/go-saas"
+	"github.com/go-saas/saas"
 	"github.com/samber/lo"
 )
 

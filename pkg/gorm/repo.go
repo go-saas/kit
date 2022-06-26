@@ -7,9 +7,9 @@ import (
 	"gorm.io/gorm/clause"
 
 	eventbus "github.com/goxiaoy/go-eventbus"
-	"github.com/goxiaoy/go-saas-kit/pkg/data"
-	"github.com/goxiaoy/go-saas-kit/pkg/query"
-	sgorm "github.com/goxiaoy/go-saas/gorm"
+	"github.com/go-saas/kit/pkg/data"
+	"github.com/go-saas/kit/pkg/query"
+	sgorm "github.com/go-saas/saas/gorm"
 	"gorm.io/gorm"
 )
 

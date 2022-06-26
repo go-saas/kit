@@ -3,11 +3,11 @@ package biz
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/pkg/data"
-	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	"github.com/goxiaoy/go-saas-kit/pkg/query"
-	v12 "github.com/goxiaoy/go-saas-kit/user/api/role/v1"
-	gorm2 "github.com/goxiaoy/go-saas/gorm"
+	"github.com/go-saas/kit/pkg/data"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	"github.com/go-saas/kit/pkg/query"
+	v12 "github.com/go-saas/kit/user/api/role/v1"
+	gorm2 "github.com/go-saas/saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 )
 

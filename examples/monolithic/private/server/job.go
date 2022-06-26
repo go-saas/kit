@@ -2,10 +2,10 @@ package server
 
 import (
 	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/goxiaoy/go-saas-kit/pkg/job"
-	sbiz "github.com/goxiaoy/go-saas-kit/saas/private/biz"
-	sysbiz "github.com/goxiaoy/go-saas-kit/sys/private/biz"
-	ubiz "github.com/goxiaoy/go-saas-kit/user/private/biz"
+	"github.com/go-saas/kit/pkg/job"
+	sbiz "github.com/go-saas/kit/saas/private/biz"
+	sysbiz "github.com/go-saas/kit/sys/private/biz"
+	ubiz "github.com/go-saas/kit/user/private/biz"
 	"github.com/hibiken/asynq"
 )
 

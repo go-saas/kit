@@ -2,8 +2,8 @@ package biz
 
 import (
 	"context"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
-	"github.com/goxiaoy/go-saas-kit/user/private/conf"
+	v1 "github.com/go-saas/kit/user/api/user/v1"
+	"github.com/go-saas/kit/user/private/conf"
 	"github.com/nbutton23/zxcvbn-go"
 )
 

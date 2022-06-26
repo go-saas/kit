@@ -2,9 +2,9 @@ package biz
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/data"
-	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/account/v1"
+	"github.com/go-saas/kit/pkg/data"
+	"github.com/go-saas/kit/pkg/gorm"
+	v1 "github.com/go-saas/kit/user/api/account/v1"
 )
 
 // UserSetting contains key/value pair of user settings

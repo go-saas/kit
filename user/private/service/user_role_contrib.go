@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas-kit/user/private/biz"
-	"github.com/goxiaoy/go-saas/data"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/user/private/biz"
+	"github.com/go-saas/saas/data"
 )
 
 type UserRoleContrib struct {

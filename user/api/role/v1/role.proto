@@ -11,7 +11,7 @@ import "validate/validate.proto";
 import "google/api/field_behavior.proto";
 import "query/operation.proto";
 
-option go_package = "github.com/goxiaoy/go-saas-kit/user/api/role/v1;v1";
+option go_package = "github.com/go-saas/kit/user/api/role/v1;v1";
 
 service RoleService{
   // authz: user.role,*,list

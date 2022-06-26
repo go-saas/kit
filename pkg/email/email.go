@@ -3,8 +3,8 @@ package email
 import (
 	"context"
 	"crypto/tls"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/lazy"
+	"github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/lazy"
 	"github.com/xhit/go-simple-mail/v2"
 	"time"
 )

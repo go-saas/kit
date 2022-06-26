@@ -12,7 +12,7 @@ import "blob/blob.proto";
 import "google/api/field_behavior.proto";
 import "query/operation.proto";
 
-option go_package = "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1;v1";
+option go_package = "github.com/go-saas/kit/saas/api/tenant/v1;v1";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 	info: {

@@ -2,9 +2,9 @@ package biz
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/data"
-	"github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
+	"github.com/go-saas/kit/pkg/data"
+	"github.com/go-saas/kit/pkg/gorm"
+	v1 "github.com/go-saas/kit/user/api/user/v1"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	gorm2 "gorm.io/gorm"

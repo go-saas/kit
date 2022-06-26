@@ -7,7 +7,7 @@
 package conf
 
 import (
-	conf "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	conf "github.com/go-saas/kit/pkg/conf"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

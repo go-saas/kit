@@ -7,9 +7,9 @@
 package conf
 
 import (
-	authz "github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob"
-	conf "github.com/goxiaoy/go-saas-kit/pkg/conf"
+	authz "github.com/go-saas/kit/pkg/authz/authz"
+	_ "github.com/go-saas/kit/pkg/blob"
+	conf "github.com/go-saas/kit/pkg/conf"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"

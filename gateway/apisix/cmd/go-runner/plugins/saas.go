@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
 	"github.com/apache/apisix-go-plugin-runner/pkg/log"
-	"github.com/goxiaoy/go-saas"
-	"github.com/goxiaoy/go-saas-kit/pkg/api"
-	shttp "github.com/goxiaoy/go-saas/http"
+	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/saas"
+	shttp "github.com/go-saas/saas/http"
 	"net/http"
 )
 

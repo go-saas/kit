@@ -2,7 +2,7 @@ package gorm
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/authn"
+	"github.com/go-saas/kit/pkg/authn"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	as3 "github.com/fclairamb/afero-s3"
-	"github.com/goxiaoy/go-saas-kit/pkg/blob"
+	"github.com/go-saas/kit/pkg/blob"
 	"github.com/spf13/afero"
 	"net/url"
 	"path"

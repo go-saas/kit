@@ -4,15 +4,15 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	kconf "github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/dal"
-	"github.com/goxiaoy/go-saas-kit/saas/api"
-	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
+	kconf "github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/dal"
+	"github.com/go-saas/kit/saas/api"
+	"github.com/go-saas/kit/saas/private/biz"
 	g "gorm.io/gorm"
 
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/memory"
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/os"
-	_ "github.com/goxiaoy/go-saas-kit/pkg/blob/s3"
+	_ "github.com/go-saas/kit/pkg/blob/memory"
+	_ "github.com/go-saas/kit/pkg/blob/os"
+	_ "github.com/go-saas/kit/pkg/blob/s3"
 )
 
 // ProviderSet is data providers.

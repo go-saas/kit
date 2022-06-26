@@ -2,7 +2,7 @@ package i18n
 
 import (
 	_ "embed"
-	localize "github.com/goxiaoy/go-saas-kit/pkg/localize"
+	localize "github.com/go-saas/kit/pkg/localize"
 )
 
 var (

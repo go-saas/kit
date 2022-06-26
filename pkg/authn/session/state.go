@@ -2,7 +2,7 @@ package session
 
 import (
 	"context"
-	"github.com/goxiaoy/sessions"
+	"github.com/go-saas/sessions"
 )
 
 const (

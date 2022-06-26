@@ -3,8 +3,8 @@ package data
 import (
 	"context"
 	"github.com/goxiaoy/go-eventbus"
-	kitgorm "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	"github.com/goxiaoy/go-saas-kit/user/private/biz"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	"github.com/go-saas/kit/user/private/biz"
 	"gorm.io/gorm"
 )
 

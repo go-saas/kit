@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/query"
+	"github.com/go-saas/kit/pkg/query"
 	"github.com/samber/lo"
 	"strings"
 )

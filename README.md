@@ -4,11 +4,11 @@
 
 Kit for golang sass project
 
-Frontend Repo: https://github.com/Goxiaoy/go-saas-kit-frontend  
-Layout Repo( For creating new service): https://github.com/Goxiaoy/go-saas-kit-layout
+Frontend Repo: https://github.com/go-saas/kit-frontend  
+Layout Repo( For creating new service): https://github.com/go-saas/kit-layout
 
 # Architecture
-![Architecture](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/go-saas-kit.drawio.png?raw=true)
+![Architecture](https://github.com/go-saas/kit/blob/main/docs/go-saas-kit.drawio.png?raw=true)
 
 [//]: # (# Demo )
 
@@ -87,7 +87,7 @@ make build
 
 Module design: 
 
-![Minimal](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/minimal-module-design.drawio.png?raw=true)
+![Minimal](https://github.com/go-saas/kit/blob/main/docs/minimal-module-design.drawio.png?raw=true)
 
 
 **Api:** Protobuf definition for public/internal service and models
@@ -110,10 +110,10 @@ Module design:
 
 For Microservice:
 
-![Minimal](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/microservice.drawio.png?raw=true)
+![Minimal](https://github.com/go-saas/kit/blob/main/docs/microservice.drawio.png?raw=true)
 
 
 
 For Monolithic:
 
-![Minimal](https://github.com/goxiaoy/go-saas-kit/blob/main/docs/monolithic.drawio.png?raw=true)
+![Minimal](https://github.com/go-saas/kit/blob/main/docs/monolithic.drawio.png?raw=true)

@@ -3,7 +3,7 @@ syntax = "proto3";
 package saas.api.tenant.v1;
 import "errors/errors.proto";
 
-option go_package = "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1;v1";
+option go_package = "github.com/go-saas/kit/saas/api/tenant/v1;v1";
 
 enum ErrorReason {
 

@@ -2,8 +2,8 @@ package biz
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas-kit/pkg/authz/authz"
-	"github.com/goxiaoy/go-saas/seed"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/saas/seed"
 	"github.com/samber/lo"
 )
 

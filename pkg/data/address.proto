@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package data;
 
-option go_package = "github.com/goxiaoy/go-saas-kit/pkg/data;data";
+option go_package = "github.com/go-saas/kit/pkg/data;data";
 
 message Address{
   //Country or region

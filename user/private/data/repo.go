@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	"github.com/goxiaoy/go-saas/gorm"
+	"github.com/go-saas/saas/gorm"
 	g "gorm.io/gorm"
 )
 

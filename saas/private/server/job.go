@@ -2,8 +2,8 @@ package server
 
 import (
 	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/goxiaoy/go-saas-kit/pkg/job"
-	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
+	"github.com/go-saas/kit/pkg/job"
+	"github.com/go-saas/kit/saas/private/biz"
 	"github.com/hibiken/asynq"
 )
 

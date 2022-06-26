@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/goxiaoy/go-saas-kit/pkg/localize"
+	"github.com/go-saas/kit/pkg/localize"
 	"strings"
 
 	"google.golang.org/protobuf/compiler/protogen"

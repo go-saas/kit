@@ -2,10 +2,10 @@ package data
 
 import (
 	"errors"
-	"github.com/goxiaoy/go-saas"
-	gorm2 "github.com/goxiaoy/go-saas-kit/pkg/gorm"
-	v1 "github.com/goxiaoy/go-saas-kit/user/api/user/v1"
-	"github.com/goxiaoy/go-saas-kit/user/private/biz"
+	"github.com/go-saas/saas"
+	gorm2 "github.com/go-saas/kit/pkg/gorm"
+	v1 "github.com/go-saas/kit/user/api/user/v1"
+	"github.com/go-saas/kit/user/private/biz"
 
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"

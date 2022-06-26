@@ -6,7 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	http2 "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gorilla/csrf"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/conf"
 	"net/http"
 )
 

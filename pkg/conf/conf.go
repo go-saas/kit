@@ -2,7 +2,7 @@ package conf
 
 import (
 	"fmt"
-	"github.com/goxiaoy/go-saas-kit/pkg/event"
+	"github.com/go-saas/kit/pkg/event"
 	"google.golang.org/protobuf/proto"
 )
 

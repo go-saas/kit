@@ -3,12 +3,12 @@ package service
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
-	sapi "github.com/goxiaoy/go-saas-kit/pkg/api"
-	"github.com/goxiaoy/go-saas-kit/pkg/blob"
-	"github.com/goxiaoy/go-saas-kit/pkg/conf"
-	"github.com/goxiaoy/go-saas-kit/pkg/localize"
-	pb "github.com/goxiaoy/go-saas-kit/saas/api/tenant/v1"
-	"github.com/goxiaoy/go-saas-kit/saas/private/biz"
+	sapi "github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/blob"
+	"github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/localize"
+	pb "github.com/go-saas/kit/saas/api/tenant/v1"
+	"github.com/go-saas/kit/saas/private/biz"
 )
 
 type TenantInternalService struct {
