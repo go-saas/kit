@@ -21,14 +21,17 @@ func NewProtoCache[T proto.Message](creator func() T, proxy cache.CacheInterface
 }
 
 func (c *ProtoCache[T]) Get(ctx context.Context, key any) (T, error) {
-	f := c.creator()
+
 	t, err := c.proxy.Get(ctx, key)
 	if err != nil {
-		return nil, err
+		var n T
+		return n, err
 	}
+	f := c.creator()
 	err = protojson.Unmarshal([]byte(t), f)
 	if err != nil {
-		return nil, err
+		var n T
+		return n, err
 	}
 	return f, nil
 }

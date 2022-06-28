@@ -166,10 +166,11 @@ func (p *TwoStepTokenProvider[T]) Retrieve(ctx context.Context, purpose TokenPur
 	key := fmt.Sprintf("%s:%s:%s", TwoStepName, purpose, token)
 	t, err := p.c.Get(ctx, key)
 	if err != nil {
+		var n T
 		if (store.NotFound{}).Is(err) {
-			return nil, nil
+			return n, nil
 		}
-		return nil, err
+		return n, err
 	}
 	return t, nil
 }
