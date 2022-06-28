@@ -10,7 +10,6 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/goxiaoy/go-eventbus"
 	server2 "github.com/go-saas/kit/examples/monolithic/private/server"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
@@ -20,7 +19,6 @@ import (
 	"github.com/go-saas/kit/pkg/dal"
 	"github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/job"
-	"github.com/go-saas/kit/pkg/redis"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/uow"
 	api2 "github.com/go-saas/kit/saas/api"
@@ -40,6 +38,7 @@ import (
 	server3 "github.com/go-saas/kit/user/private/server"
 	service2 "github.com/go-saas/kit/user/private/service"
 	"github.com/go-saas/kit/user/private/service/http"
+	"github.com/goxiaoy/go-eventbus"
 )
 
 import (
@@ -112,11 +111,11 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	emailTokenProvider := biz2.NewEmailTokenProvider(client)
-	phoneTokenProvider := biz2.NewPhoneTokenProvider(client)
-	cache := redis.NewCache(client)
-	twoStepTokenProvider := biz2.NewTwoStepTokenProvider(cache)
-	userManager := biz2.NewUserManager(userConf, userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, userTokenRepo, refreshTokenRepo, userTenantRepo, emailTokenProvider, phoneTokenProvider, twoStepTokenProvider, logger)
+	storeInterface := dal.NewCacheStore(client)
+	cache := dal.NewStringCacheManager(storeInterface)
+	emailTokenProvider := biz2.NewEmailTokenProvider(cache)
+	phoneTokenProvider := biz2.NewPhoneTokenProvider(cache)
+	userManager := biz2.NewUserManager(userConf, userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, userTokenRepo, refreshTokenRepo, userTenantRepo, emailTokenProvider, phoneTokenProvider, cache, logger)
 	roleRepo := data2.NewRoleRepo(data4, eventBus)
 	roleManager := biz2.NewRoleManager(roleRepo, lookupNormalizer)
 	enforcerProvider, err := data2.NewEnforcerProvider(logger, dbProvider)

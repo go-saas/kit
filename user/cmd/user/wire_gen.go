@@ -18,7 +18,6 @@ import (
 	"github.com/go-saas/kit/pkg/dal"
 	"github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/job"
-	"github.com/go-saas/kit/pkg/redis"
 	server2 "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/uow"
 	api2 "github.com/go-saas/kit/saas/api"
@@ -81,11 +80,11 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 		cleanup()
 		return nil, nil, err
 	}
-	emailTokenProvider := biz.NewEmailTokenProvider(client)
-	phoneTokenProvider := biz.NewPhoneTokenProvider(client)
-	cache := redis.NewCache(client)
-	twoStepTokenProvider := biz.NewTwoStepTokenProvider(cache)
-	userManager := biz.NewUserManager(userConf, userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, userTokenRepo, refreshTokenRepo, userTenantRepo, emailTokenProvider, phoneTokenProvider, twoStepTokenProvider, logger)
+	storeInterface := dal.NewCacheStore(client)
+	cache := dal.NewStringCacheManager(storeInterface)
+	emailTokenProvider := biz.NewEmailTokenProvider(cache)
+	phoneTokenProvider := biz.NewPhoneTokenProvider(cache)
+	userManager := biz.NewUserManager(userConf, userRepo, passwordHasher, userValidator, passwordValidator, lookupNormalizer, userTokenRepo, refreshTokenRepo, userTenantRepo, emailTokenProvider, phoneTokenProvider, cache, logger)
 	eventBus := _wireEventBusValue
 	roleRepo := data.NewRoleRepo(dataData, eventBus)
 	roleManager := biz.NewRoleManager(roleRepo, lookupNormalizer)

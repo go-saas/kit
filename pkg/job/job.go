@@ -14,7 +14,7 @@ func (r RedisFunc) MakeRedisClient() interface{} {
 	return r()
 }
 
-func NewAsynqClientOpt(r *redis.Client) asynq.RedisConnOpt {
+func NewAsynqClientOpt(r redis.UniversalClient) asynq.RedisConnOpt {
 	return RedisFunc(func() interface{} {
 		return r
 	})

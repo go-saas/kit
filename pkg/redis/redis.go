@@ -1,7 +1,6 @@
 package redis
 
 import (
-	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis/extra/redisotel/v8"
 	"github.com/go-redis/redis/v8"
 	"github.com/go-saas/kit/pkg/conf"
@@ -24,12 +23,4 @@ func NewRedisClient(r *redis.Options) *redis.Client {
 	rdb := redis.NewClient(r)
 	rdb.AddHook(redisotel.NewTracingHook(redisotel.WithAttributes(semconv.NetPeerNameKey.String(r.Addr), semconv.NetPeerPortKey.String(r.Addr))))
 	return rdb
-}
-
-func NewCache(client *redis.Client) *cache.Cache {
-	c := cache.New(&cache.Options{
-		Redis: client,
-	})
-	return c
-
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"github.com/go-saas/kit/pkg/conf"
-	"github.com/go-saas/kit/pkg/lazy"
+	"github.com/go-saas/lazy"
 	"github.com/xhit/go-simple-mail/v2"
 	"time"
 )

@@ -2,14 +2,16 @@ package biz
 
 import (
 	"context"
+	"github.com/eko/gocache/v3/cache"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/google/uuid"
-	"github.com/go-saas/saas"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/server"
 	v12 "github.com/go-saas/kit/user/api/auth/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
+	cache2 "github.com/go-saas/kit/user/private/cache"
 	"github.com/go-saas/kit/user/private/conf"
+	"github.com/go-saas/saas"
+	"github.com/google/uuid"
 
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"time"
@@ -27,7 +29,7 @@ type UserManager struct {
 	userTenantRepo   UserTenantRepo
 	emailToken       *EmailTokenProvider
 	phoneToken       *PhoneTokenProvider
-	twoStepToken     *TwoStepTokenProvider
+	forgetPwdTwoStep *TwoStepTokenProvider[*cache2.ForgetPasswordTwoStepTokenPayload]
 	log              log.Logger
 }
 
@@ -43,7 +45,7 @@ func NewUserManager(
 	userTenantRepo UserTenantRepo,
 	emailToken *EmailTokenProvider,
 	phoneToken *PhoneTokenProvider,
-	twoStepToken *TwoStepTokenProvider,
+	strCache cache.CacheInterface[string],
 	logger log.Logger) *UserManager {
 	return &UserManager{
 		cfg:              cfg,
@@ -57,8 +59,11 @@ func NewUserManager(
 		userTenantRepo:   userTenantRepo,
 		emailToken:       emailToken,
 		phoneToken:       phoneToken,
-		twoStepToken:     twoStepToken,
-		log:              log.With(logger, "module", "/biz/user_manager")}
+		forgetPwdTwoStep: NewTwoStepTokenProvider(func() *cache2.ForgetPasswordTwoStepTokenPayload {
+			return &cache2.ForgetPasswordTwoStepTokenPayload{}
+		}, strCache),
+
+		log: log.With(logger, "module", "/biz/user_manager")}
 }
 
 func (um *UserManager) List(ctx context.Context, query *v1.ListUsersRequest) ([]*User, error) {
@@ -241,13 +246,9 @@ func (um *UserManager) VerifyPhoneForgetPasswordToken(ctx context.Context, phone
 	return nil
 }
 
-type ForgetPasswordTwoStepTokenPayload struct {
-	UserID string
-}
-
 func (um *UserManager) GenerateForgetPasswordToken(ctx context.Context, user *User) (string, error) {
 	duration := 5 * time.Minute
-	return um.twoStepToken.Generate(ctx, RecoverChangePasswordPurpose, &ForgetPasswordTwoStepTokenPayload{UserID: user.ID.String()}, duration)
+	return um.forgetPwdTwoStep.Generate(ctx, RecoverChangePasswordPurpose, &cache2.ForgetPasswordTwoStepTokenPayload{UserId: user.ID.String()}, duration)
 }
 
 func (um *UserManager) ChangePasswordByToken(ctx context.Context, token, newPwd string) error {
@@ -262,15 +263,14 @@ func (um *UserManager) ChangePasswordByToken(ctx context.Context, token, newPwd 
 }
 
 func (um *UserManager) retrieveTwoStepForgetPasswordToken(ctx context.Context, token string) (*User, error) {
-	payload := &ForgetPasswordTwoStepTokenPayload{}
-	ok, err := um.twoStepToken.Retrieve(ctx, RecoverChangePasswordPurpose, token, payload)
+	payload, err := um.forgetPwdTwoStep.Retrieve(ctx, RecoverChangePasswordPurpose, token)
 	if err != nil {
 		return nil, err
 	}
-	if !ok {
+	if payload == nil {
 		return nil, v12.ErrorTwoStepFailed("")
 	}
-	user, err := um.FindByID(ctx, payload.UserID)
+	user, err := um.FindByID(ctx, payload.UserId)
 	if err != nil {
 		return nil, err
 	}

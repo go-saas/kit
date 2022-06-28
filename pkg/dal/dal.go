@@ -1,10 +1,8 @@
 package dal
 
 import (
+	"github.com/eko/gocache/v3/cache"
 	"github.com/go-redis/redis/v8"
-	"github.com/go-saas/saas"
-	"github.com/google/wire"
-	"github.com/goxiaoy/go-eventbus"
 	"github.com/go-saas/kit/pkg/blob"
 	kitconf "github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/email"
@@ -13,7 +11,11 @@ import (
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	kitredis "github.com/go-saas/kit/pkg/redis"
 	kituow "github.com/go-saas/kit/pkg/uow"
+	"github.com/go-saas/saas"
+	"github.com/google/wire"
+	"github.com/goxiaoy/go-eventbus"
 
+	"github.com/eko/gocache/v3/store"
 	"github.com/go-saas/saas/data"
 	sgorm "github.com/go-saas/saas/gorm"
 )
@@ -38,7 +40,10 @@ var (
 		NewBlobFactory,
 
 		NewRedis,
-		kitredis.NewCache,
+		wire.Bind(new(redis.UniversalClient), new(*redis.Client)),
+		NewCacheStore,
+		NewStringCacheManager,
+		wire.Bind(new(cache.CacheInterface[string]), new(*cache.Cache[string])),
 
 		NewEmailer,
 		NewEventSender,
@@ -79,6 +84,14 @@ func NewRedis(c *kitconf.Data, name ConnName) (*redis.Client, error) {
 	}
 	r, err := kitredis.ResolveRedisEndpointOrDefault(c.Endpoints.Redis, string(name))
 	return kitredis.NewRedisClient(r), err
+}
+
+func NewCacheStore(client redis.UniversalClient) store.StoreInterface {
+	return store.NewRedis(client)
+}
+
+func NewStringCacheManager(store store.StoreInterface) *cache.Cache[string] {
+	return cache.New[string](store)
 }
 
 func NewEventSender(c *kitconf.Data, name ConnName) (event.Producer, func(), error) {
