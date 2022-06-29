@@ -18,6 +18,7 @@ import (
 	"github.com/go-saas/kit/pkg/dal"
 	"github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/job"
+	"github.com/go-saas/kit/pkg/registry"
 	server2 "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/uow"
 	api2 "github.com/go-saas/kit/saas/api"
@@ -49,8 +50,9 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	manager := uow.NewUowManager(dbCache)
 	option := api.NewDefaultOption(logger)
 	clientName := _wireClientNameValue
+	registryConf := registry.NewConf(services)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
+	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, registryConf, option, inMemoryTokenManager, logger, arg...)
 	tenantInternalServiceServer := api2.NewTenantInternalGrpcClient(grpcConn)
 	tenantStore := api2.NewTenantStore(tenantInternalServiceServer)
 	decodeRequestFunc := _wireDecodeRequestFuncValue

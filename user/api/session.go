@@ -21,7 +21,7 @@ func NewRefreshProvider(srv v1.AuthServer, logger klog.Logger) session.RefreshTo
 		if writer, ok := session.FromClientStateWriterContext(ctx); ok {
 			handlerError := func(err error) error {
 				err = kerrors.FromError(err)
-				if errors2.NotBizError(err) {
+				if errors2.UnRecoverableError(err) {
 					return err
 				} else {
 					if !v1.IsRememberTokenUsed(err) {

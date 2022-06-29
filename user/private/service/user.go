@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/go-saas/saas"
 	api2 "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/errors"
 	v12 "github.com/go-saas/kit/saas/api/tenant/v1"
+	"github.com/go-saas/saas"
 	"io"
 	"os"
 	"path/filepath"
@@ -16,11 +16,11 @@ import (
 
 	errors2 "github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/google/uuid"
 	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	v1 "github.com/go-saas/kit/user/api/role/v1"
+	"github.com/google/uuid"
 
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -358,7 +358,7 @@ func (s *UserService) CheckUserTenantInternal(ctx context.Context, userId, tenan
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource("*", "*"), authz.AnyAction); err != nil {
 		//no permission
 
-		if errors.NotBizError(err) {
+		if errors.UnRecoverableError(err) {
 			//internal server error
 			s.logger.Errorf("no recover error:%v", err)
 			return false, err

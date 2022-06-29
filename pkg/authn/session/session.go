@@ -3,12 +3,12 @@ package session
 import (
 	"context"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/go-saas/sessions"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/errors"
 	v1 "github.com/go-saas/kit/user/api/auth/v1"
+	"github.com/go-saas/sessions"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"net/http"
 )
@@ -73,7 +73,7 @@ func Refresh(errEncoder khttp.EncodeErrorFunc, provider RefreshTokenProvider, va
 					//call refresh
 					_, err := provider.Refresh(ctx, state.GetRememberToken().Token)
 					if err != nil {
-						if errors.NotBizError(err) {
+						if errors.UnRecoverableError(err) {
 							//abort with error
 							errEncoder(w, r, err)
 							return

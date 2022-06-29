@@ -174,7 +174,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		if err != nil {
 			err = kerrors.FromError(err)
 			log.Errorf("refresh fail %v", err)
-			if errors2.NotBizError(err) {
+			if errors2.UnRecoverableError(err) {
 				//abort with error
 				abortWithError(err, w)
 				return

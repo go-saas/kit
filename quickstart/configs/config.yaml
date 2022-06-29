@@ -4,9 +4,15 @@ services:
 
   services:
     user:
-      grpc_endpoint: user:9081
+      list:
+        - endpoints:
+            - grpc://user:9081
+            - http://user:9080
     saas:
-      grpc_endpoint: saas:9081
+      list:
+        - endpoints:
+            - grpc://saas:9081
+            - http://saas:9080
 
 data:
   endpoints:

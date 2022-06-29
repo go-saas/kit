@@ -17,6 +17,7 @@ import (
 	"github.com/go-saas/kit/pkg/dal"
 	"github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/job"
+	"github.com/go-saas/kit/pkg/registry"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/uow"
 	api2 "github.com/go-saas/kit/saas/api"
@@ -75,8 +76,9 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
 	clientName := _wireClientNameValue
+	registryConf := registry.NewConf(services)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup4 := api3.NewGrpcConn(clientName, services, option, inMemoryTokenManager, logger, arg...)
+	grpcConn, cleanup4 := api3.NewGrpcConn(clientName, services, registryConf, option, inMemoryTokenManager, logger, arg...)
 	userServiceServer := api3.NewUserGrpcClient(grpcConn)
 	userTenantContrib := api3.NewUserTenantContrib(userServiceServer)
 	permissionServiceServer := api3.NewPermissionGrpcClient(grpcConn)

@@ -7,6 +7,7 @@ import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 import "blob/blob.proto";
 import "event/event.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/go-saas/kit/pkg/conf;conf";
 
@@ -43,8 +44,14 @@ message Server {
 }
 
 message Service{
-  string grpc_endpoint=1;
-  string http_endpoint=2;
+  string name=1;
+  string id =2 ;
+  string version =3;
+  repeated string endpoints =4 [(validate.rules).repeated.min_items=1];
+}
+
+message ServiceList{
+  repeated Service list = 1;
 }
 
 message Client{
@@ -55,8 +62,11 @@ message Client{
 }
 
 message Services{
-  map<string, Service> services = 1;
+  // Services server to server communication services info
+  map<string,ServiceList> services = 1;
+  // Servers configure server config
   map<string,Server> servers =2;
+  // Clients server to server communication client
   map<string,Client> clients =3;
 }
 

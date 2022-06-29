@@ -2,15 +2,15 @@ package api
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/google/wire"
 	"github.com/go-saas/kit/pkg/conf"
+	kregistry "github.com/go-saas/kit/pkg/registry"
+	"github.com/google/wire"
 	grpcx "google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -28,18 +28,13 @@ func NewGrpcConn(
 	clientName ClientName,
 	serviceName string,
 	services *conf.Services,
+	dis registry.Discovery,
 	opt *Option,
 	tokenMgr TokenManager,
 	logger log.Logger,
 	opts ...grpc.ClientOption,
 ) (grpcx.ClientConnInterface, func()) {
-	endpoint, ok := services.Services[serviceName]
-	if !ok {
-		panic(errors.New(fmt.Sprintf(" %v service not found", serviceName)))
-	}
-
 	var clientCfg = proto.Clone(defaultClientCfg).(*conf.Client)
-
 	if c, ok := services.Clients[string(clientName)]; ok {
 		proto.Merge(clientCfg, c)
 	}
@@ -49,7 +44,8 @@ func NewGrpcConn(
 	var conn *grpcx.ClientConn
 	var err error
 	fOpts := []grpc.ClientOption{
-		grpc.WithEndpoint(endpoint.GrpcEndpoint),
+		grpc.WithEndpoint("discovery:///" + serviceName),
+		grpc.WithDiscovery(dis),
 		grpc.WithMiddleware(
 			recovery.Recovery(),
 			tracing.Client(),
@@ -81,16 +77,13 @@ func NewHttpClient(
 	clientName ClientName,
 	serviceName string,
 	services *conf.Services,
+	dis registry.Discovery,
 	opt *Option,
 	tokenMgr TokenManager,
 	logger log.Logger,
 	opts ...http.ClientOption,
 ) (*http.Client, func()) {
 
-	endpoint, ok := services.Services[serviceName]
-	if !ok {
-		panic(errors.New(fmt.Sprintf(" %v service not found", serviceName)))
-	}
 	var clientCfg = proto.Clone(defaultClientCfg).(*conf.Client)
 	if c, ok := services.Clients[string(clientName)]; ok {
 		proto.Merge(clientCfg, c)
@@ -100,7 +93,8 @@ func NewHttpClient(
 	}
 
 	fOpts := []http.ClientOption{
-		http.WithEndpoint(endpoint.HttpEndpoint),
+		http.WithEndpoint("discovery:///" + serviceName),
+		http.WithDiscovery(dis),
 		http.WithMiddleware(
 			recovery.Recovery(),
 			tracing.Client(),
@@ -123,7 +117,7 @@ func NewHttpClient(
 
 var DefaultProviderSet = wire.NewSet(
 	NewDefaultOption,
-	NewInMemoryTokenManager,
-	wire.Bind(new(TokenManager), new(*InMemoryTokenManager)),
+	NewInMemoryTokenManager, wire.Bind(new(TokenManager), new(*InMemoryTokenManager)),
 	NewClientTrustedContextValidator,
+	kregistry.NewConf, wire.Bind(new(registry.Discovery), new(*kregistry.Conf)),
 )

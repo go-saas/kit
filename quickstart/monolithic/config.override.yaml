@@ -2,6 +2,12 @@ services:
 
   services:
     user:
-      grpc_endpoint: monolithic:9081
+      list:
+        - endpoints:
+            - grpc://monolithic:9081
+            - http://monolithic:9080
     saas:
-      grpc_endpoint: monolithic:9081
+      list:
+        - endpoints:
+            - grpc://monolithic:9081
+            - http://monolithic:9080

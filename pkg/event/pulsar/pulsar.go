@@ -17,6 +17,7 @@ var (
 func init() {
 	event.RegisterConsumer("pulsar", func(ctx context.Context, cfg *event.Config) (event.Consumer, error) {
 		opt := pulsar.ClientOptions{URL: cfg.Addr}
+		opt.Logger = logger{l: log.GetLogger()}
 		if cfg.Pulsar != nil {
 			if cfg.Pulsar.OperationTimeout != nil {
 				opt.OperationTimeout = cfg.Pulsar.OperationTimeout.AsDuration()
@@ -30,6 +31,7 @@ func init() {
 
 	event.RegisterProducer("pulsar", func(cfg *event.Config) (*event.ProducerMux, error) {
 		opt := pulsar.ClientOptions{URL: cfg.Addr}
+		opt.Logger = logger{l: log.GetLogger()}
 		if cfg.Pulsar != nil {
 			if cfg.Pulsar.OperationTimeout != nil {
 				opt.OperationTimeout = cfg.Pulsar.OperationTimeout.AsDuration()
