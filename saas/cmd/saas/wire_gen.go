@@ -10,6 +10,8 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	data2 "github.com/go-saas/kit/dtm/data"
+	service2 "github.com/go-saas/kit/dtm/service"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
@@ -81,16 +83,19 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	grpcConn, cleanup4 := api3.NewGrpcConn(clientName, services, registryConf, option, inMemoryTokenManager, logger, arg...)
 	userServiceServer := api3.NewUserGrpcClient(grpcConn)
 	userTenantContrib := api3.NewUserTenantContrib(userServiceServer)
+	msgServiceService := service2.NewMsgService(constDbProvider, connName)
+	httpServerRegister := service2.NewHttpServerRegister(msgServiceService)
 	permissionServiceServer := api3.NewPermissionGrpcClient(grpcConn)
 	permissionChecker := api3.NewRemotePermissionChecker(permissionServiceServer)
 	authzOption := server2.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
 	tenantService := service.NewTenantService(tenantUseCase, defaultAuthorizationService, trustedContextValidator, factory, appConfig)
-	httpServerRegister := service.NewHttpServerRegister(tenantService, factory, defaultAuthorizationService, encodeErrorFunc, tenantInternalService, confData)
-	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, trustedContextValidator, userTenantContrib, httpServerRegister)
+	serviceHttpServerRegister := service.NewHttpServerRegister(tenantService, factory, defaultAuthorizationService, encodeErrorFunc, tenantInternalService, confData)
+	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, trustedContextValidator, userTenantContrib, httpServerRegister, serviceHttpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(tenantService, tenantInternalService)
-	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, userTenantContrib, trustedContextValidator, grpcServerRegister, logger)
+	serviceGrpcServerRegister := service2.NewGrpcServerRegister(msgServiceService)
+	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, userTenantContrib, trustedContextValidator, grpcServerRegister, serviceGrpcServerRegister, logger)
 	client, err := dal.NewRedis(confData, connName)
 	if err != nil {
 		cleanup4()
@@ -103,9 +108,10 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	jobServer := server2.NewJobServer(redisConnOpt, logger)
 	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
 	consumerFactoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler)
+	migrator := data2.NewMigrator(constDbProvider, connName)
 	migrate := data.NewMigrate(dataData)
 	seeding := server2.NewSeeding(manager, migrate)
-	seeder := server2.NewSeeder(tenantStore, seeding)
+	seeder := server2.NewSeeder(tenantStore, migrator, seeding)
 	app := newApp(logger, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder)
 	return app, func() {
 		cleanup4()

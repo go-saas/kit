@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/google/wire"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	kconf "github.com/go-saas/kit/pkg/conf"
@@ -15,6 +14,7 @@ import (
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/sys/api"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
+	"github.com/google/wire"
 	"github.com/hibiken/asynq"
 	"net/http"
 )
@@ -37,13 +37,13 @@ func NewHttpServerRegister(
 	dataCfg *kconf.Data,
 	opt asynq.RedisConnOpt,
 ) HttpServerRegister {
-	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware middleware.Middleware) {
+	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 		server.HandleBlobs("", dataCfg.Blobs, srv, factory)
 		v1.RegisterMenuServiceHTTPServer(srv, menu)
 
 		router := chi.NewRouter()
 		router.Use(
-			server.MiddlewareConvert(errEncoder, middleware))
+			server.MiddlewareConvert(errEncoder, middleware...))
 
 		const apiPrefix = "/v1/sys/dev/swagger"
 
@@ -65,7 +65,7 @@ func NewHttpServerRegister(
 }
 
 func NewGrpcServerRegister(menu *MenuService) GrpcServerRegister {
-	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware middleware.Middleware) {
+	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v1.RegisterMenuServiceServer(srv, menu)
 	})
 }

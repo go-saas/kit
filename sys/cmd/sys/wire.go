@@ -9,7 +9,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/google/wire"
+	dtmserver "github.com/go-saas/kit/dtm/server"
 	kapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
@@ -23,13 +23,14 @@ import (
 	"github.com/go-saas/kit/sys/private/service"
 	uapi "github.com/go-saas/kit/user/api"
 	shttp "github.com/go-saas/saas/http"
+	"github.com/google/wire"
 
 	sapi "github.com/go-saas/kit/saas/api"
 )
 
 // initApp init kratos application.
 func initApp(*sconf.Services, *sconf.Security, *shttp.WebMultiTenancyOption, *sconf.Data, log.Logger, ...grpc.ClientOption) (*kratos.App, func(), error) {
-	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet, job.DefaultProviderSet,
+	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet, job.DefaultProviderSet, dtmserver.DtmProviderSet,
 		uapi.GrpcProviderSet,
 		sapi.GrpcProviderSet,
 		server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))

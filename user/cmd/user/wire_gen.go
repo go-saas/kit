@@ -10,6 +10,8 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	data2 "github.com/go-saas/kit/dtm/data"
+	service2 "github.com/go-saas/kit/dtm/service"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
@@ -120,16 +122,22 @@ func initApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	apiClient := service.NewHydra(security)
 	auth := http2.NewAuth(decodeRequestFunc, userManager, logger, signInManager, apiClient)
 	httpServerRegister := service.NewHttpServerRegister(userService, encodeResponseFunc, encodeErrorFunc, accountService, authService, roleService, servicePermissionService, auth, confData, defaultAuthorizationService, factory)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContrib, trustedContextValidator, refreshTokenProvider, httpServerRegister)
+	connStrings := dal.NewConstantConnStrResolver(confData)
+	constDbProvider := dal.NewConstDbProvider(dbCache, connStrings, confData)
+	msgServiceService := service2.NewMsgService(constDbProvider, connName)
+	serviceHttpServerRegister := service2.NewHttpServerRegister(msgServiceService)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContrib, trustedContextValidator, refreshTokenProvider, httpServerRegister, serviceHttpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(userService, accountService, authService, roleService, servicePermissionService)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContrib, grpcServerRegister)
+	serviceGrpcServerRegister := service2.NewGrpcServerRegister(msgServiceService)
+	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContrib, grpcServerRegister, serviceGrpcServerRegister)
 	redisConnOpt := job.NewAsynqClientOpt(client)
+	migrator := data2.NewMigrator(constDbProvider, connName)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
 	seeding := server.NewSeeding(manager, migrate, roleSeed, userSeed, permissionSeeder)
-	seeder := server.NewSeeder(tenantStore, seeding)
+	seeder := server.NewSeeder(tenantStore, migrator, seeding)
 	producer, cleanup4, err := dal.NewEventSender(confData, connName)
 	if err != nil {
 		cleanup3()

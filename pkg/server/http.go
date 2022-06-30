@@ -7,12 +7,12 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/csrf"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"github.com/spf13/afero"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -42,19 +42,19 @@ var (
 type (
 	// HttpServiceRegister register http handler into http server
 	HttpServiceRegister interface {
-		Register(server *khttp.Server, middleware middleware.Middleware)
+		Register(server *khttp.Server, middleware ...middleware.Middleware)
 	}
-	HttpServiceRegisterFunc func(server *khttp.Server, middleware middleware.Middleware)
+	HttpServiceRegisterFunc func(server *khttp.Server, middleware ...middleware.Middleware)
 )
 
-func (f HttpServiceRegisterFunc) Register(server *khttp.Server, middleware middleware.Middleware) {
-	f(server, middleware)
+func (f HttpServiceRegisterFunc) Register(server *khttp.Server, middleware ...middleware.Middleware) {
+	f(server, middleware...)
 }
 
 func ChainHttpServiceRegister(r ...HttpServiceRegister) HttpServiceRegister {
-	return HttpServiceRegisterFunc(func(server *khttp.Server, middleware middleware.Middleware) {
+	return HttpServiceRegisterFunc(func(server *khttp.Server, middleware ...middleware.Middleware) {
 		for _, register := range r {
-			register.Register(server, middleware)
+			register.Register(server, middleware...)
 		}
 	})
 }

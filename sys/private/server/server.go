@@ -1,8 +1,7 @@
 package server
 
 import (
-	"github.com/google/wire"
-	"github.com/go-saas/saas"
+	dtmdata "github.com/go-saas/kit/dtm/data"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	ksaas "github.com/go-saas/kit/pkg/saas"
@@ -10,9 +9,11 @@ import (
 	api2 "github.com/go-saas/kit/sys/api"
 	"github.com/go-saas/kit/sys/private/biz"
 	"github.com/go-saas/kit/sys/private/data"
+	"github.com/go-saas/saas"
+	"github.com/google/wire"
 
-	"github.com/go-saas/uow"
 	"github.com/go-saas/saas/seed"
+	"github.com/go-saas/uow"
 )
 
 // ProviderSet is server providers.
@@ -27,8 +28,8 @@ func NewSeeding(uow uow.Manager, migrate *data.Migrate, menu *biz.MenuSeed) Seed
 	return uow2.NewUowContrib(uow, seed.Chain(migrate, menu))
 }
 
-func NewSeeder(ts saas.TenantStore, ss Seeding) seed.Seeder {
-	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, ss)))
+func NewSeeder(ts saas.TenantStore, dtmMigrator *dtmdata.Migrator, ss Seeding) seed.Seeder {
+	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, dtmMigrator, ss)))
 }
 
 func NewAuthorizationOption() *authz.Option {

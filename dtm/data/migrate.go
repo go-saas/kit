@@ -38,7 +38,7 @@ func (m *Migrator) Seed(ctx context.Context, sCtx *seed.Context) error {
 		dtmimp.SetCurrentDBType(name)
 		//read sql
 
-		fs, err := sqls.Open(fmt.Sprintf("dtmcli.barrier.%s.sql", name))
+		fs, err := sqls.Open(fmt.Sprintf("sqls/dtmcli.barrier.%s.sql", name))
 		defer fs.Close()
 		if err != nil {
 			return err

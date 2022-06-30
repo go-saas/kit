@@ -11,19 +11,19 @@ import (
 type (
 	// GrpcServiceRegister register grpc handler into grpc server
 	GrpcServiceRegister interface {
-		Register(server *grpc.Server, middleware middleware.Middleware)
+		Register(server *grpc.Server, middleware ...middleware.Middleware)
 	}
-	GrpcServiceRegisterFunc func(server *grpc.Server, middleware middleware.Middleware)
+	GrpcServiceRegisterFunc func(server *grpc.Server, middleware ...middleware.Middleware)
 )
 
-func (f GrpcServiceRegisterFunc) Register(server *grpc.Server, middleware middleware.Middleware) {
-	f(server, middleware)
+func (f GrpcServiceRegisterFunc) Register(server *grpc.Server, middleware ...middleware.Middleware) {
+	f(server, middleware...)
 }
 
 func ChainGrpcServiceRegister(r ...GrpcServiceRegister) GrpcServiceRegister {
-	return GrpcServiceRegisterFunc(func(server *grpc.Server, middleware middleware.Middleware) {
+	return GrpcServiceRegisterFunc(func(server *grpc.Server, middleware ...middleware.Middleware) {
 		for _, register := range r {
-			register.Register(server, middleware)
+			register.Register(server, middleware...)
 		}
 	})
 }

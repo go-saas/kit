@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	dtmservice "github.com/go-saas/kit/dtm/service"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/conf"
@@ -37,10 +38,11 @@ func NewHTTPServer(c *conf.Services,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
 	userTenant *uapi.UserTenantContrib,
+	dtmRegister dtmservice.HttpServerRegister,
 	register service.HttpServerRegister) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
-	m := middleware.Chain(
+	m := []middleware.Middleware{
 		server.Recovery(),
 		tracing.Server(),
 		logging.Server(logger),
@@ -52,16 +54,15 @@ func NewHTTPServer(c *conf.Services,
 		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
 			o.AppendContribs(userTenant)
 		}),
-		kuow.Uow(uowMgr, kuow.WithLogger(logger)),
-	)
+		kuow.Uow(uowMgr, kuow.WithLogger(logger))}
+
 	opts = append(opts, []http.ServerOption{
 		http.Middleware(
-			m,
+			m...,
 		),
 	}...)
 	srv := http.NewServer(opts...)
-
-	register.Register(srv, m)
+	server.ChainHttpServiceRegister(register, dtmRegister).Register(srv, m...)
 
 	return srv
 }

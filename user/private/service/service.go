@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/google/wire"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	kconf "github.com/go-saas/kit/pkg/conf"
@@ -19,6 +18,7 @@ import (
 	v1 "github.com/go-saas/kit/user/api/role/v1"
 	v12 "github.com/go-saas/kit/user/api/user/v1"
 	uhttp "github.com/go-saas/kit/user/private/service/http"
+	"github.com/google/wire"
 	client "github.com/ory/hydra-client-go"
 	"net/http"
 )
@@ -60,13 +60,13 @@ func NewHttpServerRegister(user *UserService,
 	dataCfg *kconf.Data,
 	authzSrv authz.Service,
 	factory blob.Factory) HttpServerRegister {
-	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware middleware.Middleware) {
+	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 
 		router := chi.NewRouter()
 
 		//global filter
 		router.Use(
-			server.MiddlewareConvert(errEncoder, middleware))
+			server.MiddlewareConvert(errEncoder, middleware...))
 
 		router.Get("/login", server.HandlerWrap(resEncoder, authHttp.LoginGet))
 		router.Post("/login", server.HandlerWrap(resEncoder, authHttp.LoginPost))
@@ -108,7 +108,7 @@ func NewGrpcServerRegister(user *UserService,
 	auth *AuthService,
 	role *RoleService,
 	permission *PermissionService) GrpcServerRegister {
-	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware middleware.Middleware) {
+	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v12.RegisterUserServiceServer(srv, user)
 		v13.RegisterAccountServer(srv, account)
 		v14.RegisterAuthServer(srv, auth)
