@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package dtm.api.dtm.v1;
+import "errors/errors.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/go-saas/kit/dtm/api/dtm/v1;v1";
+
+service MsgService {
+  rpc QueryPrepared(QueryPreparedRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      get: "/v1/{service}/dtm/query-prepared"
+    };
+  };
+}
+
+message QueryPreparedRequest{
+  string service=1;
+}

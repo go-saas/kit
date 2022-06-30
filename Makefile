@@ -10,6 +10,7 @@ link:
 	ln -sfn $(DIR)/user $(DIR)/buf/user
 	ln -sfn $(DIR)/sys $(DIR)/buf/sys
 	ln -sfn $(DIR)/saas $(DIR)/buf/saas
+	ln -sfn $(DIR)/dtm $(DIR)/buf/dtm
 
 .PHONY: init
 # init env
@@ -47,7 +48,7 @@ apisix:
 .PHONY: api
 # generate api proto
 api:
-	buf generate
+	buf generate --path ./buf/user --path ./buf/sys --path ./buf/saas --path ./buf/dtm
 
 .PHONY: generate
 # generate
