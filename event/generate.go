@@ -1,3 +1,3 @@
 package event
 
-//go:generate protoc --proto_path=../../pkg --proto_path=../../proto --go_out=paths=source_relative:../  ../../pkg/event/event.proto
+//go:generate protoc --proto_path=../pkg --proto_path=../proto  --proto_path=../buf --go_out=paths=source_relative:./  ../event/event.proto

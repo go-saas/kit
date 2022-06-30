@@ -8,7 +8,7 @@ package conf
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	"github.com/go-saas/kit/event"
+	event "github.com/go-saas/kit/event"
 	blob "github.com/go-saas/kit/pkg/blob"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"

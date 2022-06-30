@@ -31,7 +31,8 @@ func NewUserMigrationTask(msg *v1.TenantCreatedEvent) (*asynq.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	return asynq.NewTask(JobTypeUserMigration, payload, asynq.Queue(string(ConnName)), asynq.Retention(time.Hour*24*30)), nil
+	// delay second in case saas local transaction not committed
+	return asynq.NewTask(JobTypeUserMigration, payload, asynq.ProcessIn(time.Second), asynq.Queue(string(ConnName)), asynq.Retention(time.Hour*24*30)), nil
 }
 
 type UserMigrationTaskHandler func(ctx context.Context, t *asynq.Task) error

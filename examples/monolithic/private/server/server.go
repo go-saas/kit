@@ -1,7 +1,6 @@
 package server
 
 import (
-	dtmdata "github.com/go-saas/kit/dtm/data"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/dal"
 	ksaas "github.com/go-saas/kit/pkg/saas"
@@ -36,8 +35,8 @@ var ProviderSet = wire.NewSet(
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister
 
-func NewSeeder(dtmMigrator *dtmdata.Migrator, ts saas.TenantStore, user userver.Seeding, sys sysserver.Seeding, saas sserver.Seeding) seed.Seeder {
-	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, dtmMigrator, user, sys, saas)))
+func NewSeeder(ts saas.TenantStore, user userver.Seeding, sys sysserver.Seeding, saas sserver.Seeding) seed.Seeder {
+	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, user, sys, saas)))
 }
 
 func NewHttpServiceRegister(user uservice.HttpServerRegister, sys sysservice.HttpServerRegister, saas sservice.HttpServerRegister) HttpServerRegister {
