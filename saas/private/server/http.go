@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	dtmservice "github.com/go-saas/kit/dtm/service"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/conf"
@@ -38,7 +37,6 @@ func NewHTTPServer(c *conf.Services,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
 	userTenant *uapi.UserTenantContrib,
-	dtmRegister dtmservice.HttpServerRegister,
 	register service.HttpServerRegister) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
@@ -62,7 +60,7 @@ func NewHTTPServer(c *conf.Services,
 		),
 	}...)
 	srv := http.NewServer(opts...)
-	server.ChainHttpServiceRegister(register, dtmRegister).Register(srv, m...)
+	server.ChainHttpServiceRegister(register).Register(srv, m...)
 
 	return srv
 }

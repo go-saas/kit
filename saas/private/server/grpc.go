@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	dtmservice "github.com/go-saas/kit/dtm/service"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/conf"
@@ -30,7 +29,6 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts saas.TenantStor
 	userTenant *uapi.UserTenantContrib,
 	validator sapi.TrustedContextValidator,
 	register service.GrpcServerRegister,
-	dtmRegister dtmservice.GrpcServerRegister,
 	logger log.Logger) *grpc.Server {
 	m := []middleware.Middleware{server.Recovery(),
 		tracing.Server(),
@@ -51,7 +49,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts saas.TenantStor
 	}
 	opts = server.PatchGrpcOpts(logger, opts, api.ServiceName, c)
 	srv := grpc.NewServer(opts...)
-	server.ChainGrpcServiceRegister(dtmRegister, register).Register(srv, m...)
+	server.ChainGrpcServiceRegister(register).Register(srv, m...)
 
 	return srv
 }

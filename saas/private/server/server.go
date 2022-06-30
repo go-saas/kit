@@ -1,7 +1,6 @@
 package server
 
 import (
-	dtmdata "github.com/go-saas/kit/dtm/data"
 	kapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	ksaas "github.com/go-saas/kit/pkg/saas"
@@ -28,8 +27,8 @@ func NewSeeding(uow uow.Manager, migrate *data.Migrate) Seeding {
 	return uow2.NewUowContrib(uow, seed.Chain(migrate))
 }
 
-func NewSeeder(ts saas.TenantStore, dtmMigrator *dtmdata.Migrator, ss Seeding) seed.Seeder {
-	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, dtmMigrator, ss)))
+func NewSeeder(ts saas.TenantStore, ss Seeding) seed.Seeder {
+	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, ss)))
 }
 
 func NewAuthorizationOption() *authz.Option {

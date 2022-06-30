@@ -10,8 +10,6 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	data2 "github.com/go-saas/kit/dtm/data"
-	service2 "github.com/go-saas/kit/dtm/service"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
@@ -78,16 +76,10 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	}
 	redisConnOpt := job.NewAsynqClientOpt(client)
 	httpServerRegister := service.NewHttpServerRegister(menuService, defaultAuthorizationService, encodeErrorFunc, factory, confData, redisConnOpt)
-	connStrings := dal.NewConstantConnStrResolver(confData)
-	constDbProvider := dal.NewConstDbProvider(dbCache, connStrings, confData)
-	msgServiceService := service2.NewMsgService(constDbProvider, connName)
-	serviceHttpServerRegister := service2.NewHttpServerRegister(msgServiceService)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, option, logger, trustedContextValidator, httpServerRegister, serviceHttpServerRegister)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, option, logger, trustedContextValidator, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(menuService)
-	serviceGrpcServerRegister := service2.NewGrpcServerRegister(msgServiceService)
-	grpcServer := server.NewGRPCServer(services, tokenizer, manager, option, logger, trustedContextValidator, grpcServerRegister, serviceGrpcServerRegister)
+	grpcServer := server.NewGRPCServer(services, tokenizer, manager, option, logger, trustedContextValidator, grpcServerRegister)
 	jobServer := server.NewJobServer(redisConnOpt, logger)
-	migrator := data2.NewMigrator(constDbProvider, connName)
 	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup3()
@@ -98,7 +90,7 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	migrate := data.NewMigrate(dataData)
 	menuSeed := biz.NewMenuSeed(dbProvider, menuRepo)
 	seeding := server.NewSeeding(manager, migrate, menuSeed)
-	seeder := server.NewSeeder(tenantStore, migrator, seeding)
+	seeder := server.NewSeeder(tenantStore, seeding)
 	app := newApp(logger, httpServer, grpcServer, jobServer, seeder)
 	return app, func() {
 		cleanup4()
