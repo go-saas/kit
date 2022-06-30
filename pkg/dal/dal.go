@@ -3,11 +3,11 @@ package dal
 import (
 	"github.com/eko/gocache/v3/cache"
 	"github.com/go-redis/redis/v8"
+	"github.com/go-saas/kit/event"
+	"github.com/go-saas/kit/event/trace"
 	"github.com/go-saas/kit/pkg/blob"
 	kitconf "github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/email"
-	event "github.com/go-saas/kit/pkg/event"
-	"github.com/go-saas/kit/pkg/event/trace"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	kitredis "github.com/go-saas/kit/pkg/redis"
 	kituow "github.com/go-saas/kit/pkg/uow"

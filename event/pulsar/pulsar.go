@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-saas/kit/pkg/event"
+	"github.com/go-saas/kit/event"
 	"github.com/go-saas/lazy"
 	"sync"
 )

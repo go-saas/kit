@@ -6,7 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 
-option go_package = "github.com/go-saas/kit/pkg/event;event";
+option go_package = "github.com/go-saas/kit/event;event";
 
 message Config{
   string type=1;

@@ -15,20 +15,20 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-type MsgServiceService struct {
+type MsgService struct {
 	pb.UnimplementedMsgServiceServer
 	provider dal.ConstDbProvider
 	connName dal.ConnName
 }
 
-func NewMsgService(provider dal.ConstDbProvider, connName dal.ConnName) *MsgServiceService {
-	return &MsgServiceService{
+func NewMsgService(provider dal.ConstDbProvider, connName dal.ConnName) *MsgService {
+	return &MsgService{
 		provider: provider,
 		connName: connName,
 	}
 }
 
-func (s *MsgServiceService) QueryPrepared(ctx context.Context, req *pb.QueryPreparedRequest) (*emptypb.Empty, error) {
+func (s *MsgService) QueryPrepared(ctx context.Context, req *pb.QueryPreparedRequest) (*emptypb.Empty, error) {
 
 	var ba *dtmcli.BranchBarrier
 	var err error

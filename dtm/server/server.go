@@ -8,7 +8,7 @@ import (
 )
 
 var DtmProviderSet = wire.NewSet(
-	service.NewMsgService, wire.Bind(new(v1.MsgServiceServer), new(*service.MsgServiceService)),
+	service.NewMsgService, wire.Bind(new(v1.MsgServiceServer), new(*service.MsgService)),
 	data.NewMigrator,
 	service.NewHttpServerRegister, service.NewGrpcServerRegister,
 )

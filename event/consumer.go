@@ -52,7 +52,7 @@ func FilterKey(key string, handler ConsumerHandler) ConsumerHandler {
 	})
 }
 
-type ServeMux struct {
+type ConsumerMux struct {
 	mu      sync.RWMutex
 	mws     []ConsumerMiddlewareFunc
 	handles []ConsumerHandler
@@ -60,8 +60,8 @@ type ServeMux struct {
 }
 
 // Use appends a ConsumerMiddlewareFunc to the chain.
-// Middlewares are executed in the order that they are applied to the ServeMux.
-func (mux *ServeMux) Use(mws ...ConsumerMiddlewareFunc) {
+// Middlewares are executed in the order that they are applied to the ConsumerMux.
+func (mux *ConsumerMux) Use(mws ...ConsumerMiddlewareFunc) {
 	mux.mu.Lock()
 	defer mux.mu.Unlock()
 	for _, fn := range mws {
@@ -70,14 +70,14 @@ func (mux *ServeMux) Use(mws ...ConsumerMiddlewareFunc) {
 }
 
 // Append will append handler into mux,
-func (mux *ServeMux) Append(h ConsumerHandler) {
+func (mux *ConsumerMux) Append(h ConsumerHandler) {
 	mux.mu.Lock()
 	defer mux.mu.Unlock()
 	mux.handles = append(mux.handles, h)
 }
 
 // Process call handler one by one until error happens
-func (mux *ServeMux) Process(ctx context.Context, event Event) error {
+func (mux *ConsumerMux) Process(ctx context.Context, event Event) error {
 	mux.mu.RLock()
 	defer mux.mu.RUnlock()
 
@@ -99,7 +99,7 @@ func (mux *ServeMux) Process(ctx context.Context, event Event) error {
 
 // ConsumerFactoryServer resolve LazyConsumer from factory, then wrap as kratos server
 type ConsumerFactoryServer struct {
-	*ServeMux
+	*ConsumerMux
 	lr  LazyConsumer
 	cfg *Config
 }
@@ -120,9 +120,9 @@ func NewConsumerFactoryServer(cfg *Config) *ConsumerFactoryServer {
 		panic(cfg.Type + " event server not registered")
 	}
 	return &ConsumerFactoryServer{
-		ServeMux: &ServeMux{},
-		cfg:      cfg,
-		lr:       r,
+		ConsumerMux: &ConsumerMux{},
+		cfg:         cfg,
+		lr:          r,
 	}
 }
 
@@ -143,14 +143,14 @@ func (f *ConsumerFactoryServer) Stop(ctx context.Context) error {
 }
 
 type ConsumerServer struct {
-	*ServeMux
+	*ConsumerMux
 }
 
 var _ transport.Server = (*ConsumerServer)(nil)
 
 // NewConsumerServer create server from Consumer directly
 func NewConsumerServer(r Consumer) *ConsumerServer {
-	return &ConsumerServer{&ServeMux{r: r}}
+	return &ConsumerServer{&ConsumerMux{r: r}}
 }
 
 func (s *ConsumerServer) Start(ctx context.Context) error {

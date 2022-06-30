@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/Shopify/sarama"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-saas/kit/pkg/event"
+	"github.com/go-saas/kit/event"
 	"strings"
 	"sync"
 )

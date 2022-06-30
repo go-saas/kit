@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package event.api.v1;
+import "errors/errors.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/go-saas/kit/event/api/v1;v1";
+
+
+message MessageProto{
+  string key=1;
+  bytes value=2;
+  map<string,string> header=3;
+}
+
+message EventRequest{
+  string service=1;
+  MessageProto message=2 [(validate.rules).message.required=true];
+}
+
+
+// EventService proxy event handler
+service EventService{
+  rpc Event(EventRequest)returns(google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/v1/{service}/proxy/event"
+      body: "*"
+    };
+  }
+}

@@ -7,10 +7,12 @@ DIR=$(shell pwd)
 # link proto
 link:
 	mkdir -p buf
+	ln -sfn $(DIR)/dtm $(DIR)/buf/dtm
+	ln -sfn $(DIR)/event $(DIR)/buf/event
 	ln -sfn $(DIR)/user $(DIR)/buf/user
 	ln -sfn $(DIR)/sys $(DIR)/buf/sys
 	ln -sfn $(DIR)/saas $(DIR)/buf/saas
-	ln -sfn $(DIR)/dtm $(DIR)/buf/dtm
+
 
 .PHONY: init
 # init env
@@ -51,7 +53,7 @@ apisix:
 .PHONY: api
 # generate api proto
 api:
-	buf generate --path ./buf/user --path ./buf/sys --path ./buf/saas --path ./buf/dtm
+	buf generate --path ./buf/user --path ./buf/sys --path ./buf/saas --path ./buf/dtm --path ./buf/event
 
 .PHONY: generate
 # generate

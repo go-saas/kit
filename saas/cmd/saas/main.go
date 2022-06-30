@@ -5,7 +5,7 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/config/env"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"github.com/go-saas/kit/pkg/event"
+	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/tracers"
@@ -21,8 +21,8 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-saas/kit/saas/private/conf"
 
-	_ "github.com/go-saas/kit/pkg/event/kafka"
-	_ "github.com/go-saas/kit/pkg/event/pulsar"
+	_ "github.com/go-saas/kit/event/kafka"
+	_ "github.com/go-saas/kit/event/pulsar"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"

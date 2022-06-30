@@ -2,13 +2,13 @@ package biz
 
 import (
 	"context"
-	"github.com/google/uuid"
+	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/pkg/data"
-	event2 "github.com/go-saas/kit/pkg/event"
 	gorm2 "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	v12 "github.com/go-saas/kit/saas/event/v1"
+	"github.com/google/uuid"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	gg "gorm.io/gorm"
 	"time"
@@ -65,10 +65,10 @@ type TenantRepo interface {
 type TenantUseCase struct {
 	repo             TenantRepo
 	connStrGenerator ConnStrGenerator
-	sender           event2.Producer
+	sender           event.Producer
 }
 
-func NewTenantUserCase(repo TenantRepo, connStrGenerator ConnStrGenerator, sender event2.Producer) *TenantUseCase {
+func NewTenantUserCase(repo TenantRepo, connStrGenerator ConnStrGenerator, sender event.Producer) *TenantUseCase {
 	return &TenantUseCase{repo: repo, connStrGenerator: connStrGenerator, sender: sender}
 }
 
@@ -136,7 +136,7 @@ func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adm
 		remoteEvent.AdminUsername = adminInfo.Username
 		remoteEvent.AdminPassword = adminInfo.Password
 	}
-	e, _ := event2.NewMessageFromProto(remoteEvent)
+	e, _ := event.NewMessageFromProto(remoteEvent)
 	return t.sender.Send(ctx, e)
 }
 
