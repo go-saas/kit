@@ -44,7 +44,7 @@
     },
     "/v1/saas/tenant": {
       "post": {
-        "summary": "CreateTenant\r\nauthz: saas.tenant,*,create",
+        "summary": "CreateTenant\nauthz: saas.tenant,*,create",
         "operationId": "TenantService_CreateTenant",
         "responses": {
           "200": {
@@ -77,7 +77,7 @@
     },
     "/v1/saas/tenant/list": {
       "post": {
-        "summary": "ListTenant\r\nauthz: saas.tenant,*,list",
+        "summary": "ListTenant\nauthz: saas.tenant,*,list",
         "operationId": "TenantService_ListTenant2",
         "responses": {
           "200": {
@@ -110,7 +110,7 @@
     },
     "/v1/saas/tenant/{idOrName}": {
       "get": {
-        "summary": "GetTenant\r\nauthz: saas.tenant,{id},get",
+        "summary": "GetTenant\nauthz: saas.tenant,{id},get",
         "operationId": "TenantService_GetTenant",
         "responses": {
           "200": {
@@ -141,7 +141,7 @@
     },
     "/v1/saas/tenant/{idOrName}/public": {
       "get": {
-        "summary": "GetTenant\r\nauthz: saas.tenant,{id},get",
+        "summary": "GetTenant\nauthz: saas.tenant,{id},get",
         "operationId": "TenantService_GetTenantPublic",
         "responses": {
           "200": {
@@ -172,7 +172,7 @@
     },
     "/v1/saas/tenant/{id}": {
       "delete": {
-        "summary": "DeleteTenant\r\nauthz: saas.tenant,{id},delete",
+        "summary": "DeleteTenant\nauthz: saas.tenant,{id},delete",
         "operationId": "TenantService_DeleteTenant",
         "responses": {
           "200": {
@@ -203,7 +203,7 @@
     },
     "/v1/saas/tenant/{tenant.id}": {
       "put": {
-        "summary": "UpdateTenant\r\nauthz: saas.tenant,{id},update",
+        "summary": "UpdateTenant\nauthz: saas.tenant,{id},update",
         "operationId": "TenantService_UpdateTenant",
         "responses": {
           "200": {
@@ -240,7 +240,7 @@
         ]
       },
       "patch": {
-        "summary": "UpdateTenant\r\nauthz: saas.tenant,{id},update",
+        "summary": "UpdateTenant\nauthz: saas.tenant,{id},update",
         "operationId": "TenantService_UpdateTenant2",
         "responses": {
           "200": {
@@ -279,7 +279,7 @@
     },
     "/v1/saas/tenants": {
       "get": {
-        "summary": "ListTenant\r\nauthz: saas.tenant,*,list",
+        "summary": "ListTenant\nauthz: saas.tenant,*,list",
         "operationId": "TenantService_ListTenant",
         "responses": {
           "200": {

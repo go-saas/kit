@@ -43,8 +43,14 @@ func NewGrpcConn(
 	}
 	var conn *grpcx.ClientConn
 	var err error
+
+	var name = serviceName
+	serviceCfg := services.GetServiceMergedDefault(serviceName)
+	if serviceCfg != nil && len(serviceCfg.Redirect) > 0 {
+		name = serviceCfg.Redirect
+	}
 	fOpts := []grpc.ClientOption{
-		grpc.WithEndpoint("discovery:///" + serviceName),
+		grpc.WithEndpoint("discovery:///" + name),
 		grpc.WithDiscovery(dis),
 		grpc.WithMiddleware(
 			recovery.Recovery(),
@@ -115,9 +121,14 @@ func NewHttpClient(
 	}
 }
 
+func NewDiscovery(services *conf.Services) (registry.Discovery, error) {
+	_, r, err := kregistry.NewRegister(services.Registry)
+	return r, err
+}
+
 var DefaultProviderSet = wire.NewSet(
 	NewDefaultOption,
 	NewInMemoryTokenManager, wire.Bind(new(TokenManager), new(*InMemoryTokenManager)),
 	NewClientTrustedContextValidator,
-	kregistry.NewConf, wire.Bind(new(registry.Discovery), new(*kregistry.Conf)),
+	NewDiscovery,
 )

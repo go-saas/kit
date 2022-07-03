@@ -3,14 +3,12 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2/log"
 	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-saas/kit/gateway/apisix/cmd/go-runner/plugins"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authn/session"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
-	kregistry "github.com/go-saas/kit/pkg/registry"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas"
 	shttp "github.com/go-saas/saas/http"
@@ -96,4 +94,4 @@ func NewAuthorizationOption() *authz.Option {
 
 var ProviderSet = wire.NewSet(api.NewInMemoryTokenManager, NewSelfClientOption,
 	wire.Bind(new(api.TokenManager), new(*api.InMemoryTokenManager)), NewAuthorizationOption,
-	kregistry.NewConf, wire.Bind(new(registry.Discovery), new(*kregistry.Conf)))
+	api.NewDiscovery)

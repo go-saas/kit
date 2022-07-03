@@ -13,7 +13,6 @@ import (
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
-	"github.com/go-saas/kit/pkg/registry"
 	api2 "github.com/go-saas/kit/saas/api"
 	api3 "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas/http"
@@ -21,20 +20,24 @@ import (
 
 import (
 	_ "github.com/go-saas/kit/gateway/apisix/cmd/go-runner/plugins"
+	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // Injectors from wire.go:
 
 func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOption *http.WebMultiTenancyOption, clientName api.ClientName, logger log.Logger, arg ...grpc.ClientOption) (*App, func(), error) {
-	registryConf := registry.NewConf(services)
+	discovery, err := api.NewDiscovery(services)
+	if err != nil {
+		return nil, nil, err
+	}
 	option := NewSelfClientOption(logger)
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, registryConf, option, inMemoryTokenManager, logger, arg...)
+	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, discovery, option, inMemoryTokenManager, logger, arg...)
 	tenantInternalServiceServer := api2.NewTenantInternalGrpcClient(grpcConn)
 	tenantStore := api2.NewTenantStore(tenantInternalServiceServer)
-	apiGrpcConn, cleanup2 := api3.NewGrpcConn(clientName, services, registryConf, option, inMemoryTokenManager, logger, arg...)
+	apiGrpcConn, cleanup2 := api3.NewGrpcConn(clientName, services, discovery, option, inMemoryTokenManager, logger, arg...)
 	userServiceServer := api3.NewUserGrpcClient(apiGrpcConn)
 	userTenantContrib := api3.NewUserTenantContrib(userServiceServer)
 	authServer := api3.NewAuthGrpcClient(apiGrpcConn)

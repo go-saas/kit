@@ -3,24 +3,24 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/go-saas/saas"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/query"
 	ubiz "github.com/go-saas/kit/user/private/biz"
+	"github.com/go-saas/saas"
 	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/google/uuid"
 	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	"github.com/go-saas/kit/saas/api"
 	pb "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/go-saas/kit/saas/private/biz"
+	"github.com/google/uuid"
 
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -169,13 +169,13 @@ func (s *TenantService) GetTenantPublic(ctx context.Context, req *pb.GetTenantPu
 	if t == nil {
 		return nil, errors.NotFound("", "")
 	}
-	return mapBizTenantToInfo(ctx, s.blob, t), nil
+	return mapBizTenantToInfo(ctx, s.blob, t, s.app), nil
 }
 
 func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrentTenantRequest) (*pb.GetCurrentTenantReply, error) {
 	ti, _ := saas.FromCurrentTenant(ctx)
 	if len(ti.GetId()) == 0 {
-		return &pb.GetCurrentTenantReply{IsHost: true}, nil
+		return &pb.GetCurrentTenantReply{IsHost: true, Tenant: mapBizTenantToInfo(ctx, s.blob, nil, s.app)}, nil
 	} else {
 		t, err := s.useCase.FindByIdOrName(ctx, ti.GetId())
 		if err != nil {
@@ -184,14 +184,7 @@ func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrent
 		if t == nil {
 			return nil, pb.ErrorTenantNotFound("")
 		}
-		info := &pb.TenantInfo{
-			Id:          t.ID.String(),
-			Name:        t.Name,
-			DisplayName: t.DisplayName,
-			Region:      t.Region,
-			Logo:        mapLogo(ctx, s.blob, t),
-		}
-		info.NormalizeHost(ctx, s.app)
+		info := mapBizTenantToInfo(ctx, s.blob, t, s.app)
 		return &pb.GetCurrentTenantReply{
 			IsHost: false,
 			Tenant: info,
@@ -329,14 +322,21 @@ func mapBizTenantToApi(ctx context.Context, app *conf.AppConfig, blob blob.Facto
 	return res
 }
 
-func mapBizTenantToInfo(ctx context.Context, blob blob.Factory, tenant *biz.Tenant) *pb.TenantInfo {
+func mapBizTenantToInfo(ctx context.Context, b blob.Factory, tenant *biz.Tenant, app *conf.AppConfig) *pb.TenantInfo {
+	if tenant == nil {
+		return &pb.TenantInfo{
+			DisplayName: app.HostDisplayName,
+			Logo:        &blob.BlobFile{Url: app.HostLogo},
+		}
+	}
 	res := &pb.TenantInfo{
 		Id:          tenant.ID.String(),
 		Name:        tenant.Name,
 		DisplayName: tenant.DisplayName,
 		Region:      tenant.Region,
-		Logo:        mapLogo(ctx, blob, tenant),
+		Logo:        mapLogo(ctx, b, tenant),
 	}
+	res.NormalizeHost(ctx, app)
 	return res
 }
 

@@ -53,6 +53,14 @@ services:
     ports:
       - "7379:6379"
 
+  etcd:
+    image: bitnami/etcd
+    restart: always
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+    ports:
+      - "3379:2379"
 
 volumes:
   mysql_data:

@@ -7,7 +7,7 @@ import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 import "blob/blob.proto";
 import "event/event.proto";
-import "validate/validate.proto";
+import "registry/registry.proto";
 
 option go_package = "github.com/go-saas/kit/pkg/conf;conf";
 
@@ -43,17 +43,6 @@ message Server {
   GRPC grpc = 2;
 }
 
-message Service{
-  string name=1;
-  string id =2 ;
-  string version =3;
-  repeated string endpoints =4 [(validate.rules).repeated.min_items=1];
-}
-
-message ServiceList{
-  repeated Service list = 1;
-}
-
 message Client{
   string client_id=1;
   // server clients use secret
@@ -61,13 +50,18 @@ message Client{
   google.protobuf.Duration timeout = 3;
 }
 
+message Service{
+  string redirect=1;
+}
+
 message Services{
-  // Services server to server communication services info
-  map<string,ServiceList> services = 1;
+  map<string,Service> services = 1;
   // Servers configure server config
   map<string,Server> servers =2;
   // Clients server to server communication client
   map<string,Client> clients =3;
+  //Registry for service discovery
+  registry.Config registry=4;
 }
 
 message Database {
@@ -182,8 +176,10 @@ message Tracers{
 }
 
 message AppConfig{
-  google.protobuf.StringValue tenant_key=1;
-  google.protobuf.StringValue domain_format=2;
+  optional google.protobuf.StringValue tenant_key=1;
+  optional google.protobuf.StringValue domain_format=2;
+  string host_display_name=3;
+  string host_logo=4;
 }
 
 

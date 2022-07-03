@@ -1,18 +1,9 @@
 app:
   domain_format: ([-a-z0-9]+)\.saas\.nihaosaoya\.com
 services:
-
-  services:
-    user:
-      list:
-        - endpoints:
-            - grpc://user:9081
-            - http://user:9080
-    saas:
-      list:
-        - endpoints:
-            - grpc://saas:9081
-            - http://saas:9080
+  registry:
+    type: etcd
+    endpoint: http://etcd:2379
 
 data:
   endpoints:
@@ -68,7 +59,7 @@ security:
 
 logging:
   zap:
-    level: "debug"
+    level: "info"
     outputPaths: [ "stdout", "rolling://.temp/logs" ]
     errorOutputPaths: [ "stderr" ]
     encoding: json

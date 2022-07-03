@@ -171,7 +171,7 @@
         ]
       },
       "put": {
-        "summary": "UpdateProfile\r\nAvatar: POST form file /v1/account/avatar",
+        "summary": "UpdateProfile\nAvatar: POST form file /v1/account/avatar",
         "operationId": "Account_UpdateProfile",
         "responses": {
           "200": {
@@ -573,7 +573,7 @@
     },
     "/v1/auth/password/forget": {
       "post": {
-        "summary": "ForgetPassword\r\nverify forget password token",
+        "summary": "ForgetPassword\nverify forget password token",
         "operationId": "Auth_ForgetPassword",
         "responses": {
           "200": {
@@ -638,7 +638,7 @@
     },
     "/v1/auth/password/validate": {
       "post": {
-        "summary": "ValidatePassword\r\nserver validation for password strength",
+        "summary": "ValidatePassword\nserver validation for password strength",
         "operationId": "Auth_ValidatePassword",
         "responses": {
           "200": {
@@ -1701,7 +1701,7 @@
     },
     "/v1/user": {
       "post": {
-        "summary": "CreateUser\r\nauthz: user.user,*,create",
+        "summary": "CreateUser\nauthz: user.user,*,create",
         "operationId": "UserService_CreateUser",
         "responses": {
           "200": {
@@ -1734,7 +1734,7 @@
     },
     "/v1/user/invite": {
       "post": {
-        "summary": "InviteUser\r\nauthz: user.user,*,create",
+        "summary": "InviteUser\nauthz: user.user,*,create",
         "operationId": "UserService_InviteUser",
         "responses": {
           "200": {
@@ -1767,7 +1767,7 @@
     },
     "/v1/user/list": {
       "post": {
-        "summary": "ListUsers\r\nauthz: user.user,*,list",
+        "summary": "ListUsers\nauthz: user.user,*,list",
         "operationId": "UserService_ListUsers2",
         "responses": {
           "200": {
@@ -1800,7 +1800,7 @@
     },
     "/v1/user/{id}": {
       "get": {
-        "summary": "GetUser\r\nauthz: user.user,id,get",
+        "summary": "GetUser\nauthz: user.user,id,get",
         "operationId": "UserService_GetUser",
         "responses": {
           "200": {
@@ -1829,7 +1829,7 @@
         ]
       },
       "delete": {
-        "summary": "DeleteUser\r\nauthz: user.user,id,delete",
+        "summary": "DeleteUser\nauthz: user.user,id,delete",
         "operationId": "UserService_DeleteUser",
         "responses": {
           "200": {
@@ -1867,7 +1867,7 @@
     },
     "/v1/user/{id}/roles": {
       "get": {
-        "summary": "GetUserRoles\r\nauthz: user.user,id,get",
+        "summary": "GetUserRoles\nauthz: user.user,id,get",
         "operationId": "UserService_GetUserRoles",
         "responses": {
           "200": {
@@ -1898,7 +1898,7 @@
     },
     "/v1/user/{user.id}": {
       "put": {
-        "summary": "UpdateUser\r\nauthz: user.user,id,update",
+        "summary": "UpdateUser\nauthz: user.user,id,update",
         "operationId": "UserService_UpdateUser",
         "responses": {
           "200": {
@@ -1935,7 +1935,7 @@
         ]
       },
       "patch": {
-        "summary": "UpdateUser\r\nauthz: user.user,id,update",
+        "summary": "UpdateUser\nauthz: user.user,id,update",
         "operationId": "UserService_UpdateUser2",
         "responses": {
           "200": {
@@ -1974,7 +1974,7 @@
     },
     "/v1/users": {
       "get": {
-        "summary": "ListUsers\r\nauthz: user.user,*,list",
+        "summary": "ListUsers\nauthz: user.user,*,list",
         "operationId": "UserService_ListUsers",
         "responses": {
           "200": {
@@ -3424,7 +3424,7 @@
         "expires": {
           "type": "integer",
           "format": "int32",
-          "title": "Expires time in seconds\r\nDeprecated, use expires_in instead"
+          "title": "Expires time in seconds\nDeprecated, use expires_in instead"
         },
         "refreshToken": {
           "type": "string",

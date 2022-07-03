@@ -44,6 +44,7 @@ import (
 import (
 	_ "github.com/go-saas/kit/event/kafka"
 	_ "github.com/go-saas/kit/event/pulsar"
+	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // Injectors from wire.go:
@@ -184,7 +185,17 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	asynqClient, cleanup6 := job.NewAsynqClient(redisConnOpt)
 	tenantSeedEventHandler := biz2.NewTenantSeedEventHandler(asynqClient)
 	consumerFactoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler, tenantSeedEventHandler)
-	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder)
+	registrar, err := server.NewRegistrar(services)
+	if err != nil {
+		cleanup6()
+		cleanup5()
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, registrar)
 	return app, func() {
 		cleanup6()
 		cleanup5()

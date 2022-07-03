@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package registry;
+
+option go_package = "github.com/go-saas/kit/pkg/registry;registry";
+
+message Config{
+  string type=1;
+  string endpoint=2;
+}

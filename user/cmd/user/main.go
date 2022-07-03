@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/config/env"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/job"
@@ -29,12 +30,14 @@ import (
 
 	_ "github.com/go-saas/kit/event/kafka"
 	_ "github.com/go-saas/kit/event/pulsar"
+
+	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string = "USER"
+	Name string = "user"
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
@@ -49,7 +52,7 @@ func init() {
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
 }
 
-func newApp(c *conf.UserConf, logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.ConsumerFactoryServer, seeder seed.Seeder) *kratos.App {
+func newApp(c *conf.UserConf, logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.ConsumerFactoryServer, seeder seed.Seeder, r registry.Registrar) *kratos.App {
 	if ifSeed {
 		if err := seeder.Seed(context.Background(),
 			seed.AddHost(),
@@ -66,6 +69,7 @@ func newApp(c *conf.UserConf, logger log.Logger, hs *http.Server, gs *grpc.Serve
 		kratos.Version(Version),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
+		kratos.Registrar(r),
 		kratos.Server(
 			hs,
 			gs,

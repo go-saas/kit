@@ -10,6 +10,24 @@ const (
 	defaultKey = "default"
 )
 
+func (x *Services) GetServiceMergedDefault(name string) *Service {
+	var res *Service
+	if name != "" {
+		res, _ = x.Services[name]
+	}
+	if def, ok := x.Services[defaultKey]; ok {
+		if res == nil {
+			res = def
+		} else {
+			c := proto.Clone(def).(*Service)
+			proto.Merge(c, res)
+			res = c
+		}
+	}
+
+	return res
+}
+
 func (x *Endpoints) GetEventMergedDefault(name string) *event.Config {
 	var res *event.Config
 	if name != "" {

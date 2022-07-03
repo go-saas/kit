@@ -33,7 +33,7 @@ func NewFactoryProducer(cfg *Config) (*ProducerMux, error) {
 }
 
 func (s *ProducerMux) Close() error {
-	return s.Close()
+	return s.Producer.Close()
 }
 
 type ProducerMiddlewareFunc func(HandlerOf[any]) HandlerOf[any]

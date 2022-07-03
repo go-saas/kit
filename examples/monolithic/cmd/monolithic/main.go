@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config/env"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/examples/monolithic/private/conf"
 	"github.com/go-saas/kit/pkg/job"
@@ -26,12 +27,13 @@ import (
 
 	_ "github.com/go-saas/kit/event/kafka"
 	_ "github.com/go-saas/kit/event/pulsar"
+	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string = "MONOLITHIC"
+	Name string = "monolithic"
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
@@ -48,7 +50,7 @@ func init() {
 	flag.StringVar(&seedPath, sysbiz.SeedPathKey, "", "menu seed file path")
 }
 
-func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.ConsumerFactoryServer, seeder seed.Seeder) *kratos.App {
+func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.ConsumerFactoryServer, seeder seed.Seeder, r registry.Registrar) *kratos.App {
 	if ifSeed {
 		extra := map[string]interface{}{}
 		if len(seedPath) > 0 {
@@ -66,6 +68,7 @@ func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Serv
 		kratos.Version(Version),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
+		kratos.Registrar(r),
 		kratos.Server(
 			hs,
 			gs,

@@ -23,12 +23,13 @@ import (
 
 	_ "github.com/go-saas/kit/event/kafka"
 	_ "github.com/go-saas/kit/event/pulsar"
+	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string = "SAAS"
+	Name string = "saas"
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.

@@ -1,13 +1,4 @@
 services:
-
   services:
-    user:
-      list:
-        - endpoints:
-            - grpc://monolithic:9081
-            - http://monolithic:9080
-    saas:
-      list:
-        - endpoints:
-            - grpc://monolithic:9081
-            - http://monolithic:9080
+    default:
+      redirect: monolithic

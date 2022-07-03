@@ -17,7 +17,6 @@ import (
 	"github.com/go-saas/kit/pkg/dal"
 	"github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/job"
-	"github.com/go-saas/kit/pkg/registry"
 	server2 "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/uow"
 	api3 "github.com/go-saas/kit/saas/api"
@@ -33,6 +32,7 @@ import (
 import (
 	_ "github.com/go-saas/kit/event/kafka"
 	_ "github.com/go-saas/kit/event/pulsar"
+	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // Injectors from wire.go:
@@ -49,15 +49,19 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	option := api.NewDefaultOption(logger)
 	trustedContextValidator := api.NewClientTrustedContextValidator()
 	clientName := _wireClientNameValue
-	registryConf := registry.NewConf(services)
+	discovery, err := api.NewDiscovery(services)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, registryConf, option, inMemoryTokenManager, logger, arg...)
+	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, discovery, option, inMemoryTokenManager, logger, arg...)
 	permissionServiceServer := api2.NewPermissionGrpcClient(grpcConn)
 	permissionChecker := api2.NewRemotePermissionChecker(permissionServiceServer)
 	authzOption := server.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
-	apiGrpcConn, cleanup3 := api3.NewGrpcConn(clientName, services, registryConf, option, inMemoryTokenManager, logger, arg...)
+	apiGrpcConn, cleanup3 := api3.NewGrpcConn(clientName, services, discovery, option, inMemoryTokenManager, logger, arg...)
 	tenantInternalServiceServer := api3.NewTenantInternalGrpcClient(apiGrpcConn)
 	tenantStore := api3.NewTenantStore(tenantInternalServiceServer)
 	connStrResolver := dal.NewConnStrResolver(confData, tenantStore)
