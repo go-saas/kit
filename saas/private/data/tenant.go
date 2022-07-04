@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/goxiaoy/go-eventbus"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/go-saas/kit/saas/private/biz"
+	"github.com/google/uuid"
+	"github.com/goxiaoy/go-eventbus"
 	gg "gorm.io/gorm"
 )
 

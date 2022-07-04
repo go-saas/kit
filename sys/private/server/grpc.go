@@ -14,7 +14,6 @@ import (
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/sys/api"
-	"github.com/go-saas/kit/sys/i18n"
 	"github.com/go-saas/kit/sys/private/service"
 	uow2 "github.com/go-saas/uow"
 	kuow "github.com/go-saas/uow/kratos"
@@ -36,7 +35,7 @@ func NewGRPCServer(
 		logging.Server(logger),
 		metrics.Server(),
 		validate.Validator(),
-		localize.I18N(i18n.Files...),
+		localize.I18N(),
 		jwt.ServerExtractAndAuth(tokenizer, logger),
 		sapi.ServerPropagation(apiOpt, validator, logger),
 		kuow.Uow(uowMgr, kuow.WithLogger(logger))}

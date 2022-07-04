@@ -4,6 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"gopkg.in/yaml.v3"
+	"io/fs"
+	"io/ioutil"
+	"path/filepath"
+	"sync"
 
 	"github.com/BurntSushi/toml"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -17,18 +21,44 @@ type (
 	localizerKey struct{}
 
 	FileBundle struct {
-		Buf  []byte
-		Path string
+		Fs fs.FS
 	}
 )
 
-func I18N(files ...FileBundle) middleware.Middleware {
+var (
+	globalFileBundles []FileBundle
+	globalLock        sync.RWMutex
+)
+
+func RegisterFileBundle(files ...FileBundle) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
+	globalFileBundles = append(globalFileBundles, files...)
+}
+
+func I18N() middleware.Middleware {
+	globalLock.RLock()
+	defer globalLock.RUnlock()
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
 	bundle.RegisterUnmarshalFunc("yaml", yaml.Unmarshal)
-	for _, f := range files {
-		bundle.MustParseMessageFileBytes(f.Buf, f.Path)
+	for _, f := range globalFileBundles {
+		fs.WalkDir(f.Fs, ".", func(path string, d fs.DirEntry, err error) error {
+			if filepath.Ext(path) == ".toml" || filepath.Ext(path) == ".json" || filepath.Ext(path) == ".yaml" {
+				f, err := f.Fs.Open(path)
+				if err != nil {
+					panic(f)
+				}
+				defer f.Close()
+				b, err := ioutil.ReadAll(f)
+				if err != nil {
+					panic(f)
+				}
+				bundle.MustParseMessageFileBytes(b, path)
+			}
+			return nil
+		})
 	}
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {

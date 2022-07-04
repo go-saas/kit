@@ -8,6 +8,7 @@ import (
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
+	_ "github.com/go-saas/kit/sys/i18n"
 	"github.com/google/wire"
 	"google.golang.org/grpc"
 )

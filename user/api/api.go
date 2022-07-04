@@ -13,6 +13,7 @@ import (
 	v15 "github.com/go-saas/kit/user/api/permission/v1"
 	v14 "github.com/go-saas/kit/user/api/role/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
+	_ "github.com/go-saas/kit/user/i18n"
 	"github.com/google/wire"
 	"google.golang.org/grpc"
 )

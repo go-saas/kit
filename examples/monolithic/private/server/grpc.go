@@ -14,7 +14,6 @@ import (
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
 	uapi "github.com/go-saas/kit/user/api"
-	"github.com/go-saas/kit/user/i18n"
 	"github.com/go-saas/saas"
 	shttp "github.com/go-saas/saas/http"
 	uow2 "github.com/go-saas/uow"
@@ -40,8 +39,7 @@ func NewGRPCServer(
 		logging.Server(logger),
 		metrics.Server(),
 		validate.Validator(),
-		//TODO combine i18n
-		localize.I18N(i18n.Files...),
+		localize.I18N(),
 		jwt.ServerExtractAndAuth(tokenizer, logger),
 		sapi.ServerPropagation(apiOpt, validator, logger),
 		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
 	ubiz "github.com/go-saas/kit/user/private/biz"
 	"github.com/go-saas/saas"
@@ -182,7 +183,7 @@ func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrent
 			return nil, err
 		}
 		if t == nil {
-			return nil, pb.ErrorTenantNotFound("")
+			return nil, pb.ErrorTenantNotFoundLocalized(localize.FromContext(ctx), nil, nil)
 		}
 		info := mapBizTenantToInfo(ctx, s.blob, t, s.app)
 		return &pb.GetCurrentTenantReply{

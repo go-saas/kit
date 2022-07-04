@@ -1,5 +1,7 @@
 app:
   domain_format: ([-a-z0-9]+)\.saas\.nihaosaoya\.com
+  host_display_name: GO SAAS KIT
+  host_logo: /logo.svg
 services:
   registry:
     type: etcd

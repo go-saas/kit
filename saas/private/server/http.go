@@ -14,7 +14,6 @@ import (
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/saas/api"
-	"github.com/go-saas/kit/saas/i18n"
 	"github.com/go-saas/kit/saas/private/service"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas"
@@ -46,7 +45,7 @@ func NewHTTPServer(c *conf.Services,
 		logging.Server(logger),
 		metrics.Server(),
 		validate.Validator(),
-		localize.I18N(i18n.Files...),
+		localize.I18N(),
 		jwt.ServerExtractAndAuth(tokenizer, logger),
 		sapi.ServerPropagation(apiOpt, validator, logger),
 		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
