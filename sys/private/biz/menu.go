@@ -2,10 +2,10 @@ package biz
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
+	"github.com/google/uuid"
 )
 
 type Menu struct {
@@ -58,4 +58,5 @@ func (m *Menu) MergeWithPreservedFields(p *Menu) {
 	m.IsPreserved = p.IsPreserved
 	m.Path = p.Path
 	m.Priority = p.Priority
+	m.Title = p.Title
 }

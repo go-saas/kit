@@ -3,7 +3,7 @@ menus:
     path: "/dev"
     component: "LAYOUT"
     redirect: "/dev/jaeger"
-    title: "routes.dev.title"
+    title: "dev.title"
     icon: "ion:grid-outline"
     meta:
     priority: 1000
@@ -17,7 +17,7 @@ menus:
         path: "/dev/docs"
         component: "IFRAME"
         iframe: "/swagger"
-        title: "routes.dev.docs"
+        title: "dev.docs"
         is_preserved: true
         requirement:
           - namespace: "dev.docs"
@@ -29,7 +29,7 @@ menus:
         component: "IFRAME"
         is_preserved: true
         iframe: "/jaeger"
-        title: "routes.dev.jaeger"
+        title: "dev.jaeger"
         requirement:
           - namespace: "dev.jaeger"
             resource: "*"
@@ -40,7 +40,7 @@ menus:
         component: "IFRAME"
         iframe: "/v1/sys/asynqmon/"
         is_preserved: true
-        title: "routes.dev.jobs"
+        title: "dev.jobs"
         requirement:
           - namespace: "dev.jobs"
             resource: "*"
@@ -49,7 +49,7 @@ menus:
     path: "/saas"
     component: "LAYOUT"
     redirect: "/saas/tenants"
-    title: "routes.saas.title"
+    title: "saas.title"
     icon: "ion:grid-outline"
     meta:
     priority: 101
@@ -60,61 +60,51 @@ menus:
         action: "read"
     children:
       - name: "tenant"
-        path: "/tenants"
+        path: "/saas/tenants"
         component: "/saas/tenant/index"
         is_preserved: true
         meta:
-        title: "routes.saas.tenant.management"
+        title: "saas.tenant.management"
         requirement:
           - namespace: "saas.tenant"
             resource: "*"
             action: "read"
-  - name: "system"
-    path: "/system"
+  - name: "sys"
+    path: "/sys"
     component: "LAYOUT"
     is_preserved: true
-    redirect: '/system/users'
-    title: "routes.system.title"
+    redirect: '/sys/users'
+    title: "sys.title"
     icon: "ion:grid-outline"
     priority: 100
     meta:
     children:
       - name: "user"
-        path: 'users'
+        path: '/sys/users'
         is_preserved: true
-        component: "/system/user/index"
+        component: "/sys/user/index"
         meta:
-        title: "routes.system.user.management"
+        title: "sys.user.management"
         requirement:
           - namespace: "user.user"
             resource: "*"
             action: "read"
       - name: "role"
-        path: "roles"
+        path: "/sys/roles"
         is_preserved: true
-        component: "/system/role/index"
+        component: "/sys/role/index"
         meta:
-        title: "routes.system.role.management"
+        title: "sys.role.management"
         requirement:
           - namespace: "user.role"
             resource: "*"
             action: "read"
-      - name: "permission"
-        path: "permission"
-        is_preserved: true
-        component: "/system/permission/index"
-        meta:
-        title: "routes.system.permission.management"
-        requirement:
-          - namespace: "permission"
-            resource: "*"
-            action: "read"
       - name: "menu"
-        path: "menu"
+        path: "/sys/menus"
         is_preserved: true
         component: "/system/menu/index"
         meta:
-        title: "routes.system.menu.management"
+        title: "sys.menu.management"
         requirement:
           - namespace: "sys.menu"
             resource: "*"
