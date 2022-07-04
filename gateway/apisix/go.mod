@@ -18,6 +18,7 @@ require (
 )
 
 require (
+	github.com/BurntSushi/toml v1.0.0 // indirect
 	github.com/ReneKroon/ttlcache/v2 v2.11.0 // indirect
 	github.com/api7/ext-plugin-proto v0.4.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
