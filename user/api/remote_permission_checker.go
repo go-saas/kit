@@ -102,17 +102,30 @@ func (r *PermissionChecker) UpdateGrant(ctx context.Context, subject authz.Subje
 	return err
 }
 
-func (r *PermissionChecker) RemoveGrant(ctx context.Context, resource authz.Resource, action authz.Action, subject authz.Subject, tenantID string, effects []authz.Effect) error {
-	var effs = lo.Map(effects, func(e authz.Effect, _ int) v1.Effect {
+func (r *PermissionChecker) RemoveGrant(ctx context.Context, subject authz.Subject, filter ...authz.FilterFunc) error {
+	f := &authz.Filter{}
+	for _, filterFunc := range filter {
+		filterFunc(f)
+	}
+
+	var effs = lo.Map(f.Effects, func(e authz.Effect, _ int) v1.Effect {
 		return util.MapAuthEffect2PbEffect(e)
 	})
-	_, err := r.srv.RemoveSubjectPermission(ctx, &v1.RemoveSubjectPermissionRequest{
-		Namespace: resource.GetNamespace(),
-		Resource:  resource.GetIdentity(),
-		Action:    action.GetIdentity(),
-		Subject:   subject.GetIdentity(),
-		Effects:   effs,
-		TenantId:  tenantID,
-	})
+	req := &v1.RemoveSubjectPermissionRequest{
+		Subject:  subject.GetIdentity(),
+		Effects:  effs,
+		TenantId: f.TenantID,
+	}
+	if f.Resource != nil {
+		n := f.Resource.GetNamespace()
+		req.Namespace = &n
+		i := f.Resource.GetIdentity()
+		req.Resource = &i
+	}
+	if f.Action != nil {
+		i := f.Action.GetIdentity()
+		req.Action = &i
+	}
+	_, err := r.srv.RemoveSubjectPermission(ctx, req)
 	return err
 }

@@ -84,6 +84,12 @@ func (s *RoleService) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.
 	}
 	res := &pb.Role{}
 	MapBizRoleToApi(u, res)
+	acl, err := s.getRolePermission(ctx, u)
+	if err != nil {
+		return nil, err
+	}
+	res.Acl = acl.Acl
+	res.DefGroups = acl.DefGroups
 	return res, nil
 }
 
@@ -117,6 +123,11 @@ func (s *RoleService) UpdateRole(ctx context.Context, req *pb.UpdateRoleRequest)
 	if err := s.mgr.Update(ctx, r.ID.String(), r, nil); err != nil {
 		return nil, err
 	}
+	if req.Role.Acl != nil {
+		if err := s.updateRolePermission(ctx, r, req.Role.Acl); err != nil {
+			return nil, err
+		}
+	}
 	ret := &pb.Role{}
 	MapBizRoleToApi(r, ret)
 	return ret, nil
@@ -129,8 +140,14 @@ func (s *RoleService) DeleteRole(ctx context.Context, req *pb.DeleteRoleRequest)
 	if err := s.mgr.Delete(ctx, req.Id); err != nil {
 		return nil, err
 	}
+	roleSubject := authz.NewRoleSubject(req.Id)
+	//delete role permission
+	if err := s.permissionMgr.RemoveGrant(ctx, roleSubject); err != nil {
+		return nil, err
+	}
 	return &pb.DeleteRoleResponse{}, nil
 }
+
 func (s *RoleService) GetRolePermission(ctx context.Context, req *pb.GetRolePermissionRequest) (*pb.GetRolePermissionResponse, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceRole, req.Id), authz.ReadAction); err != nil {
 		return nil, err
@@ -139,10 +156,14 @@ func (s *RoleService) GetRolePermission(ctx context.Context, req *pb.GetRolePerm
 	if err != nil {
 		return nil, err
 	}
+	return s.getRolePermission(ctx, r)
+}
+
+func (s *RoleService) getRolePermission(ctx context.Context, r *biz.Role) (*pb.GetRolePermissionResponse, error) {
 	if r == nil {
 		return nil, errors.NotFound("", "")
 	}
-	roleSubject := authz.NewRoleSubject(req.Id)
+	roleSubject := authz.NewRoleSubject(r.ID.String())
 	acl, err := s.permissionMgr.ListAcl(ctx, roleSubject)
 	if err != nil {
 		return nil, err
@@ -188,7 +209,6 @@ func (s *RoleService) GetRolePermission(ctx context.Context, req *pb.GetRolePerm
 	}
 
 	res.DefGroups = groups
-
 	return res, nil
 }
 
@@ -200,14 +220,21 @@ func (s *RoleService) UpdateRolePermission(ctx context.Context, req *pb.UpdateRo
 	if err != nil {
 		return nil, err
 	}
+	if err := s.updateRolePermission(ctx, r, req.Acl); err != nil {
+		return nil, err
+	}
+	return &pb.UpdateRolePermissionResponse{}, nil
+}
+
+func (s *RoleService) updateRolePermission(ctx context.Context, r *biz.Role, update []*pb.UpdateRolePermissionAcl) error {
 	if r == nil {
-		return nil, errors.NotFound("", "")
+		return errors.NotFound("", "")
 	}
 	if r.IsPreserved {
-		return nil, pb.ErrorRolePreserved("")
+		return pb.ErrorRolePreserved("")
 	}
 	ti, _ := saas.FromCurrentTenant(ctx)
-	var acl = lo.Map(req.Acl, func(a *pb.UpdateRolePermissionAcl, _ int) authz.UpdateSubjectPermission {
+	var acl = lo.Map(update, func(a *pb.UpdateRolePermissionAcl, _ int) authz.UpdateSubjectPermission {
 		effect := util.MapPbEffect2AuthEffect(a.Effect)
 		return authz.UpdateSubjectPermission{
 			Resource: authz.NewEntityResource(a.Namespace, a.Resource),
@@ -216,10 +243,10 @@ func (s *RoleService) UpdateRolePermission(ctx context.Context, req *pb.UpdateRo
 			Effect:   effect,
 		}
 	})
-	if err := s.permissionMgr.UpdateGrant(ctx, authz.NewRoleSubject(req.Id), acl); err != nil {
-		return nil, err
+	if err := s.permissionMgr.UpdateGrant(ctx, authz.NewRoleSubject(r.ID.String()), acl); err != nil {
+		return err
 	}
-	return &pb.UpdateRolePermissionResponse{}, nil
+	return nil
 }
 
 func MapBizRoleToApi(u *biz.Role, b *pb.Role) {

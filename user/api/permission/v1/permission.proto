@@ -135,12 +135,12 @@ message UpdateSubjectPermissionResponse{
 }
 
 message RemoveSubjectPermissionRequest{
-  string namespace = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  optional string namespace = 1 ;
+  optional string  resource = 2 ;
+  optional string  action = 3 ;
   string subject = 4[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   repeated Effect effects =5;
-  string tenant_id =6;
+  optional string tenant_id =6;
 }
 message RemoveSubjectPermissionReply{
 

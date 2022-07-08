@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/casbin/casbin/v2/util"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/google/wire"
 	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/google/wire"
 	"net/http"
 	"strings"
 )
@@ -102,24 +102,54 @@ func (p *PermissionService) UpdateGrant(ctx context.Context, subject authz.Subje
 	return nil
 }
 
-func (p *PermissionService) RemoveGrant(ctx context.Context, resource authz.Resource, action authz.Action, subject authz.Subject, tenantID string, effects []authz.Effect) error {
+func (p *PermissionService) RemoveGrant(ctx context.Context, subject authz.Subject, filter ...authz.FilterFunc) error {
 	enforcer, err := p.enforcer.Get(ctx)
 	if err != nil {
 		return err
 	}
-	var effectStr []string
-	if len(effects) == 0 {
-		effects = []authz.Effect{authz.EffectGrant, authz.EffectForbidden, authz.EffectUnknown}
+	f := &authz.Filter{}
+	for _, filterFunc := range filter {
+		filterFunc(f)
 	}
-	for _, eff := range effects {
-		e, err := mapToEffect(eff)
-		if err != nil {
-			return err
+	var fieldValues []string
+	fieldValues = append(fieldValues, subject.GetIdentity())
+	if f.Resource != nil {
+		fieldValues = append(fieldValues, f.Resource.GetNamespace())
+		fieldValues = append(fieldValues, f.Resource.GetIdentity())
+	} else {
+		//do not filter
+		fieldValues = append(fieldValues, "", "")
+	}
+	if f.Action != nil {
+		fieldValues = append(fieldValues, f.Action.GetIdentity())
+	} else {
+		//do not filter
+		fieldValues = append(fieldValues, "")
+	}
+	//tenant
+	if f.TenantID != nil {
+		fieldValues = append(fieldValues, authz.NormalizeTenantId(ctx, *f.TenantID))
+	} else {
+		//do not filter
+		fieldValues = append(fieldValues, "")
+	}
+	if len(f.Effects) > 0 {
+		var effectStr []string
+		for _, eff := range f.Effects {
+			e, err := mapToEffect(eff)
+			if err != nil {
+				return err
+			}
+			effectStr = append(effectStr, e)
 		}
-		effectStr = append(effectStr, e)
+
+		fieldValues = append(fieldValues, strings.Join(effectStr, ","))
+	} else {
+		//do not filter
+		fieldValues = append(fieldValues, "")
 	}
 
-	_, err = enforcer.RemoveFilteredPolicy(0, subject.GetIdentity(), resource.GetNamespace(), resource.GetIdentity(), action.GetIdentity(), authz.NormalizeTenantId(ctx, tenantID), strings.Join(effectStr, ","))
+	_, err = enforcer.RemoveFilteredPolicy(0, fieldValues...)
 	if err != nil {
 		return err
 	}

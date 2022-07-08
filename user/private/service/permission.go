@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-saas/saas"
 	api2 "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/user/api"
 	pb "github.com/go-saas/kit/user/api/permission/v1"
 	"github.com/go-saas/kit/user/util"
+	"github.com/go-saas/saas"
 
 	"github.com/samber/lo"
 )
@@ -179,8 +179,18 @@ func (s *PermissionService) RemoveSubjectPermission(ctx context.Context, req *pb
 	for i, effect := range req.Effects {
 		effList[i] = util.MapPbEffect2AuthEffect(effect)
 	}
-	if err := s.permissionMgr.RemoveGrant(ctx, authz.NewEntityResource(req.Namespace, req.Resource), authz.ActionStr(req.Action), authz.SubjectStr(req.Subject),
-		req.TenantId, effList); err != nil {
+	var opts []authz.FilterFunc
+	opts = append(opts, authz.WithEffectsFilter(effList...))
+	if req.Action != nil {
+		opts = append(opts, authz.WithActionFilter(authz.ActionStr(*req.Action)))
+	}
+	if req.Resource != nil && req.Namespace != nil {
+		opts = append(opts, authz.WithResourceFilter(authz.NewEntityResource(*req.Namespace, *req.Resource)))
+	}
+	if req.TenantId != nil {
+		opts = append(opts, authz.WithTenantFilter(*req.TenantId))
+	}
+	if err := s.permissionMgr.RemoveGrant(ctx, authz.SubjectStr(req.Subject), opts...); err != nil {
 		return nil, err
 	}
 	return &pb.RemoveSubjectPermissionReply{}, nil

@@ -1312,39 +1312,6 @@ func (m *RemoveSubjectPermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetNamespace()) < 1 {
-		err := RemoveSubjectPermissionRequestValidationError{
-			field:  "Namespace",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetResource()) < 1 {
-		err := RemoveSubjectPermissionRequestValidationError{
-			field:  "Resource",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetAction()) < 1 {
-		err := RemoveSubjectPermissionRequestValidationError{
-			field:  "Action",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if utf8.RuneCountInString(m.GetSubject()) < 1 {
 		err := RemoveSubjectPermissionRequestValidationError{
 			field:  "Subject",
@@ -1356,7 +1323,21 @@ func (m *RemoveSubjectPermissionRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for TenantId
+	if m.Namespace != nil {
+		// no validation rules for Namespace
+	}
+
+	if m.Resource != nil {
+		// no validation rules for Resource
+	}
+
+	if m.Action != nil {
+		// no validation rules for Action
+	}
+
+	if m.TenantId != nil {
+		// no validation rules for TenantId
+	}
 
 	if len(errors) > 0 {
 		return RemoveSubjectPermissionRequestMultiError(errors)

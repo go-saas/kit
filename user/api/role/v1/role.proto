@@ -98,6 +98,10 @@ message Role{
   string id=1;
   string name =2;
   bool is_preserved=3;
+
+  repeated .user.api.permission.v1.Permission acl = 4;
+  repeated .user.api.permission.v1.PermissionDefGroup def_groups=5;
+
 }
 
 message GetRoleRequest{
@@ -119,6 +123,7 @@ message UpdateRoleRequest{
 message UpdateRole{
   string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   string name =2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  repeated UpdateRolePermissionAcl acl =3;
 }
 
 message DeleteRoleRequest{
