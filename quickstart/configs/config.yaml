@@ -24,10 +24,10 @@ data:
         topic: kit
         group: golang
         # If you would like to use kafka
-        # addr: kafka:9092
-        # type: kafka
-        type: pulsar
-        addr: pulsar://pulsar:6650
+        addr: kafka:9092
+        type: kafka
+#        type: pulsar
+#        addr: pulsar://pulsar:6650
       saas:
         group: saas-golang
       user:
@@ -37,13 +37,13 @@ data:
   blobs:
     user:
       provider: os
-      public_url: /
+      public_url: http://localhost
       base_path: "assets/user"
       os:
         dir: ".assets"
     saas:
       provider: os
-      public_url: /
+      public_url: http://localhost
       base_path: "assets/saas"
       os:
         dir: ".assets"

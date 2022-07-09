@@ -119,6 +119,9 @@ func (s *RoleService) UpdateRole(ctx context.Context, req *pb.UpdateRoleRequest)
 	if r == nil {
 		return nil, errors.NotFound("", "")
 	}
+	if r.IsPreserved {
+		return nil, pb.ErrorRolePreserved("")
+	}
 	r.Name = req.Role.Name
 	if err := s.mgr.Update(ctx, r.ID.String(), r, nil); err != nil {
 		return nil, err

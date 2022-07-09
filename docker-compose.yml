@@ -2,7 +2,7 @@ version: '3.7'
 services:
 
   web:
-    image: ${DOCKER_REGISTRY}go-saas-kit-web:${DOCKER_TAG:-latest}
+    image: ${DOCKER_REGISTRY}go-saas-kit-frontend:${DOCKER_TAG:-latest}
     restart: on-failure
 
   api_docs:
