@@ -8,6 +8,7 @@ import "google/protobuf/wrappers.proto";
 import "blob/blob.proto";
 import "event/event.proto";
 import "registry/registry.proto";
+import "redis/redis.proto";
 
 option go_package = "github.com/go-saas/kit/pkg/conf;conf";
 
@@ -74,16 +75,10 @@ message Database {
 message Endpoints{
   map<string, Database> databases = 1;
   map<string,event.Config> events=2;
-  map<string,Redis> redis=3;
+  map<string,redis.Config> redis=3;
   Email email=4;
   Sms sms=5;
 }
-
-message Redis {
-  // Url see redis.ParseURL (https://github.com/go-redis/redis/blob/27f0addeb2e6997bdd2faa1b48f6a989f83c4751/options.go#L225)
-  string url = 1;
-}
-
 
 
 message Security{

@@ -4,9 +4,10 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/google/wire"
 	"github.com/go-saas/saas"
+	"github.com/google/wire"
 	"github.com/samber/lo"
+	"strings"
 )
 
 type Service interface {
@@ -18,7 +19,7 @@ type Service interface {
 	BatchCheckForSubjects(ctx context.Context, requirement RequirementList, subjects ...Subject) (ResultList, error)
 	BatchCheck(ctx context.Context, requirement RequirementList) (ResultList, error)
 
-	FormatError(ctx context.Context, result *Result, subjects ...Subject) error
+	FormatError(ctx context.Context, requirements RequirementList, result *Result, subjects ...Subject) error
 }
 
 type Requirement struct {
@@ -74,7 +75,7 @@ func (a *DefaultAuthorizationService) CheckForSubjects(ctx context.Context, reso
 	if err != nil {
 		return res, err
 	}
-	return res, a.FormatError(ctx, res)
+	return res, a.FormatError(ctx, requirements, res)
 }
 
 func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resource, action Action) (*Result, error) {
@@ -88,7 +89,7 @@ func (a *DefaultAuthorizationService) Check(ctx context.Context, resource Resour
 		return res, err
 	}
 	subjects, _ := a.sr.ResolveFromContext(ctx)
-	return res, a.FormatError(ctx, res, subjects...)
+	return res, a.FormatError(ctx, requirements, res, subjects...)
 }
 
 func (a *DefaultAuthorizationService) check(ctx context.Context, requirements RequirementList, tenant string, subject ...Subject) (ResultList, error) {
@@ -142,7 +143,7 @@ func (a *DefaultAuthorizationService) BatchCheck(ctx context.Context, requiremen
 	return a.check(ctx, requirement, ti.GetId(), subjects...)
 }
 
-func (a *DefaultAuthorizationService) FormatError(ctx context.Context, result *Result, subjects ...Subject) (err error) {
+func (a *DefaultAuthorizationService) FormatError(ctx context.Context, requirements RequirementList, result *Result, subjects ...Subject) (err error) {
 	if len(subjects) == 0 {
 		subjects, err = a.sr.ResolveFromContext(ctx)
 		if err != nil {
@@ -166,7 +167,11 @@ func (a *DefaultAuthorizationService) FormatError(ctx context.Context, result *R
 		}
 	}
 	if authed {
-		//TODO format error
+		a.log.Warnf("subjects: %s are not allowed to %s", strings.Join(lo.Map(subjects, func(t Subject, _ int) string {
+			return t.GetIdentity()
+		}), ","), strings.Join(lo.Map(requirements, func(t *Requirement, _ int) string {
+			return t.Action.GetIdentity() + " " + t.Resource.GetNamespace() + "/" + t.Resource.GetIdentity()
+		}), ","))
 		return errors.Forbidden("", "")
 	}
 	//no claims

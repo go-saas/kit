@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/saas"
+	"github.com/go-saas/saas/data"
+	sgorm "github.com/go-saas/saas/gorm"
 	"github.com/go-saas/uow"
 	gorm2 "github.com/go-saas/uow/gorm"
 	mysql2 "github.com/go-sql-driver/mysql"
-	"github.com/go-saas/saas"
-	"github.com/go-saas/kit/pkg/conf"
-	"github.com/go-saas/saas/data"
-	sgorm "github.com/go-saas/saas/gorm"
 	"github.com/uptrace/opentelemetry-go-extra/otelgorm"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
@@ -191,8 +191,7 @@ func closeDb(d *gorm.DB) error {
 	}
 	cErr := sqlDB.Close()
 	if cErr != nil {
-		//todo logging
-		//logger.Errorf("Gorm db close error: %s", err.Error())
+		klog.Errorf("gorm db close error: %s", err.Error())
 		return cErr
 	}
 	return nil

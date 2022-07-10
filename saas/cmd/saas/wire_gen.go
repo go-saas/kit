@@ -97,7 +97,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, trustedContextValidator, userTenantContrib, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(tenantService, tenantInternalService)
 	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, userTenantContrib, trustedContextValidator, grpcServerRegister, logger)
-	client, err := dal.NewRedis(confData, connName)
+	universalClient, err := dal.NewRedis(confData, connName)
 	if err != nil {
 		cleanup4()
 		cleanup3()
@@ -105,7 +105,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	redisConnOpt := job.NewAsynqClientOpt(client)
+	redisConnOpt := job.NewAsynqClientOpt(universalClient)
 	jobServer := server2.NewJobServer(redisConnOpt, logger)
 	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
 	consumerFactoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler)

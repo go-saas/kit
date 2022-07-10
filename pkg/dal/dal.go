@@ -40,7 +40,6 @@ var (
 		NewBlobFactory,
 
 		NewRedis,
-		wire.Bind(new(redis.UniversalClient), new(*redis.Client)),
 		NewCacheStore,
 		NewStringCacheManager,
 		wire.Bind(new(cache.CacheInterface[string]), new(*cache.Cache[string])),
@@ -78,7 +77,7 @@ func NewEmailer(c *kitconf.Data) email.LazyClient {
 	return email.NewLazyClient(c.Endpoints)
 }
 
-func NewRedis(c *kitconf.Data, name ConnName) (*redis.Client, error) {
+func NewRedis(c *kitconf.Data, name ConnName) (redis.UniversalClient, error) {
 	if c.Endpoints.Redis == nil {
 		panic("redis endpoints required")
 	}

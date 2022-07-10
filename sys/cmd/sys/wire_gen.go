@@ -71,14 +71,14 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	menuService := service.NewMenuService(defaultAuthorizationService, menuRepo, logger)
 	factory := dal.NewBlobFactory(confData)
 	connName := _wireConnNameValue
-	client, err := dal.NewRedis(confData, connName)
+	universalClient, err := dal.NewRedis(confData, connName)
 	if err != nil {
 		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	redisConnOpt := job.NewAsynqClientOpt(client)
+	redisConnOpt := job.NewAsynqClientOpt(universalClient)
 	httpServerRegister := service.NewHttpServerRegister(menuService, defaultAuthorizationService, encodeErrorFunc, factory, confData, redisConnOpt)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, option, logger, trustedContextValidator, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(menuService)

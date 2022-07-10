@@ -220,7 +220,7 @@ func AuthzGuardian(srv authz.Service, requirement authz.RequirementList, encoder
 		}
 		for _, result := range r {
 			if !result.Allowed {
-				encoder(writer, request, srv.FormatError(request.Context(), result))
+				encoder(writer, request, srv.FormatError(request.Context(), requirement, result))
 				return
 			}
 		}

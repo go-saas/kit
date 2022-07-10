@@ -104,7 +104,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	userTokenRepo := data2.NewUserTokenRepo(data4)
 	refreshTokenRepo := data2.NewRefreshTokenRepo(data4)
 	userTenantRepo := data2.NewUserTenantRepo(data4)
-	client, err := dal.NewRedis(confData, connName)
+	universalClient, err := dal.NewRedis(confData, connName)
 	if err != nil {
 		cleanup4()
 		cleanup3()
@@ -112,7 +112,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	storeInterface := dal.NewCacheStore(client)
+	storeInterface := dal.NewCacheStore(universalClient)
 	cache := dal.NewStringCacheManager(storeInterface)
 	emailTokenProvider := biz2.NewEmailTokenProvider(cache)
 	phoneTokenProvider := biz2.NewPhoneTokenProvider(cache)
@@ -150,7 +150,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	httpServerRegister := service2.NewHttpServerRegister(userService, encodeResponseFunc, encodeErrorFunc, accountService, authService, roleService, servicePermissionService, auth, confData, defaultAuthorizationService, factory)
 	menuRepo := data3.NewMenuRepo(dbProvider, eventBus)
 	menuService := service3.NewMenuService(defaultAuthorizationService, menuRepo, logger)
-	redisConnOpt := job.NewAsynqClientOpt(client)
+	redisConnOpt := job.NewAsynqClientOpt(universalClient)
 	serviceHttpServerRegister := service3.NewHttpServerRegister(menuService, defaultAuthorizationService, encodeErrorFunc, factory, confData, redisConnOpt)
 	httpServerRegister2 := service.NewHttpServerRegister(tenantService, factory, defaultAuthorizationService, encodeErrorFunc, tenantInternalService, confData)
 	serverHttpServerRegister := server2.NewHttpServiceRegister(httpServerRegister, serviceHttpServerRegister, httpServerRegister2)
@@ -182,8 +182,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	userMigrationTaskHandler := biz2.NewUserMigrationTaskHandler(seeder, producer)
 	jobServer := server2.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
 	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
-	asynqClient, cleanup6 := job.NewAsynqClient(redisConnOpt)
-	tenantSeedEventHandler := biz2.NewTenantSeedEventHandler(asynqClient)
+	client, cleanup6 := job.NewAsynqClient(redisConnOpt)
+	tenantSeedEventHandler := biz2.NewTenantSeedEventHandler(client)
 	consumerFactoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler, tenantSeedEventHandler)
 	registrar, err := server.NewRegistrar(services)
 	if err != nil {

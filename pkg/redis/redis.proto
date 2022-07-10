@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package redis;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/go-saas/kit/pkg/redis;redis";
+
+message Config {
+  repeated string addrs = 2;
+  optional google.protobuf.Duration read_timeout = 3;
+  optional google.protobuf.Duration write_timeout = 4;
+  optional google.protobuf.StringValue username = 5;
+  optional google.protobuf.StringValue password = 6;
+  optional google.protobuf.Int32Value  db = 7;
+  optional google.protobuf.Int32Value max_retries = 8;
+  optional google.protobuf.Duration min_retry_backoff = 9;
+  optional google.protobuf.Duration max_retry_backoff = 10;
+  optional google.protobuf.Duration dial_timeout = 11;
+  optional string master_name=12;
+}

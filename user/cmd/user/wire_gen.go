@@ -79,14 +79,14 @@ func InitApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	refreshTokenRepo := data.NewRefreshTokenRepo(dataData)
 	userTenantRepo := data.NewUserTenantRepo(dataData)
 	connName := _wireConnNameValue
-	client, err := dal.NewRedis(confData, connName)
+	universalClient, err := dal.NewRedis(confData, connName)
 	if err != nil {
 		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	storeInterface := dal.NewCacheStore(client)
+	storeInterface := dal.NewCacheStore(universalClient)
 	cache := dal.NewStringCacheManager(storeInterface)
 	emailTokenProvider := biz.NewEmailTokenProvider(cache)
 	phoneTokenProvider := biz.NewPhoneTokenProvider(cache)
@@ -127,7 +127,7 @@ func InitApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContrib, trustedContextValidator, refreshTokenProvider, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(userService, accountService, authService, roleService, servicePermissionService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContrib, grpcServerRegister)
-	redisConnOpt := job.NewAsynqClientOpt(client)
+	redisConnOpt := job.NewAsynqClientOpt(universalClient)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
@@ -143,8 +143,8 @@ func InitApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	}
 	userMigrationTaskHandler := biz.NewUserMigrationTaskHandler(seeder, producer)
 	jobServer := server.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
-	asynqClient, cleanup5 := job.NewAsynqClient(redisConnOpt)
-	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(asynqClient)
+	client, cleanup5 := job.NewAsynqClient(redisConnOpt)
+	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(client)
 	consumerFactoryServer := server.NewEventServer(confData, connName, logger, manager, tenantSeedEventHandler)
 	registrar, err := server2.NewRegistrar(services)
 	if err != nil {

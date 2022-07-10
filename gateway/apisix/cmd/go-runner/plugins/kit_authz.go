@@ -56,17 +56,17 @@ func (p *KitAuthz) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 		//do not handle error
 		ctx, _ = contributor.Extract(ctx, headers)
 	}
-
-	resultList, err := authService.BatchCheck(ctx, lo.Map(requirement, func(t Requirement, _ int) *authz.Requirement {
+	requirements := lo.Map(requirement, func(t Requirement, _ int) *authz.Requirement {
 		return authz.NewRequirement(authz.NewEntityResource(t.Namespace, t.Resource), authz.ActionStr(t.Action))
-	}))
+	})
+	resultList, err := authService.BatchCheck(ctx, requirements)
 	if err != nil {
 		abortWithError(err, w)
 		return
 	}
 	for _, result := range resultList {
 		if !result.Allowed {
-			abortWithError(authService.FormatError(ctx, result), w)
+			abortWithError(authService.FormatError(ctx, requirements, result), w)
 			return
 		}
 	}
