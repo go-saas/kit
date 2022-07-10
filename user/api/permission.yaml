@@ -1,6 +1,7 @@
 groups:
 
   - name: "permission.permission"
+    internal: true
     def:
       - name: "permission.permission.read"
         namespace: "permission"
@@ -9,7 +10,7 @@ groups:
         namespace: "permission"
         action: "write"
 
-  - name: "permission.user.user"
+  - name: "permission.user.user.group"
     def:
       - name: "permission.user.user.any"
         namespace: "user.user"
@@ -28,7 +29,7 @@ groups:
         namespace: "user.user"
         action: "delete"
 
-  - name: "permission.user.role"
+  - name: "permission.user.role.group"
     def:
       - name: "permission.user.role.any"
         namespace: "user.role"

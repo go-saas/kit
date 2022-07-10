@@ -3913,6 +3913,9 @@
         },
         "granted": {
           "type": "boolean"
+        },
+        "name": {
+          "type": "string"
         }
       }
     },
@@ -3937,6 +3940,9 @@
         },
         "extra": {
           "type": "object"
+        },
+        "name": {
+          "type": "string"
         }
       }
     },

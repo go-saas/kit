@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-saas/kit/pkg/localize"
 	"strings"
 
 	"github.com/go-saas/kit/sys/api"
@@ -112,7 +113,7 @@ func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest)
 		return nil, errors.NotFound("", "")
 	}
 	if g.IsPreserved {
-		return nil, pb.ErrorMenuPreserved("")
+		return nil, pb.ErrorMenuPreservedLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	MapUpdatePbMenu2Biz(req.Menu, g)
 	if err := s.repo.Update(ctx, g.ID.String(), g, nil); err != nil {
@@ -135,7 +136,7 @@ func (s *MenuService) DeleteMenu(ctx context.Context, req *pb.DeleteMenuRequest)
 		return nil, errors.NotFound("", "")
 	}
 	if g.IsPreserved {
-		return nil, pb.ErrorMenuPreserved("")
+		return nil, pb.ErrorMenuPreservedLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	err = s.repo.Delete(ctx, req.Id)
 	if err != nil {

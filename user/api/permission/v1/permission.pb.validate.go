@@ -2291,6 +2291,8 @@ func (m *PermissionDefGroup) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for Name
+
 	if len(errors) > 0 {
 		return PermissionDefGroupMultiError(errors)
 	}
@@ -2431,6 +2433,8 @@ func (m *PermissionDef) validate(all bool) error {
 	// no validation rules for Action
 
 	// no validation rules for Granted
+
+	// no validation rules for Name
 
 	if len(errors) > 0 {
 		return PermissionDefMultiError(errors)

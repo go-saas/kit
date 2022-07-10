@@ -42,8 +42,8 @@ import (
 
 // Injectors from wire.go:
 
-// initApp init kratos application.
-func initApp(services *conf.Services, security *conf.Security, userConf *conf2.UserConf, confData *conf.Data, logger log.Logger, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
+// InitApp init kratos application.
+func InitApp(services *conf.Services, security *conf.Security, userConf *conf2.UserConf, confData *conf.Data, logger log.Logger, webMultiTenancyOption *http.WebMultiTenancyOption, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbCache, cleanup := gorm.NewDbCache(confData, logger)

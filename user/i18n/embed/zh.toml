@@ -1,2 +1,29 @@
 [InvalidCredentials]
 other = "账号或密码错误"
+[RolePreserved]
+other = "保留角色无法修改或删除"
+[RoleNameDuplicate]
+other = "角色名称已被占用"
+
+
+[permission.user.user.group]
+other = "用户"
+[permission.user.user.read]
+other = "读取用户"
+[permission.user.user.create]
+other = "创建用户"
+[permission.user.user.update]
+other = "更新用户"
+[permission.user.user.delete]
+other = "删除用户"
+
+[permission.user.role.group]
+other = "角色"
+[permission.user.role.read]
+other = "读取角色"
+[permission.user.role.create]
+other = "创建角色"
+[permission.user.role.update]
+other = "更新角色"
+[permission.user.role.delete]
+other = "删除角色"

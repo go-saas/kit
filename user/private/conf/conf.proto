@@ -37,6 +37,5 @@ message UserConf{
 
   optional google.protobuf.StringValue totp_2fa_issuer=9;
 
-  authz.PermissionConf permission=10;
 }
 

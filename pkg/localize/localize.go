@@ -79,3 +79,21 @@ func FromContext(ctx context.Context) *i18n.Localizer {
 	}
 	return nil
 }
+
+func GetMsg(ctx context.Context, id, defaultMsg string, data map[string]interface{}, pluralCount interface{}) string {
+	l := FromContext(ctx)
+	if l == nil {
+		return defaultMsg
+	}
+	msg, err := l.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: id,
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err != nil {
+		return defaultMsg
+	}
+	return msg
+}

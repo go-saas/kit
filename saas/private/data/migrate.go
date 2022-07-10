@@ -17,7 +17,12 @@ func NewMigrate(data *Data) *Migrate {
 		data: data,
 	}
 }
+
 func (m *Migrate) Seed(ctx context.Context, sCtx *seed.Context) error {
+	if len(sCtx.TenantId) > 0 {
+		//host only migrate
+		return nil
+	}
 	//make sure database exists
 	ctx = kitgorm.NewDbGuardianContext(ctx)
 	db := GetDb(ctx, m.data.DbProvider)

@@ -1,2 +1,28 @@
 [InvalidCredentials]
 other = "Invalid Credentials"
+[RolePreserved]
+other = "Can't update or delete preserved role"
+[RoleNameDuplicate]
+other = "Role Name Used"
+
+[permission.user.user.group]
+other = "User"
+[permission.user.user.read]
+other = "Read User"
+[permission.user.user.create]
+other = "Create User"
+[permission.user.user.update]
+other = "Update User"
+[permission.user.user.delete]
+other = "Delete User"
+
+[permission.user.role.group]
+other = "Role"
+[permission.user.role.read]
+other = "Read Role"
+[permission.user.role.create]
+other = "Create Role"
+[permission.user.role.update]
+other = "Update Role"
+[permission.user.role.delete]
+other = "Delete Role"

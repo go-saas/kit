@@ -1,0 +1,19 @@
+[permission.sys.menu.group]
+other = "Menu"
+[permission.sys.menu.read]
+other = "Read Menu"
+[permission.sys.menu.create]
+other = "Create Menu"
+[permission.sys.menu.update]
+other = "Update Menu"
+[permission.sys.menu.delete]
+other = "Delete Menu"
+
+[permission.sys.dev.group]
+other = "Development"
+[permission.sys.dev.jaeger]
+other = "Jaeger"
+[permission.sys.dev.docs]
+other = "Openapi Docs"
+[permission.sys.dev.jobs]
+other = "Background Jobs"

@@ -54,7 +54,9 @@ apisix:
 # generate api proto
 api:
 	buf generate --path ./buf/user --path ./buf/sys --path ./buf/saas --path ./buf/dtm --path ./buf/event
-
+	cd user && $(MAKE) api
+	cd saas && $(MAKE) api
+	cd sys && $(MAKE) api
 .PHONY: generate
 # generate
 generate:

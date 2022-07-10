@@ -1,2 +1,13 @@
 [TenantNotFound]
 other = "Tenant Not Found"
+
+[permission.saas.tenant.group]
+other = "Tenant"
+[permission.saas.tenant.read]
+other = "Read Tenant"
+[permission.saas.tenant.create]
+other = "Create Tenant"
+[permission.saas.tenant.update]
+other = "Update Tenant"
+[permission.saas.tenant.delete]
+other = "Delete Tenant"

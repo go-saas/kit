@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	api2 "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/user/api"
 	pb "github.com/go-saas/kit/user/api/permission/v1"
 	"github.com/go-saas/kit/user/util"
@@ -130,12 +131,12 @@ func (s *PermissionService) ListSubjectPermission(ctx context.Context, req *pb.L
 	var groups []*pb.PermissionDefGroup
 	authz.WalkGroups(len(ti.GetId()) == 0, true, func(group *authz.PermissionDefGroup) {
 		g := &pb.PermissionDefGroup{}
-		mapGroupDef2Pb(group, g)
+		mapGroupDef2Pb(ctx, group, g)
 		groups = append(groups, g)
 		var defs []*pb.PermissionDef
 		group.Walk(len(ti.GetId()) == 0, true, func(def *authz.PermissionDef) {
 			d := &pb.PermissionDef{}
-			mapDef2Pb(def, d)
+			mapDef2Pb(ctx, def, d)
 			defs = append(defs, d)
 		})
 		g.Def = defs
@@ -209,15 +210,17 @@ func (s *PermissionService) findAnyValidateModifyPermissionDef(ctx context.Conte
 	return nil
 }
 
-func mapGroupDef2Pb(a *authz.PermissionDefGroup, b *pb.PermissionDefGroup) {
-	b.DisplayName = a.Name
+func mapGroupDef2Pb(ctx context.Context, a *authz.PermissionDefGroup, b *pb.PermissionDefGroup) {
+	b.Name = a.Name
+	b.DisplayName = localize.GetMsg(ctx, a.Name, a.Name, nil, nil)
 	b.Side = mapSide2Pb(a.Side)
 	b.Priority = a.Priority
 	b.Extra = a.Extra
 }
 
-func mapDef2Pb(a *authz.PermissionDef, b *pb.PermissionDef) {
-	b.DisplayName = a.Name
+func mapDef2Pb(ctx context.Context, a *authz.PermissionDef, b *pb.PermissionDef) {
+	b.Name = a.Name
+	b.DisplayName = localize.GetMsg(ctx, a.Name, a.Name, nil, nil)
 	b.Side = mapSide2Pb(a.Side)
 	b.Extra = a.Extra
 	b.Namespace = a.Namespace

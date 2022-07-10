@@ -10,5 +10,6 @@ enum ErrorReason {
   option (errors.default_code) = 500;
 
   ROLE_PRESERVED = 0 [(errors.code) = 403];
+  ROLE_NAME_DUPLICATE = 1[(errors.code) = 400];
 
 }

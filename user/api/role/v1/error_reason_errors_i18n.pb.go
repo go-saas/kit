@@ -29,3 +29,22 @@ func ErrorRolePreservedLocalized(localizer *i18n.Localizer, data map[string]inte
 	}
 
 }
+
+func ErrorRoleNameDuplicateLocalized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	if localizer == nil {
+		return errors.New(400, ErrorReason_ROLE_NAME_DUPLICATE.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "RoleNameDuplicate",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_ROLE_NAME_DUPLICATE.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_ROLE_NAME_DUPLICATE.String(), "")
+	}
+
+}

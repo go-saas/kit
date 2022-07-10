@@ -186,6 +186,7 @@ message PermissionDefGroup{
   int32 priority=3;
   repeated PermissionDef def=4;
   google.protobuf.Struct extra=5;
+  string name=6;
 }
 
 message PermissionDef{
@@ -196,4 +197,5 @@ message PermissionDef{
   string action=5;
 
   bool granted=6;
+  string name=7;
 }

@@ -1,2 +1,13 @@
 [TenantNotFound]
 other = "未找到该租户"
+
+[permission.saas.tenant.group]
+other = "租户"
+[permission.saas.tenant.read]
+other = "读取租户"
+[permission.saas.tenant.create]
+other = "创建租户"
+[permission.saas.tenant.update]
+other = "更新租户"
+[permission.saas.tenant.delete]
+other = "删除租户"

@@ -1,5 +1,5 @@
 groups:
-  - name: "permission.saas.tenant"
+  - name: "permission.saas.tenant.group"
     side: HOST_ONLY
     def:
       - name: "permission.saas.tenant.any"

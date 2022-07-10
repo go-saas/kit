@@ -27,8 +27,8 @@ import (
 	"github.com/google/wire"
 )
 
-// initApp init kratos application.
-func initApp(*kconf.Services, *kconf.Security, *conf.UserConf, *kconf.Data, log.Logger, *http.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
+// InitApp init kratos application.
+func InitApp(*kconf.Services, *kconf.Security, *conf.UserConf, *kconf.Data, log.Logger, *http.WebMultiTenancyOption, ...grpc.ClientOption) (*kratos.App, func(), error) {
 	panic(wire.Build(authz.ProviderSet, kserver.DefaultProviderSet, jwt.ProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet, job.DefaultProviderSet,
 		sapi.GrpcProviderSet,
 		casbin.PermissionProviderSet, server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))

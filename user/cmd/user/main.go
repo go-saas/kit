@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-saas/kit/event"
-	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
@@ -139,11 +138,7 @@ func main() {
 	}
 	defer shutdown()
 
-	if bc.User != nil && bc.User.Permission != nil {
-		authz.LoadFromConf(bc.User.Permission)
-	}
-
-	app, cleanup, err := initApp(bc.Services, bc.Security, bc.User, bc.Data, logger, server.NewWebMultiTenancyOption(bc.App))
+	app, cleanup, err := InitApp(bc.Services, bc.Security, bc.User, bc.Data, logger, server.NewWebMultiTenancyOption(bc.App))
 	if err != nil {
 		panic(err)
 	}

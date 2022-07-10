@@ -22,6 +22,6 @@ menus:
         is_preserved: true
       - name: "go_saas"
         icon: "ant-design:api-outlined"
-        path: "https://github.com/Goxiaoy/go-saas"
+        path: "https://github.com/go-saas/saas"
         title: "GO-SAAS"
         is_preserved: true

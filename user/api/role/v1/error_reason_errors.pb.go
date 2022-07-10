@@ -22,3 +22,15 @@ func IsRolePreserved(err error) bool {
 func ErrorRolePreserved(format string, args ...interface{}) *errors.Error {
 	return errors.New(403, ErrorReason_ROLE_PRESERVED.String(), fmt.Sprintf(format, args...))
 }
+
+func IsRoleNameDuplicate(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_ROLE_NAME_DUPLICATE.String() && e.Code == 400
+}
+
+func ErrorRoleNameDuplicate(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, ErrorReason_ROLE_NAME_DUPLICATE.String(), fmt.Sprintf(format, args...))
+}

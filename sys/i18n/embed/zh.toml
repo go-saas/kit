@@ -1,0 +1,19 @@
+[permission.sys.menu.group]
+other = "菜单"
+[permission.sys.menu.read]
+other = "读取菜单"
+[permission.sys.menu.create]
+other = "创建菜单"
+[permission.sys.menu.update]
+other = "更新菜单"
+[permission.sys.menu.delete]
+other = "删除菜单"
+
+[permission.sys.dev.group]
+other = "开发"
+[permission.sys.dev.jaeger]
+other = "Jaeger"
+[permission.sys.dev.docs]
+other = "Openapi开发文档"
+[permission.sys.dev.jobs]
+other = "后台任务"

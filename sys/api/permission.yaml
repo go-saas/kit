@@ -1,6 +1,6 @@
 groups:
 
-  - name: "permission.sys.menu"
+  - name: "permission.sys.menu.group"
     side: HOST_ONLY
     def:
       - name: "permission.sys.menu.any"
@@ -20,19 +20,19 @@ groups:
         namespace: "sys.menu"
         action: "delete"
 
-  - name: "permission.dev"
+  - name: "permission.sys.dev.group"
     side: HOST_ONLY
     def:
-      - name: "permission.dev"
+      - name: "permission.sys.dev.any"
         namespace: "dev"
         action: "*"
         internal: true
-      - name: "permission.dev.jaeger"
+      - name: "permission.sys.dev.jaeger"
         namespace: "dev.jaeger"
         action: "*"
-      - name: "permission.dev.docs"
+      - name: "permission.sys.dev.docs"
         namespace: "dev.docs"
         action: "*"
-      - name: "permission.dev.jobs"
+      - name: "permission.sys.dev.jobs"
         namespace: "dev.jobs"
         action: "*"
