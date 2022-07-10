@@ -8,11 +8,11 @@ import (
 )
 
 type UserRoleContrib struct {
-	userRepo biz.UserRepo
+	um *biz.UserManager
 }
 
-func NewUserRoleContrib(userRepo biz.UserRepo) *UserRoleContrib {
-	return &UserRoleContrib{userRepo: userRepo}
+func NewUserRoleContrib(um *biz.UserManager) *UserRoleContrib {
+	return &UserRoleContrib{um: um}
 }
 
 func (u *UserRoleContrib) Process(ctx context.Context, subject authz.Subject) ([]authz.Subject, error) {
@@ -20,16 +20,14 @@ func (u *UserRoleContrib) Process(ctx context.Context, subject authz.Subject) ([
 		if us.GetUserId() != "" {
 			//TODO ?
 			ctx = data.NewMultiTenancyDataFilter(ctx, false)
-			user, err := u.userRepo.FindByID(ctx, us.GetUserId())
+			roles, err := u.um.GetUserRoleIds(ctx, us.GetUserId(), false)
 			if err != nil {
 				return nil, err
 			}
-			if user == nil {
-				return nil, nil
-			}
-			roleSubjects := make([]authz.Subject, len(user.Roles))
-			for i, r := range user.Roles {
-				roleSubjects[i] = authz.NewRoleSubject(r.ID.String())
+
+			roleSubjects := make([]authz.Subject, len(roles))
+			for i, r := range roles {
+				roleSubjects[i] = authz.NewRoleSubject(r.RoleId)
 			}
 			return roleSubjects, nil
 		}

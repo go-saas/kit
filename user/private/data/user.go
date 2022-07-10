@@ -2,11 +2,11 @@ package data
 
 import (
 	"errors"
-	"github.com/go-saas/saas"
 	gorm2 "github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/kit/user/private/biz"
-
+	"github.com/go-saas/saas"
+	"github.com/google/uuid"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"gorm.io/gorm"
@@ -216,9 +216,10 @@ func (u *UserRepo) GetToken(ctx context.Context, user *biz.User, loginProvider s
 	return &t.Value, nil
 }
 
-func (u *UserRepo) GetRoles(ctx context.Context, user *biz.User) ([]biz.Role, error) {
+func (u *UserRepo) GetRoles(ctx context.Context, userId string) ([]biz.Role, error) {
 	db := u.GetDb(ctx)
 	var ret []biz.Role
+	user := &biz.User{UIDBase: gorm2.UIDBase{ID: uuid.MustParse(userId)}}
 	if err := db.Model(user).Association("Roles").Find(&ret); err != nil {
 		return nil, err
 	} else {

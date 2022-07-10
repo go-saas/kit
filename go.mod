@@ -9,7 +9,7 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v0.6.7
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-kratos/kratos/v2 v2.3.1
-	github.com/go-saas/saas v0.5.1-0.20220626074657-d010c1b28e67
+	github.com/go-saas/saas v0.5.1-0.20220710115728-a4dbe28e869a
 	github.com/go-saas/uow v0.0.4
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
@@ -30,7 +30,7 @@ require (
 	google.golang.org/protobuf v1.28.0
 	gorm.io/driver/mysql v1.3.3
 	gorm.io/driver/sqlite v1.3.4
-	gorm.io/gorm v1.23.6
+	gorm.io/gorm v1.23.8
 )
 
 require (
@@ -195,4 +195,5 @@ require (
 replace (
 	github.com/99designs/keyring => github.com/99designs/keyring v1.2.1
 	github.com/hibiken/asynqmon => github.com/Goxiaoy/asynqmon v0.7.2-0.20220620161318-80231130441b
+	gorm.io/gorm => github.com/Goxiaoy/gorm v1.23.4-0.20220710130843-d9eb6dfe0b2d
 )

@@ -2,17 +2,18 @@ package biz
 
 import (
 	"context"
+	"fmt"
 	"github.com/eko/gocache/v3/cache"
 	"github.com/go-kratos/kratos/v2/log"
+	cache2 "github.com/go-saas/kit/pkg/cache"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/server"
 	v12 "github.com/go-saas/kit/user/api/auth/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
-	cache2 "github.com/go-saas/kit/user/private/cache"
 	"github.com/go-saas/kit/user/private/conf"
 	"github.com/go-saas/saas"
 	"github.com/google/uuid"
-
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"time"
 )
@@ -29,7 +30,8 @@ type UserManager struct {
 	userTenantRepo   UserTenantRepo
 	emailToken       *EmailTokenProvider
 	phoneToken       *PhoneTokenProvider
-	forgetPwdTwoStep *TwoStepTokenProvider[*cache2.ForgetPasswordTwoStepTokenPayload]
+	forgetPwdTwoStep *TwoStepTokenProvider[*ForgetPasswordTwoStepTokenPayload]
+	userRoleCache    *cache2.Helper[*UserRoleCacheItem]
 	log              log.Logger
 }
 
@@ -59,11 +61,11 @@ func NewUserManager(
 		userTenantRepo:   userTenantRepo,
 		emailToken:       emailToken,
 		phoneToken:       phoneToken,
-		forgetPwdTwoStep: NewTwoStepTokenProvider(func() *cache2.ForgetPasswordTwoStepTokenPayload {
-			return &cache2.ForgetPasswordTwoStepTokenPayload{}
+		forgetPwdTwoStep: NewTwoStepTokenProvider(func() *ForgetPasswordTwoStepTokenPayload {
+			return &ForgetPasswordTwoStepTokenPayload{}
 		}, strCache),
-
-		log: log.With(logger, "module", "/biz/user_manager")}
+		userRoleCache: cache2.NewHelper[*UserRoleCacheItem](cache2.NewProtoCache(func() *UserRoleCacheItem { return &UserRoleCacheItem{} }, strCache)),
+		log:           log.With(logger, "module", "/biz/user_manager")}
 }
 
 func (um *UserManager) List(ctx context.Context, query *v1.ListUsersRequest) ([]*User, error) {
@@ -248,7 +250,7 @@ func (um *UserManager) VerifyPhoneForgetPasswordToken(ctx context.Context, phone
 
 func (um *UserManager) GenerateForgetPasswordToken(ctx context.Context, user *User) (string, error) {
 	duration := 5 * time.Minute
-	return um.forgetPwdTwoStep.Generate(ctx, RecoverChangePasswordPurpose, &cache2.ForgetPasswordTwoStepTokenPayload{UserId: user.ID.String()}, duration)
+	return um.forgetPwdTwoStep.Generate(ctx, RecoverChangePasswordPurpose, &ForgetPasswordTwoStepTokenPayload{UserId: user.ID.String()}, duration)
 }
 
 func (um *UserManager) ChangePasswordByToken(ctx context.Context, token, newPwd string) error {
@@ -277,8 +279,32 @@ func (um *UserManager) retrieveTwoStepForgetPasswordToken(ctx context.Context, t
 	return user, nil
 }
 
-func (um *UserManager) GetRoles(ctx context.Context, user *User) ([]Role, error) {
-	return um.userRepo.GetRoles(ctx, user)
+func (um *UserManager) GetRoles(ctx context.Context, userId string) ([]Role, error) {
+	return um.userRepo.GetRoles(ctx, userId)
+}
+
+func (um *UserManager) GetUserRoleIds(ctx context.Context, userId string, currentTenantOnly bool) ([]*UserRoleCacheItem_UserRole, error) {
+	item, err, _ := um.userRoleCache.GetOrSet(ctx, fmt.Sprintf("userrole:%s", userId), func(ctx context.Context) (*UserRoleCacheItem, error) {
+		roles, err := um.GetRoles(ctx, userId)
+		if err != nil {
+			return nil, err
+		}
+		return &UserRoleCacheItem{Role: lo.Map(roles, func(t Role, _ int) *UserRoleCacheItem_UserRole {
+			return &UserRoleCacheItem_UserRole{
+				RoleId:   t.ID.String(),
+				TenantId: t.TenantId.String,
+			}
+		})}, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	roles := item.Role
+	if currentTenantOnly {
+		ct, _ := saas.FromCurrentTenant(ctx)
+		roles = lo.Filter(roles, func(t *UserRoleCacheItem_UserRole, _ int) bool { return t.TenantId == ct.GetId() })
+	}
+	return roles, nil
 }
 
 func (um *UserManager) UpdateRoles(ctx context.Context, user *User, roles []Role) error {

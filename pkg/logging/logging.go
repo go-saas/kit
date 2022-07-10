@@ -8,7 +8,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	kerrors "github.com/go-saas/kit/pkg/errors"
 	"time"
 )
 
@@ -109,7 +108,7 @@ func extractArgs(req interface{}) string {
 // extractError returns the string of the error
 func extractError(err error) (log.Level, string) {
 	if err != nil {
-		return log.LevelError, string(kerrors.Stack(2))
+		return log.LevelError, ""
 	}
 	return log.LevelInfo, ""
 }

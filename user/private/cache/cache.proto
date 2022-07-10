@@ -1,9 +1,0 @@
-syntax = "proto3";
-package user.private.cache;
-
-option go_package = "github.com/go-saas/kit/user/private/cache;cache";
-
-
-message ForgetPasswordTwoStepTokenPayload {
-  string user_id=1;
-}

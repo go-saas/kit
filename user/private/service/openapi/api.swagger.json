@@ -2744,6 +2744,17 @@
         }
       }
     },
+    "userv1UserRole": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "v1AddSubjectPermissionRequest": {
       "type": "object",
       "properties": {
@@ -3241,7 +3252,7 @@
         "roles": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/v1UserRole"
+            "$ref": "#/definitions/userv1UserRole"
           }
         }
       }
@@ -4218,17 +4229,6 @@
           "items": {
             "$ref": "#/definitions/v1UserFilter"
           }
-        }
-      }
-    },
-    "v1UserRole": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
         }
       }
     },

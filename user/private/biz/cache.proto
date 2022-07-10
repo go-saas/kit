@@ -1,0 +1,16 @@
+syntax = "proto3";
+package user.private.cache;
+
+option go_package = "github.com/go-saas/kit/user/private/biz;biz";
+
+message ForgetPasswordTwoStepTokenPayload {
+  string user_id=1;
+}
+
+message UserRoleCacheItem{
+  message UserRole{
+    string role_id=1;
+    string tenant_id=2;
+  }
+  repeated UserRole role=1;
+}

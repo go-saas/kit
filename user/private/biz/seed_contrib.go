@@ -12,6 +12,7 @@ const (
 	AdminUsernameKey = "admin_username"
 	AdminEmailKey    = "admin_email"
 	AdminPasswordKey = "admin_password"
+	AdminUserId      = "admin_user_id"
 )
 
 type RoleSeed struct {
@@ -56,13 +57,22 @@ func NewUserSeed(um *UserManager, rm *RoleManager) *UserSeed {
 func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	adminUsername := ""
 	adminEmail := ""
+	adminId := ""
 	var admin *User
 	var err error
 	var ok bool
+	var shouldCreate = false
+
 	if adminUsername, ok = sCtx.Extra[AdminUsernameKey].(string); ok {
+		shouldCreate = true
 		admin, err = u.um.FindByName(ctx, adminUsername)
 	} else if adminEmail, ok = sCtx.Extra[AdminEmailKey].(string); ok {
+		shouldCreate = true
 		admin, err = u.um.FindByEmail(ctx, adminEmail)
+	}
+	if adminId, ok = sCtx.Extra[AdminUserId].(string); ok {
+		//attach existing user as tenant amin
+		admin, err = u.um.FindByID(ctx, adminId)
 	}
 	if err != nil {
 		return err
@@ -70,12 +80,8 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	adminPassword := ""
 	adminPassword, _ = sCtx.Extra[AdminPasswordKey].(string)
 
-	if len(adminUsername) == 0 && len(adminEmail) == 0 {
-		//can not seed admin
-		return nil
-	}
 	//seed admin
-	if admin == nil {
+	if admin == nil && shouldCreate {
 		//seed
 		name := adminUsername
 		admin = &User{
@@ -91,8 +97,12 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 			return err
 		}
 	}
+	if admin == nil {
+		//can not create
+		return nil
+	}
 	//add into role
-	roles, err := u.um.GetRoles(ctx, admin)
+	roles, err := u.um.GetRoles(ctx, admin.ID.String())
 	if err != nil {
 		return err
 	}

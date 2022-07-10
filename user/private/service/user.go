@@ -291,7 +291,7 @@ func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleReque
 	if u == nil {
 		return nil, errors2.NotFound("", "")
 	}
-	roles, err := s.um.GetRoles(ctx, u)
+	roles, err := s.um.GetRoles(ctx, u.ID.String())
 	if err != nil {
 		return nil, err
 	}

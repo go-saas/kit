@@ -12,6 +12,11 @@ import (
 
 type Helper[T any] struct {
 	cache.CacheInterface[T]
+	group singleflight.Group
+}
+
+func NewHelper[T any](c cache.CacheInterface[T]) *Helper[T] {
+	return &Helper[T]{CacheInterface: c}
 }
 
 type option struct {
@@ -21,12 +26,11 @@ type option struct {
 
 type Option func(*option)
 
+// WithGroup pass nil to disable singleflight.Group
 func WithGroup(g ...*singleflight.Group) Option {
 	return func(o *option) {
 		if len(g) > 0 {
 			o.group = g[0]
-		} else {
-			o.group = &singleflight.Group{}
 		}
 	}
 }
@@ -38,7 +42,7 @@ func WithStoreOption(opt ...store.Option) Option {
 }
 
 func (h *Helper[T]) GetOrSet(ctx context.Context, key any, fn func(ctx context.Context) (T, error), opts ...Option) (v T, err error, set bool) {
-	opt := &option{}
+	opt := &option{group: &h.group}
 	for _, o := range opts {
 		o(opt)
 	}

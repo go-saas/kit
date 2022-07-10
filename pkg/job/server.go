@@ -2,10 +2,8 @@ package job
 
 import (
 	"context"
-	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
-	kerrors "github.com/go-saas/kit/pkg/errors"
 	"github.com/go-saas/lazy"
 	"github.com/hibiken/asynq"
 )
@@ -36,18 +34,6 @@ func NewServer(opt asynq.RedisConnOpt, opts ...ServerOption) *Server {
 	return ret
 }
 
-func Stack() asynq.MiddlewareFunc {
-	return func(handler asynq.Handler) asynq.Handler {
-		return asynq.HandlerFunc(func(ctx context.Context, task *asynq.Task) error {
-			err := handler.ProcessTask(ctx, task)
-			if err == nil {
-				return err
-			}
-			return fmt.Errorf("%w\n,%s", err, kerrors.Stack(0))
-		})
-	}
-}
-
 func Logging(logger klog.Logger) asynq.MiddlewareFunc {
 	return func(handler asynq.Handler) asynq.Handler {
 		return asynq.HandlerFunc(func(ctx context.Context, task *asynq.Task) error {
@@ -55,8 +41,7 @@ func Logging(logger klog.Logger) asynq.MiddlewareFunc {
 			if err != nil {
 				_ = klog.WithContext(ctx, logger).Log(klog.LevelError,
 					klog.DefaultMessageKey, err.Error(),
-					"task", task.Type(),
-					"stack", kerrors.Stack(0))
+					"task", task.Type())
 			} else {
 				_ = klog.WithContext(ctx, logger).Log(klog.LevelInfo,
 					"task", task.Type())

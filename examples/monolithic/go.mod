@@ -7,7 +7,7 @@ replace github.com/go-saas/kit => ../../
 require (
 	github.com/go-kratos/kratos/v2 v2.3.1
 	github.com/go-saas/kit v0.0.0-00010101000000-000000000000
-	github.com/go-saas/saas v0.5.1-0.20220626074657-d010c1b28e67
+	github.com/go-saas/saas v0.5.1-0.20220710115728-a4dbe28e869a
 	github.com/go-saas/uow v0.0.4
 	github.com/google/wire v0.5.0
 	github.com/goxiaoy/go-eventbus v0.0.5
@@ -171,7 +171,7 @@ require (
 	gorm.io/driver/postgres v1.3.4 // indirect
 	gorm.io/driver/sqlite v1.3.4 // indirect
 	gorm.io/driver/sqlserver v1.3.2 // indirect
-	gorm.io/gorm v1.23.6 // indirect
+	gorm.io/gorm v1.23.8 // indirect
 	gorm.io/plugin/dbresolver v1.1.0 // indirect
 	k8s.io/apimachinery v0.23.5 // indirect
 	modernc.org/libc v1.15.1 // indirect
@@ -183,4 +183,5 @@ require (
 replace (
 	github.com/99designs/keyring => github.com/99designs/keyring v1.2.1
 	github.com/hibiken/asynqmon => github.com/Goxiaoy/asynqmon v0.7.2-0.20220620161318-80231130441b
+	gorm.io/gorm => github.com/Goxiaoy/gorm v1.23.4-0.20220710130843-d9eb6dfe0b2d
 )
