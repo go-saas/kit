@@ -49,7 +49,6 @@ func NewHTTPServer(c *conf.Services,
 		logging.Server(logger),
 		metrics.Server(),
 		validate.Validator(),
-		//TODO combine i18n
 		localize.I18N(),
 		jwt.ServerExtractAndAuth(tokenizer, logger),
 		sapi.ServerPropagation(apiOpt, validator, logger),

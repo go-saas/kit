@@ -6,6 +6,7 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	api2 "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/errors"
+	"github.com/go-saas/kit/pkg/localize"
 	v12 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/go-saas/saas"
 	"io"
@@ -357,13 +358,12 @@ func (s *UserService) CheckUserTenantInternal(ctx context.Context, userId, tenan
 	//super permission check
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource("*", "*"), authz.AnyAction); err != nil {
 		//no permission
-
 		if errors.UnRecoverableError(err) {
 			//internal server error
 			s.logger.Errorf("no recover error:%v", err)
 			return false, err
 		}
-		return false, v12.ErrorTenantForbidden("")
+		return false, v12.ErrorTenantForbiddenLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	return true, nil
 }

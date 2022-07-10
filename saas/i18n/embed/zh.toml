@@ -1,5 +1,9 @@
 [TenantNotFound]
 other = "未找到该租户"
+[DuplicateTenantName]
+other = "租户名称已被使用"
+[TenantForbidden]
+other = "租户未授权"
 
 [permission.saas.tenant.group]
 other = "租户"

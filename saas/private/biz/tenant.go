@@ -5,6 +5,7 @@ import (
 	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/pkg/data"
 	gorm2 "github.com/go-saas/kit/pkg/gorm"
+	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	v12 "github.com/go-saas/kit/saas/event/v1"
@@ -110,7 +111,7 @@ func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adm
 	}
 	if dbEntity != nil {
 		// duplicate
-		return v1.ErrorDuplicateTenantName("%v is used", entity.Name)
+		return v1.ErrorDuplicateTenantNameLocalized(localize.FromContext(ctx), map[string]interface{}{"name": entity.Name}, nil)
 	}
 	//ensure id generate
 	entity.UIDBase.ID = uuid.New()
@@ -148,7 +149,7 @@ func (t *TenantUseCase) Update(ctx context.Context, entity *Tenant, p query.Sele
 	}
 	if dbEntity != nil && dbEntity.ID != entity.ID {
 		// duplicate
-		return v1.ErrorDuplicateTenantName("%v is used", entity.Name)
+		return v1.ErrorDuplicateTenantNameLocalized(localize.FromContext(ctx), map[string]interface{}{"name": entity.Name}, nil)
 	}
 	return t.repo.Update(ctx, entity.ID.String(), entity, p)
 }

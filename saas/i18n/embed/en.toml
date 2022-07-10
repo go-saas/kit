@@ -1,5 +1,9 @@
 [TenantNotFound]
 other = "Tenant Not Found"
+[DuplicateTenantName]
+other = "Tenant Name Used"
+[TenantForbidden]
+other = "Tenant Forbidden"
 
 [permission.saas.tenant.group]
 other = "Tenant"

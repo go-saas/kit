@@ -4,6 +4,8 @@ other = "Invalid Credentials"
 other = "Can't update or delete preserved role"
 [RoleNameDuplicate]
 other = "Role Name Used"
+[PasswordInsufficientStrength]
+other = "Password too weak"
 
 [permission.user.user.group]
 other = "User"

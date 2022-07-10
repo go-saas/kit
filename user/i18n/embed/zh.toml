@@ -4,7 +4,8 @@ other = "账号或密码错误"
 other = "保留角色无法修改或删除"
 [RoleNameDuplicate]
 other = "角色名称已被占用"
-
+[PasswordInsufficientStrength]
+other = "密码强度不够"
 
 [permission.user.user.group]
 other = "用户"

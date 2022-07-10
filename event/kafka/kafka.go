@@ -149,7 +149,6 @@ func (k *Consumer) Process(ctx context.Context, handler event.ConsumerHandler) e
 			// recreated to get the new claims
 			if err := k.ConsumerGroup.Consume(ctx, topics, newConsumerGroupHandler(k.group, handler)); err != nil {
 				log.Error(err)
-				//TODO panic?
 			}
 			// check if context was cancelled, signaling that the Consumer should stop
 			if ctx.Err() != nil {

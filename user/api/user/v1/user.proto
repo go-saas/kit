@@ -103,6 +103,7 @@ service UserService{
     };
   }
 
+
   //CheckUserTenant internal api for checking whether user is allowed in this tenant
   rpc CheckUserTenant(CheckUserTenantRequest)returns(CheckUserTenantReply){
 
