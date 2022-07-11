@@ -3,17 +3,15 @@ package biz
 import (
 	"context"
 	"github.com/go-saas/kit/event"
-	gorm2 "github.com/go-saas/kit/pkg/gorm"
 	v12 "github.com/go-saas/kit/user/event/v1"
 	"github.com/go-saas/saas/gorm"
 	"github.com/google/uuid"
 )
 
 type UserRole struct {
-	gorm2.UIDBase
-	gorm.MultiTenancy
-	UserID uuid.UUID `gorm:"type:char(36)"`
-	RoleID uuid.UUID `gorm:"type:char(36)"`
+	gorm.MultiTenancy `gorm:"primaryKey"`
+	UserID            uuid.UUID `gorm:"type:char(36);primaryKey"`
+	RoleID            uuid.UUID `gorm:"type:char(36);primaryKey"`
 }
 
 type UserRoleChangeEventHandler event.ConsumerHandler

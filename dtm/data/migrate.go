@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/dtm-labs/dtmcli/dtmimp"
 	"github.com/go-saas/kit/pkg/dal"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/saas/seed"
 	"gorm.io/gorm"
 	"io/ioutil"
@@ -32,6 +33,7 @@ var _ seed.Contrib = (*Migrator)(nil)
 func (m *Migrator) Seed(ctx context.Context, sCtx *seed.Context) error {
 	skipDrop := true
 	if len(sCtx.TenantId) == 0 {
+		ctx = kitgorm.NewDbGuardianContext(ctx)
 		//only apply for host
 		//get db kind
 		db := GetDb(ctx, m.provider, m.connName)
