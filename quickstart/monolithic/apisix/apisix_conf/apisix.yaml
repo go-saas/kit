@@ -32,7 +32,9 @@ routes:
         conf:
           - name: "kit_authz"
             value: "{\"requirement\":[{\"namespace\":\"dev.events.kafka\",\"resource\":\"*\",\"action\":\"*\"}]}"
-
+      response-rewrite:
+        headers:
+          X-Frame-Options: ""
   -
     uri: /v1/sys/*
     upstream_id: sys-http
