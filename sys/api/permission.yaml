@@ -36,3 +36,6 @@ groups:
       - name: "permission.sys.dev.jobs"
         namespace: "dev.jobs"
         action: "*"
+      - name: "permission.sys.dev.events.kafka"
+        namespace: "dev.events.kafka"
+        action: "*"

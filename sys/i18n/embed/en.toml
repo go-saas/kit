@@ -17,3 +17,5 @@ other = "Jaeger"
 other = "Openapi Docs"
 [permission.sys.dev.jobs]
 other = "Background Jobs"
+[permission.sys.dev.events.kafka]
+other = "Kafka"

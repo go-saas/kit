@@ -45,6 +45,17 @@ menus:
           - namespace: "dev.jobs"
             resource: "*"
             action: "*"
+      - name: "events-kafka"
+        icon: "ant-design:eye-outlined"
+        path: "/dev/events-kafka"
+        component: "IFRAME"
+        iframe: "/kafka-ui"
+        is_preserved: true
+        title: "dev.events.kafka"
+        requirement:
+          - namespace: "dev.events.kafka"
+            resource: "*"
+            action: "*"
   - name: "saas"
     path: "/saas"
     component: "LAYOUT"

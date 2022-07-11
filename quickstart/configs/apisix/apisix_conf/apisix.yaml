@@ -25,6 +25,15 @@ routes:
             value: "{\"requirement\":[{\"namespace\":\"dev.jaeger\",\"resource\":\"*\",\"action\":\"*\"}]}"
 
   -
+    uri: /kafka-ui*
+    upstream_id: kafka-ui
+    plugins:
+      ext-plugin-pre-req:
+        conf:
+          - name: "kit_authz"
+            value: "{\"requirement\":[{\"namespace\":\"dev.events.kafka\",\"resource\":\"*\",\"action\":\"*\"}]}"
+
+  -
     uri: /v1/sys/*
     upstream_id: sys-http
 
@@ -73,6 +82,11 @@ upstreams:
   - id: jaeger
     nodes:
       "jaeger-all-in-one:16686": 1
+    type: roundrobin
+
+  - id: kafka-ui
+    nodes:
+      "kafka-ui:8080": 1
     type: roundrobin
 
 
