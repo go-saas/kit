@@ -64,8 +64,8 @@ func newApp(
 	_ *dtmapi.Init,
 	r registry.Registrar,
 ) *kratos.App {
+	ctx := event.NewProducerContext(context.Background(), producer)
 	if ifSeed {
-		ctx := event.NewProducerContext(context.Background(), producer)
 		if err := seeder.Seed(ctx,
 			seed.AddHost(),
 			seed.SetExtra(biz.AdminUsernameKey, c.Admin.GetUsername()),
@@ -76,6 +76,7 @@ func newApp(
 	}
 
 	return kratos.New(
+		kratos.Context(ctx),
 		kratos.ID(id),
 		kratos.Name(Name),
 		kratos.Version(Version),

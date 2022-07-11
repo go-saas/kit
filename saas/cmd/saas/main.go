@@ -43,13 +43,15 @@ func init() {
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.ConsumerFactoryServer, seeder seed.Seeder) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.ConsumerFactoryServer, seeder seed.Seeder, producer event.Producer) *kratos.App {
+	ctx := event.NewProducerContext(context.Background(), producer)
 	if ifSeed {
-		if err := seeder.Seed(context.Background(), seed.AddHost()); err != nil {
+		if err := seeder.Seed(ctx, seed.AddHost()); err != nil {
 			panic(err)
 		}
 	}
 	return kratos.New(
+		kratos.Context(ctx),
 		kratos.ID(id),
 		kratos.Name(Name),
 		kratos.Version(Version),

@@ -49,6 +49,7 @@ func (h *Helper[T]) GetOrSet(ctx context.Context, key any, fn func(ctx context.C
 	run := func() (v T, err error, set bool) {
 		v, err = h.Get(ctx, key)
 		if err == nil {
+			//resolve from cache
 			return
 		}
 		if (store.NotFound{}).Is(err) {
@@ -66,17 +67,17 @@ func (h *Helper[T]) GetOrSet(ctx context.Context, key any, fn func(ctx context.C
 		}
 		return
 	}
-
 	if opt.group == nil {
 		return run()
 	}
 	//run into group
 	keyStr := h.getCacheKey(key)
-
-	_, err, _ = opt.group.Do(keyStr, func() (interface{}, error) {
+	var value interface{}
+	value, err, _ = opt.group.Do(keyStr, func() (interface{}, error) {
 		v, err, set = run()
 		return v, err
 	})
+	v = value.(T)
 	return
 }
 

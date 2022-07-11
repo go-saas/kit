@@ -96,8 +96,17 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	menuSeed := biz.NewMenuSeed(dbProvider, menuRepo)
 	seeding := server.NewSeeding(manager, migrate, menuSeed)
 	seeder := server.NewSeeder(tenantStore, seeding)
-	app := newApp(logger, httpServer, grpcServer, jobServer, seeder)
+	producer, cleanup5, err := dal.NewEventSender(confData, connName)
+	if err != nil {
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, producer)
 	return app, func() {
+		cleanup5()
 		cleanup4()
 		cleanup3()
 		cleanup2()

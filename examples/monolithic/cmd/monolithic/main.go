@@ -61,8 +61,8 @@ func newApp(
 	producer event.Producer,
 	r registry.Registrar,
 ) *kratos.App {
+	ctx := event.NewProducerContext(context.Background(), producer)
 	if ifSeed {
-		ctx := event.NewProducerContext(context.Background(), producer)
 		extra := map[string]interface{}{}
 		if len(seedPath) > 0 {
 			extra[sysbiz.SeedPathKey] = seedPath
@@ -74,6 +74,7 @@ func newApp(
 		}
 	}
 	return kratos.New(
+		kratos.Context(ctx),
 		kratos.ID(id),
 		kratos.Name(Name),
 		kratos.Version(Version),

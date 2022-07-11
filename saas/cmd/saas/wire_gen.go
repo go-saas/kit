@@ -105,8 +105,16 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	migrate := data.NewMigrate(dataData)
 	seeding := server2.NewSeeding(manager, migrate)
 	seeder := server2.NewSeeder(tenantStore, seeding)
-	app := newApp(logger, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder)
+	producer, cleanup4, err := dal.NewEventSender(confData, connName)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	app := newApp(logger, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, producer)
 	return app, func() {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()

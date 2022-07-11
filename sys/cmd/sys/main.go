@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config/env"
+	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
@@ -47,17 +48,26 @@ func init() {
 	flag.StringVar(&seedPath, biz.SeedPathKey, "", "menu seed file path")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, js *job.Server, seeder seed.Seeder) *kratos.App {
+func newApp(
+	logger log.Logger,
+	hs *http.Server,
+	gs *grpc.Server,
+	js *job.Server,
+	seeder seed.Seeder,
+	producer event.Producer,
+) *kratos.App {
+	ctx := event.NewProducerContext(context.Background(), producer)
 	if ifSeed {
 		extra := map[string]interface{}{}
 		if len(seedPath) > 0 {
 			extra[biz.SeedPathKey] = seedPath
 		}
-		if err := seeder.Seed(context.Background(), seed.AddHost(), seed.WithExtra(extra)); err != nil {
+		if err := seeder.Seed(ctx, seed.AddHost(), seed.WithExtra(extra)); err != nil {
 			panic(err)
 		}
 	}
 	return kratos.New(
+		kratos.Context(ctx),
 		kratos.ID(id),
 		kratos.Name(Name),
 		kratos.Version(Version),
