@@ -772,6 +772,10 @@
         "adminPassword": {
           "type": "string",
           "x-nullable": true
+        },
+        "adminUserId": {
+          "type": "string",
+          "x-nullable": true
         }
       },
       "required": [

@@ -15,6 +15,7 @@ type User struct {
 	gorm.UIDBase        `json:",squash"`
 	concurrency.Version `gorm:"type:char(36)"`
 	gorm.AuditedModel
+	gorm.AggRoot
 
 	DeletedAt gorm2.DeletedAt `gorm:"index"`
 

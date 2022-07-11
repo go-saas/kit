@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"github.com/eko/gocache/v3/cache"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-saas/kit/event"
 	cache2 "github.com/go-saas/kit/pkg/cache"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/server"
 	v12 "github.com/go-saas/kit/user/api/auth/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
+	v13 "github.com/go-saas/kit/user/event/v1"
 	"github.com/go-saas/kit/user/private/conf"
 	"github.com/go-saas/saas"
 	"github.com/google/uuid"
@@ -283,8 +285,16 @@ func (um *UserManager) GetRoles(ctx context.Context, userId string) ([]Role, err
 	return um.userRepo.GetRoles(ctx, userId)
 }
 
+func getUserRoleCacheKey(userId string) string {
+	return fmt.Sprintf("userrole:%s", userId)
+}
+
+func (um *UserManager) RemoveUserRoleCache(ctx context.Context, userId string) error {
+	return um.userRoleCache.Delete(ctx, getUserRoleCacheKey(userId))
+}
+
 func (um *UserManager) GetUserRoleIds(ctx context.Context, userId string, currentTenantOnly bool) ([]*UserRoleCacheItem_UserRole, error) {
-	item, err, _ := um.userRoleCache.GetOrSet(ctx, fmt.Sprintf("userrole:%s", userId), func(ctx context.Context) (*UserRoleCacheItem, error) {
+	item, err, _ := um.userRoleCache.GetOrSet(ctx, getUserRoleCacheKey(userId), func(ctx context.Context) (*UserRoleCacheItem, error) {
 		roles, err := um.GetRoles(ctx, userId)
 		if err != nil {
 			return nil, err
@@ -308,23 +318,31 @@ func (um *UserManager) GetUserRoleIds(ctx context.Context, userId string, curren
 }
 
 func (um *UserManager) UpdateRoles(ctx context.Context, user *User, roles []Role) error {
+	e, _ := event.NewMessageFromProto(&v13.UserRoleChangeEvent{UserId: user.ID.String()})
+	user.AppendEvent(e)
 	if err := um.userRepo.UpdateRoles(ctx, user, roles); err != nil {
 		return err
 	}
 	return nil
 }
+
 func (um *UserManager) AddToRole(ctx context.Context, user *User, role *Role) error {
+	e, _ := event.NewMessageFromProto(&v13.UserRoleChangeEvent{UserId: user.ID.String()})
+	user.AppendEvent(e)
 	if err := um.userRepo.AddToRole(ctx, user, role); err != nil {
 		return err
 	}
 	return nil
 }
 func (um *UserManager) RemoveFromRole(ctx context.Context, user *User, role *Role) error {
+	e, _ := event.NewMessageFromProto(&v13.UserRoleChangeEvent{UserId: user.ID.String()})
+	user.AppendEvent(e)
 	if err := um.userRepo.RemoveFromRole(ctx, user, role); err != nil {
 		return err
 	}
 	return nil
 }
+
 func (um *UserManager) CheckDeleted(ctx context.Context, u *User) (bool, error) {
 	if u.DeletedAt.Valid && u.DeletedAt.Time.Before(time.Now()) {
 		return true, nil

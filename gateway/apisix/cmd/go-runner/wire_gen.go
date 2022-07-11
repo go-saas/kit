@@ -26,6 +26,7 @@ import (
 // Injectors from wire.go:
 
 func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOption *http.WebMultiTenancyOption, clientName api.ClientName, logger log.Logger, arg ...grpc.ClientOption) (*App, func(), error) {
+	client := api.NewClientCfg(clientName, services)
 	discovery, err := api.NewDiscovery(services)
 	if err != nil {
 		return nil, nil, err
@@ -34,10 +35,10 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup := api2.NewGrpcConn(clientName, services, discovery, option, inMemoryTokenManager, logger, arg...)
+	grpcConn, cleanup := api2.NewGrpcConn(client, services, discovery, option, inMemoryTokenManager, logger, arg...)
 	tenantInternalServiceServer := api2.NewTenantInternalGrpcClient(grpcConn)
 	tenantStore := api2.NewTenantStore(tenantInternalServiceServer)
-	apiGrpcConn, cleanup2 := api3.NewGrpcConn(clientName, services, discovery, option, inMemoryTokenManager, logger, arg...)
+	apiGrpcConn, cleanup2 := api3.NewGrpcConn(client, services, discovery, option, inMemoryTokenManager, logger, arg...)
 	userServiceServer := api3.NewUserGrpcClient(apiGrpcConn)
 	userTenantContrib := api3.NewUserTenantContrib(userServiceServer)
 	authServer := api3.NewAuthGrpcClient(apiGrpcConn)

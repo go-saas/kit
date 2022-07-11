@@ -32,7 +32,7 @@ func (model *AuditedModel) SetCreatedBy(createdBy interface{}) {
 }
 
 // GetCreatedBy get created by
-func (model AuditedModel) GetCreatedBy() *string {
+func (model *AuditedModel) GetCreatedBy() *string {
 	return model.CreatedBy
 }
 
@@ -43,7 +43,7 @@ func (model *AuditedModel) SetUpdatedBy(updatedBy interface{}) {
 }
 
 // GetUpdatedBy get updated by
-func (model AuditedModel) GetUpdatedBy() *string {
+func (model *AuditedModel) GetUpdatedBy() *string {
 	return model.UpdatedBy
 }
 
@@ -54,14 +54,6 @@ type auditableInterface interface {
 	GetUpdatedBy() *string
 }
 
-func isAuditable(db *gorm.DB) (isAuditable bool) {
-	if db.Statement.Schema.ModelType == nil {
-		return false
-	}
-	_, isAuditable = reflect.New(db.Statement.Schema.ModelType).Interface().(auditableInterface)
-	return
-}
-
 func getCurrentUser(db *gorm.DB) (string, bool) {
 	if u, ok := authn.FromUserContext(db.Statement.Context); ok {
 		return u.GetId(), true
@@ -70,7 +62,7 @@ func getCurrentUser(db *gorm.DB) (string, bool) {
 }
 
 func assignCreatedBy(db *gorm.DB) {
-	if isAuditable(db) {
+	if _, ok := isModel[auditableInterface](db); ok {
 		if user, ok := getCurrentUser(db); ok {
 			f := db.Statement.Schema.FieldsByName["CreatedBy"]
 			switch db.Statement.ReflectValue.Kind() {
@@ -86,7 +78,7 @@ func assignCreatedBy(db *gorm.DB) {
 }
 
 func assignUpdatedBy(db *gorm.DB) {
-	if isAuditable(db) {
+	if _, ok := isModel[auditableInterface](db); ok {
 		if user, ok := getCurrentUser(db); ok {
 			f := db.Statement.Schema.FieldsByName["UpdatedBy"]
 			switch db.Statement.ReflectValue.Kind() {
@@ -101,8 +93,8 @@ func assignUpdatedBy(db *gorm.DB) {
 	}
 }
 
-// RegisterCallbacks register callback into GORM DB
-func RegisterCallbacks(db *gorm.DB) {
+// RegisterAuditCallbacks register callback into GORM DB
+func RegisterAuditCallbacks(db *gorm.DB) {
 	callback := db.Callback()
 	if callback.Create().Get("audited:assign_created_by") == nil {
 		callback.Create().Before("gorm:before_create").Register("audited:assign_created_by", assignCreatedBy)

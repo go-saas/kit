@@ -53,14 +53,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	}
 	tenantRepo := data.NewTenantRepo(eventBus, dataData)
 	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
-	connName := _wireConnNameValue
-	producer, cleanup3, err := dal.NewEventSender(confData, connName)
-	if err != nil {
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, producer)
+	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator)
 	factory := dal.NewBlobFactory(confData)
 	tenantInternalService := &service.TenantInternalService{
 		Trusted: trustedContextValidator,
@@ -76,15 +69,15 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
 	clientName := _wireClientNameValue
+	client := api.NewClientCfg(clientName, services)
 	discovery, err := api.NewDiscovery(services)
 	if err != nil {
-		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup4 := api3.NewGrpcConn(clientName, services, discovery, option, inMemoryTokenManager, logger, arg...)
+	grpcConn, cleanup3 := api3.NewGrpcConn(client, services, discovery, option, inMemoryTokenManager, logger, arg...)
 	userServiceServer := api3.NewUserGrpcClient(grpcConn)
 	userTenantContrib := api3.NewUserTenantContrib(userServiceServer)
 	permissionServiceServer := api3.NewPermissionGrpcClient(grpcConn)
@@ -97,9 +90,9 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	httpServer := server2.NewHTTPServer(services, security, tokenizer, tenantStore, manager, webMultiTenancyOption, option, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, trustedContextValidator, userTenantContrib, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(tenantService, tenantInternalService)
 	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, userTenantContrib, trustedContextValidator, grpcServerRegister, logger)
+	connName := _wireConnNameValue
 	universalClient, err := dal.NewRedis(confData, connName)
 	if err != nil {
-		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -114,7 +107,6 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	seeder := server2.NewSeeder(tenantStore, seeding)
 	app := newApp(logger, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder)
 	return app, func() {
-		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -123,9 +115,9 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 
 var (
 	_wireEventBusValue           = eventbus.Default
-	_wireConnNameValue           = biz.ConnName
 	_wireDecodeRequestFuncValue  = server.ReqDecode
 	_wireEncodeResponseFuncValue = server.ResEncoder
 	_wireEncodeErrorFuncValue    = server.ErrEncoder
 	_wireClientNameValue         = server2.ClientName
+	_wireConnNameValue           = biz.ConnName
 )

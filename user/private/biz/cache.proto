@@ -1,5 +1,5 @@
 syntax = "proto3";
-package user.private.cache;
+package user.private.biz.cache;
 
 option go_package = "github.com/go-saas/kit/user/private/biz;biz";
 

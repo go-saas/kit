@@ -71,14 +71,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	}
 	tenantRepo := data.NewTenantRepo(eventBus, dataData)
 	connStrGenerator := biz.NewConfigConnStrGenerator(saasConf)
-	connName := _wireConnNameValue
-	producer, cleanup3, err := dal.NewEventSender(confData, connName)
-	if err != nil {
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator, producer)
+	tenantUseCase := biz.NewTenantUserCase(tenantRepo, connStrGenerator)
 	factory := dal.NewBlobFactory(confData)
 	tenantInternalService := &service.TenantInternalService{
 		Trusted: trustedContextValidator,
@@ -90,9 +83,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	decodeRequestFunc := _wireDecodeRequestFuncValue
 	encodeResponseFunc := _wireEncodeResponseFuncValue
 	encodeErrorFunc := _wireEncodeErrorFuncValue
-	data5, cleanup4, err := data2.NewData(confData, constDbProvider, logger)
+	data5, cleanup3, err := data2.NewData(confData, constDbProvider, logger)
 	if err != nil {
-		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
@@ -105,9 +97,9 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	userTokenRepo := data2.NewUserTokenRepo(data5)
 	refreshTokenRepo := data2.NewRefreshTokenRepo(data5)
 	userTenantRepo := data2.NewUserTenantRepo(data5)
+	connName := _wireConnNameValue
 	universalClient, err := dal.NewRedis(confData, connName)
 	if err != nil {
-		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -124,7 +116,6 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	dbProvider := gorm.NewDbProvider(dbCache, connStrResolver, confData)
 	enforcerProvider, err := data2.NewEnforcerProvider(logger, dbProvider)
 	if err != nil {
-		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -143,9 +134,10 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	refreshTokenProvider := api3.NewRefreshProvider(authService, logger)
 	tenantReadyEventHandler := biz.NewTenantReadyEventHandler(tenantUseCase)
 	redisConnOpt := job.NewAsynqClientOpt(universalClient)
-	client, cleanup5 := job.NewAsynqClient(redisConnOpt)
+	client, cleanup4 := job.NewAsynqClient(redisConnOpt)
 	tenantSeedEventHandler := biz2.NewTenantSeedEventHandler(client)
-	consumerFactoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler, tenantSeedEventHandler)
+	userRoleChangeEventHandler := biz2.NewUserRoleChangeEventHandler(userManager)
+	consumerFactoryServer := server2.NewEventServer(confData, connName, logger, manager, tenantReadyEventHandler, tenantSeedEventHandler, userRoleChangeEventHandler)
 	eventService := service3.NewEventService(consumerFactoryServer, trustedContextValidator)
 	httpServerRegister := service3.NewHttpServerRegister(eventService)
 	msgService := service4.NewMsgService(constDbProvider, connName)
@@ -179,9 +171,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	userSeed := biz2.NewUserSeed(userManager, roleManager)
 	permissionSeeder := biz2.NewPermissionSeeder(permissionService, permissionService, roleManager)
 	seeding := server3.NewSeeding(manager, migrate, roleSeed, userSeed, permissionSeeder)
-	data6, cleanup6, err := data3.NewData(confData, dbProvider, logger)
+	data6, cleanup5, err := data3.NewData(confData, dbProvider, logger)
 	if err != nil {
-		cleanup5()
 		cleanup4()
 		cleanup3()
 		cleanup2()
@@ -194,6 +185,15 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	migrate2 := data.NewMigrate(dataData)
 	seeding2 := server5.NewSeeding(manager, migrate2)
 	seeder := server2.NewSeeder(migrator, tenantStore, seeding, serverSeeding, seeding2)
+	producer, cleanup6, err := dal.NewEventSender(confData, connName)
+	if err != nil {
+		cleanup5()
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	userMigrationTaskHandler := biz2.NewUserMigrationTaskHandler(seeder, producer)
 	jobServer := server2.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
 	registrar, err := server.NewRegistrar(services)
@@ -206,7 +206,7 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, registrar)
+	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, producer, registrar)
 	return app, func() {
 		cleanup6()
 		cleanup5()
@@ -219,8 +219,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 
 var (
 	_wireEventBusValue           = eventbus.Default
-	_wireConnNameValue           = dal.ConnName("default")
 	_wireDecodeRequestFuncValue  = server.ReqDecode
 	_wireEncodeResponseFuncValue = server.ResEncoder
 	_wireEncodeErrorFuncValue    = server.ErrEncoder
+	_wireConnNameValue           = dal.ConnName("default")
 )

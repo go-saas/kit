@@ -60,11 +60,13 @@ func newApp(
 	js *job.Server,
 	es *event.ConsumerFactoryServer,
 	seeder seed.Seeder,
+	producer event.Producer,
 	_ *dtmapi.Init,
 	r registry.Registrar,
 ) *kratos.App {
 	if ifSeed {
-		if err := seeder.Seed(context.Background(),
+		ctx := event.NewProducerContext(context.Background(), producer)
+		if err := seeder.Seed(ctx,
 			seed.AddHost(),
 			seed.SetExtra(biz.AdminUsernameKey, c.Admin.GetUsername()),
 			seed.SetExtra(biz.AdminPasswordKey, c.Admin.GetPassword()),

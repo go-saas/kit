@@ -27,6 +27,7 @@ var ProviderSet = wire.NewSet(
 	NewEmailSender,
 
 	NewTenantSeedEventHandler,
+	NewUserRoleChangeEventHandler,
 	//job
 	NewUserMigrationTaskHandler)
 

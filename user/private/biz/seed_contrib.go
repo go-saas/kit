@@ -118,6 +118,14 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 		}
 	}
 
+	adminRole, err := u.rm.FindByName(ctx, Admin)
+	if err != nil {
+		return err
+	}
+	if err := u.um.AddToRole(ctx, admin, adminRole); err != nil {
+		return err
+	}
+
 	//add into tenant
 	if err := u.um.JoinTenant(ctx, admin.UIDBase.ID.String(), sCtx.TenantId); err != nil {
 		return err

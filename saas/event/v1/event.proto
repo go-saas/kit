@@ -20,6 +20,7 @@ message TenantCreatedEvent{
   string admin_email=7;
   string admin_username=8;
   string admin_password=9;
+  string admin_user_id=10;
 }
 
 message TenantReadyEvent{

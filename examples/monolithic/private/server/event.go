@@ -11,11 +11,20 @@ import (
 	uow2 "github.com/go-saas/uow"
 )
 
-func NewEventServer(c *kitconf.Data, conn dal.ConnName, logger klog.Logger, uowMgr uow2.Manager, tenantReady saasbiz.TenantReadyEventHandler, tenantSeed ubiz.TenantSeedEventHandler) *event.ConsumerFactoryServer {
+func NewEventServer(
+	c *kitconf.Data,
+	conn dal.ConnName,
+	logger klog.Logger,
+	uowMgr uow2.Manager,
+	tenantReady saasbiz.TenantReadyEventHandler,
+	tenantSeed ubiz.TenantSeedEventHandler,
+	ur ubiz.UserRoleChangeEventHandler,
+) *event.ConsumerFactoryServer {
 	e := c.Endpoints.GetEventMergedDefault(string(conn))
 	srv := event.NewConsumerFactoryServer(e)
 	srv.Use(event.ConsumerRecover(event.WithLogger(logger)), trace.Receive(), event.Logging(logger), event.ConsumerUow(uowMgr))
 	srv.Append(tenantReady)
 	srv.Append(tenantSeed)
+	srv.Append(ur)
 	return srv
 }

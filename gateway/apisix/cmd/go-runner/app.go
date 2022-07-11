@@ -92,6 +92,9 @@ func NewAuthorizationOption() *authz.Option {
 	return authz.NewAuthorizationOption()
 }
 
-var ProviderSet = wire.NewSet(api.NewInMemoryTokenManager, NewSelfClientOption,
+var ProviderSet = wire.NewSet(
+	api.NewClientCfg,
+	api.NewInMemoryTokenManager,
+	NewSelfClientOption,
 	wire.Bind(new(api.TokenManager), new(*api.InMemoryTokenManager)), NewAuthorizationOption,
 	api.NewDiscovery)

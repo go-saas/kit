@@ -18,8 +18,8 @@ type HttpClient *http.Client
 
 const ServiceName = "sys"
 
-func NewGrpcConn(clientName api.ClientName, services *conf.Services, dis registry.Discovery, opt *api.Option, tokenMgr api.TokenManager, logger log.Logger, opts ...grpc2.ClientOption) (GrpcConn, func()) {
-	return api.NewGrpcConn(clientName, ServiceName, services, dis, opt, tokenMgr, logger, opts...)
+func NewGrpcConn(client *conf.Client, services *conf.Services, dis registry.Discovery, opt *api.Option, tokenMgr api.TokenManager, logger log.Logger, opts ...grpc2.ClientOption) (GrpcConn, func()) {
+	return api.NewGrpcConn(client, ServiceName, services, dis, opt, tokenMgr, logger, opts...)
 }
 
 var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewMenuGrpcClient)

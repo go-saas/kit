@@ -17,6 +17,7 @@ import (
 
 type Tenant struct {
 	gorm2.UIDBase
+	gorm2.AggRoot
 	concurrency.Version
 	//unique name. usually for domain name
 	Name string `gorm:"column:name;index;size:255;"`
@@ -66,11 +67,10 @@ type TenantRepo interface {
 type TenantUseCase struct {
 	repo             TenantRepo
 	connStrGenerator ConnStrGenerator
-	sender           event.Producer
 }
 
-func NewTenantUserCase(repo TenantRepo, connStrGenerator ConnStrGenerator, sender event.Producer) *TenantUseCase {
-	return &TenantUseCase{repo: repo, connStrGenerator: connStrGenerator, sender: sender}
+func NewTenantUserCase(repo TenantRepo, connStrGenerator ConnStrGenerator) *TenantUseCase {
+	return &TenantUseCase{repo: repo, connStrGenerator: connStrGenerator}
 }
 
 func (t *TenantUseCase) FindByIdOrName(ctx context.Context, idOrName string) (*Tenant, error) {
@@ -122,10 +122,7 @@ func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adm
 		}
 		entity.Conn = conn
 	}
-	if err := t.repo.Create(ctx, entity); err != nil {
-		return err
-	}
-	//dispatch a remote event for seeding database
+	
 	remoteEvent := &v12.TenantCreatedEvent{
 		Id:         entity.ID.String(),
 		Name:       entity.Name,
@@ -138,7 +135,12 @@ func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adm
 		remoteEvent.AdminPassword = adminInfo.Password
 	}
 	e, _ := event.NewMessageFromProto(remoteEvent)
-	return t.sender.Send(ctx, e)
+	//append event to agg root
+	entity.AppendEvent(e)
+	if err := t.repo.Create(ctx, entity); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (t *TenantUseCase) Update(ctx context.Context, entity *Tenant, p query.Select) error {

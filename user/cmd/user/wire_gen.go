@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	api4 "github.com/go-saas/kit/dtm/api"
 	data2 "github.com/go-saas/kit/dtm/data"
 	service2 "github.com/go-saas/kit/dtm/service"
 	service3 "github.com/go-saas/kit/event/service"
@@ -53,13 +54,14 @@ func InitApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	manager := uow.NewUowManager(dbCache)
 	option := api.NewDefaultOption(logger)
 	clientName := _wireClientNameValue
+	client := api.NewClientCfg(clientName, services)
 	discovery, err := api.NewDiscovery(services)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, discovery, option, inMemoryTokenManager, logger, arg...)
+	grpcConn, cleanup2 := api2.NewGrpcConn(client, services, discovery, option, inMemoryTokenManager, logger, arg...)
 	tenantInternalServiceServer := api2.NewTenantInternalGrpcClient(grpcConn)
 	tenantStore := api2.NewTenantStore(tenantInternalServiceServer)
 	decodeRequestFunc := _wireDecodeRequestFuncValue
@@ -132,9 +134,10 @@ func InitApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	msgService := service2.NewMsgService(constDbProvider, connName)
 	serviceHttpServerRegister := service2.NewHttpServerRegister(msgService)
 	redisConnOpt := job.NewAsynqClientOpt(universalClient)
-	client, cleanup4 := job.NewAsynqClient(redisConnOpt)
-	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(client)
-	consumerFactoryServer := server.NewEventServer(confData, connName, logger, manager, tenantSeedEventHandler)
+	asynqClient, cleanup4 := job.NewAsynqClient(redisConnOpt)
+	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(asynqClient)
+	userRoleChangeEventHandler := biz.NewUserRoleChangeEventHandler(userManager)
+	consumerFactoryServer := server.NewEventServer(confData, connName, logger, manager, tenantSeedEventHandler, userRoleChangeEventHandler)
 	eventService := service3.NewEventService(consumerFactoryServer, trustedContextValidator)
 	httpServerRegister2 := service3.NewHttpServerRegister(eventService)
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContrib, trustedContextValidator, refreshTokenProvider, httpServerRegister, serviceHttpServerRegister, httpServerRegister2)
@@ -159,6 +162,7 @@ func InitApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	}
 	userMigrationTaskHandler := biz.NewUserMigrationTaskHandler(seeder, producer)
 	jobServer := server.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
+	init := api4.NewInit(client, option, inMemoryTokenManager, logger)
 	registrar, err := server2.NewRegistrar(services)
 	if err != nil {
 		cleanup5()
@@ -168,7 +172,7 @@ func InitApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(userConf, logger, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, registrar)
+	app := newApp(userConf, logger, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, producer, init, registrar)
 	return app, func() {
 		cleanup5()
 		cleanup4()

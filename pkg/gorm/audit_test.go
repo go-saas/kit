@@ -22,7 +22,7 @@ func TestAudit(t *testing.T) {
 	err = db.AutoMigrate(&TestEntity{})
 	assert.NoError(t, err)
 
-	RegisterCallbacks(db)
+	RegisterAuditCallbacks(db)
 
 	ctx := authn.NewUserContext(context.Background(), authn.NewUserInfo("test"))
 

@@ -49,19 +49,20 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 	option := api.NewDefaultOption(logger)
 	trustedContextValidator := api.NewClientTrustedContextValidator()
 	clientName := _wireClientNameValue
+	client := api.NewClientCfg(clientName, services)
 	discovery, err := api.NewDiscovery(services)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
 	inMemoryTokenManager := api.NewInMemoryTokenManager(tokenizer, logger)
-	grpcConn, cleanup2 := api2.NewGrpcConn(clientName, services, discovery, option, inMemoryTokenManager, logger, arg...)
+	grpcConn, cleanup2 := api2.NewGrpcConn(client, services, discovery, option, inMemoryTokenManager, logger, arg...)
 	permissionServiceServer := api2.NewPermissionGrpcClient(grpcConn)
 	permissionChecker := api2.NewRemotePermissionChecker(permissionServiceServer)
 	authzOption := server.NewAuthorizationOption()
 	subjectResolverImpl := authz.NewSubjectResolver(authzOption)
 	defaultAuthorizationService := authz.NewDefaultAuthorizationService(permissionChecker, subjectResolverImpl, logger)
-	apiGrpcConn, cleanup3 := api3.NewGrpcConn(clientName, services, discovery, option, inMemoryTokenManager, logger, arg...)
+	apiGrpcConn, cleanup3 := api3.NewGrpcConn(client, services, discovery, option, inMemoryTokenManager, logger, arg...)
 	tenantInternalServiceServer := api3.NewTenantInternalGrpcClient(apiGrpcConn)
 	tenantStore := api3.NewTenantStore(tenantInternalServiceServer)
 	connStrResolver := dal.NewConnStrResolver(confData, tenantStore)

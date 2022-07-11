@@ -23,9 +23,20 @@ var (
 	defaultClientCfg = &conf.Client{Timeout: durationpb.New(5 * time.Second)}
 )
 
+func NewClientCfg(clientName ClientName, services *conf.Services) *conf.Client {
+	var clientCfg = proto.Clone(defaultClientCfg).(*conf.Client)
+	if c, ok := services.Clients[string(clientName)]; ok {
+		proto.Merge(clientCfg, c)
+	}
+	if len(clientCfg.ClientId) == 0 {
+		clientCfg.ClientId = string(clientName)
+	}
+	return clientCfg
+}
+
 // NewGrpcConn create new grpc client from name
 func NewGrpcConn(
-	clientName ClientName,
+	clientCfg *conf.Client,
 	serviceName string,
 	services *conf.Services,
 	dis registry.Discovery,
@@ -34,13 +45,7 @@ func NewGrpcConn(
 	logger log.Logger,
 	opts ...grpc.ClientOption,
 ) (grpcx.ClientConnInterface, func()) {
-	var clientCfg = proto.Clone(defaultClientCfg).(*conf.Client)
-	if c, ok := services.Clients[string(clientName)]; ok {
-		proto.Merge(clientCfg, c)
-	}
-	if len(clientCfg.ClientId) == 0 {
-		clientCfg.ClientId = string(clientName)
-	}
+
 	var conn *grpcx.ClientConn
 	var err error
 
@@ -80,7 +85,7 @@ func NewGrpcConn(
 
 // NewHttpClient create new http client from name
 func NewHttpClient(
-	clientName ClientName,
+	clientCfg *conf.Client,
 	serviceName string,
 	services *conf.Services,
 	dis registry.Discovery,
@@ -90,16 +95,14 @@ func NewHttpClient(
 	opts ...http.ClientOption,
 ) (*http.Client, func()) {
 
-	var clientCfg = proto.Clone(defaultClientCfg).(*conf.Client)
-	if c, ok := services.Clients[string(clientName)]; ok {
-		proto.Merge(clientCfg, c)
-	}
-	if len(clientCfg.ClientId) == 0 {
-		clientCfg.ClientId = string(clientName)
+	var name = serviceName
+	serviceCfg := services.GetServiceMergedDefault(serviceName)
+	if serviceCfg != nil && len(serviceCfg.Redirect) > 0 {
+		name = serviceCfg.Redirect
 	}
 
 	fOpts := []http.ClientOption{
-		http.WithEndpoint("discovery:///" + serviceName),
+		http.WithEndpoint("discovery:///" + name),
 		http.WithDiscovery(dis),
 		http.WithMiddleware(
 			recovery.Recovery(),
@@ -127,6 +130,7 @@ func NewDiscovery(services *conf.Services) (registry.Discovery, error) {
 }
 
 var DefaultProviderSet = wire.NewSet(
+	NewClientCfg,
 	NewDefaultOption,
 	NewInMemoryTokenManager, wire.Bind(new(TokenManager), new(*InMemoryTokenManager)),
 	NewClientTrustedContextValidator,

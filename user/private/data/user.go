@@ -228,10 +228,8 @@ func (u *UserRepo) GetRoles(ctx context.Context, userId string) ([]biz.Role, err
 }
 
 func (u *UserRepo) UpdateRoles(ctx context.Context, user *biz.User, roles []biz.Role) error {
-	//delete all previous
 	db := u.GetDb(ctx)
-	user.Roles = roles
-	if err := db.Model(&user).Association("Roles").Replace(roles); err != nil {
+	if err := db.Model(user).Association("Roles").Replace(roles); err != nil {
 		return err
 	}
 	return nil

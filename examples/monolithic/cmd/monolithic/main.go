@@ -50,15 +50,26 @@ func init() {
 	flag.StringVar(&seedPath, sysbiz.SeedPathKey, "", "menu seed file path")
 }
 
-func newApp(logger log.Logger, c *uconf.UserConf, hs *http.Server, gs *grpc.Server, js *job.Server, es *event.ConsumerFactoryServer, seeder seed.Seeder, r registry.Registrar) *kratos.App {
+func newApp(
+	logger log.Logger,
+	c *uconf.UserConf,
+	hs *http.Server,
+	gs *grpc.Server,
+	js *job.Server,
+	es *event.ConsumerFactoryServer,
+	seeder seed.Seeder,
+	producer event.Producer,
+	r registry.Registrar,
+) *kratos.App {
 	if ifSeed {
+		ctx := event.NewProducerContext(context.Background(), producer)
 		extra := map[string]interface{}{}
 		if len(seedPath) > 0 {
 			extra[sysbiz.SeedPathKey] = seedPath
 		}
 		extra[ubiz.AdminUsernameKey] = c.Admin.GetUsername()
 		extra[ubiz.AdminPasswordKey] = c.Admin.GetPassword()
-		if err := seeder.Seed(context.Background(), seed.AddHost(), seed.WithExtra(extra)); err != nil {
+		if err := seeder.Seed(ctx, seed.AddHost(), seed.WithExtra(extra)); err != nil {
 			panic(err)
 		}
 	}

@@ -128,6 +128,7 @@ message CreateTenantRequest {
 	optional google.protobuf.StringValue admin_email = 7 [(validate.rules).string.email=true];
 	optional google.protobuf.StringValue admin_username=8;
 	optional google.protobuf.StringValue admin_password=9;
+	optional google.protobuf.StringValue admin_user_id=10;
 }
 
 message UpdateTenantRequest {

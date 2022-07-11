@@ -71,6 +71,8 @@ func (m *TenantCreatedEvent) validate(all bool) error {
 
 	// no validation rules for AdminPassword
 
+	// no validation rules for AdminUserId
+
 	if len(errors) > 0 {
 		return TenantCreatedEventMultiError(errors)
 	}

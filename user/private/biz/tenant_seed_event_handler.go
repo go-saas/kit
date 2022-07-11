@@ -17,7 +17,7 @@ type TenantSeedEventHandler event.ConsumerHandler
 func NewTenantSeedEventHandler(client *asynq.Client) TenantSeedEventHandler {
 	msg := &v1.TenantCreatedEvent{}
 	return event.ProtoHandler[*v1.TenantCreatedEvent](msg, event.HandlerFuncOf[*v1.TenantCreatedEvent](func(ctx context.Context, msg *v1.TenantCreatedEvent) error {
-		t, err := NewUserMigrationTask(msg)
+		t, err := NewUserMigrationTask(NewUserMigrationTaskFromTenantEvent(msg))
 		if err != nil {
 			return err
 		}
@@ -26,7 +26,7 @@ func NewTenantSeedEventHandler(client *asynq.Client) TenantSeedEventHandler {
 	}))
 }
 
-func NewUserMigrationTask(msg *v1.TenantCreatedEvent) (*asynq.Task, error) {
+func NewUserMigrationTask(msg *UserMigrationTask) (*asynq.Task, error) {
 	payload, err := protojson.Marshal(msg)
 	if err != nil {
 		return nil, err
@@ -37,9 +37,9 @@ func NewUserMigrationTask(msg *v1.TenantCreatedEvent) (*asynq.Task, error) {
 
 type UserMigrationTaskHandler func(ctx context.Context, t *asynq.Task) error
 
-func NewUserMigrationTaskHandler(seeder seed.Seeder, sender event.Producer) UserMigrationTaskHandler {
+func NewUserMigrationTaskHandler(seeder seed.Seeder, producer event.Producer) UserMigrationTaskHandler {
 	return func(ctx context.Context, t *asynq.Task) error {
-		msg := &v1.TenantCreatedEvent{}
+		msg := &UserMigrationTask{}
 		if err := protojson.Unmarshal(t.Payload(), msg); err != nil {
 			return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
 		}
@@ -53,6 +53,9 @@ func NewUserMigrationTaskHandler(seeder seed.Seeder, sender event.Producer) User
 		if len(msg.AdminPassword) > 0 {
 			extra[AdminPasswordKey] = msg.AdminPassword
 		}
+		if len(msg.AdminUserId) > 0 {
+			extra[AdminUserId] = msg.AdminUserId
+		}
 		if err := seeder.Seed(ctx, seed.AddTenant(msg.Id), seed.WithExtra(extra)); err != nil {
 			return err
 		}
@@ -61,6 +64,6 @@ func NewUserMigrationTaskHandler(seeder seed.Seeder, sender event.Producer) User
 			ServiceName: api.ServiceName,
 		}
 		ee, _ := event.NewMessageFromProto(e)
-		return sender.Send(ctx, ee)
+		return producer.Send(ctx, ee)
 	}
 }
