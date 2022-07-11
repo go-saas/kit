@@ -46,25 +46,27 @@ func (h *Helper[T]) GetOrSet(ctx context.Context, key any, fn func(ctx context.C
 	for _, o := range opts {
 		o(opt)
 	}
+	v, err = h.Get(ctx, key)
+	if err == nil {
+		//resolve from cache
+		return
+	}
+	if !(store.NotFound{}).Is(err) {
+		//cache error
+		return
+	}
 	run := func() (v T, err error, set bool) {
-		v, err = h.Get(ctx, key)
-		if err == nil {
-			//resolve from cache
+		//use factory
+		v, err = fn(ctx)
+		if err != nil {
 			return
 		}
-		if (store.NotFound{}).Is(err) {
-			//use factory
-			v, err = fn(ctx)
-			if err != nil {
-				return
-			}
-			//push back
-			err = h.Set(ctx, key, v, opt.options...)
-			if err != nil {
-				return
-			}
-			set = true
+		//push back
+		err = h.Set(ctx, key, v, opt.options...)
+		if err != nil {
+			return
 		}
+		set = true
 		return
 	}
 	if opt.group == nil {
