@@ -10,6 +10,9 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	data2 "github.com/go-saas/kit/dtm/data"
+	service2 "github.com/go-saas/kit/dtm/service"
+	service3 "github.com/go-saas/kit/event/service"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
@@ -126,18 +129,29 @@ func InitApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	apiClient := service.NewHydra(security)
 	auth := http2.NewAuth(decodeRequestFunc, userManager, logger, signInManager, apiClient)
 	httpServerRegister := service.NewHttpServerRegister(userService, encodeResponseFunc, encodeErrorFunc, accountService, authService, roleService, servicePermissionService, auth, confData, defaultAuthorizationService, factory)
-	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContrib, trustedContextValidator, refreshTokenProvider, httpServerRegister)
-	grpcServerRegister := service.NewGrpcServerRegister(userService, accountService, authService, roleService, servicePermissionService)
-	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContrib, grpcServerRegister)
+	msgService := service2.NewMsgService(constDbProvider, connName)
+	serviceHttpServerRegister := service2.NewHttpServerRegister(msgService)
 	redisConnOpt := job.NewAsynqClientOpt(universalClient)
+	client, cleanup4 := job.NewAsynqClient(redisConnOpt)
+	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(client)
+	consumerFactoryServer := server.NewEventServer(confData, connName, logger, manager, tenantSeedEventHandler)
+	eventService := service3.NewEventService(consumerFactoryServer, trustedContextValidator)
+	httpServerRegister2 := service3.NewHttpServerRegister(eventService)
+	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, webMultiTenancyOption, option, tenantStore, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, logger, userTenantContrib, trustedContextValidator, refreshTokenProvider, httpServerRegister, serviceHttpServerRegister, httpServerRegister2)
+	grpcServerRegister := service.NewGrpcServerRegister(userService, accountService, authService, roleService, servicePermissionService)
+	serviceGrpcServerRegister := service2.NewGrpcServerRegister(msgService)
+	grpcServerRegister2 := service3.NewGrpcServerRegister(eventService)
+	grpcServer := server.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContrib, grpcServerRegister, serviceGrpcServerRegister, grpcServerRegister2)
+	migrator := data2.NewMigrator(constDbProvider, connName)
 	migrate := data.NewMigrate(dataData)
 	roleSeed := biz.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz.NewUserSeed(userManager, roleManager)
 	permissionSeeder := biz.NewPermissionSeeder(permissionService, permissionService, roleManager)
 	seeding := server.NewSeeding(manager, migrate, roleSeed, userSeed, permissionSeeder)
-	seeder := server.NewSeeder(tenantStore, seeding)
-	producer, cleanup4, err := dal.NewEventSender(confData, connName)
+	seeder := server.NewSeeder(tenantStore, migrator, seeding)
+	producer, cleanup5, err := dal.NewEventSender(confData, connName)
 	if err != nil {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -145,9 +159,6 @@ func InitApp(services *conf.Services, security *conf.Security, userConf *conf2.U
 	}
 	userMigrationTaskHandler := biz.NewUserMigrationTaskHandler(seeder, producer)
 	jobServer := server.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
-	client, cleanup5 := job.NewAsynqClient(redisConnOpt)
-	tenantSeedEventHandler := biz.NewTenantSeedEventHandler(client)
-	consumerFactoryServer := server.NewEventServer(confData, connName, logger, manager, tenantSeedEventHandler)
 	registrar, err := server2.NewRegistrar(services)
 	if err != nil {
 		cleanup5()

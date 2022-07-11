@@ -62,6 +62,16 @@ services:
     ports:
       - "3379:2379"
 
+  dtm:
+    image: yedf/dtm:latest
+    restart: on-failure
+    command: ["-c", "/data/conf.yml"]
+    volumes:
+      - ./quickstart/configs/dtm/conf.yml:/data/conf.yml
+    ports:
+      - "36790:36790"
+      - "36789:36789"
+
 volumes:
   mysql_data:
   apisix_runner:

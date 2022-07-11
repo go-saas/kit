@@ -8,4 +8,5 @@ import (
 
 var EventProviderSet = wire.NewSet(
 	service.NewEventService, wire.Bind(new(v12.EventServiceServer), new(*service.EventService)),
+	service.NewGrpcServerRegister, service.NewHttpServerRegister,
 )

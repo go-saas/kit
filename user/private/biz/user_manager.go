@@ -308,13 +308,22 @@ func (um *UserManager) GetUserRoleIds(ctx context.Context, userId string, curren
 }
 
 func (um *UserManager) UpdateRoles(ctx context.Context, user *User, roles []Role) error {
-	return um.userRepo.UpdateRoles(ctx, user, roles)
+	if err := um.userRepo.UpdateRoles(ctx, user, roles); err != nil {
+		return err
+	}
+	return nil
 }
 func (um *UserManager) AddToRole(ctx context.Context, user *User, role *Role) error {
-	return um.userRepo.AddToRole(ctx, user, role)
+	if err := um.userRepo.AddToRole(ctx, user, role); err != nil {
+		return err
+	}
+	return nil
 }
 func (um *UserManager) RemoveFromRole(ctx context.Context, user *User, role *Role) error {
-	return um.userRepo.RemoveFromRole(ctx, user, role)
+	if err := um.userRepo.RemoveFromRole(ctx, user, role); err != nil {
+		return err
+	}
+	return nil
 }
 func (um *UserManager) CheckDeleted(ctx context.Context, u *User) (bool, error) {
 	if u.DeletedAt.Valid && u.DeletedAt.Time.Before(time.Now()) {

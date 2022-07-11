@@ -9,6 +9,12 @@
       "name": "UserService"
     },
     {
+      "name": "MsgService"
+    },
+    {
+      "name": "EventService"
+    },
+    {
       "name": "PermissionService"
     },
     {
@@ -2454,6 +2460,79 @@
           "UserService"
         ]
       }
+    },
+    "/v1/{service}/dtm/query-prepared": {
+      "get": {
+        "operationId": "MsgService_QueryPrepared",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "MsgService"
+        ]
+      }
+    },
+    "/v1/{service}/proxy/event": {
+      "post": {
+        "operationId": "EventService_Event",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "$ref": "#/definitions/v1MessageProto"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "EventService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -3537,6 +3616,24 @@
       "properties": {
         "redirect": {
           "type": "string"
+        }
+      }
+    },
+    "v1MessageProto": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        },
+        "header": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },

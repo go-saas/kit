@@ -9,6 +9,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	eventserver "github.com/go-saas/kit/event/server"
 	"github.com/go-saas/kit/examples/monolithic/private/server"
 	kapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
@@ -33,11 +34,14 @@ import (
 	uconf "github.com/go-saas/kit/user/private/conf"
 	udata "github.com/go-saas/kit/user/private/data"
 	uservice "github.com/go-saas/kit/user/private/service"
+
+	dtmserver "github.com/go-saas/kit/dtm/server"
 )
 
 // initApp init kratos application.
 func initApp(*kitconf.Services, *kitconf.Security, *kitconf.Data, *sconf.SaasConf, *uconf.UserConf, log.Logger, *kitconf.AppConfig, ...grpc.ClientOption) (*kratos.App, func(), error) {
-	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kserver.NewWebMultiTenancyOption, kapi.DefaultProviderSet, kdal.DefaultProviderSet, job.DefaultProviderSet,
+	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kserver.NewWebMultiTenancyOption, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
+		job.DefaultProviderSet, dtmserver.DtmProviderSet, eventserver.EventProviderSet,
 		sdata.ProviderSet, sbiz.ProviderSet, sservice.ProviderSet,
 		sysdata.ProviderSet, sysbiz.ProviderSet, sysservice.ProviderSet,
 		udata.ProviderSet, ubiz.ProviderSet, uservice.ProviderSet,

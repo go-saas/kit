@@ -12,7 +12,7 @@ func (x *MessageProto) ToEvent() event.Event {
 	return ret
 }
 
-func FromEvent(e event.Event) *MessageProto {
+func MessageProtoFromEvent(e event.Event) *MessageProto {
 	ret := &MessageProto{
 		Key:    e.Key(),
 		Value:  e.Value(),

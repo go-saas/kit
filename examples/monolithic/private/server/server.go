@@ -1,6 +1,9 @@
 package server
 
 import (
+	dtmdata "github.com/go-saas/kit/dtm/data"
+	dtmservice "github.com/go-saas/kit/dtm/service"
+	eventservice "github.com/go-saas/kit/event/service"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/dal"
 	ksaas "github.com/go-saas/kit/pkg/saas"
@@ -35,16 +38,16 @@ var ProviderSet = wire.NewSet(
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister
 
-func NewSeeder(ts saas.TenantStore, user userver.Seeding, sys sysserver.Seeding, saas sserver.Seeding) seed.Seeder {
-	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, user, sys, saas)))
+func NewSeeder(dtmMigrator *dtmdata.Migrator, ts saas.TenantStore, user userver.Seeding, sys sysserver.Seeding, saas sserver.Seeding) seed.Seeder {
+	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(dtmMigrator, ksaas.SeedChangeTenant(ts, user, sys, saas)))
 }
 
-func NewHttpServiceRegister(user uservice.HttpServerRegister, sys sysservice.HttpServerRegister, saas sservice.HttpServerRegister) HttpServerRegister {
-	return server.ChainHttpServiceRegister(user, sys, saas)
+func NewHttpServiceRegister(eventRegister eventservice.HttpServerRegister, dtmRegister dtmservice.HttpServerRegister, user uservice.HttpServerRegister, sys sysservice.HttpServerRegister, saas sservice.HttpServerRegister) HttpServerRegister {
+	return server.ChainHttpServiceRegister(eventRegister, dtmRegister, user, sys, saas)
 }
 
-func NewGrpcServiceRegister(user uservice.GrpcServerRegister, sys sysservice.GrpcServerRegister, saas sservice.GrpcServerRegister) GrpcServerRegister {
-	return server.ChainGrpcServiceRegister(user, sys, saas)
+func NewGrpcServiceRegister(eventRegister eventservice.GrpcServerRegister, dtmRegister dtmservice.GrpcServerRegister, user uservice.GrpcServerRegister, sys sysservice.GrpcServerRegister, saas sservice.GrpcServerRegister) GrpcServerRegister {
+	return server.ChainGrpcServiceRegister(eventRegister, dtmRegister, user, sys, saas)
 }
 
 func NewAuthorizationOption(userRole *uservice.UserRoleContrib) *authz.Option {

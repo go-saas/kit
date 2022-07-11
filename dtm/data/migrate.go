@@ -7,6 +7,7 @@ import (
 	"github.com/dtm-labs/dtmcli/dtmimp"
 	"github.com/go-saas/kit/pkg/dal"
 	"github.com/go-saas/saas/seed"
+	"gorm.io/gorm"
 	"io/ioutil"
 	"strings"
 )
@@ -37,26 +38,39 @@ func (m *Migrator) Seed(ctx context.Context, sCtx *seed.Context) error {
 		name := db.Dialector.Name()
 		dtmimp.SetCurrentDBType(name)
 		//read sql
-
-		fs, err := sqls.Open(fmt.Sprintf("sqls/dtmcli.barrier.%s.sql", name))
-		defer fs.Close()
-		if err != nil {
-			return err
+		fileNames := []string{
+			fmt.Sprintf("sqls/dtmcli.barrier.%s.sql", name),
+			fmt.Sprintf("sqls/dtmsvr.storage.%s.sql", name),
 		}
-		content, err := ioutil.ReadAll(fs)
-		if err != nil {
-			return err
-		}
-		sqls := strings.Split(string(content), ";")
-		for _, sql := range sqls {
-			s := strings.TrimSpace(sql)
-			if s == "" || (skipDrop && strings.Contains(s, "drop")) {
-				continue
-			}
-			err = db.Exec(s).Error
+		for _, fileName := range fileNames {
+			err := m.do(ctx, fileName, skipDrop, db)
 			if err != nil {
 				return err
 			}
+		}
+
+	}
+	return nil
+}
+func (m *Migrator) do(ctx context.Context, fileName string, skipDrop bool, db *gorm.DB) error {
+	fs, err := sqls.Open(fileName)
+	defer fs.Close()
+	if err != nil {
+		return err
+	}
+	content, err := ioutil.ReadAll(fs)
+	if err != nil {
+		return err
+	}
+	sqls := strings.Split(string(content), ";")
+	for _, sql := range sqls {
+		s := strings.TrimSpace(sql)
+		if s == "" || (skipDrop && strings.Contains(s, "drop")) {
+			continue
+		}
+		err := db.Exec(s).Error
+		if err != nil {
+			return err
 		}
 	}
 	return nil
