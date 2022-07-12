@@ -42,8 +42,8 @@ func NewApisixOption(cfg *conf.SysConf, srvs *kconf.Services) *apisix.Option {
 	}
 	if cfg != nil {
 		if cfg.Apisix != nil {
-			ret.Endpoint = cfg.Apisix.ApiKey
-			ret.ApiKey = cfg.Apisix.Endpoint
+			ret.Endpoint = cfg.Apisix.Endpoint
+			ret.ApiKey = cfg.Apisix.ApiKey
 		}
 	}
 	if srvs != nil {

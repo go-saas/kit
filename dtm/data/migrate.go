@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	barrier = "barrier"
-	storage = "storage"
+	barrier = "dtmcli.barrier"
+	storage = "dtmsvr.storage"
 )
 
 type migrator struct {
@@ -72,7 +72,7 @@ func (m *migrator) Seed(ctx context.Context, sCtx *seed.Context) error {
 		//read sql
 		fileNames := make([]string, len(m.kind))
 		for i, k := range m.kind {
-			fileNames[i] = fmt.Sprintf("sqls/dtmcli.%s.%s.sql", k, name)
+			fileNames[i] = fmt.Sprintf("sqls/%s.%s.sql", k, name)
 		}
 		for _, fileName := range fileNames {
 			err := m.do(ctx, fileName, skipDrop, db)

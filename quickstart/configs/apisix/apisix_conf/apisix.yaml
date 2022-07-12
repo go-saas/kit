@@ -1,10 +1,4 @@
 routes:
-  -
-    uri: /v1/saas/*
-    upstream_id: saas-http
-  -
-    uri: /assets/saas/*
-    upstream_id: saas-http
 
   -
     uri: /swagger*
@@ -35,6 +29,16 @@ routes:
       response-rewrite:
         headers:
           X-Frame-Options: ""
+
+
+  -
+    uri: /v1/saas/*
+    upstream_id: saas-http
+  -
+    uri: /assets/saas/*
+    upstream_id: saas-http
+
+
   -
     uri: /v1/sys/*
     upstream_id: sys-http

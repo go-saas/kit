@@ -7,9 +7,9 @@ services:
     type: etcd
     endpoint: http://etcd:2379
   services:
-    user:
-    sys:
-    saas:
+    user: {}
+    sys: {}
+    saas: {}
 
 data:
   endpoints:

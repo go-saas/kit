@@ -2,4 +2,4 @@ services:
   services:
     default:
       redirect: monolithic
-    monolithic:
+    monolithic: {}

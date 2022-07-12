@@ -64,7 +64,10 @@ func (r *watcherSync) watch() {
 			continue
 		}
 		err = r.updateFunc(ins)
-		klog.Errorf("[apisix] Failed to update service %s : %v", r.service, err)
+		if err != nil {
+			klog.Errorf("[apisix] Failed to update service %s : %v", r.service, err)
+		}
+
 	}
 }
 
@@ -77,11 +80,11 @@ type Node struct {
 type Upstream struct {
 	Nodes  []Node `json:"nodes"`
 	Type   string `json:"type"`
-	Schema string `json:"schema"`
+	Scheme string `json:"scheme"`
 }
 
 func toUpstreams(serviceName string, srvs []*registry.ServiceInstance) (map[string]*Upstream, error) {
-	var ret map[string]*Upstream
+	var ret = map[string]*Upstream{}
 	//group by schemas
 	endpoints := lo.FlatMap(srvs, func(t *registry.ServiceInstance, _ int) []string {
 		return t.Endpoints
@@ -97,7 +100,7 @@ func toUpstreams(serviceName string, srvs []*registry.ServiceInstance) (map[stri
 		srvName := serviceName + "-" + raw.Scheme
 		srv, ok := ret[srvName]
 		if !ok {
-			srv = &Upstream{Schema: raw.Scheme, Type: "roundrobin"}
+			srv = &Upstream{Scheme: raw.Scheme, Type: "roundrobin"}
 			ret[srvName] = srv
 		}
 		srv.Nodes = append(srv.Nodes, Node{
@@ -118,12 +121,15 @@ func putServices(client *http.Client, endPoint, apiKey, serviceName string, ins 
 	if err != nil {
 		return err
 	}
+	if len(up) == 0 {
+		klog.Warnf("[apisix] Skipped to put service %s empty upstream", serviceName)
+	}
 	for srvName, upstream := range up {
 		j, err := json.Marshal(upstream)
 		if err != nil {
 			return err
 		}
-		klog.Infof("[apisix]  update service %s : %v", srvName, j)
+		klog.Infof("[apisix]  update service %s : %s", srvName, j)
 		req, err := http.NewRequest(http.MethodPut, endPoint+"/apisix/admin/upstreams/"+srvName, bytes.NewReader(j))
 		if err != nil {
 			return err
@@ -169,17 +175,18 @@ func (w *WatchSyncAdmin) Start(ctx context.Context) (err error) {
 	}
 
 	//generate watcher for all services
-	g, ctx := errgroup.WithContext(ctx)
+	g := errgroup.Group{}
 
 	//start watcher wait group
 	wg := sync.WaitGroup{}
 	stopWg := sync.WaitGroup{}
 	w.stopWg = &stopWg
 	for _, service := range w.opt.Services {
+		service := service
 		g.Go(func() error {
 			defer wg.Done()
 			watcher, err := w.discovery.Watch(ctx, service)
-			if err != nil {
+			if err == nil {
 				//add watch into group
 				s := &watcherSync{
 					service: service,
