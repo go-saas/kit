@@ -4,8 +4,8 @@ app:
   host_logo: /logo.svg
 services:
   registry:
-    type: consul
-    endpoint: consul:8500
+    type: etcd
+    endpoint: http://etcd:2379
 
 data:
   endpoints:

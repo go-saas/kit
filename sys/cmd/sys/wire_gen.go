@@ -11,6 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/apisix"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
@@ -21,6 +22,7 @@ import (
 	"github.com/go-saas/kit/pkg/uow"
 	api3 "github.com/go-saas/kit/saas/api"
 	"github.com/go-saas/kit/sys/private/biz"
+	conf2 "github.com/go-saas/kit/sys/private/conf"
 	"github.com/go-saas/kit/sys/private/data"
 	"github.com/go-saas/kit/sys/private/server"
 	"github.com/go-saas/kit/sys/private/service"
@@ -33,12 +35,13 @@ import (
 	_ "github.com/go-saas/kit/event/kafka"
 	_ "github.com/go-saas/kit/event/pulsar"
 	_ "github.com/go-saas/kit/pkg/registry/consul"
+	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOption *http.WebMultiTenancyOption, confData *conf.Data, logger log.Logger, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.SysConf, webMultiTenancyOption *http.WebMultiTenancyOption, confData *conf.Data, logger log.Logger, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbCache, cleanup := gorm.NewDbCache(confData, logger)
@@ -104,7 +107,9 @@ func initApp(services *conf.Services, security *conf.Security, webMultiTenancyOp
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, producer)
+	apisixOption := service.NewApisixOption(sysConf)
+	watchSyncAdmin := apisix.NewWatchSyncAdmin(discovery, apisixOption)
+	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, producer, watchSyncAdmin)
 	return app, func() {
 		cleanup5()
 		cleanup4()

@@ -5,7 +5,9 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config/env"
+	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-saas/kit/event"
+	"github.com/go-saas/kit/pkg/apisix"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
@@ -26,6 +28,7 @@ import (
 	_ "github.com/go-saas/kit/event/kafka"
 	_ "github.com/go-saas/kit/event/pulsar"
 	_ "github.com/go-saas/kit/pkg/registry/consul"
+	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
@@ -36,14 +39,18 @@ var (
 	Version string
 	// flagconf is the config flag.
 	flagconf arrayFlags
-	ifSeed   bool
-	id, _    = os.Hostname()
+
+	ifSyncApisix bool
+
+	ifSeed bool
+	id, _  = os.Hostname()
 
 	seedPath string
 )
 
 func init() {
 	flag.Var(&flagconf, "conf", "config path, eg: -conf config.yaml")
+	flag.BoolVar(&ifSyncApisix, "apisix", true, "sync with apisix upstreams")
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
 	flag.StringVar(&seedPath, biz.SeedPathKey, "", "menu seed file path")
 }
@@ -55,6 +62,7 @@ func newApp(
 	js *job.Server,
 	seeder seed.Seeder,
 	producer event.Producer,
+	syncAdmin *apisix.WatchSyncAdmin,
 ) *kratos.App {
 	ctx := event.NewProducerContext(context.Background(), producer)
 	if ifSeed {
@@ -66,6 +74,14 @@ func newApp(
 			panic(err)
 		}
 	}
+	srvs := []transport.Server{
+		hs,
+		gs,
+		js,
+	}
+	if ifSyncApisix {
+		srvs = append(srvs, syncAdmin)
+	}
 	return kratos.New(
 		kratos.Context(ctx),
 		kratos.ID(id),
@@ -74,9 +90,7 @@ func newApp(
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
 		kratos.Server(
-			hs,
-			gs,
-			js,
+			srvs...,
 		),
 	)
 }
@@ -139,7 +153,7 @@ func main() {
 		log.Error(err)
 	}
 	defer shutdown()
-	app, cleanup, err := initApp(bc.Services, bc.Security, server.NewWebMultiTenancyOption(bc.App), bc.Data, logger)
+	app, cleanup, err := initApp(bc.Services, bc.Security, bc.Sys, server.NewWebMultiTenancyOption(bc.App), bc.Data, logger)
 	if err != nil {
 		panic(err)
 	}

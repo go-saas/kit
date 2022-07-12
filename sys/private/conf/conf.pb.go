@@ -33,6 +33,7 @@ type Bootstrap struct {
 	Logging  *conf.Logging   `protobuf:"bytes,6,opt,name=logging,proto3" json:"logging,omitempty"`
 	Tracing  *conf.Tracers   `protobuf:"bytes,7,opt,name=tracing,proto3" json:"tracing,omitempty"`
 	App      *conf.AppConfig `protobuf:"bytes,8,opt,name=app,proto3" json:"app,omitempty"`
+	Sys      *SysConf        `protobuf:"bytes,10,opt,name=sys,proto3" json:"sys,omitempty"`
 }
 
 func (x *Bootstrap) Reset() {
@@ -109,6 +110,115 @@ func (x *Bootstrap) GetApp() *conf.AppConfig {
 	return nil
 }
 
+func (x *Bootstrap) GetSys() *SysConf {
+	if x != nil {
+		return x.Sys
+	}
+	return nil
+}
+
+type SysConf struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Apisix *SysConf_Apisix `protobuf:"bytes,1,opt,name=apisix,proto3" json:"apisix,omitempty"`
+}
+
+func (x *SysConf) Reset() {
+	*x = SysConf{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_sys_private_conf_conf_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SysConf) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConf) ProtoMessage() {}
+
+func (x *SysConf) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_private_conf_conf_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConf.ProtoReflect.Descriptor instead.
+func (*SysConf) Descriptor() ([]byte, []int) {
+	return file_sys_private_conf_conf_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *SysConf) GetApisix() *SysConf_Apisix {
+	if x != nil {
+		return x.Apisix
+	}
+	return nil
+}
+
+type SysConf_Apisix struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Endpoint string `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	ApiKey   string `protobuf:"bytes,2,opt,name=api_key,json=apiKey,proto3" json:"api_key,omitempty"`
+}
+
+func (x *SysConf_Apisix) Reset() {
+	*x = SysConf_Apisix{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_sys_private_conf_conf_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SysConf_Apisix) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConf_Apisix) ProtoMessage() {}
+
+func (x *SysConf_Apisix) ProtoReflect() protoreflect.Message {
+	mi := &file_sys_private_conf_conf_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConf_Apisix.ProtoReflect.Descriptor instead.
+func (*SysConf_Apisix) Descriptor() ([]byte, []int) {
+	return file_sys_private_conf_conf_proto_rawDescGZIP(), []int{1, 0}
+}
+
+func (x *SysConf_Apisix) GetEndpoint() string {
+	if x != nil {
+		return x.Endpoint
+	}
+	return ""
+}
+
+func (x *SysConf_Apisix) GetApiKey() string {
+	if x != nil {
+		return x.ApiKey
+	}
+	return ""
+}
+
 var File_sys_private_conf_conf_proto protoreflect.FileDescriptor
 
 var file_sys_private_conf_conf_proto_rawDesc = []byte{
@@ -116,7 +226,7 @@ var file_sys_private_conf_conf_proto_rawDesc = []byte{
 	0x6e, 0x66, 0x2f, 0x63, 0x6f, 0x6e, 0x66, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0c, 0x73,
 	0x79, 0x73, 0x2e, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x1a, 0x0f, 0x63, 0x6f, 0x6e,
 	0x66, 0x2f, 0x63, 0x6f, 0x6e, 0x66, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x0f, 0x62, 0x6c,
-	0x6f, 0x62, 0x2f, 0x62, 0x6c, 0x6f, 0x62, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xf8, 0x01,
+	0x6f, 0x62, 0x2f, 0x62, 0x6c, 0x6f, 0x62, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xa1, 0x02,
 	0x0a, 0x09, 0x42, 0x6f, 0x6f, 0x74, 0x73, 0x74, 0x72, 0x61, 0x70, 0x12, 0x1e, 0x0a, 0x04, 0x64,
 	0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x63, 0x6f, 0x6e, 0x66,
 	0x2e, 0x44, 0x61, 0x74, 0x61, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x12, 0x2a, 0x0a, 0x08, 0x73,
@@ -132,10 +242,21 @@ var file_sys_private_conf_conf_proto_rawDesc = []byte{
 	0x63, 0x6f, 0x6e, 0x66, 0x2e, 0x54, 0x72, 0x61, 0x63, 0x65, 0x72, 0x73, 0x52, 0x07, 0x74, 0x72,
 	0x61, 0x63, 0x69, 0x6e, 0x67, 0x12, 0x21, 0x0a, 0x03, 0x61, 0x70, 0x70, 0x18, 0x08, 0x20, 0x01,
 	0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x63, 0x6f, 0x6e, 0x66, 0x2e, 0x41, 0x70, 0x70, 0x43, 0x6f, 0x6e,
-	0x66, 0x69, 0x67, 0x52, 0x03, 0x61, 0x70, 0x70, 0x42, 0x2e, 0x5a, 0x2c, 0x67, 0x69, 0x74, 0x68,
-	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x6f, 0x2d, 0x73, 0x61, 0x61, 0x73, 0x2f, 0x6b,
-	0x69, 0x74, 0x2f, 0x73, 0x79, 0x73, 0x2f, 0x70, 0x72, 0x69, 0x76, 0x61, 0x74, 0x65, 0x2f, 0x63,
-	0x6f, 0x6e, 0x66, 0x3b, 0x63, 0x6f, 0x6e, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x66, 0x69, 0x67, 0x52, 0x03, 0x61, 0x70, 0x70, 0x12, 0x27, 0x0a, 0x03, 0x73, 0x79, 0x73, 0x18,
+	0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x73, 0x79, 0x73, 0x2e, 0x69, 0x6e, 0x74, 0x65,
+	0x72, 0x6e, 0x61, 0x6c, 0x2e, 0x53, 0x79, 0x73, 0x43, 0x6f, 0x6e, 0x66, 0x52, 0x03, 0x73, 0x79,
+	0x73, 0x22, 0x7e, 0x0a, 0x07, 0x53, 0x79, 0x73, 0x43, 0x6f, 0x6e, 0x66, 0x12, 0x34, 0x0a, 0x06,
+	0x61, 0x70, 0x69, 0x73, 0x69, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1c, 0x2e, 0x73,
+	0x79, 0x73, 0x2e, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2e, 0x53, 0x79, 0x73, 0x43,
+	0x6f, 0x6e, 0x66, 0x2e, 0x41, 0x70, 0x69, 0x73, 0x69, 0x78, 0x52, 0x06, 0x61, 0x70, 0x69, 0x73,
+	0x69, 0x78, 0x1a, 0x3d, 0x0a, 0x06, 0x41, 0x70, 0x69, 0x73, 0x69, 0x78, 0x12, 0x1a, 0x0a, 0x08,
+	0x65, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x65, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x12, 0x17, 0x0a, 0x07, 0x61, 0x70, 0x69, 0x5f,
+	0x6b, 0x65, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x61, 0x70, 0x69, 0x4b, 0x65,
+	0x79, 0x42, 0x2e, 0x5a, 0x2c, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
+	0x67, 0x6f, 0x2d, 0x73, 0x61, 0x61, 0x73, 0x2f, 0x6b, 0x69, 0x74, 0x2f, 0x73, 0x79, 0x73, 0x2f,
+	0x70, 0x72, 0x69, 0x76, 0x61, 0x74, 0x65, 0x2f, 0x63, 0x6f, 0x6e, 0x66, 0x3b, 0x63, 0x6f, 0x6e,
+	0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -150,28 +271,32 @@ func file_sys_private_conf_conf_proto_rawDescGZIP() []byte {
 	return file_sys_private_conf_conf_proto_rawDescData
 }
 
-var file_sys_private_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_sys_private_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_sys_private_conf_conf_proto_goTypes = []interface{}{
 	(*Bootstrap)(nil),      // 0: sys.internal.Bootstrap
-	(*conf.Data)(nil),      // 1: conf.Data
-	(*conf.Security)(nil),  // 2: conf.Security
-	(*conf.Services)(nil),  // 3: conf.Services
-	(*conf.Logging)(nil),   // 4: conf.Logging
-	(*conf.Tracers)(nil),   // 5: conf.Tracers
-	(*conf.AppConfig)(nil), // 6: conf.AppConfig
+	(*SysConf)(nil),        // 1: sys.internal.SysConf
+	(*SysConf_Apisix)(nil), // 2: sys.internal.SysConf.Apisix
+	(*conf.Data)(nil),      // 3: conf.Data
+	(*conf.Security)(nil),  // 4: conf.Security
+	(*conf.Services)(nil),  // 5: conf.Services
+	(*conf.Logging)(nil),   // 6: conf.Logging
+	(*conf.Tracers)(nil),   // 7: conf.Tracers
+	(*conf.AppConfig)(nil), // 8: conf.AppConfig
 }
 var file_sys_private_conf_conf_proto_depIdxs = []int32{
-	1, // 0: sys.internal.Bootstrap.data:type_name -> conf.Data
-	2, // 1: sys.internal.Bootstrap.security:type_name -> conf.Security
-	3, // 2: sys.internal.Bootstrap.services:type_name -> conf.Services
-	4, // 3: sys.internal.Bootstrap.logging:type_name -> conf.Logging
-	5, // 4: sys.internal.Bootstrap.tracing:type_name -> conf.Tracers
-	6, // 5: sys.internal.Bootstrap.app:type_name -> conf.AppConfig
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	3, // 0: sys.internal.Bootstrap.data:type_name -> conf.Data
+	4, // 1: sys.internal.Bootstrap.security:type_name -> conf.Security
+	5, // 2: sys.internal.Bootstrap.services:type_name -> conf.Services
+	6, // 3: sys.internal.Bootstrap.logging:type_name -> conf.Logging
+	7, // 4: sys.internal.Bootstrap.tracing:type_name -> conf.Tracers
+	8, // 5: sys.internal.Bootstrap.app:type_name -> conf.AppConfig
+	1, // 6: sys.internal.Bootstrap.sys:type_name -> sys.internal.SysConf
+	2, // 7: sys.internal.SysConf.apisix:type_name -> sys.internal.SysConf.Apisix
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	8, // [8:8] is the sub-list for extension type_name
+	8, // [8:8] is the sub-list for extension extendee
+	0, // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_sys_private_conf_conf_proto_init() }
@@ -192,6 +317,30 @@ func file_sys_private_conf_conf_proto_init() {
 				return nil
 			}
 		}
+		file_sys_private_conf_conf_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SysConf); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_sys_private_conf_conf_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SysConf_Apisix); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -199,7 +348,7 @@ func file_sys_private_conf_conf_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_sys_private_conf_conf_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

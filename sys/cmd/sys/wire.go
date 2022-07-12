@@ -17,6 +17,7 @@ import (
 	"github.com/go-saas/kit/pkg/job"
 	kserver "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/sys/private/biz"
+	"github.com/go-saas/kit/sys/private/conf"
 	"github.com/go-saas/kit/sys/private/data"
 	"github.com/go-saas/kit/sys/private/server"
 	"github.com/go-saas/kit/sys/private/service"
@@ -28,7 +29,7 @@ import (
 )
 
 // initApp init kratos application.
-func initApp(*sconf.Services, *sconf.Security, *shttp.WebMultiTenancyOption, *sconf.Data, log.Logger, ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(*sconf.Services, *sconf.Security, *conf.SysConf, *shttp.WebMultiTenancyOption, *sconf.Data, log.Logger, ...grpc.ClientOption) (*kratos.App, func(), error) {
 	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet, job.DefaultProviderSet,
 		uapi.GrpcProviderSet,
 		sapi.GrpcProviderSet,

@@ -13,4 +13,14 @@ message Bootstrap {
   conf.Logging logging=6;
   conf.Tracers tracing=7;
   conf.AppConfig app=8;
+
+  SysConf sys=10;
+}
+
+message SysConf{
+  message Apisix{
+    string endpoint=1;
+    string api_key=2;
+  }
+  Apisix apisix=1;
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/go-saas/kit/pkg/apisix"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	kconf "github.com/go-saas/kit/pkg/conf"
@@ -14,6 +15,7 @@ import (
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/sys/api"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
+	"github.com/go-saas/kit/sys/private/conf"
 	"github.com/google/wire"
 	"github.com/hibiken/asynq"
 	"net/http"
@@ -23,11 +25,29 @@ import (
 var spec []byte
 
 // ProviderSet is service providers.
-var ProviderSet = wire.NewSet(NewHttpServerRegister, NewGrpcServerRegister,
+var ProviderSet = wire.NewSet(NewApisixOption, apisix.NewWatchSyncAdmin,
+	NewHttpServerRegister, NewGrpcServerRegister,
 	NewMenuService, wire.Bind(new(v1.MenuServiceServer), new(*MenuService)))
 
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister
+
+func NewApisixOption(cfg *conf.SysConf) *apisix.Option {
+	ret := &apisix.Option{
+		Endpoint: "",
+		ApiKey:   "",
+		Services: nil,
+		Timeout:  0,
+		Log:      nil,
+	}
+	if cfg != nil {
+		if cfg.Apisix != nil {
+			ret.Endpoint = cfg.Apisix.ApiKey
+			ret.ApiKey = cfg.Apisix.Endpoint
+		}
+	}
+	return ret
+}
 
 func NewHttpServerRegister(
 	menu *MenuService,

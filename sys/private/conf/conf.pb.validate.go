@@ -231,6 +231,35 @@ func (m *Bootstrap) validate(all bool) error {
 		}
 	}
 
+	if all {
+		switch v := interface{}(m.GetSys()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, BootstrapValidationError{
+					field:  "Sys",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, BootstrapValidationError{
+					field:  "Sys",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSys()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return BootstrapValidationError{
+				field:  "Sys",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return BootstrapMultiError(errors)
 	}
@@ -307,3 +336,234 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = BootstrapValidationError{}
+
+// Validate checks the field values on SysConf with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SysConf) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SysConf with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in SysConfMultiError, or nil if none found.
+func (m *SysConf) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SysConf) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetApisix()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SysConfValidationError{
+					field:  "Apisix",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SysConfValidationError{
+					field:  "Apisix",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetApisix()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SysConfValidationError{
+				field:  "Apisix",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SysConfMultiError(errors)
+	}
+
+	return nil
+}
+
+// SysConfMultiError is an error wrapping multiple validation errors returned
+// by SysConf.ValidateAll() if the designated constraints aren't met.
+type SysConfMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SysConfMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SysConfMultiError) AllErrors() []error { return m }
+
+// SysConfValidationError is the validation error returned by SysConf.Validate
+// if the designated constraints aren't met.
+type SysConfValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SysConfValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SysConfValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SysConfValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SysConfValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SysConfValidationError) ErrorName() string { return "SysConfValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SysConfValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSysConf.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SysConfValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SysConfValidationError{}
+
+// Validate checks the field values on SysConf_Apisix with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SysConf_Apisix) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SysConf_Apisix with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SysConf_ApisixMultiError,
+// or nil if none found.
+func (m *SysConf_Apisix) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SysConf_Apisix) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Endpoint
+
+	// no validation rules for ApiKey
+
+	if len(errors) > 0 {
+		return SysConf_ApisixMultiError(errors)
+	}
+
+	return nil
+}
+
+// SysConf_ApisixMultiError is an error wrapping multiple validation errors
+// returned by SysConf_Apisix.ValidateAll() if the designated constraints
+// aren't met.
+type SysConf_ApisixMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SysConf_ApisixMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SysConf_ApisixMultiError) AllErrors() []error { return m }
+
+// SysConf_ApisixValidationError is the validation error returned by
+// SysConf_Apisix.Validate if the designated constraints aren't met.
+type SysConf_ApisixValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SysConf_ApisixValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SysConf_ApisixValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SysConf_ApisixValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SysConf_ApisixValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SysConf_ApisixValidationError) ErrorName() string { return "SysConf_ApisixValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SysConf_ApisixValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSysConf_Apisix.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SysConf_ApisixValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SysConf_ApisixValidationError{}
