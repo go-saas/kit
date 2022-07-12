@@ -39,6 +39,15 @@ apisix:
     ip: "0.0.0.0"
     port: 9092
 
+discovery:
+  consul_kv:
+    servers:
+      - "http://consul:8500"
+    dump: # if you need, when registered nodes updated can dump into file
+      path: "logs/consul_kv.dump"
+      expire: 2592000      # unit sec, here is 30 day
+
+
 ext-plugin:
   cmd: ["/app/go-runner", "run","-c /data/conf","-c /data/conf.override"]
 

@@ -45,7 +45,7 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 
 	_ "github.com/go-saas/kit/gateway/apisix/cmd/go-runner/plugins"
-	_ "github.com/go-saas/kit/pkg/registry/etcd"
+	_ "github.com/go-saas/kit/pkg/registry/consul"
 )
 
 var (

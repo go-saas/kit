@@ -35,22 +35,22 @@ Layout Repo( For creating new service): https://github.com/go-saas/kit-layout
 ### For Microservice
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.ms.yml -f docker-compose.kafka.yml -f docker-compose.tracing.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.ms.yml -f docker-compose.kafka.yml -f docker-compose.tracing.yml up -d
 ```
 
 Or with build
 ```
-docker-compose -f docker-compose.yml -f docker-compose.ms.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.ms.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d --build
 ```
 
 ### For Monolithic
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.monolithic.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.monolithic.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d
 ```
 Or with build
 ```
-docker-compose -f docker-compose.yml -f docker-compose.monolithic.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.monolithic.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d --build
 ```
 
 [//]: # (With hydra)

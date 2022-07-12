@@ -53,14 +53,17 @@ services:
     ports:
       - "7379:6379"
 
-  etcd:
-    image: bitnami/etcd
-    restart: always
-    environment:
-      - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+  consul:
+    image: docker.io/bitnami/consul:1
+    volumes:
+      - consul_data:/bitnami/consul
     ports:
-      - "3379:2379"
+      - '9300:8300'
+      - '9301:8301'
+      - '9301:8301/udp'
+      - '9500:8500'
+      - '9600:8600'
+      - '9600:8600/udp'
 
   dtm:
     image: yedf/dtm:latest
@@ -75,3 +78,4 @@ services:
 volumes:
   mysql_data:
   apisix_runner:
+  consul_data:

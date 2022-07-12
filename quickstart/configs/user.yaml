@@ -3,23 +3,3 @@ user:
   admin:
     username: admin
     password: "123456"
-  permission:
-    groups:
-      - name: "permission.cms.post"
-        def:
-          - name: "permission.cms.post.any"
-            namespace: "cms.post"
-            action: "*"
-            internal: true
-          - name: "permission.cms.post.read"
-            namespace: "cms.post"
-            action: "read"
-          - name: "permission.cms.post.create"
-            namespace: "cms.post"
-            action: "create"
-          - name: "permission.cms.post.update"
-            namespace: "cms.post"
-            action: "update"
-          - name: "permission.cms.post.delete"
-            namespace: "cms.post"
-            action: "delete"

@@ -20,7 +20,7 @@ import (
 
 import (
 	_ "github.com/go-saas/kit/gateway/apisix/cmd/go-runner/plugins"
-	_ "github.com/go-saas/kit/pkg/registry/etcd"
+	_ "github.com/go-saas/kit/pkg/registry/consul"
 )
 
 // Injectors from wire.go:

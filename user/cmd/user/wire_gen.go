@@ -39,7 +39,7 @@ import (
 import (
 	_ "github.com/go-saas/kit/event/kafka"
 	_ "github.com/go-saas/kit/event/pulsar"
-	_ "github.com/go-saas/kit/pkg/registry/etcd"
+	_ "github.com/go-saas/kit/pkg/registry/consul"
 	_ "github.com/go-saas/kit/saas/api"
 	_ "github.com/go-saas/kit/sys/api"
 )

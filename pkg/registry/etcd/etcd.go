@@ -1,7 +1,7 @@
 package etcd
 
 import (
-	etcd "github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2/registry"
 	kregistry "github.com/go-saas/kit/pkg/registry"
 	clientv3 "go.etcd.io/etcd/client/v3"

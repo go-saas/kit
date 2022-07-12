@@ -39,8 +39,8 @@
 
  MicroService: # grpc based microservice config
    Driver: 'dtm-driver-kratos' # name of the driver to handle register/discover
-   Target: 'etcd://etcd:2379/dtmservice' # register dtm server to this url
-   EndPoint: 'dtm:36790'
+   Target: 'consul://consul:8500/dtmservice' # register dtm server to this url
+   EndPoint: 'dtm:36790' #dtm self endpoint
 
 # HttpMicroService: # http based microservice config
 #   Driver: 'dtm-driver-http' # name of the driver to handle register/discover
