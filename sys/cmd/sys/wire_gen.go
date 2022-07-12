@@ -107,7 +107,7 @@ func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.Sy
 		cleanup()
 		return nil, nil, err
 	}
-	apisixOption := service.NewApisixOption(sysConf)
+	apisixOption := service.NewApisixOption(sysConf, services)
 	watchSyncAdmin := apisix.NewWatchSyncAdmin(discovery, apisixOption)
 	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, producer, watchSyncAdmin)
 	return app, func() {

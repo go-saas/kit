@@ -11,6 +11,6 @@ import (
 var DtmProviderSet = wire.NewSet(
 	dtmapi.NewInit,
 	service.NewMsgService, wire.Bind(new(v1.MsgServiceServer), new(*service.MsgService)),
-	data.NewMigrator,
+	data.NewBarrierMigrator, data.NewStorageMigrator, data.NewMigrator,
 	service.NewHttpServerRegister, service.NewGrpcServerRegister,
 )

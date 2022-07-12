@@ -8,6 +8,7 @@ import "blob/blob.proto";
 import "saas/private/conf/conf.proto";
 import "user/private/conf/conf.proto";
 import "sys/private/conf/conf.proto";
+
 message Bootstrap {
   conf.Data data = 2;
   conf.Security security=3;
@@ -18,4 +19,5 @@ message Bootstrap {
   
   saas.internal.SaasConf saas=20;
   user.internal.UserConf user=21;
+  sys.internal.SysConf sys=22;
 }

@@ -19,6 +19,7 @@ import (
 	kdal "github.com/go-saas/kit/pkg/dal"
 	"github.com/go-saas/kit/pkg/job"
 	kserver "github.com/go-saas/kit/pkg/server"
+	sysconf "github.com/go-saas/kit/sys/private/conf"
 	"github.com/google/wire"
 
 	sbiz "github.com/go-saas/kit/saas/private/biz"
@@ -39,7 +40,7 @@ import (
 )
 
 // initApp init kratos application.
-func initApp(*kitconf.Services, *kitconf.Security, *kitconf.Data, *sconf.SaasConf, *uconf.UserConf, log.Logger, *kitconf.AppConfig, ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(*kitconf.Services, *kitconf.Security, *kitconf.Data, *sysconf.SysConf, *sconf.SaasConf, *uconf.UserConf, log.Logger, *kitconf.AppConfig, ...grpc.ClientOption) (*kratos.App, func(), error) {
 	panic(wire.Build(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kserver.NewWebMultiTenancyOption, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
 		job.DefaultProviderSet, dtmserver.DtmProviderSet, eventserver.EventProviderSet,
 		sdata.ProviderSet, sbiz.ProviderSet, sservice.ProviderSet,

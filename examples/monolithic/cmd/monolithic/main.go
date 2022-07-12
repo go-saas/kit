@@ -7,8 +7,10 @@ import (
 	"github.com/go-kratos/kratos/v2/config/env"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/examples/monolithic/private/conf"
+	"github.com/go-saas/kit/pkg/apisix"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/tracers"
@@ -38,15 +40,17 @@ var (
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
-	flagconf arrayFlags
-	ifSeed   bool
-	id, _    = os.Hostname()
+	flagconf     arrayFlags
+	ifSyncApisix bool
+	ifSeed       bool
+	id, _        = os.Hostname()
 
 	seedPath string
 )
 
 func init() {
 	flag.Var(&flagconf, "conf", "config path, eg: -conf config.yaml")
+	flag.BoolVar(&ifSyncApisix, "apisix.sync", true, "sync with apisix upstreams")
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
 	flag.StringVar(&seedPath, sysbiz.SeedPathKey, "", "menu seed file path")
 }
@@ -61,6 +65,7 @@ func newApp(
 	seeder seed.Seeder,
 	producer event.Producer,
 	r registry.Registrar,
+	syncAdmin *apisix.WatchSyncAdmin,
 ) *kratos.App {
 	ctx := event.NewProducerContext(context.Background(), producer)
 	if ifSeed {
@@ -74,6 +79,15 @@ func newApp(
 			panic(err)
 		}
 	}
+	srvs := []transport.Server{
+		hs,
+		gs,
+		js,
+		es,
+	}
+	if ifSyncApisix {
+		srvs = append(srvs, syncAdmin)
+	}
 	return kratos.New(
 		kratos.Context(ctx),
 		kratos.ID(id),
@@ -83,10 +97,7 @@ func newApp(
 		kratos.Logger(logger),
 		kratos.Registrar(r),
 		kratos.Server(
-			hs,
-			gs,
-			js,
-			es,
+			srvs...,
 		),
 	)
 }
@@ -147,7 +158,7 @@ func main() {
 		log.Error(err)
 	}
 	defer shutdown()
-	app, cleanup, err := initApp(bc.Services, bc.Security, bc.Data, bc.Saas, bc.User, logger, bc.App)
+	app, cleanup, err := initApp(bc.Services, bc.Security, bc.Data, bc.Sys, bc.Saas, bc.User, logger, bc.App)
 	if err != nil {
 		panic(err)
 	}

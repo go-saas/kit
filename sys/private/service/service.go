@@ -32,7 +32,7 @@ var ProviderSet = wire.NewSet(NewApisixOption, apisix.NewWatchSyncAdmin,
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister
 
-func NewApisixOption(cfg *conf.SysConf) *apisix.Option {
+func NewApisixOption(cfg *conf.SysConf, srvs *kconf.Services) *apisix.Option {
 	ret := &apisix.Option{
 		Endpoint: "",
 		ApiKey:   "",
@@ -44,6 +44,15 @@ func NewApisixOption(cfg *conf.SysConf) *apisix.Option {
 		if cfg.Apisix != nil {
 			ret.Endpoint = cfg.Apisix.ApiKey
 			ret.ApiKey = cfg.Apisix.Endpoint
+		}
+	}
+	if srvs != nil {
+		if srvs.Services != nil {
+			for k, _ := range srvs.Services {
+				if k != "default" {
+					ret.Services = append(ret.Services, k)
+				}
+			}
 		}
 	}
 	return ret

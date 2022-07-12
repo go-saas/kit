@@ -50,7 +50,7 @@ var (
 
 func init() {
 	flag.Var(&flagconf, "conf", "config path, eg: -conf config.yaml")
-	flag.BoolVar(&ifSyncApisix, "apisix", true, "sync with apisix upstreams")
+	flag.BoolVar(&ifSyncApisix, "apisix.sync", true, "sync with apisix upstreams")
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
 	flag.StringVar(&seedPath, biz.SeedPathKey, "", "menu seed file path")
 }

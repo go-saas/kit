@@ -13,24 +13,48 @@ import (
 	"strings"
 )
 
-type Migrator struct {
+const (
+	barrier = "barrier"
+	storage = "storage"
+)
+
+type migrator struct {
 	provider dal.ConstDbProvider
 	connName dal.ConnName
+	kind     []string
 }
+
+type (
+	BarrierMigrator migrator
+	StorageMigrator migrator
+	Migrator        migrator
+)
 
 //go:embed  sqls
 var sqls embed.FS
 
+func NewBarrierMigrator(provider dal.ConstDbProvider, connName dal.ConnName) *BarrierMigrator {
+	return (*BarrierMigrator)(newMigrator(provider, connName, barrier))
+}
+func NewStorageMigrator(provider dal.ConstDbProvider, connName dal.ConnName) *StorageMigrator {
+	return (*StorageMigrator)(newMigrator(provider, connName, storage))
+}
+
 func NewMigrator(provider dal.ConstDbProvider, connName dal.ConnName) *Migrator {
-	return &Migrator{
+	return (*Migrator)(newMigrator(provider, connName, storage, barrier))
+}
+
+func newMigrator(provider dal.ConstDbProvider, connName dal.ConnName, kind ...string) *migrator {
+	return &migrator{
 		provider: provider,
 		connName: connName,
+		kind:     kind,
 	}
 }
 
-var _ seed.Contrib = (*Migrator)(nil)
+var _ seed.Contrib = (*migrator)(nil)
 
-func (m *Migrator) Seed(ctx context.Context, sCtx *seed.Context) error {
+func (m *migrator) Seed(ctx context.Context, sCtx *seed.Context) error {
 	skipDrop := true
 	if len(sCtx.TenantId) == 0 {
 		ctx = kitgorm.NewDbGuardianContext(ctx)
@@ -40,9 +64,9 @@ func (m *Migrator) Seed(ctx context.Context, sCtx *seed.Context) error {
 		name := db.Dialector.Name()
 		dtmimp.SetCurrentDBType(name)
 		//read sql
-		fileNames := []string{
-			fmt.Sprintf("sqls/dtmcli.barrier.%s.sql", name),
-			fmt.Sprintf("sqls/dtmsvr.storage.%s.sql", name),
+		fileNames := make([]string, len(m.kind))
+		for i, k := range m.kind {
+			fileNames[i] = fmt.Sprintf("sqls/dtmcli.%s.%s.sql", k, name)
 		}
 		for _, fileName := range fileNames {
 			err := m.do(ctx, fileName, skipDrop, db)
@@ -54,7 +78,7 @@ func (m *Migrator) Seed(ctx context.Context, sCtx *seed.Context) error {
 	}
 	return nil
 }
-func (m *Migrator) do(ctx context.Context, fileName string, skipDrop bool, db *gorm.DB) error {
+func (m *migrator) do(ctx context.Context, fileName string, skipDrop bool, db *gorm.DB) error {
 	fs, err := sqls.Open(fileName)
 	defer fs.Close()
 	if err != nil {

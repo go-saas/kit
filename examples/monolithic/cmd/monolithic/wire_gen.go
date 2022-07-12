@@ -15,6 +15,7 @@ import (
 	service3 "github.com/go-saas/kit/event/service"
 	server2 "github.com/go-saas/kit/examples/monolithic/private/server"
 	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/apisix"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/authz/casbin"
@@ -26,17 +27,18 @@ import (
 	"github.com/go-saas/kit/pkg/uow"
 	api2 "github.com/go-saas/kit/saas/api"
 	"github.com/go-saas/kit/saas/private/biz"
-	conf2 "github.com/go-saas/kit/saas/private/conf"
+	conf3 "github.com/go-saas/kit/saas/private/conf"
 	"github.com/go-saas/kit/saas/private/data"
 	server5 "github.com/go-saas/kit/saas/private/server"
 	"github.com/go-saas/kit/saas/private/service"
 	biz3 "github.com/go-saas/kit/sys/private/biz"
+	conf2 "github.com/go-saas/kit/sys/private/conf"
 	data3 "github.com/go-saas/kit/sys/private/data"
 	server4 "github.com/go-saas/kit/sys/private/server"
 	service5 "github.com/go-saas/kit/sys/private/service"
 	api3 "github.com/go-saas/kit/user/api"
 	biz2 "github.com/go-saas/kit/user/private/biz"
-	conf3 "github.com/go-saas/kit/user/private/conf"
+	conf4 "github.com/go-saas/kit/user/private/conf"
 	data2 "github.com/go-saas/kit/user/private/data"
 	server3 "github.com/go-saas/kit/user/private/server"
 	service2 "github.com/go-saas/kit/user/private/service"
@@ -54,7 +56,7 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(services *conf.Services, security *conf.Security, confData *conf.Data, saasConf *conf2.SaasConf, userConf *conf3.UserConf, logger log.Logger, appConfig *conf.AppConfig, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
+func initApp(services *conf.Services, security *conf.Security, confData *conf.Data, sysConf *conf2.SysConf, saasConf *conf3.SaasConf, userConf *conf4.UserConf, logger log.Logger, appConfig *conf.AppConfig, arg ...grpc.ClientOption) (*kratos.App, func(), error) {
 	tokenizerConfig := jwt.NewTokenizerConfig(security)
 	tokenizer := jwt.NewTokenizer(tokenizerConfig)
 	dbCache, cleanup := gorm.NewDbCache(confData, logger)
@@ -207,7 +209,19 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, producer, registrar)
+	discovery, err := api.NewDiscovery(services)
+	if err != nil {
+		cleanup6()
+		cleanup5()
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	apisixOption := service5.NewApisixOption(sysConf, services)
+	watchSyncAdmin := apisix.NewWatchSyncAdmin(discovery, apisixOption)
+	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, producer, registrar, watchSyncAdmin)
 	return app, func() {
 		cleanup6()
 		cleanup5()
