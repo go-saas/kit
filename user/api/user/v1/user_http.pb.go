@@ -47,8 +47,8 @@ func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
 	r.PUT("/v1/user/{user.id}", _UserService_UpdateUser1_HTTP_Handler(srv))
 	r.DELETE("/v1/user/{id}", _UserService_DeleteUser0_HTTP_Handler(srv))
 	r.GET("/v1/user/{id}/roles", _UserService_GetUserRoles0_HTTP_Handler(srv))
-	r.POST("/v1/user/invite", _UserService_InviteUser0_HTTP_Handler(srv))
-	r.GET("/v1/user/search", _UserService_SearchUser0_HTTP_Handler(srv))
+	r.POST("/v1/user/public/invite", _UserService_InviteUser0_HTTP_Handler(srv))
+	r.GET("/v1/user/public/search", _UserService_SearchUser0_HTTP_Handler(srv))
 }
 
 func _UserService_ListUsers0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
@@ -329,7 +329,7 @@ func (c *UserServiceHTTPClientImpl) GetUserRoles(ctx context.Context, in *GetUse
 
 func (c *UserServiceHTTPClientImpl) InviteUser(ctx context.Context, in *InviteUserRequest, opts ...http.CallOption) (*InviteUserReply, error) {
 	var out InviteUserReply
-	pattern := "/v1/user/invite"
+	pattern := "/v1/user/public/invite"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserServiceInviteUser))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -355,7 +355,7 @@ func (c *UserServiceHTTPClientImpl) ListUsers(ctx context.Context, in *ListUsers
 
 func (c *UserServiceHTTPClientImpl) SearchUser(ctx context.Context, in *SearchUserRequest, opts ...http.CallOption) (*SearchUserResponse, error) {
 	var out SearchUserResponse
-	pattern := "/v1/user/search"
+	pattern := "/v1/user/public/search"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserServiceSearchUser))
 	opts = append(opts, http.PathTemplate(pattern))

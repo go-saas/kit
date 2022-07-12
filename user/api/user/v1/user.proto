@@ -98,14 +98,14 @@ service UserService{
   //authz: user.user,*,create
   rpc InviteUser(InviteUserRequest)returns(InviteUserReply){
     option (google.api.http) = {
-      post: "/v1/user/invite"
+      post: "/v1/user/public/invite"
       body:"*"
     };
   }
 
   rpc SearchUser(SearchUserRequest)returns(SearchUserResponse){
     option (google.api.http) = {
-      get: "/v1/user/search"
+      get: "/v1/user/public/search"
     };
   }
 

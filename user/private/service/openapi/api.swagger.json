@@ -1738,39 +1738,6 @@
         ]
       }
     },
-    "/v1/user/invite": {
-      "post": {
-        "summary": "InviteUser\r\nauthz: user.user,*,create",
-        "operationId": "UserService_InviteUser",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1InviteUserReply"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1InviteUserRequest"
-            }
-          }
-        ],
-        "tags": [
-          "UserService"
-        ]
-      }
-    },
     "/v1/user/list": {
       "post": {
         "summary": "ListUsers\r\nauthz: user.user,*,list",
@@ -1804,7 +1771,40 @@
         ]
       }
     },
-    "/v1/user/search": {
+    "/v1/user/public/invite": {
+      "post": {
+        "summary": "InviteUser\r\nauthz: user.user,*,create",
+        "operationId": "UserService_InviteUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1InviteUserReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1InviteUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/public/search": {
       "get": {
         "operationId": "UserService_SearchUser",
         "responses": {
