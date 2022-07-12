@@ -25,23 +25,29 @@ type migrator struct {
 }
 
 type (
-	BarrierMigrator migrator
-	StorageMigrator migrator
-	Migrator        migrator
+	BarrierMigrator struct {
+		*migrator
+	}
+	StorageMigrator struct {
+		*migrator
+	}
+	Migrator struct {
+		*migrator
+	}
 )
 
 //go:embed  sqls
 var sqls embed.FS
 
 func NewBarrierMigrator(provider dal.ConstDbProvider, connName dal.ConnName) *BarrierMigrator {
-	return (*BarrierMigrator)(newMigrator(provider, connName, barrier))
+	return &BarrierMigrator{newMigrator(provider, connName, barrier)}
 }
 func NewStorageMigrator(provider dal.ConstDbProvider, connName dal.ConnName) *StorageMigrator {
-	return (*StorageMigrator)(newMigrator(provider, connName, storage))
+	return &StorageMigrator{newMigrator(provider, connName, storage)}
 }
 
 func NewMigrator(provider dal.ConstDbProvider, connName dal.ConnName) *Migrator {
-	return (*Migrator)(newMigrator(provider, connName, storage, barrier))
+	return &Migrator{newMigrator(provider, connName, storage, barrier)}
 }
 
 func newMigrator(provider dal.ConstDbProvider, connName dal.ConnName, kind ...string) *migrator {

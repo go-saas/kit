@@ -25,6 +25,13 @@ services:
       context: .
       dockerfile: ./gateway/apisix/Dockerfile
 
+  apisix-dashboard:
+    image: apache/apisix-dashboard:2.13-alpine
+    restart: always
+    volumes:
+      - ./quickstart/configs/apisix/dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
+    ports:
+      - "9000:9000"
 
   mysqld:
     image: mysql:8.0
