@@ -103,6 +103,11 @@ service UserService{
     };
   }
 
+  rpc SearchUser(SearchUserRequest)returns(SearchUserResponse){
+    option (google.api.http) = {
+      get: "/v1/user/search"
+    };
+  }
 
   //CheckUserTenant internal api for checking whether user is allowed in this tenant
   rpc CheckUserTenant(CheckUserTenantRequest)returns(CheckUserTenantReply){
@@ -243,4 +248,23 @@ message CheckUserTenantRequest{
 message CheckUserTenantReply{
   //can user access this tenant
   bool ok=1;
+}
+
+message SearchUserRequest{
+  string identity=1;
+  string username=2;
+  string email=4 [(validate.rules).string.email=true];
+  string phone=5;
+  google.protobuf.FieldMask fields=10;
+}
+
+
+message SearchUserResponse{
+  message SearchUser{
+    string id=1;
+    optional google.protobuf.StringValue username =2;
+    blob.BlobFile avatar=10;
+  }
+
+  SearchUser user=1;
 }

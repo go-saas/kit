@@ -43,6 +43,7 @@ type UserServiceClient interface {
 	//InviteUser
 	//authz: user.user,*,create
 	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserReply, error)
+	SearchUser(ctx context.Context, in *SearchUserRequest, opts ...grpc.CallOption) (*SearchUserResponse, error)
 	//CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error)
 }
@@ -118,6 +119,15 @@ func (c *userServiceClient) InviteUser(ctx context.Context, in *InviteUserReques
 	return out, nil
 }
 
+func (c *userServiceClient) SearchUser(ctx context.Context, in *SearchUserRequest, opts ...grpc.CallOption) (*SearchUserResponse, error) {
+	out := new(SearchUserResponse)
+	err := c.cc.Invoke(ctx, "/user.api.user.v1.UserService/SearchUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error) {
 	out := new(CheckUserTenantReply)
 	err := c.cc.Invoke(ctx, "/user.api.user.v1.UserService/CheckUserTenant", in, out, opts...)
@@ -152,6 +162,7 @@ type UserServiceServer interface {
 	//InviteUser
 	//authz: user.user,*,create
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error)
+	SearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error)
 	//CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error)
 }
@@ -180,6 +191,9 @@ func (UnimplementedUserServiceServer) GetUserRoles(context.Context, *GetUserRole
 }
 func (UnimplementedUserServiceServer) InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InviteUser not implemented")
+}
+func (UnimplementedUserServiceServer) SearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchUser not implemented")
 }
 func (UnimplementedUserServiceServer) CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckUserTenant not implemented")
@@ -322,6 +336,24 @@ func _UserService_InviteUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_SearchUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SearchUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.user.v1.UserService/SearchUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SearchUser(ctx, req.(*SearchUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_CheckUserTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckUserTenantRequest)
 	if err := dec(in); err != nil {
@@ -374,6 +406,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InviteUser",
 			Handler:    _UserService_InviteUser_Handler,
+		},
+		{
+			MethodName: "SearchUser",
+			Handler:    _UserService_SearchUser_Handler,
 		},
 		{
 			MethodName: "CheckUserTenant",

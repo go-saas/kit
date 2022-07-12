@@ -1804,6 +1804,60 @@
         ]
       }
     },
+    "/v1/user/search": {
+      "get": {
+        "operationId": "UserService_SearchUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SearchUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/v1/user/{id}": {
       "get": {
         "summary": "GetUser\r\nauthz: user.user,id,get",
@@ -2536,6 +2590,21 @@
     }
   },
   "definitions": {
+    "SearchUserResponseSearchUser": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "avatar": {
+          "$ref": "#/definitions/blobBlobFile"
+        }
+      }
+    },
     "blobBlobFile": {
       "type": "object",
       "properties": {
@@ -3869,6 +3938,14 @@
         },
         "name": {
           "$ref": "#/definitions/operationStringFilterOperation"
+        }
+      }
+    },
+    "v1SearchUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/SearchUserResponseSearchUser"
         }
       }
     },

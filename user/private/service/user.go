@@ -328,6 +328,40 @@ func (s *UserService) InviteUser(ctx context.Context, req *pb.InviteUserRequest)
 	return &pb.InviteUserReply{RequiredConfirm: false}, nil
 }
 
+// SearchUser is for inviting user or creating user
+func (s *UserService) SearchUser(ctx context.Context, req *pb.SearchUserRequest) (*pb.SearchUserResponse, error) {
+	if _, err := authn.ErrIfUnauthenticated(ctx); err != nil {
+		return nil, err
+	}
+	var user *biz.User
+	var err error
+	if len(req.Identity) > 0 {
+		user, err = s.um.FindByIdentity(ctx, req.Identity)
+	} else if len(req.Email) > 0 {
+		user, err = s.um.FindByEmail(ctx, req.Email)
+	} else if len(req.Phone) > 0 {
+		user, err = s.um.FindByPhone(ctx, req.Phone)
+	} else if len(req.Username) > 0 {
+		user, err = s.um.FindByName(ctx, req.Phone)
+	}
+	if err != nil {
+		return nil, err
+	}
+	ret := &pb.SearchUserResponse{}
+	if user == nil {
+		return ret, nil
+	}
+
+	ret.User = &pb.SearchUserResponse_SearchUser{
+		Id: user.ID.String(),
+	}
+	if user.Username != nil {
+		ret.User.Username = &wrapperspb.StringValue{Value: *user.Username}
+	}
+	ret.User.Avatar = mapAvatar(ctx, s.blob, user)
+	return ret, err
+}
+
 //CheckUserTenant internal api for check user tenant
 func (s *UserService) CheckUserTenant(ctx context.Context, req *pb.CheckUserTenantRequest) (*pb.CheckUserTenantReply, error) {
 	//check permission

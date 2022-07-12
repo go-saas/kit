@@ -137,7 +137,6 @@ func (um *UserManager) FindByEmail(ctx context.Context, email string) (user *Use
 func (um *UserManager) FindByIdentity(ctx context.Context, identity string) (user *User, err error) {
 	//try to find by id
 	if uid, err := uuid.Parse(identity); err == nil {
-		//
 		return um.FindByID(ctx, uid.String())
 	}
 	if _, err := um.lookupNormalizer.Email(identity); err == nil {

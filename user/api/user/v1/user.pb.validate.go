@@ -2788,3 +2788,500 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CheckUserTenantReplyValidationError{}
+
+// Validate checks the field values on SearchUserRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SearchUserRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchUserRequestMultiError, or nil if none found.
+func (m *SearchUserRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchUserRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Identity
+
+	// no validation rules for Username
+
+	if err := m._validateEmail(m.GetEmail()); err != nil {
+		err = SearchUserRequestValidationError{
+			field:  "Email",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Phone
+
+	if all {
+		switch v := interface{}(m.GetFields()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SearchUserRequestValidationError{
+					field:  "Fields",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SearchUserRequestValidationError{
+					field:  "Fields",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SearchUserRequestValidationError{
+				field:  "Fields",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SearchUserRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *SearchUserRequest) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *SearchUserRequest) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
+}
+
+// SearchUserRequestMultiError is an error wrapping multiple validation errors
+// returned by SearchUserRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SearchUserRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchUserRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchUserRequestMultiError) AllErrors() []error { return m }
+
+// SearchUserRequestValidationError is the validation error returned by
+// SearchUserRequest.Validate if the designated constraints aren't met.
+type SearchUserRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchUserRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchUserRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchUserRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchUserRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchUserRequestValidationError) ErrorName() string {
+	return "SearchUserRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchUserRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchUserRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchUserRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchUserRequestValidationError{}
+
+// Validate checks the field values on SearchUserResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchUserResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchUserResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchUserResponseMultiError, or nil if none found.
+func (m *SearchUserResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchUserResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SearchUserResponseValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SearchUserResponseValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SearchUserResponseValidationError{
+				field:  "User",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SearchUserResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchUserResponseMultiError is an error wrapping multiple validation errors
+// returned by SearchUserResponse.ValidateAll() if the designated constraints
+// aren't met.
+type SearchUserResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchUserResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchUserResponseMultiError) AllErrors() []error { return m }
+
+// SearchUserResponseValidationError is the validation error returned by
+// SearchUserResponse.Validate if the designated constraints aren't met.
+type SearchUserResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchUserResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchUserResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchUserResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchUserResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchUserResponseValidationError) ErrorName() string {
+	return "SearchUserResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchUserResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchUserResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchUserResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchUserResponseValidationError{}
+
+// Validate checks the field values on SearchUserResponse_SearchUser with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchUserResponse_SearchUser) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchUserResponse_SearchUser with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// SearchUserResponse_SearchUserMultiError, or nil if none found.
+func (m *SearchUserResponse_SearchUser) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchUserResponse_SearchUser) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetAvatar()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SearchUserResponse_SearchUserValidationError{
+					field:  "Avatar",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SearchUserResponse_SearchUserValidationError{
+					field:  "Avatar",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAvatar()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SearchUserResponse_SearchUserValidationError{
+				field:  "Avatar",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.Username != nil {
+
+		if all {
+			switch v := interface{}(m.GetUsername()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SearchUserResponse_SearchUserValidationError{
+						field:  "Username",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SearchUserResponse_SearchUserValidationError{
+						field:  "Username",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SearchUserResponse_SearchUserValidationError{
+					field:  "Username",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return SearchUserResponse_SearchUserMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchUserResponse_SearchUserMultiError is an error wrapping multiple
+// validation errors returned by SearchUserResponse_SearchUser.ValidateAll()
+// if the designated constraints aren't met.
+type SearchUserResponse_SearchUserMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchUserResponse_SearchUserMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchUserResponse_SearchUserMultiError) AllErrors() []error { return m }
+
+// SearchUserResponse_SearchUserValidationError is the validation error
+// returned by SearchUserResponse_SearchUser.Validate if the designated
+// constraints aren't met.
+type SearchUserResponse_SearchUserValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchUserResponse_SearchUserValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchUserResponse_SearchUserValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchUserResponse_SearchUserValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchUserResponse_SearchUserValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchUserResponse_SearchUserValidationError) ErrorName() string {
+	return "SearchUserResponse_SearchUserValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchUserResponse_SearchUserValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchUserResponse_SearchUser.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchUserResponse_SearchUserValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchUserResponse_SearchUserValidationError{}

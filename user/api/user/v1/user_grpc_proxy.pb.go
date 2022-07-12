@@ -49,6 +49,9 @@ func (c *userServiceClientProxy) GetUserRoles(ctx context.Context, in *GetUserRo
 func (c *userServiceClientProxy) InviteUser(ctx context.Context, in *InviteUserRequest) (*InviteUserReply, error) {
 	return c.cc.InviteUser(ctx, in)
 }
+func (c *userServiceClientProxy) SearchUser(ctx context.Context, in *SearchUserRequest) (*SearchUserResponse, error) {
+	return c.cc.SearchUser(ctx, in)
+}
 func (c *userServiceClientProxy) CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
 	return c.cc.CheckUserTenant(ctx, in)
 }
