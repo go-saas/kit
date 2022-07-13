@@ -26,14 +26,15 @@ type Seeding seed.Contrib
 
 func NewSeeding(uow uow.Manager,
 	migrate *data.Migrate,
+	dtmMigrator *dtmdata.BarrierMigrator, //barrier only
 	roleSeed *biz.RoleSeed,
 	userSeed *biz.UserSeed,
 	p *biz.PermissionSeeder) Seeding {
-	return seed.Chain(migrate, uow2.NewUowContrib(uow, roleSeed, userSeed, p))
+	return seed.Chain(migrate, dtmMigrator, uow2.NewUowContrib(uow, roleSeed, userSeed, p))
 }
 
-func NewSeeder(ts saas.TenantStore, dtmMigrator *dtmdata.Migrator, us Seeding) seed.Seeder {
-	res := seed.NewDefaultSeeder(ksaas.NewTraceContrib(dtmMigrator, ksaas.SeedChangeTenant(ts, us)))
+func NewSeeder(ts saas.TenantStore, us Seeding) seed.Seeder {
+	res := seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, us)))
 	return res
 }
 

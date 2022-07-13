@@ -1,6 +1,7 @@
 package server
 
 import (
+	dtmdata "github.com/go-saas/kit/dtm/data"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	ksaas "github.com/go-saas/kit/pkg/saas"
@@ -23,8 +24,9 @@ var ClientName api.ClientName = api2.ServiceName
 // Seeding workaround for https://github.com/google/wire/issues/207
 type Seeding seed.Contrib
 
-func NewSeeding(uow uow.Manager, migrate *data.Migrate, menu *biz.MenuSeed) Seeding {
-	return uow2.NewUowContrib(uow, seed.Chain(migrate, menu))
+// NewSeeding sys seeding should migrate dtmsrv and dmtcli
+func NewSeeding(apisixSeeder *biz.ApisixSeed, uow uow.Manager, dtmMigrator *dtmdata.Migrator, migrate *data.Migrate, menu *biz.MenuSeed) Seeding {
+	return seed.Chain(apisixSeeder, dtmMigrator, migrate, uow2.NewUowContrib(uow, seed.Chain(menu)))
 }
 
 func NewSeeder(ts saas.TenantStore, ss Seeding) seed.Seeder {

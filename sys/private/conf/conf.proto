@@ -5,6 +5,8 @@ option go_package = "github.com/go-saas/kit/sys/private/conf;conf";
 
 import "conf/conf.proto";
 import "blob/blob.proto";
+import "google/protobuf/struct.proto";
+
 
 message Bootstrap {
   conf.Data data = 2;
@@ -21,6 +23,13 @@ message SysConf{
   message Apisix{
     string endpoint=1;
     string api_key=2;
+
+    map<string,google.protobuf.Struct> routes=10;
+
+    map<string,google.protobuf.Struct> global_rules=11;
+
+    map<string,google.protobuf.Struct> upstreams=12;
+
   }
   Apisix apisix=1;
 }

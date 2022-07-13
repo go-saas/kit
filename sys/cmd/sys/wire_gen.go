@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	data2 "github.com/go-saas/kit/dtm/data"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/apisix"
 	"github.com/go-saas/kit/pkg/authn/jwt"
@@ -88,6 +89,20 @@ func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.Sy
 	grpcServerRegister := service.NewGrpcServerRegister(menuService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, manager, option, logger, trustedContextValidator, grpcServerRegister)
 	jobServer := server.NewJobServer(redisConnOpt, logger)
+	adminClient, err := service.NewApisixAdminClient(sysConf)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	apisixSeed := &biz.ApisixSeed{
+		Cfg:    sysConf,
+		Client: adminClient,
+	}
+	connStrings := dal.NewConstantConnStrResolver(confData)
+	constDbProvider := dal.NewConstDbProvider(dbCache, connStrings, confData)
+	migrator := data2.NewMigrator(constDbProvider, connName)
 	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup3()
@@ -97,7 +112,7 @@ func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.Sy
 	}
 	migrate := data.NewMigrate(dataData)
 	menuSeed := biz.NewMenuSeed(dbProvider, menuRepo)
-	seeding := server.NewSeeding(manager, migrate, menuSeed)
+	seeding := server.NewSeeding(apisixSeed, manager, migrator, migrate, menuSeed)
 	seeder := server.NewSeeder(tenantStore, seeding)
 	producer, cleanup5, err := dal.NewEventSender(confData, connName)
 	if err != nil {
@@ -107,8 +122,8 @@ func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.Sy
 		cleanup()
 		return nil, nil, err
 	}
-	apisixOption := service.NewApisixOption(sysConf, services)
-	watchSyncAdmin := apisix.NewWatchSyncAdmin(discovery, apisixOption)
+	apisixOption := service.NewApisixOption(services)
+	watchSyncAdmin := apisix.NewWatchSyncAdmin(discovery, adminClient, apisixOption)
 	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, producer, watchSyncAdmin)
 	return app, func() {
 		cleanup5()

@@ -25,26 +25,28 @@ import (
 var spec []byte
 
 // ProviderSet is service providers.
-var ProviderSet = wire.NewSet(NewApisixOption, apisix.NewWatchSyncAdmin,
+var ProviderSet = wire.NewSet(NewApisixOption, NewApisixAdminClient, apisix.NewWatchSyncAdmin,
 	NewHttpServerRegister, NewGrpcServerRegister,
 	NewMenuService, wire.Bind(new(v1.MenuServiceServer), new(*MenuService)))
 
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister
 
-func NewApisixOption(cfg *conf.SysConf, srvs *kconf.Services) *apisix.Option {
-	ret := &apisix.Option{
-		Endpoint: "",
-		ApiKey:   "",
-		Services: nil,
-		Timeout:  0,
-		Log:      nil,
-	}
+func NewApisixAdminClient(cfg *conf.SysConf) (*apisix.AdminClient, error) {
+	var endpoint, apikey string
 	if cfg != nil {
 		if cfg.Apisix != nil {
-			ret.Endpoint = cfg.Apisix.Endpoint
-			ret.ApiKey = cfg.Apisix.ApiKey
+			endpoint = cfg.Apisix.Endpoint
+			apikey = cfg.Apisix.ApiKey
 		}
+	}
+	return apisix.NewAdminClient(endpoint, apikey)
+}
+
+func NewApisixOption(srvs *kconf.Services) *apisix.Option {
+	ret := &apisix.Option{
+		Services: nil,
+		Timeout:  0,
 	}
 	if srvs != nil {
 		if srvs.Services != nil {

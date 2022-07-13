@@ -1,38 +1,27 @@
 package apisix
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/samber/lo"
 	"golang.org/x/sync/errgroup"
-	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 )
 
-var (
-	ErrOption = errors.New("apisix endpoint and apiKey are required")
-)
-
 type Option struct {
-	Endpoint string
-	ApiKey   string
 	Services []string
 	Timeout  time.Duration
-	Log      klog.Logger
 }
 
 type WatchSyncAdmin struct {
 	discovery registry.Discovery
-	client    *http.Client
+	client    *AdminClient
 	opt       *Option
 	canceler  context.CancelFunc
 	stopWg    *sync.WaitGroup
@@ -71,18 +60,6 @@ func (r *watcherSync) watch() {
 	}
 }
 
-type Node struct {
-	Host   string `json:"host"`
-	Port   uint64 `json:"port"`
-	Weight int    `json:"weight"`
-}
-
-type Upstream struct {
-	Nodes  []Node `json:"nodes"`
-	Type   string `json:"type"`
-	Scheme string `json:"scheme"`
-}
-
 func toUpstreams(serviceName string, srvs []*registry.ServiceInstance) (map[string]*Upstream, error) {
 	var ret = map[string]*Upstream{}
 	//group by schemas
@@ -103,7 +80,7 @@ func toUpstreams(serviceName string, srvs []*registry.ServiceInstance) (map[stri
 			srv = &Upstream{Scheme: raw.Scheme, Type: "roundrobin"}
 			ret[srvName] = srv
 		}
-		srv.Nodes = append(srv.Nodes, Node{
+		srv.Nodes = append(srv.Nodes, &Node{
 			Host:   addr,
 			Port:   port,
 			Weight: 1,
@@ -113,10 +90,8 @@ func toUpstreams(serviceName string, srvs []*registry.ServiceInstance) (map[stri
 	return ret, nil
 }
 
-func putServices(client *http.Client, endPoint, apiKey, serviceName string, ins []*registry.ServiceInstance) error {
-	if strings.HasSuffix(endPoint, "/") {
-		endPoint = strings.TrimSuffix(endPoint, "/")
-	}
+func putServices(client *AdminClient, serviceName string, ins []*registry.ServiceInstance) error {
+
 	up, err := toUpstreams(serviceName, ins)
 	if err != nil {
 		return err
@@ -125,18 +100,7 @@ func putServices(client *http.Client, endPoint, apiKey, serviceName string, ins 
 		klog.Warnf("[apisix] Skipped to put service %s empty upstream", serviceName)
 	}
 	for srvName, upstream := range up {
-		j, err := json.Marshal(upstream)
-		if err != nil {
-			return err
-		}
-		klog.Infof("[apisix]  update service %s : %s", srvName, j)
-		req, err := http.NewRequest(http.MethodPut, endPoint+"/apisix/admin/upstreams/"+srvName, bytes.NewReader(j))
-		if err != nil {
-			return err
-		}
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("X-API-KEY", apiKey)
-		_, err = client.Do(req)
+		err = client.PutUpstream(srvName, upstream)
 		if err != nil {
 			return err
 		}
@@ -144,19 +108,14 @@ func putServices(client *http.Client, endPoint, apiKey, serviceName string, ins 
 	return nil
 }
 
-func NewWatchSyncAdmin(discovery registry.Discovery, opt *Option) *WatchSyncAdmin {
-	return &WatchSyncAdmin{discovery: discovery, opt: opt}
+func NewWatchSyncAdmin(discovery registry.Discovery, adminClient *AdminClient, opt *Option) *WatchSyncAdmin {
+	return &WatchSyncAdmin{discovery: discovery, client: adminClient, opt: opt}
 }
 
 var _ transport.Server = (*WatchSyncAdmin)(nil)
 
 func (w *WatchSyncAdmin) Start(ctx context.Context) (err error) {
-	if w.opt == nil || len(w.opt.Endpoint) == 0 || len(w.opt.ApiKey) == 0 {
-		return ErrOption
-	}
-	if w.opt.Log == nil {
-		w.opt.Log = klog.GetLogger()
-	}
+
 	if w.opt.Timeout == 0 {
 		w.opt.Timeout = 10 * time.Second
 	}
@@ -164,14 +123,12 @@ func (w *WatchSyncAdmin) Start(ctx context.Context) (err error) {
 	ctx, cancel := context.WithCancel(ctx)
 	w.canceler = cancel
 
-	//generate admin client
-	w.client = &http.Client{}
 	if err != nil {
 		return err
 	}
 
 	if len(w.opt.Services) == 0 {
-		w.opt.Log.Log(klog.LevelWarn, klog.DefaultMessageKey, "empty service list. will not sync to apisix admin")
+		klog.Warn("empty service list. will not sync to apisix admin")
 	}
 
 	//generate watcher for all services
@@ -193,7 +150,7 @@ func (w *WatchSyncAdmin) Start(ctx context.Context) (err error) {
 					w:       watcher,
 					ctx:     ctx,
 					updateFunc: func(ins []*registry.ServiceInstance) error {
-						return putServices(w.client, w.opt.Endpoint, w.opt.ApiKey, service, ins)
+						return putServices(w.client, service, ins)
 					},
 					wg: &stopWg,
 				}

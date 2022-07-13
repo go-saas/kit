@@ -168,12 +168,25 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	grpcServerRegister4 := service.NewGrpcServerRegister(tenantService, tenantInternalService)
 	serverGrpcServerRegister := server2.NewGrpcServiceRegister(grpcServerRegister, serviceGrpcServerRegister, grpcServerRegister2, grpcServerRegister3, grpcServerRegister4)
 	grpcServer := server2.NewGRPCServer(services, tokenizer, tenantStore, manager, webMultiTenancyOption, option, logger, trustedContextValidator, userTenantContrib, serverGrpcServerRegister)
-	migrator := data4.NewMigrator(constDbProvider, connName)
 	migrate := data2.NewMigrate(data5)
+	barrierMigrator := data4.NewBarrierMigrator(constDbProvider, connName)
 	roleSeed := biz2.NewRoleSeed(roleManager, permissionService)
 	userSeed := biz2.NewUserSeed(userManager, roleManager)
 	permissionSeeder := biz2.NewPermissionSeeder(permissionService, permissionService, roleManager)
-	seeding := server3.NewSeeding(manager, migrate, roleSeed, userSeed, permissionSeeder)
+	seeding := server3.NewSeeding(manager, migrate, barrierMigrator, roleSeed, userSeed, permissionSeeder)
+	adminClient, err := service5.NewApisixAdminClient(sysConf)
+	if err != nil {
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	apisixSeed := &biz3.ApisixSeed{
+		Cfg:    sysConf,
+		Client: adminClient,
+	}
+	migrator := data4.NewMigrator(constDbProvider, connName)
 	data6, cleanup5, err := data3.NewData(confData, dbProvider, logger)
 	if err != nil {
 		cleanup4()
@@ -184,10 +197,10 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 	}
 	dataMigrate := data3.NewMigrate(data6)
 	menuSeed := biz3.NewMenuSeed(dbProvider, menuRepo)
-	serverSeeding := server4.NewSeeding(manager, dataMigrate, menuSeed)
+	serverSeeding := server4.NewSeeding(apisixSeed, manager, migrator, dataMigrate, menuSeed)
 	migrate2 := data.NewMigrate(dataData)
 	seeding2 := server5.NewSeeding(manager, migrate2)
-	seeder := server2.NewSeeder(migrator, tenantStore, seeding, serverSeeding, seeding2)
+	seeder := server2.NewSeeder(tenantStore, seeding, serverSeeding, seeding2)
 	producer, cleanup6, err := dal.NewEventSender(confData, connName)
 	if err != nil {
 		cleanup5()
@@ -219,8 +232,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	apisixOption := service5.NewApisixOption(sysConf, services)
-	watchSyncAdmin := apisix.NewWatchSyncAdmin(discovery, apisixOption)
+	apisixOption := service5.NewApisixOption(services)
+	watchSyncAdmin := apisix.NewWatchSyncAdmin(discovery, adminClient, apisixOption)
 	app := newApp(logger, userConf, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, producer, registrar, watchSyncAdmin)
 	return app, func() {
 		cleanup6()

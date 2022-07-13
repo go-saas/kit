@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package apisix;
+
+option go_package = "github.com/go-saas/kit/pkg/apisix;apisix";
+
+message Node{
+  string host=1;
+  uint64  port=2;
+  int64 weight=3;
+}
+
+message Upstream{
+  repeated Node nodes=1;
+  string type=2;
+  string scheme=3;
+}

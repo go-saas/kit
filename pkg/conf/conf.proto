@@ -53,7 +53,6 @@ message Client{
 
 message Service{
   string redirect=1;
-  string endpoint=2;
 }
 
 message Services{

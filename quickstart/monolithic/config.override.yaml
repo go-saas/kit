@@ -3,3 +3,86 @@ services:
     default:
       redirect: monolithic
     monolithic: {}
+
+sys:
+  apisix:
+    upstreams:
+      api-docs:
+        nodes:
+          "api_docs:8080": 1
+        type: roundrobin
+      web:
+        nodes:
+          "web:8080": 1
+        type: roundrobin
+
+      jaeger:
+        nodes:
+          "jaeger-all-in-one:16686": 1
+        type: roundrobin
+
+      kafka-ui:
+        nodes:
+          "kafka-ui:8080": 1
+        type: roundrobin
+
+    global_rules:
+      opentelemetry:
+        plugins:
+          opentelemetry:
+            sampler:
+              name: always_on
+      kit_authn:
+        plugins:
+          ext-plugin-pre-req:
+            conf:
+              - name: "kit_authn"
+                value: "{}"
+      cors:
+        plugins:
+          cors:
+            allow_origins: "*"
+    routes:
+      api-docs:
+        uri: /swagger*
+        upstream_id: api-docs
+        plugins:
+          ext-plugin-pre-req:
+            conf:
+              - name: "kit_authz"
+                value: "{\"requirement\":[{\"namespace\":\"dev.docs\",\"resource\":\"*\",\"action\":\"*\"}]}"
+      jaeger:
+        uri: /jaeger*
+        upstream_id: jaeger
+        plugins:
+          ext-plugin-pre-req:
+            conf:
+              - name: "kit_authz"
+                value: "{\"requirement\":[{\"namespace\":\"dev.jaeger\",\"resource\":\"*\",\"action\":\"*\"}]}"
+      kafka-ui:
+        uri: /kafka-ui*
+        upstream_id: kafka-ui
+        plugins:
+          ext-plugin-pre-req:
+            conf:
+              - name: "kit_authz"
+                value: "{\"requirement\":[{\"namespace\":\"dev.events.kafka\",\"resource\":\"*\",\"action\":\"*\"}]}"
+          response-rewrite:
+            headers:
+              X-Frame-Options: ""
+
+      saas-api:
+        uris: ["/v1/saas/*","/assets/saas/*"]
+        upstream_id: monolithic-http
+
+      sys-api:
+        uris: ["/v1/sys/*","/assets/sys/*"]
+        upstream_id: monolithic-http
+
+      user-api:
+        uris: ["/v1/*","/assets/user/*"]
+        upstream_id: monolithic-http
+
+      web:
+        uri: /*
+        upstream_id: web

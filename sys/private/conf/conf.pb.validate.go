@@ -490,6 +490,144 @@ func (m *SysConf_Apisix) validate(all bool) error {
 
 	// no validation rules for ApiKey
 
+	{
+		sorted_keys := make([]string, len(m.GetRoutes()))
+		i := 0
+		for key := range m.GetRoutes() {
+			sorted_keys[i] = key
+			i++
+		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetRoutes()[key]
+			_ = val
+
+			// no validation rules for Routes[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, SysConf_ApisixValidationError{
+							field:  fmt.Sprintf("Routes[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, SysConf_ApisixValidationError{
+							field:  fmt.Sprintf("Routes[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				}
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+				if err := v.Validate(); err != nil {
+					return SysConf_ApisixValidationError{
+						field:  fmt.Sprintf("Routes[%v]", key),
+						reason: "embedded message failed validation",
+						cause:  err,
+					}
+				}
+			}
+
+		}
+	}
+
+	{
+		sorted_keys := make([]string, len(m.GetGlobalRules()))
+		i := 0
+		for key := range m.GetGlobalRules() {
+			sorted_keys[i] = key
+			i++
+		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetGlobalRules()[key]
+			_ = val
+
+			// no validation rules for GlobalRules[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, SysConf_ApisixValidationError{
+							field:  fmt.Sprintf("GlobalRules[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, SysConf_ApisixValidationError{
+							field:  fmt.Sprintf("GlobalRules[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				}
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+				if err := v.Validate(); err != nil {
+					return SysConf_ApisixValidationError{
+						field:  fmt.Sprintf("GlobalRules[%v]", key),
+						reason: "embedded message failed validation",
+						cause:  err,
+					}
+				}
+			}
+
+		}
+	}
+
+	{
+		sorted_keys := make([]string, len(m.GetUpstreams()))
+		i := 0
+		for key := range m.GetUpstreams() {
+			sorted_keys[i] = key
+			i++
+		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetUpstreams()[key]
+			_ = val
+
+			// no validation rules for Upstreams[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, SysConf_ApisixValidationError{
+							field:  fmt.Sprintf("Upstreams[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, SysConf_ApisixValidationError{
+							field:  fmt.Sprintf("Upstreams[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				}
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+				if err := v.Validate(); err != nil {
+					return SysConf_ApisixValidationError{
+						field:  fmt.Sprintf("Upstreams[%v]", key),
+						reason: "embedded message failed validation",
+						cause:  err,
+					}
+				}
+			}
+
+		}
+	}
+
 	if len(errors) > 0 {
 		return SysConf_ApisixMultiError(errors)
 	}
