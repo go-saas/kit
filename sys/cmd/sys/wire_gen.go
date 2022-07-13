@@ -122,9 +122,18 @@ func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.Sy
 		cleanup()
 		return nil, nil, err
 	}
+	registrar, err := server2.NewRegistrar(services)
+	if err != nil {
+		cleanup5()
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	apisixOption := service.NewApisixOption(services)
 	watchSyncAdmin := apisix.NewWatchSyncAdmin(discovery, adminClient, apisixOption)
-	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, producer, watchSyncAdmin)
+	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, producer, registrar, watchSyncAdmin)
 	return app, func() {
 		cleanup5()
 		cleanup4()

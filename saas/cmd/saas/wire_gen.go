@@ -113,7 +113,15 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(logger, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, producer)
+	registrar, err := server.NewRegistrar(services)
+	if err != nil {
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	app := newApp(logger, httpServer, grpcServer, jobServer, consumerFactoryServer, seeder, producer, registrar)
 	return app, func() {
 		cleanup4()
 		cleanup3()

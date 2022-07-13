@@ -3,13 +3,13 @@ package data
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/google/wire"
 	_ "github.com/go-saas/kit/pkg/blob/memory"
 	_ "github.com/go-saas/kit/pkg/blob/os"
 	_ "github.com/go-saas/kit/pkg/blob/s3"
 	kconf "github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/sys/private/biz"
 	"github.com/go-saas/saas/gorm"
+	"github.com/google/wire"
 	g "gorm.io/gorm"
 )
 
@@ -33,7 +33,7 @@ func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
 // NewData .
 func NewData(c *kconf.Data, dbProvider gorm.DbProvider, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
-		logger.Log(log.LevelInfo, "closing the data resources")
+		logger.Log(log.LevelInfo, log.DefaultMessageKey, "closing the data resources")
 	}
 	return &Data{
 		DbProvider: dbProvider,

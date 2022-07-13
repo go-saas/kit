@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config/env"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/pkg/apisix"
@@ -62,6 +63,7 @@ func newApp(
 	js *job.Server,
 	seeder seed.Seeder,
 	producer event.Producer,
+	r registry.Registrar,
 	syncAdmin *apisix.WatchSyncAdmin,
 ) *kratos.App {
 	ctx := event.NewProducerContext(context.Background(), producer)
@@ -89,6 +91,7 @@ func newApp(
 		kratos.Version(Version),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
+		kratos.Registrar(r),
 		kratos.Server(
 			srvs...,
 		),
