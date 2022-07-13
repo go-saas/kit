@@ -337,12 +337,12 @@ func (s *UserService) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 	var err error
 	if len(req.Identity) > 0 {
 		user, err = s.um.FindByIdentity(ctx, req.Identity)
-	} else if len(req.Email) > 0 {
-		user, err = s.um.FindByEmail(ctx, req.Email)
+	} else if req.Email != nil {
+		user, err = s.um.FindByEmail(ctx, req.Email.Value)
 	} else if len(req.Phone) > 0 {
 		user, err = s.um.FindByPhone(ctx, req.Phone)
 	} else if len(req.Username) > 0 {
-		user, err = s.um.FindByName(ctx, req.Phone)
+		user, err = s.um.FindByName(ctx, req.Username)
 	}
 	if err != nil {
 		return nil, err

@@ -253,7 +253,7 @@ message CheckUserTenantReply{
 message SearchUserRequest{
   string identity=1;
   string username=2;
-  string email=4 [(validate.rules).string.email=true];
+  google.protobuf.StringValue email=4 [(validate.rules).string.email=true];
   string phone=5;
   google.protobuf.FieldMask fields=10;
 }

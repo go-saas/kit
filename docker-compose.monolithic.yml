@@ -18,6 +18,8 @@ services:
       dockerfile: ./examples/monolithic/Dockerfile
     volumes:
       - ./quickstart/configs:/data/conf
+      #override service config
+      - ./quickstart/monolithic:/data/conf.override
       - ./quickstart/.assets:/app/.assets
     restart: on-failure
-    command: ["./monolithic", "-conf", "/data/conf","-seed.menu.path","/data/conf/seed/sys.yaml"]
+    command: ["./monolithic", "-conf", "/data/conf", "-conf", "/data/conf.override","-seed.menu.path","/data/conf/seed/sys.yaml"]

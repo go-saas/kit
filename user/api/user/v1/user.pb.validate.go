@@ -2815,16 +2815,20 @@ func (m *SearchUserRequest) validate(all bool) error {
 
 	// no validation rules for Username
 
-	if err := m._validateEmail(m.GetEmail()); err != nil {
-		err = SearchUserRequestValidationError{
-			field:  "Email",
-			reason: "value must be a valid email address",
-			cause:  err,
+	if wrapper := m.GetEmail(); wrapper != nil {
+
+		if err := m._validateEmail(wrapper.GetValue()); err != nil {
+			err = SearchUserRequestValidationError{
+				field:  "Email",
+				reason: "value must be a valid email address",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
+
 	}
 
 	// no validation rules for Phone
