@@ -80,9 +80,11 @@ sys:
         upstream_id: monolithic-http
 
       user-api:
+        priority: -99
         uris: ["/v1/*","/assets/user/*"]
         upstream_id: monolithic-http
 
       web:
+        priority: -100
         uri: /*
         upstream_id: web
