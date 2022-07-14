@@ -6,7 +6,7 @@ import (
 )
 
 // ProviderSet is biz providers.
-var ProviderSet = wire.NewSet(NewMenuSeed, wire.Struct(new(ApisixSeed), "*"))
+var ProviderSet = wire.NewSet(NewMenuSeed, wire.Struct(new(ApisixSeed), "*"), NewApisixMigrationTaskHandler)
 
 const (
 	SeedPathKey              = "seed.menu.path"

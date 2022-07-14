@@ -88,7 +88,6 @@ func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.Sy
 	httpServer := server.NewHTTPServer(services, security, tokenizer, manager, decodeRequestFunc, encodeResponseFunc, encodeErrorFunc, option, logger, trustedContextValidator, httpServerRegister)
 	grpcServerRegister := service.NewGrpcServerRegister(menuService)
 	grpcServer := server.NewGRPCServer(services, tokenizer, manager, option, logger, trustedContextValidator, grpcServerRegister)
-	jobServer := server.NewJobServer(redisConnOpt, logger)
 	adminClient, err := service.NewApisixAdminClient(sysConf)
 	if err != nil {
 		cleanup3()
@@ -96,15 +95,20 @@ func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.Sy
 		cleanup()
 		return nil, nil, err
 	}
+	asynqClient, cleanup4 := job.NewAsynqClient(redisConnOpt)
 	apisixSeed := &biz.ApisixSeed{
-		Cfg:    sysConf,
-		Client: adminClient,
+		Cfg:       sysConf,
+		Client:    adminClient,
+		JobClient: asynqClient,
 	}
+	apisixMigrationTaskHandler := biz.NewApisixMigrationTaskHandler(apisixSeed)
+	jobServer := server.NewJobServer(redisConnOpt, logger, apisixMigrationTaskHandler)
 	connStrings := dal.NewConstantConnStrResolver(confData)
 	constDbProvider := dal.NewConstDbProvider(dbCache, connStrings, confData)
 	migrator := data2.NewMigrator(constDbProvider, connName)
-	dataData, cleanup4, err := data.NewData(confData, dbProvider, logger)
+	dataData, cleanup5, err := data.NewData(confData, dbProvider, logger)
 	if err != nil {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -114,8 +118,9 @@ func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.Sy
 	menuSeed := biz.NewMenuSeed(dbProvider, menuRepo)
 	seeding := server.NewSeeding(apisixSeed, manager, migrator, migrate, menuSeed)
 	seeder := server.NewSeeder(tenantStore, seeding)
-	producer, cleanup5, err := dal.NewEventSender(confData, connName)
+	producer, cleanup6, err := dal.NewEventSender(confData, connName)
 	if err != nil {
+		cleanup5()
 		cleanup4()
 		cleanup3()
 		cleanup2()
@@ -124,6 +129,7 @@ func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.Sy
 	}
 	registrar, err := server2.NewRegistrar(services)
 	if err != nil {
+		cleanup6()
 		cleanup5()
 		cleanup4()
 		cleanup3()
@@ -135,6 +141,7 @@ func initApp(services *conf.Services, security *conf.Security, sysConf *conf2.Sy
 	watchSyncAdmin := apisix.NewWatchSyncAdmin(discovery, adminClient, apisixOption)
 	app := newApp(logger, httpServer, grpcServer, jobServer, seeder, producer, registrar, watchSyncAdmin)
 	return app, func() {
+		cleanup6()
 		cleanup5()
 		cleanup4()
 		cleanup3()

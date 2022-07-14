@@ -5,19 +5,27 @@ import (
 	"github.com/go-saas/kit/pkg/apisix"
 	"github.com/go-saas/kit/sys/private/conf"
 	"github.com/go-saas/saas/seed"
+	"github.com/hibiken/asynq"
 )
 
 type ApisixSeed struct {
-	Cfg    *conf.SysConf
-	Client *apisix.AdminClient
+	Cfg       *conf.SysConf
+	Client    *apisix.AdminClient
+	JobClient *asynq.Client
 }
-
-var _ seed.Contrib = (*ApisixSeed)(nil)
 
 func (a *ApisixSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	if len(sCtx.TenantId) != 0 || a.Cfg == nil || a.Cfg.Apisix == nil {
 		return nil
 	}
+	//Put into background job
+	_, err := a.JobClient.EnqueueContext(ctx, NewApisixMigrationTask())
+	return err
+}
+
+var _ seed.Contrib = (*ApisixSeed)(nil)
+
+func (a *ApisixSeed) Do() error {
 	if a.Cfg.Apisix.Upstreams != nil {
 		upstreams := a.Cfg.Apisix.Upstreams
 		for id, upstream := range upstreams {

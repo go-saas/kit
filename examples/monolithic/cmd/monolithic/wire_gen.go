@@ -183,8 +183,9 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		return nil, nil, err
 	}
 	apisixSeed := &biz3.ApisixSeed{
-		Cfg:    sysConf,
-		Client: adminClient,
+		Cfg:       sysConf,
+		Client:    adminClient,
+		JobClient: client,
 	}
 	migrator := data4.NewMigrator(constDbProvider, connName)
 	data6, cleanup5, err := data3.NewData(confData, dbProvider, logger)
@@ -211,7 +212,8 @@ func initApp(services *conf.Services, security *conf.Security, confData *conf.Da
 		return nil, nil, err
 	}
 	userMigrationTaskHandler := biz2.NewUserMigrationTaskHandler(seeder, producer)
-	jobServer := server2.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler)
+	apisixMigrationTaskHandler := biz3.NewApisixMigrationTaskHandler(apisixSeed)
+	jobServer := server2.NewJobServer(redisConnOpt, logger, userMigrationTaskHandler, apisixMigrationTaskHandler)
 	registrar, err := server.NewRegistrar(services)
 	if err != nil {
 		cleanup6()
