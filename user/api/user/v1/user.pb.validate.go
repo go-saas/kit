@@ -1095,19 +1095,33 @@ func (m *CreateUserRequest) validate(all bool) error {
 
 	if m.Username != nil {
 
-		if wrapper := m.GetUsername(); wrapper != nil {
-
-			if utf8.RuneCountInString(wrapper.GetValue()) < 1 {
-				err := CreateUserRequestValidationError{
-					field:  "Username",
-					reason: "value length must be at least 1 runes",
+		if all {
+			switch v := interface{}(m.GetUsername()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateUserRequestValidationError{
+						field:  "Username",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
 				}
-				if !all {
-					return err
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateUserRequestValidationError{
+						field:  "Username",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
 				}
-				errors = append(errors, err)
 			}
-
+		} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateUserRequestValidationError{
+					field:  "Username",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
 		}
 
 	}

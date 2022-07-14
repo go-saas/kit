@@ -4380,10 +4380,7 @@
       "properties": {
         "username": {
           "type": "string",
-          "x-nullable": true,
-          "required": [
-            "username"
-          ]
+          "x-nullable": true
         },
         "name": {
           "type": "string",
@@ -4420,10 +4417,7 @@
             "type": "string"
           }
         }
-      },
-      "required": [
-        "username"
-      ]
+      }
     },
     "v1DeleteAddressesReply": {
       "type": "object"
