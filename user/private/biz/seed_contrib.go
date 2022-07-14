@@ -62,18 +62,18 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	var err error
 	var ok bool
 	var shouldCreate = false
-
-	if adminUsername, ok = sCtx.Extra[AdminUsernameKey].(string); ok {
+	
+	if adminId, ok = sCtx.Extra[AdminUserId].(string); ok {
+		//attach existing user as tenant amin
+		admin, err = u.um.FindByID(ctx, adminId)
+	} else if adminUsername, ok = sCtx.Extra[AdminUsernameKey].(string); ok {
 		shouldCreate = true
 		admin, err = u.um.FindByName(ctx, adminUsername)
 	} else if adminEmail, ok = sCtx.Extra[AdminEmailKey].(string); ok {
 		shouldCreate = true
 		admin, err = u.um.FindByEmail(ctx, adminEmail)
 	}
-	if adminId, ok = sCtx.Extra[AdminUserId].(string); ok {
-		//attach existing user as tenant amin
-		admin, err = u.um.FindByID(ctx, adminId)
-	}
+
 	if err != nil {
 		return err
 	}

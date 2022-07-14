@@ -98,6 +98,7 @@ func (t *TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
 }
 
 type AdminInfo struct {
+	UserId   string
 	Username string
 	Email    string
 	Password string
@@ -122,7 +123,7 @@ func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adm
 		}
 		entity.Conn = conn
 	}
-	
+
 	remoteEvent := &v12.TenantCreatedEvent{
 		Id:         entity.ID.String(),
 		Name:       entity.Name,
@@ -130,6 +131,7 @@ func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adm
 		SeparateDb: entity.SeparateDb,
 	}
 	if adminInfo != nil {
+		remoteEvent.AdminUserId = adminInfo.UserId
 		remoteEvent.AdminEmail = adminInfo.Email
 		remoteEvent.AdminUsername = adminInfo.Username
 		remoteEvent.AdminPassword = adminInfo.Password

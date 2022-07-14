@@ -59,16 +59,10 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		Logo:        req.Logo,
 		SeparateDb:  req.SeparateDb,
 	}
-	var adminInfo *biz.AdminInfo
-	if req.SeparateDb {
-		//TODO better to call user service api
-		if req.AdminUsername == nil && req.AdminEmail == nil {
-			return nil, pb.ErrorAdminIdentityRequired("")
-		}
-		if req.AdminPassword == nil {
-			return nil, pb.ErrorAdminPasswordRequired("")
-		}
-		adminInfo = &biz.AdminInfo{}
+	adminInfo := &biz.AdminInfo{}
+	if req.AdminUserId != nil {
+		adminInfo.UserId = req.AdminUserId.Value
+	} else {
 		if req.AdminUsername != nil {
 			adminInfo.Username = req.AdminUsername.Value
 			_, err := s.normalizer.Name(adminInfo.Username)
@@ -86,7 +80,6 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		if req.AdminPassword != nil {
 			adminInfo.Password = req.AdminPassword.Value
 		}
-
 	}
 
 	if err := s.useCase.CreateWithAdmin(ctx, t, adminInfo); err != nil {
