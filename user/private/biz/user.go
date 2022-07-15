@@ -25,16 +25,16 @@ type User struct {
 
 	Username *string `json:"username"`
 	// NormalizedUsername uppercase normalized userName
-	NormalizedUsername *string `json:"normalized_username" gorm:"size:200,index:"`
+	NormalizedUsername *string `json:"normalized_username" gorm:"index:,size:200"`
 
 	// Phone
-	Phone          *string `json:"phone" gorm:"size:200,index:"`
+	Phone          *string `json:"phone" gorm:"index:,size:200"`
 	PhoneConfirmed bool    `json:"phone_confirmed"`
 
 	// Email
 	Email *string `json:"email"`
 	// NormalizedEmail uppercase normalized email
-	NormalizedEmail *string `json:"normalized_email" gorm:"size:200,index:"`
+	NormalizedEmail *string `json:"normalized_email" gorm:"index:,size:200"`
 	EmailConfirmed  bool    `json:"email_confirmed"`
 
 	// Password hashed
