@@ -2,10 +2,6 @@ package authn
 
 import "context"
 
-const (
-	ProxyClientId = "proxy-local-client"
-)
-
 type userKey struct{}
 
 func NewUserContext(ctx context.Context, user UserInfo) context.Context {
