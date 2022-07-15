@@ -6,8 +6,6 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/google/uuid"
-	"github.com/gorilla/csrf"
 	api2 "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/authn/jwt"
@@ -19,6 +17,8 @@ import (
 	pb "github.com/go-saas/kit/user/api/auth/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/kit/user/private/biz"
+	"github.com/google/uuid"
+	"github.com/gorilla/csrf"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -143,7 +143,7 @@ func (s *AuthService) SendForgetPasswordToken(ctx context.Context, req *pb.Forge
 			return nil, err
 		}
 		if user == nil {
-			return nil, v1.ErrorUserNotFound("")
+			return nil, v1.ErrorUserNotFoundLocalized(localize.FromContext(ctx), nil, nil)
 		}
 		//generate token
 		token, err := s.um.GeneratePhoneForgetPasswordToken(ctx, user)
@@ -159,7 +159,7 @@ func (s *AuthService) SendForgetPasswordToken(ctx context.Context, req *pb.Forge
 			return nil, err
 		}
 		if user == nil {
-			return nil, v1.ErrorUserNotFound("")
+			return nil, v1.ErrorUserNotFoundLocalized(localize.FromContext(ctx), nil, nil)
 		}
 		//generate token
 		token, err := s.um.GenerateEmailForgetPasswordToken(ctx, user)
@@ -187,7 +187,7 @@ func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPassword
 			return nil, err
 		}
 		if user == nil {
-			return nil, v1.ErrorUserNotFound("")
+			return nil, v1.ErrorUserNotFoundLocalized(localize.FromContext(ctx), nil, nil)
 		}
 		if err := s.um.VerifyPhoneForgetPasswordToken(ctx, req.Phone.Value, req.Token); err != nil {
 			return nil, err
@@ -199,7 +199,7 @@ func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPassword
 			return nil, err
 		}
 		if user == nil {
-			return nil, v1.ErrorUserNotFound("")
+			return nil, v1.ErrorUserNotFoundLocalized(localize.FromContext(ctx), nil, nil)
 		}
 		if err := s.um.VerifyEmailForgetPasswordToken(ctx, req.Email.Value, req.Token); err != nil {
 			return nil, err
@@ -216,7 +216,7 @@ func (s *AuthService) ChangePasswordByForget(ctx context.Context, req *pb.Change
 
 	//validate password
 	if req.NewPassword != req.ConfirmNewPassword {
-		return nil, v1.ErrorConfirmPasswordMismatch("")
+		return nil, v1.ErrorConfirmPasswordMismatchLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	err := s.um.ChangePasswordByToken(ctx, req.ChangePasswordToken, req.NewPassword)
 	if err != nil {
@@ -242,7 +242,7 @@ func (s *AuthService) ChangePasswordByPre(ctx context.Context, req *pb.ChangePas
 	}
 	//validate password
 	if req.NewPassword != req.ConfirmNewPassword {
-		return nil, v1.ErrorConfirmPasswordMismatch("")
+		return nil, v1.ErrorConfirmPasswordMismatchLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	user, err := s.um.FindByID(ctx, ui.GetId())
 	if err != nil {

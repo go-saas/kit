@@ -7,7 +7,7 @@ import (
 	v1 "github.com/go-saas/kit/user/api/account/v1"
 )
 
-// UserSetting contains key/value pair of user settings
+// UserSetting contains key/value pairs of user settings
 type UserSetting struct {
 	gorm.UIDBase
 	UserId string     `json:"user_id" gorm:"index"`

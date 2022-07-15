@@ -7,6 +7,23 @@ other = "Role Name Used"
 [PasswordInsufficientStrength]
 other = "Password too weak"
 
+[InvalidUsername]
+other = "Invalid Username"
+[InvalidPhone]
+other = "Invalid Phone"
+[InvalidEmail]
+other = "Invalid Email"
+[UserNotFound]
+other= "User Not Found"
+[DuplicateUsername]
+other = "Username is used"
+[DuplicatePhone]
+other = "Phone is used"
+[DuplicateEmail]
+other = "Email is used"
+[ConfirmPasswordMismatch]
+other = "Confirm Password Mismatch"
+
 [permission.user.user.group]
 other = "User"
 [permission.user.user.read]

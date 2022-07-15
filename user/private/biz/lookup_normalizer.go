@@ -1,6 +1,8 @@
 package biz
 
 import (
+	"context"
+	"github.com/go-saas/kit/pkg/localize"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/nyaruka/phonenumbers"
 	"net/mail"
@@ -9,11 +11,11 @@ import (
 
 type LookupNormalizer interface {
 	// Name normalizer
-	Name(name string) (string, error)
+	Name(ctx context.Context, name string) (string, error)
 	// Email normalizer
-	Email(email string) (string, error)
+	Email(ctx context.Context, email string) (string, error)
 	// Phone normalizer
-	Phone(phone string) (string, error)
+	Phone(ctx context.Context, phone string) (string, error)
 }
 
 type lookupNormalizer struct {
@@ -22,39 +24,39 @@ type lookupNormalizer struct {
 func NewLookupNormalizer() LookupNormalizer {
 	return lookupNormalizer{}
 }
-func (l lookupNormalizer) Name(name string) (string, error) {
+func (l lookupNormalizer) Name(ctx context.Context, name string) (string, error) {
 	if name == "" {
-		return "", v1.ErrorInvalidUsername("")
+		return "", v1.ErrorInvalidUsernameLocalized(localize.FromContext(ctx), nil, nil)
 	}
-	if _, err := l.Email(name); err == nil {
-		return "", v1.ErrorInvalidUsername("")
+	if _, err := l.Email(ctx, name); err == nil {
+		return "", v1.ErrorInvalidUsernameLocalized(localize.FromContext(ctx), nil, nil)
 	}
-	if _, err := l.Phone(name); err == nil {
-		return "", v1.ErrorInvalidUsername("")
+	if _, err := l.Phone(ctx, name); err == nil {
+		return "", v1.ErrorInvalidUsernameLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	return strings.ToUpper(name), nil
 }
 
-func (l lookupNormalizer) Email(email string) (string, error) {
+func (l lookupNormalizer) Email(ctx context.Context, email string) (string, error) {
 	if email == "" {
-		return "", v1.ErrorInvalidEmail("")
+		return "", v1.ErrorInvalidEmailLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	if _, err := mail.ParseAddress(email); err != nil {
-		return "", v1.ErrorInvalidEmail("%s", err)
+		return "", v1.ErrorInvalidEmailLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	return strings.ToUpper(email), nil
 }
 
-func (l lookupNormalizer) Phone(phone string) (string, error) {
+func (l lookupNormalizer) Phone(ctx context.Context, phone string) (string, error) {
 	if phone == "" {
-		return "", v1.ErrorInvalidPhone("")
+		return "", v1.ErrorInvalidPhoneLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	num, err := phonenumbers.Parse(phone, "US")
 	if err != nil {
-		return "", v1.ErrorInvalidPhone("%s", err)
+		return "", v1.ErrorInvalidPhoneLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	if ok := phonenumbers.IsValidNumber(num); !ok {
-		return "", v1.ErrorInvalidPhone("")
+		return "", v1.ErrorInvalidPhoneLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	formattedNum := phonenumbers.Format(num, phonenumbers.E164)
 	return formattedNum, err

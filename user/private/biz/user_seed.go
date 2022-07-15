@@ -2,7 +2,6 @@ package biz
 
 import (
 	"context"
-	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/saas/seed"
 	"github.com/samber/lo"
 )
@@ -14,36 +13,6 @@ const (
 	AdminPasswordKey = "admin_password"
 	AdminUserId      = "admin_user_id"
 )
-
-type RoleSeed struct {
-	rm         *RoleManager
-	permission authz.PermissionManagementService
-}
-
-func NewRoleSeed(roleMgr *RoleManager, permission authz.PermissionManagementService) *RoleSeed {
-	return &RoleSeed{rm: roleMgr, permission: permission}
-}
-
-func (r *RoleSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
-	seedRoles := []*Role{
-		{
-			Name:        Admin,
-			IsPreserved: true,
-		},
-	}
-	for _, sr := range seedRoles {
-		role, err := r.rm.FindByName(ctx, sr.Name)
-		if err != nil {
-			return err
-		}
-		if role == nil {
-			if err := r.rm.Create(ctx, sr); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
 
 type UserSeed struct {
 	um *UserManager
@@ -62,7 +31,7 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	var err error
 	var ok bool
 	var shouldCreate = false
-	
+
 	if adminId, ok = sCtx.Extra[AdminUserId].(string); ok {
 		//attach existing user as tenant amin
 		admin, err = u.um.FindByID(ctx, adminId)

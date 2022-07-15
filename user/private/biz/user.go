@@ -23,7 +23,7 @@ type User struct {
 	FirstName *string `json:"first_name"`
 	LastName  *string `json:"last_name"`
 
-	Username *string `json:"username" gorm:"index"`
+	Username *string `json:"username"`
 	// NormalizedUsername uppercase normalized userName
 	NormalizedUsername *string `json:"normalized_username" gorm:"index"`
 
@@ -32,7 +32,7 @@ type User struct {
 	PhoneConfirmed bool    `json:"phone_confirmed"`
 
 	// Email
-	Email *string `json:"email" gorm:"index"`
+	Email *string `json:"email"`
 	// NormalizedEmail uppercase normalized email
 	NormalizedEmail *string `json:"normalized_email" gorm:"index"`
 	EmailConfirmed  bool    `json:"email_confirmed"`

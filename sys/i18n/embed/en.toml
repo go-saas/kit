@@ -1,3 +1,6 @@
+[MenuNameDuplicate]
+other = "Menu Name is used"
+
 [permission.sys.menu.group]
 other = "Menu"
 [permission.sys.menu.read]

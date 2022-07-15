@@ -111,7 +111,7 @@ func (um *UserManager) FindByID(ctx context.Context, id string) (user *User, err
 	return um.userRepo.FindByID(ctx, id)
 }
 func (um *UserManager) FindByName(ctx context.Context, name string) (user *User, err error) {
-	name, err = um.lookupNormalizer.Name(name)
+	name, err = um.lookupNormalizer.Name(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func (um *UserManager) FindByName(ctx context.Context, name string) (user *User,
 }
 
 func (um *UserManager) FindByPhone(ctx context.Context, phone string) (user *User, err error) {
-	phone, err = um.lookupNormalizer.Phone(phone)
+	phone, err = um.lookupNormalizer.Phone(ctx, phone)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +127,7 @@ func (um *UserManager) FindByPhone(ctx context.Context, phone string) (user *Use
 }
 
 func (um *UserManager) FindByEmail(ctx context.Context, email string) (user *User, err error) {
-	email, err = um.lookupNormalizer.Email(email)
+	email, err = um.lookupNormalizer.Email(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -139,10 +139,10 @@ func (um *UserManager) FindByIdentity(ctx context.Context, identity string) (use
 	if uid, err := uuid.Parse(identity); err == nil {
 		return um.FindByID(ctx, uid.String())
 	}
-	if _, err := um.lookupNormalizer.Email(identity); err == nil {
+	if _, err := um.lookupNormalizer.Email(ctx, identity); err == nil {
 		return um.FindByEmail(ctx, identity)
 	}
-	if phone, err := um.lookupNormalizer.Phone(identity); err == nil {
+	if phone, err := um.lookupNormalizer.Phone(ctx, identity); err == nil {
 		return um.FindByPhone(ctx, phone)
 	}
 	return um.FindByName(ctx, identity)
@@ -260,7 +260,7 @@ func (um *UserManager) ChangePasswordByToken(ctx context.Context, token, newPwd 
 		return err
 	}
 	if user == nil {
-		return v1.ErrorUserNotFound("")
+		return v1.ErrorUserNotFoundLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	return um.UpdatePassword(ctx, user, newPwd)
 }
@@ -432,21 +432,21 @@ func (um *UserManager) validateUser(ctx context.Context, u *User) (err error) {
 func (um *UserManager) normalize(ctx context.Context, u *User) error {
 	//normalize
 	if u.Username != nil {
-		n, err := um.lookupNormalizer.Name(*u.Username)
+		n, err := um.lookupNormalizer.Name(ctx, *u.Username)
 		if err != nil {
 			return err
 		}
 		u.NormalizedUsername = &n
 	}
 	if u.Email != nil {
-		e, err := um.lookupNormalizer.Email(*u.Email)
+		e, err := um.lookupNormalizer.Email(ctx, *u.Email)
 		if err != nil {
 			return err
 		}
 		u.NormalizedEmail = &e
 	}
 	if u.Phone != nil {
-		phone, err := um.lookupNormalizer.Phone(*u.Phone)
+		phone, err := um.lookupNormalizer.Phone(ctx, *u.Phone)
 		if err != nil {
 			return err
 		}

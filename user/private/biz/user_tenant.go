@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/go-saas/kit/pkg/data"
 	gorm2 "github.com/go-saas/kit/pkg/gorm"
-	gg "gorm.io/gorm"
 	"time"
 )
 
@@ -27,29 +26,21 @@ func (p UserTenantStatus) String() string {
 }
 
 type UserTenant struct {
-	gorm2.UIDBase
-	UserId    string           `gorm:"type:char(36);index" json:"user_id"`
-	TenantId  *string          `json:"tenant_id" gorm:"type:char(36);index"`
-	JoinTime  time.Time        `json:"join_time"`
-	Status    UserTenantStatus `json:"status;index"`
-	DeletedAt gg.DeletedAt     `gorm:"index"`
-	Extra     data.JSONMap
+	gorm2.AuditedModel
+	UserId   string           `gorm:"type:char(36);primary_key" json:"user_id"`
+	TenantId string           `gorm:"type:char(36);primary_key" json:"tenant_id" `
+	JoinTime time.Time        `json:"join_time"`
+	Status   UserTenantStatus `json:"status;index"`
+	Extra    data.JSONMap
 }
 
 func (u *UserTenant) SetTenantId(id string) *UserTenant {
-	if len(id) == 0 {
-		u.TenantId = nil
-	} else {
-		u.TenantId = &id
-	}
+	u.TenantId = id
 	return u
 }
 
 func (u *UserTenant) GetTenantId() string {
-	if u.TenantId == nil {
-		return ""
-	}
-	return *u.TenantId
+	return u.TenantId
 }
 
 type UserTenantRepo interface {

@@ -82,7 +82,7 @@ func (s *MenuService) CreateMenu(ctx context.Context, req *pb.CreateMenuRequest)
 	if dbP, err := s.repo.FindByName(ctx, normalizeName(req.Name)); err != nil {
 		return nil, err
 	} else if dbP != nil {
-		return nil, pb.ErrorMenuNameDuplicate("")
+		return nil, pb.ErrorMenuNameDuplicateLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	e := &biz.Menu{}
 	MapCreatePbMenu2Biz(req, e)
@@ -102,7 +102,7 @@ func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest)
 	if dbP, err := s.repo.FindByName(ctx, normalizeName(req.Menu.Name)); err != nil {
 		return nil, err
 	} else if dbP != nil && dbP.ID.String() != req.Menu.Id {
-		return nil, pb.ErrorMenuNameDuplicate("")
+		return nil, pb.ErrorMenuNameDuplicateLocalized(localize.FromContext(ctx), nil, nil)
 	}
 
 	g, err := s.repo.Get(ctx, req.Menu.Id)

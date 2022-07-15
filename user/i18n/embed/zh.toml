@@ -7,6 +7,23 @@ other = "角色名称已被占用"
 [PasswordInsufficientStrength]
 other = "密码强度不够"
 
+[InvalidUsername]
+other = "用户名格式不对"
+[InvalidPhone]
+other = "手机号格式不对"
+[InvalidEmail]
+other = "电子邮箱格式不对"
+[UserNotFound]
+other= "未找到用户"
+[DuplicateUsername]
+other = "用户名已被占用"
+[DuplicatePhone]
+other = "手机号已被占用"
+[DuplicateEmail]
+other = "电子邮箱已被占用"
+[ConfirmPasswordMismatch]
+other = "确认密码不匹配"
+
 [permission.user.user.group]
 other = "用户"
 [permission.user.user.read]

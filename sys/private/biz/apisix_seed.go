@@ -6,6 +6,7 @@ import (
 	"github.com/go-saas/kit/sys/private/conf"
 	"github.com/go-saas/saas/seed"
 	"github.com/hibiken/asynq"
+	"math"
 )
 
 type ApisixSeed struct {
@@ -19,7 +20,7 @@ func (a *ApisixSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 		return nil
 	}
 	//Put into background job
-	_, err := a.JobClient.EnqueueContext(ctx, NewApisixMigrationTask())
+	_, err := a.JobClient.EnqueueContext(ctx, NewApisixMigrationTask(), asynq.MaxRetry(math.MaxInt))
 	return err
 }
 

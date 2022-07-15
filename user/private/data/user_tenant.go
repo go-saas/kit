@@ -48,24 +48,15 @@ func (u *UserTenantRepo) IsIn(ctx context.Context, userId string, tenantId strin
 	return ut != nil, nil
 }
 
-func (u *UserTenantRepo) RemoveFromTenant(ctx context.Context, userId string, tenantId string) error {
-	var err error
-	if len(tenantId) > 0 {
-		err = u.GetDb(ctx).Delete(&biz.UserTenant{}, "user_id = ? and tenant_id = ?", userId, tenantId).Error
-	} else {
-		err = u.GetDb(ctx).Delete(&biz.UserTenant{}, "user_id = ? and tenant_id is NULL ?", userId).Error
-	}
-	return err
+func (u *UserTenantRepo) RemoveFromTenant(ctx context.Context, userId string, tenantId string) (err error) {
+	err = u.GetDb(ctx).Delete(&biz.UserTenant{}, "user_id = ? and tenant_id = ?", userId, tenantId).Error
+	return
 }
 
 func (u *UserTenantRepo) Get(ctx context.Context, userId string, tenantId string) (*biz.UserTenant, error) {
 	t := &biz.UserTenant{}
 	var err error
-	if len(tenantId) > 0 {
-		err = u.GetDb(ctx).Where("user_id = ? and tenant_id = ?", userId, tenantId).First(t).Error
-	} else {
-		err = u.GetDb(ctx).Where("user_id = ? and tenant_id is NULL", userId).First(t).Error
-	}
+	err = u.GetDb(ctx).Where("user_id = ? and tenant_id = ?", userId, tenantId).First(t).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

@@ -1,3 +1,5 @@
+[MenuNameDuplicate]
+other = "菜单名字已被使用"
 [permission.sys.menu.group]
 other = "菜单"
 [permission.sys.menu.read]

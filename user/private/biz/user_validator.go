@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"github.com/go-saas/kit/pkg/localize"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 )
 
@@ -27,7 +28,7 @@ func (u *userValidator) Validate(ctx context.Context, um *UserManager, user *Use
 			return err
 		}
 		if u != nil && u.ID != user.ID {
-			return v1.ErrorDuplicateUsername("")
+			return v1.ErrorDuplicateUsernameLocalized(localize.FromContext(ctx), nil, nil)
 		}
 	}
 	if user.Email != nil {
@@ -36,7 +37,7 @@ func (u *userValidator) Validate(ctx context.Context, um *UserManager, user *Use
 			return err
 		}
 		if u != nil && u.ID != user.ID {
-			return v1.ErrorDuplicateEmail("")
+			return v1.ErrorDuplicateEmailLocalized(localize.FromContext(ctx), nil, nil)
 		}
 	}
 	if user.Phone != nil {
@@ -45,7 +46,7 @@ func (u *userValidator) Validate(ctx context.Context, um *UserManager, user *Use
 			return err
 		}
 		if u != nil && u.ID != user.ID {
-			return v1.ErrorDuplicatePhone("")
+			return v1.ErrorDuplicatePhoneLocalized(localize.FromContext(ctx), nil, nil)
 		}
 	}
 	return nil

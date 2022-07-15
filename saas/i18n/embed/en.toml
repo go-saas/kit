@@ -5,6 +5,11 @@ other = "Tenant Name Used"
 [TenantForbidden]
 other = "Tenant Forbidden"
 
+[AdminUsernameInvalid]
+other = "Administrator Username Invalid"
+[AdminEmailInvalid]
+other = "Administrator Email Invalid"
+
 [permission.saas.tenant.group]
 other = "Tenant"
 [permission.saas.tenant.read]

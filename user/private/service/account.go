@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/go-saas/saas"
 	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/query"
+	"github.com/go-saas/saas"
 	"google.golang.org/protobuf/types/known/structpb"
 	"io"
 	"os"
@@ -13,13 +13,13 @@ import (
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/google/uuid"
 	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/blob"
 	v13 "github.com/go-saas/kit/saas/api/tenant/v1"
 	v12 "github.com/go-saas/kit/user/api/role/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/kit/user/private/biz"
+	"github.com/google/uuid"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -115,7 +115,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 
 		reTenants := lo.Map(u.Tenants, func(ut biz.UserTenant, _ int) *pb.UserTenant {
 			//get tenant info
-			if ut.TenantId == nil {
+			if len(ut.TenantId) == 0 {
 				//host
 				return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.GetTenantId(), IsHost: true}
 			}
@@ -257,7 +257,7 @@ func (s *AccountService) CreateAddresses(ctx context.Context, req *pb.CreateAddr
 	addr.UserId = u.GetId()
 
 	if len(addr.Phone) > 0 {
-		p, err := s.normalizer.Phone(addr.Phone)
+		p, err := s.normalizer.Phone(ctx, addr.Phone)
 		if err != nil {
 			return nil, err
 		}

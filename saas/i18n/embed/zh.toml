@@ -5,6 +5,11 @@ other = "租户名称已被使用"
 [TenantForbidden]
 other = "租户未授权"
 
+[AdminUsernameInvalid]
+other = "管理员用户名格式错误"
+[AdminEmailInvalid]
+other = "管理员电子邮箱格式错误"
+
 [permission.saas.tenant.group]
 other = "租户"
 [permission.saas.tenant.read]

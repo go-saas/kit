@@ -14,12 +14,12 @@ import (
 
 type Role struct {
 	kitgorm.UIDBase
-	concurrency.Version `kitgorm:"type:char(36)"`
+	concurrency.Version `gorm:"type:char(36)"`
 	kitgorm.AuditedModel
-	gorm2.MultiTenancy
-	Name           string `json:"name" kitgorm:"index"`
-	NormalizedName string `json:"normalized_name" kitgorm:"index"`
-	IsPreserved    bool   `json:"is_preserved"`
+	TenantId       gorm2.HasTenant `gorm:"index:,unique,composite:tenant_role""`
+	Name           string          `json:"name" gorm:"index"`
+	NormalizedName string          `gorm:"index:,unique,composite:tenant_role" json:"normalized_name" `
+	IsPreserved    bool            `json:"is_preserved"`
 }
 
 // RoleRepo crud role
@@ -47,7 +47,7 @@ func (r *RoleManager) First(ctx context.Context, query *v12.ListRolesRequest) (*
 }
 
 func (r *RoleManager) FindByName(ctx context.Context, name string) (*Role, error) {
-	nn, err := r.lookupNormalizer.Name(name)
+	nn, err := r.lookupNormalizer.Name(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (r *RoleManager) Get(ctx context.Context, id string) (*Role, error) {
 }
 
 func (r *RoleManager) Create(ctx context.Context, role *Role) error {
-	nn, err := r.lookupNormalizer.Name(role.Name)
+	nn, err := r.lookupNormalizer.Name(ctx, role.Name)
 	if err != nil {
 		return err
 	}
@@ -78,14 +78,14 @@ func (r *RoleManager) Create(ctx context.Context, role *Role) error {
 	}
 	if dbRole != nil {
 		// duplicate
-		return errors.Forbidden("NAME_DUPLICATE", "role name duplicate")
+		return v12.ErrorRoleNameDuplicateLocalized(localize.FromContext(ctx), nil, nil)
 	}
 	role.NormalizedName = nn
 	return r.repo.Create(ctx, role)
 }
 
 func (r *RoleManager) Update(ctx context.Context, id string, role *Role, p query.Select) error {
-	nn, err := r.lookupNormalizer.Name(role.Name)
+	nn, err := r.lookupNormalizer.Name(ctx, role.Name)
 	if err != nil {
 		return err
 	}

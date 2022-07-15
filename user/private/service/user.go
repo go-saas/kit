@@ -107,7 +107,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	// check confirm password
 	if req.Password != "" {
 		if req.ConfirmPassword != req.Password {
-			return nil, pb.ErrorConfirmPasswordMismatch("")
+			return nil, pb.ErrorConfirmPasswordMismatchLocalized(localize.FromContext(ctx), nil, nil)
 		}
 	}
 	u := biz.User{}
@@ -171,7 +171,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	// check confirm password
 	if req.User.Password != "" {
 		if req.User.ConfirmPassword != req.User.Password {
-			return nil, pb.ErrorConfirmPasswordMismatch("")
+			return nil, pb.ErrorConfirmPasswordMismatchLocalized(localize.FromContext(ctx), nil, nil)
 		}
 	}
 

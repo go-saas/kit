@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+const (
+	JobTypeUserMigration = string(ConnName) + ":" + "migration"
+)
+
 type TenantSeedEventHandler event.ConsumerHandler
 
 func NewTenantSeedEventHandler(client *asynq.Client) TenantSeedEventHandler {

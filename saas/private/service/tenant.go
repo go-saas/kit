@@ -65,16 +65,16 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 	} else {
 		if req.AdminUsername != nil {
 			adminInfo.Username = req.AdminUsername.Value
-			_, err := s.normalizer.Name(adminInfo.Username)
+			_, err := s.normalizer.Name(ctx, adminInfo.Username)
 			if err != nil {
-				return nil, pb.ErrorAdminUsernameInvalid("")
+				return nil, pb.ErrorAdminUsernameInvalidLocalized(localize.FromContext(ctx), nil, nil)
 			}
 		}
 		if req.AdminEmail != nil {
 			adminInfo.Email = req.AdminEmail.Value
-			_, err := s.normalizer.Email(adminInfo.Email)
+			_, err := s.normalizer.Email(ctx, adminInfo.Email)
 			if err != nil {
-				return nil, pb.ErrorAdminEmailInvalid("")
+				return nil, pb.ErrorAdminEmailInvalidLocalized(localize.FromContext(ctx), nil, nil)
 			}
 		}
 		if req.AdminPassword != nil {
