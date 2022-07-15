@@ -17,6 +17,7 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	conf2 "github.com/go-saas/kit/pkg/conf"
 	errors2 "github.com/go-saas/kit/pkg/errors"
+	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	uapi "github.com/go-saas/kit/user/api"
 	v12 "github.com/go-saas/kit/user/api/auth/v1"
 	"github.com/go-saas/saas"
@@ -114,11 +115,26 @@ func (p *KitAuthn) ParseConf(in []byte) (interface{}, error) {
 	return conf, err
 }
 
-func abortWithError(err error, w http.ResponseWriter) {
+func abortWithError(r pkgHTTP.Request, err error, w http.ResponseWriter) {
 	//use error codec
 	fr := kerrors.FromError(err)
+
+	//check tenant error
+	if !isAjax(r) {
+		//TODO should redirect to error page
+		key := shttp.KeyOrDefault("")
+		if fr.Reason == v1.ErrorReason_TENANT_NOT_FOUND.String() || fr.Reason == v1.ErrorReason_TENANT_FORBIDDEN.String() {
+			//delete cookie
+			sessions.SetCookie(w.Header(), sessions.NewCookie(key, "", &sessions.Options{MaxAge: 0}))
+		}
+	}
 	w.WriteHeader(int(fr.Code))
 	khttp.DefaultErrorEncoder(w, &http.Request{}, err)
+}
+
+func isAjax(r pkgHTTP.Request) bool {
+	h := r.Header().View()["X-Requested-With"]
+	return len(h) > 0 && h[0] == "XMLHttpRequest"
 }
 
 func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
@@ -139,7 +155,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	ctx, err = Saas(ctx, ts, saasWebConfig.DomainFormat, w, r)
 	//format error
 	if err != nil {
-		abortWithError(err, w)
+		abortWithError(r, err, w)
 		//stop
 		return
 	}
@@ -176,7 +192,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 			log.Errorf("refresh fail %v", err)
 			if errors2.UnRecoverableError(err) {
 				//abort with error
-				abortWithError(err, w)
+				abortWithError(r, err, w)
 				return
 			}
 			if v12.IsRememberTokenUsed(err) {
@@ -222,11 +238,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	err = userTenantValidator.Resolve(trCtx)
 	if err != nil {
 		// user can not in this tenant
-		// use error codec
-		fr := kerrors.FromError(err)
-		log.Errorf("%s", fr)
-		w.WriteHeader(int(fr.Code))
-		khttp.DefaultErrorEncoder(w, &http.Request{}, err)
+		abortWithError(r, err, w)
 		return
 	}
 
@@ -244,7 +256,7 @@ func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	})
 	if err != nil {
 		log.Errorf("%s", err)
-		w.WriteHeader(500)
+		abortWithError(r, err, w)
 		return
 	}
 	//replace with internal token

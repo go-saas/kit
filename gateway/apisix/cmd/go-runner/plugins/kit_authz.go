@@ -61,12 +61,12 @@ func (p *KitAuthz) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Req
 	})
 	resultList, err := authService.BatchCheck(ctx, requirements)
 	if err != nil {
-		abortWithError(err, w)
+		abortWithError(r, err, w)
 		return
 	}
 	for _, result := range resultList {
 		if !result.Allowed {
-			abortWithError(authService.FormatError(ctx, requirements, result), w)
+			abortWithError(r, authService.FormatError(ctx, requirements, result), w)
 			return
 		}
 	}
