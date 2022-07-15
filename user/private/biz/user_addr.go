@@ -9,7 +9,7 @@ import (
 type UserAddress struct {
 	gorm.UIDBase
 	gorm.AuditedModel
-	UserId   string             `json:"user_id" gorm:"type:char(36),index"`
+	UserId   string             `json:"user_id" gorm:"index:,type:char(36)"`
 	Phone    string             `json:"phone"`
 	Usage    string             `json:"usage"`
 	Prefer   bool               `json:"prefer"`
