@@ -17,8 +17,8 @@ type Role struct {
 	concurrency.Version `gorm:"type:char(36)"`
 	kitgorm.AuditedModel
 	TenantId       gorm2.HasTenant `gorm:"index:,unique,composite:tenant_role""`
-	Name           string          `json:"name" gorm:"index"`
-	NormalizedName string          `gorm:"index:,unique,composite:tenant_role" json:"normalized_name" `
+	Name           string          `json:"name" gorm:"size:200"`
+	NormalizedName string          `gorm:"size:200,index:,unique,composite:tenant_role" json:"normalized_name" `
 	IsPreserved    bool            `json:"is_preserved"`
 }
 
