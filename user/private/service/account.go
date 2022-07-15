@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/query"
 	"github.com/go-saas/saas"
@@ -102,7 +103,9 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	if len(tenantIds) > 0 {
 		//change to host side
 		ctx = saas.NewCurrentTenant(ctx, "", "")
-		tenants, err := s.tenantService.ListTenant(ctx,
+
+		tempCtx := authz.NewAlwaysAuthorizationContext(ctx, true)
+		tenants, err := s.tenantService.ListTenant(tempCtx,
 			&v13.ListTenantRequest{Filter: &v13.TenantFilter{
 				Id: &query.StringFilterOperation{In: lo.Map(tenantIds, func(t string, _ int) *wrapperspb.StringValue {
 					return &wrapperspb.StringValue{Value: t}
@@ -110,6 +113,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		if err != nil {
 			return nil, err
 		}
+		
 		//back to current
 		ctx = saas.NewCurrentTenant(ctx, currentTenant.GetId(), currentTenant.GetName())
 
