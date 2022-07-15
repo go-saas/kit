@@ -9,6 +9,7 @@ import (
 const (
 	contextPackage = protogen.GoImportPath("context")
 	grpcPackage    = protogen.GoImportPath("google.golang.org/grpc")
+	authnPackage   = protogen.GoImportPath("github.com/go-saas/kit/pkg/authn")
 )
 
 func protocVersion(gen *protogen.Plugin) string {
@@ -61,6 +62,7 @@ func genService(gen *protogen.Plugin, file *protogen.File, g *protogen.Generated
 	for _, method := range service.Methods {
 
 		g.P("func (c *", unexport(structName), ") ", serverSignature(g, method), "{")
+		g.P("ctx = " + g.QualifiedGoIdent(authnPackage.Ident("NewClientContext")) + "(ctx, " + g.QualifiedGoIdent(authnPackage.Ident("ProxyClientId")) + ")")
 		g.P("return c.cc.", method.GoName, "(ctx, in)")
 		g.P("}")
 	}
