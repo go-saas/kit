@@ -112,10 +112,10 @@ func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest)
 	if g == nil {
 		return nil, errors.NotFound("", "")
 	}
-	if g.IsPreserved {
-		return nil, pb.ErrorMenuPreservedLocalized(localize.FromContext(ctx), nil, nil)
-	}
+	//copy menu
+	copyG := *g
 	MapUpdatePbMenu2Biz(req.Menu, g)
+	g.MergeWithPreservedFields(&copyG)
 	if err := s.repo.Update(ctx, g.ID.String(), g, nil); err != nil {
 		return nil, err
 	}
@@ -264,6 +264,7 @@ func MapBizMenu2Pb(a *biz.Menu, b *pb.Menu) {
 	b.Title = a.Title
 	b.Path = a.Path
 	b.Redirect = a.Redirect
+	b.HideInMenu = a.HideInMenu
 }
 
 func MapUpdatePbMenu2Biz(a *pb.UpdateMenu, b *biz.Menu) {
@@ -302,6 +303,7 @@ func MapUpdatePbMenu2Biz(a *pb.UpdateMenu, b *biz.Menu) {
 	b.Title = a.Title
 	b.Path = normalizePath(a.Path)
 	b.Redirect = a.Redirect
+	b.HideInMenu = a.HideInMenu
 }
 
 func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
@@ -339,6 +341,7 @@ func MapCreatePbMenu2Biz(a *pb.CreateMenuRequest, b *biz.Menu) {
 	b.Title = a.Title
 	b.Path = normalizePath(a.Path)
 	b.Redirect = a.Redirect
+	b.HideInMenu = a.HideInMenu
 }
 
 func normalizeName(name string) string {

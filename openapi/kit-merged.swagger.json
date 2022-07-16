@@ -4313,6 +4313,9 @@
         },
         "microAppDev": {
           "type": "string"
+        },
+        "hideInMenu": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -5162,6 +5165,9 @@
         },
         "microAppDev": {
           "type": "string"
+        },
+        "hideInMenu": {
+          "type": "boolean"
         }
       }
     },
@@ -5718,6 +5724,9 @@
         },
         "microAppDev": {
           "type": "string"
+        },
+        "hideInMenu": {
+          "type": "boolean"
         }
       },
       "required": [

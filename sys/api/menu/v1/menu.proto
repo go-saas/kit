@@ -104,6 +104,7 @@ message CreateMenuRequest {
   string micro_app_name=20;
   string micro_app_base_route=21;
   string micro_app_dev=22;
+  bool hide_in_menu=23;
 }
 
 message UpdateMenuRequest {
@@ -134,6 +135,7 @@ message UpdateMenu{
   string micro_app_name=20;
   string micro_app_base_route=21;
   string micro_app_dev=22;
+  bool hide_in_menu=23;
 }
 
 
@@ -191,6 +193,7 @@ message Menu{
   string micro_app_name=20;
   string micro_app_base_route=21;
   string micro_app_dev=22;
+  bool hide_in_menu=23;
 }
 
 message GetAvailableMenusRequest{

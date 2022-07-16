@@ -30,6 +30,7 @@ type Menu struct {
 	Title             string                      `json:"title"`
 	Path              string                      `json:"path"`
 	Redirect          string                      `json:"redirect"`
+	HideInMenu        bool                        `json:"hide_in_menu"`
 	IsPreserved       bool                        `json:"is_preserved"`
 }
 
@@ -50,7 +51,6 @@ func (m *Menu) MergeWithPreservedFields(p *Menu) {
 	m.Name = p.Name
 	m.Component = p.Component
 	m.Requirement = p.Requirement
-	//m.MicroApp = p.MicroApp
 	m.Iframe = p.Iframe
 	m.Parent = p.Parent
 	m.FullPath = p.FullPath
@@ -59,4 +59,6 @@ func (m *Menu) MergeWithPreservedFields(p *Menu) {
 	m.Path = p.Path
 	m.Priority = p.Priority
 	m.Title = p.Title
+	m.Icon = p.Icon
+	m.HideInMenu = p.HideInMenu
 }
