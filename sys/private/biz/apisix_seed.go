@@ -55,5 +55,13 @@ func (a *ApisixSeed) Do() error {
 			}
 		}
 	}
+	if a.Cfg.Apisix.StreamRoutes != nil {
+		routes := a.Cfg.Apisix.StreamRoutes
+		for id, route := range routes {
+			if err := a.Client.PutStreamRoute(id, route); err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }

@@ -30,6 +30,8 @@ message SysConf{
 
     map<string,google.protobuf.Struct> upstreams=12;
 
+    map<string,google.protobuf.Struct> stream_routes=13;
+
   }
   Apisix apisix=1;
 }

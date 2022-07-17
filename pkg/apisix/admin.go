@@ -90,6 +90,24 @@ func (a *AdminClient) PutRoute(id string, route *structpb.Struct) error {
 	return nil
 }
 
+func (a *AdminClient) PutStreamRoute(id string, route *structpb.Struct) error {
+	j, err := protojson.Marshal(route)
+	if err != nil {
+		return err
+	}
+	klog.Infof("[apisix]  update stream_routes %s : %s", id, j)
+	req, err := http.NewRequest(http.MethodPut, a.endpoint+"/apisix/admin/stream_routes/"+id, bytes.NewReader(j))
+	if err != nil {
+		return err
+	}
+	body, err := a.do(req)
+	if err != nil {
+		return err
+	}
+	klog.Infof("[apisix]  update stream_routes response %s : %s", id, body)
+	return nil
+}
+
 func (a *AdminClient) PutGlobalRules(id string, route *structpb.Struct) error {
 	j, err := protojson.Marshal(route)
 	if err != nil {
