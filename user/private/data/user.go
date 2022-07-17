@@ -71,11 +71,7 @@ func buildUserTenantsScope() func(db *gorm.DB) *gorm.DB {
 		}
 		ti, _ := saas.FromCurrentTenant(db.Statement.Context)
 		subQuery := db.Session(&gorm.Session{NewDB: true}).Model(new(biz.UserTenant))
-		if len(ti.GetId()) == 0 {
-			subQuery = subQuery.Where("tenant_id IS NULL")
-		} else {
-			subQuery = subQuery.Where("tenant_id = ?", ti.GetId())
-		}
+		subQuery = subQuery.Where("tenant_id = ?", ti.GetId())
 		subQuery = subQuery.Select("user_id")
 		subQuery = subQuery.Group("user_id").Having("COUNT(user_id) > 0")
 		return db.Where("id in (?)", subQuery)
