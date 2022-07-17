@@ -7,11 +7,11 @@ import (
 	"github.com/hibiken/asynq"
 )
 
-func NewJobServer(opt asynq.RedisConnOpt, log klog.Logger, handler biz.UserMigrationTaskHandler) *job.Server {
+func NewJobServer(opt asynq.RedisConnOpt, log klog.Logger, handlers []*job.Handler) *job.Server {
 	srv := job.NewServer(opt, job.WithQueues(map[string]int{
 		string(biz.ConnName): 1,
 	}))
 	srv.Use(job.TracingServer(), job.Logging(log))
-	srv.HandleFunc(biz.JobTypeUserMigration, handler)
+	job.RegisterHandlers(srv, handlers...)
 	return srv
 }

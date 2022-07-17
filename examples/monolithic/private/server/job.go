@@ -12,8 +12,7 @@ import (
 func NewJobServer(
 	opt asynq.RedisConnOpt,
 	log klog.Logger,
-	handler ubiz.UserMigrationTaskHandler,
-	apisixMigration sysbiz.ApisixMigrationTaskHandler,
+	handlers []*job.Handler,
 ) *job.Server {
 	srv := job.NewServer(opt, job.WithQueues(map[string]int{
 		string(ubiz.ConnName):   1,
@@ -21,7 +20,6 @@ func NewJobServer(
 		string(sysbiz.ConnName): 1,
 	}))
 	srv.Use(job.TracingServer(), job.Logging(log))
-	srv.HandleFunc(ubiz.JobTypeUserMigration, handler)
-	srv.HandleFunc(sysbiz.JobTypeApisixMigration, apisixMigration)
+	job.RegisterHandlers(srv, handlers...)
 	return srv
 }

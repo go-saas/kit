@@ -36,7 +36,7 @@ func NewHTTPServer(c *conf.Services,
 	userTenant *uapi.UserTenantContrib,
 	validator sapi.TrustedContextValidator,
 	refreshProvider session.RefreshTokenProvider,
-	register HttpServerRegister,
+	register []server.HttpServiceRegister,
 ) *khttp.Server {
 	var opts []khttp.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, uapi.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
@@ -63,6 +63,6 @@ func NewHTTPServer(c *conf.Services,
 
 	srv := khttp.NewServer(opts...)
 
-	register.Register(srv, middleware.Chain(middlewares...))
+	server.ChainHttpServiceRegister(register...).Register(srv, middleware.Chain(middlewares...))
 	return srv
 }

@@ -35,7 +35,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-saas/kit/sys/private/conf"
 
 	_ "github.com/go-saas/kit/event/kafka"
@@ -70,9 +69,7 @@ func init() {
 
 func newApp(
 	logger log.Logger,
-	hs *http.Server,
-	gs *grpc.Server,
-	js *job.Server,
+	srvs []transport.Server,
 	seeder seed.Seeder,
 	producer event.Producer,
 	r registry.Registrar,
@@ -88,11 +85,7 @@ func newApp(
 			panic(err)
 		}
 	}
-	srvs := []transport.Server{
-		hs,
-		gs,
-		js,
-	}
+
 	if ifSyncApisix {
 		srvs = append(srvs, syncAdmin)
 	}

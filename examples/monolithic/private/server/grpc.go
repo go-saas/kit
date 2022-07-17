@@ -31,7 +31,7 @@ func NewGRPCServer(
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
 	userTenant *uapi.UserTenantContrib,
-	register GrpcServerRegister,
+	register []server.GrpcServiceRegister,
 ) *grpc.Server {
 	m := []middleware.Middleware{
 		server.Recovery(),
@@ -55,7 +55,7 @@ func NewGRPCServer(
 	opts = server.PatchGrpcOpts(logger, opts, uapi.ServiceName, c)
 	srv := grpc.NewServer(opts...)
 
-	register.Register(srv, middleware.Chain(m...))
+	server.ChainGrpcServiceRegister(register...).Register(srv, middleware.Chain(m...))
 
 	return srv
 }

@@ -14,7 +14,6 @@ import (
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/sys/api"
-	"github.com/go-saas/kit/sys/private/service"
 	uow2 "github.com/go-saas/uow"
 	kuow "github.com/go-saas/uow/kratos"
 )
@@ -27,7 +26,7 @@ func NewGRPCServer(
 	apiOpt *sapi.Option,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
-	register service.GrpcServerRegister,
+	register []server.GrpcServiceRegister,
 ) *grpc.Server {
 	m := []middleware.Middleware{
 		server.Recovery(),
@@ -46,7 +45,7 @@ func NewGRPCServer(
 	}
 	opts = server.PatchGrpcOpts(logger, opts, api.ServiceName, c)
 	srv := grpc.NewServer(opts...)
-	server.ChainGrpcServiceRegister(register).Register(srv, m...)
+	server.ChainGrpcServiceRegister(register...).Register(srv, m...)
 
 	return srv
 }

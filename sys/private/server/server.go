@@ -1,10 +1,10 @@
 package server
 
 import (
+	"github.com/go-kratos/kratos/v2/transport"
 	dtmdata "github.com/go-saas/kit/dtm/data"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
-	"github.com/go-saas/kit/pkg/dal"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	ksaas "github.com/go-saas/kit/pkg/saas"
 	uow2 "github.com/go-saas/kit/pkg/uow"
@@ -14,35 +14,33 @@ import (
 	"github.com/go-saas/saas"
 	"github.com/go-saas/saas/seed"
 	"github.com/go-saas/uow"
+	"github.com/goava/di"
 )
 
 // ProviderSet is server providers.
 var ProviderSet = kitdi.NewSet(
-	NewHTTPServer,
-	NewGRPCServer,
-	NewJobServer,
+	kitdi.NewProvider(NewHTTPServer, di.As(new(transport.Server))),
+	kitdi.NewProvider(NewGRPCServer, di.As(new(transport.Server))),
+	kitdi.NewProvider(NewJobServer, di.As(new(transport.Server))),
 	NewSeeder,
-	func() api.ClientName { return ClientName },
-
-	func() dal.ConnName {
-		return biz.ConnName
-	},
+	kitdi.Value(ClientName),
+	kitdi.Value(biz.ConnName),
 	NewSeeding,
 	NewAuthorizationOption,
 )
 
 var ClientName api.ClientName = api2.ServiceName
 
-// Seeding workaround for https://github.com/google/wire/issues/207
-type Seeding seed.Contrib
-
 // NewSeeding sys seeding should migrate dtmsrv and dmtcli
-func NewSeeding(apisixSeeder *biz.ApisixSeed, uow uow.Manager, dtmMigrator *dtmdata.Migrator, migrate *data.Migrate, menu *biz.MenuSeed) Seeding {
+//
+// wrap all service migrator into one seed.Contrib, which grants the running sequence of those contribs
+func NewSeeding(apisixSeeder *biz.ApisixSeed, uow uow.Manager, dtmMigrator *dtmdata.Migrator, migrate *data.Migrate, menu *biz.MenuSeed) seed.Contrib {
 	return seed.Chain(apisixSeeder, dtmMigrator, migrate, uow2.NewUowContrib(uow, seed.Chain(menu)))
 }
 
-func NewSeeder(ts saas.TenantStore, ss Seeding) seed.Seeder {
-	return seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, ss)))
+func NewSeeder(ts saas.TenantStore, seeds []seed.Contrib) seed.Seeder {
+	res := seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, seeds...)))
+	return res
 }
 
 func NewAuthorizationOption() *authz.Option {

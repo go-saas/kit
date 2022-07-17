@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/config/env"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-saas/kit/event"
 	kapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
@@ -31,7 +32,6 @@ import (
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-saas/kit/saas/private/conf"
 
 	_ "github.com/go-saas/kit/event/kafka"
@@ -59,10 +59,7 @@ func init() {
 
 func newApp(
 	logger log.Logger,
-	hs *http.Server,
-	gs *grpc.Server,
-	js *job.Server,
-	es *event.ConsumerFactoryServer,
+	srvs []transport.Server,
 	seeder seed.Seeder,
 	producer event.Producer,
 	r registry.Registrar,
@@ -82,10 +79,7 @@ func newApp(
 		kratos.Logger(logger),
 		kratos.Registrar(r),
 		kratos.Server(
-			hs,
-			gs,
-			js,
-			es,
+			srvs...,
 		),
 	)
 }

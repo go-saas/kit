@@ -30,9 +30,6 @@ var ProviderSet = kitdi.NewSet(NewApisixOption, NewApisixAdminClient, apisix.New
 	NewHttpServerRegister, NewGrpcServerRegister,
 	kitdi.NewProvider(NewMenuService, di.As(new(v1.MenuServiceServer))))
 
-type HttpServerRegister server.HttpServiceRegister
-type GrpcServerRegister server.GrpcServiceRegister
-
 func NewApisixAdminClient(cfg *conf.SysConf) (*apisix.AdminClient, error) {
 	var endpoint, apikey string
 	if cfg != nil {
@@ -68,7 +65,7 @@ func NewHttpServerRegister(
 	factory blob.Factory,
 	dataCfg *kconf.Data,
 	opt asynq.RedisConnOpt,
-) HttpServerRegister {
+) server.HttpServiceRegister {
 	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 		server.HandleBlobs("", dataCfg.Blobs, srv, factory)
 		v1.RegisterMenuServiceHTTPServer(srv, menu)
@@ -96,7 +93,7 @@ func NewHttpServerRegister(
 	})
 }
 
-func NewGrpcServerRegister(menu *MenuService) GrpcServerRegister {
+func NewGrpcServerRegister(menu *MenuService) server.GrpcServiceRegister {
 	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v1.RegisterMenuServiceServer(srv, menu)
 	})

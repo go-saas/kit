@@ -8,9 +8,7 @@ import (
 	"github.com/samber/lo"
 )
 
-type TenantReadyEventHandler event.ConsumerHandler
-
-func NewTenantReadyEventHandler(useCase *TenantUseCase) TenantReadyEventHandler {
+func NewTenantReadyEventHandler(useCase *TenantUseCase) event.ConsumerHandler {
 	msg := &v1.TenantReadyEvent{}
 	return event.ProtoHandler[*v1.TenantReadyEvent](msg, event.HandlerFuncOf[*v1.TenantReadyEvent](func(ctx context.Context, msg *v1.TenantReadyEvent) error {
 		tenant, err := useCase.FindByIdOrName(ctx, msg.Id)

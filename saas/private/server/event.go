@@ -6,14 +6,21 @@ import (
 	"github.com/go-saas/kit/event/trace"
 	kitconf "github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/dal"
-	"github.com/go-saas/kit/saas/private/biz"
 	uow2 "github.com/go-saas/uow"
 )
 
-func NewEventServer(c *kitconf.Data, conn dal.ConnName, logger klog.Logger, uowMgr uow2.Manager, tenantReady biz.TenantReadyEventHandler) *event.ConsumerFactoryServer {
+func NewEventServer(
+	c *kitconf.Data,
+	conn dal.ConnName,
+	logger klog.Logger,
+	uowMgr uow2.Manager,
+	handlers []event.ConsumerHandler,
+) *event.ConsumerFactoryServer {
 	e := c.Endpoints.GetEventMergedDefault(string(conn))
 	srv := event.NewConsumerFactoryServer(e)
 	srv.Use(event.ConsumerRecover(event.WithLogger(logger)), trace.Receive(), event.Logging(logger), event.ConsumerUow(uowMgr))
-	srv.Append(tenantReady)
+	for _, handler := range handlers {
+		srv.Append(handler)
+	}
 	return srv
 }

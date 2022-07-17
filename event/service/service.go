@@ -8,15 +8,12 @@ import (
 	"github.com/go-saas/kit/pkg/server"
 )
 
-type HttpServerRegister server.HttpServiceRegister
-type GrpcServerRegister server.GrpcServiceRegister
-
-func NewHttpServerRegister(event *EventService) HttpServerRegister {
+func NewHttpServerRegister(event *EventService) server.HttpServiceRegister {
 	return server.HttpServiceRegisterFunc(func(server *http.Server, middleware ...middleware.Middleware) {
 		v12.RegisterEventServiceHTTPServer(server, event)
 	})
 }
-func NewGrpcServerRegister(event *EventService) GrpcServerRegister {
+func NewGrpcServerRegister(event *EventService) server.GrpcServiceRegister {
 	return server.GrpcServiceRegisterFunc(func(server *grpc.Server, middleware ...middleware.Middleware) {
 		v12.RegisterEventServiceServer(server, event)
 	})

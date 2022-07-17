@@ -14,9 +14,7 @@ type UserRole struct {
 	RoleID            uuid.UUID `gorm:"type:char(36);primaryKey"`
 }
 
-type UserRoleChangeEventHandler event.ConsumerHandler
-
-func NewUserRoleChangeEventHandler(um *UserManager) UserRoleChangeEventHandler {
+func NewUserRoleChangeEventHandler(um *UserManager) event.ConsumerHandler {
 	msg := &v12.UserRoleChangeEvent{}
 	return event.ProtoHandler[*v12.UserRoleChangeEvent](msg, event.HandlerFuncOf[*v12.UserRoleChangeEvent](func(ctx context.Context, msg *v12.UserRoleChangeEvent) error {
 		return um.RemoveUserRoleCache(ctx, msg.UserId)

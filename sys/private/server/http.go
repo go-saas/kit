@@ -14,7 +14,6 @@ import (
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/sys/api"
-	"github.com/go-saas/kit/sys/private/service"
 	uow2 "github.com/go-saas/uow"
 	kuow "github.com/go-saas/uow/kratos"
 )
@@ -30,7 +29,7 @@ func NewHTTPServer(c *conf2.Services,
 	apiOpt *sapi.Option,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
-	register service.HttpServerRegister,
+	register []server.HttpServiceRegister,
 ) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
@@ -50,7 +49,7 @@ func NewHTTPServer(c *conf2.Services,
 	}...)
 	srv := http.NewServer(opts...)
 
-	server.ChainHttpServiceRegister(register).Register(srv, m...)
+	server.ChainHttpServiceRegister(register...).Register(srv, m...)
 
 	return srv
 }

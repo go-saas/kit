@@ -45,9 +45,6 @@ var ProviderSet = kitdi.NewSet(
 	api.NewRefreshProvider,
 	uhttp.NewAuth)
 
-type HttpServerRegister server.HttpServiceRegister
-type GrpcServerRegister server.GrpcServiceRegister
-
 func NewHttpServerRegister(user *UserService,
 	resEncoder khttp.EncodeResponseFunc,
 	errEncoder khttp.EncodeErrorFunc,
@@ -58,7 +55,7 @@ func NewHttpServerRegister(user *UserService,
 	authHttp *uhttp.Auth,
 	dataCfg *kconf.Data,
 	authzSrv authz.Service,
-	factory blob.Factory) HttpServerRegister {
+	factory blob.Factory) server.HttpServiceRegister {
 	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 
 		router := chi.NewRouter()
@@ -106,7 +103,7 @@ func NewGrpcServerRegister(user *UserService,
 	account *AccountService,
 	auth *AuthService,
 	role *RoleService,
-	permission *PermissionService) GrpcServerRegister {
+	permission *PermissionService) server.GrpcServiceRegister {
 	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v12.RegisterUserServiceServer(srv, user)
 		v13.RegisterAccountServer(srv, account)

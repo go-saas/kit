@@ -7,8 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	dtmservice "github.com/go-saas/kit/dtm/service"
-	eventservice "github.com/go-saas/kit/event/service"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/conf"
@@ -16,7 +14,6 @@ import (
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/user/api"
-	"github.com/go-saas/kit/user/private/service"
 	"github.com/go-saas/saas"
 	http2 "github.com/go-saas/saas/http"
 	uow2 "github.com/go-saas/uow"
@@ -34,9 +31,7 @@ func NewGRPCServer(
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
 	userTenant *api.UserTenantContrib,
-	register service.GrpcServerRegister,
-	dtmRegister dtmservice.GrpcServerRegister,
-	eventRegister eventservice.GrpcServerRegister,
+	register []server.GrpcServiceRegister,
 ) *grpc.Server {
 	m := []middleware.Middleware{
 		server.Recovery(),
@@ -60,7 +55,7 @@ func NewGRPCServer(
 	opts = server.PatchGrpcOpts(logger, opts, api.ServiceName, c)
 	srv := grpc.NewServer(opts...)
 
-	server.ChainGrpcServiceRegister(dtmRegister, eventRegister, register).Register(srv, m...)
+	server.ChainGrpcServiceRegister(register...).Register(srv, m...)
 
 	return srv
 }

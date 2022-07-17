@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-saas/kit/event"
+	"github.com/go-saas/kit/pkg/job"
 	v1 "github.com/go-saas/kit/saas/event/v1"
 	"github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas/seed"
@@ -16,9 +17,7 @@ const (
 	JobTypeUserMigration = string(ConnName) + ":" + "migration"
 )
 
-type TenantSeedEventHandler event.ConsumerHandler
-
-func NewTenantSeedEventHandler(client *asynq.Client) TenantSeedEventHandler {
+func NewTenantSeedEventHandler(client *asynq.Client) event.ConsumerHandler {
 	msg := &v1.TenantCreatedEvent{}
 	return event.ProtoHandler[*v1.TenantCreatedEvent](msg, event.HandlerFuncOf[*v1.TenantCreatedEvent](func(ctx context.Context, msg *v1.TenantCreatedEvent) error {
 		t, err := NewUserMigrationTask(NewUserMigrationTaskFromTenantEvent(msg))
@@ -39,10 +38,8 @@ func NewUserMigrationTask(msg *UserMigrationTask) (*asynq.Task, error) {
 	return asynq.NewTask(JobTypeUserMigration, payload, asynq.ProcessIn(time.Second), asynq.Queue(string(ConnName)), asynq.Retention(time.Hour*24*30)), nil
 }
 
-type UserMigrationTaskHandler func(ctx context.Context, t *asynq.Task) error
-
-func NewUserMigrationTaskHandler(seeder seed.Seeder, producer event.Producer) UserMigrationTaskHandler {
-	return func(ctx context.Context, t *asynq.Task) error {
+func NewUserMigrationTaskHandler(seeder seed.Seeder, producer event.Producer) *job.Handler {
+	return job.NewHandlerFunc(JobTypeUserMigration, func(ctx context.Context, t *asynq.Task) error {
 		msg := &UserMigrationTask{}
 		if err := protojson.Unmarshal(t.Payload(), msg); err != nil {
 			return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
@@ -69,5 +66,5 @@ func NewUserMigrationTaskHandler(seeder seed.Seeder, producer event.Producer) Us
 		}
 		ee, _ := event.NewMessageFromProto(e)
 		return producer.Send(ctx, ee)
-	}
+	})
 }

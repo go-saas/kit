@@ -26,3 +26,21 @@ func NewAsynqClient(opt asynq.RedisConnOpt) (*asynq.Client, func()) {
 		client.Close()
 	}
 }
+
+type Handler struct {
+	Pattern string
+	asynq.Handler
+}
+
+func NewHandler(pattern string, handler asynq.Handler) *Handler {
+	return &Handler{Pattern: pattern, Handler: handler}
+}
+func NewHandlerFunc(pattern string, handler asynq.HandlerFunc) *Handler {
+	return &Handler{Pattern: pattern, Handler: handler}
+}
+
+func RegisterHandlers(srv *Server, handlers ...*Handler) {
+	for _, handler := range handlers {
+		srv.Handle(handler.Pattern, handler.Handler)
+	}
+}

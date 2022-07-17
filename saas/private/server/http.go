@@ -14,7 +14,6 @@ import (
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/saas/api"
-	"github.com/go-saas/kit/saas/private/service"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas"
 	http2 "github.com/go-saas/saas/http"
@@ -36,7 +35,7 @@ func NewHTTPServer(c *conf.Services,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
 	userTenant *uapi.UserTenantContrib,
-	register service.HttpServerRegister) *http.Server {
+	register []server.HttpServiceRegister) *http.Server {
 	var opts []http.ServerOption
 	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
 	m := []middleware.Middleware{
@@ -59,7 +58,7 @@ func NewHTTPServer(c *conf.Services,
 		),
 	}...)
 	srv := http.NewServer(opts...)
-	server.ChainHttpServiceRegister(register).Register(srv, m...)
+	server.ChainHttpServiceRegister(register...).Register(srv, m...)
 
 	return srv
 }

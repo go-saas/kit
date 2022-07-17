@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/config/env"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/go-kratos/kratos/v2/transport"
 	dtmapi "github.com/go-saas/kit/dtm/api"
 	dtmserver "github.com/go-saas/kit/dtm/server"
 	"github.com/go-saas/kit/event"
@@ -35,7 +36,6 @@ import (
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-saas/kit/user/private/conf"
 
 	_ "github.com/go-saas/kit/saas/api"
@@ -69,14 +69,11 @@ func init() {
 func newApp(
 	c *conf.UserConf,
 	logger log.Logger,
-	hs *http.Server,
-	gs *grpc.Server,
-	js *job.Server,
-	es *event.ConsumerFactoryServer,
 	seeder seed.Seeder,
 	producer event.Producer,
 	_ *dtmapi.Init,
 	r registry.Registrar,
+	srvs []transport.Server,
 ) *kratos.App {
 	ctx := event.NewProducerContext(context.Background(), producer)
 	if ifSeed {
@@ -98,10 +95,7 @@ func newApp(
 		kratos.Logger(logger),
 		kratos.Registrar(r),
 		kratos.Server(
-			hs,
-			gs,
-			js,
-			es,
+			srvs...,
 		),
 	)
 }

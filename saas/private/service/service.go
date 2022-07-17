@@ -26,9 +26,6 @@ var ProviderSet = kitdi.NewSet(NewHttpServerRegister, NewGrpcServerRegister,
 	kitdi.NewProvider(NewTenantInternalService, di.As(new(v1.TenantInternalServiceServer))),
 )
 
-type HttpServerRegister server.HttpServiceRegister
-type GrpcServerRegister server.GrpcServiceRegister
-
 func NewHttpServerRegister(
 	tenant *TenantService,
 	factory blob.Factory,
@@ -36,7 +33,7 @@ func NewHttpServerRegister(
 	errEncoder khttp.EncodeErrorFunc,
 	tenantInternal *TenantInternalService,
 	dataCfg *kconf.Data,
-) HttpServerRegister {
+) server.HttpServiceRegister {
 	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 		route := srv.Route("/")
 
@@ -59,7 +56,7 @@ func NewHttpServerRegister(
 	})
 }
 
-func NewGrpcServerRegister(tenant *TenantService, tenantInternal *TenantInternalService) GrpcServerRegister {
+func NewGrpcServerRegister(tenant *TenantService, tenantInternal *TenantInternalService) server.GrpcServiceRegister {
 	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v1.RegisterTenantInternalServiceServer(srv, tenantInternal)
 		v1.RegisterTenantServiceServer(srv, tenant)
