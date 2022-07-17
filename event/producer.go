@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"github.com/goava/di"
 	"io"
 	"sync"
 )
@@ -18,7 +19,7 @@ type ProducerMux struct {
 	mws []ProducerMiddlewareFunc
 }
 
-func NewFactoryProducer(cfg *Config) (*ProducerMux, error) {
+func NewFactoryProducer(cfg *Config, container *di.Container) (*ProducerMux, error) {
 	_typeProducerMux.RLock()
 	defer _typeProducerMux.RUnlock()
 	t, err := resolveType(cfg)
@@ -28,7 +29,7 @@ func NewFactoryProducer(cfg *Config) (*ProducerMux, error) {
 	if r, ok := _typeProducerRegister[t]; !ok {
 		panic(cfg.Type + " event producer not registered")
 	} else {
-		return r(cfg)
+		return r(cfg, container)
 	}
 }
 

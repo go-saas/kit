@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-saas/kit/event"
 	"github.com/go-saas/lazy"
+	"github.com/goava/di"
 	"sync"
 )
 
@@ -15,38 +16,56 @@ var (
 )
 
 func init() {
-	event.RegisterConsumer("pulsar", func(ctx context.Context, cfg *event.Config) (event.Consumer, error) {
-		opt := pulsar.ClientOptions{URL: cfg.Addr}
-		opt.Logger = logger{l: log.GetLogger()}
-		if cfg.Pulsar != nil {
-			if cfg.Pulsar.OperationTimeout != nil {
-				opt.OperationTimeout = cfg.Pulsar.OperationTimeout.AsDuration()
-			}
-			if cfg.Pulsar.ConnectionTimeout != nil {
-				opt.ConnectionTimeout = cfg.Pulsar.ConnectionTimeout.AsDuration()
-			}
-		}
-		return NewConsumer(cfg.Topic, cfg.Group, opt)
-	})
-
-	event.RegisterProducer("pulsar", func(cfg *event.Config) (*event.ProducerMux, error) {
-		opt := pulsar.ClientOptions{URL: cfg.Addr}
-		opt.Logger = logger{l: log.GetLogger()}
-		if cfg.Pulsar != nil {
-			if cfg.Pulsar.OperationTimeout != nil {
-				opt.OperationTimeout = cfg.Pulsar.OperationTimeout.AsDuration()
-			}
-			if cfg.Pulsar.ConnectionTimeout != nil {
-				opt.ConnectionTimeout = cfg.Pulsar.ConnectionTimeout.AsDuration()
-			}
-		}
-		sender, err := NewProducer(cfg.Topic, opt)
+	event.RegisterConsumer("pulsar", func(ctx context.Context, cfg *event.Config, container *di.Container) (event.Consumer, error) {
+		client, err := findClientOrProvider(cfg, container)
 		if err != nil {
 			return nil, err
 		}
+		return NewConsumer(cfg.Topic, cfg.Group, client), nil
+	})
+
+	event.RegisterProducer("pulsar", func(cfg *event.Config, container *di.Container) (*event.ProducerMux, error) {
+		client, err := findClientOrProvider(cfg, container)
+		if err != nil {
+			return nil, err
+		}
+		sender := NewProducer(cfg.Topic, client)
 		res := event.NewProducer(sender)
 		return res, nil
 	})
+}
+
+func findClientOrProvider(cfg *event.Config, container *di.Container) (pulsar.Client, error) {
+	var client pulsar.Client
+	if has, err := container.Has(&client); err == nil {
+		if !has {
+			err := container.Provide(func() (pulsar.Client, error) {
+				opt := pulsar.ClientOptions{URL: cfg.Addr}
+				opt.Logger = logger{l: log.GetLogger()}
+				if cfg.Pulsar != nil {
+					if cfg.Pulsar.OperationTimeout != nil {
+						opt.OperationTimeout = cfg.Pulsar.OperationTimeout.AsDuration()
+					}
+					if cfg.Pulsar.ConnectionTimeout != nil {
+						opt.ConnectionTimeout = cfg.Pulsar.ConnectionTimeout.AsDuration()
+					}
+				}
+				return pulsar.NewClient(opt)
+			})
+			if err != nil {
+				return nil, err
+			}
+		}
+		err := container.Resolve(&client)
+		if err != nil {
+			return nil, err
+		} else {
+			log.Info("reuse pulsar client")
+			return client, nil
+		}
+	} else {
+		return nil, err
+	}
 }
 
 type Producer struct {
@@ -55,20 +74,13 @@ type Producer struct {
 	topic    string
 }
 
-func NewProducer(topic string, opt pulsar.ClientOptions) (*Producer, error) {
-	client, err := pulsar.NewClient(opt)
-	if err != nil {
-		return nil, err
-	}
+func NewProducer(topic string, client pulsar.Client) *Producer {
 	p := lazy.New(func(ctx context.Context) (pulsar.Producer, error) {
 		return client.CreateProducer(pulsar.ProducerOptions{
 			Topic: topic,
 		})
 	})
-	if err != nil {
-		return nil, err
-	}
-	return &Producer{Client: client, producer: p, topic: topic}, nil
+	return &Producer{Client: client, producer: p, topic: topic}
 }
 
 func (p *Producer) Close() error {
@@ -128,12 +140,8 @@ type Consumer struct {
 	wg       sync.WaitGroup
 }
 
-func NewConsumer(topic, subsName string, opt pulsar.ClientOptions) (*Consumer, error) {
-	client, err := pulsar.NewClient(opt)
-	if err != nil {
-		return nil, err
-	}
-	return &Consumer{Client: client, subsName: subsName, topic: topic}, nil
+func NewConsumer(topic, subsName string, client pulsar.Client) *Consumer {
+	return &Consumer{Client: client, subsName: subsName, topic: topic}
 }
 
 func (c *Consumer) Process(ctx context.Context, handler event.ConsumerHandler) error {

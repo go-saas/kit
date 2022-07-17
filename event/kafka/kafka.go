@@ -5,6 +5,7 @@ import (
 	"github.com/Shopify/sarama"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-saas/kit/event"
+	"github.com/goava/di"
 	"strings"
 	"sync"
 )
@@ -15,7 +16,7 @@ var (
 )
 
 func init() {
-	event.RegisterConsumer("kafka", func(ctx context.Context, cfg *event.Config) (event.Consumer, error) {
+	event.RegisterConsumer("kafka", func(ctx context.Context, cfg *event.Config, _ *di.Container) (event.Consumer, error) {
 		var addr []string
 		if cfg.Addr != "" {
 			addr = strings.Split(cfg.Addr, ";")
@@ -25,7 +26,7 @@ func init() {
 		return NewConsumer(addr, cfg.Topic, cfg.Group, cfg.Kafka)
 	})
 
-	event.RegisterProducer("kafka", func(cfg *event.Config) (*event.ProducerMux, error) {
+	event.RegisterProducer("kafka", func(cfg *event.Config, _ *di.Container) (*event.ProducerMux, error) {
 		var addr []string
 		if cfg.Addr != "" {
 			addr = strings.Split(cfg.Addr, ";")

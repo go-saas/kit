@@ -3,11 +3,12 @@ package event
 import (
 	"context"
 	"fmt"
+	"github.com/goava/di"
 	"sync"
 )
 
-type LazyConsumer func(ctx context.Context, c *Config) (Consumer, error)
-type LazyProducer func(c *Config) (*ProducerMux, error)
+type LazyConsumer func(ctx context.Context, c *Config, container *di.Container) (Consumer, error)
+type LazyProducer func(c *Config, container *di.Container) (*ProducerMux, error)
 
 var (
 	_typeConsumerMux      sync.RWMutex

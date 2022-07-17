@@ -92,9 +92,9 @@ func NewStringCacheManager(store store.StoreInterface) *cache.Cache[string] {
 	return cache.New[string](store)
 }
 
-func NewEventSender(c *kitconf.Data, name ConnName) (event.Producer, func(), error) {
+func NewEventSender(c *kitconf.Data, name ConnName, container *di.Container) (event.Producer, func(), error) {
 	e := c.Endpoints.GetEventMergedDefault(string(name))
-	ret, err := event.NewFactoryProducer(e)
+	ret, err := event.NewFactoryProducer(e, container)
 	if err != nil {
 		return nil, func() {}, err
 	}

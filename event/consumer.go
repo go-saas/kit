@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/goava/di"
 	"io"
 	"sync"
 )
@@ -100,13 +101,14 @@ func (mux *ConsumerMux) Process(ctx context.Context, event Event) error {
 // ConsumerFactoryServer resolve LazyConsumer from factory, then wrap as kratos server
 type ConsumerFactoryServer struct {
 	*ConsumerMux
-	lr  LazyConsumer
-	cfg *Config
+	lr        LazyConsumer
+	cfg       *Config
+	container *di.Container
 }
 
 var _ transport.Server = (*ConsumerFactoryServer)(nil)
 
-func NewConsumerFactoryServer(cfg *Config) *ConsumerFactoryServer {
+func NewConsumerFactoryServer(cfg *Config, container *di.Container) *ConsumerFactoryServer {
 	_typeConsumerMux.RLock()
 	defer _typeConsumerMux.RUnlock()
 	var r LazyConsumer
@@ -123,6 +125,7 @@ func NewConsumerFactoryServer(cfg *Config) *ConsumerFactoryServer {
 		ConsumerMux: &ConsumerMux{},
 		cfg:         cfg,
 		lr:          r,
+		container:   container,
 	}
 }
 
@@ -130,7 +133,7 @@ func (f *ConsumerFactoryServer) Start(ctx context.Context) error {
 	if f.r != nil {
 		panic("server can not start twice")
 	}
-	r, err := f.lr(ctx, f.cfg)
+	r, err := f.lr(ctx, f.cfg, f.container)
 	if err != nil {
 		return err
 	}

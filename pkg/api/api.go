@@ -125,8 +125,8 @@ func NewHttpClient(
 	}
 }
 
-func NewDiscovery(services *conf.Services) (registry.Discovery, error) {
-	_, r, err := kregistry.NewRegister(services.Registry)
+func NewDiscovery(services *conf.Services, container *di.Container) (registry.Discovery, error) {
+	_, r, err := kregistry.NewRegister(services.Registry, container)
 	return r, err
 }
 

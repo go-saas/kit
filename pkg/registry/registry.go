@@ -3,10 +3,11 @@ package registry
 import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/goava/di"
 	"sync"
 )
 
-type Factory func(c *Config) (registry.Registrar, registry.Discovery, error)
+type Factory func(c *Config, container *di.Container) (registry.Registrar, registry.Discovery, error)
 
 var (
 	_registryMap  = map[string]Factory{}
@@ -19,7 +20,7 @@ func Register(kind string, factory Factory) {
 	_registryMap[kind] = factory
 }
 
-func NewRegister(c *Config) (registry.Registrar, registry.Discovery, error) {
+func NewRegister(c *Config, container *di.Container) (registry.Registrar, registry.Discovery, error) {
 	_registryLock.RLock()
 	defer _registryLock.RUnlock()
 	if len(c.Type) == 0 {
@@ -29,5 +30,5 @@ func NewRegister(c *Config) (registry.Registrar, registry.Discovery, error) {
 	if !ok {
 		return nil, nil, fmt.Errorf("registry type %s not found", c.Type)
 	}
-	return r(c)
+	return r(c, container)
 }
