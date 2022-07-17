@@ -5,12 +5,13 @@ import (
 	v1 "github.com/go-saas/kit/dtm/api/dtm/v1"
 	"github.com/go-saas/kit/dtm/data"
 	"github.com/go-saas/kit/dtm/service"
-	"github.com/google/wire"
+	kitdi "github.com/go-saas/kit/pkg/di"
+	"github.com/goava/di"
 )
 
-var DtmProviderSet = wire.NewSet(
+var DtmProviderSet = kitdi.NewSet(
 	dtmapi.NewInit,
-	service.NewMsgService, wire.Bind(new(v1.MsgServiceServer), new(*service.MsgService)),
+	kitdi.NewProvider(service.NewMsgService, di.As(new(v1.MsgServiceServer))),
 	data.NewBarrierMigrator, data.NewStorageMigrator, data.NewMigrator,
 	service.NewHttpServerRegister, service.NewGrpcServerRegister,
 )

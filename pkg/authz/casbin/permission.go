@@ -6,7 +6,8 @@ import (
 	"github.com/casbin/casbin/v2/util"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-saas/kit/pkg/authz/authz"
-	"github.com/google/wire"
+	kitdi "github.com/go-saas/kit/pkg/di"
+	"github.com/goava/di"
 	"net/http"
 	"strings"
 )
@@ -177,8 +178,5 @@ func mapToAuthEffect(eff string) authz.Effect {
 	return authz.EffectUnknown
 }
 
-var PermissionProviderSet = wire.NewSet(
-	NewPermissionService,
-	wire.Bind(new(authz.PermissionManagementService), new(*PermissionService)),
-	wire.Bind(new(authz.PermissionChecker), new(*PermissionService)),
-)
+var PermissionProviderSet = kitdi.NewSet(
+	kitdi.NewProvider(NewPermissionService, di.As(new(authz.PermissionManagementService)), di.As(new(authz.PermissionChecker))))

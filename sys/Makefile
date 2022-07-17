@@ -14,7 +14,6 @@ build:
 .PHONY: generate
 # generate
 generate:
-	go get -d github.com/google/wire/cmd/wire@v0.5.0
 	go generate ./...
 
 .PHONY: all

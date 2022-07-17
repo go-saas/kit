@@ -7,9 +7,9 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	_ "github.com/go-saas/kit/saas/i18n"
-	"github.com/google/wire"
 	"google.golang.org/grpc"
 )
 
@@ -25,12 +25,12 @@ func NewGrpcConn(
 	opt *api.Option,
 	tokenMgr api.TokenManager,
 	logger log.Logger,
-	opts ...grpc2.ClientOption,
+	opts []grpc2.ClientOption,
 ) (GrpcConn, func()) {
-	return api.NewGrpcConn(client, ServiceName, services, dis, opt, tokenMgr, logger, opts...)
+	return api.NewGrpcConn(client, ServiceName, services, dis, opt, tokenMgr, logger, opts)
 }
 
-var GrpcProviderSet = wire.NewSet(NewTenantStore, NewGrpcConn, NewTenantGrpcClient, NewTenantInternalGrpcClient)
+var GrpcProviderSet = kitdi.NewSet(NewTenantStore, NewGrpcConn, NewTenantGrpcClient, NewTenantInternalGrpcClient)
 
 func NewTenantGrpcClient(conn GrpcConn) v1.TenantServiceServer {
 	return v1.NewTenantServiceClientProxy(v1.NewTenantServiceClient(conn))

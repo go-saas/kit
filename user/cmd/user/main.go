@@ -7,13 +7,26 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	dtmapi "github.com/go-saas/kit/dtm/api"
+	dtmserver "github.com/go-saas/kit/dtm/server"
 	"github.com/go-saas/kit/event"
+	eventserver "github.com/go-saas/kit/event/server"
+	kapi "github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/authn/jwt"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/authz/casbin"
+	kdal "github.com/go-saas/kit/pkg/dal"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
-	"github.com/go-saas/kit/pkg/server"
+	kitserver "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/tracers"
+	sapi "github.com/go-saas/kit/saas/api"
 	"github.com/go-saas/kit/user/private/biz"
+	"github.com/go-saas/kit/user/private/data"
+	"github.com/go-saas/kit/user/private/server"
+	"github.com/go-saas/kit/user/private/service"
 	"github.com/go-saas/saas/seed"
+	"github.com/goava/di"
 	"os"
 	"strings"
 
@@ -152,15 +165,32 @@ func main() {
 		log.Error(err)
 	}
 	defer shutdown()
-
-	app, cleanup, err := InitApp(bc.Services, bc.Security, bc.User, bc.Data, logger, server.NewWebMultiTenancyOption(bc.App))
+	di.SetTracer(&di.StdTracer{})
+	builder, err := di.New(
+		kitdi.Value(bc.Services),
+		kitdi.Value(bc.Security),
+		kitdi.Value(bc.User),
+		kitdi.Value(bc.Data),
+		kitdi.Value(logger),
+		kitdi.Value([]grpc.ClientOption{}),
+		kitdi.Value(kitserver.NewWebMultiTenancyOption(bc.App)),
+		authz.ProviderSet, kitserver.DefaultProviderSet, jwt.ProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
+		job.DefaultProviderSet, dtmserver.DtmProviderSet, eventserver.EventProviderSet,
+		sapi.GrpcProviderSet,
+		casbin.PermissionProviderSet, server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet,
+		kitdi.NewSet(newApp),
+	)
 	if err != nil {
 		panic(err)
 	}
-	defer cleanup()
+	defer builder.Cleanup()
+	err = builder.Invoke(func(app *kratos.App) error {
+		// start and wait for stop signal
+		return app.Run()
+	})
 
-	// start and wait for stop signal
-	if err := app.Run(); err != nil {
+	if err != nil {
 		panic(err)
 	}
+
 }

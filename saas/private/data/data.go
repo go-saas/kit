@@ -5,9 +5,9 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	kconf "github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/dal"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/saas/api"
 	"github.com/go-saas/kit/saas/private/biz"
-	"github.com/google/wire"
 	g "gorm.io/gorm"
 
 	_ "github.com/go-saas/kit/pkg/blob/memory"
@@ -16,7 +16,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(
+var ProviderSet = kitdi.NewSet(
 	NewData,
 	NewTenantRepo,
 	NewMigrate,

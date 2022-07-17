@@ -8,16 +8,34 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport"
+	dtmserver "github.com/go-saas/kit/dtm/server"
 	"github.com/go-saas/kit/event"
+	eventserver "github.com/go-saas/kit/event/server"
 	"github.com/go-saas/kit/examples/monolithic/private/conf"
+	"github.com/go-saas/kit/examples/monolithic/private/server"
+	kapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/apisix"
+	"github.com/go-saas/kit/pkg/authn/jwt"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/authz/casbin"
+	kdal "github.com/go-saas/kit/pkg/dal"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
+	kserver "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/tracers"
+	sbiz "github.com/go-saas/kit/saas/private/biz"
+	sdata "github.com/go-saas/kit/saas/private/data"
+	sservice "github.com/go-saas/kit/saas/private/service"
 	sysbiz "github.com/go-saas/kit/sys/private/biz"
+	sysdata "github.com/go-saas/kit/sys/private/data"
+	sysservice "github.com/go-saas/kit/sys/private/service"
 	ubiz "github.com/go-saas/kit/user/private/biz"
 	uconf "github.com/go-saas/kit/user/private/conf"
+	udata "github.com/go-saas/kit/user/private/data"
+	uservice "github.com/go-saas/kit/user/private/service"
 	"github.com/go-saas/saas/seed"
+	"github.com/goava/di"
 	"os"
 	"strings"
 
@@ -158,14 +176,37 @@ func main() {
 		log.Error(err)
 	}
 	defer shutdown()
-	app, cleanup, err := initApp(bc.Services, bc.Security, bc.Data, bc.Sys, bc.Saas, bc.User, logger, bc.App)
+
+	di.SetTracer(&di.StdTracer{})
+	builder, err := di.New(
+		kitdi.Value(bc.Services),
+		kitdi.Value(bc.Security),
+		kitdi.Value(bc.Data),
+		kitdi.Value(bc.Sys),
+		kitdi.Value(bc.Saas),
+		kitdi.Value(bc.User),
+		kitdi.Value(bc.App),
+		kitdi.Value(logger),
+		kitdi.NewSet(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kserver.NewWebMultiTenancyOption, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
+			job.DefaultProviderSet, dtmserver.DtmProviderSet, eventserver.EventProviderSet,
+			sdata.ProviderSet, sbiz.ProviderSet, sservice.ProviderSet,
+			sysdata.ProviderSet, sysbiz.ProviderSet, sysservice.ProviderSet,
+			udata.ProviderSet, ubiz.ProviderSet, uservice.ProviderSet,
+			casbin.PermissionProviderSet, server.ProviderSet,
+			newApp),
+	)
+
 	if err != nil {
 		panic(err)
 	}
-	defer cleanup()
 
-	// start and wait for stop signal
-	if err := app.Run(); err != nil {
+	defer builder.Cleanup()
+	err = builder.Invoke(func(app *kratos.App) error {
+		// start and wait for stop signal
+		return app.Run()
+	})
+
+	if err != nil {
 		panic(err)
 	}
 }

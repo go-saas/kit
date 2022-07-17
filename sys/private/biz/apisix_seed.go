@@ -15,6 +15,10 @@ type ApisixSeed struct {
 	JobClient *asynq.Client
 }
 
+func NewApisixSeed(cfg *conf.SysConf, client *apisix.AdminClient, jobClient *asynq.Client) *ApisixSeed {
+	return &ApisixSeed{Cfg: cfg, Client: client, JobClient: jobClient}
+}
+
 func (a *ApisixSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 	if len(sCtx.TenantId) != 0 || a.Cfg == nil || a.Cfg.Apisix == nil {
 		return nil

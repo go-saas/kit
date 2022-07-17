@@ -3,7 +3,7 @@ package blob
 import (
 	"context"
 	"fmt"
-	"github.com/google/wire"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/saas"
 
 	"github.com/spf13/afero"
@@ -150,4 +150,4 @@ func PatchOpt(cfg BlobConfig, fs afero.Fs) afero.Fs {
 	return r
 }
 
-var ProviderSet = wire.NewSet(NewFactory)
+var ProviderSet = kitdi.NewSet(NewFactory)

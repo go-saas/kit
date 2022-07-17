@@ -4,20 +4,32 @@ import (
 	dtmdata "github.com/go-saas/kit/dtm/data"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/dal"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	ksaas "github.com/go-saas/kit/pkg/saas"
 	uow2 "github.com/go-saas/kit/pkg/uow"
 	api2 "github.com/go-saas/kit/sys/api"
 	"github.com/go-saas/kit/sys/private/biz"
 	"github.com/go-saas/kit/sys/private/data"
 	"github.com/go-saas/saas"
-	"github.com/google/wire"
-
 	"github.com/go-saas/saas/seed"
 	"github.com/go-saas/uow"
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewJobServer, NewSeeder, wire.Value(ClientName), wire.Value(biz.ConnName), NewSeeding, NewAuthorizationOption)
+var ProviderSet = kitdi.NewSet(
+	NewHTTPServer,
+	NewGRPCServer,
+	NewJobServer,
+	NewSeeder,
+	func() api.ClientName { return ClientName },
+
+	func() dal.ConnName {
+		return biz.ConnName
+	},
+	NewSeeding,
+	NewAuthorizationOption,
+)
 
 var ClientName api.ClientName = api2.ServiceName
 

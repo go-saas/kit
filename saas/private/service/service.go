@@ -10,9 +10,10 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	kconf "github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/server"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
-	"github.com/google/wire"
+	"github.com/goava/di"
 	"net/http"
 )
 
@@ -20,9 +21,10 @@ import (
 var spec []byte
 
 // ProviderSet is service providers.
-var ProviderSet = wire.NewSet(NewHttpServerRegister, NewGrpcServerRegister,
-	NewTenantService, wire.Bind(new(v1.TenantServiceServer), new(*TenantService)),
-	wire.Struct(new(TenantInternalService), "*"), wire.Bind(new(v1.TenantInternalServiceServer), new(*TenantInternalService)))
+var ProviderSet = kitdi.NewSet(NewHttpServerRegister, NewGrpcServerRegister,
+	kitdi.NewProvider(NewTenantService, di.As(new(v1.TenantServiceServer))),
+	kitdi.NewProvider(NewTenantInternalService, di.As(new(v1.TenantInternalServiceServer))),
+)
 
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister

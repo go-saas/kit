@@ -9,10 +9,11 @@ import (
 	"github.com/go-saas/kit/pkg/authn/session"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas"
 	shttp "github.com/go-saas/saas/http"
-	"github.com/google/wire"
+	"github.com/goava/di"
 )
 
 type App struct {
@@ -92,9 +93,10 @@ func NewAuthorizationOption() *authz.Option {
 	return authz.NewAuthorizationOption()
 }
 
-var ProviderSet = wire.NewSet(
+var ProviderSet = kitdi.NewSet(
 	api.NewClientCfg,
+	kitdi.NewProvider(api.NewInMemoryTokenManager, di.As(new(api.TokenManager))),
 	api.NewInMemoryTokenManager,
 	NewSelfClientOption,
-	wire.Bind(new(api.TokenManager), new(*api.InMemoryTokenManager)), NewAuthorizationOption,
+	NewAuthorizationOption,
 	api.NewDiscovery)

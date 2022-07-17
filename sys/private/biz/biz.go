@@ -2,11 +2,11 @@ package biz
 
 import (
 	"github.com/go-saas/kit/pkg/dal"
-	"github.com/google/wire"
+	kitdi "github.com/go-saas/kit/pkg/di"
 )
 
 // ProviderSet is biz providers.
-var ProviderSet = wire.NewSet(NewMenuSeed, wire.Struct(new(ApisixSeed), "*"), NewApisixMigrationTaskHandler)
+var ProviderSet = kitdi.NewSet(NewMenuSeed, NewApisixSeed, NewApisixMigrationTaskHandler)
 
 const (
 	SeedPathKey              = "seed.menu.path"

@@ -8,13 +8,14 @@ import (
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	v13 "github.com/go-saas/kit/user/api/account/v1"
 	v12 "github.com/go-saas/kit/user/api/auth/v1"
 	v15 "github.com/go-saas/kit/user/api/permission/v1"
 	v14 "github.com/go-saas/kit/user/api/role/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	_ "github.com/go-saas/kit/user/i18n"
-	"github.com/google/wire"
+	"github.com/goava/di"
 	"google.golang.org/grpc"
 )
 
@@ -23,15 +24,21 @@ type HttpClient *http.Client
 
 const ServiceName = "user"
 
-func NewGrpcConn(client *conf.Client, services *conf.Services, dis registry.Discovery, opt *api.Option, tokenMgr api.TokenManager, logger log.Logger, opts ...grpc2.ClientOption) (GrpcConn, func()) {
-	return api.NewGrpcConn(client, ServiceName, services, dis, opt, tokenMgr, logger, opts...)
+func NewGrpcConn(
+	client *conf.Client,
+	services *conf.Services,
+	dis registry.Discovery,
+	opt *api.Option,
+	tokenMgr api.TokenManager,
+	logger log.Logger,
+	opts []grpc2.ClientOption,
+) (GrpcConn, func()) {
+	return api.NewGrpcConn(client, ServiceName, services, dis, opt, tokenMgr, logger, opts)
 }
 
-var GrpcProviderSet = wire.NewSet(
+var GrpcProviderSet = kitdi.NewSet(
 	NewUserTenantContrib, NewRefreshProvider,
-	NewRemotePermissionChecker,
-	wire.Bind(new(authz.PermissionChecker), new(*PermissionChecker)),
-	wire.Bind(new(authz.PermissionManagementService), new(*PermissionChecker)),
+	kitdi.NewProvider(NewRemotePermissionChecker, di.As(new(authz.PermissionChecker)), di.As(new(authz.PermissionManagementService))),
 	NewGrpcConn,
 	NewUserGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient)
 

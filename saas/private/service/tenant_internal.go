@@ -19,6 +19,10 @@ type TenantInternalService struct {
 	Blob                                        blob.Factory
 }
 
+func NewTenantInternalService(trusted sapi.TrustedContextValidator, useCase *biz.TenantUseCase, app *conf.AppConfig, blob blob.Factory) *TenantInternalService {
+	return &TenantInternalService{Trusted: trusted, UseCase: useCase, App: app, Blob: blob}
+}
+
 func (s *TenantInternalService) GetTenant(ctx context.Context, req *pb.GetTenantRequest) (*pb.Tenant, error) {
 	if ok, err := s.Trusted.Trusted(ctx); err != nil {
 		return nil, err

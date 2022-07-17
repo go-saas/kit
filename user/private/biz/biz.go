@@ -4,13 +4,13 @@ import (
 	"context"
 	"github.com/go-saas/kit/pkg/blob"
 	"github.com/go-saas/kit/pkg/dal"
-	"github.com/google/wire"
+	kitdi "github.com/go-saas/kit/pkg/di"
 )
 
 const ConnName dal.ConnName = "user"
 
 // ProviderSet is biz providers.
-var ProviderSet = wire.NewSet(
+var ProviderSet = kitdi.NewSet(
 	NewUserManager,
 	NewSignInManager,
 	NewUserValidator,

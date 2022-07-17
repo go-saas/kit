@@ -3,20 +3,30 @@ package server
 import (
 	kapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/dal"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	ksaas "github.com/go-saas/kit/pkg/saas"
 	uow2 "github.com/go-saas/kit/pkg/uow"
 	"github.com/go-saas/kit/saas/api"
 	"github.com/go-saas/kit/saas/private/biz"
 	"github.com/go-saas/kit/saas/private/data"
 	"github.com/go-saas/saas"
-	"github.com/google/wire"
-
 	"github.com/go-saas/saas/seed"
 	"github.com/go-saas/uow"
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewJobServer, NewEventServer, NewSeeder, wire.Value(ClientName), wire.Value(biz.ConnName), NewSeeding, NewAuthorizationOption)
+var ProviderSet = kitdi.NewSet(
+	NewHTTPServer,
+	NewGRPCServer,
+	NewJobServer,
+	NewEventServer,
+	NewSeeder,
+	func() kapi.ClientName { return ClientName },
+	func() dal.ConnName { return biz.ConnName },
+	NewSeeding,
+	NewAuthorizationOption,
+)
 
 var ClientName kapi.ClientName = api.ServiceName
 

@@ -7,14 +7,14 @@ import (
 	_ "github.com/go-saas/kit/pkg/blob/os"
 	_ "github.com/go-saas/kit/pkg/blob/s3"
 	kconf "github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/sys/private/biz"
 	"github.com/go-saas/saas/gorm"
-	"github.com/google/wire"
 	g "gorm.io/gorm"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(
+var ProviderSet = kitdi.NewSet(
 	NewData,
 	NewMigrate,
 	NewMenuRepo,

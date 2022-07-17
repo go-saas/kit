@@ -2,22 +2,22 @@ package dal
 
 import (
 	"github.com/eko/gocache/v3/cache"
+	"github.com/eko/gocache/v3/store"
 	"github.com/go-redis/redis/v8"
 	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/event/trace"
 	"github.com/go-saas/kit/pkg/blob"
 	kitconf "github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/email"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	kitredis "github.com/go-saas/kit/pkg/redis"
 	kituow "github.com/go-saas/kit/pkg/uow"
 	"github.com/go-saas/saas"
-	"github.com/google/wire"
-	"github.com/goxiaoy/go-eventbus"
-
-	"github.com/eko/gocache/v3/store"
 	"github.com/go-saas/saas/data"
 	sgorm "github.com/go-saas/saas/gorm"
+	"github.com/goava/di"
+	"github.com/goxiaoy/go-eventbus"
 )
 
 type (
@@ -27,7 +27,7 @@ type (
 
 var (
 	//DefaultProviderSet shared provider for all data layer
-	DefaultProviderSet = wire.NewSet(
+	DefaultProviderSet = kitdi.NewSet(
 		NewConnStrResolver,
 		NewConstantConnStrResolver,
 		kitgorm.NewDbCache,
@@ -41,12 +41,11 @@ var (
 
 		NewRedis,
 		NewCacheStore,
-		NewStringCacheManager,
-		wire.Bind(new(cache.CacheInterface[string]), new(*cache.Cache[string])),
+		kitdi.NewProvider(NewStringCacheManager, di.As(new(cache.CacheInterface[string]))),
 
 		NewEmailer,
 		NewEventSender,
-		wire.Value(eventbus.Default),
+		func() *eventbus.EventBus { return eventbus.Default },
 	)
 )
 

@@ -11,12 +11,13 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	kconf "github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/sys/api"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
 	"github.com/go-saas/kit/sys/private/conf"
-	"github.com/google/wire"
+	"github.com/goava/di"
 	"github.com/hibiken/asynq"
 	"net/http"
 )
@@ -25,9 +26,9 @@ import (
 var spec []byte
 
 // ProviderSet is service providers.
-var ProviderSet = wire.NewSet(NewApisixOption, NewApisixAdminClient, apisix.NewWatchSyncAdmin,
+var ProviderSet = kitdi.NewSet(NewApisixOption, NewApisixAdminClient, apisix.NewWatchSyncAdmin,
 	NewHttpServerRegister, NewGrpcServerRegister,
-	NewMenuService, wire.Bind(new(v1.MenuServiceServer), new(*MenuService)))
+	kitdi.NewProvider(NewMenuService, di.As(new(v1.MenuServiceServer))))
 
 type HttpServerRegister server.HttpServiceRegister
 type GrpcServerRegister server.GrpcServiceRegister

@@ -1,8 +1,10 @@
 package jwt
 
-import "github.com/google/wire"
+import (
+	kitdi "github.com/go-saas/kit/pkg/di"
+)
 
-var ProviderSet = wire.NewSet(NewTokenizer, NewTokenizerConfig)
+var ProviderSet = kitdi.NewSet(NewTokenizer, NewTokenizerConfig)
 
 const (
 	AuthorizationHeader = "Authorization"

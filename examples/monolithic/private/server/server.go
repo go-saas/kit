@@ -5,6 +5,7 @@ import (
 	eventservice "github.com/go-saas/kit/event/service"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/dal"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	ksaas "github.com/go-saas/kit/pkg/saas"
 	"github.com/go-saas/kit/pkg/server"
 	sserver "github.com/go-saas/kit/saas/private/server"
@@ -15,11 +16,10 @@ import (
 	uservice "github.com/go-saas/kit/user/private/service"
 	"github.com/go-saas/saas"
 	"github.com/go-saas/saas/seed"
-	"github.com/google/wire"
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(
+var ProviderSet = kitdi.NewSet(
 	NewHTTPServer,
 	NewGRPCServer,
 	NewJobServer,
@@ -27,7 +27,7 @@ var ProviderSet = wire.NewSet(
 	NewHttpServiceRegister,
 	NewGrpcServiceRegister,
 	NewSeeder,
-	wire.Value(dal.ConnName("default")),
+	func() dal.ConnName { return dal.ConnName("default") },
 	NewAuthorizationOption,
 	userver.NewSeeding,
 	sserver.NewSeeding,

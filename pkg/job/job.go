@@ -2,11 +2,11 @@ package job
 
 import (
 	"github.com/go-redis/redis/v8"
-	"github.com/google/wire"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/hibiken/asynq"
 )
 
-var DefaultProviderSet = wire.NewSet(NewAsynqClientOpt, NewAsynqClient)
+var DefaultProviderSet = kitdi.NewSet(NewAsynqClientOpt, NewAsynqClient)
 
 type RedisFunc func() interface{}
 

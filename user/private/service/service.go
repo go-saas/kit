@@ -10,6 +10,7 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	kconf "github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/user/api"
 	v13 "github.com/go-saas/kit/user/api/account/v1"
@@ -18,7 +19,7 @@ import (
 	v1 "github.com/go-saas/kit/user/api/role/v1"
 	v12 "github.com/go-saas/kit/user/api/user/v1"
 	uhttp "github.com/go-saas/kit/user/private/service/http"
-	"github.com/google/wire"
+	"github.com/goava/di"
 	client "github.com/ory/hydra-client-go"
 	"net/http"
 )
@@ -27,20 +28,18 @@ import (
 var spec []byte
 
 // ProviderSet is service providers.
-var ProviderSet = wire.NewSet(
+var ProviderSet = kitdi.NewSet(
 	NewGrpcServerRegister,
 	NewHttpServerRegister,
 	NewUserRoleContrib,
-	NewUserService,
-	wire.Bind(new(v12.UserServiceServer), new(*UserService)),
-	NewAccountService,
-	wire.Bind(new(v13.AccountServer), new(*AccountService)),
-	NewAuthService,
-	wire.Bind(new(v14.AuthServer), new(*AuthService)),
-	NewRoleServiceService,
-	wire.Bind(new(v1.RoleServiceServer), new(*RoleService)),
-	NewPermissionService,
-	wire.Bind(new(v15.PermissionServiceServer), new(*PermissionService)),
+	kitdi.NewProvider(NewUserService, di.As(new(v12.UserServiceServer))),
+
+	kitdi.NewProvider(NewAccountService, di.As(new(v13.AccountServer))),
+
+	kitdi.NewProvider(NewAuthService, di.As(new(v14.AuthServer))),
+
+	kitdi.NewProvider(NewRoleServiceService, di.As(new(v1.RoleServiceServer))),
+	kitdi.NewProvider(NewPermissionService, di.As(new(v15.PermissionServiceServer))),
 	NewHydra,
 	api.NewUserTenantContrib,
 	api.NewRefreshProvider,

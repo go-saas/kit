@@ -4,8 +4,9 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/saas"
-	"github.com/google/wire"
+	"github.com/goava/di"
 	"github.com/samber/lo"
 	"strings"
 )
@@ -178,6 +179,5 @@ func (a *DefaultAuthorizationService) FormatError(ctx context.Context, requireme
 	return errors.Unauthorized("", "")
 }
 
-var ProviderSet = wire.NewSet(NewDefaultAuthorizationService,
-	wire.Bind(new(Service), new(*DefaultAuthorizationService)),
-	NewSubjectResolver, wire.Bind(new(SubjectResolver), new(*SubjectResolverImpl)))
+var ProviderSet = kitdi.NewSet(kitdi.NewProvider(NewDefaultAuthorizationService, di.As(new(Service))),
+	kitdi.NewProvider(NewSubjectResolver, di.As(new(SubjectResolver))))

@@ -23,11 +23,18 @@ import (
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/env"
 	"github.com/go-kratos/kratos/v2/config/file"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-saas/kit/gateway/apisix/internal/conf"
 	"github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/authn/jwt"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/tracers"
+	sapi "github.com/go-saas/kit/saas/api"
+	uapi "github.com/go-saas/kit/user/api"
+	"github.com/goava/di"
 	"go.uber.org/zap/zapcore"
 	"io"
 	"os"
@@ -181,12 +188,30 @@ func newRunCommand() *cobra.Command {
 			}
 			defer shutdown()
 
-			//init all
-			_, clean, err := initApp(bc.Services, bc.Security, server.NewWebMultiTenancyOption(bc.App), api.ClientName(clientName), logger)
+			di.SetTracer(&di.StdTracer{})
+			builder, err := di.New(
+				kitdi.Value(bc.Services),
+				kitdi.Value(bc.Security),
+				kitdi.Value(server.NewWebMultiTenancyOption(bc.App)),
+				kitdi.Value(api.ClientName(clientName)),
+				kitdi.Value([]grpc.ClientOption{}),
+				kitdi.Value(logger),
+				kitdi.NewSet(
+					ProviderSet, authz.ProviderSet, sapi.GrpcProviderSet, uapi.GrpcProviderSet, jwt.ProviderSet, newApp),
+			)
+
 			if err != nil {
 				panic(err)
 			}
-			defer clean()
+
+			defer builder.Cleanup()
+			err = builder.Invoke(func(app *App) error {
+				// start and wait for stop signal
+				return app.load()
+			})
+			if err != nil {
+				panic(err)
+			}
 			runner.Run(cfg)
 		},
 	}

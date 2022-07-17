@@ -9,8 +9,9 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	kregistry "github.com/go-saas/kit/pkg/registry"
-	"github.com/google/wire"
+	"github.com/goava/di"
 	grpcx "google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -43,7 +44,7 @@ func NewGrpcConn(
 	opt *Option,
 	tokenMgr TokenManager,
 	logger log.Logger,
-	opts ...grpc.ClientOption,
+	opts []grpc.ClientOption,
 ) (grpcx.ClientConnInterface, func()) {
 
 	var conn *grpcx.ClientConn
@@ -92,7 +93,7 @@ func NewHttpClient(
 	opt *Option,
 	tokenMgr TokenManager,
 	logger log.Logger,
-	opts ...http.ClientOption,
+	opts []http.ClientOption,
 ) (*http.Client, func()) {
 
 	var name = serviceName
@@ -129,10 +130,10 @@ func NewDiscovery(services *conf.Services) (registry.Discovery, error) {
 	return r, err
 }
 
-var DefaultProviderSet = wire.NewSet(
+var DefaultProviderSet = kitdi.NewSet(
 	NewClientCfg,
 	NewDefaultOption,
-	NewInMemoryTokenManager, wire.Bind(new(TokenManager), new(*InMemoryTokenManager)),
+	kitdi.NewProvider(NewInMemoryTokenManager, di.As(new(TokenManager))),
 	NewClientTrustedContextValidator,
 	NewDiscovery,
 )

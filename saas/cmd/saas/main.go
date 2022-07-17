@@ -7,10 +7,22 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-saas/kit/event"
+	kapi "github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/authn/jwt"
+	"github.com/go-saas/kit/pkg/authz/authz"
+	kdal "github.com/go-saas/kit/pkg/dal"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
+	kitserver "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/tracers"
+	"github.com/go-saas/kit/saas/private/biz"
+	"github.com/go-saas/kit/saas/private/data"
+	"github.com/go-saas/kit/saas/private/server"
+	"github.com/go-saas/kit/saas/private/service"
+	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas/seed"
+	"github.com/goava/di"
 	"os"
 	"strings"
 
@@ -134,14 +146,34 @@ func main() {
 		log.Error(err)
 	}
 	defer shutdown()
-	app, cleanup, err := initApp(bc.Services, bc.Security, bc.Data, bc.Saas, logger, bc.App)
+
+	di.SetTracer(&di.StdTracer{})
+	builder, err := di.New(
+		kitdi.Value(bc.Services),
+		kitdi.Value(bc.Security),
+		kitdi.Value(bc.Saas),
+		kitdi.Value(bc.Data),
+		kitdi.Value(bc.App),
+		kitdi.Value(logger),
+		kitdi.Value([]grpc.ClientOption{}),
+		kitdi.NewSet(kitserver.NewWebMultiTenancyOption),
+		authz.ProviderSet, jwt.ProviderSet, kitserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet, job.DefaultProviderSet,
+		uapi.GrpcProviderSet,
+		server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet,
+		kitdi.NewSet(newApp),
+	)
 	if err != nil {
 		panic(err)
 	}
-	defer cleanup()
 
-	// start and wait for stop signal
-	if err := app.Run(); err != nil {
+	defer builder.Cleanup()
+	err = builder.Invoke(func(app *kratos.App) error {
+		// start and wait for stop signal
+		return app.Run()
+	})
+
+	if err != nil {
 		panic(err)
 	}
+
 }

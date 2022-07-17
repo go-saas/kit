@@ -7,9 +7,9 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
 	_ "github.com/go-saas/kit/sys/i18n"
-	"github.com/google/wire"
 	"google.golang.org/grpc"
 )
 
@@ -18,11 +18,19 @@ type HttpClient *http.Client
 
 const ServiceName = "sys"
 
-func NewGrpcConn(client *conf.Client, services *conf.Services, dis registry.Discovery, opt *api.Option, tokenMgr api.TokenManager, logger log.Logger, opts ...grpc2.ClientOption) (GrpcConn, func()) {
-	return api.NewGrpcConn(client, ServiceName, services, dis, opt, tokenMgr, logger, opts...)
+func NewGrpcConn(
+	client *conf.Client,
+	services *conf.Services,
+	dis registry.Discovery,
+	opt *api.Option,
+	tokenMgr api.TokenManager,
+	logger log.Logger,
+	opts []grpc2.ClientOption,
+) (GrpcConn, func()) {
+	return api.NewGrpcConn(client, ServiceName, services, dis, opt, tokenMgr, logger, opts)
 }
 
-var GrpcProviderSet = wire.NewSet(NewGrpcConn, NewMenuGrpcClient)
+var GrpcProviderSet = kitdi.NewSet(NewGrpcConn, NewMenuGrpcClient)
 
 func NewMenuGrpcClient(conn GrpcConn) v1.MenuServiceServer {
 	return v1.NewMenuServiceClientProxy(v1.NewMenuServiceClient(conn))
