@@ -20,6 +20,7 @@ import (
 	"github.com/go-saas/kit/pkg/authz/casbin"
 	kdal "github.com/go-saas/kit/pkg/dal"
 	kitdi "github.com/go-saas/kit/pkg/di"
+	kitflag "github.com/go-saas/kit/pkg/flag"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
 	kserver "github.com/go-saas/kit/pkg/server"
@@ -55,7 +56,7 @@ var (
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
-	flagconf     arrayFlags
+	flagconf     kitflag.ArrayFlags
 	ifSyncApisix bool
 	ifSeed       bool
 	id, _        = os.Hostname()
@@ -107,17 +108,6 @@ func newApp(
 			srvs...,
 		),
 	)
-}
-
-type arrayFlags []string
-
-func (i *arrayFlags) String() string {
-	return "my string representation"
-}
-
-func (i *arrayFlags) Set(value string) error {
-	*i = append(*i, value)
-	return nil
 }
 
 func main() {
@@ -176,7 +166,7 @@ func main() {
 		kitdi.Value(bc.User),
 		kitdi.Value(bc.App),
 		kitdi.Value(logger),
-		kitdi.NewSet(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kserver.NewWebMultiTenancyOption, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
+		kitdi.NewSet(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
 			job.DefaultProviderSet, dtmserver.DtmProviderSet, eventserver.EventProviderSet,
 			sdata.ProviderSet, sbiz.ProviderSet, sservice.ProviderSet,
 			sysdata.ProviderSet, sysbiz.ProviderSet, sysservice.ProviderSet,

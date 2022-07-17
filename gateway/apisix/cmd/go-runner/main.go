@@ -30,7 +30,6 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/logging"
-	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/tracers"
 	sapi "github.com/go-saas/kit/saas/api"
 	uapi "github.com/go-saas/kit/user/api"
@@ -192,7 +191,7 @@ func newRunCommand() *cobra.Command {
 			builder, err := di.New(
 				kitdi.Value(bc.Services),
 				kitdi.Value(bc.Security),
-				kitdi.Value(server.NewWebMultiTenancyOption(bc.App)),
+				kitdi.Value(bc.App),
 				kitdi.Value(api.ClientName(clientName)),
 				kitdi.Value([]grpc.ClientOption{}),
 				kitdi.Value(logger),

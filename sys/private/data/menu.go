@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/goxiaoy/go-eventbus"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
 	"github.com/go-saas/kit/sys/private/biz"
 	sgorm "github.com/go-saas/saas/gorm"
+	"github.com/goxiaoy/go-eventbus"
 	"gorm.io/gorm"
 )
 

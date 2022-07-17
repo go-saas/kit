@@ -179,5 +179,6 @@ func (a *DefaultAuthorizationService) FormatError(ctx context.Context, requireme
 	return errors.Unauthorized("", "")
 }
 
-var ProviderSet = kitdi.NewSet(kitdi.NewProvider(NewDefaultAuthorizationService, di.As(new(Service))),
+var ProviderSet = kitdi.NewSet(
+	kitdi.NewProvider(NewDefaultAuthorizationService, di.As(new(Service))),
 	kitdi.NewProvider(NewSubjectResolver, di.As(new(SubjectResolver))))

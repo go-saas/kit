@@ -13,6 +13,7 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	kdal "github.com/go-saas/kit/pkg/dal"
 	kitdi "github.com/go-saas/kit/pkg/di"
+	kitflag "github.com/go-saas/kit/pkg/flag"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
 	kitserver "github.com/go-saas/kit/pkg/server"
@@ -47,7 +48,7 @@ var (
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
-	flagconf arrayFlags
+	flagconf kitflag.ArrayFlags
 	ifSeed   bool
 	id, _    = os.Hostname()
 )
@@ -84,17 +85,6 @@ func newApp(
 	)
 }
 
-type arrayFlags []string
-
-func (i *arrayFlags) String() string {
-	return "my string representation"
-}
-
-func (i *arrayFlags) Set(value string) error {
-	*i = append(*i, value)
-	return nil
-}
-
 func main() {
 	flag.Parse()
 
@@ -105,6 +95,8 @@ func main() {
 		for _, s := range flagconf {
 			source = append(source, file.NewSource(strings.TrimSpace(s)))
 		}
+	} else {
+		source = append(source, file.NewSource("./configs"))
 	}
 
 	c := config.New(
@@ -150,7 +142,6 @@ func main() {
 		kitdi.Value(bc.App),
 		kitdi.Value(logger),
 		kitdi.Value([]grpc.ClientOption{}),
-		kitdi.NewSet(kitserver.NewWebMultiTenancyOption),
 		authz.ProviderSet, jwt.ProviderSet, kitserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet, job.DefaultProviderSet,
 		uapi.GrpcProviderSet,
 		server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet,

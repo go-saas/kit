@@ -113,7 +113,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		if err != nil {
 			return nil, err
 		}
-		
+
 		//back to current
 		ctx = saas.NewCurrentTenant(ctx, currentTenant.GetId(), currentTenant.GetName())
 

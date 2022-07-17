@@ -6,10 +6,10 @@ import (
 	kerrors "github.com/go-kratos/kratos/v2/errors"
 	"gorm.io/gorm/clause"
 
-	eventbus "github.com/goxiaoy/go-eventbus"
 	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/query"
 	sgorm "github.com/go-saas/saas/gorm"
+	eventbus "github.com/goxiaoy/go-eventbus"
 	"gorm.io/gorm"
 )
 

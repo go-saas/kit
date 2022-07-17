@@ -2,8 +2,8 @@ package biz
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"github.com/go-saas/kit/pkg/gorm"
+	"github.com/google/uuid"
 	gorm2 "gorm.io/gorm"
 )
 

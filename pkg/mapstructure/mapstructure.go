@@ -1,8 +1,8 @@
 package mapstructure
 
 import (
-	"github.com/google/uuid"
 	data2 "github.com/go-saas/kit/pkg/data"
+	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
 	"reflect"
 )

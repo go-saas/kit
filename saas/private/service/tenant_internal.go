@@ -12,11 +12,11 @@ import (
 )
 
 type TenantInternalService struct {
-	pb.UnimplementedTenantInternalServiceServer `wire:"-"`
-	Trusted                                     sapi.TrustedContextValidator
-	UseCase                                     *biz.TenantUseCase
-	App                                         *conf.AppConfig
-	Blob                                        blob.Factory
+	pb.UnimplementedTenantInternalServiceServer
+	Trusted sapi.TrustedContextValidator
+	UseCase *biz.TenantUseCase
+	App     *conf.AppConfig
+	Blob    blob.Factory
 }
 
 func NewTenantInternalService(trusted sapi.TrustedContextValidator, useCase *biz.TenantUseCase, app *conf.AppConfig, blob blob.Factory) *TenantInternalService {

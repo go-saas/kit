@@ -14,6 +14,7 @@ var DefaultProviderSet = kitdi.NewSet(
 	kitdi.Value(ResEncoder),
 	kitdi.Value(ErrEncoder),
 	NewRegistrar,
+	NewWebMultiTenancyOption,
 )
 
 func NewRegistrar(services *conf.Services, container *di.Container) (registry.Registrar, error) {

@@ -3,8 +3,8 @@ package data
 import (
 	"context"
 	"errors"
-	"github.com/google/uuid"
 	"github.com/go-saas/kit/user/private/biz"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 

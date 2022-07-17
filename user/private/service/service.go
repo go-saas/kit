@@ -88,6 +88,8 @@ func NewHttpServerRegister(user *UserService,
 		v15.RegisterPermissionServiceHTTPServer(srv, permission)
 
 		swaggerRouter := chi.NewRouter()
+		swaggerRouter.Use(
+			server.MiddlewareConvert(errEncoder, middleware...))
 		const apiPrefix = "/v1/user/dev/swagger"
 		swaggerRouter.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, server.AuthzGuardian(
 			authzSrv, authz.RequirementList{
