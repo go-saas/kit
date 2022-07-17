@@ -10,6 +10,7 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
+	"github.com/go-saas/kit/pkg/server"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas"
 	shttp "github.com/go-saas/saas/http"
@@ -99,4 +100,5 @@ var ProviderSet = kitdi.NewSet(
 	api.NewInMemoryTokenManager,
 	NewSelfClientOption,
 	NewAuthorizationOption,
+	server.NewWebMultiTenancyOption,
 	api.NewDiscovery)
