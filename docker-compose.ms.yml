@@ -18,7 +18,7 @@ services:
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
-    restart: on-failure
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./user/Dockerfile
@@ -30,7 +30,7 @@ services:
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
-    restart: on-failure
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./saas/Dockerfile
@@ -44,7 +44,7 @@ services:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
     command: ["./sys", "-conf", "/data/conf","-seed.menu.path","/data/conf/seed/sys.yaml"]
-    restart: on-failure
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./sys/Dockerfile

@@ -26,6 +26,6 @@ services:
       migrate -c /etc/config/hydra/hydra.yml sql -e --yes
     volumes:
       - ./quickstart/configs/hydra:/etc/config/hydra
-    restart: on-failure
+    restart: unless-stopped
     depends_on:
       - mysqld

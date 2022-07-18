@@ -318,6 +318,9 @@ func mapBizTenantToApi(ctx context.Context, app *conf.AppConfig, blob blob.Facto
 
 func mapBizTenantToInfo(ctx context.Context, b blob.Factory, tenant *biz.Tenant, app *conf.AppConfig) *pb.TenantInfo {
 	if tenant == nil {
+		if app == nil {
+			return nil
+		}
 		return &pb.TenantInfo{
 			DisplayName: app.HostDisplayName,
 			Logo:        &blob.BlobFile{Url: app.HostLogo},

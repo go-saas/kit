@@ -3,13 +3,13 @@ services:
 
   web:
     image: ${DOCKER_REGISTRY}go-saas-kit-frontend:${DOCKER_TAG:-latest}
-    restart: on-failure
+    restart: unless-stopped
 
   api_docs:
     image: ${DOCKER_REGISTRY}go-saas-kit-swagger:${DOCKER_TAG:-latest}
     environment:
       - BASE_URL="/swagger"
-    restart: on-failure
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./openapi/Dockerfile
@@ -20,7 +20,7 @@ services:
       - "80:9080" #Http
       - "9091:9091" #Prometheus
       - "9443:9443" #Https
-    restart: on-failure
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./gateway/apisix/Dockerfile
@@ -71,7 +71,7 @@ services:
 
   dtm:
     image: yedf/dtm:latest
-    restart: on-failure
+    restart: unless-stopped
     command: ["-c", "/data/conf.yml"]
     volumes:
       - ./quickstart/configs/dtm/conf.yml:/data/conf.yml
