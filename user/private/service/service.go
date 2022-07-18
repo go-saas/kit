@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	kconf "github.com/go-saas/kit/pkg/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
@@ -54,7 +53,6 @@ func NewHttpServerRegister(user *UserService,
 	permission *PermissionService,
 	authHttp *uhttp.Auth,
 	dataCfg *kconf.Data,
-	authzSrv authz.Service,
 	factory blob.Factory) server.HttpServiceRegister {
 	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 
@@ -91,11 +89,7 @@ func NewHttpServerRegister(user *UserService,
 		swaggerRouter.Use(
 			server.MiddlewareConvert(errEncoder, middleware...))
 		const apiPrefix = "/v1/user/dev/swagger"
-		swaggerRouter.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, server.AuthzGuardian(
-			authzSrv, authz.RequirementList{
-				authz.NewRequirement(authz.NewEntityResource("dev", "user"), authz.AnyAction),
-			}, errEncoder, swaggerui.Handler(spec),
-		)))
+		swaggerRouter.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, swaggerui.Handler(spec)))
 
 		srv.HandlePrefix(apiPrefix, swaggerRouter)
 	})

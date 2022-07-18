@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	kconf "github.com/go-saas/kit/pkg/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
@@ -29,7 +28,6 @@ var ProviderSet = kitdi.NewSet(NewHttpServerRegister, NewGrpcServerRegister,
 func NewHttpServerRegister(
 	tenant *TenantService,
 	factory blob.Factory,
-	authzSrv authz.Service,
 	errEncoder khttp.EncodeErrorFunc,
 	tenantInternal *TenantInternalService,
 	dataCfg *kconf.Data,
@@ -47,11 +45,7 @@ func NewHttpServerRegister(
 		router.Use(
 			server.MiddlewareConvert(errEncoder, middleware...))
 		const apiPrefix = "/v1/saas/dev/swagger"
-		router.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, server.AuthzGuardian(
-			authzSrv, authz.RequirementList{
-				authz.NewRequirement(authz.NewEntityResource("dev", "saas"), authz.AnyAction),
-			}, errEncoder, swaggerui.Handler(spec),
-		)))
+		router.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, swaggerui.Handler(spec)))
 		srv.HandlePrefix(apiPrefix, router)
 	})
 }

@@ -76,11 +76,7 @@ func NewHttpServerRegister(
 
 		const apiPrefix = "/v1/sys/dev/swagger"
 
-		router.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, server.AuthzGuardian(
-			authzSrv, authz.RequirementList{
-				authz.NewRequirement(authz.NewEntityResource("dev", "sys"), authz.AnyAction),
-			}, errEncoder, swaggerui.Handler(spec),
-		)))
+		router.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, swaggerui.Handler(spec)))
 		const asynqPrefix = "/v1/sys/asynqmon"
 		router.Handle(asynqPrefix+"*", server.AuthzGuardian(
 			authzSrv, authz.RequirementList{
