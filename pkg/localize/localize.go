@@ -10,7 +10,7 @@ import (
 	"sync"
 
 	"github.com/BurntSushi/toml"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/go-saas/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 
 	"github.com/go-kratos/kratos/v2/middleware"

@@ -15,6 +15,7 @@ import (
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/sys/api"
+	v12 "github.com/go-saas/kit/sys/api/locale/v1"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
 	"github.com/go-saas/kit/sys/private/conf"
 	"github.com/goava/di"
@@ -28,7 +29,9 @@ var spec []byte
 // ProviderSet is service providers.
 var ProviderSet = kitdi.NewSet(NewApisixOption, NewApisixAdminClient, apisix.NewWatchSyncAdmin,
 	NewHttpServerRegister, NewGrpcServerRegister,
-	kitdi.NewProvider(NewMenuService, di.As(new(v1.MenuServiceServer))))
+	kitdi.NewProvider(NewMenuService, di.As(new(v1.MenuServiceServer))),
+	kitdi.NewProvider(NewLocaleService, di.As(new(v12.LocaleServiceServer))),
+)
 
 func NewApisixAdminClient(cfg *conf.SysConf) (*apisix.AdminClient, error) {
 	var endpoint, apikey string
@@ -60,6 +63,7 @@ func NewApisixOption(srvs *kconf.Services) *apisix.Option {
 
 func NewHttpServerRegister(
 	menu *MenuService,
+	locSrv *LocaleService,
 	authzSrv authz.Service,
 	errEncoder khttp.EncodeErrorFunc,
 	factory blob.Factory,
@@ -69,6 +73,7 @@ func NewHttpServerRegister(
 	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 		server.HandleBlobs("", dataCfg.Blobs, srv, factory)
 		v1.RegisterMenuServiceHTTPServer(srv, menu)
+		v12.RegisterLocaleServiceHTTPServer(srv, locSrv)
 
 		router := chi.NewRouter()
 		router.Use(
@@ -89,8 +94,11 @@ func NewHttpServerRegister(
 	})
 }
 
-func NewGrpcServerRegister(menu *MenuService) server.GrpcServiceRegister {
+func NewGrpcServerRegister(
+	menu *MenuService,
+	locSrv *LocaleService) server.GrpcServiceRegister {
 	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v1.RegisterMenuServiceServer(srv, menu)
+		v12.RegisterLocaleServiceServer(srv, locSrv)
 	})
 }

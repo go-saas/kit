@@ -48,6 +48,7 @@ require (
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20220701054745-9015ffb920f0
 	github.com/go-redis/redis/extra/redisotel/v8 v8.11.5
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-saas/go-i18n/v2 v2.2.1-0.20220719043234-2e8ea1df2661
 	github.com/go-saas/lazy v1.0.0
 	github.com/go-saas/sessions v1.2.2-0.20220626044315-a7a87c87f120
 	github.com/go-sql-driver/mysql v1.6.0

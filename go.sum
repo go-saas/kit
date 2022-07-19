@@ -296,6 +296,8 @@ github.com/go-redis/redis/v8 v8.11.5/go.mod h1:gREzHqY1hg6oD9ngVRbLStwAWKhA0FEgq
 github.com/go-resty/resty/v2 v2.6.0/go.mod h1:PwvJS6hvaPkjtjNg9ph+VrSD92bi5Zq73w/BIH7cC3Q=
 github.com/go-resty/resty/v2 v2.7.0 h1:me+K9p3uhSmXtrBZ4k9jcEAfJmuC8IivWHwaLZwPrFY=
 github.com/go-resty/resty/v2 v2.7.0/go.mod h1:9PWDzw47qPphMRFfhsyk0NnSgvluHcljSMVIq3w7q0I=
+github.com/go-saas/go-i18n/v2 v2.2.1-0.20220719043234-2e8ea1df2661 h1:pbguH3axuqOD5g+oATC0hDB2/IHhr3riGmTkM5eP7iM=
+github.com/go-saas/go-i18n/v2 v2.2.1-0.20220719043234-2e8ea1df2661/go.mod h1:1gXyHcqS0O8YBY0Ib53Gy8AjOArA4BWHHJVuLlKQGkY=
 github.com/go-saas/lazy v1.0.0 h1:kh0eBDeWOGCf19fcaSOqbYYQZi+sLYZOU2g+ygj719c=
 github.com/go-saas/lazy v1.0.0/go.mod h1:92+YKljqZX8FB2yVKfORICn/mCgCzsJL/6V0O6oP9oo=
 github.com/go-saas/saas v0.5.1-0.20220710115728-a4dbe28e869a h1:zKcggwU2Qiy3JdRe9ibcsH5NBERz2erLmDQfXyOQQ0U=

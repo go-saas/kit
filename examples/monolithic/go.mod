@@ -129,7 +129,7 @@ require (
 	github.com/mtibben/percent v0.2.1 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354 // indirect
-	github.com/nicksnyder/go-i18n/v2 v2.2.0 // indirect
+	github.com/go-saas/go-i18n/v2 v2.2.0 // indirect
 	github.com/nyaruka/phonenumbers v1.0.74 // indirect
 	github.com/ory/hydra-client-go v1.11.7 // indirect
 	github.com/pegasus-kv/thrift v0.13.0 // indirect

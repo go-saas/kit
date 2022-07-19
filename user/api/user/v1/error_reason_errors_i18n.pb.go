@@ -4,7 +4,7 @@ package v1
 
 import (
 	errors "github.com/go-kratos/kratos/v2/errors"
-	i18n "github.com/nicksnyder/go-i18n/v2/i18n"
+	i18n "github.com/go-saas/go-i18n/v2/i18n"
 )
 
 // This is a compile-time assertion to ensure that this generated file

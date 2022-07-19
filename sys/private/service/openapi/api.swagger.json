@@ -7,6 +7,9 @@
   "tags": [
     {
       "name": "MenuService"
+    },
+    {
+      "name": "LocaleService"
     }
   ],
   "consumes": [
@@ -16,6 +19,40 @@
     "application/json"
   ],
   "paths": {
+    "/v1/sys/locale/msgs": {
+      "get": {
+        "operationId": "LocaleService_ListMessages",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListMessageReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "filter.nameIn",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "LocaleService"
+        ]
+      }
+    },
     "/v1/sys/menu": {
       "post": {
         "operationId": "MenuService_CreateMenu",
@@ -817,6 +854,42 @@
         }
       }
     },
+    "v1ListMessageReply": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1LocaleLanguage"
+          }
+        }
+      }
+    },
+    "v1LocaleLanguage": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "msg": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1LocaleMessage"
+          }
+        }
+      }
+    },
+    "v1LocaleMessage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "other": {
+          "type": "string"
+        }
+      }
+    },
     "v1Menu": {
       "type": "object",
       "properties": {
@@ -906,6 +979,17 @@
         },
         "parent": {
           "$ref": "#/definitions/operationStringFilterOperation"
+        }
+      }
+    },
+    "v1MessageFilter": {
+      "type": "object",
+      "properties": {
+        "nameIn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

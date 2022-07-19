@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package sys.api.locale.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "blob/blob.proto";
+import "google/api/field_behavior.proto";
+import "user/api/permission/v1/permission.proto";
+import "query/operation.proto";
+
+option go_package = "github.com/go-saas/kit/sys/api/locale/v1;v1";
+
+service LocaleService{
+  rpc ListMessages (ListMessageRequest) returns (ListMessageReply){
+    option (google.api.http) = {
+      get: "/v1/sys/locale/msgs",
+    };
+  }
+}
+
+message ListMessageRequest{
+    MessageFilter filter=1;
+}
+
+message MessageFilter{
+  repeated string name_in=1;
+}
+
+
+message ListMessageReply{
+  repeated LocaleLanguage items=2;
+}
+
+message LocaleLanguage{
+  string name=1;
+  repeated LocaleMessage msg=2;
+}
+
+message LocaleMessage{
+  string id=1;
+  string other=2;
+}
