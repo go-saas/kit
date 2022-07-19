@@ -41,6 +41,7 @@ require (
 	github.com/go-redis/redis/extra/rediscmd/v8 v8.11.5 // indirect
 	github.com/go-redis/redis/extra/redisotel/v8 v8.11.5 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
+	github.com/go-saas/go-i18n/v2 v2.2.1-0.20220719043234-2e8ea1df2661 // indirect
 	github.com/go-saas/uow v0.0.5-0.20220710170855-20a530670db0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -70,7 +71,6 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
-	github.com/go-saas/go-i18n/v2 v2.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect

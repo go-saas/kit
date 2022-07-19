@@ -58,7 +58,6 @@ require (
 	github.com/hibiken/asynq v0.23.0
 	github.com/hibiken/asynqmon v0.7.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
-	github.com/nicksnyder/go-i18n/v2 v2.2.0
 	github.com/nyaruka/phonenumbers v1.0.74
 	github.com/ory/hydra-client-go v1.11.7
 	github.com/samber/lo v1.10.1

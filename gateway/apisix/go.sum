@@ -176,6 +176,8 @@ github.com/go-redis/redis/extra/redisotel/v8 v8.11.5 h1:BqyYJgvdSr2S/6O2l7zmCj26
 github.com/go-redis/redis/extra/redisotel/v8 v8.11.5/go.mod h1:LlDT9RRdBgOrMGvFjT/m1+GrZAmRlBaMcM3UXHPWf8g=
 github.com/go-redis/redis/v8 v8.11.5 h1:AcZZR7igkdvfVmQTPnu9WE37LRrO/YrBH5zWyjDC0oI=
 github.com/go-redis/redis/v8 v8.11.5/go.mod h1:gREzHqY1hg6oD9ngVRbLStwAWKhA0FEgq8Jd4h5lpwo=
+github.com/go-saas/go-i18n/v2 v2.2.1-0.20220719043234-2e8ea1df2661 h1:pbguH3axuqOD5g+oATC0hDB2/IHhr3riGmTkM5eP7iM=
+github.com/go-saas/go-i18n/v2 v2.2.1-0.20220719043234-2e8ea1df2661/go.mod h1:1gXyHcqS0O8YBY0Ib53Gy8AjOArA4BWHHJVuLlKQGkY=
 github.com/go-saas/saas v0.5.1-0.20220710115728-a4dbe28e869a h1:zKcggwU2Qiy3JdRe9ibcsH5NBERz2erLmDQfXyOQQ0U=
 github.com/go-saas/saas v0.5.1-0.20220710115728-a4dbe28e869a/go.mod h1:Bx2DMpoCJU5bnJecwHXK6IEXTTwBs4NmjgHPjYGAQGM=
 github.com/go-saas/sessions v1.2.2-0.20220626044315-a7a87c87f120 h1:IYBlphRuY3B8B2BDt84C8NpP0ZQ7Gaa1EBh3e7Zyc70=
@@ -406,8 +408,6 @@ github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRW
 github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/natefinch/lumberjack v2.0.0+incompatible h1:4QJd3OLAMgj7ph+yZTuX13Ld4UpgHp07nNdFX7mqFfM=
 github.com/natefinch/lumberjack v2.0.0+incompatible/go.mod h1:Wi9p2TTF5DG5oU+6YfsmYQpsTIOm0B1VNzQg9Mw6nPk=
-github.com/go-saas/go-i18n/v2 v2.2.0 h1:MNXbyPvd141JJqlU6gJKrczThxJy+kdCNivxZpBQFkw=
-github.com/go-saas/go-i18n/v2 v2.2.0/go.mod h1:4OtLfzqyAxsscyCb//3gfqSvBc81gImX91LrZzczN1o=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=

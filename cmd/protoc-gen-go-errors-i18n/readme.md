@@ -1,6 +1,6 @@
 # protoc-gen-go-errors-i18n
 
-generate [i18n](https://github.com/nicksnyder/go-i18n) method for [errors](https://github.com/go-kratos/kratos/tree/main/cmd/protoc-gen-go-errors)
+generate [i18n](https://github.com/go-saas/go-i18n) method for [errors](https://github.com/go-kratos/kratos/tree/main/cmd/protoc-gen-go-errors)
 
 for example
 ```go
