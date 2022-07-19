@@ -11,7 +11,7 @@ import (
 
 const (
 	errorsPackage = protogen.GoImportPath("github.com/go-kratos/kratos/v2/errors")
-	i18nPackage   = protogen.GoImportPath("github.com/nicksnyder/go-i18n/v2/i18n")
+	i18nPackage   = protogen.GoImportPath("github.com/go-saas/go-i18n/v2/i18n")
 )
 
 // generateFile generates a _errors.pb.go file containing kratos errors definitions.
