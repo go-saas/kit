@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	oidcdata "github.com/go-saas/kit/oidc/data"
 	_ "github.com/go-saas/kit/pkg/blob/memory"
 	_ "github.com/go-saas/kit/pkg/blob/os"
 	_ "github.com/go-saas/kit/pkg/blob/s3"
@@ -18,6 +19,7 @@ var ProviderSet = kitdi.NewSet(
 	NewData,
 	NewMigrate,
 	NewMenuRepo,
+	oidcdata.ProviderSet,
 )
 
 // Data .

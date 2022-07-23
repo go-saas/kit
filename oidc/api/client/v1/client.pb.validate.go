@@ -301,20 +301,6 @@ func (m *OAuth2Client) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for BackchannelLogoutSessionRequired
-
-	// no validation rules for BackchannelLogoutUri
-
-	// no validation rules for ClientId
-
-	// no validation rules for ClientName
-
-	// no validation rules for ClientSecret
-
-	// no validation rules for ClientSecretExpiresAt
-
-	// no validation rules for ClientUri
-
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
 		case interface{ ValidateAll() error }:
@@ -343,92 +329,6 @@ func (m *OAuth2Client) validate(all bool) error {
 			}
 		}
 	}
-
-	// no validation rules for FrontchannelLogoutSessionRequired
-
-	// no validation rules for FrontchannelLogoutUri
-
-	if all {
-		switch v := interface{}(m.GetJwks()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, OAuth2ClientValidationError{
-					field:  "Jwks",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, OAuth2ClientValidationError{
-					field:  "Jwks",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetJwks()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return OAuth2ClientValidationError{
-				field:  "Jwks",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	// no validation rules for JwksUri
-
-	// no validation rules for LogoUri
-
-	if all {
-		switch v := interface{}(m.GetMetadata()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, OAuth2ClientValidationError{
-					field:  "Metadata",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, OAuth2ClientValidationError{
-					field:  "Metadata",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetMetadata()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return OAuth2ClientValidationError{
-				field:  "Metadata",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	// no validation rules for Owner
-
-	// no validation rules for PolicyUri
-
-	// no validation rules for RegistrationAccessToken
-
-	// no validation rules for RegistrationClientUri
-
-	// no validation rules for RequestObjectSigningAlg
-
-	// no validation rules for SectorIdentifierUri
-
-	// no validation rules for SubjectType
-
-	// no validation rules for TokenEndpointAuthMethod
-
-	// no validation rules for TokenEndpointAuthSigningAlg
-
-	// no validation rules for TosUri
 
 	if all {
 		switch v := interface{}(m.GetUpdatedAt()).(type) {
@@ -459,7 +359,163 @@ func (m *OAuth2Client) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for UserinfoSignedResponseAlg
+	if m.BackchannelLogoutSessionRequired != nil {
+		// no validation rules for BackchannelLogoutSessionRequired
+	}
+
+	if m.BackchannelLogoutUri != nil {
+		// no validation rules for BackchannelLogoutUri
+	}
+
+	if m.ClientId != nil {
+		// no validation rules for ClientId
+	}
+
+	if m.ClientName != nil {
+		// no validation rules for ClientName
+	}
+
+	if m.ClientSecret != nil {
+		// no validation rules for ClientSecret
+	}
+
+	if m.ClientSecretExpiresAt != nil {
+		// no validation rules for ClientSecretExpiresAt
+	}
+
+	if m.ClientUri != nil {
+		// no validation rules for ClientUri
+	}
+
+	if m.FrontchannelLogoutSessionRequired != nil {
+		// no validation rules for FrontchannelLogoutSessionRequired
+	}
+
+	if m.FrontchannelLogoutUri != nil {
+		// no validation rules for FrontchannelLogoutUri
+	}
+
+	if m.Jwks != nil {
+
+		if all {
+			switch v := interface{}(m.GetJwks()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, OAuth2ClientValidationError{
+						field:  "Jwks",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, OAuth2ClientValidationError{
+						field:  "Jwks",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJwks()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return OAuth2ClientValidationError{
+					field:  "Jwks",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.JwksUri != nil {
+		// no validation rules for JwksUri
+	}
+
+	if m.LogoUri != nil {
+		// no validation rules for LogoUri
+	}
+
+	if m.Metadata != nil {
+
+		if all {
+			switch v := interface{}(m.GetMetadata()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, OAuth2ClientValidationError{
+						field:  "Metadata",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, OAuth2ClientValidationError{
+						field:  "Metadata",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMetadata()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return OAuth2ClientValidationError{
+					field:  "Metadata",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Owner != nil {
+		// no validation rules for Owner
+	}
+
+	if m.PolicyUri != nil {
+		// no validation rules for PolicyUri
+	}
+
+	if m.RegistrationAccessToken != nil {
+		// no validation rules for RegistrationAccessToken
+	}
+
+	if m.RegistrationClientUri != nil {
+		// no validation rules for RegistrationClientUri
+	}
+
+	if m.RequestObjectSigningAlg != nil {
+		// no validation rules for RequestObjectSigningAlg
+	}
+
+	if m.Scope != nil {
+		// no validation rules for Scope
+	}
+
+	if m.SectorIdentifierUri != nil {
+		// no validation rules for SectorIdentifierUri
+	}
+
+	if m.SubjectType != nil {
+		// no validation rules for SubjectType
+	}
+
+	if m.TokenEndpointAuthMethod != nil {
+		// no validation rules for TokenEndpointAuthMethod
+	}
+
+	if m.TokenEndpointAuthSigningAlg != nil {
+		// no validation rules for TokenEndpointAuthSigningAlg
+	}
+
+	if m.TosUri != nil {
+		// no validation rules for TosUri
+	}
+
+	if m.UserinfoSignedResponseAlg != nil {
+		// no validation rules for UserinfoSignedResponseAlg
+	}
 
 	if len(errors) > 0 {
 		return OAuth2ClientMultiError(errors)
@@ -933,8 +989,6 @@ func (m *PatchOAuth2Client) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for From
-
 	// no validation rules for Op
 
 	// no validation rules for Path
@@ -966,6 +1020,10 @@ func (m *PatchOAuth2Client) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.From != nil {
+		// no validation rules for From
 	}
 
 	if len(errors) > 0 {

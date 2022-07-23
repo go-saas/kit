@@ -1,0 +1,22 @@
+
+[permission.oidc.client.group]
+other = "Client"
+[permission.oidc.client.read]
+other = "Read Client"
+[permission.oidc.client.create]
+other = "Create Client"
+[permission.oidc.client.update]
+other = "Update Client"
+[permission.oidc.client.delete]
+other = "Delete Client"
+
+[permission.oidc.key.group]
+other = "Key"
+[permission.oidc.key.read]
+other = "Read Key"
+[permission.oidc.key.create]
+other = "Create Key"
+[permission.oidc.key.update]
+other = "Update Key"
+[permission.oidc.key.delete]
+other = "Delete Key"

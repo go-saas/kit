@@ -28,7 +28,7 @@ type ClientServiceClient interface {
 	CreateOAuth2Client(ctx context.Context, in *OAuth2Client, opts ...grpc.CallOption) (*OAuth2Client, error)
 	DeleteOAuth2Client(ctx context.Context, in *DeleteOAuth2ClientRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	PatchOAuth2Client(ctx context.Context, in *PatchOAuth2ClientRequest, opts ...grpc.CallOption) (*OAuth2Client, error)
-	UpdateOAuth2Client(ctx context.Context, in *PatchOAuth2ClientRequest, opts ...grpc.CallOption) (*OAuth2Client, error)
+	UpdateOAuth2Client(ctx context.Context, in *UpdateOAuth2ClientRequest, opts ...grpc.CallOption) (*OAuth2Client, error)
 }
 
 type clientServiceClient struct {
@@ -84,7 +84,7 @@ func (c *clientServiceClient) PatchOAuth2Client(ctx context.Context, in *PatchOA
 	return out, nil
 }
 
-func (c *clientServiceClient) UpdateOAuth2Client(ctx context.Context, in *PatchOAuth2ClientRequest, opts ...grpc.CallOption) (*OAuth2Client, error) {
+func (c *clientServiceClient) UpdateOAuth2Client(ctx context.Context, in *UpdateOAuth2ClientRequest, opts ...grpc.CallOption) (*OAuth2Client, error) {
 	out := new(OAuth2Client)
 	err := c.cc.Invoke(ctx, "/oidc.api.client.ClientService/UpdateOAuth2Client", in, out, opts...)
 	if err != nil {
@@ -102,7 +102,7 @@ type ClientServiceServer interface {
 	CreateOAuth2Client(context.Context, *OAuth2Client) (*OAuth2Client, error)
 	DeleteOAuth2Client(context.Context, *DeleteOAuth2ClientRequest) (*emptypb.Empty, error)
 	PatchOAuth2Client(context.Context, *PatchOAuth2ClientRequest) (*OAuth2Client, error)
-	UpdateOAuth2Client(context.Context, *PatchOAuth2ClientRequest) (*OAuth2Client, error)
+	UpdateOAuth2Client(context.Context, *UpdateOAuth2ClientRequest) (*OAuth2Client, error)
 }
 
 // UnimplementedClientServiceServer should be embedded to have forward compatible implementations.
@@ -124,7 +124,7 @@ func (UnimplementedClientServiceServer) DeleteOAuth2Client(context.Context, *Del
 func (UnimplementedClientServiceServer) PatchOAuth2Client(context.Context, *PatchOAuth2ClientRequest) (*OAuth2Client, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PatchOAuth2Client not implemented")
 }
-func (UnimplementedClientServiceServer) UpdateOAuth2Client(context.Context, *PatchOAuth2ClientRequest) (*OAuth2Client, error) {
+func (UnimplementedClientServiceServer) UpdateOAuth2Client(context.Context, *UpdateOAuth2ClientRequest) (*OAuth2Client, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateOAuth2Client not implemented")
 }
 
@@ -230,7 +230,7 @@ func _ClientService_PatchOAuth2Client_Handler(srv interface{}, ctx context.Conte
 }
 
 func _ClientService_UpdateOAuth2Client_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PatchOAuth2ClientRequest)
+	in := new(UpdateOAuth2ClientRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -242,7 +242,7 @@ func _ClientService_UpdateOAuth2Client_Handler(srv interface{}, ctx context.Cont
 		FullMethod: "/oidc.api.client.ClientService/UpdateOAuth2Client",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServiceServer).UpdateOAuth2Client(ctx, req.(*PatchOAuth2ClientRequest))
+		return srv.(ClientServiceServer).UpdateOAuth2Client(ctx, req.(*UpdateOAuth2ClientRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

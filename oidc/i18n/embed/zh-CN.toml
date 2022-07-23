@@ -1,0 +1,21 @@
+[permission.oidc.client.group]
+other = "客户端"
+[permission.oidc.client.read]
+other = "查看客户端"
+[permission.oidc.client.create]
+other = "新增客户端"
+[permission.oidc.client.update]
+other = "修改客户端"
+[permission.oidc.client.delete]
+other = "删除客户端"
+
+[permission.oidc.key.group]
+other = "密钥"
+[permission.oidc.key.read]
+other = "查看密钥"
+[permission.oidc.key.create]
+other = "新增密钥"
+[permission.oidc.key.update]
+other = "修改密钥"
+[permission.oidc.key.delete]
+other = "删除密钥"

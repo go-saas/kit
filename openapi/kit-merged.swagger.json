@@ -1128,10 +1128,7 @@
               "type": "object",
               "properties": {
                 "client": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/clientPatchOAuth2Client"
-                  }
+                  "$ref": "#/definitions/clientOAuth2Client"
                 }
               }
             }
@@ -1324,7 +1321,7 @@
               "type": "object",
               "properties": {
                 "keys": {
-                  "$ref": "#/definitions/keyJSONWebKeySet"
+                  "$ref": "#/definitions/keyJsonWebKeySetGeneratorRequest"
                 }
               }
             }
@@ -1365,7 +1362,7 @@
               "type": "object",
               "properties": {
                 "keys": {
-                  "$ref": "#/definitions/keyJsonWebKeySetGeneratorRequest"
+                  "$ref": "#/definitions/keyJSONWebKeySet"
                 }
               }
             }
@@ -4382,26 +4379,33 @@
           }
         },
         "backchannelLogoutSessionRequired": {
-          "type": "boolean"
+          "type": "boolean",
+          "x-nullable": true
         },
         "backchannelLogoutUri": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "clientId": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "clientName": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "clientSecret": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "clientSecretExpiresAt": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string",
+          "format": "int64",
+          "x-nullable": true
         },
         "clientUri": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "contacts": {
           "type": "array",
@@ -4414,10 +4418,12 @@
           "format": "date-time"
         },
         "frontchannelLogoutSessionRequired": {
-          "type": "boolean"
+          "type": "boolean",
+          "x-nullable": true
         },
         "frontchannelLogoutUri": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "grantTypes": {
           "type": "array",
@@ -4426,22 +4432,28 @@
           }
         },
         "jwks": {
-          "type": "object"
+          "type": "object",
+          "x-nullable": true
         },
         "jwksUri": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "logoUri": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "metadata": {
-          "type": "object"
+          "type": "object",
+          "x-nullable": true
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "policyUri": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "postLogoutRedirectUris": {
           "type": "array",
@@ -4456,13 +4468,16 @@
           }
         },
         "registrationAccessToken": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "registrationClientUri": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "requestObjectSigningAlg": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "requestUris": {
           "type": "array",
@@ -4477,32 +4492,36 @@
           }
         },
         "scope": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string",
+          "x-nullable": true
         },
         "sectorIdentifierUri": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "subjectType": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "tokenEndpointAuthMethod": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "tokenEndpointAuthSigningAlg": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "tosUri": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "updatedAt": {
           "type": "string",
           "format": "date-time"
         },
         "userinfoSignedResponseAlg": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       }
     },
@@ -4521,7 +4540,8 @@
       "type": "object",
       "properties": {
         "from": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "op": {
           "type": "string"
@@ -4611,22 +4631,28 @@
           ]
         },
         "crv": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "d": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "dp": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "dq": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "e": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "k": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "kid": {
           "type": "string",
@@ -4641,16 +4667,20 @@
           ]
         },
         "n": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "p": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "q": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "qi": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "use": {
           "type": "string",
@@ -4659,13 +4689,18 @@
           ]
         },
         "x": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "x5c": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "y": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       },
       "required": [
@@ -4687,7 +4722,32 @@
       }
     },
     "keyJsonWebKeySetGeneratorRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "alg": {
+          "type": "string",
+          "required": [
+            "alg"
+          ]
+        },
+        "kid": {
+          "type": "string",
+          "required": [
+            "kid"
+          ]
+        },
+        "use": {
+          "type": "string",
+          "required": [
+            "use"
+          ]
+        }
+      },
+      "required": [
+        "alg",
+        "kid",
+        "use"
+      ]
     },
     "operationDateFilterOperators": {
       "type": "object",

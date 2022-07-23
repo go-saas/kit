@@ -64,15 +64,17 @@ message GetJsonWebKeySetRequest{
 
 message UpdateJsonWebKeySetRequest{
   string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  JsonWebKeySetGeneratorRequest keys=2;
+  JSONWebKeySet keys=2;
 }
 message CreateJsonWebKeySetRequest{
   string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  JSONWebKeySet keys=2;
+  JsonWebKeySetGeneratorRequest keys=2;
 }
 
 message JsonWebKeySetGeneratorRequest{
-
+  string alg=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string kid=8[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string use=14 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }
 
 message DeleteJsonWebKeyRequest{
@@ -93,22 +95,22 @@ message UpdateJsonWebKeyRequest{
 }
 message JSONWebKey{
   string alg=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string crv=2;
-  string d=3;
-  string dp=4;
-  string dq=5;
-  string e=6;
-  string k=7;
+  optional string crv=2;
+  optional string d=3;
+  optional string dp=4;
+  optional string dq=5;
+  optional string e=6;
+  optional string k=7;
   string kid=8[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   string kty=9[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string n=10;
-  string p=11;
-  string q=12;
-  string qi=13;
+  optional string n=10;
+  optional string p=11;
+  optional string q=12;
+  optional string qi=13;
   string use=14 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string x=15;
-  string x5c=16;
-  string y=17;
+  optional string x=15;
+  repeated string x5c=16;
+  optional string y=17;
 }
 
 message JSONWebKeySet{

@@ -59,7 +59,7 @@ require (
 	github.com/hibiken/asynqmon v0.7.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/nyaruka/phonenumbers v1.0.74
-	github.com/ory/hydra-client-go v1.11.7
+	github.com/ory/hydra-client-go v1.11.8
 	github.com/samber/lo v1.10.1
 	github.com/spf13/afero v1.8.2
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.1.14

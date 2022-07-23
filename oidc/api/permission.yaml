@@ -1,0 +1,49 @@
+groups:
+  - name: "permission.oidc.client.group"
+    side: HOST_ONLY
+    def:
+      - name: "permission.oidc.client.any"
+        namespace: "oidc.client"
+        action: "*"
+        internal: true
+        side: HOST_ONLY
+      - name: "permission.oidc.client.read"
+        namespace: "oidc.client"
+        action: "read"
+        side: HOST_ONLY
+      - name: "permission.oidc.client.create"
+        namespace: "oidc.client"
+        action: "create"
+        side: HOST_ONLY
+      - name: "permission.oidc.client.update"
+        namespace: "oidc.client"
+        action: "update"
+        side: HOST_ONLY
+      - name: "permission.oidc.client.delete"
+        namespace: "oidc.client"
+        action: "delete"
+        side: HOST_ONLY
+  - name: "permission.oidc.key.group"
+    side: HOST_ONLY
+    def:
+      - name: "permission.oidc.key.any"
+        namespace: "oidc.key"
+        action: "*"
+        internal: true
+        side: HOST_ONLY
+      - name: "permission.oidc.key.read"
+        namespace: "oidc.key"
+        action: "read"
+        side: HOST_ONLY
+      - name: "permission.oidc.key.create"
+        namespace: "oidc.key"
+        action: "create"
+        side: HOST_ONLY
+      - name: "permission.oidc.key.update"
+        namespace: "oidc.key"
+        action: "update"
+        side: HOST_ONLY
+      - name: "permission.oidc.key.delete"
+        namespace: "oidc.key"
+        action: "delete"
+        side: HOST_ONLY

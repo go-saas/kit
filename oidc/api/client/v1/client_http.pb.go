@@ -33,7 +33,7 @@ type ClientServiceHTTPServer interface {
 	GetOAuth2Client(context.Context, *GetOAuth2ClientRequest) (*OAuth2Client, error)
 	ListOAuth2Clients(context.Context, *ListClientRequest) (*OAuth2ClientList, error)
 	PatchOAuth2Client(context.Context, *PatchOAuth2ClientRequest) (*OAuth2Client, error)
-	UpdateOAuth2Client(context.Context, *PatchOAuth2ClientRequest) (*OAuth2Client, error)
+	UpdateOAuth2Client(context.Context, *UpdateOAuth2ClientRequest) (*OAuth2Client, error)
 }
 
 func RegisterClientServiceHTTPServer(s *http.Server, srv ClientServiceHTTPServer) {
@@ -172,7 +172,7 @@ func _ClientService_PatchOAuth2Client0_HTTP_Handler(srv ClientServiceHTTPServer)
 
 func _ClientService_UpdateOAuth2Client0_HTTP_Handler(srv ClientServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in PatchOAuth2ClientRequest
+		var in UpdateOAuth2ClientRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -181,7 +181,7 @@ func _ClientService_UpdateOAuth2Client0_HTTP_Handler(srv ClientServiceHTTPServer
 		}
 		http.SetOperation(ctx, OperationClientServiceUpdateOAuth2Client)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateOAuth2Client(ctx, req.(*PatchOAuth2ClientRequest))
+			return srv.UpdateOAuth2Client(ctx, req.(*UpdateOAuth2ClientRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -198,7 +198,7 @@ type ClientServiceHTTPClient interface {
 	GetOAuth2Client(ctx context.Context, req *GetOAuth2ClientRequest, opts ...http.CallOption) (rsp *OAuth2Client, err error)
 	ListOAuth2Clients(ctx context.Context, req *ListClientRequest, opts ...http.CallOption) (rsp *OAuth2ClientList, err error)
 	PatchOAuth2Client(ctx context.Context, req *PatchOAuth2ClientRequest, opts ...http.CallOption) (rsp *OAuth2Client, err error)
-	UpdateOAuth2Client(ctx context.Context, req *PatchOAuth2ClientRequest, opts ...http.CallOption) (rsp *OAuth2Client, err error)
+	UpdateOAuth2Client(ctx context.Context, req *UpdateOAuth2ClientRequest, opts ...http.CallOption) (rsp *OAuth2Client, err error)
 }
 
 type ClientServiceHTTPClientImpl struct {
@@ -274,7 +274,7 @@ func (c *ClientServiceHTTPClientImpl) PatchOAuth2Client(ctx context.Context, in 
 	return &out, err
 }
 
-func (c *ClientServiceHTTPClientImpl) UpdateOAuth2Client(ctx context.Context, in *PatchOAuth2ClientRequest, opts ...http.CallOption) (*OAuth2Client, error) {
+func (c *ClientServiceHTTPClientImpl) UpdateOAuth2Client(ctx context.Context, in *UpdateOAuth2ClientRequest, opts ...http.CallOption) (*OAuth2Client, error) {
 	var out OAuth2Client
 	pattern := "/v1/oidc/client/{id}"
 	path := binding.EncodeURL(pattern, in, false)

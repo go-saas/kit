@@ -11,6 +11,7 @@ import (
 	dtmserver "github.com/go-saas/kit/dtm/server"
 	"github.com/go-saas/kit/event"
 	eventserver "github.com/go-saas/kit/event/server"
+	oidcdata "github.com/go-saas/kit/oidc/data"
 	kapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
@@ -160,7 +161,7 @@ func main() {
 		kitdi.Value(bc.Data),
 		kitdi.Value(logger),
 		kitdi.Value([]grpc.ClientOption{}),
-		authz.ProviderSet, kitserver.DefaultProviderSet, jwt.ProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
+		authz.ProviderSet, kitserver.DefaultProviderSet, jwt.ProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet, oidcdata.ProviderSet,
 		job.DefaultProviderSet, dtmserver.DtmProviderSet, eventserver.EventProviderSet,
 		sapi.GrpcProviderSet,
 		casbin.PermissionProviderSet, server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet,

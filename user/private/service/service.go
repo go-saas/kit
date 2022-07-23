@@ -19,7 +19,6 @@ import (
 	v12 "github.com/go-saas/kit/user/api/user/v1"
 	uhttp "github.com/go-saas/kit/user/private/service/http"
 	"github.com/goava/di"
-	client "github.com/ory/hydra-client-go"
 	"net/http"
 )
 
@@ -39,7 +38,6 @@ var ProviderSet = kitdi.NewSet(
 
 	kitdi.NewProvider(NewRoleServiceService, di.As(new(v1.RoleServiceServer))),
 	kitdi.NewProvider(NewPermissionService, di.As(new(v15.PermissionServiceServer))),
-	NewHydra,
 	api.NewUserTenantContrib,
 	api.NewRefreshProvider,
 	uhttp.NewAuth)
@@ -107,14 +105,4 @@ func NewGrpcServerRegister(user *UserService,
 		v1.RegisterRoleServiceServer(srv, role)
 		v15.RegisterPermissionServiceServer(srv, permission)
 	})
-}
-
-func NewHydra(c *kconf.Security) *client.APIClient {
-	cfg := client.NewConfiguration()
-	cfg.Servers = client.ServerConfigurations{
-		{
-			URL: c.Oidc.Hydra.AdminUrl,
-		},
-	}
-	return client.NewAPIClient(cfg)
 }

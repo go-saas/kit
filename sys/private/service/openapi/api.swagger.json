@@ -9,6 +9,12 @@
       "name": "MenuService"
     },
     {
+      "name": "ClientService"
+    },
+    {
+      "name": "KeyService"
+    },
+    {
       "name": "LocaleService"
     }
   ],
@@ -19,6 +25,520 @@
     "application/json"
   ],
   "paths": {
+    "/v1/oidc/client": {
+      "post": {
+        "operationId": "ClientService_CreateOAuth2Client",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/clientOAuth2Client"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/clientOAuth2Client"
+            }
+          }
+        ],
+        "tags": [
+          "ClientService"
+        ]
+      }
+    },
+    "/v1/oidc/client/list": {
+      "post": {
+        "operationId": "ClientService_ListOAuth2Clients2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/clientOAuth2ClientList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/clientListClientRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClientService"
+        ]
+      }
+    },
+    "/v1/oidc/client/{id}": {
+      "get": {
+        "operationId": "ClientService_GetOAuth2Client",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/clientOAuth2Client"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClientService"
+        ]
+      },
+      "delete": {
+        "operationId": "ClientService_DeleteOAuth2Client",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClientService"
+        ]
+      },
+      "put": {
+        "operationId": "ClientService_UpdateOAuth2Client",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/clientOAuth2Client"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "client": {
+                  "$ref": "#/definitions/clientOAuth2Client"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "ClientService"
+        ]
+      },
+      "patch": {
+        "operationId": "ClientService_PatchOAuth2Client",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/clientOAuth2Client"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "client": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/clientPatchOAuth2Client"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "ClientService"
+        ]
+      }
+    },
+    "/v1/oidc/clients": {
+      "get": {
+        "operationId": "ClientService_ListOAuth2Clients",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/clientOAuth2ClientList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "clientName",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClientService"
+        ]
+      }
+    },
+    "/v1/oidc/keys/{set}": {
+      "get": {
+        "operationId": "KeyService_GetJsonWebKeySet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/keyJSONWebKeySet"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "set",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "KeyService"
+        ]
+      },
+      "delete": {
+        "operationId": "KeyService_DeleteJsonWebKeySet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "set",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "KeyService"
+        ]
+      },
+      "post": {
+        "operationId": "KeyService_CreateJsonWebKeySet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/keyJSONWebKeySet"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "set",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "keys": {
+                  "$ref": "#/definitions/keyJsonWebKeySetGeneratorRequest"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "KeyService"
+        ]
+      },
+      "put": {
+        "operationId": "KeyService_UpdateJsonWebKeySet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/keyJSONWebKeySet"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "set",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "keys": {
+                  "$ref": "#/definitions/keyJSONWebKeySet"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "KeyService"
+        ]
+      }
+    },
+    "/v1/oidc/keys/{set}/{kid}": {
+      "get": {
+        "operationId": "KeyService_GetJsonWebKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/keyJSONWebKeySet"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "set",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "kid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "KeyService"
+        ]
+      },
+      "delete": {
+        "operationId": "KeyService_DeleteJsonWebKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "set",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "kid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "KeyService"
+        ]
+      },
+      "put": {
+        "operationId": "KeyService_UpdateJsonWebKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/keyJSONWebKey"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "set",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "kid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "$ref": "#/definitions/keyJSONWebKey"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "KeyService"
+        ]
+      }
+    },
     "/v1/sys/locale/msgs": {
       "get": {
         "operationId": "LocaleService_ListMessages",
@@ -609,6 +1129,344 @@
     }
   },
   "definitions": {
+    "clientListClientRequest": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "string",
+          "format": "int64"
+        },
+        "offset": {
+          "type": "string",
+          "format": "int64"
+        },
+        "clientName": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        }
+      }
+    },
+    "clientOAuth2Client": {
+      "type": "object",
+      "properties": {
+        "allowedCorsOrigins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "audience": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "backchannelLogoutSessionRequired": {
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "backchannelLogoutUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "clientId": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "clientName": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "clientSecret": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "clientSecretExpiresAt": {
+          "type": "string",
+          "format": "int64",
+          "x-nullable": true
+        },
+        "clientUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "frontchannelLogoutSessionRequired": {
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "frontchannelLogoutUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "grantTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "jwks": {
+          "type": "object",
+          "x-nullable": true
+        },
+        "jwksUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "logoUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "metadata": {
+          "type": "object",
+          "x-nullable": true
+        },
+        "owner": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "policyUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "postLogoutRedirectUris": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "redirectUris": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "registrationAccessToken": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "registrationClientUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "requestObjectSigningAlg": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "requestUris": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "responseTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "sectorIdentifierUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "subjectType": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "tokenEndpointAuthMethod": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "tokenEndpointAuthSigningAlg": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "tosUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "userinfoSignedResponseAlg": {
+          "type": "string",
+          "x-nullable": true
+        }
+      }
+    },
+    "clientOAuth2ClientList": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/clientOAuth2Client"
+          }
+        }
+      }
+    },
+    "clientPatchOAuth2Client": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "op": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "value": {
+          "type": "object"
+        }
+      }
+    },
+    "keyJSONWebKey": {
+      "type": "object",
+      "properties": {
+        "alg": {
+          "type": "string",
+          "required": [
+            "alg"
+          ]
+        },
+        "crv": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "d": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "dp": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "dq": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "e": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "k": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "kid": {
+          "type": "string",
+          "required": [
+            "kid"
+          ]
+        },
+        "kty": {
+          "type": "string",
+          "required": [
+            "kty"
+          ]
+        },
+        "n": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "p": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "q": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "qi": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "use": {
+          "type": "string",
+          "required": [
+            "use"
+          ]
+        },
+        "x": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "x5c": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "y": {
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "required": [
+        "alg",
+        "kid",
+        "kty",
+        "use"
+      ]
+    },
+    "keyJSONWebKeySet": {
+      "type": "object",
+      "properties": {
+        "keys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/keyJSONWebKey"
+          }
+        }
+      }
+    },
+    "keyJsonWebKeySetGeneratorRequest": {
+      "type": "object",
+      "properties": {
+        "alg": {
+          "type": "string",
+          "required": [
+            "alg"
+          ]
+        },
+        "kid": {
+          "type": "string",
+          "required": [
+            "kid"
+          ]
+        },
+        "use": {
+          "type": "string",
+          "required": [
+            "use"
+          ]
+        }
+      },
+      "required": [
+        "alg",
+        "kid",
+        "use"
+      ]
+    },
     "operationStringFilterOperation": {
       "type": "object",
       "properties": {

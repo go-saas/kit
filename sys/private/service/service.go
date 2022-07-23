@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	oidcservice "github.com/go-saas/kit/oidc/service"
 	"github.com/go-saas/kit/pkg/apisix"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
@@ -27,7 +28,7 @@ import (
 var spec []byte
 
 // ProviderSet is service providers.
-var ProviderSet = kitdi.NewSet(NewApisixOption, NewApisixAdminClient, apisix.NewWatchSyncAdmin,
+var ProviderSet = kitdi.NewSet(NewApisixOption, NewApisixAdminClient, apisix.NewWatchSyncAdmin, oidcservice.ProviderSet,
 	NewHttpServerRegister, NewGrpcServerRegister,
 	kitdi.NewProvider(NewMenuService, di.As(new(v1.MenuServiceServer))),
 	kitdi.NewProvider(NewLocaleService, di.As(new(v12.LocaleServiceServer))),

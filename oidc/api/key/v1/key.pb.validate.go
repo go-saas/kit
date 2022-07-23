@@ -567,6 +567,39 @@ func (m *JsonWebKeySetGeneratorRequest) validate(all bool) error {
 
 	var errors []error
 
+	if utf8.RuneCountInString(m.GetAlg()) < 1 {
+		err := JsonWebKeySetGeneratorRequestValidationError{
+			field:  "Alg",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetKid()) < 1 {
+		err := JsonWebKeySetGeneratorRequestValidationError{
+			field:  "Kid",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetUse()) < 1 {
+		err := JsonWebKeySetGeneratorRequestValidationError{
+			field:  "Use",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return JsonWebKeySetGeneratorRequestMultiError(errors)
 	}
@@ -1082,18 +1115,6 @@ func (m *JSONWebKey) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Crv
-
-	// no validation rules for D
-
-	// no validation rules for Dp
-
-	// no validation rules for Dq
-
-	// no validation rules for E
-
-	// no validation rules for K
-
 	if utf8.RuneCountInString(m.GetKid()) < 1 {
 		err := JSONWebKeyValidationError{
 			field:  "Kid",
@@ -1116,14 +1137,6 @@ func (m *JSONWebKey) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for N
-
-	// no validation rules for P
-
-	// no validation rules for Q
-
-	// no validation rules for Qi
-
 	if utf8.RuneCountInString(m.GetUse()) < 1 {
 		err := JSONWebKeyValidationError{
 			field:  "Use",
@@ -1135,11 +1148,53 @@ func (m *JSONWebKey) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for X
+	if m.Crv != nil {
+		// no validation rules for Crv
+	}
 
-	// no validation rules for X5C
+	if m.D != nil {
+		// no validation rules for D
+	}
 
-	// no validation rules for Y
+	if m.Dp != nil {
+		// no validation rules for Dp
+	}
+
+	if m.Dq != nil {
+		// no validation rules for Dq
+	}
+
+	if m.E != nil {
+		// no validation rules for E
+	}
+
+	if m.K != nil {
+		// no validation rules for K
+	}
+
+	if m.N != nil {
+		// no validation rules for N
+	}
+
+	if m.P != nil {
+		// no validation rules for P
+	}
+
+	if m.Q != nil {
+		// no validation rules for Q
+	}
+
+	if m.Qi != nil {
+		// no validation rules for Qi
+	}
+
+	if m.X != nil {
+		// no validation rules for X
+	}
+
+	if m.Y != nil {
+		// no validation rules for Y
+	}
 
 	if len(errors) > 0 {
 		return JSONWebKeyMultiError(errors)

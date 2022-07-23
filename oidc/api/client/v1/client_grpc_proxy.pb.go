@@ -44,6 +44,6 @@ func (c *clientServiceClientProxy) DeleteOAuth2Client(ctx context.Context, in *D
 func (c *clientServiceClientProxy) PatchOAuth2Client(ctx context.Context, in *PatchOAuth2ClientRequest) (*OAuth2Client, error) {
 	return c.cc.PatchOAuth2Client(ctx, in)
 }
-func (c *clientServiceClientProxy) UpdateOAuth2Client(ctx context.Context, in *PatchOAuth2ClientRequest) (*OAuth2Client, error) {
+func (c *clientServiceClientProxy) UpdateOAuth2Client(ctx context.Context, in *UpdateOAuth2ClientRequest) (*OAuth2Client, error) {
 	return c.cc.UpdateOAuth2Client(ctx, in)
 }
