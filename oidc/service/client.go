@@ -31,7 +31,7 @@ func (s *ClientService) ListOAuth2Clients(ctx context.Context, req *pb.ListClien
 	}
 	resp, raw, err := s.client.AdminApi.ListOAuth2Clients(ctx).ClientName(req.ClientName).Limit(req.Limit).Offset(req.Offset).Owner(req.Owner).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	total, _ := strconv.Atoi(raw.Header.Get("X-Total-Count"))
 
@@ -43,9 +43,9 @@ func (s *ClientService) GetOAuth2Client(ctx context.Context, req *pb.GetOAuth2Cl
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceClient, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	resp, _, err := s.client.AdminApi.GetOAuth2Client(ctx, req.Id).Execute()
+	resp, raw, err := s.client.AdminApi.GetOAuth2Client(ctx, req.Id).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	c := mapClients(*resp)
 	return c, nil
@@ -55,9 +55,9 @@ func (s *ClientService) CreateOAuth2Client(ctx context.Context, req *pb.OAuth2Cl
 		return nil, err
 	}
 	c := mapOAuthClients(req)
-	resp, _, err := s.client.AdminApi.CreateOAuth2Client(ctx).OAuth2Client(c).Execute()
+	resp, raw, err := s.client.AdminApi.CreateOAuth2Client(ctx).OAuth2Client(c).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return mapClients(*resp), nil
 }
@@ -65,9 +65,9 @@ func (s *ClientService) DeleteOAuth2Client(ctx context.Context, req *pb.DeleteOA
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceClient, "*"), authz.DeleteAction); err != nil {
 		return nil, err
 	}
-	_, err := s.client.AdminApi.DeleteOAuth2Client(ctx, req.Id).Execute()
+	raw, err := s.client.AdminApi.DeleteOAuth2Client(ctx, req.Id).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -75,7 +75,7 @@ func (s *ClientService) PatchOAuth2Client(ctx context.Context, req *pb.PatchOAut
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceClient, "*"), authz.UpdateAction); err != nil {
 		return nil, err
 	}
-	resp, _, err := s.client.AdminApi.PatchOAuth2Client(ctx, req.Id).PatchDocument(lo.Map(req.Client, func(t *pb.PatchOAuth2Client, _ int) client.PatchDocument {
+	resp, raw, err := s.client.AdminApi.PatchOAuth2Client(ctx, req.Id).PatchDocument(lo.Map(req.Client, func(t *pb.PatchOAuth2Client, _ int) client.PatchDocument {
 		return client.PatchDocument{
 			From:  t.From,
 			Op:    t.Op,
@@ -84,7 +84,7 @@ func (s *ClientService) PatchOAuth2Client(ctx context.Context, req *pb.PatchOAut
 		}
 	})).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return mapClients(*resp), nil
 }
@@ -93,9 +93,9 @@ func (s *ClientService) UpdateOAuth2Client(ctx context.Context, req *pb.UpdateOA
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceClient, "*"), authz.UpdateAction); err != nil {
 		return nil, err
 	}
-	resp, _, err := s.client.AdminApi.UpdateOAuth2Client(ctx, req.Id).OAuth2Client(mapOAuthClients(req.Client)).Execute()
+	resp, raw, err := s.client.AdminApi.UpdateOAuth2Client(ctx, req.Id).OAuth2Client(mapOAuthClients(req.Client)).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return mapClients(*resp), nil
 }

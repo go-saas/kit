@@ -25,9 +25,9 @@ func (s *KeyService) DeleteJsonWebKeySet(ctx context.Context, req *pb.DeleteJson
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.DeleteAction); err != nil {
 		return nil, err
 	}
-	_, err := s.client.AdminApi.DeleteJsonWebKeySet(ctx, req.Set).Execute()
+	raw, err := s.client.AdminApi.DeleteJsonWebKeySet(ctx, req.Set).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -35,9 +35,9 @@ func (s *KeyService) GetJsonWebKeySet(ctx context.Context, req *pb.GetJsonWebKey
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	resp, _, err := s.client.AdminApi.GetJsonWebKeySet(ctx, req.Set).Execute()
+	resp, raw, err := s.client.AdminApi.GetJsonWebKeySet(ctx, req.Set).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return mapSet(*resp), nil
 }
@@ -45,13 +45,13 @@ func (s *KeyService) CreateJsonWebKeySet(ctx context.Context, req *pb.CreateJson
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.CreateAction); err != nil {
 		return nil, err
 	}
-	resp, _, err := s.client.AdminApi.CreateJsonWebKeySet(ctx, req.Set).JsonWebKeySetGeneratorRequest(client.JsonWebKeySetGeneratorRequest{
+	resp, raw, err := s.client.AdminApi.CreateJsonWebKeySet(ctx, req.Set).JsonWebKeySetGeneratorRequest(client.JsonWebKeySetGeneratorRequest{
 		Alg: req.Keys.Alg,
 		Kid: req.Keys.Kid,
 		Use: req.Keys.Use,
 	}).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return mapSet(*resp), nil
 }
@@ -59,9 +59,9 @@ func (s *KeyService) UpdateJsonWebKeySet(ctx context.Context, req *pb.UpdateJson
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.UpdateAction); err != nil {
 		return nil, err
 	}
-	resp, _, err := s.client.AdminApi.UpdateJsonWebKeySet(ctx, req.Set).JSONWebKeySet(mapPbSet(req.Keys)).Execute()
+	resp, raw, err := s.client.AdminApi.UpdateJsonWebKeySet(ctx, req.Set).JSONWebKeySet(mapPbSet(req.Keys)).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return mapSet(*resp), nil
 }
@@ -69,9 +69,9 @@ func (s *KeyService) DeleteJsonWebKey(ctx context.Context, req *pb.DeleteJsonWeb
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.DeleteAction); err != nil {
 		return nil, err
 	}
-	_, err := s.client.AdminApi.DeleteJsonWebKey(ctx, req.Kid, req.Set).Execute()
+	raw, err := s.client.AdminApi.DeleteJsonWebKey(ctx, req.Kid, req.Set).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -79,9 +79,9 @@ func (s *KeyService) GetJsonWebKey(ctx context.Context, req *pb.GetJsonWebKeyReq
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	resp, _, err := s.client.AdminApi.GetJsonWebKey(ctx, req.Kid, req.Set).Execute()
+	resp, raw, err := s.client.AdminApi.GetJsonWebKey(ctx, req.Kid, req.Set).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return mapSet(*resp), nil
 }
@@ -90,9 +90,9 @@ func (s *KeyService) UpdateJsonWebKey(ctx context.Context, req *pb.UpdateJsonWeb
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.UpdateAction); err != nil {
 		return nil, err
 	}
-	resp, _, err := s.client.AdminApi.UpdateJsonWebKey(ctx, req.Kid, req.Set).JSONWebKey(mapPbKey(req.Key)).Execute()
+	resp, raw, err := s.client.AdminApi.UpdateJsonWebKey(ctx, req.Kid, req.Set).JSONWebKey(mapPbKey(req.Key)).Execute()
 	if err != nil {
-		return nil, err
+		return nil, transformErr(raw, err)
 	}
 	return mapKey(*resp), nil
 }
