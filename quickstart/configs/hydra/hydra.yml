@@ -5,7 +5,7 @@ serve:
 urls:
   self:
     #publich hydra server
-    issuer: http://127.0.0.1:4444
+    issuer: http://localhost
 
 #  consent: http://127.0.0.1:7090/user/consent
 #  login: http://127.0.0.1:7090/user/login

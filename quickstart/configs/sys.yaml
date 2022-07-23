@@ -22,6 +22,11 @@ sys:
           "kafka-ui:8080": 1
         type: roundrobin
 
+      hydra-public:
+        nodes:
+          "hydra:4444": 1
+        type: roundrobin
+
     global_rules:
       opentelemetry:
         plugins:
@@ -39,6 +44,10 @@ sys:
           cors:
             allow_origins: "*"
     routes:
+      hydra-public:
+        uris: [ "/.well-known/jwks.json","/.well-known/openid-configuration","/oauth2/*","/userinfo" ]
+        upstream_id: hydra-public
+        priority: 100
       api-docs:
         uri: /swagger*
         upstream_id: api-docs

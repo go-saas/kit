@@ -111,6 +111,7 @@ func (a *Auth) LoginPost(w http.ResponseWriter, r *http.Request) (*v1.WebLoginAu
 		acc.SetRemember(req.Remember)
 		//TODO from config
 		acc.SetRememberFor(3600)
+		acc.SetSubject(uid)
 		hreq, _, err := a.hclient.AdminApi.AcceptLoginRequest(r.Context()).
 			LoginChallenge(req.Challenge).
 			AcceptLoginRequest(acc).Execute()
