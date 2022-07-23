@@ -7,11 +7,11 @@ urls:
     #publich hydra server
     issuer: http://127.0.0.1:4444
   #consent page
-  consent: http://127.0.0.1:8600/#/consent
+  consent: http://127.0.0.1/user/login
   #login page
-  login: http://127.0.0.1:8600/#/login
+  login: http://127.0.0.1/user/login
   #logout page
-  logout: http://127.0.0.1:8600/#/logout
+  logout: http://127.0.0.1/user/login
 
 secrets:
   system:
