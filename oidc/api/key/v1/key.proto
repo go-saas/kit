@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package oidc.api.key;
+import "errors/errors.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+option go_package = "github.com/go-saas/kit/oidc/api/key/v1;v1";
+
+service KeyService{
+
+  rpc DeleteJsonWebKeySet(DeleteJsonWebKeySetRequest)returns(google.protobuf.Empty){
+    option (google.api.http) = {
+      delete:  "/v1/oidc/keys/{set}"
+    };
+  }
+
+  rpc GetJsonWebKeySet(GetJsonWebKeySetRequest)returns(JSONWebKeySet){
+    option (google.api.http) = {
+      get:  "/v1/oidc/keys/{set}"
+    };
+  }
+  rpc CreateJsonWebKeySet(CreateJsonWebKeySetRequest)returns(JSONWebKeySet){
+    option (google.api.http) = {
+      post:  "/v1/oidc/keys/{set}"
+      body: "*"
+    };
+  }
+
+  rpc UpdateJsonWebKeySet(UpdateJsonWebKeySetRequest)returns(JSONWebKeySet){
+    option (google.api.http) = {
+      put:  "/v1/oidc/keys/{set}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteJsonWebKey(DeleteJsonWebKeyRequest)returns(google.protobuf.Empty){
+    option (google.api.http) = {
+      delete:  "/v1/oidc/keys/{set}/{kid}"
+    };
+  }
+  rpc GetJsonWebKey(GetJsonWebKeyRequest)returns(JSONWebKeySet){
+    option (google.api.http) = {
+      get:  "/v1/oidc/keys/{set}/{kid}"
+    };
+  }
+  rpc UpdateJsonWebKey(UpdateJsonWebKeyRequest)returns(JSONWebKey){
+    option (google.api.http) = {
+      put:  "/v1/oidc/keys/{set}/{kid}"
+      body: "*"
+    };
+  }
+
+}
+
+message DeleteJsonWebKeySetRequest{
+  string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+message GetJsonWebKeySetRequest{
+  string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdateJsonWebKeySetRequest{
+  string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  JsonWebKeySetGeneratorRequest keys=2;
+}
+message CreateJsonWebKeySetRequest{
+  string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  JSONWebKeySet keys=2;
+}
+
+message JsonWebKeySetGeneratorRequest{
+
+}
+
+message DeleteJsonWebKeyRequest{
+  string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string kid=2[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+message GetJsonWebKeyRequest{
+  string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string kid=2[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+
+message UpdateJsonWebKeyRequest{
+  string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string kid=2[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  JSONWebKey key=3;
+}
+message JSONWebKey{
+  string alg=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string crv=2;
+  string d=3;
+  string dp=4;
+  string dq=5;
+  string e=6;
+  string k=7;
+  string kid=8[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string kty=9[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string n=10;
+  string p=11;
+  string q=12;
+  string qi=13;
+  string use=14 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string x=15;
+  string x5c=16;
+  string y=17;
+}
+
+message JSONWebKeySet{
+
+  repeated JSONWebKey keys=1;
+}

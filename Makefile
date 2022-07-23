@@ -9,6 +9,7 @@ link:
 	mkdir -p buf
 	ln -sfn $(DIR)/dtm $(DIR)/buf/dtm
 	ln -sfn $(DIR)/event $(DIR)/buf/event
+	ln -sfn $(DIR)/oidc $(DIR)/buf/oidc
 	ln -sfn $(DIR)/user $(DIR)/buf/user
 	ln -sfn $(DIR)/sys $(DIR)/buf/sys
 	ln -sfn $(DIR)/saas $(DIR)/buf/saas
@@ -53,7 +54,7 @@ apisix:
 .PHONY: api
 # generate api proto
 api:
-	buf generate --path ./buf/user --path ./buf/sys --path ./buf/saas --path ./buf/dtm --path ./buf/event
+	buf generate --path ./buf/user --path ./buf/sys --path ./buf/saas --path ./buf/dtm --path ./buf/event --path ./buf/oidc
 	cd user && $(MAKE) api
 	cd saas && $(MAKE) api
 	cd sys && $(MAKE) api

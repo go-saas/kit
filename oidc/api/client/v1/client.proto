@@ -1,0 +1,131 @@
+syntax = "proto3";
+
+package oidc.api.client;
+import "errors/errors.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+option go_package = "github.com/go-saas/kit/oidc/api/client/v1;v1";
+
+service ClientService{
+
+  rpc ListOAuth2Clients(ListClientRequest)returns(OAuth2ClientList){
+    option (google.api.http) = {
+      get: "/v1/oidc/clients"
+      additional_bindings:{
+        post: "/v1/oidc/client/list"
+        body: "*"
+      }
+    };
+  }
+
+  rpc GetOAuth2Client(GetOAuth2ClientRequest)returns(OAuth2Client){
+    option (google.api.http) = {
+      get: "/v1/oidc/client/{id}"
+    };
+  }
+  rpc CreateOAuth2Client(OAuth2Client)returns(OAuth2Client){
+    option (google.api.http) = {
+      post: "/v1/oidc/client"
+      body: "*"
+    };
+  }
+  rpc DeleteOAuth2Client(DeleteOAuth2ClientRequest)returns(google.protobuf.Empty){
+    option (google.api.http) = {
+      delete:  "/v1/oidc/client/{id}"
+    };
+  }
+
+  rpc PatchOAuth2Client(PatchOAuth2ClientRequest)returns(OAuth2Client){
+    option (google.api.http) = {
+      patch:  "/v1/oidc/client/{id}"
+      body: "*"
+    };
+  }
+
+  rpc UpdateOAuth2Client(PatchOAuth2ClientRequest)returns(OAuth2Client){
+    option (google.api.http) = {
+      put:  "/v1/oidc/client/{id}"
+      body: "*"
+    };
+  }
+}
+
+message ListClientRequest{
+  int64 limit=1;
+  int64 offset=2;
+  string client_name=3;
+  string owner=4;
+}
+
+message OAuth2ClientList{
+  repeated OAuth2Client items=1;
+}
+
+message OAuth2Client{
+  repeated string allowed_cors_origins=1;
+  repeated string audience=2;
+  bool backchannel_logout_session_required=3;
+  string backchannel_logout_uri=4;
+  string client_id=5;
+  string client_name=6;
+  string client_secret=7;
+  int32 client_secret_expires_at=8;
+  string client_uri=9;
+  repeated string contacts=10;
+  google.protobuf.Timestamp created_at=11;
+  bool frontchannel_logout_session_required=12;
+  string frontchannel_logout_uri=13;
+  repeated string  grant_types=14;
+  google.protobuf.Struct jwks=15;
+  string jwks_uri=16;
+  string logo_uri=17;
+  google.protobuf.Struct metadata=18;
+  string owner=19;
+  string policy_uri=20;
+  repeated string post_logout_redirect_uris=21;
+  repeated string redirect_uris=23;
+  string registration_access_token=24;
+  string registration_client_uri=25;
+  string request_object_signing_alg=26;
+  repeated string request_uris=27;
+  repeated string response_types=28;
+  repeated string scope=29;
+  string sector_identifier_uri=30;
+  string subject_type=31;
+  string token_endpoint_auth_method=32;
+  string token_endpoint_auth_signing_alg=33;
+  string tos_uri=34;
+  google.protobuf.Timestamp updated_at=35;
+  string userinfo_signed_response_alg=36;
+
+}
+
+message DeleteOAuth2ClientRequest{
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+message GetOAuth2ClientRequest{
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+message PatchOAuth2ClientRequest{
+  string id=1  [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  repeated PatchOAuth2Client client=2;
+}
+
+message PatchOAuth2Client{
+  string from=1;
+  string op=2;
+  string path=3;
+  google.protobuf.Value value=5;
+}
+
+message UpdateOAuth2ClientRequest{
+  string id=1  [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  OAuth2Client client=2;
+}
