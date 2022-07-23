@@ -6,12 +6,13 @@ urls:
   self:
     #publich hydra server
     issuer: http://127.0.0.1:4444
-  #consent page
-  consent: http://127.0.0.1/user/login
-  #login page
+
+#  consent: http://127.0.0.1:7090/user/consent
+#  login: http://127.0.0.1:7090/user/login
+#  logout: http://127.0.0.1:7090/user/logout
+  consent: http://127.0.0.1/user/consent
   login: http://127.0.0.1/user/login
-  #logout page
-  logout: http://127.0.0.1/user/login
+  logout: http://127.0.0.1/user/logout
 
 secrets:
   system:
