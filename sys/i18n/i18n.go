@@ -2,6 +2,7 @@ package i18n
 
 import (
 	"embed"
+	_ "github.com/go-saas/kit/oidc/i18n"
 	"github.com/go-saas/kit/pkg/localize"
 )
 

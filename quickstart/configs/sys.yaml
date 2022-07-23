@@ -72,7 +72,7 @@ sys:
         upstream_id: saas-http
 
       sys-api:
-        uris: ["/v1/sys/*","/assets/sys/*"]
+        uris: ["/v1/sys/*","/v1/oidc/*","/assets/sys/*"]
         upstream_id: sys-http
 
       user-api:

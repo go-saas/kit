@@ -20,3 +20,10 @@ other = "Create Key"
 other = "Update Key"
 [permission.oidc.key.delete]
 other = "Delete Key"
+
+[oidc.title]
+other = "OpenID Connect"
+[oidc.client.management]
+other = "Client Management"
+[oidc.keys.management]
+other = "Key Management"

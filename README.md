@@ -53,12 +53,12 @@ Or with build
 docker compose -f docker-compose.yml -f docker-compose.monolithic.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d --build
 ```
 
-[//]: # (With hydra)
+With hydra
 
-[//]: # (```)
+```
 
-[//]: # (docker-compose -f docker-compose.yml -f docker-compose.hydra.yml up -d)
-[//]: # (```)
+docker-compose -f docker-compose.yml -f docker-compose.hydra.yml up -d
+```
 
 ### Demo
 

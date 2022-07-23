@@ -39,6 +39,8 @@ menus:
           - namespace: "sys.menu"
             resource: "*"
             action: "read"
+
+
   - name: "saas"
     path: "/saas"
     component: "LAYOUT"
@@ -61,6 +63,37 @@ menus:
           - namespace: "saas.tenant"
             resource: "*"
             action: "read"
+
+  - name: "oidc"
+    path: "/oidc"
+    component: "LAYOUT"
+    redirect: "/oidc/clients"
+    title: "oidc.title"
+    icon: "ShopOutlined"
+    priority: 102
+    is_preserved: true
+    requirement:
+      - namespace: "oidc.client"
+        resource: "*"
+        action: "read"
+    children:
+      - name: "oidc.client"
+        path: "/oidc/clients"
+        is_preserved: true
+        title: "oidc.client.management"
+        requirement:
+          - namespace: "oidc.client"
+            resource: "*"
+            action: "read"
+      - name: "oidc.keys"
+        path: "/oidc/keys"
+        is_preserved: true
+        title: "oidc.keys.management"
+        requirement:
+          - namespace: "oidc.key"
+            resource: "*"
+            action: "read"
+
   - name: "dev"
     path: "/dev"
     component: "LAYOUT"

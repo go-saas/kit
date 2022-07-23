@@ -3,6 +3,7 @@ package biz
 import (
 	"context"
 	"github.com/go-saas/kit/pkg/apisix"
+	"github.com/go-saas/kit/sys/api"
 	"github.com/go-saas/kit/sys/private/conf"
 	"github.com/go-saas/saas/seed"
 	"github.com/hibiken/asynq"
@@ -24,7 +25,7 @@ func (a *ApisixSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 		return nil
 	}
 	//Put into background job
-	_, err := a.JobClient.EnqueueContext(ctx, NewApisixMigrationTask(), asynq.MaxRetry(math.MaxInt))
+	_, err := a.JobClient.EnqueueContext(ctx, NewApisixMigrationTask(), asynq.MaxRetry(math.MaxInt), asynq.Group(api.ServiceName))
 	return err
 }
 

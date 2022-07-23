@@ -19,3 +19,10 @@ other = "新增密钥"
 other = "修改密钥"
 [permission.oidc.key.delete]
 other = "删除密钥"
+
+[oidc.title]
+other = "OpenID Connect"
+[oidc.client.management]
+other = "客户端管理"
+[oidc.keys.management]
+other = "密钥管理"

@@ -76,7 +76,7 @@ sys:
         upstream_id: monolithic-http
 
       sys-api:
-        uris: ["/v1/sys/*","/assets/sys/*"]
+        uris: ["/v1/sys/*","/v1/oidc/*","/assets/sys/*"]
         upstream_id: monolithic-http
 
       user-api:
