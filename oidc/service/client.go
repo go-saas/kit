@@ -8,6 +8,7 @@ import (
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"strconv"
 	"time"
 
 	pb "github.com/go-saas/kit/oidc/api/client/v1"
@@ -28,12 +29,13 @@ func (s *ClientService) ListOAuth2Clients(ctx context.Context, req *pb.ListClien
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceClient, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	resp, _, err := s.client.AdminApi.ListOAuth2Clients(ctx).ClientName(req.ClientName).Limit(req.Limit).Offset(req.Offset).Owner(req.Owner).Execute()
+	resp, raw, err := s.client.AdminApi.ListOAuth2Clients(ctx).ClientName(req.ClientName).Limit(req.Limit).Offset(req.Offset).Owner(req.Owner).Execute()
 	if err != nil {
 		return nil, err
 	}
+	total, _ := strconv.Atoi(raw.Header.Get("X-Total-Count"))
 
-	return &pb.OAuth2ClientList{Items: lo.Map(resp, func(t client.OAuth2Client, _ int) *pb.OAuth2Client {
+	return &pb.OAuth2ClientList{TotalCount: int32(total), Items: lo.Map(resp, func(t client.OAuth2Client, _ int) *pb.OAuth2Client {
 		return mapClients(t)
 	})}, nil
 }

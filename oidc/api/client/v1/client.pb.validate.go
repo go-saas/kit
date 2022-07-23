@@ -201,6 +201,8 @@ func (m *OAuth2ClientList) validate(all bool) error {
 
 	}
 
+	// no validation rules for TotalCount
+
 	if len(errors) > 0 {
 		return OAuth2ClientListMultiError(errors)
 	}

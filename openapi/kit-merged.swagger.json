@@ -4533,6 +4533,10 @@
           "items": {
             "$ref": "#/definitions/clientOAuth2Client"
           }
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

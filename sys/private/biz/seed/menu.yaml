@@ -85,14 +85,6 @@ menus:
           - namespace: "oidc.client"
             resource: "*"
             action: "read"
-      - name: "oidc.keys"
-        path: "/oidc/keys"
-        is_preserved: true
-        title: "oidc.keys.management"
-        requirement:
-          - namespace: "oidc.key"
-            resource: "*"
-            action: "read"
 
   - name: "dev"
     path: "/dev"

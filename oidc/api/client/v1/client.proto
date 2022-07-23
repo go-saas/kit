@@ -64,6 +64,7 @@ message ListClientRequest{
 
 message OAuth2ClientList{
   repeated OAuth2Client items=1;
+  int32 total_count=2;
 }
 
 message OAuth2Client{
