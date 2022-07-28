@@ -87,8 +87,12 @@ message GrantConsentResponse{
 
 
 message OAuthClient{
-  string id=1;
-  string name=2;
-  string logo_url=3;
-  google.protobuf.Struct metadata=4;
+  optional string client_id=5;
+  optional string client_name=6;
+  optional string client_uri=9;
+  repeated string contacts=10;
+  optional string logo_uri=17;
+  optional google.protobuf.Struct metadata=18;
+  optional string owner=19;
+  optional string policy_uri=20;
 }

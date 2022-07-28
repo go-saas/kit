@@ -31,7 +31,7 @@ func (s *ClientService) ListOAuth2Clients(ctx context.Context, req *pb.ListClien
 	}
 	resp, raw, err := s.client.AdminApi.ListOAuth2Clients(ctx).ClientName(req.ClientName).Limit(req.Limit).Offset(req.Offset).Owner(req.Owner).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	total, _ := strconv.Atoi(raw.Header.Get("X-Total-Count"))
 
@@ -45,7 +45,7 @@ func (s *ClientService) GetOAuth2Client(ctx context.Context, req *pb.GetOAuth2Cl
 	}
 	resp, raw, err := s.client.AdminApi.GetOAuth2Client(ctx, req.Id).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	c := mapClients(*resp)
 	return c, nil
@@ -57,7 +57,7 @@ func (s *ClientService) CreateOAuth2Client(ctx context.Context, req *pb.OAuth2Cl
 	c := mapOAuthClients(req)
 	resp, raw, err := s.client.AdminApi.CreateOAuth2Client(ctx).OAuth2Client(c).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return mapClients(*resp), nil
 }
@@ -67,7 +67,7 @@ func (s *ClientService) DeleteOAuth2Client(ctx context.Context, req *pb.DeleteOA
 	}
 	raw, err := s.client.AdminApi.DeleteOAuth2Client(ctx, req.Id).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -84,7 +84,7 @@ func (s *ClientService) PatchOAuth2Client(ctx context.Context, req *pb.PatchOAut
 		}
 	})).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return mapClients(*resp), nil
 }
@@ -95,7 +95,7 @@ func (s *ClientService) UpdateOAuth2Client(ctx context.Context, req *pb.UpdateOA
 	}
 	resp, raw, err := s.client.AdminApi.UpdateOAuth2Client(ctx, req.Id).OAuth2Client(mapOAuthClients(req.Client)).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return mapClients(*resp), nil
 }

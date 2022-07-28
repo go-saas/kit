@@ -5,6 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	http2 "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/kratos/v2/transport/http/binding"
+	"github.com/go-saas/kit/oidc/service"
 	v1 "github.com/go-saas/kit/user/api/auth/v1"
 	"github.com/go-saas/kit/user/private/biz"
 	"github.com/ory/hydra-client-go"
@@ -46,18 +47,18 @@ func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) (*v1.GetLoginRes
 	resp.Redirect = req.Redirect
 	if len(req.LoginChallenge) > 0 {
 		//hydra
-		if hreq, _, err := a.hclient.AdminApi.GetLoginRequest(r.Context()).LoginChallenge(req.LoginChallenge).Execute(); err != nil {
-			return resp, err
+		if hreq, raw, err := a.hclient.AdminApi.GetLoginRequest(r.Context()).LoginChallenge(req.LoginChallenge).Execute(); err != nil {
+			return resp, service.TransformHydraErr(raw, err)
 		} else {
 			// If hydra was already able to authenticate the user, skip will be true and we do not need to re-authenticate
 			// the user.
 			if hreq.Skip {
-				acc, _, err := a.hclient.AdminApi.AcceptLoginRequest(r.Context()).
+				acc, raw, err := a.hclient.AdminApi.AcceptLoginRequest(r.Context()).
 					LoginChallenge(hreq.Challenge).
 					AcceptLoginRequest(*client.NewAcceptLoginRequest(hreq.Subject)).
 					Execute()
 				if err != nil {
-					return resp, err
+					return resp, service.TransformHydraErr(raw, err)
 				}
 				resp.Redirect = acc.RedirectTo
 			} else {
@@ -91,9 +92,9 @@ func (a *Auth) LoginPost(w http.ResponseWriter, r *http.Request) (*v1.WebLoginAu
 			//TODO error
 			reject.SetError("access_denied")
 			reject.SetErrorDescription("The resource owner denied the request")
-			hreq, _, err := a.hclient.AdminApi.RejectLoginRequest(r.Context()).LoginChallenge(req.Challenge).RejectRequest(reject).Execute()
+			hreq, raw, err := a.hclient.AdminApi.RejectLoginRequest(r.Context()).LoginChallenge(req.Challenge).RejectRequest(reject).Execute()
 			if err != nil {
-				return resp, err
+				return resp, service.TransformHydraErr(raw, err)
 			}
 			resp.Redirect = hreq.RedirectTo
 			//return
@@ -112,11 +113,11 @@ func (a *Auth) LoginPost(w http.ResponseWriter, r *http.Request) (*v1.WebLoginAu
 		//TODO from config
 		acc.SetRememberFor(3600)
 		acc.SetSubject(uid)
-		hreq, _, err := a.hclient.AdminApi.AcceptLoginRequest(r.Context()).
+		hreq, raw, err := a.hclient.AdminApi.AcceptLoginRequest(r.Context()).
 			LoginChallenge(req.Challenge).
 			AcceptLoginRequest(acc).Execute()
 		if err != nil {
-			return resp, err
+			return resp, service.TransformHydraErr(raw, err)
 		}
 		resp.Redirect = hreq.RedirectTo
 	}
@@ -130,9 +131,9 @@ func (a *Auth) LoginOutGet(w http.ResponseWriter, r *http.Request) (*v1.GetLogou
 	}
 	var resp = &v1.GetLogoutResponse{}
 	if len(req.LogoutChallenge) > 0 {
-		_, _, err := a.hclient.AdminApi.GetLogoutRequest(r.Context()).LogoutChallenge(req.LogoutChallenge).Execute()
+		_, raw, err := a.hclient.AdminApi.GetLogoutRequest(r.Context()).LogoutChallenge(req.LogoutChallenge).Execute()
 		if err != nil {
-			return resp, err
+			return resp, service.TransformHydraErr(raw, err)
 		}
 		resp.Challenge = req.LogoutChallenge
 	}
@@ -151,9 +152,9 @@ func (a *Auth) Logout(w http.ResponseWriter, r *http.Request) (*v1.LogoutRespons
 		return resp, err
 	}
 	if len(req.Challenge) > 0 {
-		hreq, _, err := a.hclient.AdminApi.AcceptLogoutRequest(r.Context()).LogoutChallenge(req.Challenge).Execute()
+		hreq, raw, err := a.hclient.AdminApi.AcceptLogoutRequest(r.Context()).LogoutChallenge(req.Challenge).Execute()
 		if err != nil {
-			return resp, err
+			return resp, service.TransformHydraErr(raw, err)
 		}
 		resp.Redirect = hreq.RedirectTo
 	}
@@ -171,9 +172,9 @@ func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) (*v1.GetConsen
 	if len(req.ConsentChallenge) == 0 {
 		return resp, errors.BadRequest("CONSENT_CHALLENGE_REQUIRED", "")
 	}
-	hreq, _, err := a.hclient.AdminApi.GetConsentRequest(r.Context()).ConsentChallenge(req.ConsentChallenge).Execute()
+	hreq, raw, err := a.hclient.AdminApi.GetConsentRequest(r.Context()).ConsentChallenge(req.ConsentChallenge).Execute()
 	if err != nil {
-		return resp, err
+		return resp, service.TransformHydraErr(raw, err)
 	}
 	if hreq.GetSkip() {
 		acc := *client.NewAcceptConsentRequest()
@@ -183,9 +184,9 @@ func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) (*v1.GetConsen
 		//	AccessToken: nil,
 		//	IdToken:     nil,
 		//})
-		accReq, _, err := a.hclient.AdminApi.AcceptConsentRequest(r.Context()).ConsentChallenge(req.ConsentChallenge).AcceptConsentRequest(acc).Execute()
+		accReq, raw, err := a.hclient.AdminApi.AcceptConsentRequest(r.Context()).ConsentChallenge(req.ConsentChallenge).AcceptConsentRequest(acc).Execute()
 		if err != nil {
-			return resp, err
+			return resp, service.TransformHydraErr(raw, err)
 		}
 		resp.Redirect = accReq.RedirectTo
 		return resp, nil
@@ -193,14 +194,7 @@ func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) (*v1.GetConsen
 	resp.Challenge = hreq.Challenge
 	resp.RequestedScope = hreq.RequestedScope
 	resp.UserId = hreq.GetSubject()
-	c := hreq.GetClient()
-	meta, _ := structpb.NewStruct(c.GetMetadata())
-	resp.Client = &v1.OAuthClient{
-		Id:       c.GetClientId(),
-		Name:     c.GetClientName(),
-		LogoUrl:  c.GetLogoUri(),
-		Metadata: meta,
-	}
+	resp.Client = mapClients(hreq.GetClient())
 
 	return resp, nil
 }
@@ -220,9 +214,9 @@ func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) (*v1.GrantConsent
 		//TODO
 		reject.SetError("access_denied")
 		reject.SetErrorDescription("The resource owner denied the request")
-		hreq, _, err := a.hclient.AdminApi.RejectConsentRequest(r.Context()).ConsentChallenge(req.Challenge).RejectRequest(reject).Execute()
+		hreq, raw, err := a.hclient.AdminApi.RejectConsentRequest(r.Context()).ConsentChallenge(req.Challenge).RejectRequest(reject).Execute()
 		if err != nil {
-			return resp, err
+			return resp, service.TransformHydraErr(raw, err)
 		}
 		resp.Redirect = hreq.RedirectTo
 		//return
@@ -244,9 +238,9 @@ func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) (*v1.GrantConsent
 	//   session.id_token.given_name = 'John'
 	// }
 
-	hreq, _, err := a.hclient.AdminApi.GetConsentRequest(r.Context()).ConsentChallenge(req.Challenge).Execute()
+	hreq, raw, err := a.hclient.AdminApi.GetConsentRequest(r.Context()).ConsentChallenge(req.Challenge).Execute()
 	if err != nil {
-		return resp, err
+		return resp, service.TransformHydraErr(raw, err)
 	}
 
 	acc := client.NewAcceptConsentRequest()
@@ -256,10 +250,33 @@ func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) (*v1.GrantConsent
 	acc.SetRemember(true)
 	acc.SetRememberFor(3600)
 
-	accReq, _, err := a.hclient.AdminApi.AcceptConsentRequest(r.Context()).ConsentChallenge(req.Challenge).AcceptConsentRequest(*acc).Execute()
+	accReq, raw, err := a.hclient.AdminApi.AcceptConsentRequest(r.Context()).ConsentChallenge(req.Challenge).AcceptConsentRequest(*acc).Execute()
 	if err != nil {
-		return resp, err
+		return resp, service.TransformHydraErr(raw, err)
 	}
 	resp.Redirect = accReq.RedirectTo
 	return resp, nil
+}
+
+func mapClients(c client.OAuth2Client) *v1.OAuthClient {
+	ret := &v1.OAuthClient{
+		ClientId:   c.ClientId,
+		ClientName: c.ClientName,
+
+		ClientUri: c.ClientUri,
+		Contacts:  c.Contacts,
+
+		LogoUri:   c.LogoUri,
+		Metadata:  mapInterface(c.Metadata),
+		Owner:     c.Owner,
+		PolicyUri: c.PolicyUri,
+	}
+	return ret
+}
+func mapInterface(m map[string]interface{}) *structpb.Struct {
+	if m == nil {
+		return nil
+	}
+	r, _ := structpb.NewStruct(m)
+	return r
 }

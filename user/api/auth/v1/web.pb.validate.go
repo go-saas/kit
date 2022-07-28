@@ -723,39 +723,61 @@ func (m *OAuthClient) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if m.ClientId != nil {
+		// no validation rules for ClientId
+	}
 
-	// no validation rules for Name
+	if m.ClientName != nil {
+		// no validation rules for ClientName
+	}
 
-	// no validation rules for LogoUrl
+	if m.ClientUri != nil {
+		// no validation rules for ClientUri
+	}
 
-	if all {
-		switch v := interface{}(m.GetMetadata()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, OAuthClientValidationError{
-					field:  "Metadata",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.LogoUri != nil {
+		// no validation rules for LogoUri
+	}
+
+	if m.Metadata != nil {
+
+		if all {
+			switch v := interface{}(m.GetMetadata()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, OAuthClientValidationError{
+						field:  "Metadata",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, OAuthClientValidationError{
+						field:  "Metadata",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetMetadata()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, OAuthClientValidationError{
+				return OAuthClientValidationError{
 					field:  "Metadata",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetMetadata()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return OAuthClientValidationError{
-				field:  "Metadata",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
+	}
+
+	if m.Owner != nil {
+		// no validation rules for Owner
+	}
+
+	if m.PolicyUri != nil {
+		// no validation rules for PolicyUri
 	}
 
 	if len(errors) > 0 {

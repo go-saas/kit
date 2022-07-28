@@ -27,7 +27,7 @@ func (s *KeyService) DeleteJsonWebKeySet(ctx context.Context, req *pb.DeleteJson
 	}
 	raw, err := s.client.AdminApi.DeleteJsonWebKeySet(ctx, req.Set).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -37,7 +37,7 @@ func (s *KeyService) GetJsonWebKeySet(ctx context.Context, req *pb.GetJsonWebKey
 	}
 	resp, raw, err := s.client.AdminApi.GetJsonWebKeySet(ctx, req.Set).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return mapSet(*resp), nil
 }
@@ -51,7 +51,7 @@ func (s *KeyService) CreateJsonWebKeySet(ctx context.Context, req *pb.CreateJson
 		Use: req.Keys.Use,
 	}).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return mapSet(*resp), nil
 }
@@ -61,7 +61,7 @@ func (s *KeyService) UpdateJsonWebKeySet(ctx context.Context, req *pb.UpdateJson
 	}
 	resp, raw, err := s.client.AdminApi.UpdateJsonWebKeySet(ctx, req.Set).JSONWebKeySet(mapPbSet(req.Keys)).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return mapSet(*resp), nil
 }
@@ -71,7 +71,7 @@ func (s *KeyService) DeleteJsonWebKey(ctx context.Context, req *pb.DeleteJsonWeb
 	}
 	raw, err := s.client.AdminApi.DeleteJsonWebKey(ctx, req.Kid, req.Set).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -81,7 +81,7 @@ func (s *KeyService) GetJsonWebKey(ctx context.Context, req *pb.GetJsonWebKeyReq
 	}
 	resp, raw, err := s.client.AdminApi.GetJsonWebKey(ctx, req.Kid, req.Set).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return mapSet(*resp), nil
 }
@@ -92,7 +92,7 @@ func (s *KeyService) UpdateJsonWebKey(ctx context.Context, req *pb.UpdateJsonWeb
 	}
 	resp, raw, err := s.client.AdminApi.UpdateJsonWebKey(ctx, req.Kid, req.Set).JSONWebKey(mapPbKey(req.Key)).Execute()
 	if err != nil {
-		return nil, transformErr(raw, err)
+		return nil, TransformHydraErr(raw, err)
 	}
 	return mapKey(*resp), nil
 }

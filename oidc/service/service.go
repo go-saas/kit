@@ -39,7 +39,7 @@ func NewGrpcServerRegister(client *ClientService,
 	})
 }
 
-func transformErr(resp *http.Response, err error) error {
+func TransformHydraErr(resp *http.Response, err error) error {
 	if apiError, ok := err.(*client.GenericOpenAPIError); ok {
 		if jsonErr, ok := apiError.Model().(client.JsonError); ok {
 			reason := ""

@@ -6152,17 +6152,39 @@
     "v1OAuthClient": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
+        "clientId": {
+          "type": "string",
+          "x-nullable": true
         },
-        "name": {
-          "type": "string"
+        "clientName": {
+          "type": "string",
+          "x-nullable": true
         },
-        "logoUrl": {
-          "type": "string"
+        "clientUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "logoUri": {
+          "type": "string",
+          "x-nullable": true
         },
         "metadata": {
-          "type": "object"
+          "type": "object",
+          "x-nullable": true
+        },
+        "owner": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "policyUri": {
+          "type": "string",
+          "x-nullable": true
         }
       }
     },
