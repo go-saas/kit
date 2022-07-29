@@ -1,7 +1,6 @@
 package plugins
 
 import (
-	"encoding/json"
 	"fmt"
 	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
 	"github.com/apache/apisix-go-plugin-runner/pkg/log"
@@ -107,12 +106,7 @@ func (p *KitAuthn) Name() string {
 }
 
 func (p *KitAuthn) ParseConf(in []byte) (interface{}, error) {
-	conf := KitAuthConf{}
-	err := json.Unmarshal(in, &conf)
-	if err != nil {
-		return nil, err
-	}
-	return conf, err
+	return nil, nil
 }
 
 func abortWithError(r pkgHTTP.Request, err error, w http.ResponseWriter) {
@@ -137,7 +131,7 @@ func isAjax(r pkgHTTP.Request) bool {
 	return len(h) > 0 && h[0] == "XMLHttpRequest"
 }
 
-func (p *KitAuthn) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
+func (p *KitAuthn) Filter(_ interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
 	//clean internal headers
 	for s, _ := range r.Header().View() {
 		if strings.HasPrefix(strings.ToLower(s), api.InternalKeyPrefix) {
