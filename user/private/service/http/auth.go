@@ -43,9 +43,16 @@ func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) (*v1.GetLoginRes
 	if err := binding.BindQuery(r.URL.Query(), &req); err != nil {
 		return nil, err
 	}
-	//TODO already signin?
 	var resp = &v1.GetLoginResponse{}
-	resp.Redirect = req.Redirect
+	ui, _ := authn.FromUserContext(r.Context())
+
+	if len(ui.GetId()) > 0 {
+		resp.Redirect = req.Redirect
+		if len(resp.Redirect) == 0 {
+			resp.Redirect = "/"
+		}
+	}
+
 	if len(req.LoginChallenge) > 0 {
 		//hydra
 		if hreq, raw, err := a.hclient.AdminApi.GetLoginRequest(r.Context()).LoginChallenge(req.LoginChallenge).Execute(); err != nil {
@@ -57,6 +64,16 @@ func (a *Auth) LoginGet(w http.ResponseWriter, r *http.Request) (*v1.GetLoginRes
 				acc, raw, err := a.hclient.AdminApi.AcceptLoginRequest(r.Context()).
 					LoginChallenge(hreq.Challenge).
 					AcceptLoginRequest(*client.NewAcceptLoginRequest(hreq.Subject)).
+					Execute()
+				if err != nil {
+					return resp, service.TransformHydraErr(raw, err)
+				}
+				resp.Redirect = acc.RedirectTo
+			} else if len(ui.GetId()) > 0 {
+				//user logged in
+				acc, raw, err := a.hclient.AdminApi.AcceptLoginRequest(r.Context()).
+					LoginChallenge(hreq.Challenge).
+					AcceptLoginRequest(*client.NewAcceptLoginRequest(ui.GetId())).
 					Execute()
 				if err != nil {
 					return resp, service.TransformHydraErr(raw, err)

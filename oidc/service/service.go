@@ -51,6 +51,8 @@ func TransformHydraErr(resp *http.Response, err error) error {
 				msg = *jsonErr.ErrorDescription
 			}
 			return errors.New(resp.StatusCode, reason, msg)
+		} else {
+			return errors.New(resp.StatusCode, apiError.Error(), string(apiError.Body()))
 		}
 	}
 	return err
