@@ -6,6 +6,7 @@ import (
 	http2 "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/kratos/v2/transport/http/binding"
 	"github.com/go-saas/kit/oidc/service"
+	"github.com/go-saas/kit/pkg/authn"
 	v1 "github.com/go-saas/kit/user/api/auth/v1"
 	"github.com/go-saas/kit/user/private/biz"
 	"github.com/ory/hydra-client-go"
@@ -164,6 +165,10 @@ func (a *Auth) Logout(w http.ResponseWriter, r *http.Request) (*v1.LogoutRespons
 }
 
 func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) (*v1.GetConsentResponse, error) {
+	ui, err := authn.ErrIfUnauthenticated(r.Context())
+	if err != nil {
+		return nil, err
+	}
 	var req v1.GetConsentRequest
 	if err := binding.BindQuery(r.URL.Query(), &req); err != nil {
 		return nil, err
@@ -175,6 +180,9 @@ func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) (*v1.GetConsen
 	hreq, raw, err := a.hclient.AdminApi.GetConsentRequest(r.Context()).ConsentChallenge(req.ConsentChallenge).Execute()
 	if err != nil {
 		return resp, service.TransformHydraErr(raw, err)
+	}
+	if ui.GetId() != hreq.GetSubject() {
+		return nil, errors.Unauthorized("SUB_MISMATCH", "")
 	}
 	if hreq.GetSkip() {
 		acc := *client.NewAcceptConsentRequest()
@@ -198,7 +206,12 @@ func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) (*v1.GetConsen
 
 	return resp, nil
 }
+
 func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) (*v1.GrantConsentResponse, error) {
+	_, err := authn.ErrIfUnauthenticated(r.Context())
+	if err != nil {
+		return nil, err
+	}
 	var req v1.GrantConsentRequest
 	if err := a.reqDecoder(r, &req); err != nil {
 		return nil, err
