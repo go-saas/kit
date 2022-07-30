@@ -7,10 +7,10 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http/binding"
 	"github.com/go-saas/kit/oidc/service"
 	"github.com/go-saas/kit/pkg/authn"
+	"github.com/go-saas/kit/pkg/utils"
 	v1 "github.com/go-saas/kit/user/api/auth/v1"
 	"github.com/go-saas/kit/user/private/biz"
 	"github.com/ory/hydra-client-go"
-	"google.golang.org/protobuf/types/known/structpb"
 	"net/http"
 )
 
@@ -297,16 +297,9 @@ func mapClients(c client.OAuth2Client) *v1.OAuthClient {
 		Contacts:  c.Contacts,
 
 		LogoUri:   c.LogoUri,
-		Metadata:  mapInterface(c.Metadata),
+		Metadata:  utils.Map2Structpb(c.Metadata),
 		Owner:     c.Owner,
 		PolicyUri: c.PolicyUri,
 	}
 	return ret
-}
-func mapInterface(m map[string]interface{}) *structpb.Struct {
-	if m == nil {
-		return nil
-	}
-	r, _ := structpb.NewStruct(m)
-	return r
 }

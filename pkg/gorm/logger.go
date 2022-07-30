@@ -14,6 +14,7 @@ const (
 	DefaultSlowThreshold = 200 * time.Millisecond
 )
 
+// Logger GORM log adapter
 type Logger struct {
 	klog.Logger
 	LogLevel      logger.LogLevel

@@ -3,16 +3,13 @@ package service
 import (
 	"context"
 	"github.com/go-saas/kit/oidc/api"
+	pb "github.com/go-saas/kit/oidc/api/client/v1"
 	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/utils"
 	client "github.com/ory/hydra-client-go"
 	"github.com/samber/lo"
-	"google.golang.org/protobuf/types/known/structpb"
-	"google.golang.org/protobuf/types/known/timestamppb"
-	"strconv"
-	"time"
-
-	pb "github.com/go-saas/kit/oidc/api/client/v1"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"strconv"
 )
 
 type ClientService struct {
@@ -80,7 +77,7 @@ func (s *ClientService) PatchOAuth2Client(ctx context.Context, req *pb.PatchOAut
 			From:  t.From,
 			Op:    t.Op,
 			Path:  t.Path,
-			Value: mapStruct(t.Value),
+			Value: utils.Structpb2Map(t.Value),
 		}
 	})).Execute()
 	if err != nil {
@@ -112,14 +109,14 @@ func mapClients(c client.OAuth2Client) *pb.OAuth2Client {
 		ClientSecretExpiresAt:             c.ClientSecretExpiresAt,
 		ClientUri:                         c.ClientUri,
 		Contacts:                          c.Contacts,
-		CreatedAt:                         mapTime(c.CreatedAt),
+		CreatedAt:                         utils.Time2Timepb(c.CreatedAt),
 		FrontchannelLogoutSessionRequired: c.FrontchannelLogoutSessionRequired,
 		FrontchannelLogoutUri:             c.FrontchannelLogoutUri,
 		GrantTypes:                        c.GrantTypes,
-		Jwks:                              mapInterface(c.Jwks),
+		Jwks:                              utils.Map2Structpb(c.Jwks),
 		JwksUri:                           c.JwksUri,
 		LogoUri:                           c.LogoUri,
-		Metadata:                          mapInterface(c.Metadata),
+		Metadata:                          utils.Map2Structpb(c.Metadata),
 		Owner:                             c.Owner,
 		PolicyUri:                         c.PolicyUri,
 		PostLogoutRedirectUris:            c.PostLogoutRedirectUris,
@@ -135,7 +132,7 @@ func mapClients(c client.OAuth2Client) *pb.OAuth2Client {
 		TokenEndpointAuthMethod:           c.TokenEndpointAuthMethod,
 		TokenEndpointAuthSigningAlg:       c.TokenEndpointAuthSigningAlg,
 		TosUri:                            c.TosUri,
-		UpdatedAt:                         mapTime(c.UpdatedAt),
+		UpdatedAt:                         utils.Time2Timepb(c.UpdatedAt),
 		UserinfoSignedResponseAlg:         c.UserinfoSignedResponseAlg,
 	}
 	return ret
@@ -153,14 +150,14 @@ func mapOAuthClients(c *pb.OAuth2Client) client.OAuth2Client {
 		ClientSecretExpiresAt:             c.ClientSecretExpiresAt,
 		ClientUri:                         c.ClientUri,
 		Contacts:                          c.Contacts,
-		CreatedAt:                         mapPbTime(c.CreatedAt),
+		CreatedAt:                         utils.Timepb2Time(c.CreatedAt),
 		FrontchannelLogoutSessionRequired: c.FrontchannelLogoutSessionRequired,
 		FrontchannelLogoutUri:             c.FrontchannelLogoutUri,
 		GrantTypes:                        c.GrantTypes,
-		Jwks:                              mapStruct(c.Jwks),
+		Jwks:                              utils.Structpb2Map(c.Jwks),
 		JwksUri:                           c.JwksUri,
 		LogoUri:                           c.LogoUri,
-		Metadata:                          mapStruct(c.Metadata),
+		Metadata:                          utils.Structpb2Map(c.Metadata),
 		Owner:                             c.Owner,
 		PolicyUri:                         c.PolicyUri,
 		PostLogoutRedirectUris:            c.PostLogoutRedirectUris,
@@ -176,36 +173,8 @@ func mapOAuthClients(c *pb.OAuth2Client) client.OAuth2Client {
 		TokenEndpointAuthMethod:           c.TokenEndpointAuthMethod,
 		TokenEndpointAuthSigningAlg:       c.TokenEndpointAuthSigningAlg,
 		TosUri:                            c.TosUri,
-		UpdatedAt:                         mapPbTime(c.UpdatedAt),
+		UpdatedAt:                         utils.Timepb2Time(c.UpdatedAt),
 		UserinfoSignedResponseAlg:         c.UserinfoSignedResponseAlg,
 	}
 	return ret
-}
-
-func mapTime(time *time.Time) *timestamppb.Timestamp {
-	if time == nil {
-		return nil
-	}
-	return timestamppb.New(*time)
-}
-func mapInterface(m map[string]interface{}) *structpb.Struct {
-	if m == nil {
-		return nil
-	}
-	r, _ := structpb.NewStruct(m)
-	return r
-}
-
-func mapStruct(m *structpb.Struct) map[string]interface{} {
-	if m == nil {
-		return nil
-	}
-	return m.AsMap()
-}
-func mapPbTime(t *timestamppb.Timestamp) *time.Time {
-	if t == nil {
-		return nil
-	}
-	ret := t.AsTime()
-	return &ret
 }
