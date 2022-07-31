@@ -16,6 +16,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Publish to demo server
         if: github.repository == 'go-saas/kit'
         uses: appleboy/scp-action@master
