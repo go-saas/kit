@@ -17,9 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Publish to demo server
-        if: |
-          github.event_name == 'push'
-          && github.repository == 'go-saas/kit'
+        if: github.repository == 'go-saas/kit'
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
