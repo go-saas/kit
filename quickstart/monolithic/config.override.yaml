@@ -37,6 +37,13 @@ sys:
           opentelemetry:
             sampler:
               name: always_on
+
+      kit_authn:
+        plugins:
+          ext-plugin-pre-req:
+            conf:
+              - name: "kit_authn"
+
       cors:
         plugins:
           cors:
@@ -46,15 +53,6 @@ sys:
         uris: [ "/.well-known/jwks.json","/.well-known/openid-configuration","/oauth2/*","/userinfo" ]
         upstream_id: hydra-public
         priority: 100
-
-      kit_authn:
-        priority: 90 #lower then hydra-public
-        uri: /*
-        plugins:
-          ext-plugin-pre-req:
-            conf:
-              - name: "kit_authn"
-                value: "{}"
 
       api-docs:
         uri: /swagger*

@@ -22,6 +22,7 @@ import (
 	"github.com/go-saas/saas"
 	shttp "github.com/go-saas/saas/http"
 	"github.com/go-saas/sessions"
+	"github.com/samber/lo"
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -46,6 +47,13 @@ type KitAuthn struct {
 
 type KitAuthConf struct {
 }
+
+var (
+	WhiteAuthList = []string{
+		"/oauth2",
+		"/userinfo",
+	}
+)
 
 var (
 	tokenizer           jwt.Tokenizer
@@ -132,6 +140,11 @@ func isAjax(r pkgHTTP.Request) bool {
 }
 
 func (p *KitAuthn) Filter(_ interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
+	currentPath := string(r.Path())
+	_, shouldSkip := lo.Find(WhiteAuthList, func(s string) bool { return strings.HasPrefix(currentPath, s) })
+	if shouldSkip {
+		return
+	}
 	//clean internal headers
 	for s, _ := range r.Header().View() {
 		if strings.HasPrefix(strings.ToLower(s), api.InternalKeyPrefix) {
