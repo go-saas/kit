@@ -28,9 +28,7 @@ jobs:
           source: "quickstart/,.env,docker-compose.yml,docker-compose.tracing.yml,docker-compose.kafka.yml,docker-compose.ms.yml"
           target: "/app/go-saas-kit"
       - name: Update demo server
-        if: |
-          github.event_name == 'push'
-          && github.repository == 'go-saas/kit'
+        if: github.repository == 'go-saas/kit'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -41,5 +39,5 @@ jobs:
           script: |
             echo "$DOCKER_TAG"
             cd /app/go-saas-kit
-            docker-compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml pull
-            docker-compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml up -d --remove-orphans
+            sudo docker-compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml pull
+            sudo docker-compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml up -d --remove-orphans
