@@ -38,6 +38,7 @@ sys:
           ext-plugin-pre-req:
             conf:
               - name: "kit_authn"
+                value: "{}"
       cors:
         plugins:
           cors:
