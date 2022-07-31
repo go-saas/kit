@@ -33,6 +33,36 @@ services:
     ports:
       - "9000:9000"
 
+
+  hydra:
+    image: oryd/hydra:v1.11.8
+    ports:
+      - "4444:4444" # Public port
+      - "4445:4445" # Admin port
+      - "5555:5555" # Port for hydra token user
+    command:
+      serve -c /etc/config/hydra/hydra.yml all --dangerous-force-http
+    volumes:
+      - ./quickstart/configs/hydra:/etc/config/hydra
+
+    environment:
+      - DSN=mysql://root:youShouldChangeThis@tcp(mysqld:3306)/kit?max_conns=20&max_idle_conns=4
+    restart: unless-stopped
+    depends_on:
+      - hydra-migrate
+
+  hydra-migrate:
+    image: oryd/hydra:v1.11.8
+    environment:
+      - DSN=mysql://root:youShouldChangeThis@tcp(mysqld:3306)/kit?max_conns=20&max_idle_conns=4
+    command:
+      migrate -c /etc/config/hydra/hydra.yml sql -e --yes
+    volumes:
+      - ./quickstart/configs/hydra:/etc/config/hydra
+    restart: on-failure
+    depends_on:
+      - mysqld
+
   mysqld:
     image: mysql:8.0
     restart: always

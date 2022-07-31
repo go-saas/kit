@@ -53,23 +53,12 @@ Or with build
 docker compose -f docker-compose.yml -f docker-compose.monolithic.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d --build
 ```
 
-With hydra
-
-```
-
-docker-compose -f docker-compose.yml -f docker-compose.hydra.yml up -d
-```
-
 ### Demo
 
 Open `http://localhost:80` to see the web ui
 
 Username: admin  
 Password: 123456
-
-Open `http://localhost:80/dev/docs` to see swagger openapi  
-Open `http://localhost:80/dev/jaeger` to see jaeger tracing  
-Open `http://localhost:80/dev/jobs` to see background job status  
 
 # Development
 
