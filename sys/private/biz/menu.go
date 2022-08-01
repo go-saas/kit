@@ -61,4 +61,7 @@ func (m *Menu) MergeWithPreservedFields(p *Menu) {
 	m.Title = p.Title
 	m.Icon = p.Icon
 	m.HideInMenu = p.HideInMenu
+	m.MicroApp = p.MicroApp
+	m.MicroAppName = p.MicroAppName
+	m.MicroAppBaseRoute = p.MicroAppBaseRoute
 }
