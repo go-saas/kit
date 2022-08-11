@@ -14,6 +14,10 @@ import (
 	"time"
 )
 
+var (
+	validSchemas = []string{"http", "https", "grpc", "grpcs", "tcp", "udp", "tls"}
+)
+
 type Option struct {
 	Services []string
 	Timeout  time.Duration
@@ -77,7 +81,11 @@ func toUpstreams(serviceName string, srvs []*registry.ServiceInstance) (map[stri
 		srvName := serviceName + "-" + raw.Scheme
 		srv, ok := ret[srvName]
 		if !ok {
-			srv = &Upstream{Scheme: raw.Scheme, Type: "roundrobin"}
+			schema := raw.Scheme
+			if !lo.Contains(validSchemas, schema) {
+				schema = ""
+			}
+			srv = &Upstream{Scheme: schema, Type: "roundrobin"}
 			ret[srvName] = srv
 		}
 		srv.Nodes = append(srv.Nodes, &Node{
