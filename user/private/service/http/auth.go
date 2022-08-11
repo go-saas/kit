@@ -225,7 +225,7 @@ func (a *Auth) ConsentGet(w http.ResponseWriter, r *http.Request) (*v1.GetConsen
 }
 
 func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) (*v1.GrantConsentResponse, error) {
-	_, err := authn.ErrIfUnauthenticated(r.Context())
+	userInfo, err := authn.ErrIfUnauthenticated(r.Context())
 	if err != nil {
 		return nil, err
 	}
@@ -271,6 +271,10 @@ func (a *Auth) Consent(w http.ResponseWriter, r *http.Request) (*v1.GrantConsent
 	hreq, raw, err := a.hclient.AdminApi.GetConsentRequest(r.Context()).ConsentChallenge(req.Challenge).Execute()
 	if err != nil {
 		return resp, service.TransformHydraErr(raw, err)
+	}
+
+	if hreq.Subject == nil || *hreq.Subject != userInfo.GetId() {
+		return nil, errors.Unauthorized("", "")
 	}
 
 	acc := client.NewAcceptConsentRequest()
