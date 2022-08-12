@@ -33,7 +33,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -56,7 +56,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -89,7 +89,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -122,7 +122,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -153,7 +153,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -184,7 +184,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -215,7 +215,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -252,7 +252,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -291,7 +291,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpcStatus"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -640,6 +640,24 @@
         }
       }
     },
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
     "operationStringFilterOperation": {
       "type": "object",
       "properties": {
@@ -721,24 +739,6 @@
       ],
       "default": "NULL_VALUE",
       "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
-    },
-    "rpcStatus": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "message": {
-          "type": "string"
-        },
-        "details": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/protobufAny"
-          }
-        }
-      }
     },
     "v1CreateTenantRequest": {
       "type": "object",
