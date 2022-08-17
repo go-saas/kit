@@ -2,26 +2,21 @@ version: '3.7'
 services:
 
   zoo1:
-    image: wurstmeister/zookeeper
-    hostname: zoo1
-    #    ports:
-    #      - "2181:2181"
-    restart: always
+    image: docker.io/bitnami/zookeeper:3.8
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
 
   kafka:
-    image: wurstmeister/kafka
+    image: docker.io/bitnami/kafka:3.2
     ports:
-      - "9094:9094"
+      - "9094:9092"
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_BROKER_ID: 0
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_CREATE_TOPICS: "kit:1:1"
-      KAFKA_LISTENERS: INTERNAL://:9092,OUTSIDE://:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://localhost:9094
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zoo1:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
       - zoo1
     restart: always
