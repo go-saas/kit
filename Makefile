@@ -3,17 +3,22 @@ VERSION=$(shell git describe --tags --always)
 BUF_VERSION=v1.5.0
 DIR=$(shell pwd)
 
+SRV_PROTO_DIR = dtm event oidc user sys saas
+PKG_PROTO_DIR = $(patsubst %/,%,$(shell cd pkg && ls -d */))
+OTHER_PROTO_DIR = $(patsubst %/,%,$(shell cd proto && ls -d */))
+
 .PHONY: link
 # link proto
 link:
-	mkdir -p buf
-	ln -sfn $(DIR)/dtm $(DIR)/buf/dtm
-	ln -sfn $(DIR)/event $(DIR)/buf/event
-	ln -sfn $(DIR)/oidc $(DIR)/buf/oidc
-	ln -sfn $(DIR)/user $(DIR)/buf/user
-	ln -sfn $(DIR)/sys $(DIR)/buf/sys
-	ln -sfn $(DIR)/saas $(DIR)/buf/saas
-
+	for d in $(SRV_PROTO_DIR); do \
+  		ln -sfn $(DIR)/$$d $(DIR)/buf/$$d; \
+  	done
+	for d in $(PKG_PROTO_DIR); do \
+		ln -sfn $(DIR)/pkg/$$d $(DIR)/buf/$$d; \
+    done
+	for d in $(OTHER_PROTO_DIR); do \
+		ln -sfn $(DIR)/proto/$$d $(DIR)/buf/$$d; \
+    done
 
 .PHONY: init
 # init env

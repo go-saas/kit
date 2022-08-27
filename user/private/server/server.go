@@ -6,8 +6,7 @@ import (
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	kitdi "github.com/go-saas/kit/pkg/di"
-	ksaas "github.com/go-saas/kit/pkg/saas"
-	uow2 "github.com/go-saas/kit/pkg/uow"
+	"github.com/go-saas/kit/pkg/server"
 	api2 "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/kit/user/private/biz"
 	"github.com/go-saas/kit/user/private/data"
@@ -40,11 +39,11 @@ func NewSeeding(uow uow.Manager,
 	roleSeed *biz.RoleSeed,
 	userSeed *biz.UserSeed,
 	p *biz.PermissionSeeder) seed.Contrib {
-	return seed.Chain(migrate, dtmMigrator, uow2.NewUowContrib(uow, roleSeed, userSeed, p))
+	return seed.Chain(migrate, dtmMigrator, server.NewUowContrib(uow, roleSeed, userSeed, p))
 }
 
 func NewSeeder(ts saas.TenantStore, seeds []seed.Contrib) seed.Seeder {
-	res := seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, seeds...)))
+	res := seed.NewDefaultSeeder(server.NewTraceContrib(server.SeedChangeTenant(ts, seeds...)))
 	return res
 }
 

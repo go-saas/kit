@@ -1,9 +1,10 @@
-package saas
+package server
 
 import (
 	"context"
 	"github.com/go-saas/saas"
 	"github.com/go-saas/saas/seed"
+	"github.com/go-saas/uow"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )
@@ -49,5 +50,13 @@ func NewTraceContrib(next ...seed.Contrib) seed.Contrib {
 		}()
 		err = seed.Chain(next...).Seed(ctx, sCtx)
 		return
+	})
+}
+
+func NewUowContrib(uow uow.Manager, next ...seed.Contrib) seed.Contrib {
+	return SeedFunc(func(ctx context.Context, sCtx *seed.Context) error {
+		return uow.WithNew(ctx, func(ctx context.Context) error {
+			return seed.Chain(next...).Seed(ctx, sCtx)
+		})
 	})
 }

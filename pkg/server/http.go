@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/blob"
 	"github.com/go-saas/kit/pkg/conf"
@@ -135,6 +136,7 @@ func HandleBlobs(basePath string, cfg blob.Config, srv *khttp.Server, factory bl
 	}
 	srv.HandlePrefix(basePath, router)
 }
+
 func handleBlob(name string, config *blob.BlobConfig, factory blob.Factory, router *mux.Router) {
 	a := factory.Get(context.Background(), name, false).GetAfero()
 	basePath := fmt.Sprintf("/%s", strings.TrimPrefix(config.BasePath, "/"))
@@ -208,6 +210,17 @@ func IsAjax(ctx context.Context) bool {
 		return len(h) > 0 && h[0] == "XMLHttpRequest"
 	}
 	return false
+}
+
+func AuthnGuardian(encoder khttp.EncodeErrorFunc, handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		_, err := authn.ErrIfUnauthenticated(request.Context())
+		if err != nil {
+			encoder(writer, request, err)
+			return
+		}
+		handler.ServeHTTP(writer, request)
+	})
 }
 
 // AuthzGuardian guard http.Handler with authz

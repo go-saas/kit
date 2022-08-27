@@ -1,6 +1,4 @@
 version: v1
 directories:
   - buf
-  - proto
-  - pkg
   - examples

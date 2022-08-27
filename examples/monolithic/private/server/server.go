@@ -5,7 +5,7 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/dal"
 	kitdi "github.com/go-saas/kit/pkg/di"
-	ksaas "github.com/go-saas/kit/pkg/saas"
+	"github.com/go-saas/kit/pkg/server"
 	sserver "github.com/go-saas/kit/saas/private/server"
 	sysserver "github.com/go-saas/kit/sys/private/server"
 	userver "github.com/go-saas/kit/user/private/server"
@@ -33,7 +33,7 @@ var ProviderSet = kitdi.NewSet(
 const ConnName = dal.ConnName("default")
 
 func NewSeeder(ts saas.TenantStore, seeds []seed.Contrib) seed.Seeder {
-	res := seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, seeds...)))
+	res := seed.NewDefaultSeeder(server.NewTraceContrib(server.SeedChangeTenant(ts, seeds...)))
 	return res
 }
 

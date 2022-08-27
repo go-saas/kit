@@ -5,8 +5,7 @@ import (
 	kapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	kitdi "github.com/go-saas/kit/pkg/di"
-	ksaas "github.com/go-saas/kit/pkg/saas"
-	uow2 "github.com/go-saas/kit/pkg/uow"
+	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/saas/api"
 	"github.com/go-saas/kit/saas/private/biz"
 	"github.com/go-saas/kit/saas/private/data"
@@ -32,11 +31,11 @@ var ProviderSet = kitdi.NewSet(
 var ClientName kapi.ClientName = api.ServiceName
 
 func NewSeeding(uow uow.Manager, migrate *data.Migrate) seed.Contrib {
-	return uow2.NewUowContrib(uow, seed.Chain(migrate))
+	return server.NewUowContrib(uow, seed.Chain(migrate))
 }
 
 func NewSeeder(ts saas.TenantStore, seeds []seed.Contrib) seed.Seeder {
-	res := seed.NewDefaultSeeder(ksaas.NewTraceContrib(ksaas.SeedChangeTenant(ts, seeds...)))
+	res := seed.NewDefaultSeeder(server.NewTraceContrib(server.SeedChangeTenant(ts, seeds...)))
 	return res
 }
 
