@@ -18,5 +18,14 @@ jobs:
       - uses: bufbuild/buf-setup-action@v1.5.0
       - name: link
         run: make link
+
       - name: test buf build
         run: buf build
+
+      - uses: bufbuild/buf-push-action@v1.0.1
+        if: |
+          github.event_name == 'push'
+          && github.repository == 'go-saas/kit'
+        with:
+          input: buf
+          buf_token: ${{ secrets.BUF_TOKEN }}

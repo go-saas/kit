@@ -42,6 +42,9 @@ bin/
 
 .assets/
 
-buf/
+buf/*
+!buf/buf.yaml
+
+
 
 pulsardata/
