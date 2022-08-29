@@ -5,6 +5,7 @@ services:
     image: docker.io/bitnami/zookeeper:3.8
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+    restart: always
 
   kafka:
     image: docker.io/bitnami/kafka:3.2
