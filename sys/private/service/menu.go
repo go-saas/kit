@@ -115,7 +115,9 @@ func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest)
 	//copy menu
 	copyG := *g
 	MapUpdatePbMenu2Biz(req.Menu, g)
-	g.MergeWithPreservedFields(&copyG)
+	if g.IsPreserved {
+		g.MergeWithPreservedFields(&copyG)
+	}
 	if err := s.repo.Update(ctx, g.ID.String(), g, nil); err != nil {
 		return nil, err
 	}
