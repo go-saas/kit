@@ -17,6 +17,6 @@ func NewApisixMigrationTask() *asynq.Task {
 
 func NewApisixMigrationTaskHandler(seeder *ApisixSeed) *job.Handler {
 	return job.NewHandlerFunc(JobTypeApisixMigration, func(ctx context.Context, t *asynq.Task) error {
-		return seeder.Do()
+		return seeder.Do(ctx)
 	})
 }

@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the docker image
-        run: docker-compose -f docker-compose.yml -f docker-compose.ms.yml build user saas sys
+        run: docker-compose -f docker-compose.yml -f docker-compose.ms.yml build user saas sys realtime
 
       - name: Docker login
         if: |
@@ -35,6 +35,6 @@ jobs:
           github.event_name == 'push'
           && github.repository == 'go-saas/kit'
 
-        run: docker-compose -f docker-compose.yml -f docker-compose.ms.yml push user saas sys
+        run: docker-compose -f docker-compose.yml -f docker-compose.ms.yml push user saas sys realtime
 
           

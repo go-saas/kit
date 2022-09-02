@@ -70,13 +70,13 @@ func dispatchEvents(db *gorm.DB) {
 // RegisterAggCallbacks register callback into GORM DB
 func RegisterAggCallbacks(db *gorm.DB) {
 	callback := db.Callback()
-	if callback.Create().Get("agg:events") == nil {
-		callback.Create().After("gorm:after_create").Register("agg:events", dispatchEvents)
+	if callback.Create().Get("agg:create_events") == nil {
+		callback.Create().After("gorm:after_create").Register("agg:create_events", dispatchEvents)
 	}
-	if callback.Update().Get("agg:events") == nil {
-		callback.Update().After("gorm:after_update").Register("agg:events", dispatchEvents)
+	if callback.Update().Get("agg:update_events") == nil {
+		callback.Update().After("gorm:after_update").Register("agg:update_events", dispatchEvents)
 	}
-	if callback.Delete().Get("agg:events") == nil {
-		callback.Update().After("gorm:after_delete").Register("agg:events", dispatchEvents)
+	if callback.Delete().Get("agg:delete_events") == nil {
+		callback.Update().After("gorm:after_delete").Register("agg:delete_events", dispatchEvents)
 	}
 }

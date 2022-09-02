@@ -35,6 +35,18 @@ services:
       context: .
       dockerfile: ./saas/Dockerfile
 
+  realtime:
+    image: ${DOCKER_REGISTRY}go-saas-kit-realtime:${DOCKER_TAG:-latest}
+    depends_on:
+      - user
+    volumes:
+      - ./quickstart/configs:/data/conf
+      - ./quickstart/.assets:/app/.assets
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./realtime/Dockerfile
+
   sys:
     image: ${DOCKER_REGISTRY}go-saas-kit-sys:${DOCKER_TAG:-latest}
     depends_on:

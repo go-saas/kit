@@ -9,6 +9,7 @@ import (
 
 type Repo[TEntity any, TKey any, TQuery any] interface {
 	List(ctx context.Context, query *TQuery) ([]*TEntity, error)
+	ListCursor(ctx context.Context, query *TQuery) (*CursorResult[TEntity], error)
 	First(ctx context.Context, query *TQuery) (*TEntity, error)
 	Count(ctx context.Context, query *TQuery) (total int64, filtered int64, err error)
 	Get(ctx context.Context, id TKey) (*TEntity, error)
@@ -17,6 +18,12 @@ type Repo[TEntity any, TKey any, TQuery any] interface {
 	Update(ctx context.Context, id TKey, entity *TEntity, p query.Select) error
 	Upsert(ctx context.Context, entity *TEntity) error
 	Delete(ctx context.Context, id TKey) error
+}
+
+type CursorResult[TEntity any] struct {
+	Before *string
+	After  *string
+	Items  []TEntity
 }
 
 type BeforeCreate[TEntity any] struct {
@@ -102,18 +109,25 @@ func ParseSort(fields []string) string {
 }
 
 func ParseSortIntoOpt(fields []string) []*SortOpt {
-	sortParams := make([]*SortOpt, len(fields))
-	for i, field := range fields {
+	var sortParams []*SortOpt
+	for _, field := range fields {
+		if len(field) == 0 {
+			continue
+		}
 		var orderBy string
 		if order, ok := sortDirection[field[0]]; ok {
 			orderBy = order
-			field = field[1:]
+			if len(field) > 1 {
+				field = field[1:]
+			} else {
+				field = ""
+			}
 		}
 		opt := &SortOpt{
 			Field:  field,
 			IsDesc: orderBy == "desc",
 		}
-		sortParams[i] = opt
+		sortParams = append(sortParams, opt)
 	}
 	return sortParams
 }

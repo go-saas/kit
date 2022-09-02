@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	kerrors "github.com/go-kratos/kratos/v2/errors"
+	"github.com/pilagod/gorm-cursor-paginator/v2/paginator"
 	"gorm.io/gorm/clause"
 
 	"github.com/go-saas/kit/pkg/data"
@@ -88,7 +89,7 @@ type BuildSortScope[TQuery any] interface {
 	BuildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB
 }
 
-//BuildSortScope build sorting query
+//buildSortScope build sorting query
 func (r *Repo[TEntity, TKey, TQuery]) buildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildSortScope[TQuery]); ok {
 		return override.BuildSortScope(q)
@@ -106,10 +107,6 @@ type BuildPageScope[TQuery any] interface {
 	BuildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB
 }
 
-type UpdateAssociation[TEntity any] interface {
-	UpdateAssociation(ctx context.Context, entity *TEntity) error
-}
-
 //BuildPageScope page query
 func (r *Repo[TEntity, TKey, TQuery]) buildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildPageScope[TQuery]); ok {
@@ -125,6 +122,10 @@ func (r *Repo[TEntity, TKey, TQuery]) buildPageScope(q *TQuery) func(db *gorm.DB
 	}
 }
 
+type UpdateAssociation[TEntity any] interface {
+	UpdateAssociation(ctx context.Context, entity *TEntity) error
+}
+
 func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query *TQuery) ([]*TEntity, error) {
 	var e TEntity
 	db := r.getDb(ctx).Model(&e)
@@ -132,6 +133,53 @@ func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query *TQuery) (
 	var items []*TEntity
 	res := db.Find(&items)
 	return items, res.Error
+}
+
+func (r *Repo[TEntity, TKey, TQuery]) ListCursor(ctx context.Context, q *TQuery) (*data.CursorResult[TEntity], error) {
+	var e TEntity
+	db := r.getDb(ctx).Model(&e)
+
+	cfg := &paginator.Config{}
+
+	if f, ok := (interface{})(q).(query.HasPageSize); ok {
+		cfg.Limit = int(f.GetPageSize())
+	}
+	if f, ok := (interface{})(q).(query.Sort); ok {
+		s := f.GetSort()
+		if len(s) > 0 {
+			opts := data.ParseSortIntoOpt(s)
+			var keys []string
+			for _, opt := range opts {
+				keys = append(keys, opt.Field)
+				if opt.IsDesc {
+					cfg.Order = paginator.DESC
+				} else {
+					cfg.Order = paginator.ASC
+				}
+			}
+			cfg.Keys = keys
+		}
+	}
+	if f, ok := (interface{})(q).(query.CursorAfterPage); ok {
+		cfg.After = f.GetAfterPageToken()
+	}
+	if f, ok := (interface{})(q).(query.CursorBeforePage); ok {
+		cfg.Before = f.GetBeforePageToken()
+	}
+	p := paginator.New(cfg)
+	var items []TEntity
+	result, cursor, err := p.Paginate(db, items)
+	if err != nil {
+		return nil, err
+	}
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &data.CursorResult[TEntity]{
+		Before: cursor.Before,
+		After:  cursor.After,
+		Items:  items,
+	}, nil
 }
 
 func (r *Repo[TEntity, TKey, TQuery]) First(ctx context.Context, query *TQuery) (*TEntity, error) {

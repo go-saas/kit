@@ -3,7 +3,7 @@ VERSION=$(shell git describe --tags --always)
 BUF_VERSION=v1.5.0
 DIR=$(shell pwd)
 
-SRV_PROTO_DIR = dtm event oidc user sys saas
+SRV_PROTO_DIR = dtm event oidc user sys saas realtime
 PKG_PROTO_DIR = $(patsubst %/,%,$(shell cd pkg && ls -d */))
 OTHER_PROTO_DIR = $(patsubst %/,%,$(shell cd proto && ls -d */))
 
@@ -46,6 +46,11 @@ saas:
 	make api
 	cd saas && $(MAKE) all
 
+.PHONY: realtime
+realtime:
+	make api
+	cd realtime && $(MAKE) all
+
 .PHONY: sys
 sys:
 	make api
@@ -59,7 +64,7 @@ apisix:
 .PHONY: api
 # generate api proto
 api:
-	buf generate --path ./buf/user --path ./buf/sys --path ./buf/saas --path ./buf/dtm --path ./buf/event --path ./buf/oidc
+	buf generate --path ./buf/user --path ./buf/sys --path ./buf/saas --path ./buf/realtime --path ./buf/dtm --path ./buf/event --path ./buf/oidc
 	cd user && $(MAKE) api
 	cd saas && $(MAKE) api
 	cd sys && $(MAKE) api
@@ -90,6 +95,7 @@ all:
 	make user
 	make saas
 	make sys
+	make realtime
 	make apisix
 	make examples
 

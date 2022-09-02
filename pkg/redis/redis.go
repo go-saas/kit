@@ -8,7 +8,6 @@ import (
 const defaultKey = "default"
 
 func ResolveRedisEndpointOrDefault(endpoints map[string]*Config, key string) (*redis.UniversalOptions, error) {
-	//TODO cluster
 	var opt *Config
 	opt, ok := endpoints[key]
 	if !ok {

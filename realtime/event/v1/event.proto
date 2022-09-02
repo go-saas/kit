@@ -1,0 +1,26 @@
+syntax = "proto3";
+package kratos.api;
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+option go_package = "github.com/go-saas/kit/realtime/event/v1;v1";
+
+enum NotificationLevel{
+  INFO = 0;
+  WARNING=1000;
+  ERROR=2000;
+}
+
+message NotificationEvent{
+  string tenant_id=2;
+  string group=3;
+  string title=4;
+  string desc=5;
+//  google.protobuf.Timestamp send_time=6;
+  string image=7;
+  string link=8;
+  string source=9;
+  repeated string user_ids=10;
+  google.protobuf.Struct extra=11;
+  NotificationLevel level=12;
+}

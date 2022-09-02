@@ -39,6 +39,7 @@ var (
 
 		NewBlobFactory,
 
+		NewRedisUniversalOption,
 		NewRedis,
 		NewCacheStore,
 		kitdi.NewProvider(NewStringCacheManager, di.As(new(cache.CacheInterface[string]))),
@@ -72,16 +73,20 @@ func NewBlobFactory(c *kitconf.Data) blob.Factory {
 	return blob.NewFactory(c.Blobs)
 }
 
+// NewEmailer TODO code clean
 func NewEmailer(c *kitconf.Data) email.LazyClient {
 	return email.NewLazyClient(c.Endpoints)
 }
 
-func NewRedis(c *kitconf.Data, name ConnName) (redis.UniversalClient, error) {
+func NewRedisUniversalOption(c *kitconf.Data, name ConnName) (*redis.UniversalOptions, error) {
 	if c.Endpoints.Redis == nil {
 		panic("redis endpoints required")
 	}
-	r, err := kitredis.ResolveRedisEndpointOrDefault(c.Endpoints.Redis, string(name))
-	return kitredis.NewRedisClient(r), err
+	return kitredis.ResolveRedisEndpointOrDefault(c.Endpoints.Redis, string(name))
+}
+
+func NewRedis(opt *redis.UniversalOptions) redis.UniversalClient {
+	return kitredis.NewRedisClient(opt)
 }
 
 func NewCacheStore(client redis.UniversalClient) store.StoreInterface {

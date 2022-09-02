@@ -1,0 +1,22 @@
+syntax = "proto3";
+package realtime.private;
+
+option go_package = "github.com/go-saas/kit/realtime/private/conf;conf";
+
+import "conf/conf.proto";
+import "blob/blob.proto";
+
+message Bootstrap {
+  conf.Data data = 2;
+  conf.Security security=3;
+  conf.Services services =4;
+  conf.Logging logging=6;
+  conf.Tracers tracing=7;
+  conf.AppConfig app=8;
+}
+
+message Realtime{
+  //NodeId for snowflake
+  int32 node_id=1;
+}
+

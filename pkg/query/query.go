@@ -4,13 +4,17 @@ import (
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
-// Page handle pagination
-type Page interface {
-	GetPageOffset() int32
+type HasPageSize interface {
 	GetPageSize() int32
 }
 
-// Search field
+// Page handle pagination
+type Page interface {
+	HasPageSize
+	GetPageOffset() int32
+}
+
+// Search full text search field
 type Search interface {
 	GetSearch() string
 }
@@ -40,4 +44,12 @@ func NewField(f *fieldmaskpb.FieldMask) *Field {
 }
 func (f *Field) GetFields() *fieldmaskpb.FieldMask {
 	return f.FieldMask
+}
+
+type CursorAfterPage interface {
+	GetAfterPageToken() string
+}
+
+type CursorBeforePage interface {
+	GetBeforePageToken() string
 }

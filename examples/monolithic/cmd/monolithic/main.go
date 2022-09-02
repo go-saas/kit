@@ -35,6 +35,10 @@ import (
 	uconf "github.com/go-saas/kit/user/private/conf"
 	udata "github.com/go-saas/kit/user/private/data"
 	uservice "github.com/go-saas/kit/user/private/service"
+
+	rbiz "github.com/go-saas/kit/realtime/private/biz"
+	rdata "github.com/go-saas/kit/realtime/private/data"
+	rservice "github.com/go-saas/kit/realtime/private/service"
 	"github.com/go-saas/saas/seed"
 	"github.com/goava/di"
 	"os"
@@ -168,9 +172,15 @@ func main() {
 		kitdi.Value(logger),
 		kitdi.NewSet(authz.ProviderSet, jwt.ProviderSet, kserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
 			job.DefaultProviderSet, dtmserver.DtmProviderSet, eventserver.EventProviderSet,
+			//saas
 			sdata.ProviderSet, sbiz.ProviderSet, sservice.ProviderSet,
+			//sys
 			sysdata.ProviderSet, sysbiz.ProviderSet, sysservice.ProviderSet,
+			//user
 			udata.ProviderSet, ubiz.ProviderSet, uservice.ProviderSet,
+			//realtime
+			rdata.ProviderSet, rbiz.ProviderSet, rservice.ProviderSet,
+
 			casbin.PermissionProviderSet, server.ProviderSet,
 			newApp),
 	)
