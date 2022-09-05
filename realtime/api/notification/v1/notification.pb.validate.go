@@ -978,6 +978,8 @@ func (m *Notification) validate(all bool) error {
 
 	// no validation rules for Level
 
+	// no validation rules for HasRead
+
 	if len(errors) > 0 {
 		return NotificationMultiError(errors)
 	}

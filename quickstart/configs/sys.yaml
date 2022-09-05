@@ -73,6 +73,10 @@ sys:
             headers:
               X-Frame-Options: ""
 
+      realtime-api:
+        uris: ["/v1/realtime/*","/assets/realtime/*"]
+        upstream_id: realtime-http
+
       saas-api:
         uris: ["/v1/saas/*","/assets/saas/*"]
         upstream_id: saas-http
@@ -85,6 +89,7 @@ sys:
         priority: -99
         uris: ["/v1/*","/assets/user/*"]
         upstream_id: user-http
+
 
       web:
         priority: -100

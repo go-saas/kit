@@ -10,7 +10,7 @@ services:
     user: {}
     sys: {}
     saas: {}
-
+    realtime: {}
 data:
   endpoints:
     databases:

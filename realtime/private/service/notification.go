@@ -112,5 +112,6 @@ func MapBizNotification2Pb(entity *biz.Notification, _ int) *pb.Notification {
 		UserId:   entity.UserId,
 		Extra:    utils.Map2Structpb(entity.Extra),
 		Level:    entity.Level,
+		HasRead:  entity.HasRead,
 	}
 }

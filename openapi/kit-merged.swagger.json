@@ -6488,6 +6488,9 @@
         "level": {
           "type": "integer",
           "format": "int32"
+        },
+        "hasRead": {
+          "type": "boolean"
         }
       }
     },

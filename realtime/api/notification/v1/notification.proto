@@ -122,4 +122,6 @@ message Notification{
   string user_id=10;
   google.protobuf.Struct extra=11;
   int32 level=12;
+
+  bool has_read=100;
 }
