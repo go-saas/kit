@@ -30,11 +30,18 @@ func (s *NotificationService) ListNotification(ctx context.Context, req *pb.List
 	req.Sort = []string{"-ID"}
 
 	totalCount, filterCount, err := s.repo.Count(ctx, req)
+
 	ret.TotalSize = int32(totalCount)
 	ret.FilterSize = int32(filterCount)
 	if err != nil {
 		return ret, err
 	}
+
+	unread, err := s.repo.MyUnreadCount(ctx)
+	if err != nil {
+		return ret, err
+	}
+	ret.UnreadSize = unread
 
 	cursorRet, err := s.repo.ListCursor(ctx, req)
 	if err != nil {
@@ -59,7 +66,7 @@ func (s *NotificationService) GetNotification(ctx context.Context, req *pb.GetNo
 		return nil, errors.NotFound("", "")
 	}
 
-	return MapBizNotification2Pb(*entity, 0), nil
+	return MapBizNotification2Pb(entity, 0), nil
 }
 
 func (s *NotificationService) ReadNotification(ctx context.Context, req *pb.ReadNotificationRequest) (*emptypb.Empty, error) {
@@ -92,7 +99,7 @@ func (s *NotificationService) DeleteNotification(ctx context.Context, req *pb.De
 	return &pb.DeleteNotificationReply{}, nil
 }
 
-func MapBizNotification2Pb(entity biz.Notification, _ int) *pb.Notification {
+func MapBizNotification2Pb(entity *biz.Notification, _ int) *pb.Notification {
 	return &pb.Notification{
 		Id:       entity.ID,
 		TenantId: entity.TenantId.String,

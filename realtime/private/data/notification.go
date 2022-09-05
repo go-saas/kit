@@ -55,6 +55,19 @@ func (c *NotificationRepo) DefaultSorting() []string {
 	return []string{"created_at"}
 }
 
+func (c *NotificationRepo) MyUnreadCount(ctx context.Context) (int32, error) {
+	db := c.GetDb(ctx).Model(&biz.Notification{})
+	u, err := authn.ErrIfUnauthenticated(db.Statement.Context)
+	if err != nil {
+		return 0, err
+	}
+	var count int64
+	err = db.Where("`user_id` = ? AND has_read = ?", u.GetId(), false).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return int32(count), nil
+}
 func (c *NotificationRepo) SetMyRead(ctx context.Context, idFilter string) error {
 	db := c.GetDb(ctx).Model(&biz.Notification{})
 	u, err := authn.ErrIfUnauthenticated(db.Statement.Context)

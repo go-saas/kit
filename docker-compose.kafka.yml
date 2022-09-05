@@ -1,7 +1,7 @@
 version: '3.7'
 services:
 
-  zoo1:
+  zookeeper:
     image: docker.io/bitnami/zookeeper:3.8
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
@@ -10,16 +10,16 @@ services:
   kafka:
     image: docker.io/bitnami/kafka:3.2
     ports:
-      - "9094:9092"
+      - "9094:9094"
     environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zoo1:2181
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9094
       - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9094
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
-      - zoo1
+      - zookeeper
     restart: always
 
   kafka-ui:

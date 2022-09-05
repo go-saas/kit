@@ -817,6 +817,8 @@ func (m *ListNotificationReply) validate(all bool) error {
 
 	}
 
+	// no validation rules for UnreadSize
+
 	if m.NextAfterPageToken != nil {
 		// no validation rules for NextAfterPageToken
 	}

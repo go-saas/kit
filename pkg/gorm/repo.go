@@ -167,8 +167,8 @@ func (r *Repo[TEntity, TKey, TQuery]) ListCursor(ctx context.Context, q *TQuery)
 		cfg.Before = f.GetBeforePageToken()
 	}
 	p := paginator.New(cfg)
-	var items []TEntity
-	result, cursor, err := p.Paginate(db, items)
+	var items []*TEntity
+	result, cursor, err := p.Paginate(db, &items)
 	if err != nil {
 		return nil, err
 	}

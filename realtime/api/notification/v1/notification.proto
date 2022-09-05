@@ -93,8 +93,8 @@ message NotificationFilter{
 }
 
 message ListNotificationRequest {
-  int32 after_page_token =1;
-  int32 before_page_token =2;
+  string after_page_token =1;
+  string before_page_token =2;
   int32 page_size = 3;
   repeated string sort =4;
   google.protobuf.FieldMask fields=5;
@@ -106,6 +106,7 @@ message ListNotificationReply {
   repeated Notification items=3;
   optional string next_after_page_token=4;
   optional string next_before_page_token=5;
+  int32 unread_size=6;
 }
 
 message Notification{

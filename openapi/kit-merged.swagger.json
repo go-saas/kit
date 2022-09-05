@@ -1863,15 +1863,13 @@
             "name": "afterPageToken",
             "in": "query",
             "required": false,
-            "type": "integer",
-            "format": "int32"
+            "type": "string"
           },
           {
             "name": "beforePageToken",
             "in": "query",
             "required": false,
-            "type": "integer",
-            "format": "int32"
+            "type": "string"
           },
           {
             "name": "pageSize",
@@ -5993,6 +5991,10 @@
         "nextBeforePageToken": {
           "type": "string",
           "x-nullable": true
+        },
+        "unreadSize": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -6000,12 +6002,10 @@
       "type": "object",
       "properties": {
         "afterPageToken": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string"
         },
         "beforePageToken": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string"
         },
         "pageSize": {
           "type": "integer",

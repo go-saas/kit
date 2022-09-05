@@ -6,6 +6,7 @@ import (
 	"github.com/go-saas/kit/pkg/dal"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/server"
+	rserver "github.com/go-saas/kit/realtime/private/server"
 	sserver "github.com/go-saas/kit/saas/private/server"
 	sysserver "github.com/go-saas/kit/sys/private/server"
 	userver "github.com/go-saas/kit/user/private/server"
@@ -21,7 +22,7 @@ var ProviderSet = kitdi.NewSet(
 	kitdi.NewProvider(NewGRPCServer, di.As(new(transport.Server))),
 	kitdi.NewProvider(NewJobServer, di.As(new(transport.Server))),
 	kitdi.NewProvider(NewEventServer, di.As(new(transport.Server))),
-
+	kitdi.NewProvider(rserver.NewCentrifuge, di.As(new(transport.Server))),
 	NewSeeder,
 	kitdi.Value(ConnName),
 	NewAuthorizationOption,

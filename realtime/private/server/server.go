@@ -21,6 +21,7 @@ var ProviderSet = kitdi.NewSet(
 	kitdi.NewProvider(NewHTTPServer, di.As(new(transport.Server))),
 	kitdi.NewProvider(NewGRPCServer, di.As(new(transport.Server))),
 	kitdi.NewProvider(NewEventServer, di.As(new(transport.Server))),
+	kitdi.NewProvider(NewCentrifuge, di.As(new(transport.Server))),
 	NewSeeder,
 	NewSeeding,
 	kitdi.Value(ClientName),

@@ -68,6 +68,8 @@ api:
 	cd user && $(MAKE) api
 	cd saas && $(MAKE) api
 	cd sys && $(MAKE) api
+	cd realtime && $(MAKE) api
+
 .PHONY: generate
 # generate
 generate:

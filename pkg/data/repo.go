@@ -23,7 +23,7 @@ type Repo[TEntity any, TKey any, TQuery any] interface {
 type CursorResult[TEntity any] struct {
 	Before *string
 	After  *string
-	Items  []TEntity
+	Items  []*TEntity
 }
 
 type BeforeCreate[TEntity any] struct {

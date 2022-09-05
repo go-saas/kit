@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/pkg/apisix"
+	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/query"
 	v13 "github.com/go-saas/kit/realtime/event/v1"
 	"github.com/go-saas/kit/sys/api"
@@ -16,7 +17,6 @@ import (
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
-	"math"
 )
 
 type ApisixSeed struct {
@@ -28,7 +28,7 @@ type ApisixSeed struct {
 }
 
 func NewApisixSeed(cfg *conf.SysConf, client *apisix.AdminClient, jobClient *asynq.Client, userSrv v1.UserServiceServer, eventSender event.Producer) *ApisixSeed {
-	return &ApisixSeed{Cfg: cfg, Client: client, JobClient: jobClient, userSrv: userSrv}
+	return &ApisixSeed{Cfg: cfg, Client: client, JobClient: jobClient, userSrv: userSrv, eventSender: eventSender}
 }
 
 func (a *ApisixSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
@@ -36,7 +36,7 @@ func (a *ApisixSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 		return nil
 	}
 	//Put into background job
-	_, err := a.JobClient.EnqueueContext(ctx, NewApisixMigrationTask(), asynq.MaxRetry(math.MaxInt), asynq.Group(api.ServiceName))
+	_, err := a.JobClient.EnqueueContext(ctx, NewApisixMigrationTask(), asynq.MaxRetry(1000), asynq.Group(api.ServiceName))
 	return err
 }
 
@@ -44,12 +44,30 @@ var _ seed.Contrib = (*ApisixSeed)(nil)
 
 func (a *ApisixSeed) Do(ctx context.Context) error {
 	err := a.do(ctx)
+	var notification *v13.NotificationEvent
+	formatErr := func(err2 error) error {
+		if err == nil {
+			return err2
+		} else {
+			return errors.Wrap(err2, err.Error())
+		}
+	}
 	if err == nil {
-		return nil
+		notification = &v13.NotificationEvent{
+			Title: "Migrate Apisix Gateway Successfully",
+			Level: v13.NotificationLevel_INFO,
+		}
+	} else {
+		notification = &v13.NotificationEvent{
+			Title: "Fail to Migrate Apisix Gateway",
+			Desc:  err.Error(),
+			Level: v13.NotificationLevel_ERROR,
+		}
 	}
 	//send notification to admin users
+	tempCtx := authz.NewAlwaysAuthorizationContext(ctx, true)
 	adminReply, err1 := a.userSrv.ListUsers(
-		ctx,
+		tempCtx,
 		&v1.ListUsersRequest{
 			PageSize: -1,
 			Filter:   &v1.UserFilter{Roles: &v12.RoleFilter{Name: &query.StringFilterOperation{Eq: &wrapperspb.StringValue{Value: "admin"}}}},
@@ -57,21 +75,16 @@ func (a *ApisixSeed) Do(ctx context.Context) error {
 		},
 	)
 	if err1 != nil {
-		return errors.Wrap(err, err1.Error())
+		return formatErr(err1)
 	}
 	adminIds := lo.Map(adminReply.Items, func(t *v1.User, _ int) string {
 		return t.Id
 	})
-	notification := &v13.NotificationEvent{
-		Title:   "Fail to Migrate Apisix Gateway",
-		Desc:    err.Error(),
-		UserIds: adminIds,
-		Level:   v13.NotificationLevel_ERROR,
-	}
+	notification.UserIds = adminIds
 	ee, _ := event.NewMessageFromProto(notification)
 	err1 = a.eventSender.Send(ctx, ee)
 	if err1 != nil {
-		return errors.Wrap(err, err1.Error())
+		return formatErr(err1)
 	}
 	return err
 }

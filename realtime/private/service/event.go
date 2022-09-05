@@ -22,7 +22,7 @@ func NewNotificationEventHandler(node *centrifuge.Node, repo biz.NotificationRep
 			}
 			//publish to channel
 			for _, notification := range notifications {
-				r := MapBizNotification2Pb(*notification, 0)
+				r := MapBizNotification2Pb(notification, 0)
 				data, _ := encoding.GetCodec("json").Marshal(r)
 				_, err := node.Publish(fmt.Sprintf("notification#%s", notification.UserId), data)
 				if err != nil {
