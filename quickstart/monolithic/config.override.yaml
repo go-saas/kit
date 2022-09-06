@@ -86,6 +86,7 @@ sys:
       realtime-api:
         uris: ["/v1/realtime/*","/assets/realtime/*"]
         upstream_id: monolithic-http
+        enable_websocket: true
 
       saas-api:
         uris: ["/v1/saas/*","/assets/saas/*"]
