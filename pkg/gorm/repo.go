@@ -138,7 +138,7 @@ func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query *TQuery) (
 func (r *Repo[TEntity, TKey, TQuery]) ListCursor(ctx context.Context, q *TQuery) (*data.CursorResult[TEntity], error) {
 	var e TEntity
 	db := r.getDb(ctx).Model(&e)
-
+	db = db.Scopes(r.buildFilterScope(q), r.buildDetailScope(false))
 	cfg := &paginator.Config{}
 
 	if f, ok := (interface{})(q).(query.HasPageSize); ok {
