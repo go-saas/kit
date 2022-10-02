@@ -19,7 +19,7 @@ type Transport struct {
 	operation   string
 	reqHeader   headerCarrier
 	replyHeader headerCarrier
-	filters     []selector.Filter
+	nodeFilters []selector.NodeFilter
 }
 
 // Kind returns the transport kind.
@@ -47,10 +47,11 @@ func (tr *Transport) ReplyHeader() transport.Header {
 	return tr.replyHeader
 }
 
-// SelectFilters returns the client select filters.
-func (tr *Transport) SelectFilters() []selector.Filter {
-	return tr.filters
+// NodeFilters returns the client select filters.
+func (tr *Transport) NodeFilters() []selector.NodeFilter {
+	return tr.nodeFilters
 }
+
 
 type headerCarrier metadata.MD
 
@@ -80,13 +81,13 @@ func (mc headerCarrier) Keys() []string {
 // UnaryClientInterceptor
 //
 // https://github.com/go-kratos/kratos/blob/4ca25e46799ca1579d9e877e5be23f454ca23299/transport/grpc/client.go#L159-L192
-func UnaryClientInterceptor(ms []middleware.Middleware, timeout time.Duration, filters []selector.Filter) grpc.UnaryClientInterceptor {
+func UnaryClientInterceptor(ms []middleware.Middleware, timeout time.Duration, filters []selector.NodeFilter) grpc.UnaryClientInterceptor {
 	return func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
 		ctx = transport.NewClientContext(ctx, &Transport{
 			endpoint:  cc.Target(),
 			operation: method,
 			reqHeader: headerCarrier{},
-			filters:   filters,
+			nodeFilters: filters,
 		})
 		if timeout > 0 {
 			var cancel context.CancelFunc

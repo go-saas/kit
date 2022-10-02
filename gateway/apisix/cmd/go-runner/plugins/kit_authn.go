@@ -43,6 +43,7 @@ func init() {
 }
 
 type KitAuthn struct {
+	plugin.DefaultPlugin
 }
 
 type KitAuthConf struct {
@@ -139,7 +140,7 @@ func isAjax(r pkgHTTP.Request) bool {
 	return len(h) > 0 && h[0] == "XMLHttpRequest"
 }
 
-func (p *KitAuthn) Filter(_ interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
+func (p *KitAuthn) RequestFilter(_ interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
 	currentPath := string(r.Path())
 	_, shouldSkip := lo.Find(WhiteAuthList, func(s string) bool { return strings.HasPrefix(currentPath, s) })
 	if shouldSkip {

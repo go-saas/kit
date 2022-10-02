@@ -5,6 +5,7 @@ import (
 	"fmt"
 	pkgHTTP "github.com/apache/apisix-go-plugin-runner/pkg/http"
 	"github.com/apache/apisix-go-plugin-runner/pkg/log"
+	"github.com/apache/apisix-go-plugin-runner/pkg/plugin"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/samber/lo"
@@ -15,6 +16,7 @@ import (
 // KitAuthz is a demo to show how to return data directly instead of proxying
 // it to the upstream.
 type KitAuthz struct {
+	plugin.DefaultPlugin
 }
 
 type KitAuthzConf struct {
@@ -37,7 +39,7 @@ func (p *KitAuthz) ParseConf(in []byte) (interface{}, error) {
 	return conf, err
 }
 
-func (p *KitAuthz) Filter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
+func (p *KitAuthz) RequestFilter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
 	requirement := conf.(KitAuthzConf).Requirement
 	log.Infof("authz check requirements:%s", strings.Join(lo.Map(requirement, func(t Requirement, _ int) string {
 		return fmt.Sprintf("%s/%s@%s", t.Namespace, t.Resource, t.Action)
