@@ -27,8 +27,6 @@ data:
     events:
       default:
         topic: kit
-        group: golang
-        # If you would like to use kafka
         addr: kafka:9092
         type: kafka
 #        type: pulsar
@@ -39,6 +37,8 @@ data:
         group: user-golang
       sys:
         group: sys-golang
+      realtime:
+        group: realtime-golang
   blobs:
     user:
       provider: os
