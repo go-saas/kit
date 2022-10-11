@@ -142,6 +142,7 @@ func (k *Consumer) Process(ctx context.Context, handler event.ConsumerHandler) e
 	wg.Add(1)
 	k.wg = wg
 	topics := []string{k.topic}
+	failureCounter := 0
 	go func() {
 		defer wg.Done()
 		for {
@@ -149,7 +150,13 @@ func (k *Consumer) Process(ctx context.Context, handler event.ConsumerHandler) e
 			// server-side rebalance happens, the Consumer session will need to be
 			// recreated to get the new claims
 			if err := k.ConsumerGroup.Consume(ctx, topics, newConsumerGroupHandler(k.group, handler)); err != nil {
-				log.Error(err)
+				failureCounter++
+				// infinite loop check failed count to prevent tons of log
+				if failureCounter > 10 {
+					log.Fatal(err)
+				} else {
+					log.Error(err)
+				}
 			}
 			// check if context was cancelled, signaling that the Consumer should stop
 			if ctx.Err() != nil {
