@@ -3,14 +3,13 @@ package biz
 import (
 	"context"
 	"github.com/go-saas/kit/pkg/data"
-	"github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
 	"github.com/google/uuid"
 )
 
 type Menu struct {
-	gorm.UIDBase `json:",squash"`
-	gorm.AuditedModel
+	data.UIDBase `json:",squash"`
+	data.AuditedModel
 	Name              string                      `json:"name"`
 	Desc              string                      `json:"desc"`
 	Component         string                      `json:"component"`
@@ -35,7 +34,7 @@ type Menu struct {
 }
 
 type MenuPermissionRequirement struct {
-	gorm.UIDBase `json:",squash"`
+	data.UIDBase `json:",squash"`
 	MenuID       uuid.UUID `gorm:"type:char(36)" json:"menu_id"`
 	Namespace    string    `json:"namespace"`
 	Resource     string    `json:"resource"`

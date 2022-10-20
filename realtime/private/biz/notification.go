@@ -3,7 +3,6 @@ package biz
 import (
 	"context"
 	"github.com/go-saas/kit/pkg/data"
-	"github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/idgen"
 	"github.com/go-saas/kit/pkg/utils"
 	v1 "github.com/go-saas/kit/realtime/api/notification/v1"
@@ -14,7 +13,7 @@ import (
 
 type Notification struct {
 	ID string `gorm:"type:char(36)" json:"id"`
-	gorm.AuditedModel
+	data.AuditedModel
 	gorm2.MultiTenancy
 	Group    string
 	Title    string

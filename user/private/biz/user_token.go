@@ -2,7 +2,7 @@ package biz
 
 import (
 	"context"
-	"github.com/go-saas/kit/pkg/gorm"
+	"github.com/go-saas/kit/pkg/data"
 	"github.com/google/uuid"
 	gorm2 "gorm.io/gorm"
 )
@@ -12,9 +12,9 @@ const (
 	InternalRememberTokenName string = "remember"
 )
 
-//UserToken stores external login token
+// UserToken stores external login token
 type UserToken struct {
-	gorm.AuditedModel
+	data.AuditedModel
 	DeletedAt     gorm2.DeletedAt `gorm:"index"`
 	UserId        uuid.UUID       `gorm:"type:char(36);primaryKey" json:"user_id"`
 	LoginProvider string          `gorm:"primaryKey" json:"login_provider"`

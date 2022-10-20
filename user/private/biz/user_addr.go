@@ -3,12 +3,11 @@ package biz
 import (
 	"context"
 	"github.com/go-saas/kit/pkg/data"
-	"github.com/go-saas/kit/pkg/gorm"
 )
 
 type UserAddress struct {
-	gorm.UIDBase
-	gorm.AuditedModel
+	data.UIDBase
+	data.AuditedModel
 	UserId   string             `json:"user_id" gorm:"index:,type:char(36)"`
 	Phone    string             `json:"phone"`
 	Usage    string             `json:"usage"`

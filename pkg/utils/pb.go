@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"time"
 )
 
@@ -34,4 +36,32 @@ func Structpb2Map(m *structpb.Struct) map[string]interface{} {
 		return nil
 	}
 	return m.AsMap()
+}
+
+func ToWrapString(s []string) []*wrapperspb.StringValue {
+	return lo.Map(s, func(t string, _ int) *wrapperspb.StringValue {
+		return &wrapperspb.StringValue{Value: t}
+	})
+}
+
+func ToWrapFloat64(s []float64) []*wrapperspb.DoubleValue {
+	return lo.Map(s, func(t float64, _ int) *wrapperspb.DoubleValue {
+		return &wrapperspb.DoubleValue{Value: t}
+	})
+}
+
+func ToWrapFlot32(s []float32) []*wrapperspb.FloatValue {
+	return lo.Map(s, func(t float32, _ int) *wrapperspb.FloatValue {
+		return &wrapperspb.FloatValue{Value: t}
+	})
+}
+func ToWrapInt32(s []int32) []*wrapperspb.Int32Value {
+	return lo.Map(s, func(t int32, _ int) *wrapperspb.Int32Value {
+		return &wrapperspb.Int32Value{Value: t}
+	})
+}
+func ToWrapInt64(s []int64) []*wrapperspb.Int64Value {
+	return lo.Map(s, func(t int64, _ int) *wrapperspb.Int64Value {
+		return &wrapperspb.Int64Value{Value: t}
+	})
 }

@@ -3,20 +3,13 @@ package data
 //This is a copy from https://github.com/go-gorm/datatypes/blob/e4d6cabc4dd99a893046ed21cc4528b055e162e8/json_map.go
 
 import (
-	"context"
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
-
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
-	"gorm.io/gorm/schema"
 )
 
-// JSONMap defiend JSON data type, need to implements driver.Valuer, sql.Scanner interface
+// JSONMap defiend JSON data type, need to implement driver.Valuer, sql.Scanner interface
 type JSONMap map[string]interface{}
 
 // Value return json value, implement driver.Valuer interface
@@ -64,35 +57,4 @@ func (m *JSONMap) UnmarshalJSON(b []byte) error {
 	err := json.Unmarshal(b, &t)
 	*m = JSONMap(t)
 	return err
-}
-
-// GormDataType gorm common data type
-func (m JSONMap) GormDataType() string {
-	return "jsonmap"
-}
-
-// GormDBDataType gorm db data type
-func (JSONMap) GormDBDataType(db *gorm.DB, field *schema.Field) string {
-	switch db.Dialector.Name() {
-	case "sqlite":
-		return "JSON"
-	case "mysql":
-		return "JSON"
-	case "postgres":
-		return "JSONB"
-	case "sqlserver":
-		return "NVARCHAR(MAX)"
-	}
-	return ""
-}
-
-func (m JSONMap) GormValue(ctx context.Context, db *gorm.DB) clause.Expr {
-	data, _ := m.MarshalJSON()
-	switch db.Dialector.Name() {
-	case "mysql":
-		if v, ok := db.Dialector.(*mysql.Dialector); ok && !strings.Contains(v.ServerVersion, "MariaDB") {
-			return gorm.Expr("CAST(? AS JSON)", string(data))
-		}
-	}
-	return gorm.Expr("?", string(data))
 }

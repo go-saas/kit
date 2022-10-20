@@ -2,6 +2,7 @@ package data
 
 import (
 	"errors"
+	"github.com/go-saas/kit/pkg/data"
 	gorm2 "github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/kit/user/private/biz"
@@ -215,7 +216,7 @@ func (u *UserRepo) GetToken(ctx context.Context, user *biz.User, loginProvider s
 func (u *UserRepo) GetRoles(ctx context.Context, userId string) ([]biz.Role, error) {
 	db := u.GetDb(ctx)
 	var ret []biz.Role
-	user := &biz.User{UIDBase: gorm2.UIDBase{ID: uuid.MustParse(userId)}}
+	user := &biz.User{UIDBase: data.UIDBase{ID: uuid.MustParse(userId)}}
 	if err := db.Model(user).Association("Roles").Find(&ret); err != nil {
 		return nil, err
 	} else {

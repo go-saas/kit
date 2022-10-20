@@ -3,7 +3,6 @@ package biz
 import (
 	"context"
 	"github.com/go-saas/kit/pkg/data"
-	"github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -12,10 +11,10 @@ import (
 )
 
 type User struct {
-	gorm.UIDBase        `json:",squash"`
+	data.UIDBase        `json:",squash"`
 	concurrency.Version `gorm:"type:char(36)"`
-	gorm.AuditedModel
-	gorm.AggRoot
+	data.AuditedModel
+	data.AggRoot
 
 	DeletedAt gorm2.DeletedAt `gorm:"index"`
 

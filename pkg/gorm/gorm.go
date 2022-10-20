@@ -5,6 +5,7 @@ import (
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-saas/kit/pkg/conf"
+	data2 "github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/saas"
 	"github.com/go-saas/saas/data"
 	sgorm "github.com/go-saas/saas/gorm"
@@ -17,7 +18,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"reflect"
 )
 
 const (
@@ -139,8 +139,8 @@ func (c *DbCache) GetOrSet(ctx context.Context, key, connStr string) (*gorm.DB, 
 			return nil, err
 		}
 		//register global
-		RegisterAuditCallbacks(client)
-		RegisterAggCallbacks(client)
+		data2.RegisterAuditCallbacks(client)
+		data2.RegisterAggCallbacks(client)
 		if err := client.Use(otelgorm.NewPlugin(otelgorm.WithoutQueryVariables())); err != nil {
 			panic(err)
 		}
@@ -197,18 +197,4 @@ func closeDb(d *gorm.DB) error {
 		return cErr
 	}
 	return nil
-}
-
-func isModel[T any](db *gorm.DB) (t T, is bool) {
-	if db.Statement.Schema.ModelType == nil {
-		return
-	}
-	if db.Statement.Model != nil {
-		t, is = db.Statement.Model.(T)
-		if is {
-			return
-		}
-	}
-	_, is = reflect.New(db.Statement.Schema.ModelType).Interface().(T)
-	return
 }

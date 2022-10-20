@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/pkg/data"
-	gorm2 "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
@@ -16,8 +15,8 @@ import (
 )
 
 type Tenant struct {
-	gorm2.UIDBase
-	gorm2.AggRoot
+	data.UIDBase
+	data.AggRoot
 	concurrency.Version
 	//unique name. usually for domain name
 	Name string `gorm:"column:name;index;size:255;"`

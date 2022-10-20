@@ -3,7 +3,6 @@ package biz
 import (
 	"context"
 	"github.com/go-saas/kit/pkg/data"
-	gorm2 "github.com/go-saas/kit/pkg/gorm"
 	"time"
 )
 
@@ -26,7 +25,7 @@ func (p UserTenantStatus) String() string {
 }
 
 type UserTenant struct {
-	gorm2.AuditedModel
+	data.AuditedModel
 	UserId   string           `gorm:"type:char(36);primary_key" json:"user_id"`
 	TenantId string           `gorm:"type:char(36);primary_key" json:"tenant_id" `
 	JoinTime time.Time        `json:"join_time"`

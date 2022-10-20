@@ -3,13 +3,12 @@ package biz
 import (
 	"context"
 	"github.com/go-saas/kit/pkg/data"
-	"github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/user/api/account/v1"
 )
 
 // UserSetting contains key/value pairs of user settings
 type UserSetting struct {
-	gorm.UIDBase
+	data.UIDBase
 	UserId string     `json:"user_id" gorm:"index"`
 	Key    string     `json:"key" gorm:"index"`
 	Value  data.Value `gorm:"embedded"`

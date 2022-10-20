@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-saas/kit/pkg/data"
-	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
 	v12 "github.com/go-saas/kit/user/api/role/v1"
@@ -13,9 +12,9 @@ import (
 )
 
 type Role struct {
-	kitgorm.UIDBase
+	data.UIDBase
 	concurrency.Version `gorm:"type:char(36)"`
-	kitgorm.AuditedModel
+	data.AuditedModel
 	TenantId       gorm2.HasTenant `gorm:"index:,unique,composite:tenant_role""`
 	Name           string          `json:"name" gorm:"size:200"`
 	NormalizedName string          `gorm:"size:200,index:,unique,composite:tenant_role" json:"normalized_name" `
