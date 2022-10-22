@@ -93,7 +93,7 @@ require (
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/goxiaoy/go-eventbus v0.0.5 // indirect
-	github.com/goxiaoy/gorm-concurrency v1.0.5 // indirect
+	github.com/goxiaoy/gorm-concurrency v1.1.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
 	github.com/hashicorp/consul/api v1.15.2 // indirect
@@ -208,9 +208,9 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.3.6 // indirect
 	gorm.io/driver/postgres v1.3.10 // indirect
-	gorm.io/driver/sqlite v1.3.6 // indirect
+	gorm.io/driver/sqlite v1.4.3 // indirect
 	gorm.io/driver/sqlserver v1.3.2 // indirect
-	gorm.io/gorm v1.23.10 // indirect
+	gorm.io/gorm v1.24.0 // indirect
 	gorm.io/plugin/dbresolver v1.2.3 // indirect
 	k8s.io/apimachinery v0.25.2 // indirect
 	modernc.org/libc v1.20.0 // indirect

@@ -93,7 +93,7 @@ require (
 	google.golang.org/grpc v1.49.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.3.6 // indirect
-	gorm.io/gorm v1.23.10 // indirect
+	gorm.io/gorm v1.24.0 // indirect
 )
 
 replace github.com/go-saas/kit => ../../
