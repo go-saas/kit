@@ -34,7 +34,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bradfitz/gomemcache v0.0.0-20220106215444-fb4bf637b56d // indirect
 	github.com/casbin/casbin/v2 v2.55.1 // indirect
-	github.com/casbin/gorm-adapter/v3 v3.10.0 // indirect
+	github.com/casbin/gorm-adapter/v3 v3.12.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/centrifugal/centrifuge v0.26.0 // indirect
 	github.com/centrifugal/protocol v0.8.11 // indirect
@@ -43,7 +43,6 @@ require (
 	github.com/coreos/go-systemd/v22 v22.4.0 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/denisenkom/go-mssqldb v0.12.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dtm-labs/dtmcli v1.14.2 // indirect
 	github.com/dtm-labs/dtmdriver v0.0.3 // indirect
@@ -62,7 +61,7 @@ require (
 	github.com/flowchartsman/swaggerui v0.0.0-20210303154956-0e71c297862e // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/glebarez/go-sqlite v1.19.1 // indirect
-	github.com/glebarez/sqlite v1.4.7 // indirect
+	github.com/glebarez/sqlite v1.5.0 // indirect
 	github.com/go-chi/chi/v5 v5.0.7 // indirect
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
@@ -136,6 +135,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
 	github.com/mennanov/fmutils v0.2.0 // indirect
+	github.com/microsoft/go-mssqldb v0.17.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mna/redisc v1.3.2 // indirect
@@ -191,7 +191,7 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.23.0 // indirect
-	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be // indirect
+	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b // indirect
 	golang.org/x/exp v0.0.0-20221002003631-540bb7301a08 // indirect
 	golang.org/x/net v0.0.0-20221002022538-bcab6841153b // indirect
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
@@ -206,12 +206,12 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/driver/mysql v1.3.6 // indirect
-	gorm.io/driver/postgres v1.3.10 // indirect
+	gorm.io/driver/mysql v1.4.1 // indirect
+	gorm.io/driver/postgres v1.4.4 // indirect
 	gorm.io/driver/sqlite v1.4.3 // indirect
-	gorm.io/driver/sqlserver v1.3.2 // indirect
+	gorm.io/driver/sqlserver v1.4.1 // indirect
 	gorm.io/gorm v1.24.0 // indirect
-	gorm.io/plugin/dbresolver v1.2.3 // indirect
+	gorm.io/plugin/dbresolver v1.3.0 // indirect
 	k8s.io/apimachinery v0.25.2 // indirect
 	modernc.org/libc v1.20.0 // indirect
 	modernc.org/mathutil v1.5.0 // indirect

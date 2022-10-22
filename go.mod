@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
 	github.com/casbin/casbin/v2 v2.55.1
-	github.com/casbin/gorm-adapter/v3 v3.10.0
+	github.com/casbin/gorm-adapter/v3 v3.12.1
 	github.com/envoyproxy/protoc-gen-validate v0.6.8
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-kratos/kratos/v2 v2.5.0
@@ -27,7 +27,7 @@ require (
 	google.golang.org/genproto v0.0.0-20220930163606-c98284e70a91
 	google.golang.org/grpc v1.49.0
 	google.golang.org/protobuf v1.28.1
-	gorm.io/driver/mysql v1.3.6
+	gorm.io/driver/mysql v1.4.1
 	gorm.io/driver/sqlite v1.4.3
 	gorm.io/gorm v1.24.0
 )
@@ -101,7 +101,6 @@ require (
 	github.com/coreos/go-systemd/v22 v22.4.0 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/denisenkom/go-mssqldb v0.12.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dtm-labs/dtmdriver v0.0.3 // indirect
 	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
@@ -113,7 +112,7 @@ require (
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/glebarez/go-sqlite v1.19.1 // indirect
-	github.com/glebarez/sqlite v1.4.7 // indirect
+	github.com/glebarez/sqlite v1.5.0 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
@@ -167,6 +166,7 @@ require (
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
+	github.com/microsoft/go-mssqldb v0.17.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mna/redisc v1.3.2 // indirect
 	github.com/montanaflynn/stats v0.6.6 // indirect
@@ -203,7 +203,7 @@ require (
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
-	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be // indirect
+	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b // indirect
 	golang.org/x/exp v0.0.0-20221002003631-540bb7301a08 // indirect
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
 	golang.org/x/term v0.0.0-20220919170432-7a66f970e087 // indirect
@@ -211,9 +211,9 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637 // indirect
-	gorm.io/driver/postgres v1.3.10 // indirect
-	gorm.io/driver/sqlserver v1.3.2 // indirect
-	gorm.io/plugin/dbresolver v1.2.3 // indirect
+	gorm.io/driver/postgres v1.4.4 // indirect
+	gorm.io/driver/sqlserver v1.4.1 // indirect
+	gorm.io/plugin/dbresolver v1.3.0 // indirect
 	k8s.io/apimachinery v0.25.2 // indirect
 	modernc.org/libc v1.20.0 // indirect
 	modernc.org/mathutil v1.5.0 // indirect
