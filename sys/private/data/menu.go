@@ -28,14 +28,14 @@ func (c *MenuRepo) GetDb(ctx context.Context) *gorm.DB {
 	return GetDb(ctx, c.Repo.DbProvider)
 }
 
-//BuildDetailScope preload relations
+// BuildDetailScope preload relations
 func (c *MenuRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Requirement")
 	}
 }
 
-//BuildFilterScope filter
+// BuildFilterScope filter
 func (c *MenuRepo) BuildFilterScope(q *v1.ListMenuRequest) func(db *gorm.DB) *gorm.DB {
 	search := q.Search
 	filter := q.Filter
@@ -80,6 +80,8 @@ func (c *MenuRepo) UpdateAssociation(ctx context.Context, entity *biz.Menu) erro
 		if err := c.GetDb(ctx).Model(entity).Association("Requirement").Replace(entity.Requirement); err != nil {
 			return err
 		}
+	} else {
+		return c.GetDb(ctx).Model(entity).Association("Requirement").Clear()
 	}
 	return nil
 }

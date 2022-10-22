@@ -49,7 +49,7 @@ type BuildDetailScope interface {
 	BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB
 }
 
-//BuildDetailScope preload relations
+// BuildDetailScope preload relations
 func (r *Repo[TEntity, TKey, TQuery]) buildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildDetailScope); ok {
 		return override.BuildDetailScope(withDetail)
@@ -63,7 +63,7 @@ type BuildFilterScope[TQuery any] interface {
 	BuildFilterScope(q *TQuery) func(db *gorm.DB) *gorm.DB
 }
 
-//BuildFilterScope filter
+// BuildFilterScope filter
 func (r *Repo[TEntity, TKey, TQuery]) buildFilterScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildFilterScope[TQuery]); ok {
 		return override.BuildFilterScope(q)
@@ -77,7 +77,7 @@ type DefaultSorting interface {
 	DefaultSorting() []string
 }
 
-//DefaultSorting get default sorting
+// DefaultSorting get default sorting
 func (r *Repo[TEntity, TKey, TQuery]) defaultSorting() []string {
 	if override, ok := r.override.(DefaultSorting); ok {
 		return override.DefaultSorting()
@@ -89,7 +89,7 @@ type BuildSortScope[TQuery any] interface {
 	BuildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB
 }
 
-//buildSortScope build sorting query
+// buildSortScope build sorting query
 func (r *Repo[TEntity, TKey, TQuery]) buildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildSortScope[TQuery]); ok {
 		return override.BuildSortScope(q)
@@ -107,7 +107,7 @@ type BuildPageScope[TQuery any] interface {
 	BuildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB
 }
 
-//BuildPageScope page query
+// BuildPageScope page query
 func (r *Repo[TEntity, TKey, TQuery]) buildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildPageScope[TQuery]); ok {
 		return override.BuildPageScope(q)
@@ -261,7 +261,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entit
 	}
 
 	if u, ok := r.override.(UpdateAssociation[TEntity]); ok {
-		if err := u.UpdateAssociation(ctx, &e); err != nil {
+		if err := u.UpdateAssociation(ctx, entity); err != nil {
 			return err
 		}
 	}

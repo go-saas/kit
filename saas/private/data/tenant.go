@@ -87,9 +87,17 @@ func (g *TenantRepo) UpdateAssociation(ctx context.Context, entity *biz.Tenant) 
 		if err := g.GetDb(ctx).Model(entity).Association("Conn").Replace(entity.Conn); err != nil {
 			return err
 		}
+	} else {
+		if err := g.GetDb(ctx).Model(entity).Association("Conn").Clear(); err != nil {
+			return err
+		}
 	}
 	if entity.Features != nil {
 		if err := g.GetDb(ctx).Model(entity).Association("Features").Replace(entity.Features); err != nil {
+			return err
+		}
+	} else {
+		if err := g.GetDb(ctx).Model(entity).Association("Features").Clear(); err != nil {
 			return err
 		}
 	}
