@@ -2474,3 +2474,240 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetCurrentTenantReplyValidationError{}
+
+// Validate checks the field values on ChangeTenantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangeTenantRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangeTenantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangeTenantRequestMultiError, or nil if none found.
+func (m *ChangeTenantRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangeTenantRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for IdOrName
+
+	if len(errors) > 0 {
+		return ChangeTenantRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ChangeTenantRequestMultiError is an error wrapping multiple validation
+// errors returned by ChangeTenantRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ChangeTenantRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangeTenantRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangeTenantRequestMultiError) AllErrors() []error { return m }
+
+// ChangeTenantRequestValidationError is the validation error returned by
+// ChangeTenantRequest.Validate if the designated constraints aren't met.
+type ChangeTenantRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangeTenantRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangeTenantRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangeTenantRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangeTenantRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangeTenantRequestValidationError) ErrorName() string {
+	return "ChangeTenantRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangeTenantRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangeTenantRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangeTenantRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangeTenantRequestValidationError{}
+
+// Validate checks the field values on ChangeTenantReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ChangeTenantReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangeTenantReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangeTenantReplyMultiError, or nil if none found.
+func (m *ChangeTenantReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangeTenantReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetTenant()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ChangeTenantReplyValidationError{
+					field:  "Tenant",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ChangeTenantReplyValidationError{
+					field:  "Tenant",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTenant()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ChangeTenantReplyValidationError{
+				field:  "Tenant",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for IsHost
+
+	if len(errors) > 0 {
+		return ChangeTenantReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// ChangeTenantReplyMultiError is an error wrapping multiple validation errors
+// returned by ChangeTenantReply.ValidateAll() if the designated constraints
+// aren't met.
+type ChangeTenantReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangeTenantReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangeTenantReplyMultiError) AllErrors() []error { return m }
+
+// ChangeTenantReplyValidationError is the validation error returned by
+// ChangeTenantReply.Validate if the designated constraints aren't met.
+type ChangeTenantReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangeTenantReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangeTenantReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangeTenantReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangeTenantReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangeTenantReplyValidationError) ErrorName() string {
+	return "ChangeTenantReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangeTenantReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangeTenantReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangeTenantReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangeTenantReplyValidationError{}

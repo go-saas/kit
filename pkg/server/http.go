@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
@@ -210,6 +211,17 @@ func IsAjax(ctx context.Context) bool {
 		return len(h) > 0 && h[0] == "XMLHttpRequest"
 	}
 	return false
+}
+
+func SetCookie(ctx context.Context, cookie *http.Cookie) error {
+	if t, ok := transport.FromServerContext(ctx); ok {
+		if v := cookie.String(); v != "" {
+			t.ReplyHeader().Set("Set-Cookie", v)
+		}
+		return nil
+	} else {
+		return errors.New("unsupported transport")
+	}
 }
 
 func AuthnGuardian(encoder khttp.EncodeErrorFunc, handler http.Handler) http.Handler {

@@ -128,7 +128,7 @@ func abortWithError(r pkgHTTP.Request, err error, w http.ResponseWriter) {
 		key := shttp.KeyOrDefault("")
 		if fr.Reason == v1.ErrorReason_TENANT_NOT_FOUND.String() || fr.Reason == v1.ErrorReason_TENANT_FORBIDDEN.String() {
 			//delete cookie
-			sessions.SetCookie(w.Header(), sessions.NewCookie(key, "", &sessions.Options{MaxAge: 0}))
+			sessions.SetCookie(w.Header(), sessions.NewCookie(key, "", &sessions.Options{MaxAge: -1}))
 		}
 	}
 	w.WriteHeader(int(fr.Code))

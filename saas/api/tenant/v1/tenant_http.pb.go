@@ -19,6 +19,7 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationTenantServiceChangeTenant = "/saas.api.tenant.v1.TenantService/ChangeTenant"
 const OperationTenantServiceCreateTenant = "/saas.api.tenant.v1.TenantService/CreateTenant"
 const OperationTenantServiceDeleteTenant = "/saas.api.tenant.v1.TenantService/DeleteTenant"
 const OperationTenantServiceGetCurrentTenant = "/saas.api.tenant.v1.TenantService/GetCurrentTenant"
@@ -28,6 +29,7 @@ const OperationTenantServiceListTenant = "/saas.api.tenant.v1.TenantService/List
 const OperationTenantServiceUpdateTenant = "/saas.api.tenant.v1.TenantService/UpdateTenant"
 
 type TenantServiceHTTPServer interface {
+	ChangeTenant(context.Context, *ChangeTenantRequest) (*ChangeTenantReply, error)
 	CreateTenant(context.Context, *CreateTenantRequest) (*Tenant, error)
 	DeleteTenant(context.Context, *DeleteTenantRequest) (*DeleteTenantReply, error)
 	GetCurrentTenant(context.Context, *GetCurrentTenantRequest) (*GetCurrentTenantReply, error)
@@ -48,6 +50,7 @@ func RegisterTenantServiceHTTPServer(s *http.Server, srv TenantServiceHTTPServer
 	r.POST("/v1/saas/tenant/list", _TenantService_ListTenant0_HTTP_Handler(srv))
 	r.GET("/v1/saas/tenants", _TenantService_ListTenant1_HTTP_Handler(srv))
 	r.GET("/v1/saas/current", _TenantService_GetCurrentTenant0_HTTP_Handler(srv))
+	r.POST("/v1/saas/change-tenant/{id_or_name}", _TenantService_ChangeTenant0_HTTP_Handler(srv))
 }
 
 func _TenantService_CreateTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
@@ -236,7 +239,30 @@ func _TenantService_GetCurrentTenant0_HTTP_Handler(srv TenantServiceHTTPServer) 
 	}
 }
 
+func _TenantService_ChangeTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ChangeTenantRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTenantServiceChangeTenant)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ChangeTenant(ctx, req.(*ChangeTenantRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ChangeTenantReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type TenantServiceHTTPClient interface {
+	ChangeTenant(ctx context.Context, req *ChangeTenantRequest, opts ...http.CallOption) (rsp *ChangeTenantReply, err error)
 	CreateTenant(ctx context.Context, req *CreateTenantRequest, opts ...http.CallOption) (rsp *Tenant, err error)
 	DeleteTenant(ctx context.Context, req *DeleteTenantRequest, opts ...http.CallOption) (rsp *DeleteTenantReply, err error)
 	GetCurrentTenant(ctx context.Context, req *GetCurrentTenantRequest, opts ...http.CallOption) (rsp *GetCurrentTenantReply, err error)
@@ -252,6 +278,19 @@ type TenantServiceHTTPClientImpl struct {
 
 func NewTenantServiceHTTPClient(client *http.Client) TenantServiceHTTPClient {
 	return &TenantServiceHTTPClientImpl{client}
+}
+
+func (c *TenantServiceHTTPClientImpl) ChangeTenant(ctx context.Context, in *ChangeTenantRequest, opts ...http.CallOption) (*ChangeTenantReply, error) {
+	var out ChangeTenantReply
+	pattern := "/v1/saas/change-tenant/{id_or_name}"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTenantServiceChangeTenant))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
 }
 
 func (c *TenantServiceHTTPClientImpl) CreateTenant(ctx context.Context, in *CreateTenantRequest, opts ...http.CallOption) (*Tenant, error) {

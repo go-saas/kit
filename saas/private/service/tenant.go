@@ -7,8 +7,12 @@ import (
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
+	"github.com/go-saas/kit/pkg/server"
+	conf2 "github.com/go-saas/kit/saas/private/conf"
 	ubiz "github.com/go-saas/kit/user/private/biz"
 	"github.com/go-saas/saas"
+	shttp "github.com/go-saas/saas/http"
+	"github.com/go-saas/sessions"
 	"io"
 	"os"
 	"path/filepath"
@@ -36,10 +40,20 @@ type TenantService struct {
 	trusted    sapi.TrustedContextValidator
 	app        *conf.AppConfig
 	normalizer ubiz.LookupNormalizer
+	saasConf   *conf2.SaasConf
+	webConf    *shttp.WebMultiTenancyOption
 }
 
-func NewTenantService(useCase *biz.TenantUseCase, auth authz.Service, trusted sapi.TrustedContextValidator, blob blob.Factory, app *conf.AppConfig) *TenantService {
-	return &TenantService{useCase: useCase, auth: auth, trusted: trusted, blob: blob, app: app, normalizer: ubiz.NewLookupNormalizer()}
+func NewTenantService(
+	useCase *biz.TenantUseCase,
+	auth authz.Service,
+	trusted sapi.TrustedContextValidator,
+	blob blob.Factory,
+	app *conf.AppConfig,
+	saasConf *conf2.SaasConf,
+	wenConf *shttp.WebMultiTenancyOption,
+) *TenantService {
+	return &TenantService{useCase: useCase, auth: auth, trusted: trusted, blob: blob, app: app, saasConf: saasConf, webConf: wenConf, normalizer: ubiz.NewLookupNormalizer()}
 }
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {
@@ -154,7 +168,7 @@ func (s *TenantService) GetTenant(ctx context.Context, req *pb.GetTenantRequest)
 	return mapBizTenantToApi(ctx, s.app, s.blob, t), nil
 }
 
-//GetTenantPublic return public info of tenant
+// GetTenantPublic return public info of tenant
 func (s *TenantService) GetTenantPublic(ctx context.Context, req *pb.GetTenantPublicRequest) (*pb.TenantInfo, error) {
 	t, err := s.useCase.FindByIdOrName(ctx, req.IdOrName)
 	if err != nil {
@@ -208,6 +222,27 @@ func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantReques
 	}
 	rItems := lo.Map(items, func(g *biz.Tenant, _ int) *pb.Tenant { return mapBizTenantToApi(ctx, s.app, s.blob, g) })
 	ret.Items = rItems
+	return ret, nil
+}
+
+func (s *TenantService) ChangeTenant(ctx context.Context, req *pb.ChangeTenantRequest) (*pb.ChangeTenantReply, error) {
+	ret := &pb.ChangeTenantReply{}
+	domain := ""
+	if s.saasConf != nil && s.saasConf.TenantCookie != nil {
+		domain = s.saasConf.TenantCookie.Domain.Value
+	}
+	if len(req.IdOrName) == 0 {
+		ret.IsHost = true
+		//clear cookie
+		server.SetCookie(ctx, sessions.NewCookie(s.webConf.TenantKey, "", &sessions.Options{MaxAge: -1, Domain: domain}))
+		return ret, nil
+	}
+	t, err := s.useCase.FindByIdOrName(ctx, req.IdOrName)
+	if err != nil {
+		return nil, err
+	}
+	ret.Tenant = mapBizTenantToInfo(ctx, s.blob, t, s.app)
+	server.SetCookie(ctx, sessions.NewCookie(s.webConf.TenantKey, ret.Tenant.Name, &sessions.Options{MaxAge: 2147483647, Domain: domain}))
 	return ret, nil
 }
 

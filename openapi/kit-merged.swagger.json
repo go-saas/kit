@@ -2453,6 +2453,44 @@
         ]
       }
     },
+    "/v1/saas/change-tenant/{idOrName}": {
+      "post": {
+        "operationId": "TenantService_ChangeTenant",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ChangeTenantReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "idOrName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      }
+    },
     "/v1/saas/current": {
       "get": {
         "summary": "GetCurrentTenant",
@@ -5302,6 +5340,17 @@
         "newPassword",
         "confirmNewPassword"
       ]
+    },
+    "v1ChangeTenantReply": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/definitions/v1TenantInfo"
+        },
+        "isHost": {
+          "type": "boolean"
+        }
+      }
     },
     "v1CheckPermissionReply": {
       "type": "object",

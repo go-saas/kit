@@ -107,6 +107,13 @@ service TenantService {
 	}
 
 
+	rpc ChangeTenant(ChangeTenantRequest)returns(ChangeTenantReply){
+		option (google.api.http) = {
+			post: "/v1/saas/change-tenant/{id_or_name}"
+			body: "*"
+		};
+	}
+
 }
 
 
@@ -229,4 +236,13 @@ message GetCurrentTenantRequest{
 message GetCurrentTenantReply{
 		TenantInfo tenant=1;
 		bool is_host=2;
+}
+
+message ChangeTenantRequest{
+	string id_or_name=1;
+}
+
+message ChangeTenantReply{
+	TenantInfo tenant=1;
+	bool is_host=2;
 }

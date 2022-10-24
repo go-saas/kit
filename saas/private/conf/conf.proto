@@ -21,6 +21,7 @@ message Bootstrap {
 
 message SaasConf{
     repeated DatabaseTemplate database = 1;
+    conf.Cookie tenant_cookie=2;
 }
 
 message DatabaseTemplate{
