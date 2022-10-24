@@ -234,7 +234,7 @@ func (s *TenantService) ChangeTenant(ctx context.Context, req *pb.ChangeTenantRe
 	if len(req.IdOrName) == 0 || req.IdOrName == "-" {
 		ret.IsHost = true
 		//clear cookie
-		server.SetCookie(ctx, sessions.NewCookie(s.webConf.TenantKey, "", &sessions.Options{MaxAge: -1, Domain: domain}))
+		server.SetCookie(ctx, sessions.NewCookie(s.webConf.TenantKey, "", &sessions.Options{MaxAge: -1, Domain: domain, Path: "/"}))
 		return ret, nil
 	}
 	t, err := s.useCase.FindByIdOrName(ctx, req.IdOrName)
@@ -242,7 +242,7 @@ func (s *TenantService) ChangeTenant(ctx context.Context, req *pb.ChangeTenantRe
 		return nil, err
 	}
 	ret.Tenant = mapBizTenantToInfo(ctx, s.blob, t, s.app)
-	server.SetCookie(ctx, sessions.NewCookie(s.webConf.TenantKey, ret.Tenant.Name, &sessions.Options{MaxAge: 2147483647, Domain: domain}))
+	server.SetCookie(ctx, sessions.NewCookie(s.webConf.TenantKey, ret.Tenant.Name, &sessions.Options{MaxAge: 2147483647, Domain: domain, Path: "/"}))
 	return ret, nil
 }
 
