@@ -231,7 +231,7 @@ func (s *TenantService) ChangeTenant(ctx context.Context, req *pb.ChangeTenantRe
 	if s.saasConf != nil && s.saasConf.TenantCookie != nil {
 		domain = s.saasConf.TenantCookie.Domain.Value
 	}
-	if len(req.IdOrName) == 0 {
+	if len(req.IdOrName) == 0 || req.IdOrName == "-" {
 		ret.IsHost = true
 		//clear cookie
 		server.SetCookie(ctx, sessions.NewCookie(s.webConf.TenantKey, "", &sessions.Options{MaxAge: -1, Domain: domain}))
