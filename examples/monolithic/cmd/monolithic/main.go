@@ -64,15 +64,12 @@ var (
 	ifSyncApisix bool
 	ifSeed       bool
 	id, _        = os.Hostname()
-
-	seedPath string
 )
 
 func init() {
 	flag.Var(&flagconf, "conf", "config path, eg: -conf config.yaml")
 	flag.BoolVar(&ifSyncApisix, "apisix.sync", true, "sync with apisix upstreams")
 	flag.BoolVar(&ifSeed, "seed", true, "run seeder or not")
-	flag.StringVar(&seedPath, sysbiz.SeedPathKey, "", "menu seed file path")
 }
 
 func newApp(
@@ -87,9 +84,6 @@ func newApp(
 	ctx := event.NewProducerContext(context.Background(), producer)
 	if ifSeed {
 		extra := map[string]interface{}{}
-		if len(seedPath) > 0 {
-			extra[sysbiz.SeedPathKey] = seedPath
-		}
 		extra[ubiz.AdminUsernameKey] = c.Admin.GetUsername()
 		extra[ubiz.AdminPasswordKey] = c.Admin.GetPassword()
 		if err := seeder.Seed(ctx, seed.AddHost(), seed.WithExtra(extra)); err != nil {

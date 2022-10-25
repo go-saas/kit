@@ -40,7 +40,6 @@ menus:
             resource: "*"
             action: "read"
 
-
   - name: "saas"
     path: "/saas"
     component: "LAYOUT"

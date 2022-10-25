@@ -9,6 +9,5 @@ import (
 var ProviderSet = kitdi.NewSet(NewMenuSeed, NewApisixSeed, NewApisixMigrationTaskHandler)
 
 const (
-	SeedPathKey              = "seed.menu.path"
-	ConnName    dal.ConnName = "sys"
+	ConnName dal.ConnName = "sys"
 )

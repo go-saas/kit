@@ -6,12 +6,12 @@ import (
 	_ "embed"
 	"errors"
 	mapstructure2 "github.com/go-saas/kit/pkg/mapstructure"
+	"github.com/go-saas/kit/sys/menu"
 	"github.com/go-saas/saas/gorm"
 	"github.com/go-saas/saas/seed"
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v3"
 	"io"
-	"os"
 	"reflect"
 	"strings"
 )
@@ -23,28 +23,17 @@ type MenuSeed struct {
 
 var _ seed.Contrib = (*MenuSeed)(nil)
 
-//go:embed seed/menu.yaml
-var menuData []byte
-
 func NewMenuSeed(dbProvider gorm.DbProvider, menuRepo MenuRepo) *MenuSeed {
 	return &MenuSeed{dbProvider: dbProvider, menuRepo: menuRepo}
 }
 
 func (m *MenuSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
-	if err := m.seedBytes(ctx, menuData); err != nil {
-		return err
-	}
-	if seedPath, ok := sCtx.Extra[SeedPathKey]; ok {
-		if path, ok := seedPath.(string); ok {
-			b, err := os.ReadFile(path)
-			if err != nil {
-				return err
-			}
-			if err := m.seedBytes(ctx, b); err != nil {
-				return err
-			}
+	return menu.WalkMenus(func(menuData []byte) error {
+		if err := m.seedBytes(ctx, menuData); err != nil {
+			return err
 		}
-	}
+		return nil
+	})
 	return nil
 }
 
@@ -124,7 +113,7 @@ func (m *MenuSeed) upsertMenus(ctx context.Context, parentId string, menus inter
 			}
 		}
 	default:
-		return errors.New("users should be array")
+		return errors.New("menus should be array")
 	}
 	return nil
 }
