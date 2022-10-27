@@ -175,6 +175,8 @@ message AppConfig{
   optional google.protobuf.StringValue domain_format=2;
   string host_display_name=3;
   string host_logo=4;
+  // see https://github.com/google/libphonenumber/blob/master/java/libphonenumber/test/com/google/i18n/phonenumbers/RegionCode.java
+  optional string phone_default_region=100;
 }
 
 

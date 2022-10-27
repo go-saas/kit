@@ -53,7 +53,16 @@ func NewTenantService(
 	saasConf *conf2.SaasConf,
 	wenConf *shttp.WebMultiTenancyOption,
 ) *TenantService {
-	return &TenantService{useCase: useCase, auth: auth, trusted: trusted, blob: blob, app: app, saasConf: saasConf, webConf: wenConf, normalizer: ubiz.NewLookupNormalizer()}
+	return &TenantService{
+		useCase:    useCase,
+		auth:       auth,
+		trusted:    trusted,
+		blob:       blob,
+		app:        app,
+		saasConf:   saasConf,
+		webConf:    wenConf,
+		normalizer: ubiz.NewLookupNormalizer(app),
+	}
 }
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {

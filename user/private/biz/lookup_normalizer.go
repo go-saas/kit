@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/localize"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/nyaruka/phonenumbers"
@@ -19,12 +20,17 @@ type LookupNormalizer interface {
 }
 
 type lookupNormalizer struct {
+	phoneDefaultRegion string
 }
 
-func NewLookupNormalizer() LookupNormalizer {
-	return lookupNormalizer{}
+func NewLookupNormalizer(cfg *conf.AppConfig) LookupNormalizer {
+	ret := &lookupNormalizer{phoneDefaultRegion: "CN"}
+	if cfg != nil && cfg.PhoneDefaultRegion != nil {
+		ret.phoneDefaultRegion = *cfg.PhoneDefaultRegion
+	}
+	return ret
 }
-func (l lookupNormalizer) Name(ctx context.Context, name string) (string, error) {
+func (l *lookupNormalizer) Name(ctx context.Context, name string) (string, error) {
 	if name == "" {
 		return "", v1.ErrorInvalidUsernameLocalized(localize.FromContext(ctx), nil, nil)
 	}
@@ -37,7 +43,7 @@ func (l lookupNormalizer) Name(ctx context.Context, name string) (string, error)
 	return strings.ToUpper(name), nil
 }
 
-func (l lookupNormalizer) Email(ctx context.Context, email string) (string, error) {
+func (l *lookupNormalizer) Email(ctx context.Context, email string) (string, error) {
 	if email == "" {
 		return "", v1.ErrorInvalidEmailLocalized(localize.FromContext(ctx), nil, nil)
 	}
@@ -47,11 +53,11 @@ func (l lookupNormalizer) Email(ctx context.Context, email string) (string, erro
 	return strings.ToUpper(email), nil
 }
 
-func (l lookupNormalizer) Phone(ctx context.Context, phone string) (string, error) {
+func (l *lookupNormalizer) Phone(ctx context.Context, phone string) (string, error) {
 	if phone == "" {
 		return "", v1.ErrorInvalidPhoneLocalized(localize.FromContext(ctx), nil, nil)
 	}
-	num, err := phonenumbers.Parse(phone, "US")
+	num, err := phonenumbers.Parse(phone, l.phoneDefaultRegion)
 	if err != nil {
 		return "", v1.ErrorInvalidPhoneLocalized(localize.FromContext(ctx), nil, nil)
 	}
