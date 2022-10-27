@@ -20,7 +20,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ KeyServiceServer = (*keyServiceClientProxy)(nil)
 
 // keyServiceClientProxy is the proxy to turn KeyService client to server interface.
-//
 type keyServiceClientProxy struct {
 	cc KeyServiceClient
 }

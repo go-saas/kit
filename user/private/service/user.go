@@ -110,39 +110,55 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 			return nil, pb.ErrorConfirmPasswordMismatchLocalized(localize.FromContext(ctx), nil, nil)
 		}
 	}
+	ct, _ := saas.FromCurrentTenant(ctx)
 	u := biz.User{}
-	if req.Name != nil {
-		u.Name = &req.Name.Value
-	}
-	if req.Username != nil {
-		u.Username = &req.Username.Value
-	}
-	if req.Email != nil {
-		u.Email = &req.Email.Value
-	}
-	if req.Phone != nil {
-		u.Phone = &req.Phone.Value
-	}
-
-	if req.Birthday != nil {
-		b := req.Birthday.AsTime()
-		u.Birthday = &b
-	}
-	gender := req.Gender.String()
-	if len(req.Avatar) > 0 {
-		u.Avatar = &req.Avatar
-	}
-
-	u.Gender = &gender
-	var err error
-	if req.Password != "" {
-		err = s.um.CreateWithPassword(ctx, &u, req.Password, true)
+	if len(req.Id) > 0 {
+		dbUser, err := s.um.FindByID(ctx, req.Id)
+		if err != nil {
+			return nil, err
+		}
+		if dbUser == nil {
+			return nil, errors2.NotFound("", "")
+		}
+		u = *dbUser
+		err = s.um.JoinTenant(ctx, u.ID.String(), ct.GetId())
+		if err != nil {
+			return nil, err
+		}
 	} else {
-		err = s.um.Create(ctx, &u)
+		if req.Name != nil {
+			u.Name = &req.Name.Value
+		}
+		if req.Username != nil {
+			u.Username = &req.Username.Value
+		}
+		if req.Email != nil {
+			u.Email = &req.Email.Value
+		}
+		if req.Phone != nil {
+			u.Phone = &req.Phone.Value
+		}
+		if req.Birthday != nil {
+			b := req.Birthday.AsTime()
+			u.Birthday = &b
+		}
+		gender := req.Gender.String()
+		if len(req.Avatar) > 0 {
+			u.Avatar = &req.Avatar
+		}
+
+		u.Gender = &gender
+		var err error
+		if req.Password != "" {
+			err = s.um.CreateWithPassword(ctx, &u, req.Password, true)
+		} else {
+			err = s.um.Create(ctx, &u)
+		}
+		if err != nil {
+			return nil, err
+		}
 	}
-	if err != nil {
-		return nil, err
-	}
+
 	//set roles
 	var roles []biz.Role
 	for _, r := range req.RolesId {
@@ -362,7 +378,7 @@ func (s *UserService) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 	return ret, err
 }
 
-//CheckUserTenant internal api for check user tenant
+// CheckUserTenant internal api for check user tenant
 func (s *UserService) CheckUserTenant(ctx context.Context, req *pb.CheckUserTenantRequest) (*pb.CheckUserTenantReply, error) {
 	//check permission
 	if ok, _ := s.trust.Trusted(ctx); !ok {

@@ -19,7 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ AuthServer = (*authClientProxy)(nil)
 
 // authClientProxy is the proxy to turn Auth client to server interface.
-//
 type authClientProxy struct {
 	cc AuthClient
 }

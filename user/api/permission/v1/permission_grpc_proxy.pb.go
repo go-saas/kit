@@ -19,7 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ PermissionServiceServer = (*permissionServiceClientProxy)(nil)
 
 // permissionServiceClientProxy is the proxy to turn PermissionService client to server interface.
-//
 type permissionServiceClientProxy struct {
 	cc PermissionServiceClient
 }

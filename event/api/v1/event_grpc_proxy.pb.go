@@ -20,7 +20,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ EventServiceServer = (*eventServiceClientProxy)(nil)
 
 // eventServiceClientProxy is the proxy to turn EventService client to server interface.
-//
 type eventServiceClientProxy struct {
 	cc EventServiceClient
 }

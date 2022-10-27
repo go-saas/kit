@@ -19,7 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ AccountServer = (*accountClientProxy)(nil)
 
 // accountClientProxy is the proxy to turn Account client to server interface.
-//
 type accountClientProxy struct {
 	cc AccountClient
 }

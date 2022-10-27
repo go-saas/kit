@@ -19,7 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ RoleServiceServer = (*roleServiceClientProxy)(nil)
 
 // roleServiceClientProxy is the proxy to turn RoleService client to server interface.
-//
 type roleServiceClientProxy struct {
 	cc RoleServiceClient
 }

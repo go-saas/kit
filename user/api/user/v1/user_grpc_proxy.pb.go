@@ -19,7 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ UserServiceServer = (*userServiceClientProxy)(nil)
 
 // userServiceClientProxy is the proxy to turn UserService client to server interface.
-//
 type userServiceClientProxy struct {
 	cc UserServiceClient
 }

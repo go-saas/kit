@@ -166,6 +166,7 @@ message ListUsersResponse{
 }
 
 message CreateUserRequest{
+
     optional google.protobuf.StringValue username =1;
     optional google.protobuf.StringValue name=2;
     optional google.protobuf.StringValue phone =3;
@@ -178,6 +179,7 @@ message CreateUserRequest{
     Gender gender=8;
     string avatar=9;
     repeated string roles_id=10;
+    string id =11;
 }
 
 enum Gender{

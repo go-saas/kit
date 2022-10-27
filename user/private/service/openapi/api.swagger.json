@@ -3143,6 +3143,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "id": {
+          "type": "string"
         }
       }
     },

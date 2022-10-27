@@ -19,7 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ MenuServiceServer = (*menuServiceClientProxy)(nil)
 
 // menuServiceClientProxy is the proxy to turn MenuService client to server interface.
-//
 type menuServiceClientProxy struct {
 	cc MenuServiceClient
 }

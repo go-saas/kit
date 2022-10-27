@@ -20,7 +20,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ MsgServiceServer = (*msgServiceClientProxy)(nil)
 
 // msgServiceClientProxy is the proxy to turn MsgService client to server interface.
-//
 type msgServiceClientProxy struct {
 	cc MsgServiceClient
 }

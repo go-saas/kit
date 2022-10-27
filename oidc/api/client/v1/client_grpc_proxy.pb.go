@@ -20,7 +20,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ ClientServiceServer = (*clientServiceClientProxy)(nil)
 
 // clientServiceClientProxy is the proxy to turn ClientService client to server interface.
-//
 type clientServiceClientProxy struct {
 	cc ClientServiceClient
 }

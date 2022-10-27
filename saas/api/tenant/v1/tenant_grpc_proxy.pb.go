@@ -19,7 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ TenantServiceServer = (*tenantServiceClientProxy)(nil)
 
 // tenantServiceClientProxy is the proxy to turn TenantService client to server interface.
-//
 type tenantServiceClientProxy struct {
 	cc TenantServiceClient
 }
@@ -56,7 +55,6 @@ func (c *tenantServiceClientProxy) ChangeTenant(ctx context.Context, in *ChangeT
 var _ TenantInternalServiceServer = (*tenantInternalServiceClientProxy)(nil)
 
 // tenantInternalServiceClientProxy is the proxy to turn TenantInternalService client to server interface.
-//
 type tenantInternalServiceClientProxy struct {
 	cc TenantInternalServiceClient
 }

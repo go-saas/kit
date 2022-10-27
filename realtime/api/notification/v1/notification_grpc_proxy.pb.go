@@ -20,7 +20,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ NotificationServiceServer = (*notificationServiceClientProxy)(nil)
 
 // notificationServiceClientProxy is the proxy to turn NotificationService client to server interface.
-//
 type notificationServiceClientProxy struct {
 	cc NotificationServiceClient
 }

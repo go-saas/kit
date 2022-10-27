@@ -1093,6 +1093,8 @@ func (m *CreateUserRequest) validate(all bool) error {
 
 	// no validation rules for Avatar
 
+	// no validation rules for Id
+
 	if m.Username != nil {
 
 		if all {

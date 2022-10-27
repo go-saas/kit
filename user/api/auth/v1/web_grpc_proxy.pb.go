@@ -19,7 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 var _ AuthWebServer = (*authWebClientProxy)(nil)
 
 // authWebClientProxy is the proxy to turn AuthWeb client to server interface.
-//
 type authWebClientProxy struct {
 	cc AuthWebClient
 }
