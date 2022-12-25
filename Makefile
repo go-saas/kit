@@ -3,9 +3,10 @@ VERSION=$(shell git describe --tags --always)
 BUF_VERSION=v1.8.0
 DIR=$(shell pwd)
 
-SRV_PROTO_DIR = dtm event oidc user sys saas realtime
+SRV_PROTO_DIR = dtm event oidc user sys saas realtime gateway
 PKG_PROTO_DIR = $(patsubst %/,%,$(shell cd pkg && ls -d */))
 OTHER_PROTO_DIR = $(patsubst %/,%,$(shell cd proto && ls -d */))
+THIRD_PARTY_PROTO_DIR = errors google lbs protoc-gen-openapiv2 validate
 
 .PHONY: link
 # link proto
@@ -64,19 +65,14 @@ apisix:
 .PHONY: api
 # generate api proto
 api:
-	buf generate --path ./buf/user --path ./buf/sys --path ./buf/saas --path ./buf/realtime --path ./buf/dtm --path ./buf/event --path ./buf/oidc
+	buf generate --exclude-path ./buf/errors --exclude-path ./buf/google --exclude-path ./buf/lbs --exclude-path ./buf/protoc-gen-openapiv2 --exclude-path ./buf/validate
 	cd user && $(MAKE) api
 	cd saas && $(MAKE) api
 	cd sys && $(MAKE) api
 	cd realtime && $(MAKE) api
 
-.PHONY: generate
-# generate
-generate:
-	go generate ./pkg/...
-
 .PHONY: examples
-# generate
+# examples
 examples:
 	cd examples/monolithic && $(MAKE) all
 
@@ -93,7 +89,6 @@ build:
 .PHONY: all
 all:
 	go mod tidy
-	make generate
 	make api
 	make user
 	make saas

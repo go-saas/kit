@@ -1,31 +1,31 @@
 version: v1
 plugins:
   - name: go
-    out: ./
+    out: ./buf
     opt: paths=source_relative
   - name: go-http
-    out: ./
+    out: ./buf
     opt: paths=source_relative
   - name: go-grpc
-    out: ./
+    out: ./buf
     opt:
       - paths=source_relative
       - require_unimplemented_servers=false
   - name: go-grpc-proxy
-    out: ./
+    out: ./buf
     opt:
       - paths=source_relative
   - name: validate
-    out: ./
+    out: ./buf
     opt:
       - paths=source_relative
       - lang=go
   - name: go-errors
-    out: ./
+    out: ./buf
     opt:
       - paths=source_relative
   - name: go-errors-i18n
-    out: ./
+    out: ./buf
     opt:
       - paths=source_relative
   - remote: buf.build/grpc-ecosystem/plugins/openapiv2:v2.7.1-1
