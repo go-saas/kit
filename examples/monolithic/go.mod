@@ -75,6 +75,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/go-saas/go-i18n/v2 v2.2.1-0.20220719043234-2e8ea1df2661 // indirect
 	github.com/go-saas/lazy v1.0.0 // indirect
+	github.com/go-saas/lbs v0.0.2 // indirect
 	github.com/go-saas/sessions v1.2.2-0.20220626044315-a7a87c87f120 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
@@ -132,7 +133,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
-	github.com/mattn/go-sqlite3 v1.14.15 // indirect
+	github.com/mattn/go-sqlite3 v1.14.16 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
 	github.com/mennanov/fmutils v0.2.0 // indirect
 	github.com/microsoft/go-mssqldb v0.17.0 // indirect
@@ -166,8 +167,9 @@ require (
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
-	github.com/stretchr/testify v1.8.0 // indirect
+	github.com/stretchr/testify v1.8.1 // indirect
 	github.com/toorop/go-dkim v0.0.0-20201103131630-e1cd1a0a5208 // indirect
+	github.com/twpayne/go-geom v1.4.4 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.1.16 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.1.16 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
@@ -195,8 +197,8 @@ require (
 	golang.org/x/exp v0.0.0-20221002003631-540bb7301a08 // indirect
 	golang.org/x/net v0.0.0-20221002022538-bcab6841153b // indirect
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
-	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0 // indirect
-	golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec // indirect
+	golang.org/x/sync v0.1.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/term v0.0.0-20220919170432-7a66f970e087 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220922220347-f3bd1da661af // indirect
@@ -206,11 +208,11 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/driver/mysql v1.4.1 // indirect
+	gorm.io/driver/mysql v1.4.4 // indirect
 	gorm.io/driver/postgres v1.4.4 // indirect
 	gorm.io/driver/sqlite v1.4.3 // indirect
 	gorm.io/driver/sqlserver v1.4.1 // indirect
-	gorm.io/gorm v1.24.0 // indirect
+	gorm.io/gorm v1.24.2 // indirect
 	gorm.io/plugin/dbresolver v1.3.0 // indirect
 	k8s.io/apimachinery v0.25.2 // indirect
 	modernc.org/libc v1.20.0 // indirect

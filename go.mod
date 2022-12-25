@@ -55,7 +55,6 @@ require (
 	github.com/go-saas/sessions v1.2.2-0.20220626044315-a7a87c87f120
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/goava/di v1.11.1
-	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/consul/api v1.15.2
 	github.com/hibiken/asynq v0.23.0
@@ -125,6 +124,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect

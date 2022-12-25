@@ -42,6 +42,7 @@ require (
 	github.com/go-redis/redis/extra/redisotel/v8 v8.11.5 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-saas/go-i18n/v2 v2.2.1-0.20220719043234-2e8ea1df2661 // indirect
+	github.com/go-saas/lbs v0.0.2 // indirect
 	github.com/go-saas/uow v0.0.5-0.20220710170855-20a530670db0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -73,6 +74,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/twpayne/go-geom v1.4.4 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.5 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.5 // indirect
 	go.etcd.io/etcd/client/v3 v3.5.5 // indirect
@@ -86,14 +88,14 @@ require (
 	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/exp v0.0.0-20221002003631-540bb7301a08 // indirect
 	golang.org/x/net v0.0.0-20221002022538-bcab6841153b // indirect
-	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0 // indirect
-	golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec // indirect
+	golang.org/x/sync v0.1.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220930163606-c98284e70a91 // indirect
 	google.golang.org/grpc v1.49.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/driver/mysql v1.4.1 // indirect
-	gorm.io/gorm v1.24.0 // indirect
+	gorm.io/driver/mysql v1.4.4 // indirect
+	gorm.io/gorm v1.24.2 // indirect
 )
 
 replace github.com/go-saas/kit => ../../

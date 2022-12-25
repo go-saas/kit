@@ -39,22 +39,18 @@ init:
 
 .PHONY: user
 user:
-	make api
 	cd user && $(MAKE) all
 
 .PHONY: saas
 saas:
-	make api
 	cd saas && $(MAKE) all
 
 .PHONY: realtime
 realtime:
-	make api
 	cd realtime && $(MAKE) all
 
 .PHONY: sys
 sys:
-	make api
 	cd sys && $(MAKE) all
 
 .PHONY: apisix
