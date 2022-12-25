@@ -24,12 +24,12 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type KeyServiceClient interface {
 	DeleteJsonWebKeySet(ctx context.Context, in *DeleteJsonWebKeySetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetJsonWebKeySet(ctx context.Context, in *GetJsonWebKeySetRequest, opts ...grpc.CallOption) (*JSONWebKeySet, error)
-	CreateJsonWebKeySet(ctx context.Context, in *CreateJsonWebKeySetRequest, opts ...grpc.CallOption) (*JSONWebKeySet, error)
-	UpdateJsonWebKeySet(ctx context.Context, in *UpdateJsonWebKeySetRequest, opts ...grpc.CallOption) (*JSONWebKeySet, error)
+	GetJsonWebKeySet(ctx context.Context, in *GetJsonWebKeySetRequest, opts ...grpc.CallOption) (*JsonWebKeySet, error)
+	CreateJsonWebKeySet(ctx context.Context, in *CreateJsonWebKeySetRequest, opts ...grpc.CallOption) (*JsonWebKeySet, error)
+	UpdateJsonWebKeySet(ctx context.Context, in *UpdateJsonWebKeySetRequest, opts ...grpc.CallOption) (*JsonWebKeySet, error)
 	DeleteJsonWebKey(ctx context.Context, in *DeleteJsonWebKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetJsonWebKey(ctx context.Context, in *GetJsonWebKeyRequest, opts ...grpc.CallOption) (*JSONWebKeySet, error)
-	UpdateJsonWebKey(ctx context.Context, in *UpdateJsonWebKeyRequest, opts ...grpc.CallOption) (*JSONWebKey, error)
+	GetJsonWebKey(ctx context.Context, in *GetJsonWebKeyRequest, opts ...grpc.CallOption) (*JsonWebKeySet, error)
+	UpdateJsonWebKey(ctx context.Context, in *UpdateJsonWebKeyRequest, opts ...grpc.CallOption) (*JsonWebKey, error)
 }
 
 type keyServiceClient struct {
@@ -49,8 +49,8 @@ func (c *keyServiceClient) DeleteJsonWebKeySet(ctx context.Context, in *DeleteJs
 	return out, nil
 }
 
-func (c *keyServiceClient) GetJsonWebKeySet(ctx context.Context, in *GetJsonWebKeySetRequest, opts ...grpc.CallOption) (*JSONWebKeySet, error) {
-	out := new(JSONWebKeySet)
+func (c *keyServiceClient) GetJsonWebKeySet(ctx context.Context, in *GetJsonWebKeySetRequest, opts ...grpc.CallOption) (*JsonWebKeySet, error) {
+	out := new(JsonWebKeySet)
 	err := c.cc.Invoke(ctx, "/oidc.api.key.KeyService/GetJsonWebKeySet", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -58,8 +58,8 @@ func (c *keyServiceClient) GetJsonWebKeySet(ctx context.Context, in *GetJsonWebK
 	return out, nil
 }
 
-func (c *keyServiceClient) CreateJsonWebKeySet(ctx context.Context, in *CreateJsonWebKeySetRequest, opts ...grpc.CallOption) (*JSONWebKeySet, error) {
-	out := new(JSONWebKeySet)
+func (c *keyServiceClient) CreateJsonWebKeySet(ctx context.Context, in *CreateJsonWebKeySetRequest, opts ...grpc.CallOption) (*JsonWebKeySet, error) {
+	out := new(JsonWebKeySet)
 	err := c.cc.Invoke(ctx, "/oidc.api.key.KeyService/CreateJsonWebKeySet", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -67,8 +67,8 @@ func (c *keyServiceClient) CreateJsonWebKeySet(ctx context.Context, in *CreateJs
 	return out, nil
 }
 
-func (c *keyServiceClient) UpdateJsonWebKeySet(ctx context.Context, in *UpdateJsonWebKeySetRequest, opts ...grpc.CallOption) (*JSONWebKeySet, error) {
-	out := new(JSONWebKeySet)
+func (c *keyServiceClient) UpdateJsonWebKeySet(ctx context.Context, in *UpdateJsonWebKeySetRequest, opts ...grpc.CallOption) (*JsonWebKeySet, error) {
+	out := new(JsonWebKeySet)
 	err := c.cc.Invoke(ctx, "/oidc.api.key.KeyService/UpdateJsonWebKeySet", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -85,8 +85,8 @@ func (c *keyServiceClient) DeleteJsonWebKey(ctx context.Context, in *DeleteJsonW
 	return out, nil
 }
 
-func (c *keyServiceClient) GetJsonWebKey(ctx context.Context, in *GetJsonWebKeyRequest, opts ...grpc.CallOption) (*JSONWebKeySet, error) {
-	out := new(JSONWebKeySet)
+func (c *keyServiceClient) GetJsonWebKey(ctx context.Context, in *GetJsonWebKeyRequest, opts ...grpc.CallOption) (*JsonWebKeySet, error) {
+	out := new(JsonWebKeySet)
 	err := c.cc.Invoke(ctx, "/oidc.api.key.KeyService/GetJsonWebKey", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -94,8 +94,8 @@ func (c *keyServiceClient) GetJsonWebKey(ctx context.Context, in *GetJsonWebKeyR
 	return out, nil
 }
 
-func (c *keyServiceClient) UpdateJsonWebKey(ctx context.Context, in *UpdateJsonWebKeyRequest, opts ...grpc.CallOption) (*JSONWebKey, error) {
-	out := new(JSONWebKey)
+func (c *keyServiceClient) UpdateJsonWebKey(ctx context.Context, in *UpdateJsonWebKeyRequest, opts ...grpc.CallOption) (*JsonWebKey, error) {
+	out := new(JsonWebKey)
 	err := c.cc.Invoke(ctx, "/oidc.api.key.KeyService/UpdateJsonWebKey", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -108,12 +108,12 @@ func (c *keyServiceClient) UpdateJsonWebKey(ctx context.Context, in *UpdateJsonW
 // for forward compatibility
 type KeyServiceServer interface {
 	DeleteJsonWebKeySet(context.Context, *DeleteJsonWebKeySetRequest) (*emptypb.Empty, error)
-	GetJsonWebKeySet(context.Context, *GetJsonWebKeySetRequest) (*JSONWebKeySet, error)
-	CreateJsonWebKeySet(context.Context, *CreateJsonWebKeySetRequest) (*JSONWebKeySet, error)
-	UpdateJsonWebKeySet(context.Context, *UpdateJsonWebKeySetRequest) (*JSONWebKeySet, error)
+	GetJsonWebKeySet(context.Context, *GetJsonWebKeySetRequest) (*JsonWebKeySet, error)
+	CreateJsonWebKeySet(context.Context, *CreateJsonWebKeySetRequest) (*JsonWebKeySet, error)
+	UpdateJsonWebKeySet(context.Context, *UpdateJsonWebKeySetRequest) (*JsonWebKeySet, error)
 	DeleteJsonWebKey(context.Context, *DeleteJsonWebKeyRequest) (*emptypb.Empty, error)
-	GetJsonWebKey(context.Context, *GetJsonWebKeyRequest) (*JSONWebKeySet, error)
-	UpdateJsonWebKey(context.Context, *UpdateJsonWebKeyRequest) (*JSONWebKey, error)
+	GetJsonWebKey(context.Context, *GetJsonWebKeyRequest) (*JsonWebKeySet, error)
+	UpdateJsonWebKey(context.Context, *UpdateJsonWebKeyRequest) (*JsonWebKey, error)
 }
 
 // UnimplementedKeyServiceServer should be embedded to have forward compatible implementations.
@@ -123,22 +123,22 @@ type UnimplementedKeyServiceServer struct {
 func (UnimplementedKeyServiceServer) DeleteJsonWebKeySet(context.Context, *DeleteJsonWebKeySetRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteJsonWebKeySet not implemented")
 }
-func (UnimplementedKeyServiceServer) GetJsonWebKeySet(context.Context, *GetJsonWebKeySetRequest) (*JSONWebKeySet, error) {
+func (UnimplementedKeyServiceServer) GetJsonWebKeySet(context.Context, *GetJsonWebKeySetRequest) (*JsonWebKeySet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetJsonWebKeySet not implemented")
 }
-func (UnimplementedKeyServiceServer) CreateJsonWebKeySet(context.Context, *CreateJsonWebKeySetRequest) (*JSONWebKeySet, error) {
+func (UnimplementedKeyServiceServer) CreateJsonWebKeySet(context.Context, *CreateJsonWebKeySetRequest) (*JsonWebKeySet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateJsonWebKeySet not implemented")
 }
-func (UnimplementedKeyServiceServer) UpdateJsonWebKeySet(context.Context, *UpdateJsonWebKeySetRequest) (*JSONWebKeySet, error) {
+func (UnimplementedKeyServiceServer) UpdateJsonWebKeySet(context.Context, *UpdateJsonWebKeySetRequest) (*JsonWebKeySet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateJsonWebKeySet not implemented")
 }
 func (UnimplementedKeyServiceServer) DeleteJsonWebKey(context.Context, *DeleteJsonWebKeyRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteJsonWebKey not implemented")
 }
-func (UnimplementedKeyServiceServer) GetJsonWebKey(context.Context, *GetJsonWebKeyRequest) (*JSONWebKeySet, error) {
+func (UnimplementedKeyServiceServer) GetJsonWebKey(context.Context, *GetJsonWebKeyRequest) (*JsonWebKeySet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetJsonWebKey not implemented")
 }
-func (UnimplementedKeyServiceServer) UpdateJsonWebKey(context.Context, *UpdateJsonWebKeyRequest) (*JSONWebKey, error) {
+func (UnimplementedKeyServiceServer) UpdateJsonWebKey(context.Context, *UpdateJsonWebKeyRequest) (*JsonWebKey, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateJsonWebKey not implemented")
 }
 

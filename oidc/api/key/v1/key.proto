@@ -17,19 +17,19 @@ service KeyService{
     };
   }
 
-  rpc GetJsonWebKeySet(GetJsonWebKeySetRequest)returns(JSONWebKeySet){
+  rpc GetJsonWebKeySet(GetJsonWebKeySetRequest)returns(JsonWebKeySet){
     option (google.api.http) = {
       get:  "/v1/oidc/keys/{set}"
     };
   }
-  rpc CreateJsonWebKeySet(CreateJsonWebKeySetRequest)returns(JSONWebKeySet){
+  rpc CreateJsonWebKeySet(CreateJsonWebKeySetRequest)returns(JsonWebKeySet){
     option (google.api.http) = {
       post:  "/v1/oidc/keys/{set}"
       body: "*"
     };
   }
 
-  rpc UpdateJsonWebKeySet(UpdateJsonWebKeySetRequest)returns(JSONWebKeySet){
+  rpc UpdateJsonWebKeySet(UpdateJsonWebKeySetRequest)returns(JsonWebKeySet){
     option (google.api.http) = {
       put:  "/v1/oidc/keys/{set}"
       body: "*"
@@ -41,12 +41,12 @@ service KeyService{
       delete:  "/v1/oidc/keys/{set}/{kid}"
     };
   }
-  rpc GetJsonWebKey(GetJsonWebKeyRequest)returns(JSONWebKeySet){
+  rpc GetJsonWebKey(GetJsonWebKeyRequest)returns(JsonWebKeySet){
     option (google.api.http) = {
       get:  "/v1/oidc/keys/{set}/{kid}"
     };
   }
-  rpc UpdateJsonWebKey(UpdateJsonWebKeyRequest)returns(JSONWebKey){
+  rpc UpdateJsonWebKey(UpdateJsonWebKeyRequest)returns(JsonWebKey){
     option (google.api.http) = {
       put:  "/v1/oidc/keys/{set}/{kid}"
       body: "*"
@@ -64,7 +64,7 @@ message GetJsonWebKeySetRequest{
 
 message UpdateJsonWebKeySetRequest{
   string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  JSONWebKeySet keys=2;
+  JsonWebKeySet keys=2;
 }
 message CreateJsonWebKeySetRequest{
   string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
@@ -91,9 +91,9 @@ message GetJsonWebKeyRequest{
 message UpdateJsonWebKeyRequest{
   string set=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   string kid=2[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  JSONWebKey key=3;
+  JsonWebKey key=3;
 }
-message JSONWebKey{
+message JsonWebKey{
   string alg=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   optional string crv=2;
   optional string d=3;
@@ -113,7 +113,7 @@ message JSONWebKey{
   optional string y=17;
 }
 
-message JSONWebKeySet{
+message JsonWebKeySet{
 
-  repeated JSONWebKey keys=1;
+  repeated JsonWebKey keys=1;
 }

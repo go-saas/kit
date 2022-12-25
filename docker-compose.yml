@@ -35,13 +35,13 @@ services:
 
 
   hydra:
-    image: oryd/hydra:v1.11.8
+    image: oryd/hydra:v2.0.3
     ports:
       - "4444:4444" # Public port
       - "4445:4445" # Admin port
       - "5555:5555" # Port for hydra token user
     command:
-      serve -c /etc/config/hydra/hydra.yml all --dangerous-force-http
+      serve -c /etc/config/hydra/hydra.yml all --dev
     volumes:
       - ./quickstart/configs/hydra:/etc/config/hydra
 
@@ -52,7 +52,7 @@ services:
       - hydra-migrate
 
   hydra-migrate:
-    image: oryd/hydra:v1.11.8
+    image: oryd/hydra:v2.0.3
     environment:
       - DSN=mysql://root:youShouldChangeThis@tcp(mysqld:3306)/kit?max_conns=20&max_idle_conns=4
     command:

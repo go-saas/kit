@@ -55,7 +55,7 @@ services:
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
-    command: ["./sys", "-conf", "/data/conf","-seed.menu.path","/data/conf/seed/sys.yaml"]
+    command: ["./sys", "-conf", "/data/conf"]
     restart: unless-stopped
     build:
       context: .

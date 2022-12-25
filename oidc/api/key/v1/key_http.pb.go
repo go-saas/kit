@@ -29,13 +29,13 @@ const OperationKeyServiceUpdateJsonWebKey = "/oidc.api.key.KeyService/UpdateJson
 const OperationKeyServiceUpdateJsonWebKeySet = "/oidc.api.key.KeyService/UpdateJsonWebKeySet"
 
 type KeyServiceHTTPServer interface {
-	CreateJsonWebKeySet(context.Context, *CreateJsonWebKeySetRequest) (*JSONWebKeySet, error)
+	CreateJsonWebKeySet(context.Context, *CreateJsonWebKeySetRequest) (*JsonWebKeySet, error)
 	DeleteJsonWebKey(context.Context, *DeleteJsonWebKeyRequest) (*emptypb.Empty, error)
 	DeleteJsonWebKeySet(context.Context, *DeleteJsonWebKeySetRequest) (*emptypb.Empty, error)
-	GetJsonWebKey(context.Context, *GetJsonWebKeyRequest) (*JSONWebKeySet, error)
-	GetJsonWebKeySet(context.Context, *GetJsonWebKeySetRequest) (*JSONWebKeySet, error)
-	UpdateJsonWebKey(context.Context, *UpdateJsonWebKeyRequest) (*JSONWebKey, error)
-	UpdateJsonWebKeySet(context.Context, *UpdateJsonWebKeySetRequest) (*JSONWebKeySet, error)
+	GetJsonWebKey(context.Context, *GetJsonWebKeyRequest) (*JsonWebKeySet, error)
+	GetJsonWebKeySet(context.Context, *GetJsonWebKeySetRequest) (*JsonWebKeySet, error)
+	UpdateJsonWebKey(context.Context, *UpdateJsonWebKeyRequest) (*JsonWebKey, error)
+	UpdateJsonWebKeySet(context.Context, *UpdateJsonWebKeySetRequest) (*JsonWebKeySet, error)
 }
 
 func RegisterKeyServiceHTTPServer(s *http.Server, srv KeyServiceHTTPServer) {
@@ -88,7 +88,7 @@ func _KeyService_GetJsonWebKeySet0_HTTP_Handler(srv KeyServiceHTTPServer) func(c
 		if err != nil {
 			return err
 		}
-		reply := out.(*JSONWebKeySet)
+		reply := out.(*JsonWebKeySet)
 		return ctx.Result(200, reply)
 	}
 }
@@ -110,7 +110,7 @@ func _KeyService_CreateJsonWebKeySet0_HTTP_Handler(srv KeyServiceHTTPServer) fun
 		if err != nil {
 			return err
 		}
-		reply := out.(*JSONWebKeySet)
+		reply := out.(*JsonWebKeySet)
 		return ctx.Result(200, reply)
 	}
 }
@@ -132,7 +132,7 @@ func _KeyService_UpdateJsonWebKeySet0_HTTP_Handler(srv KeyServiceHTTPServer) fun
 		if err != nil {
 			return err
 		}
-		reply := out.(*JSONWebKeySet)
+		reply := out.(*JsonWebKeySet)
 		return ctx.Result(200, reply)
 	}
 }
@@ -176,7 +176,7 @@ func _KeyService_GetJsonWebKey0_HTTP_Handler(srv KeyServiceHTTPServer) func(ctx 
 		if err != nil {
 			return err
 		}
-		reply := out.(*JSONWebKeySet)
+		reply := out.(*JsonWebKeySet)
 		return ctx.Result(200, reply)
 	}
 }
@@ -198,19 +198,19 @@ func _KeyService_UpdateJsonWebKey0_HTTP_Handler(srv KeyServiceHTTPServer) func(c
 		if err != nil {
 			return err
 		}
-		reply := out.(*JSONWebKey)
+		reply := out.(*JsonWebKey)
 		return ctx.Result(200, reply)
 	}
 }
 
 type KeyServiceHTTPClient interface {
-	CreateJsonWebKeySet(ctx context.Context, req *CreateJsonWebKeySetRequest, opts ...http.CallOption) (rsp *JSONWebKeySet, err error)
+	CreateJsonWebKeySet(ctx context.Context, req *CreateJsonWebKeySetRequest, opts ...http.CallOption) (rsp *JsonWebKeySet, err error)
 	DeleteJsonWebKey(ctx context.Context, req *DeleteJsonWebKeyRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteJsonWebKeySet(ctx context.Context, req *DeleteJsonWebKeySetRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	GetJsonWebKey(ctx context.Context, req *GetJsonWebKeyRequest, opts ...http.CallOption) (rsp *JSONWebKeySet, err error)
-	GetJsonWebKeySet(ctx context.Context, req *GetJsonWebKeySetRequest, opts ...http.CallOption) (rsp *JSONWebKeySet, err error)
-	UpdateJsonWebKey(ctx context.Context, req *UpdateJsonWebKeyRequest, opts ...http.CallOption) (rsp *JSONWebKey, err error)
-	UpdateJsonWebKeySet(ctx context.Context, req *UpdateJsonWebKeySetRequest, opts ...http.CallOption) (rsp *JSONWebKeySet, err error)
+	GetJsonWebKey(ctx context.Context, req *GetJsonWebKeyRequest, opts ...http.CallOption) (rsp *JsonWebKeySet, err error)
+	GetJsonWebKeySet(ctx context.Context, req *GetJsonWebKeySetRequest, opts ...http.CallOption) (rsp *JsonWebKeySet, err error)
+	UpdateJsonWebKey(ctx context.Context, req *UpdateJsonWebKeyRequest, opts ...http.CallOption) (rsp *JsonWebKey, err error)
+	UpdateJsonWebKeySet(ctx context.Context, req *UpdateJsonWebKeySetRequest, opts ...http.CallOption) (rsp *JsonWebKeySet, err error)
 }
 
 type KeyServiceHTTPClientImpl struct {
@@ -221,8 +221,8 @@ func NewKeyServiceHTTPClient(client *http.Client) KeyServiceHTTPClient {
 	return &KeyServiceHTTPClientImpl{client}
 }
 
-func (c *KeyServiceHTTPClientImpl) CreateJsonWebKeySet(ctx context.Context, in *CreateJsonWebKeySetRequest, opts ...http.CallOption) (*JSONWebKeySet, error) {
-	var out JSONWebKeySet
+func (c *KeyServiceHTTPClientImpl) CreateJsonWebKeySet(ctx context.Context, in *CreateJsonWebKeySetRequest, opts ...http.CallOption) (*JsonWebKeySet, error) {
+	var out JsonWebKeySet
 	pattern := "/v1/oidc/keys/{set}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationKeyServiceCreateJsonWebKeySet))
@@ -260,8 +260,8 @@ func (c *KeyServiceHTTPClientImpl) DeleteJsonWebKeySet(ctx context.Context, in *
 	return &out, err
 }
 
-func (c *KeyServiceHTTPClientImpl) GetJsonWebKey(ctx context.Context, in *GetJsonWebKeyRequest, opts ...http.CallOption) (*JSONWebKeySet, error) {
-	var out JSONWebKeySet
+func (c *KeyServiceHTTPClientImpl) GetJsonWebKey(ctx context.Context, in *GetJsonWebKeyRequest, opts ...http.CallOption) (*JsonWebKeySet, error) {
+	var out JsonWebKeySet
 	pattern := "/v1/oidc/keys/{set}/{kid}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationKeyServiceGetJsonWebKey))
@@ -273,8 +273,8 @@ func (c *KeyServiceHTTPClientImpl) GetJsonWebKey(ctx context.Context, in *GetJso
 	return &out, err
 }
 
-func (c *KeyServiceHTTPClientImpl) GetJsonWebKeySet(ctx context.Context, in *GetJsonWebKeySetRequest, opts ...http.CallOption) (*JSONWebKeySet, error) {
-	var out JSONWebKeySet
+func (c *KeyServiceHTTPClientImpl) GetJsonWebKeySet(ctx context.Context, in *GetJsonWebKeySetRequest, opts ...http.CallOption) (*JsonWebKeySet, error) {
+	var out JsonWebKeySet
 	pattern := "/v1/oidc/keys/{set}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationKeyServiceGetJsonWebKeySet))
@@ -286,8 +286,8 @@ func (c *KeyServiceHTTPClientImpl) GetJsonWebKeySet(ctx context.Context, in *Get
 	return &out, err
 }
 
-func (c *KeyServiceHTTPClientImpl) UpdateJsonWebKey(ctx context.Context, in *UpdateJsonWebKeyRequest, opts ...http.CallOption) (*JSONWebKey, error) {
-	var out JSONWebKey
+func (c *KeyServiceHTTPClientImpl) UpdateJsonWebKey(ctx context.Context, in *UpdateJsonWebKeyRequest, opts ...http.CallOption) (*JsonWebKey, error) {
+	var out JsonWebKey
 	pattern := "/v1/oidc/keys/{set}/{kid}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationKeyServiceUpdateJsonWebKey))
@@ -299,8 +299,8 @@ func (c *KeyServiceHTTPClientImpl) UpdateJsonWebKey(ctx context.Context, in *Upd
 	return &out, err
 }
 
-func (c *KeyServiceHTTPClientImpl) UpdateJsonWebKeySet(ctx context.Context, in *UpdateJsonWebKeySetRequest, opts ...http.CallOption) (*JSONWebKeySet, error) {
-	var out JSONWebKeySet
+func (c *KeyServiceHTTPClientImpl) UpdateJsonWebKeySet(ctx context.Context, in *UpdateJsonWebKeySetRequest, opts ...http.CallOption) (*JsonWebKeySet, error) {
+	var out JsonWebKeySet
 	pattern := "/v1/oidc/keys/{set}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationKeyServiceUpdateJsonWebKeySet))

@@ -22,4 +22,4 @@ services:
       - ./quickstart/monolithic:/data/conf.override
       - ./quickstart/.assets:/app/.assets
     restart: unless-stopped
-    command: ["./monolithic", "-conf", "/data/conf", "-conf", "/data/conf.override","-seed.menu.path","/data/conf/seed/sys.yaml"]
+    command: ["./monolithic", "-conf", "/data/conf", "-conf", "/data/conf.override"]

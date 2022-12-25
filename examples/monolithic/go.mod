@@ -145,8 +145,9 @@ require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354 // indirect
 	github.com/nyaruka/phonenumbers v1.1.1 // indirect
-	github.com/ory/hydra-client-go v1.11.8 // indirect
+	github.com/ory/hydra-client-go/v2 v2.0.3 // indirect
 	github.com/pegasus-kv/thrift v0.13.0 // indirect
+	github.com/peterhellberg/link v1.2.0 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pierrec/lz4/v4 v4.1.17 // indirect
 	github.com/pilagod/gorm-cursor-paginator/v2 v2.3.0 // indirect

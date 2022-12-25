@@ -1229,6 +1229,18 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "afterPageToken",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "beforePageToken",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1243,7 +1255,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/keyJSONWebKeySet"
+              "$ref": "#/definitions/keyJsonWebKeySet"
             }
           },
           "default": {
@@ -1299,7 +1311,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/keyJSONWebKeySet"
+              "$ref": "#/definitions/keyJsonWebKeySet"
             }
           },
           "default": {
@@ -1340,7 +1352,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/keyJSONWebKeySet"
+              "$ref": "#/definitions/keyJsonWebKeySet"
             }
           },
           "default": {
@@ -1365,7 +1377,7 @@
               "type": "object",
               "properties": {
                 "keys": {
-                  "$ref": "#/definitions/keyJSONWebKeySet"
+                  "$ref": "#/definitions/keyJsonWebKeySet"
                 }
               }
             }
@@ -1383,7 +1395,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/keyJSONWebKeySet"
+              "$ref": "#/definitions/keyJsonWebKeySet"
             }
           },
           "default": {
@@ -1451,7 +1463,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/keyJSONWebKey"
+              "$ref": "#/definitions/keyJsonWebKey"
             }
           },
           "default": {
@@ -1482,7 +1494,7 @@
               "type": "object",
               "properties": {
                 "key": {
-                  "$ref": "#/definitions/keyJSONWebKey"
+                  "$ref": "#/definitions/keyJsonWebKey"
                 }
               }
             }
@@ -4614,6 +4626,12 @@
         },
         "owner": {
           "type": "string"
+        },
+        "afterPageToken": {
+          "type": "string"
+        },
+        "beforePageToken": {
+          "type": "string"
         }
       }
     },
@@ -4791,6 +4809,14 @@
         "totalCount": {
           "type": "integer",
           "format": "int32"
+        },
+        "nextAfterPageToken": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "nextBeforePageToken": {
+          "type": "string",
+          "x-nullable": true
         }
       }
     },
@@ -4863,7 +4889,7 @@
         }
       }
     },
-    "keyJSONWebKey": {
+    "keyJsonWebKey": {
       "type": "object",
       "properties": {
         "alg": {
@@ -4952,13 +4978,13 @@
         "use"
       ]
     },
-    "keyJSONWebKeySet": {
+    "keyJsonWebKeySet": {
       "type": "object",
       "properties": {
         "keys": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/keyJSONWebKey"
+            "$ref": "#/definitions/keyJsonWebKey"
           }
         }
       }

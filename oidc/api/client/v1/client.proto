@@ -57,14 +57,18 @@ service ClientService{
 
 message ListClientRequest{
   int64 limit=1 ;
-  int64 offset=2;
+  int64 offset=2 [deprecated= true];
   string client_name=3;
   string owner=4;
+  string after_page_token =10;
+  string before_page_token =11;
 }
 
 message OAuth2ClientList{
   repeated OAuth2Client items=1;
   int32 total_count=2;
+  optional string next_after_page_token=4;
+  optional string next_before_page_token=5;
 }
 
 message OAuth2Client{

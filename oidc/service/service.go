@@ -10,7 +10,7 @@ import (
 	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/goava/di"
-	client "github.com/ory/hydra-client-go"
+	client "github.com/ory/hydra-client-go/v2"
 	"net/http"
 )
 
@@ -41,7 +41,7 @@ func NewGrpcServerRegister(client *ClientService,
 
 func TransformHydraErr(resp *http.Response, err error) error {
 	if apiError, ok := err.(*client.GenericOpenAPIError); ok {
-		if jsonErr, ok := apiError.Model().(client.JsonError); ok {
+		if jsonErr, ok := apiError.Model().(client.ErrorOAuth2); ok {
 			reason := ""
 			msg := ""
 			if jsonErr.Error != nil {

@@ -62,7 +62,8 @@ require (
 	github.com/lithammer/shortuuid/v3 v3.0.7
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/nyaruka/phonenumbers v1.1.1
-	github.com/ory/hydra-client-go v1.11.8
+	github.com/ory/hydra-client-go/v2 v2.0.3
+	github.com/peterhellberg/link v1.2.0
 	github.com/pilagod/gorm-cursor-paginator/v2 v2.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.28.2

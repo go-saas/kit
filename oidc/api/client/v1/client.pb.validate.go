@@ -65,6 +65,10 @@ func (m *ListClientRequest) validate(all bool) error {
 
 	// no validation rules for Owner
 
+	// no validation rules for AfterPageToken
+
+	// no validation rules for BeforePageToken
+
 	if len(errors) > 0 {
 		return ListClientRequestMultiError(errors)
 	}
@@ -202,6 +206,14 @@ func (m *OAuth2ClientList) validate(all bool) error {
 	}
 
 	// no validation rules for TotalCount
+
+	if m.NextAfterPageToken != nil {
+		// no validation rules for NextAfterPageToken
+	}
+
+	if m.NextBeforePageToken != nil {
+		// no validation rules for NextBeforePageToken
+	}
 
 	if len(errors) > 0 {
 		return OAuth2ClientListMultiError(errors)

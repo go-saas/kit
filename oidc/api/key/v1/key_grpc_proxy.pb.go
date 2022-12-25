@@ -31,21 +31,21 @@ func NewKeyServiceClientProxy(cc KeyServiceClient) KeyServiceServer {
 func (c *keyServiceClientProxy) DeleteJsonWebKeySet(ctx context.Context, in *DeleteJsonWebKeySetRequest) (*emptypb.Empty, error) {
 	return c.cc.DeleteJsonWebKeySet(ctx, in)
 }
-func (c *keyServiceClientProxy) GetJsonWebKeySet(ctx context.Context, in *GetJsonWebKeySetRequest) (*JSONWebKeySet, error) {
+func (c *keyServiceClientProxy) GetJsonWebKeySet(ctx context.Context, in *GetJsonWebKeySetRequest) (*JsonWebKeySet, error) {
 	return c.cc.GetJsonWebKeySet(ctx, in)
 }
-func (c *keyServiceClientProxy) CreateJsonWebKeySet(ctx context.Context, in *CreateJsonWebKeySetRequest) (*JSONWebKeySet, error) {
+func (c *keyServiceClientProxy) CreateJsonWebKeySet(ctx context.Context, in *CreateJsonWebKeySetRequest) (*JsonWebKeySet, error) {
 	return c.cc.CreateJsonWebKeySet(ctx, in)
 }
-func (c *keyServiceClientProxy) UpdateJsonWebKeySet(ctx context.Context, in *UpdateJsonWebKeySetRequest) (*JSONWebKeySet, error) {
+func (c *keyServiceClientProxy) UpdateJsonWebKeySet(ctx context.Context, in *UpdateJsonWebKeySetRequest) (*JsonWebKeySet, error) {
 	return c.cc.UpdateJsonWebKeySet(ctx, in)
 }
 func (c *keyServiceClientProxy) DeleteJsonWebKey(ctx context.Context, in *DeleteJsonWebKeyRequest) (*emptypb.Empty, error) {
 	return c.cc.DeleteJsonWebKey(ctx, in)
 }
-func (c *keyServiceClientProxy) GetJsonWebKey(ctx context.Context, in *GetJsonWebKeyRequest) (*JSONWebKeySet, error) {
+func (c *keyServiceClientProxy) GetJsonWebKey(ctx context.Context, in *GetJsonWebKeyRequest) (*JsonWebKeySet, error) {
 	return c.cc.GetJsonWebKey(ctx, in)
 }
-func (c *keyServiceClientProxy) UpdateJsonWebKey(ctx context.Context, in *UpdateJsonWebKeyRequest) (*JSONWebKey, error) {
+func (c *keyServiceClientProxy) UpdateJsonWebKey(ctx context.Context, in *UpdateJsonWebKeyRequest) (*JsonWebKey, error) {
 	return c.cc.UpdateJsonWebKey(ctx, in)
 }

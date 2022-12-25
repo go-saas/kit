@@ -1082,22 +1082,22 @@ var _ interface {
 	ErrorName() string
 } = UpdateJsonWebKeyRequestValidationError{}
 
-// Validate checks the field values on JSONWebKey with the rules defined in the
+// Validate checks the field values on JsonWebKey with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *JSONWebKey) Validate() error {
+func (m *JsonWebKey) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on JSONWebKey with the rules defined in
+// ValidateAll checks the field values on JsonWebKey with the rules defined in
 // the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in JSONWebKeyMultiError, or
+// result is a list of violation errors wrapped in JsonWebKeyMultiError, or
 // nil if none found.
-func (m *JSONWebKey) ValidateAll() error {
+func (m *JsonWebKey) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *JSONWebKey) validate(all bool) error {
+func (m *JsonWebKey) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1105,7 +1105,7 @@ func (m *JSONWebKey) validate(all bool) error {
 	var errors []error
 
 	if utf8.RuneCountInString(m.GetAlg()) < 1 {
-		err := JSONWebKeyValidationError{
+		err := JsonWebKeyValidationError{
 			field:  "Alg",
 			reason: "value length must be at least 1 runes",
 		}
@@ -1116,7 +1116,7 @@ func (m *JSONWebKey) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetKid()) < 1 {
-		err := JSONWebKeyValidationError{
+		err := JsonWebKeyValidationError{
 			field:  "Kid",
 			reason: "value length must be at least 1 runes",
 		}
@@ -1127,7 +1127,7 @@ func (m *JSONWebKey) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetKty()) < 1 {
-		err := JSONWebKeyValidationError{
+		err := JsonWebKeyValidationError{
 			field:  "Kty",
 			reason: "value length must be at least 1 runes",
 		}
@@ -1138,7 +1138,7 @@ func (m *JSONWebKey) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetUse()) < 1 {
-		err := JSONWebKeyValidationError{
+		err := JsonWebKeyValidationError{
 			field:  "Use",
 			reason: "value length must be at least 1 runes",
 		}
@@ -1197,18 +1197,18 @@ func (m *JSONWebKey) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return JSONWebKeyMultiError(errors)
+		return JsonWebKeyMultiError(errors)
 	}
 
 	return nil
 }
 
-// JSONWebKeyMultiError is an error wrapping multiple validation errors
-// returned by JSONWebKey.ValidateAll() if the designated constraints aren't met.
-type JSONWebKeyMultiError []error
+// JsonWebKeyMultiError is an error wrapping multiple validation errors
+// returned by JsonWebKey.ValidateAll() if the designated constraints aren't met.
+type JsonWebKeyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m JSONWebKeyMultiError) Error() string {
+func (m JsonWebKeyMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1217,11 +1217,11 @@ func (m JSONWebKeyMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m JSONWebKeyMultiError) AllErrors() []error { return m }
+func (m JsonWebKeyMultiError) AllErrors() []error { return m }
 
-// JSONWebKeyValidationError is the validation error returned by
-// JSONWebKey.Validate if the designated constraints aren't met.
-type JSONWebKeyValidationError struct {
+// JsonWebKeyValidationError is the validation error returned by
+// JsonWebKey.Validate if the designated constraints aren't met.
+type JsonWebKeyValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1229,22 +1229,22 @@ type JSONWebKeyValidationError struct {
 }
 
 // Field function returns field value.
-func (e JSONWebKeyValidationError) Field() string { return e.field }
+func (e JsonWebKeyValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e JSONWebKeyValidationError) Reason() string { return e.reason }
+func (e JsonWebKeyValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e JSONWebKeyValidationError) Cause() error { return e.cause }
+func (e JsonWebKeyValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e JSONWebKeyValidationError) Key() bool { return e.key }
+func (e JsonWebKeyValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e JSONWebKeyValidationError) ErrorName() string { return "JSONWebKeyValidationError" }
+func (e JsonWebKeyValidationError) ErrorName() string { return "JsonWebKeyValidationError" }
 
 // Error satisfies the builtin error interface
-func (e JSONWebKeyValidationError) Error() string {
+func (e JsonWebKeyValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1256,14 +1256,14 @@ func (e JSONWebKeyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sJSONWebKey.%s: %s%s",
+		"invalid %sJsonWebKey.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = JSONWebKeyValidationError{}
+var _ error = JsonWebKeyValidationError{}
 
 var _ interface {
 	Field() string
@@ -1271,24 +1271,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = JSONWebKeyValidationError{}
+} = JsonWebKeyValidationError{}
 
-// Validate checks the field values on JSONWebKeySet with the rules defined in
+// Validate checks the field values on JsonWebKeySet with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *JSONWebKeySet) Validate() error {
+func (m *JsonWebKeySet) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on JSONWebKeySet with the rules defined
+// ValidateAll checks the field values on JsonWebKeySet with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in JSONWebKeySetMultiError, or
+// result is a list of violation errors wrapped in JsonWebKeySetMultiError, or
 // nil if none found.
-func (m *JSONWebKeySet) ValidateAll() error {
+func (m *JsonWebKeySet) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *JSONWebKeySet) validate(all bool) error {
+func (m *JsonWebKeySet) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1302,7 +1302,7 @@ func (m *JSONWebKeySet) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, JSONWebKeySetValidationError{
+					errors = append(errors, JsonWebKeySetValidationError{
 						field:  fmt.Sprintf("Keys[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1310,7 +1310,7 @@ func (m *JSONWebKeySet) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, JSONWebKeySetValidationError{
+					errors = append(errors, JsonWebKeySetValidationError{
 						field:  fmt.Sprintf("Keys[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1319,7 +1319,7 @@ func (m *JSONWebKeySet) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return JSONWebKeySetValidationError{
+				return JsonWebKeySetValidationError{
 					field:  fmt.Sprintf("Keys[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1330,19 +1330,19 @@ func (m *JSONWebKeySet) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return JSONWebKeySetMultiError(errors)
+		return JsonWebKeySetMultiError(errors)
 	}
 
 	return nil
 }
 
-// JSONWebKeySetMultiError is an error wrapping multiple validation errors
-// returned by JSONWebKeySet.ValidateAll() if the designated constraints
+// JsonWebKeySetMultiError is an error wrapping multiple validation errors
+// returned by JsonWebKeySet.ValidateAll() if the designated constraints
 // aren't met.
-type JSONWebKeySetMultiError []error
+type JsonWebKeySetMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m JSONWebKeySetMultiError) Error() string {
+func (m JsonWebKeySetMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1351,11 +1351,11 @@ func (m JSONWebKeySetMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m JSONWebKeySetMultiError) AllErrors() []error { return m }
+func (m JsonWebKeySetMultiError) AllErrors() []error { return m }
 
-// JSONWebKeySetValidationError is the validation error returned by
-// JSONWebKeySet.Validate if the designated constraints aren't met.
-type JSONWebKeySetValidationError struct {
+// JsonWebKeySetValidationError is the validation error returned by
+// JsonWebKeySet.Validate if the designated constraints aren't met.
+type JsonWebKeySetValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1363,22 +1363,22 @@ type JSONWebKeySetValidationError struct {
 }
 
 // Field function returns field value.
-func (e JSONWebKeySetValidationError) Field() string { return e.field }
+func (e JsonWebKeySetValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e JSONWebKeySetValidationError) Reason() string { return e.reason }
+func (e JsonWebKeySetValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e JSONWebKeySetValidationError) Cause() error { return e.cause }
+func (e JsonWebKeySetValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e JSONWebKeySetValidationError) Key() bool { return e.key }
+func (e JsonWebKeySetValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e JSONWebKeySetValidationError) ErrorName() string { return "JSONWebKeySetValidationError" }
+func (e JsonWebKeySetValidationError) ErrorName() string { return "JsonWebKeySetValidationError" }
 
 // Error satisfies the builtin error interface
-func (e JSONWebKeySetValidationError) Error() string {
+func (e JsonWebKeySetValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1390,14 +1390,14 @@ func (e JSONWebKeySetValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sJSONWebKeySet.%s: %s%s",
+		"invalid %sJsonWebKeySet.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = JSONWebKeySetValidationError{}
+var _ error = JsonWebKeySetValidationError{}
 
 var _ interface {
 	Field() string
@@ -1405,4 +1405,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = JSONWebKeySetValidationError{}
+} = JsonWebKeySetValidationError{}

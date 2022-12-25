@@ -3,7 +3,7 @@ package data
 import (
 	kconf "github.com/go-saas/kit/pkg/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
-	client "github.com/ory/hydra-client-go"
+	client "github.com/ory/hydra-client-go/v2"
 )
 
 var ProviderSet = kitdi.NewSet(

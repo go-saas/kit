@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/go-saas/kit/oidc/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
-	client "github.com/ory/hydra-client-go"
+	client "github.com/ory/hydra-client-go/v2"
 	"github.com/samber/lo"
 
 	pb "github.com/go-saas/kit/oidc/api/key/v1"
@@ -25,27 +25,27 @@ func (s *KeyService) DeleteJsonWebKeySet(ctx context.Context, req *pb.DeleteJson
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.DeleteAction); err != nil {
 		return nil, err
 	}
-	raw, err := s.client.AdminApi.DeleteJsonWebKeySet(ctx, req.Set).Execute()
+	raw, err := s.client.JwkApi.DeleteJsonWebKeySet(ctx, req.Set).Execute()
 	if err != nil {
 		return nil, TransformHydraErr(raw, err)
 	}
 	return &emptypb.Empty{}, nil
 }
-func (s *KeyService) GetJsonWebKeySet(ctx context.Context, req *pb.GetJsonWebKeySetRequest) (*pb.JSONWebKeySet, error) {
+func (s *KeyService) GetJsonWebKeySet(ctx context.Context, req *pb.GetJsonWebKeySetRequest) (*pb.JsonWebKeySet, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	resp, raw, err := s.client.AdminApi.GetJsonWebKeySet(ctx, req.Set).Execute()
+	resp, raw, err := s.client.JwkApi.GetJsonWebKeySet(ctx, req.Set).Execute()
 	if err != nil {
 		return nil, TransformHydraErr(raw, err)
 	}
 	return mapSet(*resp), nil
 }
-func (s *KeyService) CreateJsonWebKeySet(ctx context.Context, req *pb.CreateJsonWebKeySetRequest) (*pb.JSONWebKeySet, error) {
+func (s *KeyService) CreateJsonWebKeySet(ctx context.Context, req *pb.CreateJsonWebKeySetRequest) (*pb.JsonWebKeySet, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.CreateAction); err != nil {
 		return nil, err
 	}
-	resp, raw, err := s.client.AdminApi.CreateJsonWebKeySet(ctx, req.Set).JsonWebKeySetGeneratorRequest(client.JsonWebKeySetGeneratorRequest{
+	resp, raw, err := s.client.JwkApi.CreateJsonWebKeySet(ctx, req.Set).CreateJsonWebKeySet(client.CreateJsonWebKeySet{
 		Alg: req.Keys.Alg,
 		Kid: req.Keys.Kid,
 		Use: req.Keys.Use,
@@ -55,11 +55,11 @@ func (s *KeyService) CreateJsonWebKeySet(ctx context.Context, req *pb.CreateJson
 	}
 	return mapSet(*resp), nil
 }
-func (s *KeyService) UpdateJsonWebKeySet(ctx context.Context, req *pb.UpdateJsonWebKeySetRequest) (*pb.JSONWebKeySet, error) {
+func (s *KeyService) UpdateJsonWebKeySet(ctx context.Context, req *pb.UpdateJsonWebKeySetRequest) (*pb.JsonWebKeySet, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.UpdateAction); err != nil {
 		return nil, err
 	}
-	resp, raw, err := s.client.AdminApi.UpdateJsonWebKeySet(ctx, req.Set).JSONWebKeySet(mapPbSet(req.Keys)).Execute()
+	resp, raw, err := s.client.JwkApi.SetJsonWebKeySet(ctx, req.Set).JsonWebKeySet(mapPbSet(req.Keys)).Execute()
 	if err != nil {
 		return nil, TransformHydraErr(raw, err)
 	}
@@ -69,36 +69,36 @@ func (s *KeyService) DeleteJsonWebKey(ctx context.Context, req *pb.DeleteJsonWeb
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.DeleteAction); err != nil {
 		return nil, err
 	}
-	raw, err := s.client.AdminApi.DeleteJsonWebKey(ctx, req.Kid, req.Set).Execute()
+	raw, err := s.client.JwkApi.DeleteJsonWebKey(ctx, req.Kid, req.Set).Execute()
 	if err != nil {
 		return nil, TransformHydraErr(raw, err)
 	}
 	return &emptypb.Empty{}, nil
 }
-func (s *KeyService) GetJsonWebKey(ctx context.Context, req *pb.GetJsonWebKeyRequest) (*pb.JSONWebKeySet, error) {
+func (s *KeyService) GetJsonWebKey(ctx context.Context, req *pb.GetJsonWebKeyRequest) (*pb.JsonWebKeySet, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	resp, raw, err := s.client.AdminApi.GetJsonWebKey(ctx, req.Kid, req.Set).Execute()
+	resp, raw, err := s.client.JwkApi.GetJsonWebKey(ctx, req.Kid, req.Set).Execute()
 	if err != nil {
 		return nil, TransformHydraErr(raw, err)
 	}
 	return mapSet(*resp), nil
 }
 
-func (s *KeyService) UpdateJsonWebKey(ctx context.Context, req *pb.UpdateJsonWebKeyRequest) (*pb.JSONWebKey, error) {
+func (s *KeyService) UpdateJsonWebKey(ctx context.Context, req *pb.UpdateJsonWebKeyRequest) (*pb.JsonWebKey, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceKey, "*"), authz.UpdateAction); err != nil {
 		return nil, err
 	}
-	resp, raw, err := s.client.AdminApi.UpdateJsonWebKey(ctx, req.Kid, req.Set).JSONWebKey(mapPbKey(req.Key)).Execute()
+	resp, raw, err := s.client.JwkApi.SetJsonWebKey(ctx, req.Kid, req.Set).JsonWebKey(mapPbKey(req.Key)).Execute()
 	if err != nil {
 		return nil, TransformHydraErr(raw, err)
 	}
 	return mapKey(*resp), nil
 }
 
-func mapKey(a client.JSONWebKey) *pb.JSONWebKey {
-	return &pb.JSONWebKey{
+func mapKey(a client.JsonWebKey) *pb.JsonWebKey {
+	return &pb.JsonWebKey{
 		Alg: a.Alg,
 		Crv: a.Crv,
 		D:   a.D,
@@ -119,8 +119,8 @@ func mapKey(a client.JSONWebKey) *pb.JSONWebKey {
 	}
 }
 
-func mapPbKey(a *pb.JSONWebKey) client.JSONWebKey {
-	return client.JSONWebKey{
+func mapPbKey(a *pb.JsonWebKey) client.JsonWebKey {
+	return client.JsonWebKey{
 		Alg: a.Alg,
 		Crv: a.Crv,
 		D:   a.D,
@@ -140,13 +140,13 @@ func mapPbKey(a *pb.JSONWebKey) client.JSONWebKey {
 		Y:   a.Y,
 	}
 }
-func mapSet(a client.JSONWebKeySet) *pb.JSONWebKeySet {
-	return &pb.JSONWebKeySet{Keys: lo.Map(a.Keys, func(t client.JSONWebKey, _ int) *pb.JSONWebKey {
+func mapSet(a client.JsonWebKeySet) *pb.JsonWebKeySet {
+	return &pb.JsonWebKeySet{Keys: lo.Map(a.Keys, func(t client.JsonWebKey, _ int) *pb.JsonWebKey {
 		return mapKey(t)
 	})}
 }
-func mapPbSet(a *pb.JSONWebKeySet) client.JSONWebKeySet {
-	return client.JSONWebKeySet{Keys: lo.Map(a.Keys, func(t *pb.JSONWebKey, _ int) client.JSONWebKey {
+func mapPbSet(a *pb.JsonWebKeySet) client.JsonWebKeySet {
+	return client.JsonWebKeySet{Keys: lo.Map(a.Keys, func(t *pb.JsonWebKey, _ int) client.JsonWebKey {
 		return mapPbKey(t)
 	})}
 }
