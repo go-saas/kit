@@ -15,7 +15,7 @@ import "saas/api/tenant/v1/tenant.proto";
 import "blob/blob.proto";
 import "query/operation.proto";
 import "data/data.proto";
-import "data/address.proto";
+import "lbs/address.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/go-saas/kit/user/api/account/v1;v1";
@@ -133,7 +133,7 @@ message UserAddress{
   string phone=3;
   string usage=4;
   bool prefer=5;
-  data.Address address=6;
+  lbs.Address address=6;
   google.protobuf.Struct metadata=7;
 }
 
@@ -142,7 +142,7 @@ message CreateAddressesRequest{
   string phone=3;
   string usage=4;
   bool prefer=5;
-  data.Address address=6 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  lbs.Address address=6 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
   google.protobuf.Struct metadata=7;
 }
 
@@ -159,7 +159,7 @@ message UpdateAddress{
   string phone=3;
   string usage=4;
   bool prefer=5;
-  data.Address address=6 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  lbs.Address address=6 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
   google.protobuf.Struct metadata=7;
 }
 

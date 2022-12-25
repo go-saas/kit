@@ -6,6 +6,7 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/query"
+	"github.com/go-saas/lbs"
 	"github.com/go-saas/saas"
 	"google.golang.org/protobuf/types/known/structpb"
 	"io"
@@ -397,28 +398,42 @@ func mapBizUserAddr2Pb(a *biz.UserAddress, b *pb.UserAddress) {
 	b.Usage = a.Usage
 	b.Prefer = a.Prefer
 
-	b.Address = a.Address.ToPb()
+	b.Address, _ = a.Address.ToPb()
 	m, _ := structpb.NewStruct(a.Metadata)
 	b.Metadata = m
 }
 
-func mapCreateAddr2Biz(a *pb.CreateAddressesRequest, b *biz.UserAddress) {
+func mapCreateAddr2Biz(a *pb.CreateAddressesRequest, b *biz.UserAddress) error {
 	b.Phone = a.Phone
 	b.Usage = a.Usage
 	b.Prefer = a.Prefer
 
-	b.Address = *data.NewAddressEntityFromPb(a.Address)
+	addr, err := lbs.NewAddressEntityFromPb(a.Address)
+	if err != nil {
+		return err
+	}
+	if addr != nil {
+		b.Address = *addr
+	}
 	if a.Metadata != nil {
 		b.Metadata = a.Metadata.AsMap()
 	}
+	return nil
 }
-func mapUpdateAddr2Biz(a *pb.UpdateAddress, b *biz.UserAddress) {
+func mapUpdateAddr2Biz(a *pb.UpdateAddress, b *biz.UserAddress) error {
 	b.Phone = a.Phone
 	b.Usage = a.Usage
 	b.Prefer = a.Prefer
 
-	b.Address = *data.NewAddressEntityFromPb(a.Address)
+	addr, err := lbs.NewAddressEntityFromPb(a.Address)
+	if err != nil {
+		return err
+	}
+	if addr != nil {
+		b.Address = *addr
+	}
 	if a.Metadata != nil {
 		b.Metadata = a.Metadata.AsMap()
 	}
+	return nil
 }

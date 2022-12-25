@@ -4812,40 +4812,6 @@
         }
       }
     },
-    "dataAddress": {
-      "type": "object",
-      "properties": {
-        "country": {
-          "type": "string",
-          "title": "Country or region"
-        },
-        "state": {
-          "type": "string",
-          "title": "State or province"
-        },
-        "city": {
-          "type": "string"
-        },
-        "zipCode": {
-          "type": "string"
-        },
-        "line1": {
-          "type": "string"
-        },
-        "line2": {
-          "type": "string"
-        },
-        "line3": {
-          "type": "string"
-        },
-        "longitude": {
-          "type": "string"
-        },
-        "latitude": {
-          "type": "string"
-        }
-      }
-    },
     "dataDynamicValue": {
       "type": "object",
       "properties": {
@@ -5024,6 +4990,40 @@
         "kid",
         "use"
       ]
+    },
+    "lbsAddress": {
+      "type": "object",
+      "properties": {
+        "country": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string",
+          "title": "State or province"
+        },
+        "city": {
+          "type": "string"
+        },
+        "zipCode": {
+          "type": "string"
+        },
+        "line1": {
+          "type": "string"
+        },
+        "line2": {
+          "type": "string"
+        },
+        "line3": {
+          "type": "string"
+        },
+        "geo": {
+          "type": "object",
+          "title": "Geo geojson"
+        }
+      }
     },
     "operationBooleanFilterOperators": {
       "type": "object",
@@ -5424,7 +5424,7 @@
           "type": "boolean"
         },
         "address": {
-          "$ref": "#/definitions/dataAddress"
+          "$ref": "#/definitions/lbsAddress"
         },
         "metadata": {
           "type": "object"
@@ -7003,7 +7003,7 @@
           "type": "boolean"
         },
         "address": {
-          "$ref": "#/definitions/dataAddress"
+          "$ref": "#/definitions/lbsAddress"
         },
         "metadata": {
           "type": "object"
@@ -7468,7 +7468,7 @@
           "type": "boolean"
         },
         "address": {
-          "$ref": "#/definitions/dataAddress"
+          "$ref": "#/definitions/lbsAddress"
         },
         "metadata": {
           "type": "object"
