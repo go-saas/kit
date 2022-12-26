@@ -73,7 +73,7 @@ require (
 	github.com/go-redis/redis/extra/redisotel/v8 v8.11.5 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
-	github.com/go-saas/go-i18n/v2 v2.2.1-0.20220719043234-2e8ea1df2661 // indirect
+	github.com/go-saas/go-i18n/v2 v2.2.1 // indirect
 	github.com/go-saas/lazy v1.0.0 // indirect
 	github.com/go-saas/lbs v0.0.2 // indirect
 	github.com/go-saas/sessions v1.2.2-0.20220626044315-a7a87c87f120 // indirect
@@ -201,7 +201,7 @@ require (
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/term v0.0.0-20220919170432-7a66f970e087 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/time v0.0.0-20220922220347-f3bd1da661af // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220930163606-c98284e70a91 // indirect

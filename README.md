@@ -25,6 +25,7 @@ Layout Repo( For creating new service): https://github.com/go-saas/kit-layout
 
 * [x] Saas
 * [x] Modularity
+* [x] Localization
 * [x] Microservice/Monolithic compatible
 * [x] Distributed Eventbus: [kafka](https://kafka.apache.org/), [pulsar](https://pulsar.apache.org/)
 * [x] Cache (Redis)

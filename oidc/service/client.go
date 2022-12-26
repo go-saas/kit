@@ -28,7 +28,6 @@ func (s *ClientService) ListOAuth2Clients(ctx context.Context, req *pb.ListClien
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceClient, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	//TODO pagetoken
 	rreq := s.client.OAuth2Api.ListOAuth2Clients(ctx).ClientName(req.ClientName).PageSize(req.Limit).Owner(req.Owner)
 	if len(req.AfterPageToken) > 0 {
 		rreq = rreq.PageToken(req.AfterPageToken)
