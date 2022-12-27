@@ -42,7 +42,7 @@ func (a *AggRoot) ConsumeEventsIfAny(ctx context.Context, fn func(ctx context.Co
 }
 
 func dispatchEvents(db *gorm.DB) {
-	if agg, ok := isModel[Agg](db); ok {
+	if agg, ok := IsModel[Agg](db); ok {
 		err := agg.ConsumeEventsIfAny(db.Statement.Context, func(ctx context.Context, events []event.Event) error {
 			if uow, ok := uow.FromCurrentUow(ctx); ok {
 				// uow manage events

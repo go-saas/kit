@@ -105,7 +105,7 @@ func I18N(opts ...Option) middleware.Middleware {
 					tags = append(settingTags, tags...)
 				}
 				tags = append(tags, opt.defaultLang)
-				ctx = context.WithValue(ctx, languagesKey{}, tags)
+				ctx = NewLanguageTagsContext(ctx, tags)
 				localizer := i18n.NewLocalizerFromTags(bundle, tags...)
 				ctx = context.WithValue(ctx, localizerKey{}, localizer)
 			}
@@ -127,6 +127,10 @@ func LanguageTags(ctx context.Context) []language.Tag {
 		return ret
 	}
 	return nil
+}
+
+func NewLanguageTagsContext(ctx context.Context, tags []language.Tag) context.Context {
+	return context.WithValue(ctx, languagesKey{}, tags)
 }
 
 func GetMsg(ctx context.Context, id, defaultMsg string, data map[string]interface{}, pluralCount interface{}) string {

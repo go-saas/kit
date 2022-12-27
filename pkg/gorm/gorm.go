@@ -199,7 +199,7 @@ func closeDb(d *gorm.DB) error {
 	return nil
 }
 
-func isModel[T any](db *gorm.DB) (t T, is bool) {
+func IsModel[T any](db *gorm.DB) (t T, is bool) {
 	if db.Statement.Schema.ModelType == nil {
 		return
 	}

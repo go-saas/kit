@@ -9,9 +9,10 @@ import (
 )
 
 // AuditedModel make Model Auditable, embed `audited.AuditedModel` into your model as anonymous field to make the model auditable
-//    type User struct {
-//      gorm.AuditedModel
-//    }
+//
+//	type User struct {
+//	  gorm.AuditedModel
+//	}
 type AuditedModel struct {
 	CreatedBy *string
 	UpdatedBy *string
@@ -62,7 +63,7 @@ func getCurrentUser(db *gorm.DB) (string, bool) {
 }
 
 func assignCreatedBy(db *gorm.DB) {
-	if _, ok := isModel[auditableInterface](db); ok {
+	if _, ok := IsModel[auditableInterface](db); ok {
 		if user, ok := getCurrentUser(db); ok {
 			f := db.Statement.Schema.FieldsByName["CreatedBy"]
 			switch db.Statement.ReflectValue.Kind() {
@@ -78,7 +79,7 @@ func assignCreatedBy(db *gorm.DB) {
 }
 
 func assignUpdatedBy(db *gorm.DB) {
-	if _, ok := isModel[auditableInterface](db); ok {
+	if _, ok := IsModel[auditableInterface](db); ok {
 		if user, ok := getCurrentUser(db); ok {
 			f := db.Statement.Schema.FieldsByName["UpdatedBy"]
 			switch db.Statement.ReflectValue.Kind() {
