@@ -200,14 +200,14 @@ func closeDb(d *gorm.DB) error {
 }
 
 func IsModel[T any](db *gorm.DB) (t T, is bool) {
-	if db.Statement.Schema.ModelType == nil {
-		return
-	}
 	if db.Statement.Model != nil {
 		t, is = db.Statement.Model.(T)
 		if is {
 			return
 		}
+	}
+	if db.Statement.Schema == nil || db.Statement.Schema.ModelType == nil {
+		return
 	}
 	_, is = reflect.New(db.Statement.Schema.ModelType).Interface().(T)
 	return
