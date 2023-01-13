@@ -18,6 +18,15 @@ import (
 	sgorm "github.com/go-saas/saas/gorm"
 	"github.com/goava/di"
 	"github.com/goxiaoy/go-eventbus"
+
+	_ "github.com/go-saas/kit/event/kafka"
+	_ "github.com/go-saas/kit/event/pulsar"
+
+	_ "github.com/go-saas/kit/pkg/email/log"
+	_ "github.com/go-saas/kit/pkg/email/smtp"
+
+	_ "github.com/go-saas/kit/pkg/registry/consul"
+	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 type (
@@ -45,8 +54,9 @@ var (
 		kitdi.NewProvider(NewStringCacheManager, di.As(new(cache.CacheInterface[string]))),
 
 		NewEmailer,
-		NewEventSender,
-		func() *eventbus.EventBus { return eventbus.Default },
+
+		NewEventProducer,
+		kitdi.Value(eventbus.Default),
 	)
 )
 
@@ -73,9 +83,11 @@ func NewBlobFactory(c *kitconf.Data) blob.Factory {
 	return blob.NewFactory(c.Blobs)
 }
 
-// NewEmailer TODO code clean
-func NewEmailer(c *kitconf.Data) email.LazyClient {
-	return email.NewLazyClient(c.Endpoints)
+func NewEmailer(cfg *kitconf.Data, container *di.Container) (email.Client, error) {
+	if cfg == nil || cfg.Endpoints == nil || cfg.Endpoints.Email == nil || cfg.Endpoints.Email == nil {
+		return email.NewClient(nil, container)
+	}
+	return email.NewClient(cfg.Endpoints.Email, container)
 }
 
 func NewRedisUniversalOption(c *kitconf.Data, name ConnName) (*redis.UniversalOptions, error) {
@@ -97,7 +109,7 @@ func NewStringCacheManager(store store.StoreInterface) *cache.Cache[string] {
 	return cache.New[string](store)
 }
 
-func NewEventSender(c *kitconf.Data, name ConnName, container *di.Container) (event.Producer, func(), error) {
+func NewEventProducer(c *kitconf.Data, name ConnName, container *di.Container) (event.Producer, func(), error) {
 	e := c.Endpoints.GetEventMergedDefault(string(name))
 	ret, err := event.NewFactoryProducer(e, container)
 	if err != nil {

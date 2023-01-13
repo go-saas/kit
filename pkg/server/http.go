@@ -61,7 +61,7 @@ func ChainHttpServiceRegister(r ...HttpServiceRegister) HttpServiceRegister {
 	})
 }
 
-// PatchHttpOpts Patch khttp options with given service name and configs. f use global filters
+// PatchHttpOpts Patch http options with given service name and configs. f use global filters
 func PatchHttpOpts(l log.Logger,
 	opts []khttp.ServerOption,
 	name string,

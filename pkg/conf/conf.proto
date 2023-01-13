@@ -6,6 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 import "blob/blob.proto";
+import "email/email.proto";
 import "event/event.proto";
 import "registry/registry.proto";
 import "redis/redis.proto";
@@ -76,7 +77,7 @@ message Endpoints{
   map<string, Database> databases = 1;
   map<string,event.Config> events=2;
   map<string,redis.Config> redis=3;
-  Email email=4;
+  email.Config email=4;
   Sms sms=5;
 }
 
@@ -135,29 +136,6 @@ message Logging{
   google.protobuf.Struct zap=100;
 }
 
-
-message Email{
-  string provider=1;
-  string from = 2;
-  
-  message SMTP{
-    string host=1;
-    int32  port=2;
-    string username=3;
-    string password=4;
-    enum Encryption{
-      NONE=0;
-      SSL=1;
-      STARTTLS=2;
-    }
-    Encryption encryption=5;
-    bool keep_alive=6;
-    optional google.protobuf.Int32Value connect_timeout=7;
-    optional google.protobuf.Int32Value send_timeout=8;
-    bool tls_skip_verify=9;
-  }
-  SMTP smtp=100;
-}
 
 message Sms{
   string provider=1;

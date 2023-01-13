@@ -5,7 +5,7 @@ import (
 	"fmt"
 	kconf "github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/email"
-	mail "github.com/xhit/go-simple-mail/v2"
+	mail "github.com/wneessen/go-mail"
 )
 
 type EmailSender interface {
@@ -15,13 +15,13 @@ type EmailSender interface {
 	SendInviteTenant(ctx context.Context, email, token string) error
 }
 
-//DefaultEmailSender TODO template?
+// DefaultEmailSender TODO template?
 type DefaultEmailSender struct {
-	emailer email.LazyClient
+	emailer email.Client
 	cfg     *kconf.Data
 }
 
-func NewEmailSender(emailer email.LazyClient, cfg *kconf.Data) EmailSender {
+func NewEmailSender(emailer email.Client, cfg *kconf.Data) EmailSender {
 	return &DefaultEmailSender{emailer: emailer, cfg: cfg}
 }
 
@@ -29,20 +29,13 @@ var _ EmailSender = (*DefaultEmailSender)(nil)
 
 func (d *DefaultEmailSender) SendForgetPassword(ctx context.Context, email, token string) error {
 	// New email simple html with inline and CC
-	e := mail.NewMSG()
-	e.SetFrom(d.cfg.Endpoints.Email.From).
-		AddTo(email).
-		SetSubject("Forget Password")
+	e := mail.NewMsg()
+	e.From(d.cfg.Endpoints.Email.From)
+	e.To(email)
+	e.Subject("Forget Password")
 	body := fmt.Sprintf("token: %s", token)
-	e.SetBody(mail.TextPlain, body)
-	if e.Error != nil {
-		return e.Error
-	}
-	client, err := d.emailer.Value(ctx)
-	if err != nil {
-		return err
-	}
-	err = e.Send(client)
+	e.SetBodyString(mail.TypeTextPlain, body)
+	err := d.emailer.Send(ctx, e)
 	if err != nil {
 		return err
 	}

@@ -40,14 +40,9 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-saas/kit/user/private/conf"
 
+	//this helps to load permission definitions in following services
 	_ "github.com/go-saas/kit/saas/api"
 	_ "github.com/go-saas/kit/sys/api"
-
-	_ "github.com/go-saas/kit/event/kafka"
-	_ "github.com/go-saas/kit/event/pulsar"
-
-	_ "github.com/go-saas/kit/pkg/registry/consul"
-	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"

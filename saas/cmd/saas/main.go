@@ -34,11 +34,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-saas/kit/saas/private/conf"
-
-	_ "github.com/go-saas/kit/event/kafka"
-	_ "github.com/go-saas/kit/event/pulsar"
-	_ "github.com/go-saas/kit/pkg/registry/consul"
-	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"

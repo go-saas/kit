@@ -578,6 +578,8 @@ github.com/tv42/httpunix v0.0.0-20150427012821-b75d8614f926/go.mod h1:9ESjWnEqri
 github.com/twpayne/go-geom v1.4.4 h1:bcCPAvvNSzjmpUqR0Uqh39ClCKtPx6kZVR7EakQaVJI=
 github.com/twpayne/go-geom v1.4.4/go.mod h1:Kz4sX4LtdesDQgkhsMERazLlH/NiCg90s6FPaNr0KNI=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
+github.com/wneessen/go-mail v0.3.8 h1:ja5D/o/RVwrtRIYFlrO7GmtcjDNeMakGQuwQRZYv0JM=
+github.com/wneessen/go-mail v0.3.8/go.mod h1:m25lkU2GYQnlVr6tdwK533/UXxo57V0kLOjaFYmub0E=
 github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb h1:zGWFAtiMcyryUHoUjUJX0/lt1H2+i2Ka2n+D3DImSNo=
 github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 h1:EzJWgHovont7NscjpAxXsDA8S8BMYve8Y5+7cuRE7R0=
 github.com/xeipuuv/gojsonschema v1.2.0 h1:LhYJRs+L4fBtjZUfuSZIKGeVu0QRy8e5Xi7D17UxZ74=

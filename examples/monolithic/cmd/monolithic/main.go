@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config/env"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
@@ -47,10 +46,6 @@ import (
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
-	_ "github.com/go-saas/kit/event/kafka"
-	_ "github.com/go-saas/kit/event/pulsar"
-	_ "github.com/go-saas/kit/pkg/registry/consul"
-	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"

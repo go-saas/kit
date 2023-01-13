@@ -21,9 +21,7 @@ data:
       default:
         addrs: ["redis:6379"]
         password: youShouldChangeThis
-    email:
-      smtp:
-        host: localhost
+    email: {}
     events:
       default:
         topic: kit

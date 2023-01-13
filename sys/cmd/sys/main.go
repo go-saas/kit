@@ -38,11 +38,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-saas/kit/sys/private/conf"
 
-	_ "github.com/go-saas/kit/event/kafka"
-	_ "github.com/go-saas/kit/event/pulsar"
-	_ "github.com/go-saas/kit/pkg/registry/consul"
-	_ "github.com/go-saas/kit/pkg/registry/etcd"
-
 	_ "github.com/go-saas/kit/saas/i18n"
 	_ "github.com/go-saas/kit/sys/i18n"
 	_ "github.com/go-saas/kit/user/i18n"
