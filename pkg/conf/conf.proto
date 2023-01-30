@@ -160,5 +160,5 @@ message AppConfig{
 
 message Data {
   conf.Endpoints endpoints = 1;
-  map<string,blob.BlobConfig> blobs=2;
+  repeated blob.Config vfs = 3;
 }

@@ -7,12 +7,12 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/go-saas/kit/pkg/blob"
-	kconf "github.com/go-saas/kit/pkg/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/server"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
+	"github.com/go-saas/kit/saas/private/biz"
 	"github.com/goava/di"
+	"github.com/goxiaoy/vfs"
 	"net/http"
 )
 
@@ -27,17 +27,16 @@ var ProviderSet = kitdi.NewSet(NewHttpServerRegister, NewGrpcServerRegister,
 
 func NewHttpServerRegister(
 	tenant *TenantService,
-	factory blob.Factory,
 	errEncoder khttp.EncodeErrorFunc,
 	tenantInternal *TenantInternalService,
-	dataCfg *kconf.Data,
+	blob vfs.Blob,
 ) server.HttpServiceRegister {
 	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 		route := srv.Route("/")
 
 		route.POST("/v1/saas/tenant/logo", tenant.UpdateLogo)
-		server.HandleBlobs("", dataCfg.Blobs, srv, factory)
-
+		server.MountBlob(srv, "", biz.TenantLogoPath, blob)
+		
 		v1.RegisterTenantServiceHTTPServer(srv, tenant)
 
 		router := chi.NewRouter()

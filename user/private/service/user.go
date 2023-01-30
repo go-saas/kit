@@ -9,6 +9,7 @@ import (
 	"github.com/go-saas/kit/pkg/localize"
 	v12 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/go-saas/saas"
+	"github.com/goxiaoy/vfs"
 	"io"
 	"os"
 	"path/filepath"
@@ -38,12 +39,12 @@ type UserService struct {
 	um     *biz.UserManager
 	rm     *biz.RoleManager
 	auth   authz.Service
-	blob   blob.Factory
+	blob   vfs.Blob
 	trust  api2.TrustedContextValidator
 	logger *klog.Helper
 }
 
-func NewUserService(um *biz.UserManager, rm *biz.RoleManager, auth authz.Service, blob blob.Factory, trust api2.TrustedContextValidator, l klog.Logger) *UserService {
+func NewUserService(um *biz.UserManager, rm *biz.RoleManager, auth authz.Service, blob vfs.Blob, trust api2.TrustedContextValidator, l klog.Logger) *UserService {
 	return &UserService{
 		um:     um,
 		rm:     rm,
@@ -444,14 +445,13 @@ func (s *UserService) UpdateAvatar(ctx http.Context) error {
 		defer file.Close()
 		fileName := handle.Filename
 		ext := filepath.Ext(fileName)
-		normalizedName := fmt.Sprintf("avatar/%s%s", uuid.New().String(), ext)
-		profileBlob := biz.ProfileBlob(ctx, s.blob)
-		a := profileBlob.GetAfero()
-		err = a.MkdirAll("avatar", 0755)
+		normalizedName := fmt.Sprintf("%s/%s%s", biz.UserAvatarPath, uuid.New().String(), ext)
+
+		err = s.blob.MkdirAll(biz.UserAvatarPath, 0755)
 		if err != nil {
 			return nil, err
 		}
-		f, err := a.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
+		f, err := s.blob.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
 		if err != nil {
 			return nil, err
 		}
@@ -473,12 +473,11 @@ func (s *UserService) UpdateAvatar(ctx http.Context) error {
 			}
 		}
 
-		profile := biz.ProfileBlob(ctx, s.blob)
-		url, _ := profile.GeneratePublicUrl(normalizedName)
+		url, _ := s.blob.PublicUrl(ctx, normalizedName)
 		return &blob.BlobFile{
 			Id:   normalizedName,
 			Name: "",
-			Url:  url,
+			Url:  url.URL,
 		}, nil
 	})
 	out, err := h(ctx, nil)
@@ -488,7 +487,7 @@ func (s *UserService) UpdateAvatar(ctx http.Context) error {
 	return ctx.Result(201, out)
 }
 
-func MapBizUserToApi(ctx context.Context, u *biz.User, b blob.Factory) *pb.User {
+func MapBizUserToApi(ctx context.Context, u *biz.User, b vfs.Blob) *pb.User {
 	res := &pb.User{
 		Id:    u.ID.String(),
 		Roles: nil,

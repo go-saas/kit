@@ -10,7 +10,6 @@ import (
 	oidcservice "github.com/go-saas/kit/oidc/service"
 	"github.com/go-saas/kit/pkg/apisix"
 	"github.com/go-saas/kit/pkg/authz/authz"
-	"github.com/go-saas/kit/pkg/blob"
 	kconf "github.com/go-saas/kit/pkg/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/job"
@@ -67,12 +66,10 @@ func NewHttpServerRegister(
 	locSrv *LocaleService,
 	authzSrv authz.Service,
 	errEncoder khttp.EncodeErrorFunc,
-	factory blob.Factory,
-	dataCfg *kconf.Data,
 	opt asynq.RedisConnOpt,
 ) server.HttpServiceRegister {
 	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
-		server.HandleBlobs("", dataCfg.Blobs, srv, factory)
+
 		v1.RegisterMenuServiceHTTPServer(srv, menu)
 		v12.RegisterLocaleServiceHTTPServer(srv, locSrv)
 

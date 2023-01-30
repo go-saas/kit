@@ -4,11 +4,11 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	sapi "github.com/go-saas/kit/pkg/api"
-	"github.com/go-saas/kit/pkg/blob"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/localize"
 	pb "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/go-saas/kit/saas/private/biz"
+	"github.com/goxiaoy/vfs"
 )
 
 type TenantInternalService struct {
@@ -16,10 +16,10 @@ type TenantInternalService struct {
 	Trusted sapi.TrustedContextValidator
 	UseCase *biz.TenantUseCase
 	App     *conf.AppConfig
-	Blob    blob.Factory
+	Blob    vfs.Blob
 }
 
-func NewTenantInternalService(trusted sapi.TrustedContextValidator, useCase *biz.TenantUseCase, app *conf.AppConfig, blob blob.Factory) *TenantInternalService {
+func NewTenantInternalService(trusted sapi.TrustedContextValidator, useCase *biz.TenantUseCase, app *conf.AppConfig, blob vfs.Blob) *TenantInternalService {
 	return &TenantInternalService{Trusted: trusted, UseCase: useCase, App: app, Blob: blob}
 }
 

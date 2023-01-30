@@ -1,5 +1,5 @@
 app:
-  domain_format: ([-a-z0-9]+)\.saas\.nihaosaoya\.com
+#  domain_format: ([-a-z0-9]+)\.saas\.nihaosaoya\.com
   host_display_name: GO SAAS KIT
   host_logo: /logo.svg
 services:
@@ -37,20 +37,12 @@ data:
         group: sys-golang
       realtime:
         group: realtime-golang
-  blobs:
-    user:
-      provider: os
-      public_url: http://localhost
-      base_path: "assets/user"
+  vfs:
+    -
+      public_url: http://localhost/assets
+      mount_path: "/"
       os:
         dir: ".assets"
-    saas:
-      provider: os
-      public_url: http://localhost
-      base_path: "assets/saas"
-      os:
-        dir: ".assets"
-
 
 security:
   jwt:
@@ -62,16 +54,16 @@ security:
     hydra:
       admin_url: http://hydra:4445
 
-logging:
-  zap:
-    level: "info"
-    outputPaths: [ "stdout", "rolling://.temp/logs" ]
-    errorOutputPaths: [ "stderr" ]
-    encoding: json
-    encoderConfig:
-      messageKey: message
-      levelKey: level
-      levelEncoder: lowercase
+#logging:
+#  zap:
+#    level: "info"
+#    outputPaths: [ "stdout", "rolling://.temp/logs" ]
+#    errorOutputPaths: [ "stderr" ]
+#    encoding: json
+#    encoderConfig:
+#      messageKey: message
+#      levelKey: level
+#      levelEncoder: lowercase
 
 tracing:
   otel:

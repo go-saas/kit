@@ -13,6 +13,7 @@ import (
 	"github.com/go-saas/saas"
 	shttp "github.com/go-saas/saas/http"
 	"github.com/go-saas/sessions"
+	"github.com/goxiaoy/vfs"
 	"io"
 	"os"
 	"path/filepath"
@@ -36,7 +37,7 @@ type TenantService struct {
 	pb.UnimplementedTenantServiceServer
 	useCase    *biz.TenantUseCase
 	auth       authz.Service
-	blob       blob.Factory
+	blob       vfs.Blob
 	trusted    sapi.TrustedContextValidator
 	app        *conf.AppConfig
 	normalizer ubiz.LookupNormalizer
@@ -48,7 +49,7 @@ func NewTenantService(
 	useCase *biz.TenantUseCase,
 	auth authz.Service,
 	trusted sapi.TrustedContextValidator,
-	blob blob.Factory,
+	blob vfs.Blob,
 	app *conf.AppConfig,
 	saasConf *conf2.SaasConf,
 	wenConf *shttp.WebMultiTenancyOption,
@@ -282,13 +283,12 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 		fileName := handle.Filename
 		ext := filepath.Ext(fileName)
 		normalizedName := fmt.Sprintf("tenant/logo/%s%s", uuid.New().String(), ext)
-		logoBlob := biz.LogoBlob(ctx, s.blob)
-		a := logoBlob.GetAfero()
-		err = a.MkdirAll("tenant/logo", 0755)
+
+		err = s.blob.MkdirAll(biz.TenantLogoPath, 0755)
 		if err != nil {
 			return nil, err
 		}
-		f, err := a.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
+		f, err := s.blob.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
 		if err != nil {
 			return nil, err
 		}
@@ -312,13 +312,12 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 				return nil, err
 			}
 		}
-		profile := biz.LogoBlob(ctx, s.blob)
 
-		url, _ := profile.GeneratePublicUrl(normalizedName)
+		url, _ := s.blob.PublicUrl(ctx, normalizedName)
 		return &blob.BlobFile{
 			Id:   normalizedName,
 			Name: "",
-			Url:  url,
+			Url:  url.URL,
 		}, nil
 	})
 	out, err := h(ctx, nil)
@@ -329,7 +328,7 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 	return ctx.Result(201, out)
 }
 
-func mapBizTenantToApi(ctx context.Context, app *conf.AppConfig, blob blob.Factory, tenant *biz.Tenant) *pb.Tenant {
+func mapBizTenantToApi(ctx context.Context, app *conf.AppConfig, blob vfs.Blob, tenant *biz.Tenant) *pb.Tenant {
 	conns := lo.Map(tenant.Conn, func(con biz.TenantConn, _ int) *pb.TenantConnectionString {
 		return &pb.TenantConnectionString{
 			Key:   con.Key,
@@ -360,7 +359,7 @@ func mapBizTenantToApi(ctx context.Context, app *conf.AppConfig, blob blob.Facto
 	return res
 }
 
-func mapBizTenantToInfo(ctx context.Context, b blob.Factory, tenant *biz.Tenant, app *conf.AppConfig) *pb.TenantInfo {
+func mapBizTenantToInfo(ctx context.Context, b vfs.Blob, tenant *biz.Tenant, app *conf.AppConfig) *pb.TenantInfo {
 	if tenant == nil {
 		if app == nil {
 			return nil
@@ -381,16 +380,15 @@ func mapBizTenantToInfo(ctx context.Context, b blob.Factory, tenant *biz.Tenant,
 	return res
 }
 
-func mapLogo(ctx context.Context, factory blob.Factory, entity *biz.Tenant) *blob.BlobFile {
+func mapLogo(ctx context.Context, b vfs.Blob, entity *biz.Tenant) *blob.BlobFile {
 	if entity.Logo == "" {
 		return nil
 	}
-	profile := biz.LogoBlob(ctx, factory)
 
-	url, _ := profile.GeneratePublicUrl(entity.Logo)
+	url, _ := b.PublicUrl(ctx, entity.Logo)
 	return &blob.BlobFile{
 		Id:   entity.Logo,
 		Name: "",
-		Url:  url,
+		Url:  url.URL,
 	}
 }

@@ -18,6 +18,7 @@ import (
 	sgorm "github.com/go-saas/saas/gorm"
 	"github.com/goava/di"
 	"github.com/goxiaoy/go-eventbus"
+	"github.com/goxiaoy/vfs"
 
 	_ "github.com/go-saas/kit/event/kafka"
 	_ "github.com/go-saas/kit/event/pulsar"
@@ -46,7 +47,7 @@ var (
 
 		kituow.NewUowManager,
 
-		NewBlobFactory,
+		NewBlob,
 
 		NewRedisUniversalOption,
 		NewRedis,
@@ -79,8 +80,8 @@ func NewConstDbProvider(cache *kitgorm.DbCache, cs data.ConnStrings, d *kitconf.
 	return kitgorm.NewDbProvider(cache, cs, d)
 }
 
-func NewBlobFactory(c *kitconf.Data) blob.Factory {
-	return blob.NewFactory(c.Blobs)
+func NewBlob(c *kitconf.Data) (vfs.Blob, error) {
+	return blob.New(c.Vfs...)
 }
 
 func NewEmailer(cfg *kitconf.Data, container *di.Container) (email.Client, error) {

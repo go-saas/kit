@@ -22,7 +22,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354
 	github.com/stretchr/testify v1.8.1
-	golang.org/x/net v0.0.0-20221002022538-bcab6841153b // indirect
+	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/sys v0.2.0 // indirect
 	google.golang.org/genproto v0.0.0-20220930163606-c98284e70a91
 	google.golang.org/grpc v1.49.0
@@ -36,13 +36,12 @@ require (
 	github.com/BurntSushi/toml v1.2.0
 	github.com/Shopify/sarama v1.37.0
 	github.com/apache/pulsar-client-go v0.8.1
-	github.com/aws/aws-sdk-go v1.44.109
+	github.com/aws/aws-sdk-go v1.44.189
 	github.com/centrifugal/centrifuge v0.26.0
 	github.com/dtm-labs/dtmcli v1.14.2
 	github.com/dtm-labs/dtmdriver-kratos v0.0.8
 	github.com/dtm-labs/dtmgrpc v1.14.2
 	github.com/eko/gocache/v3 v3.1.1
-	github.com/fclairamb/afero-s3 v0.3.1
 	github.com/flowchartsman/swaggerui v0.0.0-20210303154956-0e71c297862e
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20220927151429-0ecc2b422f28
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20220927151429-0ecc2b422f28
@@ -56,6 +55,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/goava/di v1.11.1
 	github.com/gorilla/mux v1.8.0
+	github.com/goxiaoy/vfs v0.0.0-20230130063220-b20a45e86d37
 	github.com/hashicorp/consul/api v1.15.2
 	github.com/hibiken/asynq v0.23.0
 	github.com/hibiken/asynqmon v0.7.1
@@ -68,7 +68,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.28.2
 	github.com/segmentio/ksuid v1.0.4
-	github.com/spf13/afero v1.9.2
+	github.com/spf13/afero v1.9.3
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.1.16
 	github.com/wneessen/go-mail v0.3.8
 	go.etcd.io/etcd/client/v3 v3.5.5
@@ -111,6 +111,7 @@ require (
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/elliotchance/orderedmap/v2 v2.2.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
+	github.com/fclairamb/afero-s3 v0.3.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/glebarez/go-sqlite v1.19.1 // indirect
@@ -206,7 +207,7 @@ require (
 	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b // indirect
 	golang.org/x/exp v0.0.0-20221002003631-540bb7301a08 // indirect
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
-	golang.org/x/term v0.0.0-20220919170432-7a66f970e087 // indirect
+	golang.org/x/term v0.1.0 // indirect
 	golang.org/x/time v0.0.0-20220922220347-f3bd1da661af // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect

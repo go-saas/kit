@@ -256,7 +256,7 @@ type Services struct {
 	Servers map[string]*Server `protobuf:"bytes,2,rep,name=servers,proto3" json:"servers,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	// Clients server to server communication client
 	Clients map[string]*Client `protobuf:"bytes,3,rep,name=clients,proto3" json:"clients,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	//Registry for service discovery
+	// Registry for service discovery
 	Registry *registry.Config `protobuf:"bytes,4,opt,name=registry,proto3" json:"registry,omitempty"`
 }
 
@@ -981,8 +981,8 @@ type Data struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Endpoints *Endpoints                  `protobuf:"bytes,1,opt,name=endpoints,proto3" json:"endpoints,omitempty"`
-	Blobs     map[string]*blob.BlobConfig `protobuf:"bytes,2,rep,name=blobs,proto3" json:"blobs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Endpoints *Endpoints     `protobuf:"bytes,1,opt,name=endpoints,proto3" json:"endpoints,omitempty"`
+	Vfs       []*blob.Config `protobuf:"bytes,3,rep,name=vfs,proto3" json:"vfs,omitempty"`
 }
 
 func (x *Data) Reset() {
@@ -1024,9 +1024,9 @@ func (x *Data) GetEndpoints() *Endpoints {
 	return nil
 }
 
-func (x *Data) GetBlobs() map[string]*blob.BlobConfig {
+func (x *Data) GetVfs() []*blob.Config {
 	if x != nil {
-		return x.Blobs
+		return x.Vfs
 	}
 	return nil
 }
@@ -1729,27 +1729,22 @@ var file_conf_conf_proto_rawDesc = []byte{
 	0x6e, 0x88, 0x01, 0x01, 0x42, 0x0d, 0x0a, 0x0b, 0x5f, 0x74, 0x65, 0x6e, 0x61, 0x6e, 0x74, 0x5f,
 	0x6b, 0x65, 0x79, 0x42, 0x10, 0x0a, 0x0e, 0x5f, 0x64, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x5f, 0x66,
 	0x6f, 0x72, 0x6d, 0x61, 0x74, 0x42, 0x17, 0x0a, 0x15, 0x5f, 0x70, 0x68, 0x6f, 0x6e, 0x65, 0x5f,
-	0x64, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x5f, 0x72, 0x65, 0x67, 0x69, 0x6f, 0x6e, 0x22, 0xae,
-	0x01, 0x0a, 0x04, 0x44, 0x61, 0x74, 0x61, 0x12, 0x2d, 0x0a, 0x09, 0x65, 0x6e, 0x64, 0x70, 0x6f,
-	0x69, 0x6e, 0x74, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x63, 0x6f, 0x6e,
-	0x66, 0x2e, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x52, 0x09, 0x65, 0x6e, 0x64,
-	0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x12, 0x2b, 0x0a, 0x05, 0x62, 0x6c, 0x6f, 0x62, 0x73, 0x18,
-	0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x63, 0x6f, 0x6e, 0x66, 0x2e, 0x44, 0x61, 0x74,
-	0x61, 0x2e, 0x42, 0x6c, 0x6f, 0x62, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x05, 0x62, 0x6c,
-	0x6f, 0x62, 0x73, 0x1a, 0x4a, 0x0a, 0x0a, 0x42, 0x6c, 0x6f, 0x62, 0x73, 0x45, 0x6e, 0x74, 0x72,
-	0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03,
-	0x6b, 0x65, 0x79, 0x12, 0x26, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x0b, 0x32, 0x10, 0x2e, 0x62, 0x6c, 0x6f, 0x62, 0x2e, 0x42, 0x6c, 0x6f, 0x62, 0x43, 0x6f,
-	0x6e, 0x66, 0x69, 0x67, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x2a,
-	0x5a, 0x0a, 0x0c, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74, 0x65, 0x4d, 0x6f, 0x64, 0x65, 0x12,
-	0x13, 0x0a, 0x0f, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74, 0x65, 0x44, 0x65, 0x66, 0x61, 0x75,
-	0x6c, 0x74, 0x10, 0x00, 0x12, 0x0f, 0x0a, 0x0b, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74, 0x65,
-	0x4c, 0x61, 0x78, 0x10, 0x01, 0x12, 0x12, 0x0a, 0x0e, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74,
-	0x65, 0x53, 0x74, 0x72, 0x69, 0x63, 0x74, 0x10, 0x02, 0x12, 0x10, 0x0a, 0x0c, 0x53, 0x61, 0x6d,
-	0x65, 0x53, 0x69, 0x74, 0x65, 0x4e, 0x6f, 0x6e, 0x65, 0x10, 0x03, 0x42, 0x26, 0x5a, 0x24, 0x67,
-	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x6f, 0x2d, 0x73, 0x61, 0x61,
-	0x73, 0x2f, 0x6b, 0x69, 0x74, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x63, 0x6f, 0x6e, 0x66, 0x3b, 0x63,
-	0x6f, 0x6e, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x64, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x5f, 0x72, 0x65, 0x67, 0x69, 0x6f, 0x6e, 0x22, 0x55,
+	0x0a, 0x04, 0x44, 0x61, 0x74, 0x61, 0x12, 0x2d, 0x0a, 0x09, 0x65, 0x6e, 0x64, 0x70, 0x6f, 0x69,
+	0x6e, 0x74, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x63, 0x6f, 0x6e, 0x66,
+	0x2e, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x52, 0x09, 0x65, 0x6e, 0x64, 0x70,
+	0x6f, 0x69, 0x6e, 0x74, 0x73, 0x12, 0x1e, 0x0a, 0x03, 0x76, 0x66, 0x73, 0x18, 0x03, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x62, 0x6c, 0x6f, 0x62, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
+	0x52, 0x03, 0x76, 0x66, 0x73, 0x2a, 0x5a, 0x0a, 0x0c, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74,
+	0x65, 0x4d, 0x6f, 0x64, 0x65, 0x12, 0x13, 0x0a, 0x0f, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74,
+	0x65, 0x44, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x10, 0x00, 0x12, 0x0f, 0x0a, 0x0b, 0x53, 0x61,
+	0x6d, 0x65, 0x53, 0x69, 0x74, 0x65, 0x4c, 0x61, 0x78, 0x10, 0x01, 0x12, 0x12, 0x0a, 0x0e, 0x53,
+	0x61, 0x6d, 0x65, 0x53, 0x69, 0x74, 0x65, 0x53, 0x74, 0x72, 0x69, 0x63, 0x74, 0x10, 0x02, 0x12,
+	0x10, 0x0a, 0x0c, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74, 0x65, 0x4e, 0x6f, 0x6e, 0x65, 0x10,
+	0x03, 0x42, 0x26, 0x5a, 0x24, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
+	0x67, 0x6f, 0x2d, 0x73, 0x61, 0x61, 0x73, 0x2f, 0x6b, 0x69, 0x74, 0x2f, 0x70, 0x6b, 0x67, 0x2f,
+	0x63, 0x6f, 0x6e, 0x66, 0x3b, 0x63, 0x6f, 0x6e, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -1765,7 +1760,7 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 }
 
 var file_conf_conf_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_conf_conf_proto_goTypes = []interface{}{
 	(SameSiteMode)(0),              // 0: conf.SameSiteMode
 	(*Server)(nil),                 // 1: conf.Server
@@ -1796,73 +1791,71 @@ var file_conf_conf_proto_goTypes = []interface{}{
 	(*Security_Jwt)(nil),           // 26: conf.Security.Jwt
 	(*Security_CookieKey)(nil),     // 27: conf.Security.CookieKey
 	(*Tracers_Otel)(nil),           // 28: conf.Tracers.Otel
-	nil,                            // 29: conf.Data.BlobsEntry
-	(*durationpb.Duration)(nil),    // 30: google.protobuf.Duration
-	(*registry.Config)(nil),        // 31: registry.Config
-	(*wrapperspb.StringValue)(nil), // 32: google.protobuf.StringValue
-	(*email.Config)(nil),           // 33: email.Config
-	(*wrapperspb.Int32Value)(nil),  // 34: google.protobuf.Int32Value
-	(*wrapperspb.BoolValue)(nil),   // 35: google.protobuf.BoolValue
-	(*structpb.Struct)(nil),        // 36: google.protobuf.Struct
+	(*durationpb.Duration)(nil),    // 29: google.protobuf.Duration
+	(*registry.Config)(nil),        // 30: registry.Config
+	(*wrapperspb.StringValue)(nil), // 31: google.protobuf.StringValue
+	(*email.Config)(nil),           // 32: email.Config
+	(*wrapperspb.Int32Value)(nil),  // 33: google.protobuf.Int32Value
+	(*wrapperspb.BoolValue)(nil),   // 34: google.protobuf.BoolValue
+	(*structpb.Struct)(nil),        // 35: google.protobuf.Struct
+	(*blob.Config)(nil),            // 36: blob.Config
 	(*event.Config)(nil),           // 37: event.Config
 	(*redis.Config)(nil),           // 38: redis.Config
-	(*blob.BlobConfig)(nil),        // 39: blob.BlobConfig
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	16, // 0: conf.Server.http:type_name -> conf.Server.HTTP
 	17, // 1: conf.Server.grpc:type_name -> conf.Server.GRPC
-	30, // 2: conf.Client.timeout:type_name -> google.protobuf.Duration
+	29, // 2: conf.Client.timeout:type_name -> google.protobuf.Duration
 	20, // 3: conf.Services.services:type_name -> conf.Services.ServicesEntry
 	21, // 4: conf.Services.servers:type_name -> conf.Services.ServersEntry
 	22, // 5: conf.Services.clients:type_name -> conf.Services.ClientsEntry
-	31, // 6: conf.Services.registry:type_name -> registry.Config
-	32, // 7: conf.Database.table_prefix:type_name -> google.protobuf.StringValue
+	30, // 6: conf.Services.registry:type_name -> registry.Config
+	31, // 7: conf.Database.table_prefix:type_name -> google.protobuf.StringValue
 	23, // 8: conf.Endpoints.databases:type_name -> conf.Endpoints.DatabasesEntry
 	24, // 9: conf.Endpoints.events:type_name -> conf.Endpoints.EventsEntry
 	25, // 10: conf.Endpoints.redis:type_name -> conf.Endpoints.RedisEntry
-	33, // 11: conf.Endpoints.email:type_name -> email.Config
+	32, // 11: conf.Endpoints.email:type_name -> email.Config
 	12, // 12: conf.Endpoints.sms:type_name -> conf.Sms
 	26, // 13: conf.Security.jwt:type_name -> conf.Security.Jwt
 	27, // 14: conf.Security.security_cookie:type_name -> conf.Security.CookieKey
 	8,  // 15: conf.Security.session_cookie:type_name -> conf.Cookie
 	8,  // 16: conf.Security.remember_cookie:type_name -> conf.Cookie
 	9,  // 17: conf.Security.oidc:type_name -> conf.Oidc
-	32, // 18: conf.Cookie.name:type_name -> google.protobuf.StringValue
-	34, // 19: conf.Cookie.max_age:type_name -> google.protobuf.Int32Value
-	32, // 20: conf.Cookie.domain:type_name -> google.protobuf.StringValue
-	32, // 21: conf.Cookie.path:type_name -> google.protobuf.StringValue
-	35, // 22: conf.Cookie.http_only:type_name -> google.protobuf.BoolValue
-	35, // 23: conf.Cookie.secure:type_name -> google.protobuf.BoolValue
+	31, // 18: conf.Cookie.name:type_name -> google.protobuf.StringValue
+	33, // 19: conf.Cookie.max_age:type_name -> google.protobuf.Int32Value
+	31, // 20: conf.Cookie.domain:type_name -> google.protobuf.StringValue
+	31, // 21: conf.Cookie.path:type_name -> google.protobuf.StringValue
+	34, // 22: conf.Cookie.http_only:type_name -> google.protobuf.BoolValue
+	34, // 23: conf.Cookie.secure:type_name -> google.protobuf.BoolValue
 	0,  // 24: conf.Cookie.same_site:type_name -> conf.SameSiteMode
 	10, // 25: conf.Oidc.hydra:type_name -> conf.Hydra
-	36, // 26: conf.Logging.zap:type_name -> google.protobuf.Struct
+	35, // 26: conf.Logging.zap:type_name -> google.protobuf.Struct
 	28, // 27: conf.Tracers.otel:type_name -> conf.Tracers.Otel
-	32, // 28: conf.AppConfig.tenant_key:type_name -> google.protobuf.StringValue
-	32, // 29: conf.AppConfig.domain_format:type_name -> google.protobuf.StringValue
+	31, // 28: conf.AppConfig.tenant_key:type_name -> google.protobuf.StringValue
+	31, // 29: conf.AppConfig.domain_format:type_name -> google.protobuf.StringValue
 	6,  // 30: conf.Data.endpoints:type_name -> conf.Endpoints
-	29, // 31: conf.Data.blobs:type_name -> conf.Data.BlobsEntry
-	30, // 32: conf.Server.HTTP.timeout:type_name -> google.protobuf.Duration
+	36, // 31: conf.Data.vfs:type_name -> blob.Config
+	29, // 32: conf.Server.HTTP.timeout:type_name -> google.protobuf.Duration
 	18, // 33: conf.Server.HTTP.cors:type_name -> conf.Server.HTTP.Cors
 	19, // 34: conf.Server.HTTP.csrf:type_name -> conf.Server.HTTP.Csrf
-	30, // 35: conf.Server.GRPC.timeout:type_name -> google.protobuf.Duration
+	29, // 35: conf.Server.GRPC.timeout:type_name -> google.protobuf.Duration
 	8,  // 36: conf.Server.HTTP.Csrf.cookie:type_name -> conf.Cookie
-	32, // 37: conf.Server.HTTP.Csrf.request_header:type_name -> google.protobuf.StringValue
-	32, // 38: conf.Server.HTTP.Csrf.field_name:type_name -> google.protobuf.StringValue
+	31, // 37: conf.Server.HTTP.Csrf.request_header:type_name -> google.protobuf.StringValue
+	31, // 38: conf.Server.HTTP.Csrf.field_name:type_name -> google.protobuf.StringValue
 	3,  // 39: conf.Services.ServicesEntry.value:type_name -> conf.Service
 	1,  // 40: conf.Services.ServersEntry.value:type_name -> conf.Server
 	2,  // 41: conf.Services.ClientsEntry.value:type_name -> conf.Client
 	5,  // 42: conf.Endpoints.DatabasesEntry.value:type_name -> conf.Database
 	37, // 43: conf.Endpoints.EventsEntry.value:type_name -> event.Config
 	38, // 44: conf.Endpoints.RedisEntry.value:type_name -> redis.Config
-	30, // 45: conf.Security.Jwt.expire_in:type_name -> google.protobuf.Duration
-	30, // 46: conf.Security.Jwt.refresh_token_expire_in:type_name -> google.protobuf.Duration
-	32, // 47: conf.Security.CookieKey.block_key:type_name -> google.protobuf.StringValue
-	39, // 48: conf.Data.BlobsEntry.value:type_name -> blob.BlobConfig
-	49, // [49:49] is the sub-list for method output_type
-	49, // [49:49] is the sub-list for method input_type
-	49, // [49:49] is the sub-list for extension type_name
-	49, // [49:49] is the sub-list for extension extendee
-	0,  // [0:49] is the sub-list for field type_name
+	29, // 45: conf.Security.Jwt.expire_in:type_name -> google.protobuf.Duration
+	29, // 46: conf.Security.Jwt.refresh_token_expire_in:type_name -> google.protobuf.Duration
+	31, // 47: conf.Security.CookieKey.block_key:type_name -> google.protobuf.StringValue
+	48, // [48:48] is the sub-list for method output_type
+	48, // [48:48] is the sub-list for method input_type
+	48, // [48:48] is the sub-list for extension type_name
+	48, // [48:48] is the sub-list for extension extendee
+	0,  // [0:48] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -2147,7 +2140,7 @@ func file_conf_conf_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_conf_conf_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   29,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

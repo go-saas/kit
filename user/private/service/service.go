@@ -7,8 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/go-saas/kit/pkg/blob"
-	kconf "github.com/go-saas/kit/pkg/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/user/api"
@@ -17,8 +15,10 @@ import (
 	v15 "github.com/go-saas/kit/user/api/permission/v1"
 	v1 "github.com/go-saas/kit/user/api/role/v1"
 	v12 "github.com/go-saas/kit/user/api/user/v1"
+	"github.com/go-saas/kit/user/private/biz"
 	uhttp "github.com/go-saas/kit/user/private/service/http"
 	"github.com/goava/di"
+	"github.com/goxiaoy/vfs"
 	"net/http"
 )
 
@@ -50,8 +50,7 @@ func NewHttpServerRegister(user *UserService,
 	role *RoleService,
 	permission *PermissionService,
 	authHttp *uhttp.Auth,
-	dataCfg *kconf.Data,
-	factory blob.Factory) server.HttpServiceRegister {
+	vfs vfs.Blob) server.HttpServiceRegister {
 	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 
 		router := chi.NewRouter()
@@ -67,7 +66,8 @@ func NewHttpServerRegister(user *UserService,
 		router.Get("/consent", server.HandlerWrap(resEncoder, authHttp.ConsentGet))
 		router.Post("/consent", server.HandlerWrap(resEncoder, authHttp.Consent))
 
-		server.HandleBlobs("", dataCfg.Blobs, srv, factory)
+		server.MountBlob(srv, "", biz.UserAvatarPath, vfs)
+
 		srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", router))
 
 		v12.RegisterUserServiceHTTPServer(srv, user)

@@ -5,28 +5,28 @@ package blob;
 option go_package = "github.com/go-saas/kit/pkg/blob;blob";
 import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
+import "validate/validate.proto";
 
-message BlobConfig{
+message Config{
   string provider =1;
-  string base_path =2;
-  bool read_only = 3;
-  string regex_filter = 4;
+
+  string mount_path =2 [(validate.rules).string.min_len=1];
 
   string public_url=5;
   string internal_url=6;
 
-  BlobProviderS3 s3=100;
-  BlobProviderOs os=101;
+  ProviderS3 s3=100;
+  ProviderOs os=101;
 }
 
-message BlobProviderS3{
+message ProviderS3{
   string region=1;
   string key=2;
   string secret=3;
   string bucket=4;
 }
 
-message BlobProviderOs{
+message ProviderOs{
   optional google.protobuf.StringValue dir=1;
 }
 

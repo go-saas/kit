@@ -8,6 +8,7 @@ import (
 	"github.com/go-saas/kit/pkg/query"
 	"github.com/go-saas/lbs"
 	"github.com/go-saas/saas"
+	"github.com/goxiaoy/vfs"
 	"google.golang.org/protobuf/types/known/structpb"
 	"io"
 	"os"
@@ -34,13 +35,13 @@ type AccountService struct {
 	pb.UnimplementedAccountServer
 	um            *biz.UserManager
 	tenantService v13.TenantServiceServer
-	blob          blob.Factory
+	blob          vfs.Blob
 	userSetting   biz.UserSettingRepo
 	userAddr      biz.UserAddressRepo
 	normalizer    biz.LookupNormalizer
 }
 
-func NewAccountService(um *biz.UserManager, blob blob.Factory, tenantService v13.TenantServiceServer, userSetting biz.UserSettingRepo, userAddr biz.UserAddressRepo, normalizer biz.LookupNormalizer) *AccountService {
+func NewAccountService(um *biz.UserManager, blob vfs.Blob, tenantService v13.TenantServiceServer, userSetting biz.UserSettingRepo, userAddr biz.UserAddressRepo, normalizer biz.LookupNormalizer) *AccountService {
 	return &AccountService{
 		um:            um,
 		blob:          blob,
@@ -343,14 +344,13 @@ func (s *AccountService) UpdateAvatar(ctx http.Context) error {
 		defer file.Close()
 		fileName := handle.Filename
 		ext := filepath.Ext(fileName)
-		normalizedName := fmt.Sprintf("avatar/%s%s", uuid.New().String(), ext)
-		profileBlob := biz.ProfileBlob(ctx, s.blob)
-		a := profileBlob.GetAfero()
-		err = a.MkdirAll("avatar", 0755)
+		normalizedName := fmt.Sprintf("%s/%s%s", biz.UserAvatarPath, uuid.New().String(), ext)
+
+		err = s.blob.MkdirAll(biz.UserAvatarPath, 0755)
 		if err != nil {
 			return nil, err
 		}
-		f, err := a.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
+		f, err := s.blob.OpenFile(normalizedName, os.O_WRONLY|os.O_CREATE, 0o666)
 		if err != nil {
 			return nil, err
 		}
@@ -378,17 +378,16 @@ func (s *AccountService) UpdateAvatar(ctx http.Context) error {
 	return ctx.Returns(201, nil)
 }
 
-func mapAvatar(ctx context.Context, factory blob.Factory, user *biz.User) *blob.BlobFile {
+func mapAvatar(ctx context.Context, b vfs.Blob, user *biz.User) *blob.BlobFile {
 	if user.Avatar == nil {
 		return nil
 	}
-	profile := biz.ProfileBlob(ctx, factory)
 
-	url, _ := profile.GeneratePublicUrl(*user.Avatar)
+	url, _ := b.PublicUrl(ctx, *user.Avatar)
 	return &blob.BlobFile{
 		Id:   *user.Avatar,
 		Name: "",
-		Url:  url,
+		Url:  url.URL,
 	}
 }
 

@@ -35,22 +35,21 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on BlobConfig with the rules defined in the
+// Validate checks the field values on Config with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *BlobConfig) Validate() error {
+func (m *Config) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on BlobConfig with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in BlobConfigMultiError, or
-// nil if none found.
-func (m *BlobConfig) ValidateAll() error {
+// ValidateAll checks the field values on Config with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in ConfigMultiError, or nil if none found.
+func (m *Config) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *BlobConfig) validate(all bool) error {
+func (m *Config) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -59,11 +58,16 @@ func (m *BlobConfig) validate(all bool) error {
 
 	// no validation rules for Provider
 
-	// no validation rules for BasePath
-
-	// no validation rules for ReadOnly
-
-	// no validation rules for RegexFilter
+	if utf8.RuneCountInString(m.GetMountPath()) < 1 {
+		err := ConfigValidationError{
+			field:  "MountPath",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for PublicUrl
 
@@ -73,7 +77,7 @@ func (m *BlobConfig) validate(all bool) error {
 		switch v := interface{}(m.GetS3()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, BlobConfigValidationError{
+				errors = append(errors, ConfigValidationError{
 					field:  "S3",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -81,7 +85,7 @@ func (m *BlobConfig) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, BlobConfigValidationError{
+				errors = append(errors, ConfigValidationError{
 					field:  "S3",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -90,7 +94,7 @@ func (m *BlobConfig) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetS3()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return BlobConfigValidationError{
+			return ConfigValidationError{
 				field:  "S3",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -102,7 +106,7 @@ func (m *BlobConfig) validate(all bool) error {
 		switch v := interface{}(m.GetOs()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, BlobConfigValidationError{
+				errors = append(errors, ConfigValidationError{
 					field:  "Os",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -110,7 +114,7 @@ func (m *BlobConfig) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, BlobConfigValidationError{
+				errors = append(errors, ConfigValidationError{
 					field:  "Os",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -119,7 +123,7 @@ func (m *BlobConfig) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetOs()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return BlobConfigValidationError{
+			return ConfigValidationError{
 				field:  "Os",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -128,18 +132,18 @@ func (m *BlobConfig) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return BlobConfigMultiError(errors)
+		return ConfigMultiError(errors)
 	}
 
 	return nil
 }
 
-// BlobConfigMultiError is an error wrapping multiple validation errors
-// returned by BlobConfig.ValidateAll() if the designated constraints aren't met.
-type BlobConfigMultiError []error
+// ConfigMultiError is an error wrapping multiple validation errors returned by
+// Config.ValidateAll() if the designated constraints aren't met.
+type ConfigMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m BlobConfigMultiError) Error() string {
+func (m ConfigMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -148,11 +152,11 @@ func (m BlobConfigMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m BlobConfigMultiError) AllErrors() []error { return m }
+func (m ConfigMultiError) AllErrors() []error { return m }
 
-// BlobConfigValidationError is the validation error returned by
-// BlobConfig.Validate if the designated constraints aren't met.
-type BlobConfigValidationError struct {
+// ConfigValidationError is the validation error returned by Config.Validate if
+// the designated constraints aren't met.
+type ConfigValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -160,22 +164,22 @@ type BlobConfigValidationError struct {
 }
 
 // Field function returns field value.
-func (e BlobConfigValidationError) Field() string { return e.field }
+func (e ConfigValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e BlobConfigValidationError) Reason() string { return e.reason }
+func (e ConfigValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e BlobConfigValidationError) Cause() error { return e.cause }
+func (e ConfigValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e BlobConfigValidationError) Key() bool { return e.key }
+func (e ConfigValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e BlobConfigValidationError) ErrorName() string { return "BlobConfigValidationError" }
+func (e ConfigValidationError) ErrorName() string { return "ConfigValidationError" }
 
 // Error satisfies the builtin error interface
-func (e BlobConfigValidationError) Error() string {
+func (e ConfigValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -187,14 +191,14 @@ func (e BlobConfigValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sBlobConfig.%s: %s%s",
+		"invalid %sConfig.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = BlobConfigValidationError{}
+var _ error = ConfigValidationError{}
 
 var _ interface {
 	Field() string
@@ -202,24 +206,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = BlobConfigValidationError{}
+} = ConfigValidationError{}
 
-// Validate checks the field values on BlobProviderS3 with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on ProviderS3 with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *BlobProviderS3) Validate() error {
+func (m *ProviderS3) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on BlobProviderS3 with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in BlobProviderS3MultiError,
-// or nil if none found.
-func (m *BlobProviderS3) ValidateAll() error {
+// ValidateAll checks the field values on ProviderS3 with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ProviderS3MultiError, or
+// nil if none found.
+func (m *ProviderS3) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *BlobProviderS3) validate(all bool) error {
+func (m *ProviderS3) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -235,19 +239,18 @@ func (m *BlobProviderS3) validate(all bool) error {
 	// no validation rules for Bucket
 
 	if len(errors) > 0 {
-		return BlobProviderS3MultiError(errors)
+		return ProviderS3MultiError(errors)
 	}
 
 	return nil
 }
 
-// BlobProviderS3MultiError is an error wrapping multiple validation errors
-// returned by BlobProviderS3.ValidateAll() if the designated constraints
-// aren't met.
-type BlobProviderS3MultiError []error
+// ProviderS3MultiError is an error wrapping multiple validation errors
+// returned by ProviderS3.ValidateAll() if the designated constraints aren't met.
+type ProviderS3MultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m BlobProviderS3MultiError) Error() string {
+func (m ProviderS3MultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -256,11 +259,11 @@ func (m BlobProviderS3MultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m BlobProviderS3MultiError) AllErrors() []error { return m }
+func (m ProviderS3MultiError) AllErrors() []error { return m }
 
-// BlobProviderS3ValidationError is the validation error returned by
-// BlobProviderS3.Validate if the designated constraints aren't met.
-type BlobProviderS3ValidationError struct {
+// ProviderS3ValidationError is the validation error returned by
+// ProviderS3.Validate if the designated constraints aren't met.
+type ProviderS3ValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -268,22 +271,22 @@ type BlobProviderS3ValidationError struct {
 }
 
 // Field function returns field value.
-func (e BlobProviderS3ValidationError) Field() string { return e.field }
+func (e ProviderS3ValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e BlobProviderS3ValidationError) Reason() string { return e.reason }
+func (e ProviderS3ValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e BlobProviderS3ValidationError) Cause() error { return e.cause }
+func (e ProviderS3ValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e BlobProviderS3ValidationError) Key() bool { return e.key }
+func (e ProviderS3ValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e BlobProviderS3ValidationError) ErrorName() string { return "BlobProviderS3ValidationError" }
+func (e ProviderS3ValidationError) ErrorName() string { return "ProviderS3ValidationError" }
 
 // Error satisfies the builtin error interface
-func (e BlobProviderS3ValidationError) Error() string {
+func (e ProviderS3ValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -295,14 +298,14 @@ func (e BlobProviderS3ValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sBlobProviderS3.%s: %s%s",
+		"invalid %sProviderS3.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = BlobProviderS3ValidationError{}
+var _ error = ProviderS3ValidationError{}
 
 var _ interface {
 	Field() string
@@ -310,24 +313,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = BlobProviderS3ValidationError{}
+} = ProviderS3ValidationError{}
 
-// Validate checks the field values on BlobProviderOs with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on ProviderOs with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *BlobProviderOs) Validate() error {
+func (m *ProviderOs) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on BlobProviderOs with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in BlobProviderOsMultiError,
-// or nil if none found.
-func (m *BlobProviderOs) ValidateAll() error {
+// ValidateAll checks the field values on ProviderOs with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ProviderOsMultiError, or
+// nil if none found.
+func (m *ProviderOs) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *BlobProviderOs) validate(all bool) error {
+func (m *ProviderOs) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -340,7 +343,7 @@ func (m *BlobProviderOs) validate(all bool) error {
 			switch v := interface{}(m.GetDir()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, BlobProviderOsValidationError{
+					errors = append(errors, ProviderOsValidationError{
 						field:  "Dir",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -348,7 +351,7 @@ func (m *BlobProviderOs) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, BlobProviderOsValidationError{
+					errors = append(errors, ProviderOsValidationError{
 						field:  "Dir",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -357,7 +360,7 @@ func (m *BlobProviderOs) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetDir()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return BlobProviderOsValidationError{
+				return ProviderOsValidationError{
 					field:  "Dir",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -368,19 +371,18 @@ func (m *BlobProviderOs) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return BlobProviderOsMultiError(errors)
+		return ProviderOsMultiError(errors)
 	}
 
 	return nil
 }
 
-// BlobProviderOsMultiError is an error wrapping multiple validation errors
-// returned by BlobProviderOs.ValidateAll() if the designated constraints
-// aren't met.
-type BlobProviderOsMultiError []error
+// ProviderOsMultiError is an error wrapping multiple validation errors
+// returned by ProviderOs.ValidateAll() if the designated constraints aren't met.
+type ProviderOsMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m BlobProviderOsMultiError) Error() string {
+func (m ProviderOsMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -389,11 +391,11 @@ func (m BlobProviderOsMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m BlobProviderOsMultiError) AllErrors() []error { return m }
+func (m ProviderOsMultiError) AllErrors() []error { return m }
 
-// BlobProviderOsValidationError is the validation error returned by
-// BlobProviderOs.Validate if the designated constraints aren't met.
-type BlobProviderOsValidationError struct {
+// ProviderOsValidationError is the validation error returned by
+// ProviderOs.Validate if the designated constraints aren't met.
+type ProviderOsValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -401,22 +403,22 @@ type BlobProviderOsValidationError struct {
 }
 
 // Field function returns field value.
-func (e BlobProviderOsValidationError) Field() string { return e.field }
+func (e ProviderOsValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e BlobProviderOsValidationError) Reason() string { return e.reason }
+func (e ProviderOsValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e BlobProviderOsValidationError) Cause() error { return e.cause }
+func (e ProviderOsValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e BlobProviderOsValidationError) Key() bool { return e.key }
+func (e ProviderOsValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e BlobProviderOsValidationError) ErrorName() string { return "BlobProviderOsValidationError" }
+func (e ProviderOsValidationError) ErrorName() string { return "ProviderOsValidationError" }
 
 // Error satisfies the builtin error interface
-func (e BlobProviderOsValidationError) Error() string {
+func (e ProviderOsValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -428,14 +430,14 @@ func (e BlobProviderOsValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sBlobProviderOs.%s: %s%s",
+		"invalid %sProviderOs.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = BlobProviderOsValidationError{}
+var _ error = ProviderOsValidationError{}
 
 var _ interface {
 	Field() string
@@ -443,7 +445,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = BlobProviderOsValidationError{}
+} = ProviderOsValidationError{}
 
 // Validate checks the field values on BlobFile with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
