@@ -16,4 +16,4 @@ var ProviderSet = kitdi.NewSet(
 
 const ConnName dal.ConnName = "saas"
 
-const TenantLogoPath = "tenant/logo"
+const TenantLogoPath = "saas/tenant/logo"

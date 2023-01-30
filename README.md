@@ -30,6 +30,7 @@ Layout Repo( For creating new service): https://github.com/go-saas/kit-layout
 * [x] Distributed Eventbus: [kafka](https://kafka.apache.org/), [pulsar](https://pulsar.apache.org/)
 * [x] Cache (Redis)
 * [x] Background Job: [asynq](https://github.com/hibiken/asynq)
+* [x] Virtual File System: [vfs](https://github.com/goxiaoy/vfs)
 
 # Quick Start
 
