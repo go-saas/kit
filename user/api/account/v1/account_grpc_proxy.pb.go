@@ -18,6 +18,15 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ AccountServer = (*accountClientProxy)(nil)
 
+const GrpcOperationAccountGetProfile = "/user.api.account.v1.Account/GetProfile"
+const GrpcOperationAccountUpdateProfile = "/user.api.account.v1.Account/UpdateProfile"
+const GrpcOperationAccountGetSettings = "/user.api.account.v1.Account/GetSettings"
+const GrpcOperationAccountUpdateSettings = "/user.api.account.v1.Account/UpdateSettings"
+const GrpcOperationAccountGetAddresses = "/user.api.account.v1.Account/GetAddresses"
+const GrpcOperationAccountCreateAddresses = "/user.api.account.v1.Account/CreateAddresses"
+const GrpcOperationAccountUpdateAddresses = "/user.api.account.v1.Account/UpdateAddresses"
+const GrpcOperationAccountDeleteAddresses = "/user.api.account.v1.Account/DeleteAddresses"
+
 // accountClientProxy is the proxy to turn Account client to server interface.
 type accountClientProxy struct {
 	cc AccountClient

@@ -30,7 +30,7 @@ const (
 )
 
 var (
-	defaultServiceConfig = &conf.Server{
+	defaultServerConfig = &conf.Server{
 		Http: &conf.Server_HTTP{
 			Addr:    ":9080",
 			Timeout: durationpb.New(5 * time.Second),
@@ -73,7 +73,7 @@ func PatchHttpOpts(l log.Logger,
 	errEncoder khttp.EncodeErrorFunc,
 	f ...khttp.FilterFunc) []khttp.ServerOption {
 	//default config
-	server := proto.Clone(defaultServiceConfig).(*conf.Server)
+	server := proto.Clone(defaultServerConfig).(*conf.Server)
 	if def, ok := services.Servers[defaultSrvName]; ok {
 		//merge default config
 		proto.Merge(server, def)
@@ -101,6 +101,7 @@ func PatchHttpOpts(l log.Logger,
 	if errEncoder != nil {
 		opts = append(opts, khttp.ErrorEncoder(errEncoder))
 	}
+
 	var filters []khttp.FilterFunc
 
 	if server.Http.Cors != nil {

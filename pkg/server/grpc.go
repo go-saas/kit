@@ -31,7 +31,7 @@ func ChainGrpcServiceRegister(r ...GrpcServiceRegister) GrpcServiceRegister {
 // PatchGrpcOpts Patch grpc options with given service name and configs
 func PatchGrpcOpts(l log.Logger, opts []grpc.ServerOption, name string, services *conf.Services) []grpc.ServerOption {
 	//default config
-	server := proto.Clone(defaultServiceConfig).(*conf.Server)
+	server := proto.Clone(defaultServerConfig).(*conf.Server)
 	if def, ok := services.Servers[defaultSrvName]; ok {
 		//merge default config
 		proto.Merge(server, def)

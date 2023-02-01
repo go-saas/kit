@@ -19,6 +19,14 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ KeyServiceServer = (*keyServiceClientProxy)(nil)
 
+const GrpcOperationKeyServiceDeleteJsonWebKeySet = "/oidc.api.key.KeyService/DeleteJsonWebKeySet"
+const GrpcOperationKeyServiceGetJsonWebKeySet = "/oidc.api.key.KeyService/GetJsonWebKeySet"
+const GrpcOperationKeyServiceCreateJsonWebKeySet = "/oidc.api.key.KeyService/CreateJsonWebKeySet"
+const GrpcOperationKeyServiceUpdateJsonWebKeySet = "/oidc.api.key.KeyService/UpdateJsonWebKeySet"
+const GrpcOperationKeyServiceDeleteJsonWebKey = "/oidc.api.key.KeyService/DeleteJsonWebKey"
+const GrpcOperationKeyServiceGetJsonWebKey = "/oidc.api.key.KeyService/GetJsonWebKey"
+const GrpcOperationKeyServiceUpdateJsonWebKey = "/oidc.api.key.KeyService/UpdateJsonWebKey"
+
 // keyServiceClientProxy is the proxy to turn KeyService client to server interface.
 type keyServiceClientProxy struct {
 	cc KeyServiceClient

@@ -18,6 +18,13 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ AuthWebServer = (*authWebClientProxy)(nil)
 
+const GrpcOperationAuthWebGetWebLogin = "/user.api.auth.v1.AuthWeb/GetWebLogin"
+const GrpcOperationAuthWebWebLogin = "/user.api.auth.v1.AuthWeb/WebLogin"
+const GrpcOperationAuthWebGetWebLogout = "/user.api.auth.v1.AuthWeb/GetWebLogout"
+const GrpcOperationAuthWebWebLogout = "/user.api.auth.v1.AuthWeb/WebLogout"
+const GrpcOperationAuthWebGetConsent = "/user.api.auth.v1.AuthWeb/GetConsent"
+const GrpcOperationAuthWebGrantConsent = "/user.api.auth.v1.AuthWeb/GrantConsent"
+
 // authWebClientProxy is the proxy to turn AuthWeb client to server interface.
 type authWebClientProxy struct {
 	cc AuthWebClient

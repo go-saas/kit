@@ -18,6 +18,20 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ TenantServiceServer = (*tenantServiceClientProxy)(nil)
 
+const GrpcOperationTenantServiceCreateTenant = "/saas.api.tenant.v1.TenantService/CreateTenant"
+const GrpcOperationTenantServiceUpdateTenant = "/saas.api.tenant.v1.TenantService/UpdateTenant"
+const GrpcOperationTenantServiceDeleteTenant = "/saas.api.tenant.v1.TenantService/DeleteTenant"
+const GrpcOperationTenantServiceGetTenant = "/saas.api.tenant.v1.TenantService/GetTenant"
+const GrpcOperationTenantServiceGetTenantPublic = "/saas.api.tenant.v1.TenantService/GetTenantPublic"
+const GrpcOperationTenantServiceListTenant = "/saas.api.tenant.v1.TenantService/ListTenant"
+const GrpcOperationTenantServiceGetCurrentTenant = "/saas.api.tenant.v1.TenantService/GetCurrentTenant"
+const GrpcOperationTenantServiceChangeTenant = "/saas.api.tenant.v1.TenantService/ChangeTenant"
+
+var _ TenantInternalServiceServer = (*tenantInternalServiceClientProxy)(nil)
+
+const GrpcOperationTenantInternalServiceGetTenant = "/saas.api.tenant.v1.TenantInternalService/GetTenant"
+const GrpcOperationTenantInternalServiceCreateTenant = "/saas.api.tenant.v1.TenantInternalService/CreateTenant"
+
 // tenantServiceClientProxy is the proxy to turn TenantService client to server interface.
 type tenantServiceClientProxy struct {
 	cc TenantServiceClient
@@ -51,8 +65,6 @@ func (c *tenantServiceClientProxy) GetCurrentTenant(ctx context.Context, in *Get
 func (c *tenantServiceClientProxy) ChangeTenant(ctx context.Context, in *ChangeTenantRequest) (*ChangeTenantReply, error) {
 	return c.cc.ChangeTenant(ctx, in)
 }
-
-var _ TenantInternalServiceServer = (*tenantInternalServiceClientProxy)(nil)
 
 // tenantInternalServiceClientProxy is the proxy to turn TenantInternalService client to server interface.
 type tenantInternalServiceClientProxy struct {

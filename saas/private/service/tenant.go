@@ -12,6 +12,7 @@ import (
 	"github.com/go-saas/kit/pkg/server"
 	conf2 "github.com/go-saas/kit/saas/private/conf"
 	uapi "github.com/go-saas/kit/user/api"
+	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/saas"
 	shttp "github.com/go-saas/saas/http"
 	"github.com/go-saas/sessions"
@@ -96,14 +97,14 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 			"Authorization": t,
 		}
 		//create tenant
-		err = xa.CallBranch(req, sapi.WithDiscovery(api.ServiceName)+"/saas.api.tenant.v1.TenantInternalService/CreateTenant", createTenantResp)
+		err = xa.CallBranch(req, sapi.WithDiscovery(api.ServiceName)+pb.GrpcOperationTenantInternalServiceCreateTenant, createTenantResp)
 		if err != nil {
 			return err
 		}
 		//server id
 		req.Id = createTenantResp.Id
 		//create user ,seed database
-		err = xa.CallBranch(req, sapi.WithDiscovery(uapi.ServiceName)+"/user.api.user.v1.UserInternalService/CreateTenant", &emptypb.Empty{})
+		err = xa.CallBranch(req, sapi.WithDiscovery(uapi.ServiceName)+v1.GrpcOperationUserInternalServiceCreateTenant, &emptypb.Empty{})
 		if err != nil {
 			return err
 		}

@@ -18,6 +18,21 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ AuthServer = (*authClientProxy)(nil)
 
+const GrpcOperationAuthRegister = "/user.api.auth.v1.Auth/Register"
+const GrpcOperationAuthLogin = "/user.api.auth.v1.Auth/Login"
+const GrpcOperationAuthGetLogin = "/user.api.auth.v1.Auth/GetLogin"
+const GrpcOperationAuthToken = "/user.api.auth.v1.Auth/Token"
+const GrpcOperationAuthRefresh = "/user.api.auth.v1.Auth/Refresh"
+const GrpcOperationAuthSendPasswordlessToken = "/user.api.auth.v1.Auth/SendPasswordlessToken"
+const GrpcOperationAuthLoginPasswordless = "/user.api.auth.v1.Auth/LoginPasswordless"
+const GrpcOperationAuthSendForgetPasswordToken = "/user.api.auth.v1.Auth/SendForgetPasswordToken"
+const GrpcOperationAuthForgetPassword = "/user.api.auth.v1.Auth/ForgetPassword"
+const GrpcOperationAuthChangePasswordByForget = "/user.api.auth.v1.Auth/ChangePasswordByForget"
+const GrpcOperationAuthValidatePassword = "/user.api.auth.v1.Auth/ValidatePassword"
+const GrpcOperationAuthChangePasswordByPre = "/user.api.auth.v1.Auth/ChangePasswordByPre"
+const GrpcOperationAuthGetCsrfToken = "/user.api.auth.v1.Auth/GetCsrfToken"
+const GrpcOperationAuthRefreshRememberToken = "/user.api.auth.v1.Auth/RefreshRememberToken"
+
 // authClientProxy is the proxy to turn Auth client to server interface.
 type authClientProxy struct {
 	cc AuthClient

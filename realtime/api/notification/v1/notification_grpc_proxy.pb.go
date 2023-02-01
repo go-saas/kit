@@ -19,6 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ NotificationServiceServer = (*notificationServiceClientProxy)(nil)
 
+const GrpcOperationNotificationServiceListNotification = "/notification.v1.NotificationService/ListNotification"
+const GrpcOperationNotificationServiceGetNotification = "/notification.v1.NotificationService/GetNotification"
+const GrpcOperationNotificationServiceReadNotification = "/notification.v1.NotificationService/ReadNotification"
+const GrpcOperationNotificationServiceDeleteNotification = "/notification.v1.NotificationService/DeleteNotification"
+
 // notificationServiceClientProxy is the proxy to turn NotificationService client to server interface.
 type notificationServiceClientProxy struct {
 	cc NotificationServiceClient
