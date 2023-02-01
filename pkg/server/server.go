@@ -7,6 +7,8 @@ import (
 	kitdi "github.com/go-saas/kit/pkg/di"
 	kregistry "github.com/go-saas/kit/pkg/registry"
 	"github.com/goava/di"
+	"google.golang.org/protobuf/types/known/durationpb"
+	"time"
 )
 
 var DefaultProviderSet = kitdi.NewSet(
@@ -15,6 +17,23 @@ var DefaultProviderSet = kitdi.NewSet(
 	kitdi.Value(ErrEncoder),
 	NewRegistrar,
 	NewWebMultiTenancyOption,
+)
+
+const (
+	defaultSrvName = "default"
+)
+
+var (
+	defaultServerConfig = &conf.Server{
+		Http: &conf.Server_HTTP{
+			Addr:    ":9080",
+			Timeout: durationpb.New(5 * time.Second),
+		},
+		Grpc: &conf.Server_GRPC{
+			Addr:    ":9081",
+			Timeout: durationpb.New(5 * time.Second),
+		},
+	}
 )
 
 func NewRegistrar(services *conf.Services, container *di.Container) (registry.Registrar, error) {

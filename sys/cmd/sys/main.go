@@ -13,6 +13,7 @@ import (
 	"github.com/go-saas/kit/pkg/apisix"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
+	conf2 "github.com/go-saas/kit/pkg/conf"
 	kdal "github.com/go-saas/kit/pkg/dal"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	kitflag "github.com/go-saas/kit/pkg/flag"
@@ -28,11 +29,13 @@ import (
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas/seed"
 	"github.com/goava/di"
+	"github.com/goxiaoy/vfs"
+	"github.com/spf13/afero"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/config"
-	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
@@ -102,12 +105,13 @@ func main() {
 	source := []config.Source{
 		env.NewSource("KRATOS_"),
 	}
-	if flagconf != nil {
-		for _, s := range flagconf {
-			source = append(source, file.NewSource(strings.TrimSpace(s)))
-		}
-	} else {
-		source = append(source, file.NewSource("./configs"))
+	if flagconf == nil {
+		flagconf = append(flagconf, "./configs")
+	}
+	for _, s := range flagconf {
+		v := vfs.New()
+		v.Mount("/", afero.NewRegexpFs(afero.NewBasePathFs(afero.NewOsFs(), strings.TrimSpace(s)), regexp.MustCompile(`\.(json|proto|xml|yaml)$`)))
+		source = append(source, conf2.NewVfs(v, "/"))
 	}
 
 	c := config.New(

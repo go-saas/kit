@@ -36,15 +36,12 @@ bin/
 *.swp
 
 
-/configs
-
 .temp/
 
 .assets/
 
 buf/*
 !buf/buf.yaml
-
 
 
 pulsardata/

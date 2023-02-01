@@ -18,6 +18,7 @@ import (
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/authz/casbin"
+	conf2 "github.com/go-saas/kit/pkg/conf"
 	kdal "github.com/go-saas/kit/pkg/dal"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	kitflag "github.com/go-saas/kit/pkg/flag"
@@ -25,6 +26,9 @@ import (
 	"github.com/go-saas/kit/pkg/logging"
 	kserver "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/tracers"
+	rbiz "github.com/go-saas/kit/realtime/private/biz"
+	rdata "github.com/go-saas/kit/realtime/private/data"
+	rservice "github.com/go-saas/kit/realtime/private/service"
 	sbiz "github.com/go-saas/kit/saas/private/biz"
 	sdata "github.com/go-saas/kit/saas/private/data"
 	sservice "github.com/go-saas/kit/saas/private/service"
@@ -35,17 +39,15 @@ import (
 	uconf "github.com/go-saas/kit/user/private/conf"
 	udata "github.com/go-saas/kit/user/private/data"
 	uservice "github.com/go-saas/kit/user/private/service"
-
-	rbiz "github.com/go-saas/kit/realtime/private/biz"
-	rdata "github.com/go-saas/kit/realtime/private/data"
-	rservice "github.com/go-saas/kit/realtime/private/service"
 	"github.com/go-saas/saas/seed"
 	"github.com/goava/di"
+	"github.com/goxiaoy/vfs"
+	"github.com/spf13/afero"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/config"
-	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -110,10 +112,13 @@ func main() {
 	source := []config.Source{
 		env.NewSource("KRATOS_"),
 	}
-	if flagconf != nil {
-		for _, s := range flagconf {
-			source = append(source, file.NewSource(strings.TrimSpace(s)))
-		}
+	if flagconf == nil {
+		flagconf = append(flagconf, "./configs")
+	}
+	for _, s := range flagconf {
+		v := vfs.New()
+		v.Mount("/", afero.NewRegexpFs(afero.NewBasePathFs(afero.NewOsFs(), strings.TrimSpace(s)), regexp.MustCompile(`\.(json|proto|xml|yaml)$`)))
+		source = append(source, conf2.NewVfs(v, "/"))
 	}
 
 	c := config.New(

@@ -22,22 +22,25 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/env"
-	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-saas/kit/gateway/apisix/internal/conf"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
+	conf2 "github.com/go-saas/kit/pkg/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/tracers"
 	sapi "github.com/go-saas/kit/saas/api"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/goava/di"
+	"github.com/goxiaoy/vfs"
+	"github.com/spf13/afero"
 	"go.uber.org/zap/zapcore"
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"runtime/pprof"
 	"strings"
@@ -160,8 +163,13 @@ func newRunCommand() *cobra.Command {
 			source := []config.Source{
 				env.NewSource("KRATOS_"),
 			}
+			if flagconf == nil {
+				flagconf = append(flagconf, "./configs")
+			}
 			for _, s := range flagconf {
-				source = append(source, file.NewSource(strings.TrimSpace(s)))
+				v := vfs.New()
+				v.Mount("/", afero.NewRegexpFs(afero.NewBasePathFs(afero.NewOsFs(), strings.TrimSpace(s)), regexp.MustCompile(`\.(json|proto|xml|yaml)$`)))
+				source = append(source, conf2.NewVfs(v, "/"))
 			}
 			c := config.New(config.WithSource(source...))
 			if err := c.Load(); err != nil {

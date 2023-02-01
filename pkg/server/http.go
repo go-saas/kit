@@ -17,29 +17,10 @@ import (
 	"github.com/goxiaoy/vfs"
 	"github.com/spf13/afero"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/durationpb"
 	"net"
 	"net/http"
 	"path"
 	"strings"
-	"time"
-)
-
-const (
-	defaultSrvName = "default"
-)
-
-var (
-	defaultServerConfig = &conf.Server{
-		Http: &conf.Server_HTTP{
-			Addr:    ":9080",
-			Timeout: durationpb.New(5 * time.Second),
-		},
-		Grpc: &conf.Server_GRPC{
-			Addr:    ":9081",
-			Timeout: durationpb.New(5 * time.Second),
-		},
-	}
 )
 
 type (

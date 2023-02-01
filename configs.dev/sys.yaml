@@ -1,0 +1,3 @@
+sys:
+  apisix:
+    endpoint: "http://host.docker.internal:8700"

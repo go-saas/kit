@@ -1,0 +1,35 @@
+services:
+  registry:
+    type: etcd
+    endpoint: http://host.docker.internal:3379
+  servers:
+    user:
+      http:
+        addr: host.docker.internal:9080
+      grpc:
+        addr: host.docker.internal:9081
+    saas:
+      http:
+        addr: host.docker.internal:9180
+      grpc:
+        addr: host.docker.internal:9181
+    sys:
+      http:
+        addr: host.docker.internal:9280
+      grpc:
+        addr: host.docker.internal:9281
+data:
+  endpoints:
+    events:
+      default:
+        addr: host.docker.internal:9094
+        type: kafka
+    databases:
+      default:
+        debug: true
+        driver: mysql
+        source: root:youShouldChangeThis@tcp(host.docker.internal:3406)/kit?parseTime=true
+    redis:
+      default:
+        addrs: ["host.docker.internal:7379"]
+        password: youShouldChangeThis
