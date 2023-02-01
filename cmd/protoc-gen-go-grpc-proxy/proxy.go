@@ -35,15 +35,29 @@ func generateFileContent(gen *protogen.Plugin, file *protogen.File, g *protogen.
 	g.P("const _ = ", grpcPackage.Ident("SupportPackageIsVersion7")) // When changing, update version number above.
 	g.P()
 	for _, service := range file.Services {
-		genService(gen, file, g, service)
+		getServiceDesc(g, service)
+	}
+	g.P()
+	for _, service := range file.Services {
+		genService(g, service)
 	}
 }
 
-func genService(gen *protogen.Plugin, file *protogen.File, g *protogen.GeneratedFile, service *protogen.Service) {
-	clientName := service.GoName + "Client"
+func getServiceDesc(g *protogen.GeneratedFile, service *protogen.Service) {
 	serverName := service.GoName + "Server"
 	structName := service.GoName + "ClientProxy"
 	g.P("var _ ", serverName, " = ", "(*", unexport(structName), ")(nil)")
+	g.P()
+	for _, m := range service.Methods {
+		g.P("const GrpcOperation" + service.GoName + string(m.Desc.Name()) + " = " + fmt.Sprintf("/%s/%s", string(service.Desc.FullName()), string(m.Desc.Name())))
+	}
+}
+
+func genService(g *protogen.GeneratedFile, service *protogen.Service) {
+	clientName := service.GoName + "Client"
+	serverName := service.GoName + "Server"
+	structName := service.GoName + "ClientProxy"
+
 	g.P("// ", unexport(structName), " is the proxy to turn ", service.GoName, " client to server interface.")
 	g.P("//")
 
