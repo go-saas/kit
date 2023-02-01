@@ -15,6 +15,7 @@ type Option struct {
 	Propagators []Propagator
 	BypassToken bool
 	Insecure    bool
+	Subset      *int
 }
 
 func NewOption(bypassToken bool, propagators ...Propagator) *Option {
@@ -23,6 +24,13 @@ func NewOption(bypassToken bool, propagators ...Propagator) *Option {
 
 func (o *Option) WithInsecure() *Option {
 	o.Insecure = true
+	return o
+}
+
+// WithSubset with client disocvery subset size.
+// zero value means subset filter disabled
+func (o *Option) WithSubset(size int) *Option {
+	o.Subset = &size
 	return o
 }
 
@@ -63,8 +71,8 @@ func (h HeaderCarrier) HasKey(key string) bool {
 	return ok
 }
 
-//Propagator propagates cross-cutting concerns as key-value text
-//pairs within a carrier that travels in-band across process boundaries to keep same state across services
+// Propagator propagates cross-cutting concerns as key-value text
+// pairs within a carrier that travels in-band across process boundaries to keep same state across services
 type Propagator interface {
 	Extract(ctx context.Context, carrier Header) (context.Context, error)
 	Inject(ctx context.Context, carrier Header) error

@@ -3,17 +3,21 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/dtm-labs/client/dtmgrpc"
+	dtmapi "github.com/go-saas/kit/dtm/api"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
 	"github.com/go-saas/kit/pkg/server"
 	conf2 "github.com/go-saas/kit/saas/private/conf"
-	ubiz "github.com/go-saas/kit/user/private/biz"
+	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas"
 	shttp "github.com/go-saas/saas/http"
 	"github.com/go-saas/sessions"
 	"github.com/goxiaoy/vfs"
+	"github.com/lithammer/shortuuid/v3"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"io"
 	"os"
 	"path/filepath"
@@ -35,14 +39,14 @@ import (
 
 type TenantService struct {
 	pb.UnimplementedTenantServiceServer
-	useCase    *biz.TenantUseCase
-	auth       authz.Service
-	blob       vfs.Blob
-	trusted    sapi.TrustedContextValidator
-	app        *conf.AppConfig
-	normalizer ubiz.LookupNormalizer
-	saasConf   *conf2.SaasConf
-	webConf    *shttp.WebMultiTenancyOption
+	useCase  *biz.TenantUseCase
+	auth     authz.Service
+	blob     vfs.Blob
+	trusted  sapi.TrustedContextValidator
+	app      *conf.AppConfig
+	saasConf *conf2.SaasConf
+	webConf  *shttp.WebMultiTenancyOption
+	tokenMgr sapi.TokenManager
 }
 
 func NewTenantService(
@@ -53,16 +57,17 @@ func NewTenantService(
 	app *conf.AppConfig,
 	saasConf *conf2.SaasConf,
 	wenConf *shttp.WebMultiTenancyOption,
+	tokenMgr sapi.TokenManager,
 ) *TenantService {
 	return &TenantService{
-		useCase:    useCase,
-		auth:       auth,
-		trusted:    trusted,
-		blob:       blob,
-		app:        app,
-		saasConf:   saasConf,
-		webConf:    wenConf,
-		normalizer: ubiz.NewLookupNormalizer(app),
+		useCase:  useCase,
+		auth:     auth,
+		trusted:  trusted,
+		blob:     blob,
+		app:      app,
+		saasConf: saasConf,
+		webConf:  wenConf,
+		tokenMgr: tokenMgr,
 	}
 }
 
@@ -72,46 +77,45 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 		return nil, err
 	}
 
-	disPlayName := req.Name
-	if req.DisplayName != "" {
-		disPlayName = req.DisplayName
+	if len(req.DisplayName) == 0 {
+		req.DisplayName = req.Name
 	}
-	t := &biz.Tenant{
-		Name:        req.Name,
-		DisplayName: disPlayName,
-		Region:      req.Region,
-		Logo:        req.Logo,
-		SeparateDb:  req.SeparateDb,
-	}
-	adminInfo := &biz.AdminInfo{}
-	if req.AdminUserId != nil {
-		adminInfo.UserId = req.AdminUserId.Value
-	} else {
-		if req.AdminUsername != nil {
-			adminInfo.Username = req.AdminUsername.Value
-			_, err := s.normalizer.Name(ctx, adminInfo.Username)
-			if err != nil {
-				return nil, pb.ErrorAdminUsernameInvalidLocalized(localize.FromContext(ctx), nil, nil)
-			}
-		}
-		if req.AdminEmail != nil {
-			adminInfo.Email = req.AdminEmail.Value
-			_, err := s.normalizer.Email(ctx, adminInfo.Email)
-			if err != nil {
-				return nil, pb.ErrorAdminEmailInvalidLocalized(localize.FromContext(ctx), nil, nil)
-			}
-		}
-		if req.AdminPassword != nil {
-			adminInfo.Password = req.AdminPassword.Value
-		}
-	}
+	uid := uuid.New()
+	req.Id = uid.String()
 
-	if err := s.useCase.CreateWithAdmin(ctx, t, adminInfo); err != nil {
+	//XA Transaction
+	gid := shortuuid.New()
+	var err error
+	var createTenantResp *pb.Tenant
+	err = dtmgrpc.XaGlobalTransaction(sapi.WithDiscovery(dtmapi.ServiceName), gid, func(xa *dtmgrpc.XaGrpc) error {
+		t, err := s.tokenMgr.GetOrGenerateToken(ctx, dtmapi.ClientConf)
+		if err != nil {
+			return err
+		}
+		xa.BranchHeaders = map[string]string{
+			"Authorization": t,
+		}
+		//create tenant
+		err = xa.CallBranch(req, sapi.WithDiscovery(api.ServiceName)+"/saas.api.tenant.v1.TenantInternalService/CreateTenant", createTenantResp)
+		if err != nil {
+			return err
+		}
+		//server id
+		req.Id = createTenantResp.Id
+		//create user ,seed database
+		err = xa.CallBranch(req, sapi.WithDiscovery(uapi.ServiceName)+"/user.api.user.v1.UserInternalService/CreateTenant", &emptypb.Empty{})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
 		return nil, err
 	}
-
-	return mapBizTenantToApi(ctx, s.app, s.blob, t), nil
+	return createTenantResp, nil
 }
+
 func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRequest) (*pb.Tenant, error) {
 
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, req.Tenant.Id), authz.UpdateAction); err != nil {

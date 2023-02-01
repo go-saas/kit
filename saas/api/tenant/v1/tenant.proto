@@ -4,6 +4,7 @@ package saas.api.tenant.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
@@ -122,9 +123,16 @@ service TenantInternalService{
 	//GetTenant internal api for remote tenant store
 	rpc GetTenant (GetTenantRequest) returns (Tenant){
 	}
+
+	// CreateTenant
+	rpc CreateTenant(CreateTenantRequest) returns(Tenant){
+
+	}
+
 }
 
 message CreateTenantRequest {
+	string id = 1 ;
 	string name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED,(validate.rules).string.pattern="^[A-Za-z0-9](?:[A-Za-z0-9\\-]{1,61}[A-Za-z0-9])?$"];
 	string display_name=3;
 	string region = 4;

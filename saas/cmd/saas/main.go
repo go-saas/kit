@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport"
+	dtmserver "github.com/go-saas/kit/dtm/server"
 	"github.com/go-saas/kit/event"
 	kapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn/jwt"
@@ -57,6 +58,7 @@ func newApp(
 	logger log.Logger,
 	srvs []transport.Server,
 	seeder seed.Seeder,
+	_ dtmserver.Init,
 	producer event.Producer,
 	r registry.Registrar,
 ) *kratos.App {

@@ -12,7 +12,11 @@ import (
 )
 
 func Saas(hmtOpt *shttp.WebMultiTenancyOption, ts saas.TenantStore, trustedContextValidator api.TrustedContextValidator, options ...saas.ResolveOption) middleware.Middleware {
-	return selector.Server(ksaas.Server(ts, ksaas.WithMultiTenancyOption(hmtOpt), ksaas.WithResolveOption(options...))).Match(func(ctx context.Context, operation string) bool {
+	return selector.Server(ksaas.Server(
+		ts,
+		ksaas.WithMultiTenancyOption(hmtOpt),
+		ksaas.WithResolveOption(options...),
+	)).Match(func(ctx context.Context, operation string) bool {
 		ok, _ := trustedContextValidator.Trusted(ctx)
 		return !ok
 	}).Build()

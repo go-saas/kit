@@ -1,9 +1,11 @@
 package server
 
 import (
+	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
+	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
@@ -19,6 +21,7 @@ import (
 	"github.com/go-saas/saas/http"
 	uow2 "github.com/go-saas/uow"
 	kuow "github.com/go-saas/uow/kratos"
+	"github.com/samber/lo"
 )
 
 // NewGRPCServer new a gRPC server.
@@ -39,7 +42,14 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts saas.TenantStor
 		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
 			o.AppendContribs(userTenant)
 		}),
-		kuow.Uow(uowMgr, kuow.WithLogger(logger))}
+		selector.Server(kuow.Uow(uowMgr, kuow.WithLogger(logger))).
+			Match(func(ctx context.Context, operation string) bool {
+				whiteList := []string{
+					"/saas.api.tenant.v1.TenantInternalService/CreateTenant",
+				}
+				return !lo.Contains(whiteList, operation)
+			}).Build(),
+	}
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			m...,

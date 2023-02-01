@@ -8,9 +8,11 @@ package v1
 
 import (
 	context "context"
+	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,29 +24,29 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
-	//ListUsers
+	// ListUsers
 	// authz: user.user,*,list
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
-	//GetUser
+	// GetUser
 	// authz: user.user,id,get
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
 	// CreateUser
 	// authz: user.user,*,create
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
-	//UpdateUser
+	// UpdateUser
 	// authz: user.user,id,update
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
-	//DeleteUser
+	// DeleteUser
 	// authz: user.user,id,delete
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
-	//GetUserRoles
+	// GetUserRoles
 	// authz: user.user,id,get
 	GetUserRoles(ctx context.Context, in *GetUserRoleRequest, opts ...grpc.CallOption) (*GetUserRoleReply, error)
-	//InviteUser
-	//authz: user.user,*,create
+	// InviteUser
+	// authz: user.user,*,create
 	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserReply, error)
 	SearchUser(ctx context.Context, in *SearchUserRequest, opts ...grpc.CallOption) (*SearchUserResponse, error)
-	//CheckUserTenant internal api for checking whether user is allowed in this tenant
+	// CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error)
 }
 
@@ -141,29 +143,29 @@ func (c *userServiceClient) CheckUserTenant(ctx context.Context, in *CheckUserTe
 // All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
-	//ListUsers
+	// ListUsers
 	// authz: user.user,*,list
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
-	//GetUser
+	// GetUser
 	// authz: user.user,id,get
 	GetUser(context.Context, *GetUserRequest) (*User, error)
 	// CreateUser
 	// authz: user.user,*,create
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
-	//UpdateUser
+	// UpdateUser
 	// authz: user.user,id,update
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
-	//DeleteUser
+	// DeleteUser
 	// authz: user.user,id,delete
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
-	//GetUserRoles
+	// GetUserRoles
 	// authz: user.user,id,get
 	GetUserRoles(context.Context, *GetUserRoleRequest) (*GetUserRoleReply, error)
-	//InviteUser
-	//authz: user.user,*,create
+	// InviteUser
+	// authz: user.user,*,create
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error)
 	SearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error)
-	//CheckUserTenant internal api for checking whether user is allowed in this tenant
+	// CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error)
 }
 
@@ -414,6 +416,90 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckUserTenant",
 			Handler:    _UserService_CheckUserTenant_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "user/api/user/v1/user.proto",
+}
+
+// UserInternalServiceClient is the client API for UserInternalService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type UserInternalServiceClient interface {
+	CreateTenant(ctx context.Context, in *v1.CreateTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+}
+
+type userInternalServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewUserInternalServiceClient(cc grpc.ClientConnInterface) UserInternalServiceClient {
+	return &userInternalServiceClient{cc}
+}
+
+func (c *userInternalServiceClient) CreateTenant(ctx context.Context, in *v1.CreateTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/user.api.user.v1.UserInternalService/CreateTenant", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserInternalServiceServer is the server API for UserInternalService service.
+// All implementations should embed UnimplementedUserInternalServiceServer
+// for forward compatibility
+type UserInternalServiceServer interface {
+	CreateTenant(context.Context, *v1.CreateTenantRequest) (*emptypb.Empty, error)
+}
+
+// UnimplementedUserInternalServiceServer should be embedded to have forward compatible implementations.
+type UnimplementedUserInternalServiceServer struct {
+}
+
+func (UnimplementedUserInternalServiceServer) CreateTenant(context.Context, *v1.CreateTenantRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTenant not implemented")
+}
+
+// UnsafeUserInternalServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserInternalServiceServer will
+// result in compilation errors.
+type UnsafeUserInternalServiceServer interface {
+	mustEmbedUnimplementedUserInternalServiceServer()
+}
+
+func RegisterUserInternalServiceServer(s grpc.ServiceRegistrar, srv UserInternalServiceServer) {
+	s.RegisterService(&UserInternalService_ServiceDesc, srv)
+}
+
+func _UserInternalService_CreateTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.CreateTenantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserInternalServiceServer).CreateTenant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.api.user.v1.UserInternalService/CreateTenant",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserInternalServiceServer).CreateTenant(ctx, req.(*v1.CreateTenantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// UserInternalService_ServiceDesc is the grpc.ServiceDesc for UserInternalService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var UserInternalService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "user.api.user.v1.UserInternalService",
+	HandlerType: (*UserInternalServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateTenant",
+			Handler:    _UserInternalService_CreateTenant_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

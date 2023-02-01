@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-saas/kit/pkg/authn/jwt"
 )
 
@@ -9,7 +10,7 @@ type (
 	trustKey struct{}
 )
 
-//TrustedContextValidator validate whether the communication is behind authed gateway or server to server communication
+// TrustedContextValidator validate whether the communication is behind authed gateway or server to server communication
 type TrustedContextValidator interface {
 	Trusted(ctx context.Context) (bool, error)
 }
@@ -52,3 +53,12 @@ func (c *ClientTrustedContextValidator) Trusted(ctx context.Context) (bool, erro
 }
 
 var _ TrustedContextValidator = (*ClientTrustedContextValidator)(nil)
+
+func ErrIfUntrusted(ctx context.Context, t TrustedContextValidator) error {
+	if ok, err := t.Trusted(ctx); err != nil {
+		return err
+	} else if !ok {
+		return errors.Forbidden("", "")
+	}
+	return nil
+}

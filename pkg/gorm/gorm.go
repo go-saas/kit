@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	gormKind = "gorm"
+	UowKind = "gorm"
 )
 
 func NewConnStrResolver(c *conf.Endpoints, ts saas.TenantStore) data.ConnStrResolver {
@@ -165,7 +165,7 @@ func NewDbProvider(cache *DbCache, cs data.ConnStrResolver, d *conf.Data) sgorm.
 
 		//find transactional db from uow
 		if u, ok := uow.FromCurrentUow(ctx); ok {
-			tx, err := u.GetTxDb(ctx, gormKind, key, s)
+			tx, err := u.GetTxDb(ctx, UowKind, key, s)
 			if err != nil {
 				panic(err)
 			}

@@ -31,6 +31,7 @@ var ProviderSet = kitdi.NewSet(
 	NewHttpServerRegister,
 	NewUserRoleContrib,
 	kitdi.NewProvider(NewUserService, di.As(new(v12.UserServiceServer))),
+	kitdi.NewProvider(NewUserInternalService, di.As(new(v12.UserInternalServiceServer))),
 
 	kitdi.NewProvider(NewAccountService, di.As(new(v13.AccountServer))),
 
@@ -42,7 +43,9 @@ var ProviderSet = kitdi.NewSet(
 	api.NewRefreshProvider,
 	uhttp.NewAuth)
 
-func NewHttpServerRegister(user *UserService,
+func NewHttpServerRegister(
+	user *UserService,
+	userInternal *UserInternalService,
 	resEncoder khttp.EncodeResponseFunc,
 	errEncoder khttp.EncodeErrorFunc,
 	account *AccountService,
@@ -93,13 +96,16 @@ func NewHttpServerRegister(user *UserService,
 	})
 }
 
-func NewGrpcServerRegister(user *UserService,
+func NewGrpcServerRegister(
+	user *UserService,
+	userInternal *UserInternalService,
 	account *AccountService,
 	auth *AuthService,
 	role *RoleService,
 	permission *PermissionService) server.GrpcServiceRegister {
 	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v12.RegisterUserServiceServer(srv, user)
+		v12.RegisterUserInternalServiceServer(srv, userInternal)
 		v13.RegisterAccountServer(srv, account)
 		v14.RegisterAuthServer(srv, auth)
 		v1.RegisterRoleServiceServer(srv, role)

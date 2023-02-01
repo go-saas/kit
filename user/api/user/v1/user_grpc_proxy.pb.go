@@ -8,7 +8,9 @@ package v1
 
 import (
 	context "context"
+	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	grpc "google.golang.org/grpc"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -53,4 +55,19 @@ func (c *userServiceClientProxy) SearchUser(ctx context.Context, in *SearchUserR
 }
 func (c *userServiceClientProxy) CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
 	return c.cc.CheckUserTenant(ctx, in)
+}
+
+var _ UserInternalServiceServer = (*userInternalServiceClientProxy)(nil)
+
+// userInternalServiceClientProxy is the proxy to turn UserInternalService client to server interface.
+type userInternalServiceClientProxy struct {
+	cc UserInternalServiceClient
+}
+
+func NewUserInternalServiceClientProxy(cc UserInternalServiceClient) UserInternalServiceServer {
+	return &userInternalServiceClientProxy{cc}
+}
+
+func (c *userInternalServiceClientProxy) CreateTenant(ctx context.Context, in *v1.CreateTenantRequest) (*emptypb.Empty, error) {
+	return c.cc.CreateTenant(ctx, in)
 }

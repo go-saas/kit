@@ -2,13 +2,11 @@ package biz
 
 import (
 	"context"
-	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/pkg/data"
 	gorm2 "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
-	v12 "github.com/go-saas/kit/saas/event/v1"
 	"github.com/google/uuid"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	gg "gorm.io/gorm"
@@ -65,48 +63,17 @@ type TenantRepo interface {
 }
 
 type TenantUseCase struct {
-	repo             TenantRepo
+	TenantRepo
 	connStrGenerator ConnStrGenerator
 }
 
 func NewTenantUserCase(repo TenantRepo, connStrGenerator ConnStrGenerator) *TenantUseCase {
-	return &TenantUseCase{repo: repo, connStrGenerator: connStrGenerator}
-}
-
-func (t *TenantUseCase) FindByIdOrName(ctx context.Context, idOrName string) (*Tenant, error) {
-	return t.repo.FindByIdOrName(ctx, idOrName)
-}
-
-func (t *TenantUseCase) List(ctx context.Context, query *v1.ListTenantRequest) ([]*Tenant, error) {
-	return t.repo.List(ctx, query)
-}
-
-func (t *TenantUseCase) First(ctx context.Context, query *v1.ListTenantRequest) (*Tenant, error) {
-	return t.repo.First(ctx, query)
-}
-
-func (t *TenantUseCase) Count(ctx context.Context, query *v1.ListTenantRequest) (total int64, filtered int64, err error) {
-	return t.repo.Count(ctx, query)
-}
-
-func (t *TenantUseCase) Get(ctx context.Context, id string) (*Tenant, error) {
-	return t.repo.Get(ctx, id)
+	return &TenantUseCase{TenantRepo: repo, connStrGenerator: connStrGenerator}
 }
 
 func (t *TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
-	return t.CreateWithAdmin(ctx, entity, nil)
-}
-
-type AdminInfo struct {
-	UserId   string
-	Username string
-	Email    string
-	Password string
-}
-
-func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adminInfo *AdminInfo) error {
 	// check duplicate
-	dbEntity, err := t.repo.FindByIdOrName(ctx, entity.Name)
+	dbEntity, err := t.TenantRepo.FindByIdOrName(ctx, entity.Name)
 	if err != nil {
 		return err
 	}
@@ -115,7 +82,10 @@ func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adm
 		return v1.ErrorDuplicateTenantNameLocalized(localize.FromContext(ctx), map[string]interface{}{"name": entity.Name}, nil)
 	}
 	//ensure id generate
-	entity.UIDBase.ID = uuid.New()
+	if entity.UIDBase.ID == uuid.Nil {
+		entity.UIDBase.ID = uuid.New()
+	}
+
 	if entity.SeparateDb {
 		conn, err := t.connStrGenerator.Generate(ctx, entity)
 		if err != nil {
@@ -124,22 +94,7 @@ func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adm
 		entity.Conn = conn
 	}
 
-	remoteEvent := &v12.TenantCreatedEvent{
-		Id:         entity.ID.String(),
-		Name:       entity.Name,
-		Region:     entity.Region,
-		SeparateDb: entity.SeparateDb,
-	}
-	if adminInfo != nil {
-		remoteEvent.AdminUserId = adminInfo.UserId
-		remoteEvent.AdminEmail = adminInfo.Email
-		remoteEvent.AdminUsername = adminInfo.Username
-		remoteEvent.AdminPassword = adminInfo.Password
-	}
-	e, _ := event.NewMessageFromProto(remoteEvent)
-	//append event to agg root
-	entity.AppendEvent(e)
-	if err := t.repo.Create(ctx, entity); err != nil {
+	if err := t.TenantRepo.Create(ctx, entity); err != nil {
 		return err
 	}
 	return nil
@@ -147,7 +102,7 @@ func (t *TenantUseCase) CreateWithAdmin(ctx context.Context, entity *Tenant, adm
 
 func (t *TenantUseCase) Update(ctx context.Context, entity *Tenant, p query.Select) error {
 	// check duplicate
-	dbEntity, err := t.repo.FindByIdOrName(ctx, entity.Name)
+	dbEntity, err := t.TenantRepo.FindByIdOrName(ctx, entity.Name)
 	if err != nil {
 		return err
 	}
@@ -155,9 +110,5 @@ func (t *TenantUseCase) Update(ctx context.Context, entity *Tenant, p query.Sele
 		// duplicate
 		return v1.ErrorDuplicateTenantNameLocalized(localize.FromContext(ctx), map[string]interface{}{"name": entity.Name}, nil)
 	}
-	return t.repo.Update(ctx, entity.ID.String(), entity, p)
-}
-
-func (t *TenantUseCase) Delete(ctx context.Context, id string) error {
-	return t.repo.Delete(ctx, id)
+	return t.TenantRepo.Update(ctx, entity.ID.String(), entity, p)
 }

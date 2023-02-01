@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/apache/apisix-go-plugin-runner v0.4.0
-	github.com/go-kratos/kratos/v2 v2.5.0
+	github.com/go-kratos/kratos/v2 v2.5.4
 	github.com/go-saas/kit v0.0.1
 	github.com/go-saas/saas v0.6.0
 	github.com/go-saas/sessions v1.2.2-0.20220626044315-a7a87c87f120
@@ -43,7 +43,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-saas/go-i18n/v2 v2.2.1 // indirect
 	github.com/go-saas/lbs v0.0.2 // indirect
-	github.com/go-saas/uow v0.0.5-0.20220710170855-20a530670db0 // indirect
+	github.com/go-saas/uow v0.0.6 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
@@ -97,7 +97,7 @@ require (
 	google.golang.org/grpc v1.49.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.4.4 // indirect
-	gorm.io/gorm v1.24.2 // indirect
+	gorm.io/gorm v1.24.3 // indirect
 )
 
 replace github.com/go-saas/kit => ../../

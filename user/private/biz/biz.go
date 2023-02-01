@@ -26,10 +26,7 @@ var ProviderSet = kitdi.NewSet(
 	NewPermissionSeeder,
 	NewEmailSender,
 
-	kitdi.NewProvider(NewTenantSeedEventHandler, di.As(new(event.ConsumerHandler))),
 	kitdi.NewProvider(NewUserRoleChangeEventHandler, di.As(new(event.ConsumerHandler))),
-
-	//job
-	NewUserMigrationTaskHandler)
+)
 
 const UserAvatarPath = "user/avatar"

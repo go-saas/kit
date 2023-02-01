@@ -56,7 +56,7 @@ func NewGrpcConn(
 		name = serviceCfg.Redirect
 	}
 	fOpts := []grpc.ClientOption{
-		grpc.WithEndpoint("discovery:///" + name),
+		grpc.WithEndpoint(WithDiscovery(name)),
 		grpc.WithDiscovery(dis),
 		grpc.WithMiddleware(
 			recovery.Recovery(),
@@ -103,7 +103,7 @@ func NewHttpClient(
 	}
 
 	fOpts := []http.ClientOption{
-		http.WithEndpoint("discovery:///" + name),
+		http.WithEndpoint(WithDiscovery(name)),
 		http.WithDiscovery(dis),
 		http.WithMiddleware(
 			recovery.Recovery(),
@@ -128,6 +128,10 @@ func NewHttpClient(
 func NewDiscovery(services *conf.Services, container *di.Container) (registry.Discovery, error) {
 	_, r, err := kregistry.NewRegister(services.Registry, container)
 	return r, err
+}
+
+func WithDiscovery(name string) string {
+	return "discovery:///" + name
 }
 
 var DefaultProviderSet = kitdi.NewSet(

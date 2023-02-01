@@ -21,7 +21,7 @@ import (
 var ProviderSet = kitdi.NewSet(
 	kitdi.NewProvider(NewHTTPServer, di.As(new(transport.Server))),
 	kitdi.NewProvider(NewGRPCServer, di.As(new(transport.Server))),
-	kitdi.NewProvider(NewJobServer, di.As(new(transport.Server))),
+	//kitdi.NewProvider(NewJobServer, di.As(new(transport.Server))),
 	kitdi.NewProvider(NewEventServer, di.As(new(transport.Server))),
 	kitdi.Value(ClientName),
 	kitdi.Value(biz.ConnName),
