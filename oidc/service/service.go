@@ -8,7 +8,8 @@ import (
 	v1 "github.com/go-saas/kit/oidc/api/client/v1"
 	v12 "github.com/go-saas/kit/oidc/api/key/v1"
 	kitdi "github.com/go-saas/kit/pkg/di"
-	"github.com/go-saas/kit/pkg/server"
+	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
+	kithttp "github.com/go-saas/kit/pkg/server/http"
 	"github.com/goava/di"
 	client "github.com/ory/hydra-client-go/v2"
 	"net/http"
@@ -24,16 +25,16 @@ var ProviderSet = kitdi.NewSet(
 func NewHttpServerRegister(
 	client *ClientService,
 	key *KeyService,
-) server.HttpServiceRegister {
-	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
+) kithttp.ServiceRegister {
+	return kithttp.ServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 		v1.RegisterClientServiceHTTPServer(srv, client)
 		v12.RegisterKeyServiceHTTPServer(srv, key)
 	})
 }
 
 func NewGrpcServerRegister(client *ClientService,
-	key *KeyService) server.GrpcServiceRegister {
-	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
+	key *KeyService) kitgrpc.ServiceRegister {
+	return kitgrpc.ServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v1.RegisterClientServiceServer(srv, client)
 		v12.RegisterKeyServiceServer(srv, key)
 	})

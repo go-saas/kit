@@ -14,6 +14,7 @@ import (
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
+	kithttp "github.com/go-saas/kit/pkg/server/http"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas"
 	shttp "github.com/go-saas/saas/http"
@@ -36,10 +37,10 @@ func NewHTTPServer(c *conf.Services,
 	userTenant *uapi.UserTenantContrib,
 	validator sapi.TrustedContextValidator,
 	refreshProvider session.RefreshTokenProvider,
-	register []server.HttpServiceRegister,
+	register []kithttp.ServiceRegister,
 ) *khttp.Server {
 	var opts []khttp.ServerOption
-	opts = server.PatchHttpOpts(logger, opts, uapi.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
+	opts = kithttp.PatchOpts(logger, opts, uapi.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder,
 		session.Auth(sCfg, validator),
 		session.Refresh(errEncoder, refreshProvider, validator),
 	)
@@ -63,6 +64,6 @@ func NewHTTPServer(c *conf.Services,
 
 	srv := khttp.NewServer(opts...)
 
-	server.ChainHttpServiceRegister(register...).Register(srv, middleware.Chain(middlewares...))
+	kithttp.ChainServiceRegister(register...).Register(srv, middleware.Chain(middlewares...))
 	return srv
 }

@@ -5,16 +5,17 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	v12 "github.com/go-saas/kit/event/api/v1"
-	"github.com/go-saas/kit/pkg/server"
+	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
+	kithttp "github.com/go-saas/kit/pkg/server/http"
 )
 
-func NewHttpServerRegister(event *EventService) server.HttpServiceRegister {
-	return server.HttpServiceRegisterFunc(func(server *http.Server, middleware ...middleware.Middleware) {
+func NewHttpServerRegister(event *EventService) kithttp.ServiceRegister {
+	return kithttp.ServiceRegisterFunc(func(server *http.Server, middleware ...middleware.Middleware) {
 		v12.RegisterEventServiceHTTPServer(server, event)
 	})
 }
-func NewGrpcServerRegister(event *EventService) server.GrpcServiceRegister {
-	return server.GrpcServiceRegisterFunc(func(server *grpc.Server, middleware ...middleware.Middleware) {
+func NewGrpcServerRegister(event *EventService) kitgrpc.ServiceRegister {
+	return kitgrpc.ServiceRegisterFunc(func(server *grpc.Server, middleware ...middleware.Middleware) {
 		v12.RegisterEventServiceServer(server, event)
 	})
 }

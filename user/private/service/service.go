@@ -8,7 +8,8 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	kitdi "github.com/go-saas/kit/pkg/di"
-	"github.com/go-saas/kit/pkg/server"
+	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
+	kithttp "github.com/go-saas/kit/pkg/server/http"
 	"github.com/go-saas/kit/user/api"
 	v13 "github.com/go-saas/kit/user/api/account/v1"
 	v14 "github.com/go-saas/kit/user/api/auth/v1"
@@ -53,23 +54,23 @@ func NewHttpServerRegister(
 	role *RoleService,
 	permission *PermissionService,
 	authHttp *uhttp.Auth,
-	vfs vfs.Blob) server.HttpServiceRegister {
-	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
+	vfs vfs.Blob) kithttp.ServiceRegister {
+	return kithttp.ServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 
 		router := chi.NewRouter()
 
 		//global filter
 		router.Use(
-			server.MiddlewareConvert(errEncoder, middleware...))
+			kithttp.MiddlewareConvert(errEncoder, middleware...))
 
-		router.Get("/login", server.HandlerWrap(resEncoder, authHttp.LoginGet))
-		router.Post("/login", server.HandlerWrap(resEncoder, authHttp.LoginPost))
-		router.Get("/logout", server.HandlerWrap(resEncoder, authHttp.LoginOutGet))
-		router.Post("/logout", server.HandlerWrap(resEncoder, authHttp.Logout))
-		router.Get("/consent", server.HandlerWrap(resEncoder, authHttp.ConsentGet))
-		router.Post("/consent", server.HandlerWrap(resEncoder, authHttp.Consent))
+		router.Get("/login", kithttp.HandlerWrap(resEncoder, authHttp.LoginGet))
+		router.Post("/login", kithttp.HandlerWrap(resEncoder, authHttp.LoginPost))
+		router.Get("/logout", kithttp.HandlerWrap(resEncoder, authHttp.LoginOutGet))
+		router.Post("/logout", kithttp.HandlerWrap(resEncoder, authHttp.Logout))
+		router.Get("/consent", kithttp.HandlerWrap(resEncoder, authHttp.ConsentGet))
+		router.Post("/consent", kithttp.HandlerWrap(resEncoder, authHttp.Consent))
 
-		server.MountBlob(srv, "", biz.UserAvatarPath, vfs)
+		kithttp.MountBlob(srv, "", biz.UserAvatarPath, vfs)
 
 		srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", router))
 
@@ -88,7 +89,7 @@ func NewHttpServerRegister(
 
 		swaggerRouter := chi.NewRouter()
 		swaggerRouter.Use(
-			server.MiddlewareConvert(errEncoder, middleware...))
+			kithttp.MiddlewareConvert(errEncoder, middleware...))
 		const apiPrefix = "/v1/user/dev/swagger"
 		swaggerRouter.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, swaggerui.Handler(spec)))
 
@@ -102,8 +103,8 @@ func NewGrpcServerRegister(
 	account *AccountService,
 	auth *AuthService,
 	role *RoleService,
-	permission *PermissionService) server.GrpcServiceRegister {
-	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
+	permission *PermissionService) kitgrpc.ServiceRegister {
+	return kitgrpc.ServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v12.RegisterUserServiceServer(srv, user)
 		v12.RegisterUserInternalServiceServer(srv, userInternal)
 		v13.RegisterAccountServer(srv, account)

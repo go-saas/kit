@@ -13,7 +13,8 @@ import (
 	kconf "github.com/go-saas/kit/pkg/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	"github.com/go-saas/kit/pkg/job"
-	"github.com/go-saas/kit/pkg/server"
+	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
+	kithttp "github.com/go-saas/kit/pkg/server/http"
 	"github.com/go-saas/kit/sys/api"
 	v12 "github.com/go-saas/kit/sys/api/locale/v1"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
@@ -67,21 +68,21 @@ func NewHttpServerRegister(
 	authzSrv authz.Service,
 	errEncoder khttp.EncodeErrorFunc,
 	opt asynq.RedisConnOpt,
-) server.HttpServiceRegister {
-	return server.HttpServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
+) kithttp.ServiceRegister {
+	return kithttp.ServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 
 		v1.RegisterMenuServiceHTTPServer(srv, menu)
 		v12.RegisterLocaleServiceHTTPServer(srv, locSrv)
 
 		router := chi.NewRouter()
 		router.Use(
-			server.MiddlewareConvert(errEncoder, middleware...))
+			kithttp.MiddlewareConvert(errEncoder, middleware...))
 
 		const apiPrefix = "/v1/sys/dev/swagger"
 
 		router.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, swaggerui.Handler(spec)))
 		const asynqPrefix = "/v1/sys/asynqmon"
-		router.Handle(asynqPrefix+"*", server.AuthzGuardian(
+		router.Handle(asynqPrefix+"*", kithttp.AuthzGuardian(
 			authzSrv, authz.RequirementList{
 				authz.NewRequirement(authz.NewEntityResource(api.ResourceDevJob, "*"), authz.AnyAction),
 			}, errEncoder, job.NewUi(asynqPrefix, opt),
@@ -94,8 +95,8 @@ func NewHttpServerRegister(
 
 func NewGrpcServerRegister(
 	menu *MenuService,
-	locSrv *LocaleService) server.GrpcServiceRegister {
-	return server.GrpcServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
+	locSrv *LocaleService) kitgrpc.ServiceRegister {
+	return kitgrpc.ServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v1.RegisterMenuServiceServer(srv, menu)
 		v12.RegisterLocaleServiceServer(srv, locSrv)
 	})

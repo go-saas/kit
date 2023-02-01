@@ -8,7 +8,7 @@ import (
 	"github.com/go-saas/kit/event"
 	cache2 "github.com/go-saas/kit/pkg/cache"
 	"github.com/go-saas/kit/pkg/localize"
-	"github.com/go-saas/kit/pkg/server"
+	kithttp "github.com/go-saas/kit/pkg/server/http"
 	v12 "github.com/go-saas/kit/user/api/auth/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	v13 "github.com/go-saas/kit/user/event/v1"
@@ -357,7 +357,7 @@ func (um *UserManager) CheckLocked(ctx context.Context, u *User) (bool, error) {
 }
 
 func (um *UserManager) GenerateRememberToken(ctx context.Context, duration time.Duration, uid uuid.UUID) (string, error) {
-	token := NewRefreshToken(uid, duration, server.ClientUserAgent(ctx), server.ClientIP(ctx))
+	token := NewRefreshToken(uid, duration, kithttp.ClientUserAgent(ctx), kithttp.ClientIP(ctx))
 	if err := um.refreshTokenRepo.Create(ctx, token); err != nil {
 		return "", err
 	} else {
@@ -408,7 +408,7 @@ func (um *UserManager) IsInTenant(ctx context.Context, uid, tenantId string) (bo
 	return um.userTenantRepo.IsIn(ctx, uid, tenantId)
 }
 
-//JoinTenant add user into tenant. safe to call when user already in
+// JoinTenant add user into tenant. safe to call when user already in
 func (um *UserManager) JoinTenant(ctx context.Context, uid, tenantId string) error {
 	if in, err := um.userTenantRepo.IsIn(ctx, uid, tenantId); err != nil {
 		return err

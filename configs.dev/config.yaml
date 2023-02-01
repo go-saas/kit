@@ -5,19 +5,19 @@ services:
   servers:
     user:
       http:
-        addr: host.docker.internal:9080
+        addr: host.docker.internal:19080
       grpc:
-        addr: host.docker.internal:9081
+        addr: host.docker.internal:19081
     saas:
       http:
-        addr: host.docker.internal:9180
+        addr: host.docker.internal:19180
       grpc:
-        addr: host.docker.internal:9181
+        addr: host.docker.internal:19181
     sys:
       http:
-        addr: host.docker.internal:9280
+        addr: host.docker.internal:19280
       grpc:
-        addr: host.docker.internal:9281
+        addr: host.docker.internal:19281
 data:
   endpoints:
     events:

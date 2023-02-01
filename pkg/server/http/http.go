@@ -1,4 +1,4 @@
-package server
+package http
 
 import (
 	"context"
@@ -12,6 +12,7 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/csrf"
+	"github.com/go-saas/kit/pkg/server/common"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/goxiaoy/vfs"
@@ -19,32 +20,39 @@ import (
 	"google.golang.org/protobuf/proto"
 	"net"
 	"net/http"
+	"net/url"
 	"path"
 	"strings"
 )
 
 type (
-	// HttpServiceRegister register http handler into http server
-	HttpServiceRegister interface {
+	// ServiceRegister register http handler into http server
+	ServiceRegister interface {
 		Register(server *khttp.Server, middleware ...middleware.Middleware)
 	}
-	HttpServiceRegisterFunc func(server *khttp.Server, middleware ...middleware.Middleware)
+	ServiceRegisterFunc func(server *khttp.Server, middleware ...middleware.Middleware)
 )
 
-func (f HttpServiceRegisterFunc) Register(server *khttp.Server, middleware ...middleware.Middleware) {
+var (
+	ReqDecode  khttp.DecodeRequestFunc  = khttp.DefaultRequestDecoder
+	ResEncoder khttp.EncodeResponseFunc = khttp.DefaultResponseEncoder
+	ErrEncoder khttp.EncodeErrorFunc    = khttp.DefaultErrorEncoder
+)
+
+func (f ServiceRegisterFunc) Register(server *khttp.Server, middleware ...middleware.Middleware) {
 	f(server, middleware...)
 }
 
-func ChainHttpServiceRegister(r ...HttpServiceRegister) HttpServiceRegister {
-	return HttpServiceRegisterFunc(func(server *khttp.Server, middleware ...middleware.Middleware) {
+func ChainServiceRegister(r ...ServiceRegister) ServiceRegister {
+	return ServiceRegisterFunc(func(server *khttp.Server, middleware ...middleware.Middleware) {
 		for _, register := range r {
 			register.Register(server, middleware...)
 		}
 	})
 }
 
-// PatchHttpOpts Patch http options with given service name and configs. f use global filters
-func PatchHttpOpts(l log.Logger,
+// PatchOpts Patch http options with given service name and configs. f use global filters
+func PatchOpts(l log.Logger,
 	opts []khttp.ServerOption,
 	name string,
 	services *conf.Services,
@@ -54,8 +62,8 @@ func PatchHttpOpts(l log.Logger,
 	errEncoder khttp.EncodeErrorFunc,
 	f ...khttp.FilterFunc) []khttp.ServerOption {
 	//default config
-	server := proto.Clone(defaultServerConfig).(*conf.Server)
-	if def, ok := services.Servers[defaultSrvName]; ok {
+	server := proto.Clone(common.DefaultServerConfig).(*conf.Server)
+	if def, ok := services.Servers[common.DefaultSrvName]; ok {
 		//merge default config
 		proto.Merge(server, def)
 	}
@@ -223,4 +231,26 @@ func AuthzGuardian(srv authz.Service, requirement authz.RequirementList, encoder
 		}
 		handler.ServeHTTP(writer, request)
 	})
+}
+
+type server struct {
+	*khttp.Server
+	cfg *conf.Dev
+}
+
+func NewServer(cfg *conf.Dev, opts ...khttp.ServerOption) *server {
+	return &server{
+		Server: khttp.NewServer(opts...),
+		cfg:    nil,
+	}
+}
+
+func (s *server) Endpoint() (*url.URL, error) {
+	url, err := s.Server.Endpoint()
+	if err != nil || url == nil || !s.cfg.Docker {
+		return url, err
+	}
+	//replace host
+	url.Host = "host.docker.internal"
+	return url, err
 }

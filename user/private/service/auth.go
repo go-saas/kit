@@ -13,7 +13,7 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/localize"
-	"github.com/go-saas/kit/pkg/server"
+	kithttp "github.com/go-saas/kit/pkg/server/http"
 	pb "github.com/go-saas/kit/user/api/auth/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/kit/user/private/biz"
@@ -296,7 +296,7 @@ func (s *AuthService) generateToken(ctx context.Context, userId uuid.UUID) (*tok
 		duration = s.security.Jwt.RefreshTokenExpireIn.AsDuration()
 	}
 
-	refreshToken := biz.NewRefreshToken(userId, duration, server.ClientUserAgent(ctx), server.ClientIP(ctx))
+	refreshToken := biz.NewRefreshToken(userId, duration, kithttp.ClientUserAgent(ctx), kithttp.ClientIP(ctx))
 	if err := s.refreshTokenRepo.Create(ctx, refreshToken); err != nil {
 		return nil, err
 	}

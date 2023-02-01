@@ -2582,6 +2582,106 @@ var _ interface {
 	ErrorName() string
 } = DataValidationError{}
 
+// Validate checks the field values on Dev with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Dev) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Dev with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in DevMultiError, or nil if none found.
+func (m *Dev) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Dev) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Docker
+
+	if len(errors) > 0 {
+		return DevMultiError(errors)
+	}
+
+	return nil
+}
+
+// DevMultiError is an error wrapping multiple validation errors returned by
+// Dev.ValidateAll() if the designated constraints aren't met.
+type DevMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DevMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DevMultiError) AllErrors() []error { return m }
+
+// DevValidationError is the validation error returned by Dev.Validate if the
+// designated constraints aren't met.
+type DevValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DevValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DevValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DevValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DevValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DevValidationError) ErrorName() string { return "DevValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DevValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDev.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DevValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DevValidationError{}
+
 // Validate checks the field values on Server_HTTP with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

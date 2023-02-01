@@ -13,6 +13,7 @@ import (
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
+	kithttp "github.com/go-saas/kit/pkg/server/http"
 	"github.com/go-saas/kit/saas/api"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas"
@@ -21,7 +22,7 @@ import (
 	kuow "github.com/go-saas/uow/kratos"
 )
 
-// NewHTTPServer new a HTTP server.
+// NewHTTPServer new a HTTP kithttp.
 func NewHTTPServer(c *conf.Services,
 	sCfg *conf.Security,
 	tokenizer jwt.Tokenizer,
@@ -35,9 +36,9 @@ func NewHTTPServer(c *conf.Services,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
 	userTenant *uapi.UserTenantContrib,
-	register []server.HttpServiceRegister) *http.Server {
+	register []kithttp.ServiceRegister) *http.Server {
 	var opts []http.ServerOption
-	opts = server.PatchHttpOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
+	opts = kithttp.PatchOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
 	m := []middleware.Middleware{
 		server.Recovery(),
 		tracing.Server(),
@@ -58,7 +59,7 @@ func NewHTTPServer(c *conf.Services,
 		),
 	}...)
 	srv := http.NewServer(opts...)
-	server.ChainHttpServiceRegister(register...).Register(srv, m...)
+	kithttp.ChainServiceRegister(register...).Register(srv, m...)
 
 	return srv
 }

@@ -1031,6 +1031,54 @@ func (x *Data) GetVfs() []*blob.Config {
 	return nil
 }
 
+type Dev struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// docker integration
+	Docker bool `protobuf:"varint,1,opt,name=docker,proto3" json:"docker,omitempty"`
+}
+
+func (x *Dev) Reset() {
+	*x = Dev{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_conf_conf_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Dev) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Dev) ProtoMessage() {}
+
+func (x *Dev) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Dev.ProtoReflect.Descriptor instead.
+func (*Dev) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *Dev) GetDocker() bool {
+	if x != nil {
+		return x.Docker
+	}
+	return false
+}
+
 type Server_HTTP struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1046,7 +1094,7 @@ type Server_HTTP struct {
 func (x *Server_HTTP) Reset() {
 	*x = Server_HTTP{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[15]
+		mi := &file_conf_conf_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1059,7 +1107,7 @@ func (x *Server_HTTP) String() string {
 func (*Server_HTTP) ProtoMessage() {}
 
 func (x *Server_HTTP) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[15]
+	mi := &file_conf_conf_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1123,7 +1171,7 @@ type Server_GRPC struct {
 func (x *Server_GRPC) Reset() {
 	*x = Server_GRPC{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[16]
+		mi := &file_conf_conf_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1136,7 +1184,7 @@ func (x *Server_GRPC) String() string {
 func (*Server_GRPC) ProtoMessage() {}
 
 func (x *Server_GRPC) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[16]
+	mi := &file_conf_conf_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1186,7 +1234,7 @@ type Server_HTTP_Cors struct {
 func (x *Server_HTTP_Cors) Reset() {
 	*x = Server_HTTP_Cors{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[17]
+		mi := &file_conf_conf_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1199,7 +1247,7 @@ func (x *Server_HTTP_Cors) String() string {
 func (*Server_HTTP_Cors) ProtoMessage() {}
 
 func (x *Server_HTTP_Cors) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[17]
+	mi := &file_conf_conf_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1250,7 +1298,7 @@ type Server_HTTP_Csrf struct {
 func (x *Server_HTTP_Csrf) Reset() {
 	*x = Server_HTTP_Csrf{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[18]
+		mi := &file_conf_conf_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1263,7 +1311,7 @@ func (x *Server_HTTP_Csrf) String() string {
 func (*Server_HTTP_Csrf) ProtoMessage() {}
 
 func (x *Server_HTTP_Csrf) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[18]
+	mi := &file_conf_conf_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1321,7 +1369,7 @@ type Security_Jwt struct {
 func (x *Security_Jwt) Reset() {
 	*x = Security_Jwt{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[25]
+		mi := &file_conf_conf_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1334,7 +1382,7 @@ func (x *Security_Jwt) String() string {
 func (*Security_Jwt) ProtoMessage() {}
 
 func (x *Security_Jwt) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[25]
+	mi := &file_conf_conf_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1390,7 +1438,7 @@ type Security_CookieKey struct {
 func (x *Security_CookieKey) Reset() {
 	*x = Security_CookieKey{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[26]
+		mi := &file_conf_conf_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1403,7 +1451,7 @@ func (x *Security_CookieKey) String() string {
 func (*Security_CookieKey) ProtoMessage() {}
 
 func (x *Security_CookieKey) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[26]
+	mi := &file_conf_conf_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1444,7 +1492,7 @@ type Tracers_Otel struct {
 func (x *Tracers_Otel) Reset() {
 	*x = Tracers_Otel{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[27]
+		mi := &file_conf_conf_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1457,7 +1505,7 @@ func (x *Tracers_Otel) String() string {
 func (*Tracers_Otel) ProtoMessage() {}
 
 func (x *Tracers_Otel) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[27]
+	mi := &file_conf_conf_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1735,16 +1783,17 @@ var file_conf_conf_proto_rawDesc = []byte{
 	0x2e, 0x45, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x52, 0x09, 0x65, 0x6e, 0x64, 0x70,
 	0x6f, 0x69, 0x6e, 0x74, 0x73, 0x12, 0x1e, 0x0a, 0x03, 0x76, 0x66, 0x73, 0x18, 0x03, 0x20, 0x03,
 	0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x62, 0x6c, 0x6f, 0x62, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
-	0x52, 0x03, 0x76, 0x66, 0x73, 0x2a, 0x5a, 0x0a, 0x0c, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74,
-	0x65, 0x4d, 0x6f, 0x64, 0x65, 0x12, 0x13, 0x0a, 0x0f, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74,
-	0x65, 0x44, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x10, 0x00, 0x12, 0x0f, 0x0a, 0x0b, 0x53, 0x61,
-	0x6d, 0x65, 0x53, 0x69, 0x74, 0x65, 0x4c, 0x61, 0x78, 0x10, 0x01, 0x12, 0x12, 0x0a, 0x0e, 0x53,
-	0x61, 0x6d, 0x65, 0x53, 0x69, 0x74, 0x65, 0x53, 0x74, 0x72, 0x69, 0x63, 0x74, 0x10, 0x02, 0x12,
-	0x10, 0x0a, 0x0c, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74, 0x65, 0x4e, 0x6f, 0x6e, 0x65, 0x10,
-	0x03, 0x42, 0x26, 0x5a, 0x24, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
-	0x67, 0x6f, 0x2d, 0x73, 0x61, 0x61, 0x73, 0x2f, 0x6b, 0x69, 0x74, 0x2f, 0x70, 0x6b, 0x67, 0x2f,
-	0x63, 0x6f, 0x6e, 0x66, 0x3b, 0x63, 0x6f, 0x6e, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x52, 0x03, 0x76, 0x66, 0x73, 0x22, 0x1d, 0x0a, 0x03, 0x44, 0x65, 0x76, 0x12, 0x16, 0x0a, 0x06,
+	0x64, 0x6f, 0x63, 0x6b, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x64, 0x6f,
+	0x63, 0x6b, 0x65, 0x72, 0x2a, 0x5a, 0x0a, 0x0c, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74, 0x65,
+	0x4d, 0x6f, 0x64, 0x65, 0x12, 0x13, 0x0a, 0x0f, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74, 0x65,
+	0x44, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x10, 0x00, 0x12, 0x0f, 0x0a, 0x0b, 0x53, 0x61, 0x6d,
+	0x65, 0x53, 0x69, 0x74, 0x65, 0x4c, 0x61, 0x78, 0x10, 0x01, 0x12, 0x12, 0x0a, 0x0e, 0x53, 0x61,
+	0x6d, 0x65, 0x53, 0x69, 0x74, 0x65, 0x53, 0x74, 0x72, 0x69, 0x63, 0x74, 0x10, 0x02, 0x12, 0x10,
+	0x0a, 0x0c, 0x53, 0x61, 0x6d, 0x65, 0x53, 0x69, 0x74, 0x65, 0x4e, 0x6f, 0x6e, 0x65, 0x10, 0x03,
+	0x42, 0x26, 0x5a, 0x24, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67,
+	0x6f, 0x2d, 0x73, 0x61, 0x61, 0x73, 0x2f, 0x6b, 0x69, 0x74, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x63,
+	0x6f, 0x6e, 0x66, 0x3b, 0x63, 0x6f, 0x6e, 0x66, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1760,7 +1809,7 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 }
 
 var file_conf_conf_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
 var file_conf_conf_proto_goTypes = []interface{}{
 	(SameSiteMode)(0),              // 0: conf.SameSiteMode
 	(*Server)(nil),                 // 1: conf.Server
@@ -1778,79 +1827,80 @@ var file_conf_conf_proto_goTypes = []interface{}{
 	(*Tracers)(nil),                // 13: conf.Tracers
 	(*AppConfig)(nil),              // 14: conf.AppConfig
 	(*Data)(nil),                   // 15: conf.Data
-	(*Server_HTTP)(nil),            // 16: conf.Server.HTTP
-	(*Server_GRPC)(nil),            // 17: conf.Server.GRPC
-	(*Server_HTTP_Cors)(nil),       // 18: conf.Server.HTTP.Cors
-	(*Server_HTTP_Csrf)(nil),       // 19: conf.Server.HTTP.Csrf
-	nil,                            // 20: conf.Services.ServicesEntry
-	nil,                            // 21: conf.Services.ServersEntry
-	nil,                            // 22: conf.Services.ClientsEntry
-	nil,                            // 23: conf.Endpoints.DatabasesEntry
-	nil,                            // 24: conf.Endpoints.EventsEntry
-	nil,                            // 25: conf.Endpoints.RedisEntry
-	(*Security_Jwt)(nil),           // 26: conf.Security.Jwt
-	(*Security_CookieKey)(nil),     // 27: conf.Security.CookieKey
-	(*Tracers_Otel)(nil),           // 28: conf.Tracers.Otel
-	(*durationpb.Duration)(nil),    // 29: google.protobuf.Duration
-	(*registry.Config)(nil),        // 30: registry.Config
-	(*wrapperspb.StringValue)(nil), // 31: google.protobuf.StringValue
-	(*email.Config)(nil),           // 32: email.Config
-	(*wrapperspb.Int32Value)(nil),  // 33: google.protobuf.Int32Value
-	(*wrapperspb.BoolValue)(nil),   // 34: google.protobuf.BoolValue
-	(*structpb.Struct)(nil),        // 35: google.protobuf.Struct
-	(*blob.Config)(nil),            // 36: blob.Config
-	(*event.Config)(nil),           // 37: event.Config
-	(*redis.Config)(nil),           // 38: redis.Config
+	(*Dev)(nil),                    // 16: conf.Dev
+	(*Server_HTTP)(nil),            // 17: conf.Server.HTTP
+	(*Server_GRPC)(nil),            // 18: conf.Server.GRPC
+	(*Server_HTTP_Cors)(nil),       // 19: conf.Server.HTTP.Cors
+	(*Server_HTTP_Csrf)(nil),       // 20: conf.Server.HTTP.Csrf
+	nil,                            // 21: conf.Services.ServicesEntry
+	nil,                            // 22: conf.Services.ServersEntry
+	nil,                            // 23: conf.Services.ClientsEntry
+	nil,                            // 24: conf.Endpoints.DatabasesEntry
+	nil,                            // 25: conf.Endpoints.EventsEntry
+	nil,                            // 26: conf.Endpoints.RedisEntry
+	(*Security_Jwt)(nil),           // 27: conf.Security.Jwt
+	(*Security_CookieKey)(nil),     // 28: conf.Security.CookieKey
+	(*Tracers_Otel)(nil),           // 29: conf.Tracers.Otel
+	(*durationpb.Duration)(nil),    // 30: google.protobuf.Duration
+	(*registry.Config)(nil),        // 31: registry.Config
+	(*wrapperspb.StringValue)(nil), // 32: google.protobuf.StringValue
+	(*email.Config)(nil),           // 33: email.Config
+	(*wrapperspb.Int32Value)(nil),  // 34: google.protobuf.Int32Value
+	(*wrapperspb.BoolValue)(nil),   // 35: google.protobuf.BoolValue
+	(*structpb.Struct)(nil),        // 36: google.protobuf.Struct
+	(*blob.Config)(nil),            // 37: blob.Config
+	(*event.Config)(nil),           // 38: event.Config
+	(*redis.Config)(nil),           // 39: redis.Config
 }
 var file_conf_conf_proto_depIdxs = []int32{
-	16, // 0: conf.Server.http:type_name -> conf.Server.HTTP
-	17, // 1: conf.Server.grpc:type_name -> conf.Server.GRPC
-	29, // 2: conf.Client.timeout:type_name -> google.protobuf.Duration
-	20, // 3: conf.Services.services:type_name -> conf.Services.ServicesEntry
-	21, // 4: conf.Services.servers:type_name -> conf.Services.ServersEntry
-	22, // 5: conf.Services.clients:type_name -> conf.Services.ClientsEntry
-	30, // 6: conf.Services.registry:type_name -> registry.Config
-	31, // 7: conf.Database.table_prefix:type_name -> google.protobuf.StringValue
-	23, // 8: conf.Endpoints.databases:type_name -> conf.Endpoints.DatabasesEntry
-	24, // 9: conf.Endpoints.events:type_name -> conf.Endpoints.EventsEntry
-	25, // 10: conf.Endpoints.redis:type_name -> conf.Endpoints.RedisEntry
-	32, // 11: conf.Endpoints.email:type_name -> email.Config
+	17, // 0: conf.Server.http:type_name -> conf.Server.HTTP
+	18, // 1: conf.Server.grpc:type_name -> conf.Server.GRPC
+	30, // 2: conf.Client.timeout:type_name -> google.protobuf.Duration
+	21, // 3: conf.Services.services:type_name -> conf.Services.ServicesEntry
+	22, // 4: conf.Services.servers:type_name -> conf.Services.ServersEntry
+	23, // 5: conf.Services.clients:type_name -> conf.Services.ClientsEntry
+	31, // 6: conf.Services.registry:type_name -> registry.Config
+	32, // 7: conf.Database.table_prefix:type_name -> google.protobuf.StringValue
+	24, // 8: conf.Endpoints.databases:type_name -> conf.Endpoints.DatabasesEntry
+	25, // 9: conf.Endpoints.events:type_name -> conf.Endpoints.EventsEntry
+	26, // 10: conf.Endpoints.redis:type_name -> conf.Endpoints.RedisEntry
+	33, // 11: conf.Endpoints.email:type_name -> email.Config
 	12, // 12: conf.Endpoints.sms:type_name -> conf.Sms
-	26, // 13: conf.Security.jwt:type_name -> conf.Security.Jwt
-	27, // 14: conf.Security.security_cookie:type_name -> conf.Security.CookieKey
+	27, // 13: conf.Security.jwt:type_name -> conf.Security.Jwt
+	28, // 14: conf.Security.security_cookie:type_name -> conf.Security.CookieKey
 	8,  // 15: conf.Security.session_cookie:type_name -> conf.Cookie
 	8,  // 16: conf.Security.remember_cookie:type_name -> conf.Cookie
 	9,  // 17: conf.Security.oidc:type_name -> conf.Oidc
-	31, // 18: conf.Cookie.name:type_name -> google.protobuf.StringValue
-	33, // 19: conf.Cookie.max_age:type_name -> google.protobuf.Int32Value
-	31, // 20: conf.Cookie.domain:type_name -> google.protobuf.StringValue
-	31, // 21: conf.Cookie.path:type_name -> google.protobuf.StringValue
-	34, // 22: conf.Cookie.http_only:type_name -> google.protobuf.BoolValue
-	34, // 23: conf.Cookie.secure:type_name -> google.protobuf.BoolValue
+	32, // 18: conf.Cookie.name:type_name -> google.protobuf.StringValue
+	34, // 19: conf.Cookie.max_age:type_name -> google.protobuf.Int32Value
+	32, // 20: conf.Cookie.domain:type_name -> google.protobuf.StringValue
+	32, // 21: conf.Cookie.path:type_name -> google.protobuf.StringValue
+	35, // 22: conf.Cookie.http_only:type_name -> google.protobuf.BoolValue
+	35, // 23: conf.Cookie.secure:type_name -> google.protobuf.BoolValue
 	0,  // 24: conf.Cookie.same_site:type_name -> conf.SameSiteMode
 	10, // 25: conf.Oidc.hydra:type_name -> conf.Hydra
-	35, // 26: conf.Logging.zap:type_name -> google.protobuf.Struct
-	28, // 27: conf.Tracers.otel:type_name -> conf.Tracers.Otel
-	31, // 28: conf.AppConfig.tenant_key:type_name -> google.protobuf.StringValue
-	31, // 29: conf.AppConfig.domain_format:type_name -> google.protobuf.StringValue
+	36, // 26: conf.Logging.zap:type_name -> google.protobuf.Struct
+	29, // 27: conf.Tracers.otel:type_name -> conf.Tracers.Otel
+	32, // 28: conf.AppConfig.tenant_key:type_name -> google.protobuf.StringValue
+	32, // 29: conf.AppConfig.domain_format:type_name -> google.protobuf.StringValue
 	6,  // 30: conf.Data.endpoints:type_name -> conf.Endpoints
-	36, // 31: conf.Data.vfs:type_name -> blob.Config
-	29, // 32: conf.Server.HTTP.timeout:type_name -> google.protobuf.Duration
-	18, // 33: conf.Server.HTTP.cors:type_name -> conf.Server.HTTP.Cors
-	19, // 34: conf.Server.HTTP.csrf:type_name -> conf.Server.HTTP.Csrf
-	29, // 35: conf.Server.GRPC.timeout:type_name -> google.protobuf.Duration
+	37, // 31: conf.Data.vfs:type_name -> blob.Config
+	30, // 32: conf.Server.HTTP.timeout:type_name -> google.protobuf.Duration
+	19, // 33: conf.Server.HTTP.cors:type_name -> conf.Server.HTTP.Cors
+	20, // 34: conf.Server.HTTP.csrf:type_name -> conf.Server.HTTP.Csrf
+	30, // 35: conf.Server.GRPC.timeout:type_name -> google.protobuf.Duration
 	8,  // 36: conf.Server.HTTP.Csrf.cookie:type_name -> conf.Cookie
-	31, // 37: conf.Server.HTTP.Csrf.request_header:type_name -> google.protobuf.StringValue
-	31, // 38: conf.Server.HTTP.Csrf.field_name:type_name -> google.protobuf.StringValue
+	32, // 37: conf.Server.HTTP.Csrf.request_header:type_name -> google.protobuf.StringValue
+	32, // 38: conf.Server.HTTP.Csrf.field_name:type_name -> google.protobuf.StringValue
 	3,  // 39: conf.Services.ServicesEntry.value:type_name -> conf.Service
 	1,  // 40: conf.Services.ServersEntry.value:type_name -> conf.Server
 	2,  // 41: conf.Services.ClientsEntry.value:type_name -> conf.Client
 	5,  // 42: conf.Endpoints.DatabasesEntry.value:type_name -> conf.Database
-	37, // 43: conf.Endpoints.EventsEntry.value:type_name -> event.Config
-	38, // 44: conf.Endpoints.RedisEntry.value:type_name -> redis.Config
-	29, // 45: conf.Security.Jwt.expire_in:type_name -> google.protobuf.Duration
-	29, // 46: conf.Security.Jwt.refresh_token_expire_in:type_name -> google.protobuf.Duration
-	31, // 47: conf.Security.CookieKey.block_key:type_name -> google.protobuf.StringValue
+	38, // 43: conf.Endpoints.EventsEntry.value:type_name -> event.Config
+	39, // 44: conf.Endpoints.RedisEntry.value:type_name -> redis.Config
+	30, // 45: conf.Security.Jwt.expire_in:type_name -> google.protobuf.Duration
+	30, // 46: conf.Security.Jwt.refresh_token_expire_in:type_name -> google.protobuf.Duration
+	32, // 47: conf.Security.CookieKey.block_key:type_name -> google.protobuf.StringValue
 	48, // [48:48] is the sub-list for method output_type
 	48, // [48:48] is the sub-list for method input_type
 	48, // [48:48] is the sub-list for extension type_name
@@ -2045,7 +2095,7 @@ func file_conf_conf_proto_init() {
 			}
 		}
 		file_conf_conf_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Server_HTTP); i {
+			switch v := v.(*Dev); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2057,7 +2107,7 @@ func file_conf_conf_proto_init() {
 			}
 		}
 		file_conf_conf_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Server_GRPC); i {
+			switch v := v.(*Server_HTTP); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2069,7 +2119,7 @@ func file_conf_conf_proto_init() {
 			}
 		}
 		file_conf_conf_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Server_HTTP_Cors); i {
+			switch v := v.(*Server_GRPC); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2081,6 +2131,18 @@ func file_conf_conf_proto_init() {
 			}
 		}
 		file_conf_conf_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Server_HTTP_Cors); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_conf_conf_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Server_HTTP_Csrf); i {
 			case 0:
 				return &v.state
@@ -2092,7 +2154,7 @@ func file_conf_conf_proto_init() {
 				return nil
 			}
 		}
-		file_conf_conf_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+		file_conf_conf_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Security_Jwt); i {
 			case 0:
 				return &v.state
@@ -2104,7 +2166,7 @@ func file_conf_conf_proto_init() {
 				return nil
 			}
 		}
-		file_conf_conf_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+		file_conf_conf_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Security_CookieKey); i {
 			case 0:
 				return &v.state
@@ -2116,7 +2178,7 @@ func file_conf_conf_proto_init() {
 				return nil
 			}
 		}
-		file_conf_conf_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
+		file_conf_conf_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Tracers_Otel); i {
 			case 0:
 				return &v.state
@@ -2132,15 +2194,15 @@ func file_conf_conf_proto_init() {
 	file_conf_conf_proto_msgTypes[4].OneofWrappers = []interface{}{}
 	file_conf_conf_proto_msgTypes[7].OneofWrappers = []interface{}{}
 	file_conf_conf_proto_msgTypes[13].OneofWrappers = []interface{}{}
-	file_conf_conf_proto_msgTypes[18].OneofWrappers = []interface{}{}
-	file_conf_conf_proto_msgTypes[26].OneofWrappers = []interface{}{}
+	file_conf_conf_proto_msgTypes[19].OneofWrappers = []interface{}{}
+	file_conf_conf_proto_msgTypes[27].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_conf_conf_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   28,
+			NumMessages:   29,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
