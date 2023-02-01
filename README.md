@@ -31,6 +31,8 @@ Layout Repo( For creating new service): https://github.com/go-saas/kit-layout
 * [x] Cache (Redis)
 * [x] Background Job: [asynq](https://github.com/hibiken/asynq)
 * [x] Virtual File System: [vfs](https://github.com/goxiaoy/vfs)
+* [x] Distributed Transaction: [dtm](https://dtm.pub/)
+* [x] OpenId Connect: [ory](https://www.ory.sh/)
 
 # Quick Start
 
