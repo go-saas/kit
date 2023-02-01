@@ -36,6 +36,7 @@ func generateFileContent(gen *protogen.Plugin, file *protogen.File, g *protogen.
 	g.P()
 	for _, service := range file.Services {
 		getServiceDesc(g, service)
+		g.P()
 	}
 	g.P()
 	for _, service := range file.Services {
@@ -49,7 +50,7 @@ func getServiceDesc(g *protogen.GeneratedFile, service *protogen.Service) {
 	g.P("var _ ", serverName, " = ", "(*", unexport(structName), ")(nil)")
 	g.P()
 	for _, m := range service.Methods {
-		g.P("const GrpcOperation" + service.GoName + string(m.Desc.Name()) + " = " + fmt.Sprintf("/%s/%s", string(service.Desc.FullName()), string(m.Desc.Name())))
+		g.P("const GrpcOperation" + service.GoName + string(m.Desc.Name()) + " = " + fmt.Sprintf("\"/%s/%s\"", string(service.Desc.FullName()), string(m.Desc.Name())))
 	}
 }
 
