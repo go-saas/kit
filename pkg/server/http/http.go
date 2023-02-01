@@ -9,6 +9,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-saas/kit/pkg/authn"
+	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/csrf"
@@ -88,7 +89,7 @@ func PatchOpts(l log.Logger,
 			handlers.AllowedOrigins(server.Http.Cors.GetAllowedOrigins()),
 			handlers.AllowedMethods(allowMethods),
 			handlers.AllowCredentials(),
-			handlers.AllowedHeaders(append([]string{"Content-Type", "Authorization"}, server.Http.Cors.AllowedHeaders...)),
+			handlers.AllowedHeaders(append([]string{"Content-Type", jwt.AuthorizationHeader}, server.Http.Cors.AllowedHeaders...)),
 		))
 	}
 	if server.Http.Csrf != nil {

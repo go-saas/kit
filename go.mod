@@ -39,6 +39,7 @@ require (
 	github.com/aws/aws-sdk-go v1.44.189
 	github.com/centrifugal/centrifuge v0.26.0
 	github.com/dtm-labs/client v1.18.7
+	github.com/dtm-labs/dtmdriver-kratos v0.0.9
 	github.com/eko/gocache/v3 v3.1.1
 	github.com/flowchartsman/swaggerui v0.0.0-20210303154956-0e71c297862e
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20220927151429-0ecc2b422f28

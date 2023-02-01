@@ -87,15 +87,9 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 	//XA Transaction
 	gid := shortuuid.New()
 	var err error
-	var createTenantResp *pb.Tenant
+	var createTenantResp = &pb.Tenant{}
 	err = dtmgrpc.XaGlobalTransaction(sapi.WithDiscovery(dtmapi.ServiceName), gid, func(xa *dtmgrpc.XaGrpc) error {
-		t, err := s.tokenMgr.GetOrGenerateToken(ctx, dtmapi.ClientConf)
-		if err != nil {
-			return err
-		}
-		xa.BranchHeaders = map[string]string{
-			"Authorization": t,
-		}
+		xa.BranchHeaders = dtmapi.MustAddBranchHeader(ctx, s.tokenMgr)
 		//create tenant
 		err = xa.CallBranch(req, sapi.WithDiscovery(api.ServiceName)+pb.GrpcOperationTenantInternalServiceCreateTenant, createTenantResp)
 		if err != nil {

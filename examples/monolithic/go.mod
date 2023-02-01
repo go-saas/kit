@@ -48,6 +48,7 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dtm-labs/client v1.18.7 // indirect
 	github.com/dtm-labs/dtmdriver v0.0.6 // indirect
+	github.com/dtm-labs/dtmdriver-kratos v0.0.9 // indirect
 	github.com/dtm-labs/logger v0.0.2 // indirect
 	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
 	github.com/eapache/go-resiliency v1.3.0 // indirect

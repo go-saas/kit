@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/dtm-labs/client/dtmgrpc"
+	driver "github.com/dtm-labs/dtmdriver-kratos"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc/resolver/discovery"
 	v1 "github.com/go-saas/kit/dtm/api/dtm/v1"
@@ -36,5 +37,6 @@ func NewInit(dis registry.Discovery, opt *sapi.Option) (Init, error) {
 	//	opts = append(opts, discovery.WithSubset(*opt.Subset))
 	//}
 	dtmgrpc.AddDailOption(grpc.WithResolvers(discovery.NewBuilder(dis, opts...)))
+	dtmgrpc.UseDriver(driver.DriverName)
 	return "", nil
 }
