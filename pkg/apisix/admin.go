@@ -36,7 +36,11 @@ func NewAdminClient(endpoint string, apiKey string) (*AdminClient, error) {
 	}, nil
 }
 
+// PutUpstream https://apisix.apache.org/docs/apisix/admin-api/#upstream-api
 func (a *AdminClient) PutUpstream(id string, upstream *Upstream) error {
+	if len(upstream.Name) == 0 {
+		upstream.Name = id
+	}
 	j, err := json.Marshal(upstream)
 	if err != nil {
 		return err
@@ -55,6 +59,9 @@ func (a *AdminClient) PutUpstream(id string, upstream *Upstream) error {
 }
 
 func (a *AdminClient) PutUpstreamStruct(id string, upstream *structpb.Struct) error {
+	if _, ok := upstream.Fields["name"]; !ok {
+		upstream.Fields["name"] = structpb.NewStringValue(id)
+	}
 	j, err := protojson.Marshal(upstream)
 	if err != nil {
 		return err
@@ -72,7 +79,11 @@ func (a *AdminClient) PutUpstreamStruct(id string, upstream *structpb.Struct) er
 	return nil
 }
 
+// PutRoute https://apisix.apache.org/docs/apisix/admin-api/#route-api
 func (a *AdminClient) PutRoute(id string, route *structpb.Struct) error {
+	if _, ok := route.Fields["name"]; !ok {
+		route.Fields["name"] = structpb.NewStringValue(id)
+	}
 	j, err := protojson.Marshal(route)
 	if err != nil {
 		return err
@@ -90,7 +101,11 @@ func (a *AdminClient) PutRoute(id string, route *structpb.Struct) error {
 	return nil
 }
 
+// PutStreamRoute https://apisix.apache.org/docs/apisix/admin-api/#stream-route-api
 func (a *AdminClient) PutStreamRoute(id string, route *structpb.Struct) error {
+	if _, ok := route.Fields["name"]; !ok {
+		route.Fields["name"] = structpb.NewStringValue(id)
+	}
 	j, err := protojson.Marshal(route)
 	if err != nil {
 		return err
@@ -108,7 +123,11 @@ func (a *AdminClient) PutStreamRoute(id string, route *structpb.Struct) error {
 	return nil
 }
 
+// PutGlobalRules https://apisix.apache.org/docs/apisix/admin-api/#global-rule-api
 func (a *AdminClient) PutGlobalRules(id string, route *structpb.Struct) error {
+	if _, ok := route.Fields["name"]; !ok {
+		route.Fields["name"] = structpb.NewStringValue(id)
+	}
 	j, err := protojson.Marshal(route)
 	if err != nil {
 		return err

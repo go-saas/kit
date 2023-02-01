@@ -382,11 +382,11 @@ func (s *UserService) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 // CheckUserTenant internal api for check user tenant
 func (s *UserService) CheckUserTenant(ctx context.Context, req *pb.CheckUserTenantRequest) (*pb.CheckUserTenantReply, error) {
 	//check permission
-	if ok, _ := s.trust.Trusted(ctx); !ok {
-		s.logger.Warnf("untrusted can no call CheckUserTenant api")
-		return nil, errors2.Forbidden("", "")
+	if err := api2.ErrIfUntrusted(ctx, s.trust); err != nil {
+		return nil, err
 	}
-	ok, err := s.CheckUserTenantInternal(ctx, req.UserId, req.TenantId)
+
+	ok, err := s.checkUserTenantInternal(ctx, req.UserId, req.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -394,7 +394,7 @@ func (s *UserService) CheckUserTenant(ctx context.Context, req *pb.CheckUserTena
 	return &pb.CheckUserTenantReply{Ok: ok}, nil
 }
 
-func (s *UserService) CheckUserTenantInternal(ctx context.Context, userId, tenantId string) (bool, error) {
+func (s *UserService) checkUserTenantInternal(ctx context.Context, userId, tenantId string) (bool, error) {
 	//change to the request tenant
 	ctx = saas.NewCurrentTenant(ctx, tenantId, "")
 	ok, err := s.um.IsInTenant(ctx, userId, tenantId)

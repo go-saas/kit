@@ -15,7 +15,7 @@ message Bootstrap {
   conf.Logging logging=6;
   conf.Tracers tracing=7;
   conf.AppConfig app=8;
-
+  conf.Dev dev=9;
   SysConf sys=10;
 }
 

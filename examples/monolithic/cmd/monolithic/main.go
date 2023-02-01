@@ -164,6 +164,8 @@ func main() {
 		kitdi.Value(bc.Saas),
 		kitdi.Value(bc.User),
 		kitdi.Value(bc.App),
+		kitdi.Value(bc.Dev),
+
 		kitdi.Value(logger),
 		kitdi.NewSet(authz.ProviderSet, jwt.ProviderSet, sserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
 			job.DefaultProviderSet, dtmserver.DtmProviderSet, eventserver.EventProviderSet,

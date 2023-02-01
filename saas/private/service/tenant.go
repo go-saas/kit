@@ -287,7 +287,7 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 		defer file.Close()
 		fileName := handle.Filename
 		ext := filepath.Ext(fileName)
-		normalizedName := fmt.Sprintf("tenant/logo/%s%s", uuid.New().String(), ext)
+		normalizedName := fmt.Sprintf("%s/%s%s", biz.TenantLogoPath, uuid.New().String(), ext)
 
 		err = s.blob.MkdirAll(biz.TenantLogoPath, 0755)
 		if err != nil {

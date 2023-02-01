@@ -142,6 +142,7 @@ func main() {
 		kitdi.Value(bc.Saas),
 		kitdi.Value(bc.Data),
 		kitdi.Value(bc.App),
+		kitdi.Value(bc.Dev),
 		kitdi.Value(logger),
 		kitdi.Value([]grpc.ClientOption{}),
 		authz.ProviderSet, jwt.ProviderSet, kitserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet, job.DefaultProviderSet,

@@ -199,6 +199,8 @@ func (m *Upstream) validate(all bool) error {
 
 	// no validation rules for Scheme
 
+	// no validation rules for Name
+
 	if len(errors) > 0 {
 		return UpstreamMultiError(errors)
 	}

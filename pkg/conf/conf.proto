@@ -34,12 +34,14 @@ message Server {
     google.protobuf.Duration timeout = 3;
     Cors cors=4;
     Csrf csrf=5;
+    string endpoint=6;
 
   }
   message GRPC {
     string network = 1;
     string addr = 2;
     google.protobuf.Duration timeout = 3;
+    string endpoint=6;
   }
   HTTP http = 1;
   GRPC grpc = 2;

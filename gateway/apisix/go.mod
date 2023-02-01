@@ -9,7 +9,9 @@ require (
 	github.com/go-saas/saas v0.6.0
 	github.com/go-saas/sessions v1.2.2-0.20220626044315-a7a87c87f120
 	github.com/goava/di v1.11.1
+	github.com/goxiaoy/vfs v0.0.0-20230130063220-b20a45e86d37
 	github.com/samber/lo v1.28.2
+	github.com/spf13/afero v1.9.3
 	github.com/spf13/cobra v1.4.0
 	github.com/thediveo/enumflag v0.10.1
 	go.opentelemetry.io/otel v1.10.0
@@ -31,7 +33,6 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v0.6.8 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
-	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
@@ -54,7 +55,6 @@ require (
 	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
-	github.com/goxiaoy/vfs v0.0.0-20230130063220-b20a45e86d37 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3 // indirect
 	github.com/hashicorp/consul/api v1.15.2 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
@@ -73,7 +73,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/twpayne/go-geom v1.4.4 // indirect
 	github.com/wneessen/go-mail v0.3.8 // indirect

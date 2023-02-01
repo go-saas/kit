@@ -16,7 +16,8 @@ message Bootstrap {
   conf.Logging logging=6;
   conf.Tracers tracing=7;
   conf.AppConfig app=8;
-  
+  conf.Dev dev=9;
+
   saas.internal.SaasConf saas=20;
   user.internal.UserConf user=21;
   sys.internal.SysConf sys=22;

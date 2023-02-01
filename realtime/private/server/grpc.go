@@ -15,6 +15,7 @@ import (
 	conf2 "github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/server"
+	"github.com/go-saas/kit/pkg/server/common"
 	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
 	"github.com/go-saas/kit/realtime/api"
 	"github.com/go-saas/saas"
@@ -34,7 +35,7 @@ func NewGRPCServer(
 	validator sapi.TrustedContextValidator,
 	logger log.Logger,
 	register []kitgrpc.ServiceRegister,
-) *grpc.Server {
+) *kitgrpc.Server {
 	m := []middleware.Middleware{
 		recovery.Recovery(),
 		tracing.Server(),
@@ -52,8 +53,9 @@ func NewGRPCServer(
 			m...,
 		),
 	}
-	opts = kitgrpc.PatchOpts(logger, opts, api.ServiceName, c)
-	srv := grpc.NewServer(opts...)
-	kitgrpc.ChainServiceRegister(register...).Register(srv, m...)
+	cfg := common.GetConf(c, api.ServiceName)
+	opts = kitgrpc.PatchOpts(logger, opts, cfg)
+	srv := kitgrpc.NewServer(cfg, opts...)
+	kitgrpc.ChainServiceRegister(register...).Register(srv.Server, m...)
 	return srv
 }

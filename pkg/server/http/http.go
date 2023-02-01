@@ -12,12 +12,11 @@ import (
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/csrf"
-	"github.com/go-saas/kit/pkg/server/common"
+	"github.com/go-saas/kit/pkg/server/endpoint"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/goxiaoy/vfs"
 	"github.com/spf13/afero"
-	"google.golang.org/protobuf/proto"
 	"net"
 	"net/http"
 	"net/url"
@@ -54,23 +53,12 @@ func ChainServiceRegister(r ...ServiceRegister) ServiceRegister {
 // PatchOpts Patch http options with given service name and configs. f use global filters
 func PatchOpts(l log.Logger,
 	opts []khttp.ServerOption,
-	name string,
-	services *conf.Services,
+	server *conf.Server,
 	sCfg *conf.Security,
 	reqDecoder khttp.DecodeRequestFunc,
 	resEncoder khttp.EncodeResponseFunc,
 	errEncoder khttp.EncodeErrorFunc,
 	f ...khttp.FilterFunc) []khttp.ServerOption {
-	//default config
-	server := proto.Clone(common.DefaultServerConfig).(*conf.Server)
-	if def, ok := services.Servers[common.DefaultSrvName]; ok {
-		//merge default config
-		proto.Merge(server, def)
-	}
-	if s, ok := services.Servers[name]; ok {
-		//merge service config
-		proto.Merge(server, s)
-	}
 
 	if server.Http.Network != "" {
 		opts = append(opts, khttp.Network(server.Http.Network))
@@ -233,24 +221,26 @@ func AuthzGuardian(srv authz.Service, requirement authz.RequirementList, encoder
 	})
 }
 
-type server struct {
+type Server struct {
 	*khttp.Server
-	cfg *conf.Dev
+	cfg *conf.Server
 }
 
-func NewServer(cfg *conf.Dev, opts ...khttp.ServerOption) *server {
-	return &server{
+func NewServer(cfg *conf.Server, opts ...khttp.ServerOption) *Server {
+	return &Server{
 		Server: khttp.NewServer(opts...),
-		cfg:    nil,
+		cfg:    cfg,
 	}
 }
 
-func (s *server) Endpoint() (*url.URL, error) {
-	url, err := s.Server.Endpoint()
-	if err != nil || url == nil || !s.cfg.Docker {
-		return url, err
+func (s *Server) Endpoint() (url *url.URL, err error) {
+	url, err = s.Server.Endpoint()
+	if err != nil || url == nil {
+		return
 	}
-	//replace host
-	url.Host = "host.docker.internal"
-	return url, err
+	if s.cfg.Http != nil && len(s.cfg.Http.Endpoint) > 0 {
+		//TODO tls
+		return endpoint.NewEndpoint(endpoint.Scheme("http", false), s.cfg.Http.Endpoint), nil
+	}
+	return
 }

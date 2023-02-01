@@ -11,6 +11,7 @@ services:
     sys: {}
     saas: {}
     realtime: {}
+    dtmservice: {}
 data:
   endpoints:
     databases:

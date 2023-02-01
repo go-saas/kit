@@ -10,7 +10,9 @@ require (
 	github.com/go-saas/saas v0.6.0
 	github.com/go-saas/uow v0.0.6
 	github.com/goava/di v1.11.1
+	github.com/goxiaoy/vfs v0.0.0-20230130063220-b20a45e86d37
 	github.com/hibiken/asynq v0.23.0
+	github.com/spf13/afero v1.9.3
 	google.golang.org/protobuf v1.28.1
 )
 
@@ -58,7 +60,6 @@ require (
 	github.com/fclairamb/afero-s3 v0.3.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/flowchartsman/swaggerui v0.0.0-20210303154956-0e71c297862e // indirect
-	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/glebarez/go-sqlite v1.19.1 // indirect
 	github.com/glebarez/sqlite v1.5.0 // indirect
 	github.com/go-chi/chi/v5 v5.0.7 // indirect
@@ -93,7 +94,6 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/goxiaoy/go-eventbus v0.0.5 // indirect
 	github.com/goxiaoy/gorm-concurrency v1.1.0 // indirect
-	github.com/goxiaoy/vfs v0.0.0-20230130063220-b20a45e86d37 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
 	github.com/hashicorp/consul/api v1.15.2 // indirect
@@ -166,7 +166,6 @@ require (
 	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
-	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/stretchr/testify v1.8.1 // indirect
 	github.com/twpayne/go-geom v1.4.4 // indirect

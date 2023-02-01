@@ -13,6 +13,7 @@ import (
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/logging"
 	"github.com/go-saas/kit/pkg/server"
+	"github.com/go-saas/kit/pkg/server/common"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	"github.com/go-saas/kit/sys/api"
 	uow2 "github.com/go-saas/uow"
@@ -31,9 +32,10 @@ func NewHTTPServer(c *conf2.Services,
 	logger log.Logger,
 	validator sapi.TrustedContextValidator,
 	register []kithttp.ServiceRegister,
-) *http.Server {
+) *kithttp.Server {
 	var opts []http.ServerOption
-	opts = kithttp.PatchOpts(logger, opts, api.ServiceName, c, sCfg, reqDecoder, resEncoder, errEncoder)
+	cfg := common.GetConf(c, api.ServiceName)
+	opts = kithttp.PatchOpts(logger, opts, cfg, sCfg, reqDecoder, resEncoder, errEncoder)
 	m := []middleware.Middleware{server.Recovery(),
 		tracing.Server(),
 		logging.Server(logger),
@@ -48,9 +50,9 @@ func NewHTTPServer(c *conf2.Services,
 			m...,
 		),
 	}...)
-	srv := http.NewServer(opts...)
+	srv := kithttp.NewServer(cfg, opts...)
 
-	kithttp.ChainServiceRegister(register...).Register(srv, m...)
+	kithttp.ChainServiceRegister(register...).Register(srv.Server, m...)
 
 	return srv
 }
