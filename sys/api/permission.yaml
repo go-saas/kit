@@ -39,3 +39,6 @@ groups:
       - name: "permission.sys.dev.events.kafka"
         namespace: "dev.events.kafka"
         action: "*"
+      - name: "permission.sys.dev.dtm"
+        namespace: "dev.dtm"
+        action: "*"

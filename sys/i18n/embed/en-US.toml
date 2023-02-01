@@ -22,3 +22,5 @@ other = "Openapi Docs"
 other = "Background Jobs"
 [permission.sys.dev.events.kafka]
 other = "Kafka"
+[permission.sys.dev.dtm]
+other = "Dtm"

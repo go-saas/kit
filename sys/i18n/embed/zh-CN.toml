@@ -21,3 +21,5 @@ other = "Openapi开发文档"
 other = "后台任务"
 [permission.sys.dev.events.kafka]
 other = "Kafka"
+[permission.sys.dev.dtm]
+other = "分布式事务"

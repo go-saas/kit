@@ -142,5 +142,16 @@ menus:
           - namespace: "dev.events.kafka"
             resource: "*"
             action: "*"
+      - name: "dtm"
+        icon: "CloudServerOutlined"
+        path: "/dev/dtm"
+        component: "IFRAME"
+        iframe: "/dtm-ui"
+        is_preserved: true
+        title: "dev.dtm"
+        requirement:
+          - namespace: "dev.dtm"
+            resource: "*"
+            action: "*"
 
 
