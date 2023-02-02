@@ -127,6 +127,7 @@ func main() {
 
 	di.SetTracer(&di.StdTracer{})
 	builder, err := di.New(
+		kitdi.Value(kitserver.Name(Name)),
 		kitdi.Value(bc.Services),
 		kitdi.Value(bc.Security),
 		kitdi.Value(bc.App),

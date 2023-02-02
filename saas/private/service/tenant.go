@@ -3,22 +3,22 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/dtm-labs/client/dtmgrpc"
-	dtmapi "github.com/go-saas/kit/dtm/api"
+	"github.com/dtm-labs/client/dtmcli"
+	"github.com/dtm-labs/client/workflow"
+	dtmsrv "github.com/go-saas/kit/dtm/service"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
+	"github.com/go-saas/kit/pkg/utils"
 	conf2 "github.com/go-saas/kit/saas/private/conf"
-	uapi "github.com/go-saas/kit/user/api"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/saas"
 	shttp "github.com/go-saas/saas/http"
 	"github.com/go-saas/sessions"
 	"github.com/goxiaoy/vfs"
 	"github.com/lithammer/shortuuid/v3"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"io"
 	"os"
 	"path/filepath"
@@ -40,14 +40,15 @@ import (
 
 type TenantService struct {
 	pb.UnimplementedTenantServiceServer
-	useCase  *biz.TenantUseCase
-	auth     authz.Service
-	blob     vfs.Blob
-	trusted  sapi.TrustedContextValidator
-	app      *conf.AppConfig
-	saasConf *conf2.SaasConf
-	webConf  *shttp.WebMultiTenancyOption
-	tokenMgr sapi.TokenManager
+	useCase         *biz.TenantUseCase
+	auth            authz.Service
+	blob            vfs.Blob
+	trusted         sapi.TrustedContextValidator
+	app             *conf.AppConfig
+	saasConf        *conf2.SaasConf
+	webConf         *shttp.WebMultiTenancyOption
+	txhelper        *dtmsrv.Helper
+	userInternalSrv v1.UserInternalServiceServer
 }
 
 func NewTenantService(
@@ -58,19 +59,82 @@ func NewTenantService(
 	app *conf.AppConfig,
 	saasConf *conf2.SaasConf,
 	wenConf *shttp.WebMultiTenancyOption,
-	tokenMgr sapi.TokenManager,
+	txhelper *dtmsrv.Helper,
+	userInternalSrv v1.UserInternalServiceServer,
 ) *TenantService {
-	return &TenantService{
-		useCase:  useCase,
-		auth:     auth,
-		trusted:  trusted,
-		blob:     blob,
-		app:      app,
-		saasConf: saasConf,
-		webConf:  wenConf,
-		tokenMgr: tokenMgr,
+	s := &TenantService{
+		useCase:         useCase,
+		auth:            auth,
+		trusted:         trusted,
+		blob:            blob,
+		app:             app,
+		saasConf:        saasConf,
+		webConf:         wenConf,
+		txhelper:        txhelper,
+		userInternalSrv: userInternalSrv,
 	}
+
+	err := s.txhelper.WorkflowRegister2(wfName, func(wf *workflow.Workflow, data []byte) ([]byte, error) {
+		var req = &pb.CreateTenantRequest{}
+		utils.PbMustUnMarshalJson(data, req)
+
+		resp, err := wf.NewBranch().OnRollback(func(bb *dtmcli.BranchBarrier) error {
+			//delete tenant
+			return s.txhelper.BarrierUow(wf.Context, bb, biz.ConnName, func(ctx context.Context) error {
+				if err := s.useCase.Delete(ctx, req.Id); err != nil {
+					return err
+				}
+				return nil
+			})
+		}).Do(func(bb *dtmcli.BranchBarrier) ([]byte, error) {
+			//create tenant
+			resp := &pb.Tenant{}
+			err := s.txhelper.BarrierUow(wf.Context, bb, biz.ConnName, func(ctx context.Context) error {
+				if len(req.DisplayName) == 0 {
+					req.DisplayName = req.Name
+				}
+				t := &biz.Tenant{
+					Name:        req.Name,
+					DisplayName: req.DisplayName,
+					Region:      req.Region,
+					Logo:        req.Logo,
+					SeparateDb:  req.SeparateDb,
+				}
+				if len(req.Id) > 0 {
+					t.UIDBase.ID = uuid.MustParse(req.Id)
+				}
+
+				if err := s.useCase.Create(ctx, t); err != nil {
+					return err
+				}
+				resp = mapBizTenantToApi(ctx, s.app, s.blob, t)
+				return nil
+			})
+			return utils.PbMustMarshalJson(resp), err
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		wf.NewBranch().OnRollback(func(bb *dtmcli.BranchBarrier) error {
+			return nil
+		}).OnCommit(func(bb *dtmcli.BranchBarrier) error {
+			_, err := s.userInternalSrv.CreateTenant(wf.Context, req)
+			return err
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	})
+
+	if err != nil {
+		panic(err)
+	}
+	return s
 }
+
+var wfName = "saas_create_tenant"
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {
 
@@ -88,27 +152,39 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 	gid := shortuuid.New()
 	var err error
 	var createTenantResp = &pb.Tenant{}
-	err = dtmgrpc.XaGlobalTransaction(sapi.WithDiscovery(dtmapi.ServiceName), gid, func(xa *dtmgrpc.XaGrpc) error {
-		xa.BranchHeaders = dtmapi.MustAddBranchHeader(ctx, s.tokenMgr)
-		//create tenant
-		err = xa.CallBranch(req, sapi.WithDiscovery(api.ServiceName)+pb.GrpcOperationTenantInternalServiceCreateTenant, createTenantResp)
-		if err != nil {
-			return err
-		}
-		//server id
-		req.Id = createTenantResp.Id
-		//create user ,seed database
-		err = xa.CallBranch(req, sapi.WithDiscovery(uapi.ServiceName)+v1.GrpcOperationUserInternalServiceCreateTenant, &emptypb.Empty{})
-		if err != nil {
-			return err
-		}
-		return nil
-	})
 
 	if err != nil {
 		return nil, err
 	}
-	return createTenantResp, nil
+
+	data, err := workflow.Execute2(ctx, wfName, gid, utils.PbMustMarshalJson(req))
+	if err != nil {
+		return nil, err
+	}
+	utils.PbMustUnMarshalJson(data, createTenantResp)
+	return createTenantResp, err
+
+	//err = s.txhelper.XaGlobalTransaction2(ctx, gid, nil, func(xa *dtmgrpc.XaGrpc) error {
+	//
+	//	//create tenant
+	//	err = xa.CallBranch(req, sapi.WithDiscovery(api.ServiceName)+pb.GrpcOperationTenantInternalServiceCreateTenant, createTenantResp)
+	//	if err != nil {
+	//		return err
+	//	}
+	//	//server id
+	//	req.Id = createTenantResp.Id
+	//	//create user ,seed database
+	//	err = xa.CallBranch(req, sapi.WithDiscovery(uapi.ServiceName)+v1.GrpcOperationUserInternalServiceCreateTenant, &emptypb.Empty{})
+	//	if err != nil {
+	//		return err
+	//	}
+	//	return nil
+	//})
+	//
+	//if err != nil {
+	//	return nil, err
+	//}
+	//return createTenantResp, nil
 }
 
 func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRequest) (*pb.Tenant, error) {

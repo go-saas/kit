@@ -59,7 +59,7 @@ func NewHTTPServer(c *conf.Services,
 		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
 			o.AppendContribs(userTenant)
 		}),
-		kuow.Uow(uowMgr, kuow.WithLogger(logger)),
+		kuow.Uow(uowMgr),
 	}
 	opts = append(opts, []khttp.ServerOption{
 		khttp.Middleware(middlewares...),

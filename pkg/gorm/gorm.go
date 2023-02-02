@@ -2,8 +2,11 @@ package gorm
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"github.com/dtm-labs/client/dtmcli/dtmimp"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-saas/kit/dtm/utils"
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/saas"
 	"github.com/go-saas/saas/data"
@@ -13,6 +16,7 @@ import (
 	mysql2 "github.com/go-sql-driver/mysql"
 	"github.com/uptrace/opentelemetry-go-extra/otelgorm"
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -58,45 +62,50 @@ func isDbGuardianEnabled(ctx context.Context) bool {
 	return false
 }
 
-type DbCache struct {
-	*saas.Cache[string, *sgorm.DbWrap]
-	d *conf.Data
-	l klog.Logger
+// SqlDbCache adapter for dtm
+type SqlDbCache struct {
+	cache *saas.Cache[string, *sql.DB]
 }
 
-// NewDbCache create a shared gorm.Db cache by dsn
-func NewDbCache(d *conf.Data, l klog.Logger) (*DbCache, func()) {
-	c := saas.NewCache[string, *sgorm.DbWrap]()
-	return &DbCache{Cache: c, d: d, l: l}, func() {
+func NewSqlDbCache() (*SqlDbCache, func()) {
+	c := saas.NewCache[string, *sql.DB]()
+	return &SqlDbCache{cache: c}, func() {
 		c.Flush()
 	}
 }
 
-func (c *DbCache) GetOrSet(ctx context.Context, key, connStr string) (*gorm.DB, error) {
+func (s *SqlDbCache) LoadOrStore(conf dtmimp.DBConf, factory func(conf dtmimp.DBConf) (*sql.DB, error)) (*sql.DB, error) {
+	dsn := dtmimp.GetDsn(conf)
+	db, _, err := s.cache.GetOrSet(dsn, func() (*sql.DB, error) {
+		return factory(conf)
+	})
+	return db, err
+}
 
-	client, _, err := c.Cache.GetOrSet(fmt.Sprintf("%s/%s", key, connStr), func() (*sgorm.DbWrap, error) {
+type DbCache struct {
+	cache *SqlDbCache
+	d     *conf.Data
+	l     klog.Logger
+}
 
-		dbLogger := &Logger{
-			Logger:   c.l,
-			LogLevel: logger.Info,
-		}
+// NewDbCache create a shared gorm.Db cache by dsn
+func NewDbCache(d *conf.Data, l klog.Logger, c *SqlDbCache) *DbCache {
+	return &DbCache{cache: c, d: d, l: l}
+}
 
-		//find config
-		dbConfig := c.d.Endpoints.GetDatabaseMergedDefault(key)
+func (c *DbCache) GetOrSet(ctx context.Context, key, dsn string) (*gorm.DB, error) {
+	//find config
+	dbConfig := c.d.Endpoints.GetDatabaseMergedDefault(key)
+	dtmConf, err := utils.ParseDsnToDbConfig(dbConfig.Driver, dsn)
+	if err != nil {
+		return nil, err
+	}
+	sqlDb, err := c.cache.LoadOrStore(*dtmConf, func(conf dtmimp.DBConf) (*sql.DB, error) {
 		var dbGuardian ensureDbExistFunc
-		//generate db
-		tp := ""
-		if dbConfig.TablePrefix == nil {
-			tp = fmt.Sprintf("kit_%s_", key)
-		} else {
-			tp = dbConfig.TablePrefix.Value
-		}
-		var dial gorm.Dialector
 		switch dbConfig.Driver {
 		case "sqlite":
-			dial = sqlite.Open(connStr)
+			//empty
 		case "mysql":
-			dial = mysql.Open(connStr)
 			dbGuardian = func(s string) error {
 				dsn, err := mysql2.ParseDSN(s)
 				if err != nil {
@@ -105,7 +114,7 @@ func (c *DbCache) GetOrSet(ctx context.Context, key, connStr string) (*gorm.DB, 
 				dbname := dsn.DBName
 				dsn.DBName = ""
 				//open without db name
-				db, err := gorm.Open(mysql.Open(dsn.FormatDSN()), &gorm.Config{Logger: dbLogger})
+				db, err := gorm.Open(mysql.Open(dsn.FormatDSN()), GetDbConf(c.l, key, dbConfig))
 				if err != nil {
 					return err
 				}
@@ -121,42 +130,91 @@ func (c *DbCache) GetOrSet(ctx context.Context, key, connStr string) (*gorm.DB, 
 		default:
 			panic("driver unsupported")
 		}
-
 		if isDbGuardianEnabled(ctx) && dbGuardian != nil {
-			if err := dbGuardian(connStr); err != nil {
+			if err := dbGuardian(dsn); err != nil {
 				return nil, err
 			}
 		}
-
-		gormConf := &gorm.Config{
-			Logger: dbLogger,
-			NamingStrategy: schema.NamingStrategy{
-				TablePrefix: tp,
-			}}
-
-		client, err := gorm.Open(dial, gormConf)
-		if err != nil {
-			return nil, err
-		}
-		//register global
-		RegisterAuditCallbacks(client)
-		RegisterAggCallbacks(client)
-		if err := client.Use(otelgorm.NewPlugin(otelgorm.WithoutQueryVariables())); err != nil {
-			panic(err)
-		}
-		if dbConfig.Debug {
-			client = client.Debug()
-		}
-		return sgorm.NewDbWrap(client), nil
+		return dtmimp.StandaloneDB(conf)
 	})
+	if err != nil {
+		return nil, err
+	}
+	client, err := OpenFromExisting(sqlDb, c.l, key, dbConfig)
 	if err != nil {
 		return nil, err
 	}
 	return client.WithContext(ctx), nil
 }
 
+func GetDbConf(l klog.Logger, key string, dbConfig *conf.Database) *gorm.Config {
+	tp := ""
+	if dbConfig.TablePrefix == nil {
+		tp = fmt.Sprintf("kit_%s_", key)
+	} else {
+		tp = dbConfig.TablePrefix.Value
+	}
+	dbLogger := &Logger{
+		Logger:   l,
+		LogLevel: logger.Info,
+	}
+	return &gorm.Config{
+		Logger: dbLogger,
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix: tp,
+		}}
+}
+
+func ApplyDefault(client *gorm.DB, dbConfig *conf.Database) *gorm.DB {
+	ret := client
+	//register global
+	RegisterAuditCallbacks(client)
+	RegisterAggCallbacks(client)
+	if err := ret.Use(otelgorm.NewPlugin(otelgorm.WithoutQueryVariables())); err != nil {
+		panic(err)
+	}
+	if dbConfig.Debug {
+		ret = ret.Debug()
+	}
+	return ret
+}
+
+func OpenFromExisting(db *sql.DB, l klog.Logger, key string, dbConfig *conf.Database) (ret *gorm.DB, err error) {
+	cfg := GetDbConf(l, key, dbConfig)
+	switch dbConfig.Driver {
+	case "sqlite":
+		ret, err = gorm.Open(&sqlite.Dialector{Conn: db})
+	case "mysql":
+		ret, err = gorm.Open(mysql.New(mysql.Config{
+			Conn: db,
+		}), cfg)
+		if err != nil {
+			return nil, err
+		}
+	case "postgres":
+		ret, err = gorm.Open(postgres.New(postgres.Config{
+			Conn: db,
+		}), cfg)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		panic("driver unsupported")
+	}
+	if ret != nil {
+		ret = ApplyDefault(ret, dbConfig)
+	}
+	return
+}
+
 func NewDbProvider(cache *DbCache, cs data.ConnStrResolver, d *conf.Data) sgorm.DbProvider {
 	return DbProviderFunc(func(ctx context.Context, key string) *gorm.DB {
+		//find from context. for dtm usage
+		db, ok := fromContext(ctx, contextDbKey(key))
+		if ok && db != nil {
+			return db
+		}
+
 		//find connection string
 		s, err := cs.Resolve(ctx, key)
 		if err != nil {

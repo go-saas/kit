@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"github.com/dtm-labs/client/workflow"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
@@ -65,6 +66,8 @@ func NewGrpcConn(
 		),
 		// for tracing remote ip recording
 		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
+
+		grpc.WithUnaryInterceptor(workflow.Interceptor),
 	}
 	if clientCfg.Timeout != nil {
 		fOpts = append(fOpts, grpc.WithTimeout(clientCfg.Timeout.AsDuration()))

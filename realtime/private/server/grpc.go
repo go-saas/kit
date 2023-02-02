@@ -46,7 +46,7 @@ func NewGRPCServer(
 		jwt.ServerExtractAndAuth(tokenizer, logger),
 		sapi.ServerPropagation(apiOpt, validator, logger),
 		server.Saas(mOpt, ts, validator),
-		kuow.Uow(uowMgr, kuow.WithLogger(logger)),
+		kuow.Uow(uowMgr),
 	}
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(

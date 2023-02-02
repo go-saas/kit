@@ -10,7 +10,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-kratos/kratos/v2 v2.5.4
 	github.com/go-saas/saas v0.6.0
-	github.com/go-saas/uow v0.0.6
+	github.com/go-saas/uow v0.0.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/csrf v1.7.1
@@ -58,6 +58,7 @@ require (
 	github.com/hashicorp/consul/api v1.15.2
 	github.com/hibiken/asynq v0.23.0
 	github.com/hibiken/asynqmon v0.7.1
+	github.com/jackc/pgx/v4 v4.17.2
 	github.com/lithammer/shortuuid/v3 v3.0.7
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/nyaruka/phonenumbers v1.1.1
@@ -79,6 +80,7 @@ require (
 	golang.org/x/sync v0.1.0
 	golang.org/x/text v0.4.0
 	gopkg.in/yaml.v3 v3.0.1
+	gorm.io/driver/postgres v1.4.4
 )
 
 require (
@@ -152,7 +154,6 @@ require (
 	github.com/jackc/pgproto3/v2 v2.3.1 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.12.0 // indirect
-	github.com/jackc/pgx/v4 v4.17.2 // indirect
 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
 	github.com/jcmturner/gofork v1.7.6 // indirect
@@ -217,7 +218,6 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637 // indirect
-	gorm.io/driver/postgres v1.4.4 // indirect
 	gorm.io/driver/sqlserver v1.4.1 // indirect
 	gorm.io/plugin/dbresolver v1.3.0 // indirect
 	k8s.io/apimachinery v0.25.2 // indirect
@@ -229,6 +229,6 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/99designs/keyring v1.2.1
-	github.com/dtm-labs/client => github.com/goxiaoy/client v0.0.0-20230131081152-9d855c925925
+	github.com/dtm-labs/client => github.com/goxiaoy/client v0.0.0-20230202163110-7dfe91ab1b7f
 	github.com/hibiken/asynqmon => github.com/goxiaoy/asynqmon v0.7.2-0.20220620161318-80231130441b
 )

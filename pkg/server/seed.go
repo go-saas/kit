@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	uow2 "github.com/go-saas/kit/pkg/uow"
 	"github.com/go-saas/saas"
 	"github.com/go-saas/saas/seed"
 	"github.com/go-saas/uow"
@@ -55,6 +56,9 @@ func NewTraceContrib(next ...seed.Contrib) seed.Contrib {
 
 func NewUowContrib(uow uow.Manager, next ...seed.Contrib) seed.Contrib {
 	return SeedFunc(func(ctx context.Context, sCtx *seed.Context) error {
+		if uow2.SkipFromContext(ctx, false) {
+			return seed.Chain(next...).Seed(ctx, sCtx)
+		}
 		return uow.WithNew(ctx, func(ctx context.Context) error {
 			return seed.Chain(next...).Seed(ctx, sCtx)
 		})

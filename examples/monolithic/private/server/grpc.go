@@ -47,7 +47,7 @@ func NewGRPCServer(
 		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
 			o.AppendContribs(userTenant)
 		}),
-		kuow.Uow(uowMgr, kuow.WithLogger(logger)),
+		kuow.Uow(uowMgr),
 	}
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(

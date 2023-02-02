@@ -40,6 +40,7 @@ var (
 	DefaultProviderSet = kitdi.NewSet(
 		NewConnStrResolver,
 		NewConstantConnStrResolver,
+		kitgorm.NewSqlDbCache,
 		kitgorm.NewDbCache,
 
 		kitgorm.NewDbProvider,

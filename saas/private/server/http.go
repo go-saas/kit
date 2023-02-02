@@ -16,6 +16,7 @@ import (
 	"github.com/go-saas/kit/pkg/server/common"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	"github.com/go-saas/kit/saas/api"
+	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas"
 	http2 "github.com/go-saas/saas/http"
@@ -53,7 +54,7 @@ func NewHTTPServer(c *conf.Services,
 		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
 			o.AppendContribs(userTenant)
 		}),
-		kuow.Uow(uowMgr, kuow.WithLogger(logger))}
+		kuow.Uow(uowMgr, kuow.WithForceSkipOp(v1.GrpcOperationTenantInternalServiceCreateTenant))}
 
 	opts = append(opts, []http.ServerOption{
 		http.Middleware(

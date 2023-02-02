@@ -17,6 +17,9 @@ var DefaultProviderSet = kitdi.NewSet(
 	NewWebMultiTenancyOption,
 )
 
+// Name server name.
+type Name string
+
 func NewRegistrar(services *conf.Services, container *di.Container) (registry.Registrar, error) {
 	err := container.Provide(func() *kregistry.Config { return services.Registry })
 	if err != nil {

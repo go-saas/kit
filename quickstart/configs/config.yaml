@@ -17,7 +17,7 @@ data:
     databases:
       default:
         driver: mysql
-        source: root:youShouldChangeThis@tcp(mysqld:3306)/kit?parseTime=true&loc=Local&charset=utf8mb4
+        source: root:youShouldChangeThis@tcp(mysqld:3306)/kit?parseTime=true&loc=Local&charset=utf8mb4&interpolateParams=true
     redis:
       default:
         addrs: ["redis:6379"]
@@ -55,16 +55,16 @@ security:
     hydra:
       admin_url: http://hydra:4445
 
-#logging:
-#  zap:
-#    level: "info"
-#    outputPaths: [ "stdout", "rolling://.temp/logs" ]
-#    errorOutputPaths: [ "stderr" ]
-#    encoding: json
-#    encoderConfig:
-#      messageKey: message
-#      levelKey: level
-#      levelEncoder: lowercase
+logging:
+  zap:
+    level: "info"
+    outputPaths: [ "stdout", "rolling://.temp/logs" ]
+    errorOutputPaths: [ "stderr" ]
+    encoding: json
+    encoderConfig:
+      messageKey: message
+      levelKey: level
+      levelEncoder: lowercase
 
 tracing:
   otel:

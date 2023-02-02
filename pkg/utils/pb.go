@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
@@ -34,4 +36,19 @@ func Structpb2Map(m *structpb.Struct) map[string]interface{} {
 		return nil
 	}
 	return m.AsMap()
+}
+
+func PbMustMarshalJson(pb proto.Message) []byte {
+	data, err := protojson.Marshal(pb)
+	if err != nil {
+		panic(err)
+	}
+	return data
+}
+func PbMustUnMarshalJson(data []byte, pb proto.Message) {
+	err := protojson.Unmarshal(data, pb)
+	if err != nil {
+		panic(err)
+	}
+	return
 }

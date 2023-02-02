@@ -44,7 +44,7 @@ func NewHTTPServer(c *conf2.Services,
 		localize.I18N(),
 		jwt.ServerExtractAndAuth(tokenizer, logger),
 		sapi.ServerPropagation(apiOpt, validator, logger),
-		kuow.Uow(uowMgr, kuow.WithLogger(logger))}
+		kuow.Uow(uowMgr)}
 	opts = append(opts, []http.ServerOption{
 		http.Middleware(
 			m...,

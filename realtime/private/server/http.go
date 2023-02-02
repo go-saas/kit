@@ -52,7 +52,7 @@ func NewHTTPServer(c *conf2.Services,
 		jwt.ServerExtractAndAuth(tokenizer, logger),
 		sapi.ServerPropagation(apiOpt, validator, logger),
 		server.Saas(mOpt, ts, validator),
-		kuow.Uow(uowMgr, kuow.WithLogger(logger)),
+		kuow.Uow(uowMgr),
 	}
 	opts = append(opts, []khttp.ServerOption{
 		khttp.Middleware(

@@ -24,7 +24,7 @@ import (
 	kitflag "github.com/go-saas/kit/pkg/flag"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
-	sserver "github.com/go-saas/kit/pkg/server"
+	kitserver "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/tracers"
 	rbiz "github.com/go-saas/kit/realtime/private/biz"
 	rdata "github.com/go-saas/kit/realtime/private/data"
@@ -157,6 +157,7 @@ func main() {
 
 	di.SetTracer(&di.StdTracer{})
 	builder, err := di.New(
+		kitdi.Value(kitserver.Name(Name)),
 		kitdi.Value(bc.Services),
 		kitdi.Value(bc.Security),
 		kitdi.Value(bc.Data),
@@ -167,7 +168,7 @@ func main() {
 		kitdi.Value(bc.Dev),
 
 		kitdi.Value(logger),
-		kitdi.NewSet(authz.ProviderSet, jwt.ProviderSet, sserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
+		kitdi.NewSet(authz.ProviderSet, jwt.ProviderSet, kitserver.DefaultProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
 			job.DefaultProviderSet, dtmserver.DtmProviderSet, eventserver.EventProviderSet,
 			//saas
 			sdata.ProviderSet, sbiz.ProviderSet, sservice.ProviderSet,
