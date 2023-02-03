@@ -133,4 +133,7 @@ require (
 	gorm.io/gorm v1.24.3 // indirect
 )
 
-replace github.com/go-saas/kit => ../../
+replace (
+	github.com/dtm-labs/client => github.com/goxiaoy/client v0.0.0-20230202163110-7dfe91ab1b7f
+	github.com/go-saas/kit => ../../
+)
