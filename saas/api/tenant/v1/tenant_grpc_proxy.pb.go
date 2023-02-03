@@ -30,7 +30,6 @@ const GrpcOperationTenantServiceChangeTenant = "/saas.api.tenant.v1.TenantServic
 var _ TenantInternalServiceServer = (*tenantInternalServiceClientProxy)(nil)
 
 const GrpcOperationTenantInternalServiceGetTenant = "/saas.api.tenant.v1.TenantInternalService/GetTenant"
-const GrpcOperationTenantInternalServiceCreateTenant = "/saas.api.tenant.v1.TenantInternalService/CreateTenant"
 
 // tenantServiceClientProxy is the proxy to turn TenantService client to server interface.
 type tenantServiceClientProxy struct {
@@ -77,7 +76,4 @@ func NewTenantInternalServiceClientProxy(cc TenantInternalServiceClient) TenantI
 
 func (c *tenantInternalServiceClientProxy) GetTenant(ctx context.Context, in *GetTenantRequest) (*Tenant, error) {
 	return c.cc.GetTenant(ctx, in)
-}
-func (c *tenantInternalServiceClientProxy) CreateTenant(ctx context.Context, in *CreateTenantRequest) (*Tenant, error) {
-	return c.cc.CreateTenant(ctx, in)
 }

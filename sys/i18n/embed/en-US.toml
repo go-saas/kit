@@ -1,6 +1,9 @@
 [MenuNameDuplicate]
 other = "Menu Name is used"
 
+[dev.dtm]
+other = "Distributed Transaction"
+
 [permission.sys.menu.group]
 other = "Menu"
 [permission.sys.menu.read]

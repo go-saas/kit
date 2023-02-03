@@ -7,10 +7,10 @@
 
  Store: # specify which engine to store trans status
    Driver: 'mysql'
-   Host: 'mysqld'
+   Host: 'host.docker.internal'
    User: 'root'
    Password: 'youShouldChangeThis'
-   Port: 3306
+   Port: 3406
    Db: 'dtm'
 
 #   Driver: 'boltdb' # default store engine
@@ -39,7 +39,7 @@
 
  MicroService: # grpc based microservice config
    Driver: 'dtm-driver-kratos' # name of the driver to handle register/discover
-   Target: 'etcd://etcd:2379/dtmservice' # register dtm server to this url
+   Target: 'etcd://host.docker.internal:3379/dtmservice' # register dtm server to this url
 #   EndPoint: 'grpc://dtm:36790'
    EndPoint: 'grpc://host.docker.internal:36790'
 
@@ -69,3 +69,4 @@
 
 ### advanced options
 # UpdateBranchAsyncGoroutineNum: 1 # num of async goroutine to update branch status
+ AdminBasePath: "/dtm-ui"

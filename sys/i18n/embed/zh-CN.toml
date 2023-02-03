@@ -1,5 +1,9 @@
 [MenuNameDuplicate]
 other = "菜单名字已被使用"
+
+[dev.dtm]
+other = "分布式事务"
+
 [permission.sys.menu.group]
 other = "菜单"
 [permission.sys.menu.read]

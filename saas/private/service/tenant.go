@@ -18,7 +18,7 @@ import (
 	shttp "github.com/go-saas/saas/http"
 	"github.com/go-saas/sessions"
 	"github.com/goxiaoy/vfs"
-	"github.com/lithammer/shortuuid/v3"
+	"github.com/segmentio/ksuid"
 	"io"
 	"os"
 	"path/filepath"
@@ -110,6 +110,9 @@ func NewTenantService(
 				resp = mapBizTenantToApi(ctx, s.app, s.blob, t)
 				return nil
 			})
+			if err != nil {
+				return nil, err
+			}
 			return utils.PbMustMarshalJson(resp), err
 		})
 		if err != nil {
@@ -117,11 +120,11 @@ func NewTenantService(
 		}
 
 		wf.NewBranch().OnRollback(func(bb *dtmcli.BranchBarrier) error {
+			//TODO rollback?
 			return nil
-		}).OnCommit(func(bb *dtmcli.BranchBarrier) error {
-			_, err := s.userInternalSrv.CreateTenant(wf.Context, req)
-			return err
 		})
+		_, err = s.userInternalSrv.CreateTenant(wf.Context, req)
+
 		if err != nil {
 			return nil, err
 		}
@@ -148,43 +151,16 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 	uid := uuid.New()
 	req.Id = uid.String()
 
-	//XA Transaction
-	gid := shortuuid.New()
 	var err error
 	var createTenantResp = &pb.Tenant{}
 
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := workflow.Execute2(ctx, wfName, gid, utils.PbMustMarshalJson(req))
+	//Workflow Transaction
+	data, err := workflow.Execute2(ctx, wfName, ksuid.New().String(), utils.PbMustMarshalJson(req))
 	if err != nil {
 		return nil, err
 	}
 	utils.PbMustUnMarshalJson(data, createTenantResp)
 	return createTenantResp, err
-
-	//err = s.txhelper.XaGlobalTransaction2(ctx, gid, nil, func(xa *dtmgrpc.XaGrpc) error {
-	//
-	//	//create tenant
-	//	err = xa.CallBranch(req, sapi.WithDiscovery(api.ServiceName)+pb.GrpcOperationTenantInternalServiceCreateTenant, createTenantResp)
-	//	if err != nil {
-	//		return err
-	//	}
-	//	//server id
-	//	req.Id = createTenantResp.Id
-	//	//create user ,seed database
-	//	err = xa.CallBranch(req, sapi.WithDiscovery(uapi.ServiceName)+v1.GrpcOperationUserInternalServiceCreateTenant, &emptypb.Empty{})
-	//	if err != nil {
-	//		return err
-	//	}
-	//	return nil
-	//})
-	//
-	//if err != nil {
-	//	return nil, err
-	//}
-	//return createTenantResp, nil
 }
 
 func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRequest) (*pb.Tenant, error) {

@@ -24,7 +24,7 @@ sys:
 
       dtm-ui:
         nodes:
-          "dtm:36789": 1
+          "host.docker.internal:36789": 1
         type: roundrobin
 
       hydra-public:
@@ -79,7 +79,7 @@ sys:
               X-Frame-Options: ""
 
       dtm-ui:
-        uri: /dtm-ui*
+        uris: ["/dtm-ui*","/api/dtmsvr"]
         upstream_id: dtm-ui
         plugins:
           ext-plugin-pre-req:

@@ -26,6 +26,11 @@ sys:
           "kafka-ui:8080": 1
         type: roundrobin
 
+      dtm-ui:
+        nodes:
+          "host.docker.internal:36789": 1
+        type: roundrobin
+
       hydra-public:
         nodes:
           "hydra:4444": 1
@@ -82,6 +87,15 @@ sys:
           response-rewrite:
             headers:
               X-Frame-Options: ""
+
+      dtm-ui:
+        uris: ["/dtm-ui*","/api/dtmsvr"]
+        upstream_id: dtm-ui
+        plugins:
+          ext-plugin-pre-req:
+            conf:
+              - name: "kit_authz"
+                value: "{\"requirement\":[{\"namespace\":\"dev.dtm\",\"resource\":\"*\",\"action\":\"*\"}]}"
 
       realtime-api:
         uris: ["/v1/realtime/*","/assets/realtime/*"]

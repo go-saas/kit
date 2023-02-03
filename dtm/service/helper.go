@@ -24,15 +24,14 @@ import (
 type Helper struct {
 	tokenMgr sapi.TokenManager
 	d        *conf.Data
-	//TODO should use  data.ConnStrResolver?
-	cs     data.ConnStrings
-	cache  *gorm.DbCache
-	l      klog.Logger
-	uowMgr uow.Manager
-	apiOpt *sapi.Option
+	cs       data.ConnStrResolver
+	cache    *gorm.DbCache
+	l        klog.Logger
+	uowMgr   uow.Manager
+	apiOpt   *sapi.Option
 }
 
-func NewHelper(tokenMgr sapi.TokenManager, d *conf.Data, cs data.ConnStrings, cache *gorm.DbCache, l klog.Logger, uowMgr uow.Manager, apiOpt *sapi.Option) *Helper {
+func NewHelper(tokenMgr sapi.TokenManager, d *conf.Data, cs data.ConnStrResolver, cache *gorm.DbCache, l klog.Logger, uowMgr uow.Manager, apiOpt *sapi.Option) *Helper {
 	return &Helper{tokenMgr: tokenMgr, d: d, cs: cs, cache: cache, l: l, uowMgr: uowMgr, apiOpt: apiOpt}
 }
 

@@ -52,7 +52,6 @@ func (u *UserInternalService) CreateTenant(ctx context.Context, req *v1.CreateTe
 
 	barrier, err := utils.BarrierFromContext(ctx)
 
-	//return nil, status.New(codes.Aborted, "").Err()
 	if err != nil {
 		return nil, err
 	}

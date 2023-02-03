@@ -146,7 +146,8 @@ menus:
         icon: "CloudServerOutlined"
         path: "/dev/dtm"
         component: "IFRAME"
-        iframe: "/dtm-ui"
+#        TODO https://github.com/dtm-labs/dtm/pull/395
+        iframe: "http://host.docker.internal:36789"
         is_preserved: true
         title: "dev.dtm"
         requirement:
