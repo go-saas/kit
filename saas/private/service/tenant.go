@@ -126,7 +126,7 @@ func NewTenantService(
 		_, err = s.userInternalSrv.CreateTenant(wf.Context, req)
 
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%s %w", err.Error(), dtmcli.ErrFailure)
 		}
 		return resp, nil
 	})
