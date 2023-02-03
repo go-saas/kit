@@ -15,6 +15,7 @@ import (
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/dal"
 	"github.com/go-saas/kit/pkg/gorm"
+	"github.com/go-saas/kit/pkg/tracers"
 	"github.com/go-saas/saas/data"
 	"github.com/go-saas/uow"
 	gorm2 "github.com/go-saas/uow/gorm"
@@ -178,6 +179,7 @@ func (h *Helper) propagateHeader(ctx context.Context) map[string]string {
 	for _, contributor := range h.apiOpt.Propagators {
 		//do not handle error
 		contributor.Inject(ctx, headers)
+		tracers.DefaultPropagator.Inject(ctx, headers)
 	}
 	return headers
 }

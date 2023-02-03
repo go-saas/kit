@@ -68,4 +68,4 @@ logging:
 
 tracing:
   otel:
-    grpc: otel-collector:4317
+    grpc: host.docker.internal:4317

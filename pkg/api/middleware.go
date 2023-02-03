@@ -71,6 +71,14 @@ func (h HeaderCarrier) HasKey(key string) bool {
 	return ok
 }
 
+func (h HeaderCarrier) Keys() []string {
+	keys := make([]string, 0, len(h))
+	for k := range h {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
 // Propagator propagates cross-cutting concerns as key-value text
 // pairs within a carrier that travels in-band across process boundaries to keep same state across services
 type Propagator interface {
