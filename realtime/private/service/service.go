@@ -37,7 +37,7 @@ func NewHttpServerRegister(
 		swaggerRouter := chi.NewRouter()
 		swaggerRouter.Use(
 			kithttp.MiddlewareConvert(errEncoder, middleware...))
-		const apiPrefix = "/v1/server/dev/swagger"
+		const apiPrefix = "/v1/realtime/dev/swagger"
 		swaggerRouter.Handle(apiPrefix+"*", http.StripPrefix(apiPrefix, swaggerui.Handler(spec)))
 	})
 }
