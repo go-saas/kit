@@ -10,6 +10,7 @@ import (
 	"github.com/peterhellberg/link"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/structpb"
 	"net/url"
 	"strconv"
 )
@@ -144,10 +145,10 @@ func mapClients(c client.OAuth2Client) *pb.OAuth2Client {
 		FrontchannelLogoutSessionRequired: c.FrontchannelLogoutSessionRequired,
 		FrontchannelLogoutUri:             c.FrontchannelLogoutUri,
 		GrantTypes:                        c.GrantTypes,
-		Jwks:                              utils.Map2Structpb(c.Jwks.(map[string]interface{})),
+		Jwks:                              safeConvert(c.Jwks),
 		JwksUri:                           c.JwksUri,
 		LogoUri:                           c.LogoUri,
-		Metadata:                          utils.Map2Structpb(c.Metadata.(map[string]interface{})),
+		Metadata:                          safeConvert(c.Metadata),
 		Owner:                             c.Owner,
 		PolicyUri:                         c.PolicyUri,
 		PostLogoutRedirectUris:            c.PostLogoutRedirectUris,
@@ -208,4 +209,11 @@ func mapOAuthClients(c *pb.OAuth2Client) client.OAuth2Client {
 		UserinfoSignedResponseAlg:         c.UserinfoSignedResponseAlg,
 	}
 	return ret
+}
+
+func safeConvert(a interface{}) *structpb.Struct {
+	if a == nil {
+		return nil
+	}
+	return utils.Map2Structpb(a.(map[string]interface{}))
 }
