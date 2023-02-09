@@ -43,6 +43,7 @@ import (
 	"github.com/go-saas/kit/user/private/conf"
 
 	//this helps to load permission definitions in following services
+	_ "github.com/go-saas/kit/realtime/api"
 	_ "github.com/go-saas/kit/saas/api"
 	_ "github.com/go-saas/kit/sys/api"
 )

@@ -41,9 +41,11 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-saas/kit/sys/private/conf"
 
-	_ "github.com/go-saas/kit/saas/i18n"
-	_ "github.com/go-saas/kit/sys/i18n"
-	_ "github.com/go-saas/kit/user/i18n"
+	//This helps to load i18n resources in following services for locale api
+	_ "github.com/go-saas/kit/realtime/api"
+	_ "github.com/go-saas/kit/saas/api"
+	_ "github.com/go-saas/kit/sys/api"
+	_ "github.com/go-saas/kit/user/api"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"
