@@ -45,7 +45,7 @@ func (s *ClientService) ListOAuth2Clients(ctx context.Context, req *pb.ListClien
 	}
 	total, _ := strconv.Atoi(raw.Header.Get("X-Total-Count"))
 
-	ret := &pb.OAuth2ClientList{TotalCount: int32(total), Items: lo.Map(resp, func(t client.OAuth2Client, _ int) *pb.OAuth2Client {
+	ret := &pb.OAuth2ClientList{TotalSize: int32(total), Items: lo.Map(resp, func(t client.OAuth2Client, _ int) *pb.OAuth2Client {
 		return mapClients(t)
 	})}
 	respLink := raw.Header.Get("Link")

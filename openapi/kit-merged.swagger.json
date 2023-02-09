@@ -4809,7 +4809,7 @@
             "$ref": "#/definitions/clientOAuth2Client"
           }
         },
-        "totalCount": {
+        "totalSize": {
           "type": "integer",
           "format": "int32"
         },

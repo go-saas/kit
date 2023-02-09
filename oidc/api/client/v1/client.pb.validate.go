@@ -205,7 +205,7 @@ func (m *OAuth2ClientList) validate(all bool) error {
 
 	}
 
-	// no validation rules for TotalCount
+	// no validation rules for TotalSize
 
 	if m.NextAfterPageToken != nil {
 		// no validation rules for NextAfterPageToken
