@@ -3,6 +3,7 @@ package gorm
 import (
 	"context"
 	"errors"
+	"fmt"
 	kerrors "github.com/go-kratos/kratos/v2/errors"
 	"github.com/pilagod/gorm-cursor-paginator/v2/paginator"
 	"gorm.io/gorm/clause"
@@ -28,14 +29,53 @@ type Repo[TEntity any, TKey any, TQuery any] struct {
 	override   interface{}
 }
 
+type (
+	// GetDb implement to override default behaviour of resolving database from context. example:
+	//
+	//	func (u *UserRepo) GetDb(ctx context.Context) *gorm.DB {
+	//		return u.DbProvider.Get(ctx, "user")
+	//	}
+	GetDb interface {
+		GetDb(ctx context.Context) *gorm.DB
+	}
+	// BuildDetailScope implement to override default behaviour of how to preload relationship
+	BuildDetailScope interface {
+		BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB
+	}
+
+	// BuildFilterScope implement to override default behaviour of how to filter TQuery
+	BuildFilterScope[TQuery any] interface {
+		BuildFilterScope(q *TQuery) func(db *gorm.DB) *gorm.DB
+	}
+	// DefaultSorting implement to override default behaviour of applying default sorting
+	DefaultSorting interface {
+		DefaultSorting() []string
+	}
+	// BuildSortScope implement to override default behaviour of how to apply sorting
+	BuildSortScope[TQuery any] interface {
+		BuildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB
+	}
+
+	// BuildPageScope implement to override default behaviour of how to apply pagination
+	BuildPageScope[TQuery any] interface {
+		BuildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB
+	}
+
+	// UpdateAssociation implement to override default behaviour of how to apply association update before entity update
+	UpdateAssociation[TEntity any] interface {
+		UpdateAssociation(ctx context.Context, entity *TEntity) error
+	}
+
+	// BuildPrimaryField implement to override default  primary field name("id")
+	BuildPrimaryField interface {
+		BuildPrimaryField() string
+	}
+)
+
 var _ data.Repo[interface{}, interface{}, interface{}] = (*Repo[interface{}, interface{}, interface{}])(nil)
 
 func NewRepo[TEntity any, TKey any, TQuery any](dbProvider sgorm.DbProvider, eventbus *eventbus.EventBus, override interface{}) *Repo[TEntity, TKey, TQuery] {
 	return &Repo[TEntity, TKey, TQuery]{DbProvider: dbProvider, Eventbus: eventbus, override: override}
-}
-
-type GetDb interface {
-	GetDb(ctx context.Context) *gorm.DB
 }
 
 func (r *Repo[TEntity, TKey, TQuery]) getDb(ctx context.Context) *gorm.DB {
@@ -43,10 +83,6 @@ func (r *Repo[TEntity, TKey, TQuery]) getDb(ctx context.Context) *gorm.DB {
 		return override.GetDb(ctx)
 	}
 	return r.DbProvider.Get(ctx, "")
-}
-
-type BuildDetailScope interface {
-	BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB
 }
 
 // BuildDetailScope preload relations
@@ -59,10 +95,6 @@ func (r *Repo[TEntity, TKey, TQuery]) buildDetailScope(withDetail bool) func(db 
 	}
 }
 
-type BuildFilterScope[TQuery any] interface {
-	BuildFilterScope(q *TQuery) func(db *gorm.DB) *gorm.DB
-}
-
 // BuildFilterScope filter
 func (r *Repo[TEntity, TKey, TQuery]) buildFilterScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildFilterScope[TQuery]); ok {
@@ -73,20 +105,12 @@ func (r *Repo[TEntity, TKey, TQuery]) buildFilterScope(q *TQuery) func(db *gorm.
 	}
 }
 
-type DefaultSorting interface {
-	DefaultSorting() []string
-}
-
 // DefaultSorting get default sorting
 func (r *Repo[TEntity, TKey, TQuery]) defaultSorting() []string {
 	if override, ok := r.override.(DefaultSorting); ok {
 		return override.DefaultSorting()
 	}
 	return nil
-}
-
-type BuildSortScope[TQuery any] interface {
-	BuildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB
 }
 
 // buildSortScope build sorting query
@@ -101,10 +125,6 @@ func (r *Repo[TEntity, TKey, TQuery]) buildSortScope(q *TQuery) func(db *gorm.DB
 	return func(db *gorm.DB) *gorm.DB {
 		return db
 	}
-}
-
-type BuildPageScope[TQuery any] interface {
-	BuildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB
 }
 
 // BuildPageScope page query
@@ -122,8 +142,11 @@ func (r *Repo[TEntity, TKey, TQuery]) buildPageScope(q *TQuery) func(db *gorm.DB
 	}
 }
 
-type UpdateAssociation[TEntity any] interface {
-	UpdateAssociation(ctx context.Context, entity *TEntity) error
+func (r *Repo[TEntity, TKey, TQuery]) buildPrimaryField() string {
+	if override, ok := r.override.(BuildPrimaryField); ok {
+		return override.BuildPrimaryField()
+	}
+	return "id"
 }
 
 func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query *TQuery) ([]*TEntity, error) {
@@ -210,7 +233,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Count(ctx context.Context, query *TQuery) 
 }
 func (r *Repo[TEntity, TKey, TQuery]) Get(ctx context.Context, id TKey) (*TEntity, error) {
 	var entity TEntity
-	err := r.getDb(ctx).Model(&entity).Scopes(r.buildDetailScope(true)).First(&entity, "id = ?", id).Error
+	err := r.getDb(ctx).Model(&entity).Scopes(r.buildDetailScope(true)).First(&entity, fmt.Sprintf("%s = ?", r.buildPrimaryField()), id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -265,7 +288,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entit
 			return err
 		}
 	}
-	updateRet := db.Where("id = ?", id).Select("*").Updates(entity)
+	updateRet := db.Where(fmt.Sprintf("%s = ?", r.buildPrimaryField()), id).Select("*").Updates(entity)
 	if err := updateRet.Error; err != nil {
 		return err
 	}
@@ -289,7 +312,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Upsert(ctx context.Context, entity *TEntit
 
 func (r *Repo[TEntity, TKey, TQuery]) Delete(ctx context.Context, id TKey) error {
 	var entity TEntity
-	err := r.getDb(ctx).Model(&entity).First(&entity, "id = ?", id).Error
+	err := r.getDb(ctx).Model(&entity).First(&entity, fmt.Sprintf("%s = ?", r.buildPrimaryField()), id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return kerrors.NotFound("", "")
@@ -299,7 +322,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Delete(ctx context.Context, id TKey) error
 	if err := eventbus.Publish[*data.BeforeDelete[*TEntity]](r.Eventbus)(ctx, data.NewBeforeDelete(&entity)); err != nil {
 		return err
 	}
-	if err := r.getDb(ctx).Delete(&entity, "id = ?", id).Error; err != nil {
+	if err := r.getDb(ctx).Delete(&entity, fmt.Sprintf("%s = ?", r.buildPrimaryField()), id).Error; err != nil {
 		return err
 	}
 	if err := eventbus.Publish[*data.AfterDelete[*TEntity]](r.Eventbus)(ctx, data.NewAfterDelete(&entity)); err != nil {
