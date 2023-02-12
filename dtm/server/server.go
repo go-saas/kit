@@ -1,9 +1,9 @@
 package server
 
 import (
-	"github.com/dtm-labs/client/dtmcli/dtmimp"
-	"github.com/dtm-labs/client/dtmgrpc"
-	"github.com/dtm-labs/client/workflow"
+	"github.com/dtm-labs/dtm/client/dtmcli/dtmimp"
+	"github.com/dtm-labs/dtm/client/dtmgrpc"
+	"github.com/dtm-labs/dtm/client/workflow"
 	driver "github.com/dtm-labs/dtmdriver-kratos"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc/resolver/discovery"

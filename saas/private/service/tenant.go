@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/dtm-labs/client/dtmcli"
-	"github.com/dtm-labs/client/workflow"
+	"github.com/dtm-labs/dtm/client/dtmcli"
+	"github.com/dtm-labs/dtm/client/workflow"
 	dtmsrv "github.com/go-saas/kit/dtm/service"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
@@ -155,7 +155,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 	var createTenantResp = &pb.Tenant{}
 
 	//Workflow Transaction
-	data, err := workflow.Execute2(ctx, wfName, ksuid.New().String(), utils.PbMustMarshalJson(req))
+	data, err := workflow.ExecuteCtx(ctx, wfName, ksuid.New().String(), utils.PbMustMarshalJson(req))
 	if err != nil {
 		return nil, err
 	}

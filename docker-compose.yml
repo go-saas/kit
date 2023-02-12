@@ -96,7 +96,7 @@ services:
       - "3379:2379"
 
   dtm:
-    image: yedf/dtm:1.16.10
+    image: yedf/dtm:1.17
     restart: unless-stopped
     command: ["-c", "/data/conf.yml"]
     volumes:

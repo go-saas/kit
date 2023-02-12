@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/dtm-labs/client/dtmcli/dtmimp"
+	"github.com/dtm-labs/dtm/client/dtmcli/dtmimp"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-saas/kit/dtm/utils"
 	"github.com/go-saas/kit/pkg/conf"

@@ -4,7 +4,7 @@ import (
 	"context"
 	"embed"
 	"fmt"
-	"github.com/dtm-labs/client/dtmcli/dtmimp"
+	"github.com/dtm-labs/dtm/client/dtmcli/dtmimp"
 	"github.com/go-saas/kit/pkg/dal"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/saas/seed"

@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/dtm-labs/client/dtmgrpc"
+	"github.com/dtm-labs/dtm/client/dtmgrpc"
 	"github.com/go-saas/kit/dtm/data"
 	"github.com/go-saas/kit/dtm/utils"
 	"github.com/go-saas/kit/pkg/dal"

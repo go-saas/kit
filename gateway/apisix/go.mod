@@ -30,7 +30,7 @@ require (
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.4.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/dtm-labs/client v1.18.7 // indirect
+	github.com/dtm-labs/dtm v1.17.0 // indirect
 	github.com/dtm-labs/dtmdriver v0.0.6 // indirect
 	github.com/dtm-labs/logger v0.0.2 // indirect
 	github.com/elliotchance/orderedmap/v2 v2.2.0 // indirect
@@ -134,6 +134,6 @@ require (
 )
 
 replace (
-	github.com/dtm-labs/client => github.com/goxiaoy/client v0.0.0-20230202163110-7dfe91ab1b7f
+	github.com/dtm-labs/dtm => github.com/goxiaoy/dtm v0.0.0-20230212053702-b57b19825025
 	github.com/go-saas/kit => ../../
 )

@@ -24,7 +24,7 @@ sys:
 
       dtm-ui:
         nodes:
-          "host.docker.internal:36789": 1
+          "dtm:36789": 1
         type: roundrobin
 
       hydra-public:
