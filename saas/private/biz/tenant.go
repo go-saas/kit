@@ -9,7 +9,7 @@ import (
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/google/uuid"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
-	gg "gorm.io/gorm"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -24,9 +24,9 @@ type Tenant struct {
 	//region of this tenant
 	Region     string `gorm:"column:region;index;size:255;"`
 	Logo       string
-	CreatedAt  time.Time    `gorm:"column:created_at;index;"`
-	UpdatedAt  time.Time    `gorm:"column:updated_at;index;"`
-	DeletedAt  gg.DeletedAt `gorm:"column:deleted_at;index;"`
+	CreatedAt  time.Time      `gorm:"column:created_at;index;"`
+	UpdatedAt  time.Time      `gorm:"column:updated_at;index;"`
+	DeletedAt  gorm.DeletedAt `gorm:"column:deleted_at;index;"`
 	SeparateDb bool
 	//connection
 	Conn []TenantConn `gorm:"foreignKey:TenantId"`

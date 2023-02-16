@@ -77,7 +77,7 @@ func (c *MenuRepo) FindByName(ctx context.Context, name string) (*biz.Menu, erro
 
 func (c *MenuRepo) UpdateAssociation(ctx context.Context, entity *biz.Menu) error {
 	if entity.Requirement != nil {
-		if err := c.GetDb(ctx).Model(entity).Association("Requirement").Replace(entity.Requirement); err != nil {
+		if err := c.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).Association("Requirement").Replace(entity.Requirement); err != nil {
 			return err
 		}
 	} else {

@@ -9,7 +9,7 @@ import (
 	"github.com/go-saas/kit/saas/private/biz"
 	"github.com/google/uuid"
 	"github.com/goxiaoy/go-eventbus"
-	gg "gorm.io/gorm"
+	"gorm.io/gorm"
 )
 
 type TenantRepo struct {
@@ -22,13 +22,13 @@ func NewTenantRepo(eventbus *eventbus.EventBus, data *Data) biz.TenantRepo {
 	return res
 }
 
-func (g *TenantRepo) GetDb(ctx context.Context) *gg.DB {
+func (g *TenantRepo) GetDb(ctx context.Context) *gorm.DB {
 	ret := GetDb(ctx, g.DbProvider)
 	return ret
 }
 
-func (g *TenantRepo) BuildDetailScope(withDetail bool) func(db *gg.DB) *gg.DB {
-	return func(db *gg.DB) *gg.DB {
+func (g *TenantRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
 		if withDetail {
 			return db.Preload("Conn").Preload("Features")
 		}
@@ -41,10 +41,10 @@ func (g *TenantRepo) DefaultSorting() []string {
 	}
 }
 
-func (g *TenantRepo) BuildFilterScope(q *v1.ListTenantRequest) func(db *gg.DB) *gg.DB {
+func (g *TenantRepo) BuildFilterScope(q *v1.ListTenantRequest) func(db *gorm.DB) *gorm.DB {
 	search := q.Search
 	filter := q.Filter
-	return func(db *gg.DB) *gg.DB {
+	return func(db *gorm.DB) *gorm.DB {
 		ret := db
 		if search != "" {
 			ret = ret.Where("name like ?", fmt.Sprintf("%%%v%%", search))
@@ -74,7 +74,7 @@ func (g *TenantRepo) FindByIdOrName(ctx context.Context, idOrName string) (*biz.
 		err = g.GetDb(ctx).Model(&biz.Tenant{}).Scopes(g.BuildDetailScope(true)).Where("name = ?", idOrName).First(&tDb).Error
 	}
 	if err != nil {
-		if errors.Is(err, gg.ErrRecordNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err
@@ -84,7 +84,7 @@ func (g *TenantRepo) FindByIdOrName(ctx context.Context, idOrName string) (*biz.
 
 func (g *TenantRepo) UpdateAssociation(ctx context.Context, entity *biz.Tenant) error {
 	if entity.Conn != nil {
-		if err := g.GetDb(ctx).Model(entity).Association("Conn").Replace(entity.Conn); err != nil {
+		if err := g.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).Association("Conn").Replace(entity.Conn); err != nil {
 			return err
 		}
 	} else {
@@ -93,7 +93,7 @@ func (g *TenantRepo) UpdateAssociation(ctx context.Context, entity *biz.Tenant) 
 		}
 	}
 	if entity.Features != nil {
-		if err := g.GetDb(ctx).Model(entity).Association("Features").Replace(entity.Features); err != nil {
+		if err := g.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).Association("Features").Replace(entity.Features); err != nil {
 			return err
 		}
 	} else {
