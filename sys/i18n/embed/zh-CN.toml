@@ -1,6 +1,16 @@
 [MenuNameDuplicate]
 other = "菜单名字已被使用"
 
+[dev.title]
+other = "开发"
+[dev.docs]
+other = "OpenApi文档"
+[dev.jaeger]
+other = "Jaeger"
+[dev.jobs]
+other = "后台任务"
+[dev.events.kafka]
+other = "Kafka"
 [dev.dtm]
 other = "分布式事务"
 
@@ -27,3 +37,62 @@ other = "后台任务"
 other = "Kafka"
 [permission.sys.dev.dtm]
 other = "分布式事务"
+
+[common.creating]
+other = "正在添加"
+[common.create]
+other = "创建"
+[common.created]
+other = "创建成功"
+[common.deleting]
+other = "正在删除"
+[common.delete]
+other = "删除"
+[common.deleted]
+other = "删除成功"
+[common.edit]
+other = "编辑"
+[common.updating]
+other = "正在更新"
+[common.updated]
+other = "更新成功"
+[common.createdAt]
+other = "创建时间"
+[common.updatedAt]
+other = "更新时间"
+[common.operate]
+other = "操作"
+[common.deny]
+other = "拒绝"
+[common.allow]
+other = "允许"
+[common.pagination.total.total]
+other = "总共"
+[common.pagination.total.item]
+other = "条"
+[common.pagination.total.all]
+other = "加载完毕"
+
+[common.address.countryOrRegion]
+other =  "国家或地区"
+[common.address.state]
+other =  "省份"
+[common.address.city]
+other =  "城市"
+[common.address.zipcode]
+other =  "邮编"
+[common.address.line1]
+other =  "详细地址"
+
+[common.price.amount]
+other = "价格"
+[common.price.currencyCode]
+other = "货币代码"
+[common.price.default]
+other = "原价"
+[common.price.discounted]
+other = "折后价"
+[common.price.discountText]
+other = "打折标签"
+[common.price.denyMoreDiscounts]
+other = "其他优惠不共享"

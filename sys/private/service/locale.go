@@ -20,7 +20,11 @@ func (s *LocaleService) ListMessages(ctx context.Context, req *pb.ListMessageReq
 	var items []*pb.LocaleLanguage
 	for tag, m := range allMsg {
 		var msg []*pb.LocaleMessage
-		for _, template := range m {
+		for k, template := range m {
+			if template == nil {
+				msg = append(msg, &pb.LocaleMessage{Id: k, Other: ""})
+				continue
+			}
 			msg = append(msg, &pb.LocaleMessage{Id: template.ID, Other: template.Other})
 		}
 		items = append(items, &pb.LocaleLanguage{

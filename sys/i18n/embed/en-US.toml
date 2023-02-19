@@ -1,6 +1,16 @@
 [MenuNameDuplicate]
 other = "Menu Name is used"
 
+[dev.title]
+other = "Development"
+[dev.docs]
+other = "OpenApi Documents"
+[dev.jaeger]
+other = "Jaeger"
+[dev.jobs]
+other = "Background Jobs"
+[dev.events.kafka]
+other = "Kafka"
 [dev.dtm]
 other = "Distributed Transaction"
 
@@ -27,3 +37,62 @@ other = "Background Jobs"
 other = "Kafka"
 [permission.sys.dev.dtm]
 other = "Dtm"
+
+[common.creating]
+other = "Creating"
+[common.create]
+other = "Create"
+[common.created]
+other = "Create Successfully"
+[common.deleting]
+other = "Deleting"
+[common.delete]
+other = "Delete"
+[common.deleted]
+other = "Delete Successfully"
+[common.edit]
+other = "Edit"
+[common.updating]
+other = "Updating"
+[common.updated]
+other = "Update Successfully"
+[common.createdAt]
+other = "Create Time"
+[common.updatedAt]
+other = "Update Time"
+[common.operate]
+other = "Operate"
+[common.deny]
+other = "Deny"
+[common.allow]
+other = "Allow"
+[common.pagination.total.total]
+other = ""
+[common.pagination.total.item]
+other = "item(s)"
+[common.pagination.total.all]
+other = "That's all"
+
+[common.address.countryOrRegion]
+other =  "Country or Region"
+[common.address.state]
+other =  "State or Province"
+[common.address.city]
+other =  "City"
+[common.address.zipcode]
+other =  "Zipcode"
+[common.address.line1]
+other =  "Detail"
+
+[common.price.amount]
+other = "Price"
+[common.price.currencyCode]
+other = "Currency"
+[common.price.default]
+other = "Default Price"
+[common.price.discounted]
+other = "Discounted Price"
+[common.price.discountText]
+other = "Discount Text"
+[common.price.denyMoreDiscounts]
+other = "Deny More Discounts"
