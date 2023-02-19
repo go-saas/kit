@@ -69,4 +69,4 @@
 
 ### advanced options
 # UpdateBranchAsyncGoroutineNum: 1 # num of async goroutine to update branch status
-# AdminBasePath: "/dtm-ui"
+ AdminBasePath: "/dtm-ui"

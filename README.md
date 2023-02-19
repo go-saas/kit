@@ -49,16 +49,6 @@ Or with build
 docker compose -f docker-compose.yml -f docker-compose.ms.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d --build
 ```
 
-### For Monolithic
-
-```
-docker compose -f docker-compose.yml -f docker-compose.monolithic.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d
-```
-Or with build
-```
-docker compose -f docker-compose.yml -f docker-compose.monolithic.yml -f docker-compose.kafka.yml  -f docker-compose.tracing.yml up -d --build
-```
-
 ### Demo
 
 Open `http://localhost:80` to see the web ui

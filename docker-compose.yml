@@ -104,6 +104,8 @@ services:
     ports:
       - "36790:36790"
       - "36789:36789"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   mysql_data:
