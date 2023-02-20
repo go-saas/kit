@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>GO-SAAS-KIT Blog</title>
+        <link>https://your-docusaurus-test-site.com/zh-Hans/blog</link>
+        <description>GO-SAAS-KIT Blog</description>
+        <lastBuildDate>Sun, 19 Feb 2023 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>zh-Hans</language>
+        <item>
+            <title><![CDATA[背景]]></title>
+            <link>https://your-docusaurus-test-site.com/zh-Hans/blog/背景</link>
+            <guid>https://your-docusaurus-test-site.com/zh-Hans/blog/背景</guid>
+            <pubDate>Sun, 19 Feb 2023 00:00:00 GMT</pubDate>
+            <category>go</category>
+            <category>saas</category>
+        </item>
+    </channel>
+</rss>
