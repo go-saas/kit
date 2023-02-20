@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://your-docusaurus-test-site.com/zh-Hans/blog</id>
+    <id>https://your-docusaurus-test-site.com/kit/zh-Hans/blog</id>
     <title>GO-SAAS-KIT Blog</title>
     <updated>2023-02-19T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://your-docusaurus-test-site.com/zh-Hans/blog"/>
+    <link rel="alternate" href="https://your-docusaurus-test-site.com/kit/zh-Hans/blog"/>
     <subtitle>GO-SAAS-KIT Blog</subtitle>
-    <icon>https://your-docusaurus-test-site.com/zh-Hans/img/favicon.ico</icon>
+    <icon>https://your-docusaurus-test-site.com/kit/zh-Hans/img/favicon.ico</icon>
     <entry>
         <title type="html"><![CDATA[背景]]></title>
-        <id>https://your-docusaurus-test-site.com/zh-Hans/blog/背景</id>
-        <link href="https://your-docusaurus-test-site.com/zh-Hans/blog/背景"/>
+        <id>https://your-docusaurus-test-site.com/kit/zh-Hans/blog/背景</id>
+        <link href="https://your-docusaurus-test-site.com/kit/zh-Hans/blog/背景"/>
         <updated>2023-02-19T00:00:00.000Z</updated>
         <author>
             <name>Goxy</name>
