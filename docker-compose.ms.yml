@@ -9,6 +9,8 @@ services:
     depends_on:
       - user
       - saas
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   user:
     image: ${DOCKER_REGISTRY}go-saas-kit-user:${DOCKER_TAG:-latest}
@@ -22,6 +24,8 @@ services:
     build:
       context: .
       dockerfile: ./user/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   saas:
     image: ${DOCKER_REGISTRY}go-saas-kit-saas:${DOCKER_TAG:-latest}
@@ -34,6 +38,8 @@ services:
     build:
       context: .
       dockerfile: ./saas/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   realtime:
     image: ${DOCKER_REGISTRY}go-saas-kit-realtime:${DOCKER_TAG:-latest}
@@ -46,6 +52,8 @@ services:
     build:
       context: .
       dockerfile: ./realtime/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   sys:
     image: ${DOCKER_REGISTRY}go-saas-kit-sys:${DOCKER_TAG:-latest}
@@ -60,5 +68,7 @@ services:
     build:
       context: .
       dockerfile: ./sys/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 

@@ -12,15 +12,11 @@ Layout Repo( For creating new service): https://github.com/go-saas/kit-layout
 # Architecture
 ![Architecture](https://github.com/go-saas/kit/blob/main/docs/go-saas-kit.drawio.png?raw=true)
 
-[//]: # (# Demo )
+# Demo 
 
-[//]: # (address http://saas.nihaosaoya.com &#40;Shanghai&#41;)
+address http://saas.nihaosaoya.com (Shanghai)
 
-[//]: # (- **Host** Username:admin  Password:123456)
-
-[//]: # (- **Separate Storage Tenant** domain:separateDbDemo Username:admin  Password:123456)
-
-[//]: # (- **Shared Storage Tenant** domain:sharedDbDemo Username:admin  Password:123456)
+- **Host** Username:admin  Password:123456
 
 
 # Feature

@@ -3,7 +3,7 @@ sys:
     routes:
       demo-http2https:
         uri: /*
-        host: "*.saas.nihaosaoya.com"
+        hosts: ["saas.nihaosaoya.com"]
         priority: 200
         vars: [ [ "scheme","==","http" ] ]
         plugins:

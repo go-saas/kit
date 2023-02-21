@@ -30,7 +30,10 @@ apisix:
     - name: "viewer"
       key: 4054f7cf07e344346cd3f287985e76a2
       role: viewer
-  
+  ssl:
+    enable: true
+    listen:                       # APISIX listening port in https.
+      - 443
   enable_control: true
   control:
     ip: "0.0.0.0"
