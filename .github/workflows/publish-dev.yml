@@ -45,3 +45,4 @@ jobs:
             sudo docker compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml pull
             sudo docker compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml up -d --remove-orphans
             sudo docker system prune -f
+            sudo docker compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml restart sys apisix

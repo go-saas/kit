@@ -87,13 +87,15 @@ services:
       - "7379:6379"
 
   etcd:
-    image: bitnami/etcd
+    image: bitnami/etcd:3.5.0
     restart: always
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
     ports:
       - "3379:2379"
+    volumes:
+      - etcd_data:/bitnami/etcd
 
   dtm:
     image: yedf/dtm:1.17
@@ -109,5 +111,4 @@ services:
 
 volumes:
   mysql_data:
-  apisix_runner:
-  consul_data:
+  etcd_data:
