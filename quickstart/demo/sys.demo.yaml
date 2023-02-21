@@ -1,0 +1,11 @@
+sys:
+  apisix:
+    routes:
+      demo-http2https:
+        uri: /*
+        host: "*.saas.nihaosaoya.com"
+        priority: 200
+        vars: [ [ "scheme","==","http" ] ]
+        plugins:
+          redirect:
+            http_to_https: true
