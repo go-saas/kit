@@ -1,5 +1,4 @@
 app:
-  domain_format: ([-a-z0-9]+)\.saas\.nihaosaoya\.com
   host_display_name: GO SAAS KIT
 services:
   registry:
@@ -67,4 +66,4 @@ logging:
 
 tracing:
   otel:
-    grpc: host.docker.internal:4317
+    grpc: otel-collector:4317

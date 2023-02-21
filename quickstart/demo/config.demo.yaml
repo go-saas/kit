@@ -1,0 +1,10 @@
+app:
+  domain_format: ([-a-z0-9]+)\.saas\.nihaosaoya\.com
+
+data:
+  vfs:
+    -
+      public_url: https://saas.nihaosaoya.com/assets
+      mount_path: "/"
+      os:
+        dir: ".assets"
