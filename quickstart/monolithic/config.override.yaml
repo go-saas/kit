@@ -89,7 +89,7 @@ sys:
               X-Frame-Options: ""
 
       dtm-ui:
-        uris: ["/dtm-ui*","/api/dtmsvr"]
+        uris: ["/dtm-ui*","/api/dtmsvr/*"]
         upstream_id: dtm-ui
         plugins:
           ext-plugin-pre-req:
