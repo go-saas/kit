@@ -1,0 +1,16 @@
+
+ Store: # specify which engine to store trans status
+   Driver: 'mysql'
+   Host: 'mysqld'
+   User: 'root'
+   Password: 'youShouldChangeThis'
+   Port: 3406
+   Db: 'dtm'
+
+ MicroService: # grpc based microservice config
+   Driver: 'dtm-driver-kratos' # name of the driver to handle register/discover
+   Target: 'etcd://etcd:2379/dtmservice' # register dtm server to this url
+   EndPoint: 'grpc://dtm:36790'
+
+
+ AdminBasePath: "/dtm-ui"

@@ -1,0 +1,24 @@
+serve:
+  cookies:
+    same_site_mode: Lax
+
+urls:
+  self:
+    #publich hydra server
+    issuer: https://saas.nihaosaoya.com/
+
+  consent: https://saas.nihaosaoya.com/user/consent
+  login: https://saas.nihaosaoya.com/user/login
+  logout: https://saas.nihaosaoya.com/user/logout
+
+secrets:
+  system:
+    - youReallyNeedToChangeThis
+
+oidc:
+  subject_identifiers:
+    supported_types:
+      - pairwise
+      - public
+    pairwise:
+      salt: youReallyNeedToChangeThis
