@@ -4,7 +4,7 @@
    Host: 'mysqld'
    User: 'root'
    Password: 'youShouldChangeThis'
-   Port: 3406
+   Port: 3306
    Db: 'dtm'
 
  MicroService: # grpc based microservice config
