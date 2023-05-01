@@ -41,7 +41,7 @@ jobs:
           script: |
             echo "$DOCKER_TAG"
             cd /app/go-saas-kit
-            cp -r quickstart/demo/ quickstart/configs
+            cp -r quickstart/demo/. quickstart/configs
             sudo docker compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml pull
             sudo docker compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml up -d --remove-orphans
             sudo docker compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml restart

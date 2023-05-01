@@ -1,4 +1,5 @@
 app:
+  host_display_name: GO SAAS KIT DEMO
   domain_format: ([-a-z0-9]+)\.saas\.nihaosaoya\.com
 
 data:
