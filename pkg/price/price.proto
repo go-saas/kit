@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package pkg.price;
+package price;
 option go_package = "github.com/go-saas/kit/pkg/price;price";
 
 message PricePb{
