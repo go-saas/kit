@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pkg.price;
+option go_package = "github.com/go-saas/kit/pkg/price;price";
+
+message PricePb{
+  int64 amount=1;
+  string currency_code=2;
+  int32 digits=3;
+  string text=4;
+}
+
+message InfoPb{
+  PricePb default=1;
+  PricePb discounted=2;
+  string discount_text=3;
+  bool deny_more_discounts=4;
+}
