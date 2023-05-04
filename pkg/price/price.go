@@ -48,6 +48,10 @@ func (p Price) ToCurrency() currency.Amount {
 	return v
 }
 
+func (p Price) IsEmpty() bool {
+	return p.Amount == 0 && p.CurrencyCode == ""
+}
+
 func (p Price) ToPricePb() *PricePb {
 	if len(p.CurrencyCode) == 0 {
 		return nil
