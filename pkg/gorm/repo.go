@@ -164,7 +164,7 @@ func (r *Repo[TEntity, TKey, TQuery]) ListCursor(ctx context.Context, q *TQuery)
 	db = db.Scopes(r.buildFilterScope(q), r.buildDetailScope(false))
 	cfg := &paginator.Config{}
 
-	if f, ok := (interface{})(q).(query.HasPageSize); ok {
+	if f, ok := (interface{})(q).(query.HasPageSize); ok && f.GetPageSize() > 0 {
 		cfg.Limit = int(f.GetPageSize())
 	}
 	if f, ok := (interface{})(q).(query.Sort); ok {
