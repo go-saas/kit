@@ -167,21 +167,26 @@ func (r *Repo[TEntity, TKey, TQuery]) ListCursor(ctx context.Context, q *TQuery)
 	if f, ok := (interface{})(q).(query.HasPageSize); ok && f.GetPageSize() > 0 {
 		cfg.Limit = int(f.GetPageSize())
 	}
+	var s []string //sorting
 	if f, ok := (interface{})(q).(query.Sort); ok {
-		s := f.GetSort()
-		if len(s) > 0 {
-			opts := data.ParseSortIntoOpt(s)
-			var keys []string
-			for _, opt := range opts {
-				keys = append(keys, opt.Field)
-				if opt.IsDesc {
-					cfg.Order = paginator.DESC
-				} else {
-					cfg.Order = paginator.ASC
-				}
+		s = f.GetSort()
+	}
+	if len(s) == 0 {
+		//use default sorting
+		s = r.defaultSorting()
+	}
+	if len(s) > 0 {
+		opts := data.ParseSortIntoOpt(s)
+		var keys []string
+		for _, opt := range opts {
+			keys = append(keys, opt.Field)
+			if opt.IsDesc {
+				cfg.Order = paginator.DESC
+			} else {
+				cfg.Order = paginator.ASC
 			}
-			cfg.Keys = keys
 		}
+		cfg.Keys = keys
 	}
 	if f, ok := (interface{})(q).(query.CursorAfterPage); ok {
 		cfg.After = f.GetAfterPageToken()
