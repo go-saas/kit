@@ -90,7 +90,32 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateAddressesRequest"
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "phone": {
+                      "type": "string"
+                    },
+                    "usage": {
+                      "type": "string"
+                    },
+                    "prefer": {
+                      "type": "boolean"
+                    },
+                    "address": {
+                      "$ref": "#/definitions/lbsAddress"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "address"
+              ]
             }
           }
         ],
@@ -490,7 +515,7 @@
         "parameters": [
           {
             "name": "redirect",
-            "description": "redirect url.",
+            "description": "redirect url",
             "in": "query",
             "required": false,
             "type": "string"
@@ -875,7 +900,7 @@
         "parameters": [
           {
             "name": "redirect",
-            "description": "redirect url.",
+            "description": "redirect url",
             "in": "query",
             "required": false,
             "type": "string"
@@ -1081,6 +1106,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
+              "type": "object",
               "properties": {}
             }
           },
@@ -1177,6 +1203,7 @@
                 "client": {
                   "type": "array",
                   "items": {
+                    "type": "object",
                     "$ref": "#/definitions/clientPatchOAuth2Client"
                   }
                 }
@@ -1286,6 +1313,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
+              "type": "object",
               "properties": {}
             }
           },
@@ -1432,6 +1460,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
+              "type": "object",
               "properties": {}
             }
           },
@@ -1824,6 +1853,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
+              "type": "object",
               "properties": {}
             }
           },
@@ -2033,7 +2063,7 @@
           },
           {
             "name": "name",
-            "description": "id or name should be provided.",
+            "description": "id or name should be provided",
             "in": "query",
             "required": false,
             "type": "string"
@@ -2135,6 +2165,7 @@
                 "acl": {
                   "type": "array",
                   "items": {
+                    "type": "object",
                     "$ref": "#/definitions/v1UpdateRolePermissionAcl"
                   }
                 }
@@ -2177,7 +2208,30 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateRoleRequest"
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "acl": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1UpdateRolePermissionAcl"
+                      }
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
             }
           }
         ],
@@ -2214,7 +2268,30 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateRoleRequest"
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "acl": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1UpdateRolePermissionAcl"
+                      }
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
             }
           }
         ],
@@ -2718,7 +2795,43 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateTenantRequest"
+              "type": "object",
+              "properties": {
+                "tenant": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "conn": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1TenantConnectionString"
+                      }
+                    },
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1TenantFeature"
+                      }
+                    },
+                    "logo": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
             }
           }
         ],
@@ -2755,7 +2868,43 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateTenantRequest"
+              "type": "object",
+              "properties": {
+                "tenant": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "conn": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1TenantConnectionString"
+                      }
+                    },
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1TenantFeature"
+                      }
+                    },
+                    "logo": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
             }
           }
         ],
@@ -3286,7 +3435,86 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateMenuRequest"
+              "type": "object",
+              "properties": {
+                "menu": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "desc": {
+                      "type": "string"
+                    },
+                    "component": {
+                      "type": "string"
+                    },
+                    "requirement": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1PermissionRequirement"
+                      }
+                    },
+                    "parent": {
+                      "type": "string",
+                      "title": "parent menu"
+                    },
+                    "props": {
+                      "type": "object"
+                    },
+                    "fullPath": {
+                      "type": "string"
+                    },
+                    "priority": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "ignoreAuth": {
+                      "type": "boolean"
+                    },
+                    "icon": {
+                      "type": "string"
+                    },
+                    "iframe": {
+                      "type": "string"
+                    },
+                    "microApp": {
+                      "type": "string"
+                    },
+                    "meta": {
+                      "type": "object"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "redirect": {
+                      "type": "string"
+                    },
+                    "microAppName": {
+                      "type": "string"
+                    },
+                    "microAppBaseRoute": {
+                      "type": "string"
+                    },
+                    "microAppDev": {
+                      "type": "string"
+                    },
+                    "hideInMenu": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
             }
           }
         ],
@@ -3322,7 +3550,86 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateMenuRequest"
+              "type": "object",
+              "properties": {
+                "menu": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "desc": {
+                      "type": "string"
+                    },
+                    "component": {
+                      "type": "string"
+                    },
+                    "requirement": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1PermissionRequirement"
+                      }
+                    },
+                    "parent": {
+                      "type": "string",
+                      "title": "parent menu"
+                    },
+                    "props": {
+                      "type": "object"
+                    },
+                    "fullPath": {
+                      "type": "string"
+                    },
+                    "priority": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "ignoreAuth": {
+                      "type": "boolean"
+                    },
+                    "icon": {
+                      "type": "string"
+                    },
+                    "iframe": {
+                      "type": "string"
+                    },
+                    "microApp": {
+                      "type": "string"
+                    },
+                    "meta": {
+                      "type": "object"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "redirect": {
+                      "type": "string"
+                    },
+                    "microAppName": {
+                      "type": "string"
+                    },
+                    "microAppBaseRoute": {
+                      "type": "string"
+                    },
+                    "microAppDev": {
+                      "type": "string"
+                    },
+                    "hideInMenu": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
             }
           }
         ],
@@ -3898,7 +4205,7 @@
           },
           {
             "name": "force",
-            "description": "default false. Just remove user out of tenant. set to true to remove user from system.",
+            "description": "default false. Just remove user out of tenant. set to true to remove user from system",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -3970,7 +4277,57 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateUserRequest"
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "phone": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "email": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "birthday": {
+                      "type": "string",
+                      "format": "date-time",
+                      "x-nullable": true
+                    },
+                    "gender": {
+                      "$ref": "#/definitions/v1Gender"
+                    },
+                    "password": {
+                      "type": "string",
+                      "title": "reset password"
+                    },
+                    "confirmPassword": {
+                      "type": "string"
+                    },
+                    "avatar": {
+                      "type": "string"
+                    },
+                    "rolesId": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              }
             }
           }
         ],
@@ -4007,7 +4364,57 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateUserRequest"
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "phone": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "email": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "birthday": {
+                      "type": "string",
+                      "format": "date-time",
+                      "x-nullable": true
+                    },
+                    "gender": {
+                      "$ref": "#/definitions/v1Gender"
+                    },
+                    "password": {
+                      "type": "string",
+                      "title": "reset password"
+                    },
+                    "confirmPassword": {
+                      "type": "string"
+                    },
+                    "avatar": {
+                      "type": "string"
+                    },
+                    "rolesId": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              }
             }
           }
         ],
@@ -4506,6 +4913,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
+              "type": "object",
               "properties": {}
             }
           },
@@ -4536,6 +4944,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
+              "type": "object",
               "properties": {}
             }
           },
@@ -4806,6 +5215,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/clientOAuth2Client"
           }
         },
@@ -4887,6 +5297,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }
@@ -4896,10 +5307,7 @@
       "type": "object",
       "properties": {
         "alg": {
-          "type": "string",
-          "required": [
-            "alg"
-          ]
+          "type": "string"
         },
         "crv": {
           "type": "string",
@@ -4926,16 +5334,10 @@
           "x-nullable": true
         },
         "kid": {
-          "type": "string",
-          "required": [
-            "kid"
-          ]
+          "type": "string"
         },
         "kty": {
-          "type": "string",
-          "required": [
-            "kty"
-          ]
+          "type": "string"
         },
         "n": {
           "type": "string",
@@ -4954,10 +5356,7 @@
           "x-nullable": true
         },
         "use": {
-          "type": "string",
-          "required": [
-            "use"
-          ]
+          "type": "string"
         },
         "x": {
           "type": "string",
@@ -4987,6 +5386,7 @@
         "keys": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/keyJsonWebKey"
           }
         }
@@ -4996,22 +5396,13 @@
       "type": "object",
       "properties": {
         "alg": {
-          "type": "string",
-          "required": [
-            "alg"
-          ]
+          "type": "string"
         },
         "kid": {
-          "type": "string",
-          "required": [
-            "kid"
-          ]
+          "type": "string"
         },
         "use": {
-          "type": "string",
-          "required": [
-            "use"
-          ]
+          "type": "string"
         }
       },
       "required": [
@@ -5225,6 +5616,7 @@
         "def": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/permissionv1PermissionDef"
           }
         },
@@ -5268,28 +5660,16 @@
       "type": "object",
       "properties": {
         "namespace": {
-          "type": "string",
-          "required": [
-            "namespace"
-          ]
+          "type": "string"
         },
         "resource": {
-          "type": "string",
-          "required": [
-            "resource"
-          ]
+          "type": "string"
         },
         "action": {
-          "type": "string",
-          "required": [
-            "action"
-          ]
+          "type": "string"
         },
         "subject": {
-          "type": "string",
-          "required": [
-            "subject"
-          ]
+          "type": "string"
         },
         "effect": {
           "$ref": "#/definitions/v1Effect"
@@ -5302,7 +5682,8 @@
         "namespace",
         "resource",
         "action",
-        "subject"
+        "subject",
+        "effect"
       ]
     },
     "v1AddSubjectPermissionResponse": {
@@ -5315,22 +5696,13 @@
       "type": "object",
       "properties": {
         "changePasswordToken": {
-          "type": "string",
-          "required": [
-            "change_password_token"
-          ]
+          "type": "string"
         },
         "newPassword": {
-          "type": "string",
-          "required": [
-            "new_password"
-          ]
+          "type": "string"
         },
         "confirmNewPassword": {
-          "type": "string",
-          "required": [
-            "confirm_new_password"
-          ]
+          "type": "string"
         }
       },
       "required": [
@@ -5346,22 +5718,13 @@
       "type": "object",
       "properties": {
         "prePassword": {
-          "type": "string",
-          "required": [
-            "pre_password"
-          ]
+          "type": "string"
         },
         "newPassword": {
-          "type": "string",
-          "required": [
-            "new_password"
-          ]
+          "type": "string"
         },
         "confirmNewPassword": {
-          "type": "string",
-          "required": [
-            "confirm_new_password"
-          ]
+          "type": "string"
         }
       },
       "required": [
@@ -5393,22 +5756,13 @@
       "type": "object",
       "properties": {
         "namespace": {
-          "type": "string",
-          "required": [
-            "namespace"
-          ]
+          "type": "string"
         },
         "resource": {
-          "type": "string",
-          "required": [
-            "resource"
-          ]
+          "type": "string"
         },
         "action": {
-          "type": "string",
-          "required": [
-            "action"
-          ]
+          "type": "string"
         }
       },
       "required": [
@@ -5458,16 +5812,16 @@
         "metadata": {
           "type": "object"
         }
-      }
+      },
+      "required": [
+        "address"
+      ]
     },
     "v1CreateMenuRequest": {
       "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "required": [
-            "name"
-          ]
+          "type": "string"
         },
         "desc": {
           "type": "string"
@@ -5478,6 +5832,7 @@
         "requirement": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1PermissionRequirement"
           }
         },
@@ -5540,10 +5895,7 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "required": [
-            "name"
-          ]
+          "type": "string"
         }
       },
       "required": [
@@ -5557,10 +5909,7 @@
           "type": "string"
         },
         "name": {
-          "type": "string",
-          "required": [
-            "name"
-          ]
+          "type": "string"
         },
         "displayName": {
           "type": "string"
@@ -5750,6 +6099,7 @@
         "addresses": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1UserAddress"
           }
         }
@@ -5761,6 +6111,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Menu"
           }
         }
@@ -5770,10 +6121,7 @@
       "type": "object",
       "properties": {
         "challenge": {
-          "type": "string",
-          "required": [
-            "challenge"
-          ]
+          "type": "string"
         },
         "requestedScope": {
           "type": "array",
@@ -5809,6 +6157,7 @@
         "acl": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Permission"
           }
         }
@@ -5835,6 +6184,7 @@
         "oauth": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1OAuthProvider"
           }
         },
@@ -5887,12 +6237,14 @@
         "roles": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Role"
           }
         },
         "tenants": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1UserTenant"
           },
           "title": "user available tenants"
@@ -5911,12 +6263,14 @@
         "acl": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Permission"
           }
         },
         "defGroups": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/permissionv1PermissionDefGroup"
           }
         }
@@ -5928,6 +6282,7 @@
         "settings": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Settings"
           }
         }
@@ -5939,6 +6294,7 @@
         "roles": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/userv1UserRole"
           }
         }
@@ -5983,10 +6339,7 @@
       "properties": {
         "identify": {
           "type": "string",
-          "title": "username email or phone",
-          "required": [
-            "identify"
-          ]
+          "title": "username email or phone"
         }
       },
       "required": [
@@ -6007,6 +6360,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Menu"
           }
         }
@@ -6046,6 +6400,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1LocaleLanguage"
           }
         }
@@ -6065,6 +6420,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Notification"
           }
         },
@@ -6151,6 +6507,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Role"
           }
         }
@@ -6173,12 +6530,14 @@
         "acl": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Permission"
           }
         },
         "defGroups": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/permissionv1PermissionDefGroup"
           }
         }
@@ -6198,6 +6557,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Tenant"
           }
         }
@@ -6273,6 +6633,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1User"
           }
         }
@@ -6287,6 +6648,7 @@
         "msg": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1LocaleMessage"
           }
         }
@@ -6336,16 +6698,10 @@
       "type": "object",
       "properties": {
         "username": {
-          "type": "string",
-          "required": [
-            "username"
-          ]
+          "type": "string"
         },
         "password": {
-          "type": "string",
-          "required": [
-            "password"
-          ]
+          "type": "string"
         },
         "remember": {
           "type": "boolean"
@@ -6389,10 +6745,7 @@
           "x-nullable": true
         },
         "token": {
-          "type": "string",
-          "required": [
-            "token"
-          ]
+          "type": "string"
         }
       },
       "required": [
@@ -6438,6 +6791,7 @@
         "requirement": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1PermissionRequirement"
           }
         },
@@ -6682,22 +7036,13 @@
       "type": "object",
       "properties": {
         "namespace": {
-          "type": "string",
-          "required": [
-            "namespace"
-          ]
+          "type": "string"
         },
         "resource": {
-          "type": "string",
-          "required": [
-            "resource"
-          ]
+          "type": "string"
         },
         "action": {
-          "type": "string",
-          "required": [
-            "action"
-          ]
+          "type": "string"
         }
       },
       "required": [
@@ -6751,10 +7096,7 @@
       "type": "object",
       "properties": {
         "refreshToken": {
-          "type": "string",
-          "required": [
-            "refresh_token"
-          ]
+          "type": "string"
         }
       },
       "required": [
@@ -6786,10 +7128,7 @@
           "x-nullable": true
         },
         "subject": {
-          "type": "string",
-          "required": [
-            "subject"
-          ]
+          "type": "string"
         },
         "effects": {
           "type": "array",
@@ -6821,12 +7160,14 @@
         "acl": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Permission"
           }
         },
         "defGroups": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/permissionv1PermissionDefGroup"
           }
         }
@@ -6898,12 +7239,14 @@
         "conn": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1TenantConnectionString"
           }
         },
         "features": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1TenantFeature"
           }
         },
@@ -7020,10 +7363,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "required": [
-            "id"
-          ]
+          "type": "string"
         },
         "phone": {
           "type": "string"
@@ -7042,34 +7382,21 @@
         }
       },
       "required": [
-        "id"
+        "id",
+        "address"
       ]
     },
     "v1UpdateAddressesReply": {
       "type": "object"
     },
-    "v1UpdateAddressesRequest": {
-      "type": "object",
-      "properties": {
-        "address": {
-          "$ref": "#/definitions/v1UpdateAddress"
-        }
-      }
-    },
     "v1UpdateMenu": {
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "required": [
-            "id"
-          ]
+          "type": "string"
         },
         "name": {
-          "type": "string",
-          "required": [
-            "name"
-          ]
+          "type": "string"
         },
         "desc": {
           "type": "string"
@@ -7080,6 +7407,7 @@
         "requirement": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1PermissionRequirement"
           }
         },
@@ -7139,17 +7467,6 @@
         "name"
       ]
     },
-    "v1UpdateMenuRequest": {
-      "type": "object",
-      "properties": {
-        "menu": {
-          "$ref": "#/definitions/v1UpdateMenu"
-        },
-        "updateMask": {
-          "type": "string"
-        }
-      }
-    },
     "v1UpdateProfileRequest": {
       "type": "object",
       "properties": {
@@ -7173,20 +7490,15 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "required": [
-            "id"
-          ]
+          "type": "string"
         },
         "name": {
-          "type": "string",
-          "required": [
-            "name"
-          ]
+          "type": "string"
         },
         "acl": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1UpdateRolePermissionAcl"
           }
         }
@@ -7216,17 +7528,6 @@
     "v1UpdateRolePermissionResponse": {
       "type": "object"
     },
-    "v1UpdateRoleRequest": {
-      "type": "object",
-      "properties": {
-        "role": {
-          "$ref": "#/definitions/v1UpdateRole"
-        },
-        "updateMask": {
-          "type": "string"
-        }
-      }
-    },
     "v1UpdateSettings": {
       "type": "object",
       "properties": {
@@ -7247,6 +7548,7 @@
         "settings": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1UpdateSettings"
           }
         }
@@ -7258,6 +7560,7 @@
         "settings": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Settings"
           }
         }
@@ -7267,22 +7570,13 @@
       "type": "object",
       "properties": {
         "namespace": {
-          "type": "string",
-          "required": [
-            "namespace"
-          ]
+          "type": "string"
         },
         "resource": {
-          "type": "string",
-          "required": [
-            "resource"
-          ]
+          "type": "string"
         },
         "action": {
-          "type": "string",
-          "required": [
-            "action"
-          ]
+          "type": "string"
         },
         "effect": {
           "$ref": "#/definitions/v1Effect"
@@ -7294,21 +7588,20 @@
       "required": [
         "namespace",
         "resource",
-        "action"
+        "action",
+        "effect"
       ]
     },
     "v1UpdateSubjectPermissionRequest": {
       "type": "object",
       "properties": {
         "subject": {
-          "type": "string",
-          "required": [
-            "subject"
-          ]
+          "type": "string"
         },
         "acl": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1UpdateSubjectPermissionAcl"
           }
         }
@@ -7323,6 +7616,7 @@
         "acl": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Permission"
           }
         }
@@ -7332,16 +7626,10 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "required": [
-            "id"
-          ]
+          "type": "string"
         },
         "name": {
-          "type": "string",
-          "required": [
-            "name"
-          ]
+          "type": "string"
         },
         "displayName": {
           "type": "string"
@@ -7349,12 +7637,14 @@
         "conn": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1TenantConnectionString"
           }
         },
         "features": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1TenantFeature"
           }
         },
@@ -7367,25 +7657,11 @@
         "name"
       ]
     },
-    "v1UpdateTenantRequest": {
-      "type": "object",
-      "properties": {
-        "tenant": {
-          "$ref": "#/definitions/v1UpdateTenant"
-        },
-        "updateMask": {
-          "type": "string"
-        }
-      }
-    },
     "v1UpdateUser": {
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "required": [
-            "id"
-          ]
+          "type": "string"
         },
         "username": {
           "type": "string",
@@ -7432,17 +7708,6 @@
         "id"
       ]
     },
-    "v1UpdateUserRequest": {
-      "type": "object",
-      "properties": {
-        "user": {
-          "$ref": "#/definitions/v1UpdateUser"
-        },
-        "updateMask": {
-          "type": "string"
-        }
-      }
-    },
     "v1User": {
       "type": "object",
       "properties": {
@@ -7476,6 +7741,7 @@
         "roles": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Role"
           }
         },
@@ -7525,12 +7791,14 @@
         "and": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1UserFilter"
           }
         },
         "or": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1UserFilter"
           }
         }
@@ -7602,16 +7870,10 @@
       "type": "object",
       "properties": {
         "username": {
-          "type": "string",
-          "required": [
-            "username"
-          ]
+          "type": "string"
         },
         "password": {
-          "type": "string",
-          "required": [
-            "password"
-          ]
+          "type": "string"
         },
         "remember": {
           "type": "boolean"

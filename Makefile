@@ -1,6 +1,6 @@
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
-BUF_VERSION=v1.8.0
+BUF_VERSION=v1.18.0
 DIR=$(shell pwd)
 
 SRV_PROTO_DIR = dtm event oidc user sys saas realtime gateway

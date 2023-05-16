@@ -269,7 +269,43 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateTenantRequest"
+              "type": "object",
+              "properties": {
+                "tenant": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "conn": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1TenantConnectionString"
+                      }
+                    },
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1TenantFeature"
+                      }
+                    },
+                    "logo": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
             }
           }
         ],
@@ -306,7 +342,43 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateTenantRequest"
+              "type": "object",
+              "properties": {
+                "tenant": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "conn": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1TenantConnectionString"
+                      }
+                    },
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1TenantFeature"
+                      }
+                    },
+                    "logo": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
             }
           }
         ],
@@ -691,6 +763,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }
@@ -796,10 +869,7 @@
           "type": "string"
         },
         "name": {
-          "type": "string",
-          "required": [
-            "name"
-          ]
+          "type": "string"
         },
         "displayName": {
           "type": "string"
@@ -867,6 +937,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Tenant"
           }
         }
@@ -928,12 +999,14 @@
         "conn": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1TenantConnectionString"
           }
         },
         "features": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1TenantFeature"
           }
         },
@@ -1012,16 +1085,10 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "required": [
-            "id"
-          ]
+          "type": "string"
         },
         "name": {
-          "type": "string",
-          "required": [
-            "name"
-          ]
+          "type": "string"
         },
         "displayName": {
           "type": "string"
@@ -1029,12 +1096,14 @@
         "conn": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1TenantConnectionString"
           }
         },
         "features": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1TenantFeature"
           }
         },
@@ -1046,17 +1115,6 @@
         "id",
         "name"
       ]
-    },
-    "v1UpdateTenantRequest": {
-      "type": "object",
-      "properties": {
-        "tenant": {
-          "$ref": "#/definitions/v1UpdateTenant"
-        },
-        "updateMask": {
-          "type": "string"
-        }
-      }
     }
   },
   "securityDefinitions": {

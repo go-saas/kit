@@ -124,6 +124,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
+              "type": "object",
               "properties": {}
             }
           },
@@ -220,6 +221,7 @@
                 "client": {
                   "type": "array",
                   "items": {
+                    "type": "object",
                     "$ref": "#/definitions/clientPatchOAuth2Client"
                   }
                 }
@@ -329,6 +331,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
+              "type": "object",
               "properties": {}
             }
           },
@@ -475,6 +478,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
+              "type": "object",
               "properties": {}
             }
           },
@@ -736,7 +740,86 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateMenuRequest"
+              "type": "object",
+              "properties": {
+                "menu": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "desc": {
+                      "type": "string"
+                    },
+                    "component": {
+                      "type": "string"
+                    },
+                    "requirement": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1PermissionRequirement"
+                      }
+                    },
+                    "parent": {
+                      "type": "string",
+                      "title": "parent menu"
+                    },
+                    "props": {
+                      "type": "object"
+                    },
+                    "fullPath": {
+                      "type": "string"
+                    },
+                    "priority": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "ignoreAuth": {
+                      "type": "boolean"
+                    },
+                    "icon": {
+                      "type": "string"
+                    },
+                    "iframe": {
+                      "type": "string"
+                    },
+                    "microApp": {
+                      "type": "string"
+                    },
+                    "meta": {
+                      "type": "object"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "redirect": {
+                      "type": "string"
+                    },
+                    "microAppName": {
+                      "type": "string"
+                    },
+                    "microAppBaseRoute": {
+                      "type": "string"
+                    },
+                    "microAppDev": {
+                      "type": "string"
+                    },
+                    "hideInMenu": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
             }
           }
         ],
@@ -772,7 +855,86 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1UpdateMenuRequest"
+              "type": "object",
+              "properties": {
+                "menu": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "desc": {
+                      "type": "string"
+                    },
+                    "component": {
+                      "type": "string"
+                    },
+                    "requirement": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1PermissionRequirement"
+                      }
+                    },
+                    "parent": {
+                      "type": "string",
+                      "title": "parent menu"
+                    },
+                    "props": {
+                      "type": "object"
+                    },
+                    "fullPath": {
+                      "type": "string"
+                    },
+                    "priority": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "ignoreAuth": {
+                      "type": "boolean"
+                    },
+                    "icon": {
+                      "type": "string"
+                    },
+                    "iframe": {
+                      "type": "string"
+                    },
+                    "microApp": {
+                      "type": "string"
+                    },
+                    "meta": {
+                      "type": "object"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "redirect": {
+                      "type": "string"
+                    },
+                    "microAppName": {
+                      "type": "string"
+                    },
+                    "microAppBaseRoute": {
+                      "type": "string"
+                    },
+                    "microAppDev": {
+                      "type": "string"
+                    },
+                    "hideInMenu": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
             }
           }
         ],
@@ -1334,6 +1496,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/clientOAuth2Client"
           }
         },
@@ -1382,6 +1545,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }
@@ -1391,10 +1555,7 @@
       "type": "object",
       "properties": {
         "alg": {
-          "type": "string",
-          "required": [
-            "alg"
-          ]
+          "type": "string"
         },
         "crv": {
           "type": "string",
@@ -1421,16 +1582,10 @@
           "x-nullable": true
         },
         "kid": {
-          "type": "string",
-          "required": [
-            "kid"
-          ]
+          "type": "string"
         },
         "kty": {
-          "type": "string",
-          "required": [
-            "kty"
-          ]
+          "type": "string"
         },
         "n": {
           "type": "string",
@@ -1449,10 +1604,7 @@
           "x-nullable": true
         },
         "use": {
-          "type": "string",
-          "required": [
-            "use"
-          ]
+          "type": "string"
         },
         "x": {
           "type": "string",
@@ -1482,6 +1634,7 @@
         "keys": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/keyJsonWebKey"
           }
         }
@@ -1491,22 +1644,13 @@
       "type": "object",
       "properties": {
         "alg": {
-          "type": "string",
-          "required": [
-            "alg"
-          ]
+          "type": "string"
         },
         "kid": {
-          "type": "string",
-          "required": [
-            "kid"
-          ]
+          "type": "string"
         },
         "use": {
-          "type": "string",
-          "required": [
-            "use"
-          ]
+          "type": "string"
         }
       },
       "required": [
@@ -1601,10 +1745,7 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "required": [
-            "name"
-          ]
+          "type": "string"
         },
         "desc": {
           "type": "string"
@@ -1615,6 +1756,7 @@
         "requirement": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1PermissionRequirement"
           }
         },
@@ -1690,6 +1832,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Menu"
           }
         }
@@ -1709,6 +1852,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Menu"
           }
         }
@@ -1748,6 +1892,7 @@
         "items": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1LocaleLanguage"
           }
         }
@@ -1762,6 +1907,7 @@
         "msg": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1LocaleMessage"
           }
         }
@@ -1801,6 +1947,7 @@
         "requirement": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1PermissionRequirement"
           }
         },
@@ -1885,22 +2032,13 @@
       "type": "object",
       "properties": {
         "namespace": {
-          "type": "string",
-          "required": [
-            "namespace"
-          ]
+          "type": "string"
         },
         "resource": {
-          "type": "string",
-          "required": [
-            "resource"
-          ]
+          "type": "string"
         },
         "action": {
-          "type": "string",
-          "required": [
-            "action"
-          ]
+          "type": "string"
         }
       },
       "required": [
@@ -1913,16 +2051,10 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string",
-          "required": [
-            "id"
-          ]
+          "type": "string"
         },
         "name": {
-          "type": "string",
-          "required": [
-            "name"
-          ]
+          "type": "string"
         },
         "desc": {
           "type": "string"
@@ -1933,6 +2065,7 @@
         "requirement": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1PermissionRequirement"
           }
         },
@@ -1991,17 +2124,6 @@
         "id",
         "name"
       ]
-    },
-    "v1UpdateMenuRequest": {
-      "type": "object",
-      "properties": {
-        "menu": {
-          "$ref": "#/definitions/v1UpdateMenu"
-        },
-        "updateMask": {
-          "type": "string"
-        }
-      }
     }
   },
   "securityDefinitions": {
