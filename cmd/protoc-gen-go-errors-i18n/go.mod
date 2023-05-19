@@ -3,7 +3,8 @@ module github.com/go-saas/kit/cmd/protoc-gen-go-errors-i18n/v2
 go 1.16
 
 require (
-	github.com/go-kratos/kratos/v2 v2.3.1
-	github.com/go-saas/kit v0.0.5-0.20220719050141-1a9b1c885804
+	github.com/google/go-cmp v0.5.7 // indirect
+	golang.org/x/text v0.3.7
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.28.0
 )

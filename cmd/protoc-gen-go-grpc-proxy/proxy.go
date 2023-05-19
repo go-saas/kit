@@ -49,9 +49,6 @@ func getServiceDesc(g *protogen.GeneratedFile, service *protogen.Service) {
 	structName := service.GoName + "ClientProxy"
 	g.P("var _ ", serverName, " = ", "(*", unexport(structName), ")(nil)")
 	g.P()
-	for _, m := range service.Methods {
-		g.P("const GrpcOperation" + service.GoName + string(m.Desc.Name()) + " = " + fmt.Sprintf("\"/%s/%s\"", string(service.Desc.FullName()), string(m.Desc.Name())))
-	}
 }
 
 func genService(g *protogen.GeneratedFile, service *protogen.Service) {

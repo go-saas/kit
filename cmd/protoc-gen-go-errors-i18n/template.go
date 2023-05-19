@@ -2,40 +2,20 @@ package main
 
 import (
 	"bytes"
+	_ "embed"
 	"text/template"
 )
 
-var errorsTemplate = `
-{{ range .Errors }}
-
-func Error{{.CamelValue}}Localized(localizer *i18n.Localizer, data map[string]interface{}, pluralCount interface{}) *errors.Error {
-     if localizer == nil {
-		return errors.New({{.HTTPCode}}, {{.Name}}_{{.Value}}.String(), "")
-	 }
-     msg, err := localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID: "{{.MsgKey}}",
-		},
-		TemplateData: data,
-		PluralCount: pluralCount,
-	})
-	if err == nil {
-		return errors.New({{.HTTPCode}}, {{.Name}}_{{.Value}}.String(), msg)
-	} else {
-		return errors.New({{.HTTPCode}}, {{.Name}}_{{.Value}}.String(), "")
-	}
-	
-}
-
-{{- end }}
-`
+//go:embed errorsTemplate.tpl
+var errorsTemplate string
 
 type errorInfo struct {
 	Name       string
 	Value      string
 	HTTPCode   int
 	CamelValue string
-	MsgKey     string
+	Comment    string
+	HasComment bool
 }
 
 type errorWrapper struct {
