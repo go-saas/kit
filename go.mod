@@ -44,8 +44,6 @@ require (
 	github.com/eko/gocache/v3 v3.1.1
 	github.com/flowchartsman/swaggerui v0.0.0-20210303154956-0e71c297862e
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20220927151429-0ecc2b422f28
-	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20220927151429-0ecc2b422f28
-	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20220927151429-0ecc2b422f28
 	github.com/go-redis/redis/extra/redisotel/v8 v8.11.5
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-saas/go-i18n/v2 v2.2.1
@@ -56,7 +54,6 @@ require (
 	github.com/goava/di v1.11.1
 	github.com/gorilla/mux v1.8.0
 	github.com/goxiaoy/vfs v0.0.0-20230130063220-b20a45e86d37
-	github.com/hashicorp/consul/api v1.19.1
 	github.com/hibiken/asynq v0.23.0
 	github.com/hibiken/asynqmon v0.7.1
 	github.com/jackc/pgx/v4 v4.17.2
@@ -121,6 +118,8 @@ require (
 	github.com/glebarez/go-sqlite v1.19.1 // indirect
 	github.com/glebarez/sqlite v1.5.0 // indirect
 	github.com/go-kratos/aegis v0.2.0 // indirect
+	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
+	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
@@ -136,6 +135,7 @@ require (
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
+	github.com/hashicorp/consul/api v1.19.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.4.0 // indirect

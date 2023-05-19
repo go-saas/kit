@@ -55,7 +55,6 @@ import (
 
 	_ "github.com/go-saas/kit/gateway/apisix/cmd/go-runner/plugins"
 
-	_ "github.com/go-saas/kit/pkg/registry/consul"
 	_ "github.com/go-saas/kit/pkg/registry/etcd"
 )
 

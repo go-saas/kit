@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/goava/di"
@@ -31,4 +32,11 @@ func NewRegister(c *Config, container *di.Container) (registry.Registrar, regist
 		return nil, nil, fmt.Errorf("registry type %s not found", c.Type)
 	}
 	return r(c, container)
+}
+
+// Discovery is service discovery.
+type Discovery interface {
+	registry.Discovery
+	// WatchAll creates a watcher to all services
+	WatchAll(ctx context.Context) (registry.Watcher, error)
 }

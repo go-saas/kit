@@ -6,10 +6,12 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport"
+	kregistry "github.com/go-saas/kit/pkg/registry"
 	"github.com/samber/lo"
 	"golang.org/x/sync/errgroup"
 	"net/url"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -32,7 +34,6 @@ type WatchSyncAdmin struct {
 }
 
 type watcherSync struct {
-	service    string
 	w          registry.Watcher
 	ctx        context.Context
 	updateFunc func(ins []*registry.ServiceInstance) error
@@ -58,54 +59,59 @@ func (r *watcherSync) watch() {
 		}
 		err = r.updateFunc(ins)
 		if err != nil {
-			klog.Errorf("[apisix] Failed to update service %s : %v", r.service, err)
+			klog.Errorf("[apisix] Failed to update service %s : %v", strings.Join(lo.Map(ins, func(t *registry.ServiceInstance, _ int) string {
+				return t.Name
+			}), ","), err)
 		}
 
 	}
 }
 
-func toUpstreams(serviceName string, srvs []*registry.ServiceInstance) (map[string]*Upstream, error) {
+func toUpstreams(srvs []*registry.ServiceInstance) (map[string]*Upstream, error) {
 	var ret = map[string]*Upstream{}
-	//group by schemas
-	endpoints := lo.FlatMap(srvs, func(t *registry.ServiceInstance, _ int) []string {
-		return t.Endpoints
+	grouped := lo.GroupBy(srvs, func(t *registry.ServiceInstance) string {
+		return t.Name
 	})
-
-	for _, endpoint := range endpoints {
-		raw, err := url.Parse(endpoint)
-		if err != nil {
-			return nil, err
-		}
-		addr := raw.Hostname()
-		port, _ := strconv.ParseUint(raw.Port(), 10, 16)
-		srvName := serviceName + "-" + raw.Scheme
-		srv, ok := ret[srvName]
-		if !ok {
-			schema := raw.Scheme
-			if !lo.Contains(validSchemas, schema) {
-				schema = ""
-			}
-			srv = &Upstream{Scheme: schema, Type: "roundrobin"}
-			ret[srvName] = srv
-		}
-		srv.Nodes = append(srv.Nodes, &Node{
-			Host:   addr,
-			Port:   port,
-			Weight: 1,
+	for serviceName, instances := range grouped {
+		//group by schemas
+		endpoints := lo.FlatMap(instances, func(t *registry.ServiceInstance, _ int) []string {
+			return t.Endpoints
 		})
-	}
 
+		for _, endpoint := range endpoints {
+			raw, err := url.Parse(endpoint)
+			if err != nil {
+				return nil, err
+			}
+			addr := raw.Hostname()
+			port, _ := strconv.ParseUint(raw.Port(), 10, 16)
+			srvName := serviceName + "-" + raw.Scheme
+			srv, ok := ret[srvName]
+			if !ok {
+				schema := raw.Scheme
+				if !lo.Contains(validSchemas, schema) {
+					schema = ""
+				}
+				srv = &Upstream{Scheme: schema, Type: "roundrobin"}
+				ret[srvName] = srv
+			}
+			srv.Nodes = append(srv.Nodes, &Node{
+				Host:   addr,
+				Port:   port,
+				Weight: 1,
+			})
+		}
+	}
 	return ret, nil
 }
 
-func putServices(client *AdminClient, serviceName string, ins []*registry.ServiceInstance) error {
-
-	up, err := toUpstreams(serviceName, ins)
+func putServices(client *AdminClient, ins []*registry.ServiceInstance) error {
+	up, err := toUpstreams(ins)
 	if err != nil {
 		return err
 	}
 	if len(up) == 0 {
-		klog.Warnf("[apisix] Skipped to put service %s empty upstream", serviceName)
+		klog.Warnf("[apisix] Skipped to put services, empty upstream")
 	}
 	for srvName, upstream := range up {
 		err = client.PutUpstream(srvName, upstream)
@@ -146,19 +152,18 @@ func (w *WatchSyncAdmin) Start(ctx context.Context) (err error) {
 	wg := sync.WaitGroup{}
 	stopWg := sync.WaitGroup{}
 	w.stopWg = &stopWg
-	for _, service := range w.opt.Services {
-		service := service
+
+	if dis, ok := w.discovery.(kregistry.Discovery); ok {
 		g.Go(func() error {
 			defer wg.Done()
-			watcher, err := w.discovery.Watch(ctx, service)
+			watcher, err := dis.WatchAll(ctx)
 			if err == nil {
 				//add watch into group
 				s := &watcherSync{
-					service: service,
-					w:       watcher,
-					ctx:     ctx,
+					w:   watcher,
+					ctx: ctx,
 					updateFunc: func(ins []*registry.ServiceInstance) error {
-						return putServices(w.client, service, ins)
+						return putServices(w.client, ins)
 					},
 					wg: &stopWg,
 				}
@@ -168,6 +173,28 @@ func (w *WatchSyncAdmin) Start(ctx context.Context) (err error) {
 			return err
 		})
 		wg.Add(1)
+	} else {
+		for _, service := range w.opt.Services {
+			g.Go(func() error {
+				defer wg.Done()
+				watcher, err := w.discovery.Watch(ctx, service)
+				if err == nil {
+					//add watch into group
+					s := &watcherSync{
+						w:   watcher,
+						ctx: ctx,
+						updateFunc: func(ins []*registry.ServiceInstance) error {
+							return putServices(w.client, ins)
+						},
+						wg: &stopWg,
+					}
+					stopWg.Add(1)
+					go s.watch()
+				}
+				return err
+			})
+			wg.Add(1)
+		}
 	}
 	c := make(chan struct{})
 	go func() {

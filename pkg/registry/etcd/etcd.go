@@ -1,7 +1,6 @@
 package etcd
 
 import (
-	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
 	kregistry "github.com/go-saas/kit/pkg/registry"
@@ -36,7 +35,7 @@ func init() {
 		} else {
 			return nil, nil, err
 		}
-		r := etcd.New(client)
+		r := New(client)
 		return r, r, nil
 	})
 }
