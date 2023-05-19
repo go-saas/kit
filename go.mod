@@ -8,7 +8,7 @@ require (
 	github.com/casbin/gorm-adapter/v3 v3.12.1
 	github.com/envoyproxy/protoc-gen-validate v0.9.1
 	github.com/go-chi/chi/v5 v5.0.7
-	github.com/go-kratos/kratos/v2 v2.5.4
+	github.com/go-kratos/kratos/v2 v2.6.2
 	github.com/go-saas/saas v0.6.0
 	github.com/go-saas/uow v0.0.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
@@ -120,6 +120,7 @@ require (
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/glebarez/go-sqlite v1.19.1 // indirect
 	github.com/glebarez/sqlite v1.5.0 // indirect
+	github.com/go-kratos/aegis v0.2.0 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect

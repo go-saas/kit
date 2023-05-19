@@ -40,10 +40,9 @@ func NewInit(dis registry.Discovery, name kitserver.Name, cache *gorm.SqlDbCache
 	var opts = []discovery.Option{
 		discovery.WithInsecure(opt.Insecure),
 	}
-	//TODO subset
-	//if opt.Subset != nil {
-	//	opts = append(opts, discovery.WithSubset(*opt.Subset))
-	//}
+	if opt.Subset != nil {
+		opts = append(opts, discovery.WithSubset(*opt.Subset))
+	}
 	dtmimp.SetDbCache(cache)
 	dtmgrpc.AddDailOption(grpc.WithResolvers(discovery.NewBuilder(dis, opts...)))
 	dtmgrpc.UseDriver(driver.DriverName)
