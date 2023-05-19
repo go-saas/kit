@@ -20,10 +20,6 @@ plugins:
     opt:
       - paths=source_relative
       - lang=go
-  - name: go-errors
-    out: ./buf
-    opt:
-      - paths=source_relative
   - name: go-errors-i18n
     out: ./buf
     opt:

@@ -100,6 +100,7 @@ func genErrorsReason(_ *protogen.Plugin, _ *protogen.File, g *protogen.Generated
 			HTTPCode:   enumCode,
 			Comment:    comment,
 			HasComment: len(comment) > 0,
+			MsgKey:     case2Camel(string(v.Desc.Name())),
 		}
 		ew.Errors = append(ew.Errors, err)
 	}
