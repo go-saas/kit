@@ -18,14 +18,6 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ RoleServiceServer = (*roleServiceClientProxy)(nil)
 
-const GrpcOperationRoleServiceListRoles = "/user.api.role.v1.RoleService/ListRoles"
-const GrpcOperationRoleServiceGetRole = "/user.api.role.v1.RoleService/GetRole"
-const GrpcOperationRoleServiceCreateRole = "/user.api.role.v1.RoleService/CreateRole"
-const GrpcOperationRoleServiceUpdateRole = "/user.api.role.v1.RoleService/UpdateRole"
-const GrpcOperationRoleServiceDeleteRole = "/user.api.role.v1.RoleService/DeleteRole"
-const GrpcOperationRoleServiceGetRolePermission = "/user.api.role.v1.RoleService/GetRolePermission"
-const GrpcOperationRoleServiceUpdateRolePermission = "/user.api.role.v1.RoleService/UpdateRolePermission"
-
 // roleServiceClientProxy is the proxy to turn RoleService client to server interface.
 type roleServiceClientProxy struct {
 	cc RoleServiceClient

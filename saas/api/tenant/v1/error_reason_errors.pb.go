@@ -3,8 +3,10 @@
 package v1
 
 import (
-	fmt "fmt"
+	context "context"
 	errors "github.com/go-kratos/kratos/v2/errors"
+	i18n "github.com/go-saas/go-i18n/v2/i18n"
+	localize "github.com/go-saas/kit/pkg/localize"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,8 +21,23 @@ func IsDuplicateTenantName(err error) bool {
 	return e.Reason == ErrorReason_DUPLICATE_TENANT_NAME.String() && e.Code == 400
 }
 
-func ErrorDuplicateTenantName(format string, args ...interface{}) *errors.Error {
-	return errors.New(400, ErrorReason_DUPLICATE_TENANT_NAME.String(), fmt.Sprintf(format, args...))
+func ErrorDuplicateTenantNameLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(400, ErrorReason_DUPLICATE_TENANT_NAME.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "DuplicateTenantName",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_DUPLICATE_TENANT_NAME.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_DUPLICATE_TENANT_NAME.String(), "")
+	}
 }
 
 func IsTenantNotFound(err error) bool {
@@ -31,8 +48,23 @@ func IsTenantNotFound(err error) bool {
 	return e.Reason == ErrorReason_TENANT_NOT_FOUND.String() && e.Code == 404
 }
 
-func ErrorTenantNotFound(format string, args ...interface{}) *errors.Error {
-	return errors.New(404, ErrorReason_TENANT_NOT_FOUND.String(), fmt.Sprintf(format, args...))
+func ErrorTenantNotFoundLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(404, ErrorReason_TENANT_NOT_FOUND.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "TenantNotFound",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(404, ErrorReason_TENANT_NOT_FOUND.String(), msg)
+	} else {
+		return errors.New(404, ErrorReason_TENANT_NOT_FOUND.String(), "")
+	}
 }
 
 func IsTenantForbidden(err error) bool {
@@ -43,8 +75,23 @@ func IsTenantForbidden(err error) bool {
 	return e.Reason == ErrorReason_TENANT_FORBIDDEN.String() && e.Code == 403
 }
 
-func ErrorTenantForbidden(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_TENANT_FORBIDDEN.String(), fmt.Sprintf(format, args...))
+func ErrorTenantForbiddenLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_TENANT_FORBIDDEN.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "TenantForbidden",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_TENANT_FORBIDDEN.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_TENANT_FORBIDDEN.String(), "")
+	}
 }
 
 func IsTenantNotReady(err error) bool {
@@ -55,8 +102,23 @@ func IsTenantNotReady(err error) bool {
 	return e.Reason == ErrorReason_TENANT_NOT_READY.String() && e.Code == 403
 }
 
-func ErrorTenantNotReady(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_TENANT_NOT_READY.String(), fmt.Sprintf(format, args...))
+func ErrorTenantNotReadyLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_TENANT_NOT_READY.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "TenantNotReady",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_TENANT_NOT_READY.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_TENANT_NOT_READY.String(), "")
+	}
 }
 
 func IsAdminIdentityRequired(err error) bool {
@@ -67,8 +129,23 @@ func IsAdminIdentityRequired(err error) bool {
 	return e.Reason == ErrorReason_ADMIN_IDENTITY_REQUIRED.String() && e.Code == 400
 }
 
-func ErrorAdminIdentityRequired(format string, args ...interface{}) *errors.Error {
-	return errors.New(400, ErrorReason_ADMIN_IDENTITY_REQUIRED.String(), fmt.Sprintf(format, args...))
+func ErrorAdminIdentityRequiredLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(400, ErrorReason_ADMIN_IDENTITY_REQUIRED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "AdminIdentityRequired",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_ADMIN_IDENTITY_REQUIRED.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_ADMIN_IDENTITY_REQUIRED.String(), "")
+	}
 }
 
 func IsAdminPasswordRequired(err error) bool {
@@ -79,8 +156,23 @@ func IsAdminPasswordRequired(err error) bool {
 	return e.Reason == ErrorReason_ADMIN_PASSWORD_REQUIRED.String() && e.Code == 400
 }
 
-func ErrorAdminPasswordRequired(format string, args ...interface{}) *errors.Error {
-	return errors.New(400, ErrorReason_ADMIN_PASSWORD_REQUIRED.String(), fmt.Sprintf(format, args...))
+func ErrorAdminPasswordRequiredLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(400, ErrorReason_ADMIN_PASSWORD_REQUIRED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "AdminPasswordRequired",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_ADMIN_PASSWORD_REQUIRED.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_ADMIN_PASSWORD_REQUIRED.String(), "")
+	}
 }
 
 func IsAdminUsernameInvalid(err error) bool {
@@ -91,8 +183,23 @@ func IsAdminUsernameInvalid(err error) bool {
 	return e.Reason == ErrorReason_ADMIN_USERNAME_INVALID.String() && e.Code == 400
 }
 
-func ErrorAdminUsernameInvalid(format string, args ...interface{}) *errors.Error {
-	return errors.New(400, ErrorReason_ADMIN_USERNAME_INVALID.String(), fmt.Sprintf(format, args...))
+func ErrorAdminUsernameInvalidLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(400, ErrorReason_ADMIN_USERNAME_INVALID.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "AdminUsernameInvalid",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_ADMIN_USERNAME_INVALID.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_ADMIN_USERNAME_INVALID.String(), "")
+	}
 }
 
 func IsAdminEmailInvalid(err error) bool {
@@ -103,6 +210,21 @@ func IsAdminEmailInvalid(err error) bool {
 	return e.Reason == ErrorReason_ADMIN_EMAIL_INVALID.String() && e.Code == 400
 }
 
-func ErrorAdminEmailInvalid(format string, args ...interface{}) *errors.Error {
-	return errors.New(400, ErrorReason_ADMIN_EMAIL_INVALID.String(), fmt.Sprintf(format, args...))
+func ErrorAdminEmailInvalidLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(400, ErrorReason_ADMIN_EMAIL_INVALID.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "AdminEmailInvalid",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_ADMIN_EMAIL_INVALID.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_ADMIN_EMAIL_INVALID.String(), "")
+	}
 }

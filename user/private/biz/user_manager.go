@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-saas/kit/event"
 	cache2 "github.com/go-saas/kit/pkg/cache"
-	"github.com/go-saas/kit/pkg/localize"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	v12 "github.com/go-saas/kit/user/api/auth/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
@@ -177,12 +176,12 @@ func (um *UserManager) CheckPassword(ctx context.Context, user *User, password s
 		return err
 	}
 	//fail
-	return v12.ErrorInvalidCredentialsLocalized(localize.FromContext(ctx), nil, nil)
+	return v12.ErrorInvalidCredentialsLocalized(ctx, nil, nil)
 }
 
 func (um *UserManager) ChangePassword(ctx context.Context, user *User, current string, newPwd string) error {
 	if v := um.checkPassword(ctx, user, current); v == PasswordVerificationFail {
-		return v12.ErrorInvalidCredentialsLocalized(localize.FromContext(ctx), nil, nil)
+		return v12.ErrorInvalidCredentialsLocalized(ctx, nil, nil)
 	}
 	if err := um.updatePassword(ctx, user, &newPwd, true); err != nil {
 		return err
@@ -211,14 +210,14 @@ func (um *UserManager) VerifyEmailForgetPasswordToken(ctx context.Context, email
 		return err
 	}
 	if user == nil {
-		return v12.ErrorEmailRecoverFailed("")
+		return v12.ErrorEmailRecoverFailedLocalized(ctx, nil, nil)
 	}
 	ok, err := um.emailToken.Validate(ctx, RecoverPurpose, token, user)
 	if err != nil {
 		return err
 	}
 	if !ok {
-		return v12.ErrorEmailRecoverFailed("")
+		return v12.ErrorEmailRecoverFailedLocalized(ctx, nil, nil)
 	}
 	return nil
 }
@@ -237,14 +236,14 @@ func (um *UserManager) VerifyPhoneForgetPasswordToken(ctx context.Context, phone
 		return err
 	}
 	if user == nil {
-		return v12.ErrorPhoneRecoverFailed("")
+		return v12.ErrorPhoneRecoverFailedLocalized(ctx, nil, nil)
 	}
 	ok, err := um.phoneToken.Validate(ctx, RecoverPurpose, token, user)
 	if err != nil {
 		return err
 	}
 	if !ok {
-		return v12.ErrorPhoneRecoverFailed("")
+		return v12.ErrorPhoneRecoverFailedLocalized(ctx, nil, nil)
 	}
 	return nil
 }
@@ -260,7 +259,7 @@ func (um *UserManager) ChangePasswordByToken(ctx context.Context, token, newPwd 
 		return err
 	}
 	if user == nil {
-		return v1.ErrorUserNotFoundLocalized(localize.FromContext(ctx), nil, nil)
+		return v1.ErrorUserNotFoundLocalized(ctx, nil, nil)
 	}
 	return um.UpdatePassword(ctx, user, newPwd)
 }
@@ -271,7 +270,7 @@ func (um *UserManager) retrieveTwoStepForgetPasswordToken(ctx context.Context, t
 		return nil, err
 	}
 	if payload == nil {
-		return nil, v12.ErrorTwoStepFailed("")
+		return nil, v12.ErrorTwoStepFailedLocalized(ctx, nil, nil)
 	}
 	user, err := um.FindByID(ctx, payload.UserId)
 	if err != nil {
@@ -372,14 +371,14 @@ func (um *UserManager) RefreshRememberToken(ctx context.Context, token string, d
 		return nil, "", err
 	} else {
 		if t == nil {
-			return nil, "", v12.ErrorRememberTokenNotFound("")
+			return nil, "", v12.ErrorRememberTokenNotFoundLocalized(ctx, nil, nil)
 		}
 		if t.Used && t.Expires.After(currTime.Add(-time.Minute*3)) {
 			//for some concurrency refreshing
-			return nil, "", v12.ErrorRememberTokenUsed("")
+			return nil, "", v12.ErrorRememberTokenUsedLocalized(ctx, nil, nil)
 		}
 		if !t.Valid() {
-			return nil, "", v12.ErrorRememberTokenNotFound("")
+			return nil, "", v12.ErrorRememberTokenNotFoundLocalized(ctx, nil, nil)
 		}
 		//find user
 		user, err := um.FindByID(ctx, t.UserId.String())
@@ -388,7 +387,7 @@ func (um *UserManager) RefreshRememberToken(ctx context.Context, token string, d
 		}
 		if user == nil {
 			//user not found
-			return nil, "", v12.ErrorRememberTokenNotFound("")
+			return nil, "", v12.ErrorRememberTokenNotFoundLocalized(ctx, nil, nil)
 		}
 		//TODO check locked?
 		//refresh token

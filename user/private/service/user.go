@@ -6,7 +6,6 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	api2 "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/errors"
-	"github.com/go-saas/kit/pkg/localize"
 	v12 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/go-saas/saas"
 	"github.com/goxiaoy/vfs"
@@ -108,7 +107,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	// check confirm password
 	if req.Password != "" {
 		if req.ConfirmPassword != req.Password {
-			return nil, pb.ErrorConfirmPasswordMismatchLocalized(localize.FromContext(ctx), nil, nil)
+			return nil, pb.ErrorConfirmPasswordMismatchLocalized(ctx, nil, nil)
 		}
 	}
 	ct, _ := saas.FromCurrentTenant(ctx)
@@ -188,7 +187,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	// check confirm password
 	if req.User.Password != "" {
 		if req.User.ConfirmPassword != req.User.Password {
-			return nil, pb.ErrorConfirmPasswordMismatchLocalized(localize.FromContext(ctx), nil, nil)
+			return nil, pb.ErrorConfirmPasswordMismatchLocalized(ctx, nil, nil)
 		}
 	}
 
@@ -414,7 +413,7 @@ func (s *UserService) checkUserTenantInternal(ctx context.Context, userId, tenan
 			s.logger.Errorf("no recover error:%v", err)
 			return false, err
 		}
-		return false, v12.ErrorTenantForbiddenLocalized(localize.FromContext(ctx), nil, nil)
+		return false, v12.ErrorTenantForbiddenLocalized(ctx, nil, nil)
 	}
 	return true, nil
 }

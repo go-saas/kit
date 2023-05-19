@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/go-saas/kit/pkg/authn/session"
 	"github.com/go-saas/kit/pkg/conf"
-	"github.com/go-saas/kit/pkg/localize"
 	v12 "github.com/go-saas/kit/user/api/auth/v1"
 	"time"
 )
@@ -34,12 +33,12 @@ func (s *SignInManager) CheckCanSignIn(ctx context.Context, u *User) error {
 	if d, err := s.um.CheckDeleted(ctx, u); err != nil {
 		return err
 	} else if d {
-		return v12.ErrorUserDeleted("")
+		return v12.ErrorUserDeletedLocalized(ctx, nil, nil)
 	}
 	if locked, err := s.um.CheckLocked(ctx, u); err != nil {
 		return err
 	} else if locked {
-		return v12.ErrorUserLocked("")
+		return v12.ErrorUserLockedLocalized(ctx, nil, nil)
 	}
 	return nil
 }
@@ -89,7 +88,7 @@ func (s *SignInManager) ValidateSecurityStamp(ctx context.Context, u *User, secu
 
 func (s *SignInManager) PasswordSignIn(ctx context.Context, u *User, pwd string, isPersistent bool, tryLockoutOnFailure bool) error {
 	if u == nil {
-		return v12.ErrorInvalidCredentialsLocalized(localize.FromContext(ctx), nil, nil)
+		return v12.ErrorInvalidCredentialsLocalized(ctx, nil, nil)
 	}
 	err := s.um.CheckPassword(ctx, u, pwd)
 	if err != nil {

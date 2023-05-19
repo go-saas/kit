@@ -19,13 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ ClientServiceServer = (*clientServiceClientProxy)(nil)
 
-const GrpcOperationClientServiceListOAuth2Clients = "/oidc.api.client.ClientService/ListOAuth2Clients"
-const GrpcOperationClientServiceGetOAuth2Client = "/oidc.api.client.ClientService/GetOAuth2Client"
-const GrpcOperationClientServiceCreateOAuth2Client = "/oidc.api.client.ClientService/CreateOAuth2Client"
-const GrpcOperationClientServiceDeleteOAuth2Client = "/oidc.api.client.ClientService/DeleteOAuth2Client"
-const GrpcOperationClientServicePatchOAuth2Client = "/oidc.api.client.ClientService/PatchOAuth2Client"
-const GrpcOperationClientServiceUpdateOAuth2Client = "/oidc.api.client.ClientService/UpdateOAuth2Client"
-
 // clientServiceClientProxy is the proxy to turn ClientService client to server interface.
 type clientServiceClientProxy struct {
 	cc ClientServiceClient

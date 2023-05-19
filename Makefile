@@ -28,10 +28,10 @@ init:
 	go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	go install github.com/go-saas/kit/cmd/protoc-gen-go-grpc-proxy@30ba98828767978e4b095938519ddb42ef8bebbc
+	go install github.com/go-saas/kit/cmd/protoc-gen-go-grpc-proxy@c2ded75bd3ee9f1229e50d7141966ecbde39a84f
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2@latest
-	go install github.com/go-saas/kit/cmd/protoc-gen-go-errors-i18n/v2@30ba98828767978e4b095938519ddb42ef8bebbc
+	go install github.com/go-saas/kit/cmd/protoc-gen-go-errors-i18n/v2@c2ded75bd3ee9f1229e50d7141966ecbde39a84f
 	go install github.com/envoyproxy/protoc-gen-validate@v0.6.7
 	go install github.com/bufbuild/buf/cmd/buf@$(BUF_VERSION)
 	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@$(BUF_VERSION)

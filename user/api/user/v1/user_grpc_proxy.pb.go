@@ -20,19 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ UserServiceServer = (*userServiceClientProxy)(nil)
 
-const GrpcOperationUserServiceListUsers = "/user.api.user.v1.UserService/ListUsers"
-const GrpcOperationUserServiceGetUser = "/user.api.user.v1.UserService/GetUser"
-const GrpcOperationUserServiceCreateUser = "/user.api.user.v1.UserService/CreateUser"
-const GrpcOperationUserServiceUpdateUser = "/user.api.user.v1.UserService/UpdateUser"
-const GrpcOperationUserServiceDeleteUser = "/user.api.user.v1.UserService/DeleteUser"
-const GrpcOperationUserServiceGetUserRoles = "/user.api.user.v1.UserService/GetUserRoles"
-const GrpcOperationUserServiceInviteUser = "/user.api.user.v1.UserService/InviteUser"
-const GrpcOperationUserServiceSearchUser = "/user.api.user.v1.UserService/SearchUser"
-const GrpcOperationUserServiceCheckUserTenant = "/user.api.user.v1.UserService/CheckUserTenant"
-
 var _ UserInternalServiceServer = (*userInternalServiceClientProxy)(nil)
-
-const GrpcOperationUserInternalServiceCreateTenant = "/user.api.user.v1.UserInternalService/CreateTenant"
 
 // userServiceClientProxy is the proxy to turn UserService client to server interface.
 type userServiceClientProxy struct {

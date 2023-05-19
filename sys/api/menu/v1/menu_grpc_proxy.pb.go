@@ -18,13 +18,6 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ MenuServiceServer = (*menuServiceClientProxy)(nil)
 
-const GrpcOperationMenuServiceListMenu = "/sys.api.menu.v1.MenuService/ListMenu"
-const GrpcOperationMenuServiceGetMenu = "/sys.api.menu.v1.MenuService/GetMenu"
-const GrpcOperationMenuServiceCreateMenu = "/sys.api.menu.v1.MenuService/CreateMenu"
-const GrpcOperationMenuServiceUpdateMenu = "/sys.api.menu.v1.MenuService/UpdateMenu"
-const GrpcOperationMenuServiceDeleteMenu = "/sys.api.menu.v1.MenuService/DeleteMenu"
-const GrpcOperationMenuServiceGetAvailableMenus = "/sys.api.menu.v1.MenuService/GetAvailableMenus"
-
 // menuServiceClientProxy is the proxy to turn MenuService client to server interface.
 type menuServiceClientProxy struct {
 	cc MenuServiceClient

@@ -2,7 +2,6 @@ package biz
 
 import (
 	"context"
-	"github.com/go-saas/kit/pkg/localize"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/kit/user/private/conf"
 	"github.com/nbutton23/zxcvbn-go"
@@ -31,7 +30,7 @@ func (p *passwordValidator) Validate(ctx context.Context, password string) (err 
 	strength := zxcvbn.PasswordStrength(password, []string{})
 	ok := strength.Score >= int(p.config.PasswordScoreMin)
 	if !ok {
-		return v1.ErrorPasswordInsufficientStrengthLocalized(localize.FromContext(ctx), nil, nil)
+		return v1.ErrorPasswordInsufficientStrengthLocalized(ctx, nil, nil)
 	}
 	return nil
 }

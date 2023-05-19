@@ -3,8 +3,10 @@
 package v1
 
 import (
-	fmt "fmt"
+	context "context"
 	errors "github.com/go-kratos/kratos/v2/errors"
+	i18n "github.com/go-saas/go-i18n/v2/i18n"
+	localize "github.com/go-saas/kit/pkg/localize"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,8 +21,23 @@ func IsMenuNameDuplicate(err error) bool {
 	return e.Reason == ErrorReason_MENU_NAME_DUPLICATE.String() && e.Code == 400
 }
 
-func ErrorMenuNameDuplicate(format string, args ...interface{}) *errors.Error {
-	return errors.New(400, ErrorReason_MENU_NAME_DUPLICATE.String(), fmt.Sprintf(format, args...))
+func ErrorMenuNameDuplicateLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(400, ErrorReason_MENU_NAME_DUPLICATE.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "MenuNameDuplicate",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_MENU_NAME_DUPLICATE.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_MENU_NAME_DUPLICATE.String(), "")
+	}
 }
 
 func IsMenuPreserved(err error) bool {
@@ -31,6 +48,21 @@ func IsMenuPreserved(err error) bool {
 	return e.Reason == ErrorReason_MENU_PRESERVED.String() && e.Code == 403
 }
 
-func ErrorMenuPreserved(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_MENU_PRESERVED.String(), fmt.Sprintf(format, args...))
+func ErrorMenuPreservedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_MENU_PRESERVED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "MenuPreserved",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_MENU_PRESERVED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_MENU_PRESERVED.String(), "")
+	}
 }

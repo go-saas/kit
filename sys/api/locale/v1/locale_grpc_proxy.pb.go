@@ -18,8 +18,6 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ LocaleServiceServer = (*localeServiceClientProxy)(nil)
 
-const GrpcOperationLocaleServiceListMessages = "/sys.api.locale.v1.LocaleService/ListMessages"
-
 // localeServiceClientProxy is the proxy to turn LocaleService client to server interface.
 type localeServiceClientProxy struct {
 	cc LocaleServiceClient

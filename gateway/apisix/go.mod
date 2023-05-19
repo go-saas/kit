@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/apache/apisix-go-plugin-runner v0.4.0
-	github.com/go-kratos/kratos/v2 v2.5.4
+	github.com/go-kratos/kratos/v2 v2.6.2
 	github.com/go-saas/kit v0.0.1
 	github.com/go-saas/saas v0.6.0
 	github.com/go-saas/sessions v1.2.2-0.20220626044315-a7a87c87f120
@@ -36,6 +36,7 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v0.9.1 // indirect
 	github.com/fatih/color v1.14.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
+	github.com/go-kratos/aegis v0.2.0 // indirect
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect

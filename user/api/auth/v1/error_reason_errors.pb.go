@@ -3,8 +3,10 @@
 package v1
 
 import (
-	fmt "fmt"
+	context "context"
 	errors "github.com/go-kratos/kratos/v2/errors"
+	i18n "github.com/go-saas/go-i18n/v2/i18n"
+	localize "github.com/go-saas/kit/pkg/localize"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,8 +21,23 @@ func IsInvalidCredentials(err error) bool {
 	return e.Reason == ErrorReason_INVALID_CREDENTIALS.String() && e.Code == 400
 }
 
-func ErrorInvalidCredentials(format string, args ...interface{}) *errors.Error {
-	return errors.New(400, ErrorReason_INVALID_CREDENTIALS.String(), fmt.Sprintf(format, args...))
+func ErrorInvalidCredentialsLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(400, ErrorReason_INVALID_CREDENTIALS.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "InvalidCredentials",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_INVALID_CREDENTIALS.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_INVALID_CREDENTIALS.String(), "")
+	}
 }
 
 func IsInvalidOperation(err error) bool {
@@ -31,8 +48,23 @@ func IsInvalidOperation(err error) bool {
 	return e.Reason == ErrorReason_INVALID_OPERATION.String() && e.Code == 400
 }
 
-func ErrorInvalidOperation(format string, args ...interface{}) *errors.Error {
-	return errors.New(400, ErrorReason_INVALID_OPERATION.String(), fmt.Sprintf(format, args...))
+func ErrorInvalidOperationLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(400, ErrorReason_INVALID_OPERATION.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "InvalidOperation",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_INVALID_OPERATION.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_INVALID_OPERATION.String(), "")
+	}
 }
 
 func IsUserLocked(err error) bool {
@@ -43,8 +75,23 @@ func IsUserLocked(err error) bool {
 	return e.Reason == ErrorReason_USER_LOCKED.String() && e.Code == 403
 }
 
-func ErrorUserLocked(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_USER_LOCKED.String(), fmt.Sprintf(format, args...))
+func ErrorUserLockedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_USER_LOCKED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "UserLocked",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_USER_LOCKED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_USER_LOCKED.String(), "")
+	}
 }
 
 func IsEmailNotConfirmed(err error) bool {
@@ -55,8 +102,23 @@ func IsEmailNotConfirmed(err error) bool {
 	return e.Reason == ErrorReason_EMAIL_NOT_CONFIRMED.String() && e.Code == 403
 }
 
-func ErrorEmailNotConfirmed(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_EMAIL_NOT_CONFIRMED.String(), fmt.Sprintf(format, args...))
+func ErrorEmailNotConfirmedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_EMAIL_NOT_CONFIRMED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "EmailNotConfirmed",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_EMAIL_NOT_CONFIRMED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_EMAIL_NOT_CONFIRMED.String(), "")
+	}
 }
 
 func IsPhoneNotConfirmed(err error) bool {
@@ -67,8 +129,23 @@ func IsPhoneNotConfirmed(err error) bool {
 	return e.Reason == ErrorReason_PHONE_NOT_CONFIRMED.String() && e.Code == 403
 }
 
-func ErrorPhoneNotConfirmed(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_PHONE_NOT_CONFIRMED.String(), fmt.Sprintf(format, args...))
+func ErrorPhoneNotConfirmedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_PHONE_NOT_CONFIRMED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "PhoneNotConfirmed",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_PHONE_NOT_CONFIRMED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_PHONE_NOT_CONFIRMED.String(), "")
+	}
 }
 
 func IsEmailRecoverFailed(err error) bool {
@@ -79,8 +156,23 @@ func IsEmailRecoverFailed(err error) bool {
 	return e.Reason == ErrorReason_EMAIL_RECOVER_FAILED.String() && e.Code == 403
 }
 
-func ErrorEmailRecoverFailed(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_EMAIL_RECOVER_FAILED.String(), fmt.Sprintf(format, args...))
+func ErrorEmailRecoverFailedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_EMAIL_RECOVER_FAILED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "EmailRecoverFailed",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_EMAIL_RECOVER_FAILED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_EMAIL_RECOVER_FAILED.String(), "")
+	}
 }
 
 func IsEmailConfirmFailed(err error) bool {
@@ -91,8 +183,23 @@ func IsEmailConfirmFailed(err error) bool {
 	return e.Reason == ErrorReason_EMAIL_CONFIRM_FAILED.String() && e.Code == 403
 }
 
-func ErrorEmailConfirmFailed(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_EMAIL_CONFIRM_FAILED.String(), fmt.Sprintf(format, args...))
+func ErrorEmailConfirmFailedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_EMAIL_CONFIRM_FAILED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "EmailConfirmFailed",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_EMAIL_CONFIRM_FAILED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_EMAIL_CONFIRM_FAILED.String(), "")
+	}
 }
 
 func IsPhoneRecoverFailed(err error) bool {
@@ -103,8 +210,23 @@ func IsPhoneRecoverFailed(err error) bool {
 	return e.Reason == ErrorReason_PHONE_RECOVER_FAILED.String() && e.Code == 403
 }
 
-func ErrorPhoneRecoverFailed(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_PHONE_RECOVER_FAILED.String(), fmt.Sprintf(format, args...))
+func ErrorPhoneRecoverFailedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_PHONE_RECOVER_FAILED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "PhoneRecoverFailed",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_PHONE_RECOVER_FAILED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_PHONE_RECOVER_FAILED.String(), "")
+	}
 }
 
 func IsPhoneConfirmFailed(err error) bool {
@@ -115,8 +237,23 @@ func IsPhoneConfirmFailed(err error) bool {
 	return e.Reason == ErrorReason_PHONE_CONFIRM_FAILED.String() && e.Code == 403
 }
 
-func ErrorPhoneConfirmFailed(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_PHONE_CONFIRM_FAILED.String(), fmt.Sprintf(format, args...))
+func ErrorPhoneConfirmFailedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_PHONE_CONFIRM_FAILED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "PhoneConfirmFailed",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_PHONE_CONFIRM_FAILED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_PHONE_CONFIRM_FAILED.String(), "")
+	}
 }
 
 func IsTwoStepFailed(err error) bool {
@@ -127,8 +264,23 @@ func IsTwoStepFailed(err error) bool {
 	return e.Reason == ErrorReason_TWO_STEP_FAILED.String() && e.Code == 403
 }
 
-func ErrorTwoStepFailed(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), fmt.Sprintf(format, args...))
+func ErrorTwoStepFailedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "TwoStepFailed",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), "")
+	}
 }
 
 func IsConfirmPasswordMismatch(err error) bool {
@@ -139,8 +291,23 @@ func IsConfirmPasswordMismatch(err error) bool {
 	return e.Reason == ErrorReason_CONFIRM_PASSWORD_MISMATCH.String() && e.Code == 400
 }
 
-func ErrorConfirmPasswordMismatch(format string, args ...interface{}) *errors.Error {
-	return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), fmt.Sprintf(format, args...))
+func ErrorConfirmPasswordMismatchLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "ConfirmPasswordMismatch",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), msg)
+	} else {
+		return errors.New(400, ErrorReason_CONFIRM_PASSWORD_MISMATCH.String(), "")
+	}
 }
 
 func IsRememberTokenNotFound(err error) bool {
@@ -151,8 +318,23 @@ func IsRememberTokenNotFound(err error) bool {
 	return e.Reason == ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String() && e.Code == 403
 }
 
-func ErrorRememberTokenNotFound(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String(), fmt.Sprintf(format, args...))
+func ErrorRememberTokenNotFoundLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "RememberTokenNotFound",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_REMEMBER_TOKEN_NOT_FOUND.String(), "")
+	}
 }
 
 func IsRememberTokenUsed(err error) bool {
@@ -163,8 +345,23 @@ func IsRememberTokenUsed(err error) bool {
 	return e.Reason == ErrorReason_REMEMBER_TOKEN_USED.String() && e.Code == 403
 }
 
-func ErrorRememberTokenUsed(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_REMEMBER_TOKEN_USED.String(), fmt.Sprintf(format, args...))
+func ErrorRememberTokenUsedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_REMEMBER_TOKEN_USED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "RememberTokenUsed",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_REMEMBER_TOKEN_USED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_REMEMBER_TOKEN_USED.String(), "")
+	}
 }
 
 func IsUserDeleted(err error) bool {
@@ -175,8 +372,23 @@ func IsUserDeleted(err error) bool {
 	return e.Reason == ErrorReason_USER_DELETED.String() && e.Code == 403
 }
 
-func ErrorUserDeleted(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_USER_DELETED.String(), fmt.Sprintf(format, args...))
+func ErrorUserDeletedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_USER_DELETED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "UserDeleted",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_USER_DELETED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_USER_DELETED.String(), "")
+	}
 }
 
 func IsRefreshTokenInvalid(err error) bool {
@@ -187,6 +399,21 @@ func IsRefreshTokenInvalid(err error) bool {
 	return e.Reason == ErrorReason_REFRESH_TOKEN_INVALID.String() && e.Code == 401
 }
 
-func ErrorRefreshTokenInvalid(format string, args ...interface{}) *errors.Error {
-	return errors.New(401, ErrorReason_REFRESH_TOKEN_INVALID.String(), fmt.Sprintf(format, args...))
+func ErrorRefreshTokenInvalidLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(401, ErrorReason_REFRESH_TOKEN_INVALID.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "RefreshTokenInvalid",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(401, ErrorReason_REFRESH_TOKEN_INVALID.String(), msg)
+	} else {
+		return errors.New(401, ErrorReason_REFRESH_TOKEN_INVALID.String(), "")
+	}
 }

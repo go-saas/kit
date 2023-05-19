@@ -82,7 +82,7 @@ func (p *PhoneTokenProvider) CanGenerate(ctx context.Context, user *User) error 
 	if user.Phone != nil && user.PhoneConfirmed {
 		return nil
 	}
-	return v1.ErrorPhoneNotConfirmed("")
+	return v1.ErrorPhoneNotConfirmedLocalized(ctx, nil, nil)
 }
 
 type EmailTokenProvider struct {
@@ -136,7 +136,7 @@ func (e *EmailTokenProvider) CanGenerate(ctx context.Context, user *User) error 
 	if user.Email != nil && user.EmailConfirmed {
 		return nil
 	}
-	return v1.ErrorEmailNotConfirmed("")
+	return v1.ErrorEmailNotConfirmedLocalized(ctx, nil, nil)
 }
 
 type TwoStepTokenProvider[T proto.Message] struct {

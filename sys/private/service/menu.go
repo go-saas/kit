@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/go-saas/kit/pkg/localize"
 	"strings"
 
 	"github.com/go-saas/kit/sys/api"
@@ -82,7 +81,7 @@ func (s *MenuService) CreateMenu(ctx context.Context, req *pb.CreateMenuRequest)
 	if dbP, err := s.repo.FindByName(ctx, normalizeName(req.Name)); err != nil {
 		return nil, err
 	} else if dbP != nil {
-		return nil, pb.ErrorMenuNameDuplicateLocalized(localize.FromContext(ctx), nil, nil)
+		return nil, pb.ErrorMenuNameDuplicateLocalized(ctx, nil, nil)
 	}
 	e := &biz.Menu{}
 	MapCreatePbMenu2Biz(req, e)
@@ -102,7 +101,7 @@ func (s *MenuService) UpdateMenu(ctx context.Context, req *pb.UpdateMenuRequest)
 	if dbP, err := s.repo.FindByName(ctx, normalizeName(req.Menu.Name)); err != nil {
 		return nil, err
 	} else if dbP != nil && dbP.ID.String() != req.Menu.Id {
-		return nil, pb.ErrorMenuNameDuplicateLocalized(localize.FromContext(ctx), nil, nil)
+		return nil, pb.ErrorMenuNameDuplicateLocalized(ctx, nil, nil)
 	}
 
 	g, err := s.repo.Get(ctx, req.Menu.Id)
@@ -138,7 +137,7 @@ func (s *MenuService) DeleteMenu(ctx context.Context, req *pb.DeleteMenuRequest)
 		return nil, errors.NotFound("", "")
 	}
 	if g.IsPreserved {
-		return nil, pb.ErrorMenuPreservedLocalized(localize.FromContext(ctx), nil, nil)
+		return nil, pb.ErrorMenuPreservedLocalized(ctx, nil, nil)
 	}
 	err = s.repo.Delete(ctx, req.Id)
 	if err != nil {

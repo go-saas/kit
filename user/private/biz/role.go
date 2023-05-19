@@ -5,7 +5,6 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-saas/kit/pkg/data"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
-	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
 	v12 "github.com/go-saas/kit/user/api/role/v1"
 	gorm2 "github.com/go-saas/saas/gorm"
@@ -78,7 +77,7 @@ func (r *RoleManager) Create(ctx context.Context, role *Role) error {
 	}
 	if dbRole != nil {
 		// duplicate
-		return v12.ErrorRoleNameDuplicateLocalized(localize.FromContext(ctx), nil, nil)
+		return v12.ErrorRoleNameDuplicateLocalized(ctx, nil, nil)
 	}
 	role.NormalizedName = nn
 	return r.repo.Create(ctx, role)
@@ -96,10 +95,10 @@ func (r *RoleManager) Update(ctx context.Context, id string, role *Role, p query
 	}
 	if dbRole != nil && dbRole.ID != role.ID {
 		// duplicate
-		return v12.ErrorRoleNameDuplicateLocalized(localize.FromContext(ctx), nil, nil)
+		return v12.ErrorRoleNameDuplicateLocalized(ctx, nil, nil)
 	}
 	if role.IsPreserved {
-		return v12.ErrorRolePreservedLocalized(localize.FromContext(ctx), nil, nil)
+		return v12.ErrorRolePreservedLocalized(ctx, nil, nil)
 	}
 	return r.repo.Update(ctx, id, role, p)
 }
@@ -113,7 +112,7 @@ func (r *RoleManager) Delete(ctx context.Context, id string) error {
 		return errors.NotFound("", "")
 	}
 	if role.IsPreserved {
-		return v12.ErrorRolePreservedLocalized(localize.FromContext(ctx), nil, nil)
+		return v12.ErrorRolePreservedLocalized(ctx, nil, nil)
 	}
 	return r.repo.Delete(ctx, id)
 }

@@ -18,14 +18,6 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ PermissionServiceServer = (*permissionServiceClientProxy)(nil)
 
-const GrpcOperationPermissionServiceGetCurrent = "/user.api.permission.v1.PermissionService/GetCurrent"
-const GrpcOperationPermissionServiceCheckCurrent = "/user.api.permission.v1.PermissionService/CheckCurrent"
-const GrpcOperationPermissionServiceCheckForSubjects = "/user.api.permission.v1.PermissionService/CheckForSubjects"
-const GrpcOperationPermissionServiceAddSubjectPermission = "/user.api.permission.v1.PermissionService/AddSubjectPermission"
-const GrpcOperationPermissionServiceListSubjectPermission = "/user.api.permission.v1.PermissionService/ListSubjectPermission"
-const GrpcOperationPermissionServiceUpdateSubjectPermission = "/user.api.permission.v1.PermissionService/UpdateSubjectPermission"
-const GrpcOperationPermissionServiceRemoveSubjectPermission = "/user.api.permission.v1.PermissionService/RemoveSubjectPermission"
-
 // permissionServiceClientProxy is the proxy to turn PermissionService client to server interface.
 type permissionServiceClientProxy struct {
 	cc PermissionServiceClient

@@ -4,7 +4,6 @@ import (
 	"context"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
-	"github.com/go-saas/kit/pkg/localize"
 	pb "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/go-saas/kit/saas/private/biz"
 	"github.com/goxiaoy/vfs"
@@ -36,7 +35,7 @@ func (s *TenantInternalService) GetTenant(ctx context.Context, req *pb.GetTenant
 		return nil, err
 	}
 	if t == nil {
-		return nil, pb.ErrorTenantNotFoundLocalized(localize.FromContext(ctx), nil, nil)
+		return nil, pb.ErrorTenantNotFoundLocalized(ctx, nil, nil)
 	}
 
 	return mapBizTenantToApi(ctx, s.app, s.blob, t), nil

@@ -5,7 +5,7 @@ go 1.19
 replace github.com/go-saas/kit => ../../
 
 require (
-	github.com/go-kratos/kratos/v2 v2.5.4
+	github.com/go-kratos/kratos/v2 v2.6.2
 	github.com/go-saas/kit v0.0.0-00010101000000-000000000000
 	github.com/go-saas/saas v0.6.0
 	github.com/go-saas/uow v0.0.7
@@ -64,6 +64,7 @@ require (
 	github.com/glebarez/go-sqlite v1.19.1 // indirect
 	github.com/glebarez/sqlite v1.5.0 // indirect
 	github.com/go-chi/chi/v5 v5.0.7 // indirect
+	github.com/go-kratos/aegis v0.2.0 // indirect
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect

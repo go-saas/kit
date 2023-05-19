@@ -19,8 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ MsgServiceServer = (*msgServiceClientProxy)(nil)
 
-const GrpcOperationMsgServiceQueryPrepared = "/dtm.api.dtm.v1.MsgService/QueryPrepared"
-
 // msgServiceClientProxy is the proxy to turn MsgService client to server interface.
 type msgServiceClientProxy struct {
 	cc MsgServiceClient

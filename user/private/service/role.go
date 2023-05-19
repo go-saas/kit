@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/saas"
 
 	"github.com/go-kratos/kratos/v2/errors"
@@ -121,7 +120,7 @@ func (s *RoleService) UpdateRole(ctx context.Context, req *pb.UpdateRoleRequest)
 		return nil, errors.NotFound("", "")
 	}
 	if r.IsPreserved {
-		return nil, pb.ErrorRolePreservedLocalized(localize.FromContext(ctx), nil, nil)
+		return nil, pb.ErrorRolePreservedLocalized(ctx, nil, nil)
 	}
 	r.Name = req.Role.Name
 	if err := s.mgr.Update(ctx, r.ID.String(), r, nil); err != nil {
@@ -235,7 +234,7 @@ func (s *RoleService) updateRolePermission(ctx context.Context, r *biz.Role, upd
 		return errors.NotFound("", "")
 	}
 	if r.IsPreserved {
-		return pb.ErrorRolePreservedLocalized(localize.FromContext(ctx), nil, nil)
+		return pb.ErrorRolePreservedLocalized(ctx, nil, nil)
 	}
 	ti, _ := saas.FromCurrentTenant(ctx)
 	var acl = lo.Map(update, func(a *pb.UpdateRolePermissionAcl, _ int) authz.UpdateSubjectPermission {

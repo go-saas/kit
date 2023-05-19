@@ -12,7 +12,6 @@ import (
 	"github.com/go-saas/kit/pkg/authn/session"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/conf"
-	"github.com/go-saas/kit/pkg/localize"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	pb "github.com/go-saas/kit/user/api/auth/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
@@ -143,7 +142,7 @@ func (s *AuthService) SendForgetPasswordToken(ctx context.Context, req *pb.Forge
 			return nil, err
 		}
 		if user == nil {
-			return nil, v1.ErrorUserNotFoundLocalized(localize.FromContext(ctx), nil, nil)
+			return nil, v1.ErrorUserNotFoundLocalized(ctx, nil, nil)
 		}
 		//generate token
 		token, err := s.um.GeneratePhoneForgetPasswordToken(ctx, user)
@@ -159,7 +158,7 @@ func (s *AuthService) SendForgetPasswordToken(ctx context.Context, req *pb.Forge
 			return nil, err
 		}
 		if user == nil {
-			return nil, v1.ErrorUserNotFoundLocalized(localize.FromContext(ctx), nil, nil)
+			return nil, v1.ErrorUserNotFoundLocalized(ctx, nil, nil)
 		}
 		//generate token
 		token, err := s.um.GenerateEmailForgetPasswordToken(ctx, user)
@@ -187,7 +186,7 @@ func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPassword
 			return nil, err
 		}
 		if user == nil {
-			return nil, v1.ErrorUserNotFoundLocalized(localize.FromContext(ctx), nil, nil)
+			return nil, v1.ErrorUserNotFoundLocalized(ctx, nil, nil)
 		}
 		if err := s.um.VerifyPhoneForgetPasswordToken(ctx, req.Phone.Value, req.Token); err != nil {
 			return nil, err
@@ -199,7 +198,7 @@ func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPassword
 			return nil, err
 		}
 		if user == nil {
-			return nil, v1.ErrorUserNotFoundLocalized(localize.FromContext(ctx), nil, nil)
+			return nil, v1.ErrorUserNotFoundLocalized(ctx, nil, nil)
 		}
 		if err := s.um.VerifyEmailForgetPasswordToken(ctx, req.Email.Value, req.Token); err != nil {
 			return nil, err
@@ -216,7 +215,7 @@ func (s *AuthService) ChangePasswordByForget(ctx context.Context, req *pb.Change
 
 	//validate password
 	if req.NewPassword != req.ConfirmNewPassword {
-		return nil, v1.ErrorConfirmPasswordMismatchLocalized(localize.FromContext(ctx), nil, nil)
+		return nil, v1.ErrorConfirmPasswordMismatchLocalized(ctx, nil, nil)
 	}
 	err := s.um.ChangePasswordByToken(ctx, req.ChangePasswordToken, req.NewPassword)
 	if err != nil {
@@ -242,7 +241,7 @@ func (s *AuthService) ChangePasswordByPre(ctx context.Context, req *pb.ChangePas
 	}
 	//validate password
 	if req.NewPassword != req.ConfirmNewPassword {
-		return nil, v1.ErrorConfirmPasswordMismatchLocalized(localize.FromContext(ctx), nil, nil)
+		return nil, v1.ErrorConfirmPasswordMismatchLocalized(ctx, nil, nil)
 	}
 	user, err := s.um.FindByID(ctx, ui.GetId())
 	if err != nil {
@@ -263,7 +262,7 @@ func (s *AuthService) GetCsrfToken(ctx context.Context, req *pb.GetCsrfTokenRequ
 			return &pb.GetCsrfTokenResponse{CsrfToken: token}, nil
 		}
 	}
-	return nil, pb.ErrorInvalidOperation("csrf only supports http")
+	return nil, pb.ErrorInvalidOperationLocalized(ctx, nil, nil)
 }
 
 func (s *AuthService) RefreshRememberToken(ctx context.Context, req *pb.RefreshRememberTokenRequest) (*pb.RefreshRememberTokenReply, error) {
@@ -320,7 +319,7 @@ func (s *AuthService) refresh(ctx context.Context, refreshToken string) (*tokenM
 		return nil, err
 	}
 	if token == nil {
-		return nil, pb.ErrorRefreshTokenInvalid("")
+		return nil, pb.ErrorRefreshTokenInvalidLocalized(ctx, nil, nil)
 	}
 	if token.Valid() {
 		//token valid, regenerate
@@ -331,7 +330,7 @@ func (s *AuthService) refresh(ctx context.Context, refreshToken string) (*tokenM
 			return nil, err
 		}
 		if user == nil {
-			return nil, pb.ErrorRefreshTokenInvalid("")
+			return nil, pb.ErrorRefreshTokenInvalidLocalized(ctx, nil, nil)
 		}
 
 		t, err := s.generateToken(ctx, user.ID)
@@ -344,7 +343,7 @@ func (s *AuthService) refresh(ctx context.Context, refreshToken string) (*tokenM
 		}
 		return &tokenModel{accessToken: t.accessToken, expiresIn: t.expiresIn, refreshToken: t.refreshToken}, nil
 	}
-	return nil, pb.ErrorRefreshTokenInvalid("")
+	return nil, pb.ErrorRefreshTokenInvalidLocalized(ctx, nil, nil)
 }
 
 func FindUserByUsernameAndValidatePwd(ctx context.Context, um *biz.UserManager, username, password string) (*biz.User, error) {
@@ -353,7 +352,7 @@ func FindUserByUsernameAndValidatePwd(ctx context.Context, um *biz.UserManager, 
 		return nil, err
 	}
 	if user == nil {
-		return nil, pb.ErrorInvalidCredentialsLocalized(localize.FromContext(ctx), nil, nil)
+		return nil, pb.ErrorInvalidCredentialsLocalized(ctx, nil, nil)
 	}
 	// check password
 	err = um.CheckPassword(ctx, user, password)

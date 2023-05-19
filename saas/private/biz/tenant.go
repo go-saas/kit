@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/go-saas/kit/pkg/data"
 	gorm2 "github.com/go-saas/kit/pkg/gorm"
-	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/google/uuid"
@@ -79,7 +78,7 @@ func (t *TenantUseCase) Create(ctx context.Context, entity *Tenant) error {
 	}
 	if dbEntity != nil {
 		// duplicate
-		return v1.ErrorDuplicateTenantNameLocalized(localize.FromContext(ctx), map[string]interface{}{"name": entity.Name}, nil)
+		return v1.ErrorDuplicateTenantNameLocalized(ctx, map[string]interface{}{"name": entity.Name}, nil)
 	}
 	//ensure id generate
 	if entity.UIDBase.ID == uuid.Nil {
@@ -108,7 +107,7 @@ func (t *TenantUseCase) Update(ctx context.Context, entity *Tenant, p query.Sele
 	}
 	if dbEntity != nil && dbEntity.ID != entity.ID {
 		// duplicate
-		return v1.ErrorDuplicateTenantNameLocalized(localize.FromContext(ctx), map[string]interface{}{"name": entity.Name}, nil)
+		return v1.ErrorDuplicateTenantNameLocalized(ctx, map[string]interface{}{"name": entity.Name}, nil)
 	}
 	return t.TenantRepo.Update(ctx, entity.ID.String(), entity, p)
 }

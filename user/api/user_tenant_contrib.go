@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn"
-	"github.com/go-saas/kit/pkg/localize"
 	v12 "github.com/go-saas/kit/saas/api/tenant/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/saas"
@@ -41,7 +40,7 @@ func (u *UserTenantContrib) Resolve(trCtx *saas.Context) error {
 			return err
 		}
 		if !ok.Ok {
-			return v12.ErrorTenantForbiddenLocalized(localize.FromContext(trCtx.Context()), nil, nil)
+			return v12.ErrorTenantForbiddenLocalized(trCtx.Context(), nil, nil)
 		}
 	}
 	return nil

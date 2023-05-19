@@ -8,7 +8,6 @@ import (
 	dtmsrv "github.com/go-saas/kit/dtm/service"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
-	"github.com/go-saas/kit/pkg/localize"
 	"github.com/go-saas/kit/pkg/query"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	"github.com/go-saas/kit/pkg/utils"
@@ -251,7 +250,7 @@ func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrent
 			return nil, err
 		}
 		if t == nil {
-			return nil, pb.ErrorTenantNotFoundLocalized(localize.FromContext(ctx), nil, nil)
+			return nil, pb.ErrorTenantNotFoundLocalized(ctx, nil, nil)
 		}
 		info := mapBizTenantToInfo(ctx, s.blob, t, s.app)
 		return &pb.GetCurrentTenantReply{
