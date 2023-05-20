@@ -23,7 +23,6 @@ require (
 	github.com/BurntSushi/toml v1.2.0 // indirect
 	github.com/ReneKroon/ttlcache/v2 v2.11.0 // indirect
 	github.com/api7/ext-plugin-proto v0.6.0 // indirect
-	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
@@ -34,12 +33,9 @@ require (
 	github.com/dtm-labs/logger v0.0.2 // indirect
 	github.com/elliotchance/orderedmap/v2 v2.2.0 // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.9.1 // indirect
-	github.com/fatih/color v1.14.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-kratos/aegis v0.2.0 // indirect
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
-	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
-	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20220927151429-0ecc2b422f28 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
@@ -63,13 +59,6 @@ require (
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/goxiaoy/go-eventbus v0.0.5 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3 // indirect
-	github.com/hashicorp/consul/api v1.19.1 // indirect
-	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-hclog v1.4.0 // indirect
-	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
-	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
-	github.com/hashicorp/serf v0.10.1 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
@@ -83,18 +72,13 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.15.11 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mattn/go-sqlite3 v1.14.16 // indirect
-	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/montanaflynn/stats v0.6.6 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/onsi/gomega v1.20.1 // indirect
 	github.com/pilagod/gorm-cursor-paginator/v2 v2.4.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/twpayne/go-geom v1.4.4 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.1.16 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.1.16 // indirect

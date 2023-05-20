@@ -1,7 +1,9 @@
 package price
 
 import (
+	"context"
 	"github.com/bojanz/currency"
+	"github.com/go-saas/kit/pkg/localize"
 )
 
 // Price database friendly price struct
@@ -52,16 +54,28 @@ func (p Price) IsEmpty() bool {
 	return p.Amount == 0 && p.CurrencyCode == ""
 }
 
-func (p Price) ToPricePb() *PricePb {
+func (p Price) ToPricePb(ctx context.Context) *PricePb {
 	if len(p.CurrencyCode) == 0 {
 		return nil
 	}
 	a := p.ToCurrency()
 	d, _ := currency.GetDigits(p.CurrencyCode)
+	tags := localize.LanguageTags(ctx)
+	var s string
+	for _, tag := range tags {
+		locale := currency.NewLocale(tag.String())
+		if symbol, ok := currency.GetSymbol(p.CurrencyCode, locale); ok {
+			s = symbol
+			break
+		}
+	}
+	if s == "" {
+		s = p.CurrencyCode
+	}
 	return &PricePb{
 		Amount:       p.Amount,
 		CurrencyCode: p.CurrencyCode,
-		Text:         a.String(),
+		Text:         s + a.Number(),
 		Digits:       int32(d),
 	}
 }

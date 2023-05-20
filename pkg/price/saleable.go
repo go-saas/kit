@@ -1,6 +1,7 @@
 package price
 
 import (
+	"context"
 	"time"
 )
 
@@ -22,10 +23,10 @@ type Info struct {
 	DenyMoreDiscounts bool
 }
 
-func (i Info) ToInfoPb() *InfoPb {
+func (i Info) ToInfoPb(ctx context.Context) *InfoPb {
 	return &InfoPb{
-		Default:           i.Default.ToPricePb(),
-		Discounted:        i.Discounted.ToPricePb(),
+		Default:           i.Default.ToPricePb(ctx),
+		Discounted:        i.Discounted.ToPricePb(ctx),
 		DiscountText:      i.DiscountText,
 		DenyMoreDiscounts: i.DenyMoreDiscounts,
 	}
