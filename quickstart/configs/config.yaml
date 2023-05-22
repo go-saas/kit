@@ -4,12 +4,6 @@ services:
   registry:
     type: etcd
     endpoint: http://etcd:2379
-  services:
-    user: {}
-    sys: {}
-    saas: {}
-    realtime: {}
-    dtmservice: {}
 data:
   endpoints:
     databases:

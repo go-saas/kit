@@ -47,3 +47,14 @@ data:
       default:
         addrs: ["host.docker.internal:7379"]
         password: youShouldChangeThis
+logging:
+  zap:
+    level: "info"
+    outputPaths: [ "stdout"]
+    errorOutputPaths: [ "stderr" ]
+    encoding: console
+    development: true
+    encoderConfig:
+      messageKey: message
+      levelKey: level
+      levelEncoder: lowercase

@@ -137,14 +137,6 @@ func (w *WatchSyncAdmin) Start(ctx context.Context) (err error) {
 	ctx, cancel := context.WithCancel(ctx)
 	w.canceler = cancel
 
-	if err != nil {
-		return err
-	}
-
-	if len(w.opt.Services) == 0 {
-		klog.Warn("empty service list. will not sync to apisix admin")
-	}
-
 	//generate watcher for all services
 	g := errgroup.Group{}
 
@@ -174,6 +166,9 @@ func (w *WatchSyncAdmin) Start(ctx context.Context) (err error) {
 		})
 		wg.Add(1)
 	} else {
+		if len(w.opt.Services) == 0 {
+			klog.Warn("empty service list. will not sync to apisix admin")
+		}
 		for _, service := range w.opt.Services {
 			g.Go(func() error {
 				defer wg.Done()

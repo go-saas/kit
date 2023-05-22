@@ -52,7 +52,6 @@ func init() {
 func NewLogger(cfg *conf.Logging) (log.Logger, func(), error) {
 	if cfg != nil {
 		if cfg.Zap != nil {
-
 			var zapCfg zap.Config
 			jsonStr, _ := cfg.Zap.MarshalJSON()
 			if err := json.Unmarshal(jsonStr, &zapCfg); err != nil {
