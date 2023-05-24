@@ -105,9 +105,6 @@ func redisShardsFromOpt(node *centrifuge.Node, redisOpt *redis.UniversalOptions)
 			User:           redisOpt.Username,
 			Password:       redisOpt.Password,
 			DB:             redisOpt.DB,
-			ReadTimeout:    redisOpt.ReadTimeout,
-			IdleTimeout:    redisOpt.IdleTimeout,
-			WriteTimeout:   redisOpt.WriteTimeout,
 			ConnectTimeout: redisOpt.DialTimeout,
 		})
 	}

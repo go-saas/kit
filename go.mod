@@ -29,7 +29,7 @@ require (
 	google.golang.org/protobuf v1.30.0
 	gorm.io/driver/mysql v1.4.4
 	gorm.io/driver/sqlite v1.4.4
-	gorm.io/gorm v1.24.3
+	gorm.io/gorm v1.24.5
 )
 
 require (
@@ -38,7 +38,7 @@ require (
 	github.com/apache/pulsar-client-go v0.8.1
 	github.com/aws/aws-sdk-go v1.44.189
 	github.com/bojanz/currency v1.1.2
-	github.com/centrifugal/centrifuge v0.26.0
+	github.com/centrifugal/centrifuge v0.29.1
 	github.com/dtm-labs/dtm v1.17.3
 	github.com/dtm-labs/dtmdriver-kratos v0.0.9
 	github.com/eko/gocache/v3 v3.1.1
@@ -67,7 +67,7 @@ require (
 	github.com/samber/lo v1.28.2
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/afero v1.9.3
-	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.1.16
+	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.2.0
 	github.com/wneessen/go-mail v0.3.8
 	go.etcd.io/etcd/client/v3 v3.5.5
 	go.opentelemetry.io/otel v1.15.1
@@ -88,7 +88,6 @@ require (
 	github.com/AthenZ/athenz v1.11.10 // indirect
 	github.com/DataDog/zstd v1.5.2 // indirect
 	github.com/FZambia/eagle v0.0.2 // indirect
-	github.com/FZambia/sentinel v1.1.1 // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/XiaoMi/pegasus-go-client v0.0.0-20210427083443-f3b6b08bc4c2 // indirect
 	github.com/apache/pulsar-client-go/oauth2 v0.0.0-20220810085107-c2476193159f // indirect
@@ -97,7 +96,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bradfitz/gomemcache v0.0.0-20220106215444-fb4bf637b56d // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
-	github.com/centrifugal/protocol v0.8.11 // indirect
+	github.com/centrifugal/protocol v0.10.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/cockroachdb/apd/v3 v3.1.2 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
@@ -131,7 +130,6 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
@@ -172,27 +170,27 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
 	github.com/microsoft/go-mssqldb v0.17.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/mna/redisc v1.3.2 // indirect
 	github.com/montanaflynn/stats v0.6.6 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
 	github.com/pegasus-kv/thrift v0.13.0 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pierrec/lz4/v4 v4.1.17 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_golang v1.13.0 // indirect
-	github.com/prometheus/client_model v0.2.0 // indirect
+	github.com/prometheus/client_golang v1.14.0 // indirect
+	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20220927061507-ef77025ab5aa // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
+	github.com/rueian/rueidis v0.0.100-go1.18 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
-	github.com/segmentio/encoding v0.3.5 // indirect
+	github.com/segmentio/encoding v0.3.6 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/twpayne/go-geom v1.4.4 // indirect
-	github.com/uptrace/opentelemetry-go-extra/otelsql v0.1.16 // indirect
+	github.com/uptrace/opentelemetry-go-extra/otelsql v0.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.1 // indirect
@@ -203,7 +201,7 @@ require (
 	go.mongodb.org/mongo-driver v1.11.1 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.15.1 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.15.1 // indirect
-	go.opentelemetry.io/otel/metric v0.32.1 // indirect
+	go.opentelemetry.io/otel/metric v0.38.1 // indirect
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
