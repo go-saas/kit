@@ -158,7 +158,7 @@ func main() {
 		kitdi.Value(bc.Security),
 		kitdi.Value(bc.App),
 		kitdi.Value(bc.Dev),
-
+		kitdi.Value(bc.Idp),
 		kitdi.Value(bc.User),
 		kitdi.Value(bc.Data),
 		kitdi.Value(logger),

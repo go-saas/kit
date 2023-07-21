@@ -8,6 +8,7 @@ import "google/protobuf/wrappers.proto";
 import "blob/blob.proto";
 import "google/protobuf/duration.proto";
 import "authz/authz/def.proto";
+import "idp/idp.proto";
 
 message Bootstrap {
   conf.Data data = 2;
@@ -18,6 +19,7 @@ message Bootstrap {
   conf.Tracers tracing=7;
   conf.AppConfig app=8;
   conf.Dev dev=9;
+  idp.Config idp=10;
 }
 
 

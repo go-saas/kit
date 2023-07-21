@@ -14,3 +14,11 @@ message UserRoleCacheItem{
   }
   repeated UserRole role=1;
 }
+
+message WeChatMiniProgramLoginTwoStepTokenPayload {
+  string app_id=1;
+  string session_key=2;
+  string open_id=3;
+  string union_id=4;
+  string step=5;
+}

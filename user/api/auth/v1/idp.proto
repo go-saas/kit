@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package user.api.auth.v1;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/duration.proto";
+import "validate/validate.proto";
+import "user/api/auth/v1/auth.proto";
+
+option go_package = "github.com/go-saas/kit/user/api/auth/v1;v1";
+
+service WeChatAuthService {
+  rpc MiniProgramCode(WechatMiniProgramCodeReq) returns (WeChatLoginReply){
+    option (google.api.http) = {
+      post: "/v1/auth/wechat/mini/code",
+      body: "*",
+    };
+  }
+
+  rpc MiniProgramPhoneCode(WechatMiniProgramPhoneCodeReq)returns(WeChatLoginReply){
+    option (google.api.http) = {
+      post: "/v1/auth/wechat/mini/phone-code",
+      body: "*",
+    };
+  }
+
+}
+
+
+message WechatMiniProgramCodeReq{
+  string app_id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string code=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+message WechatMiniProgramPhoneCodeReq{
+  string app_id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string code=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string next_token=3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+message WeChatLoginReply{
+  // Next step. could be "", "phone", "phone_realtime",
+  string next=1;
+  string next_token=2;
+  TokenReply token=3;
+}

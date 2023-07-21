@@ -109,6 +109,7 @@ func (um *UserManager) CreateWithPassword(ctx context.Context, u *User, pwd stri
 func (um *UserManager) FindByID(ctx context.Context, id string) (user *User, err error) {
 	return um.userRepo.FindByID(ctx, id)
 }
+
 func (um *UserManager) FindByName(ctx context.Context, name string) (user *User, err error) {
 	name, err = um.lookupNormalizer.Name(ctx, name)
 	if err != nil {
@@ -147,6 +148,34 @@ func (um *UserManager) FindByIdentity(ctx context.Context, identity string) (use
 	return um.FindByName(ctx, identity)
 }
 
+func (um *UserManager) FindByLogin(ctx context.Context, loginProvider string, providerKey string) (*User, error) {
+	return um.userRepo.FindByLogin(ctx, loginProvider, providerKey)
+}
+
+func (um *UserManager) AddLogin(ctx context.Context, user *User, logins []UserLogin) error {
+	//find logins
+	existing, err := um.userRepo.ListLogin(ctx, user)
+	if err != nil {
+		return err
+	}
+	for _, login := range logins {
+		if lo.ContainsBy(existing, func(l *UserLogin) bool {
+			return l.LoginProvider == login.LoginProvider && l.ProviderKey == login.ProviderKey
+		}) {
+			continue
+		}
+		err = um.userRepo.AddLogin(ctx, user, &UserLogin{
+			UserId:        user.ID,
+			LoginProvider: login.LoginProvider,
+			ProviderKey:   login.ProviderKey,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (um *UserManager) Update(ctx context.Context, user *User, p *fieldmaskpb.FieldMask) (err error) {
 	err = um.normalize(ctx, user)
 	if err != nil {
@@ -163,7 +192,6 @@ func (um *UserManager) Delete(ctx context.Context, user *User) error {
 }
 
 func (um *UserManager) CheckPassword(ctx context.Context, user *User, password string) error {
-
 	v := um.checkPassword(ctx, user, password)
 	if v == PasswordVerificationSuccess {
 		return nil

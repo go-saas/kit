@@ -21,7 +21,7 @@ enum ErrorReason {
   PHONE_RECOVER_FAILED=7[(errors.code) = 403];
   PHONE_CONFIRM_FAILED=8[(errors.code) = 403];
 
-  TWO_STEP_FAILED = 9[(errors.code) = 403];
+  TWO_STEP_FAILED = 9[(errors.code) = 400];
 
   CONFIRM_PASSWORD_MISMATCH= 10[(errors.code) = 400];
   REMEMBER_TOKEN_NOT_FOUND = 11[(errors.code) = 403];

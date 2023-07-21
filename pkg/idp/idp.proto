@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package idp;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/go-saas/kit/pkg/idp;idp";
+
+message Config {
+  WeChat wechat=10;
+}
+
+message WeChat{
+
+  message OpenPlatform{
+    string app_id=1;
+    string app_secret=2;
+    string token=3;
+    string encoding_aes_key=4;
+  }
+
+  message OfficialAccount{
+    string app_id=1;
+    string app_secret=2;
+    string token=3;
+    string encoding_aes_key=4;
+  }
+
+  message MiniProgram{
+    string app_id=1;
+    string app_secret=2;
+  }
+
+  message MiniGame{
+    string app_id=1;
+    string app_secret=2;
+  }
+
+  message Work{
+    // corp_id
+    string corp_id=1;
+    // corp_secret,如果需要获取会话存档实例，当前参数请填写聊天内容存档的Secret，可以在企业微信管理端--管理工具--聊天内容存档查看
+    string corp_secret=2;
+    // agent_id
+    string agent_id=3;
+    string ras_private_key =8;
+    // 微信客服回调配置，用于生成签名校验回调请求的合法性
+    string token=9;
+    // 微信客服回调p配置，用于解密回调消息内容对应的密文
+    string encoding_aes_key=10;
+  }
+  message Pay{
+    string app_id=1;
+    string key=2;
+    string mch_id=3;
+
+    string notify_url=4;
+  }
+
+  map<string,OpenPlatform> open_platform=1;
+  map<string,OfficialAccount> official_account=2;
+  map<string,MiniProgram> mini_program=3;
+  map<string,MiniGame> mini_game=4;
+  map<string,Pay> pay=5;
+  map<string,Work> work=6;
+}

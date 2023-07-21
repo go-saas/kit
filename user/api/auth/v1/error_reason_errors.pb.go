@@ -261,13 +261,13 @@ func IsTwoStepFailed(err error) bool {
 		return false
 	}
 	e := errors.FromError(err)
-	return e.Reason == ErrorReason_TWO_STEP_FAILED.String() && e.Code == 403
+	return e.Reason == ErrorReason_TWO_STEP_FAILED.String() && e.Code == 400
 }
 
 func ErrorTwoStepFailedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
 	localizer := localize.FromContext(ctx)
 	if localizer == nil {
-		return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), "")
+		return errors.New(400, ErrorReason_TWO_STEP_FAILED.String(), "")
 	}
 	msg, err := localizer.Localize(&i18n.LocalizeConfig{
 		DefaultMessage: &i18n.Message{
@@ -277,9 +277,9 @@ func ErrorTwoStepFailedLocalized(ctx context.Context, data map[string]interface{
 		PluralCount:  pluralCount,
 	})
 	if err == nil {
-		return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), msg)
+		return errors.New(400, ErrorReason_TWO_STEP_FAILED.String(), msg)
 	} else {
-		return errors.New(403, ErrorReason_TWO_STEP_FAILED.String(), "")
+		return errors.New(400, ErrorReason_TWO_STEP_FAILED.String(), "")
 	}
 }
 

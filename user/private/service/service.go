@@ -8,6 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	kitdi "github.com/go-saas/kit/pkg/di"
+	"github.com/go-saas/kit/pkg/idp"
 	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	"github.com/go-saas/kit/user/api"
@@ -31,6 +32,9 @@ var ProviderSet = kitdi.NewSet(
 	NewGrpcServerRegister,
 	NewHttpServerRegister,
 	NewUserRoleContrib,
+	//idp
+	idp.NewWeChat,
+
 	kitdi.NewProvider(NewUserService, di.As(new(v12.UserServiceServer))),
 	kitdi.NewProvider(NewUserInternalService, di.As(new(v12.UserInternalServiceServer))),
 
@@ -40,6 +44,8 @@ var ProviderSet = kitdi.NewSet(
 
 	kitdi.NewProvider(NewRoleServiceService, di.As(new(v1.RoleServiceServer))),
 	kitdi.NewProvider(NewPermissionService, di.As(new(v15.PermissionServiceServer))),
+
+	kitdi.NewProvider(NewWeChatAuthService, di.As(new(v14.WeChatAuthServiceServer))),
 	api.NewUserTenantContrib,
 	api.NewRefreshProvider,
 	uhttp.NewAuth)
@@ -54,6 +60,7 @@ func NewHttpServerRegister(
 	role *RoleService,
 	permission *PermissionService,
 	authHttp *uhttp.Auth,
+	weChatAuth *WeChatAuthService,
 	vfs vfs.Blob) kithttp.ServiceRegister {
 	return kithttp.ServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 
@@ -84,6 +91,7 @@ func NewHttpServerRegister(
 		route.POST("/v1/user/avatar", user.UpdateAvatar)
 
 		v14.RegisterAuthHTTPServer(srv, auth)
+		v14.RegisterWeChatAuthServiceHTTPServer(srv, weChatAuth)
 		v1.RegisterRoleServiceHTTPServer(srv, role)
 		v15.RegisterPermissionServiceHTTPServer(srv, permission)
 
@@ -102,6 +110,7 @@ func NewGrpcServerRegister(
 	userInternal *UserInternalService,
 	account *AccountService,
 	auth *AuthService,
+	weChatAuth *WeChatAuthService,
 	role *RoleService,
 	permission *PermissionService) kitgrpc.ServiceRegister {
 	return kitgrpc.ServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
@@ -109,6 +118,7 @@ func NewGrpcServerRegister(
 		v12.RegisterUserInternalServiceServer(srv, userInternal)
 		v13.RegisterAccountServer(srv, account)
 		v14.RegisterAuthServer(srv, auth)
+		v14.RegisterWeChatAuthServiceServer(srv, weChatAuth)
 		v1.RegisterRoleServiceServer(srv, role)
 		v15.RegisterPermissionServiceServer(srv, permission)
 	})

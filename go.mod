@@ -66,6 +66,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.28.2
 	github.com/segmentio/ksuid v1.0.4
+	github.com/silenceper/wechat/v2 v2.1.5
 	github.com/spf13/afero v1.9.3
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.2.0
 	github.com/wneessen/go-mail v0.3.8
@@ -112,6 +113,7 @@ require (
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/elliotchance/orderedmap/v2 v2.2.0 // indirect
 	github.com/fatih/color v1.14.1 // indirect
+	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fclairamb/afero-s3 v0.3.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/glebarez/go-sqlite v1.19.1 // indirect
@@ -189,6 +191,9 @@ require (
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
+	github.com/tidwall/gjson v1.14.1 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twpayne/go-geom v1.4.4 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package idp;
+
+import "errors/errors.proto";
+
+option go_package = "github.com/go-saas/kit/pkg/idp;idp";
+
+enum ErrorReason {
+
+  option (errors.default_code) = 500;
+
+  WECHAT_CONFIG_NOT_FOUND = 0 [(errors.code) = 400];
+}

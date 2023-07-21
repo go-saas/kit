@@ -51,6 +51,9 @@
       "name": "Auth"
     },
     {
+      "name": "WeChatAuthService"
+    },
+    {
       "name": "AuthWeb"
     }
   ],
@@ -1004,6 +1007,70 @@
         ],
         "tags": [
           "AuthWeb"
+        ]
+      }
+    },
+    "/v1/auth/wechat/mini/code": {
+      "post": {
+        "operationId": "WeChatAuthService_MiniProgramCode",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1WeChatLoginReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1WechatMiniProgramCodeReq"
+            }
+          }
+        ],
+        "tags": [
+          "WeChatAuthService"
+        ]
+      }
+    },
+    "/v1/auth/wechat/mini/phone-code": {
+      "post": {
+        "operationId": "WeChatAuthService_MiniProgramPhoneCode",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1WeChatLoginReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1WechatMiniProgramPhoneCodeReq"
+            }
+          }
+        ],
+        "tags": [
+          "WeChatAuthService"
         ]
       }
     },
@@ -7837,6 +7904,21 @@
         }
       }
     },
+    "v1WeChatLoginReply": {
+      "type": "object",
+      "properties": {
+        "next": {
+          "type": "string",
+          "title": "Next step. could be \"\", \"phone\", \"phone_realtime\","
+        },
+        "nextToken": {
+          "type": "string"
+        },
+        "token": {
+          "$ref": "#/definitions/v1TokenReply"
+        }
+      }
+    },
     "v1WebLoginAuthReply": {
       "type": "object",
       "properties": {
@@ -7888,6 +7970,40 @@
       "required": [
         "username",
         "password"
+      ]
+    },
+    "v1WechatMiniProgramCodeReq": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "appId",
+        "code"
+      ]
+    },
+    "v1WechatMiniProgramPhoneCodeReq": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "nextToken": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "appId",
+        "code",
+        "nextToken"
       ]
     }
   },

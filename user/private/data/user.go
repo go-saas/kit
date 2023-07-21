@@ -150,6 +150,18 @@ func (u *UserRepo) FindByPhone(ctx context.Context, phone string) (*biz.User, er
 	return user, nil
 }
 
+func (u *UserRepo) FindByEmail(ctx context.Context, email string) (*biz.User, error) {
+	user := &biz.User{}
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope()).Scopes(preloadUserScope(true)).First(user, "normalized_email = ?", email).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return user, nil
+}
+
 func (u *UserRepo) AddLogin(ctx context.Context, user *biz.User, userLogin *biz.UserLogin) error {
 	userLogin.UserId = user.ID
 	err := u.GetDb(ctx).Create(userLogin).Error
@@ -172,18 +184,6 @@ func (u *UserRepo) FindByLogin(ctx context.Context, loginProvider string, provid
 		Joins("left join user_logins on user_logins.user_id = users.id").
 		Where("user_logins.login_provider=? and user_logins.provider_key=?", loginProvider, providerKey).First(user).Error
 	return user, err
-}
-
-func (u *UserRepo) FindByEmail(ctx context.Context, email string) (*biz.User, error) {
-	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope()).Scopes(preloadUserScope(true)).First(user, "normalized_email = ?", email).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return user, nil
 }
 
 func (u *UserRepo) SetToken(ctx context.Context, user *biz.User, loginProvider string, name string, value string) (err error) {
