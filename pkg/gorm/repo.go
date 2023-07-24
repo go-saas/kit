@@ -45,7 +45,7 @@ type (
 
 	// BuildFilterScope implement to override default behaviour of how to filter TQuery
 	BuildFilterScope[TQuery any] interface {
-		BuildFilterScope(q *TQuery) func(db *gorm.DB) *gorm.DB
+		BuildFilterScope(q TQuery) func(db *gorm.DB) *gorm.DB
 	}
 	// DefaultSorting implement to override default behaviour of applying default sorting
 	DefaultSorting interface {
@@ -53,12 +53,12 @@ type (
 	}
 	// BuildSortScope implement to override default behaviour of how to apply sorting
 	BuildSortScope[TQuery any] interface {
-		BuildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB
+		BuildSortScope(q TQuery) func(db *gorm.DB) *gorm.DB
 	}
 
 	// BuildPageScope implement to override default behaviour of how to apply pagination
 	BuildPageScope[TQuery any] interface {
-		BuildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB
+		BuildPageScope(q TQuery) func(db *gorm.DB) *gorm.DB
 	}
 
 	// UpdateAssociation implement to override default behaviour of how to apply association update before entity update
@@ -96,7 +96,7 @@ func (r *Repo[TEntity, TKey, TQuery]) buildDetailScope(withDetail bool) func(db 
 }
 
 // BuildFilterScope filter
-func (r *Repo[TEntity, TKey, TQuery]) buildFilterScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
+func (r *Repo[TEntity, TKey, TQuery]) buildFilterScope(q TQuery) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildFilterScope[TQuery]); ok {
 		return override.BuildFilterScope(q)
 	}
@@ -114,7 +114,7 @@ func (r *Repo[TEntity, TKey, TQuery]) defaultSorting() []string {
 }
 
 // buildSortScope build sorting query
-func (r *Repo[TEntity, TKey, TQuery]) buildSortScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
+func (r *Repo[TEntity, TKey, TQuery]) buildSortScope(q TQuery) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildSortScope[TQuery]); ok {
 		return override.BuildSortScope(q)
 	}
@@ -128,7 +128,7 @@ func (r *Repo[TEntity, TKey, TQuery]) buildSortScope(q *TQuery) func(db *gorm.DB
 }
 
 // BuildPageScope page query
-func (r *Repo[TEntity, TKey, TQuery]) buildPageScope(q *TQuery) func(db *gorm.DB) *gorm.DB {
+func (r *Repo[TEntity, TKey, TQuery]) buildPageScope(q TQuery) func(db *gorm.DB) *gorm.DB {
 	if override, ok := r.override.(BuildPageScope[TQuery]); ok {
 		return override.BuildPageScope(q)
 	}
@@ -149,7 +149,7 @@ func (r *Repo[TEntity, TKey, TQuery]) buildPrimaryField() string {
 	return "id"
 }
 
-func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query *TQuery) ([]*TEntity, error) {
+func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query TQuery) ([]*TEntity, error) {
 	var e TEntity
 	db := r.getDb(ctx).Model(&e)
 	db = db.Scopes(r.buildFilterScope(query), r.buildDetailScope(false), r.buildSortScope(query), r.buildPageScope(query))
@@ -158,7 +158,7 @@ func (r *Repo[TEntity, TKey, TQuery]) List(ctx context.Context, query *TQuery) (
 	return items, res.Error
 }
 
-func (r *Repo[TEntity, TKey, TQuery]) ListCursor(ctx context.Context, q *TQuery) (*data.CursorResult[TEntity], error) {
+func (r *Repo[TEntity, TKey, TQuery]) ListCursor(ctx context.Context, q TQuery) (*data.CursorResult[TEntity], error) {
 	var e TEntity
 	db := r.getDb(ctx).Model(&e)
 	db = db.Scopes(r.buildFilterScope(q), r.buildDetailScope(false))
@@ -210,7 +210,7 @@ func (r *Repo[TEntity, TKey, TQuery]) ListCursor(ctx context.Context, q *TQuery)
 	}, nil
 }
 
-func (r *Repo[TEntity, TKey, TQuery]) First(ctx context.Context, query *TQuery) (*TEntity, error) {
+func (r *Repo[TEntity, TKey, TQuery]) First(ctx context.Context, query TQuery) (*TEntity, error) {
 	var e TEntity
 	db := r.getDb(ctx).Model(&e)
 	db = db.Scopes(r.buildFilterScope(query), r.buildDetailScope(true))
@@ -225,7 +225,7 @@ func (r *Repo[TEntity, TKey, TQuery]) First(ctx context.Context, query *TQuery) 
 	return &item, nil
 }
 
-func (r *Repo[TEntity, TKey, TQuery]) Count(ctx context.Context, query *TQuery) (total int64, filtered int64, err error) {
+func (r *Repo[TEntity, TKey, TQuery]) Count(ctx context.Context, query TQuery) (total int64, filtered int64, err error) {
 	var e TEntity
 	db := r.getDb(ctx).Model(&e)
 	err = db.Count(&total).Error

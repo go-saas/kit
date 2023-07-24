@@ -12,12 +12,12 @@ import (
 )
 
 type RoleRepo struct {
-	*kitgorm.Repo[biz.Role, string, v12.ListRolesRequest]
+	*kitgorm.Repo[biz.Role, string, *v12.ListRolesRequest]
 }
 
 func NewRoleRepo(data *Data, eventbus *eventbus.EventBus) biz.RoleRepo {
 	res := &RoleRepo{}
-	res.Repo = kitgorm.NewRepo[biz.Role, string, v12.ListRolesRequest](data.DbProvider, eventbus, res)
+	res.Repo = kitgorm.NewRepo[biz.Role, string, *v12.ListRolesRequest](data.DbProvider, eventbus, res)
 	return res
 }
 
@@ -25,7 +25,7 @@ func (r *RoleRepo) GetDb(ctx context.Context) *gorm.DB {
 	return GetDb(ctx, r.DbProvider)
 }
 
-//BuildFilterScope filter
+// BuildFilterScope filter
 func (r *RoleRepo) BuildFilterScope(q *v12.ListRolesRequest) func(db *gorm.DB) *gorm.DB {
 	filter := q.Filter
 	return func(db *gorm.DB) *gorm.DB {
@@ -39,7 +39,7 @@ func (r *RoleRepo) BuildFilterScope(q *v12.ListRolesRequest) func(db *gorm.DB) *
 	}
 }
 
-//DefaultSorting get default sorting
+// DefaultSorting get default sorting
 func (r *RoleRepo) DefaultSorting() []string {
 	return []string{"-created_at"}
 }

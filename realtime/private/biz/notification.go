@@ -57,7 +57,7 @@ func FromNotificationEvents(event *v12.NotificationEvent) []*Notification {
 }
 
 type NotificationRepo interface {
-	data.Repo[Notification, string, v1.ListNotificationRequest]
+	data.Repo[Notification, string, *v1.ListNotificationRequest]
 	MyUnreadCount(ctx context.Context) (int32, error)
 	SetMyRead(ctx context.Context, idFilter string) error
 	DeleteMy(ctx context.Context, id string) error

@@ -13,12 +13,12 @@ import (
 )
 
 type TenantRepo struct {
-	*kitgorm.Repo[biz.Tenant, string, v1.ListTenantRequest]
+	*kitgorm.Repo[biz.Tenant, string, *v1.ListTenantRequest]
 }
 
 func NewTenantRepo(eventbus *eventbus.EventBus, data *Data) biz.TenantRepo {
 	res := &TenantRepo{}
-	res.Repo = kitgorm.NewRepo[biz.Tenant, string, v1.ListTenantRequest](data.DbProvider, eventbus, res)
+	res.Repo = kitgorm.NewRepo[biz.Tenant, string, *v1.ListTenantRequest](data.DbProvider, eventbus, res)
 	return res
 }
 

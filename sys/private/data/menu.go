@@ -13,14 +13,14 @@ import (
 )
 
 type MenuRepo struct {
-	*kitgorm.Repo[biz.Menu, string, v1.ListMenuRequest]
+	*kitgorm.Repo[biz.Menu, string, *v1.ListMenuRequest]
 }
 
 var _ biz.MenuRepo = (*MenuRepo)(nil)
 
 func NewMenuRepo(dbProvider sgorm.DbProvider, eventbus *eventbus.EventBus) biz.MenuRepo {
 	res := &MenuRepo{}
-	res.Repo = kitgorm.NewRepo[biz.Menu, string, v1.ListMenuRequest](dbProvider, eventbus, res)
+	res.Repo = kitgorm.NewRepo[biz.Menu, string, *v1.ListMenuRequest](dbProvider, eventbus, res)
 	return res
 }
 

@@ -23,7 +23,7 @@ type Role struct {
 
 // RoleRepo crud role
 type RoleRepo interface {
-	data.Repo[Role, string, v12.ListRolesRequest]
+	data.Repo[Role, string, *v12.ListRolesRequest]
 	FindByName(ctx context.Context, name string) (*Role, error)
 }
 

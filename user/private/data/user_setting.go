@@ -12,12 +12,12 @@ import (
 )
 
 type UserSettingRepo struct {
-	*kitgorm.Repo[biz.UserSetting, string, v1.GetSettingsRequest]
+	*kitgorm.Repo[biz.UserSetting, string, *v1.GetSettingsRequest]
 }
 
 func NewUserSettingRepo(data *Data, eventbus *eventbus.EventBus) biz.UserSettingRepo {
 	res := &UserSettingRepo{}
-	res.Repo = kitgorm.NewRepo[biz.UserSetting, string, v1.GetSettingsRequest](data.DbProvider, eventbus, res)
+	res.Repo = kitgorm.NewRepo[biz.UserSetting, string, *v1.GetSettingsRequest](data.DbProvider, eventbus, res)
 	return res
 }
 
@@ -25,7 +25,7 @@ func (r *UserSettingRepo) GetDb(ctx context.Context) *gorm.DB {
 	return GetDb(ctx, r.DbProvider)
 }
 
-//BuildFilterScope filter
+// BuildFilterScope filter
 func (r *UserSettingRepo) BuildFilterScope(q *v1.GetSettingsRequest) func(db *gorm.DB) *gorm.DB {
 	filter := q.Filter
 	return func(db *gorm.DB) *gorm.DB {

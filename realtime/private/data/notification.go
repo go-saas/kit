@@ -12,12 +12,12 @@ import (
 )
 
 type NotificationRepo struct {
-	*kitgorm.Repo[biz.Notification, string, v1.ListNotificationRequest]
+	*kitgorm.Repo[biz.Notification, string, *v1.ListNotificationRequest]
 }
 
 func NewNotificationRepo(dbProvider sgorm.DbProvider, eventbus *eventbus.EventBus) biz.NotificationRepo {
 	res := &NotificationRepo{}
-	res.Repo = kitgorm.NewRepo[biz.Notification, string, v1.ListNotificationRequest](dbProvider, eventbus, res)
+	res.Repo = kitgorm.NewRepo[biz.Notification, string, *v1.ListNotificationRequest](dbProvider, eventbus, res)
 	return res
 }
 
@@ -25,14 +25,14 @@ func (c *NotificationRepo) GetDb(ctx context.Context) *gorm.DB {
 	return GetDb(ctx, c.Repo.DbProvider)
 }
 
-//BuildDetailScope preload relations
+// BuildDetailScope preload relations
 func (c *NotificationRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db
 	}
 }
 
-//BuildFilterScope filter
+// BuildFilterScope filter
 func (c *NotificationRepo) BuildFilterScope(q *v1.ListNotificationRequest) func(db *gorm.DB) *gorm.DB {
 	filter := q.Filter
 	return func(db *gorm.DB) *gorm.DB {

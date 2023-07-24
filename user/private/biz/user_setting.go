@@ -23,7 +23,7 @@ type UpdateUserSetting struct {
 }
 
 type UserSettingRepo interface {
-	data.Repo[UserSetting, string, v1.GetSettingsRequest]
+	data.Repo[UserSetting, string, *v1.GetSettingsRequest]
 	FindByUser(ctx context.Context, userId string, query *v1.GetSettingsRequest) ([]*UserSetting, error)
 	UpdateByUser(ctx context.Context, userId string, updateBatch []UpdateUserSetting) error
 }

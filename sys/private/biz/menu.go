@@ -43,7 +43,7 @@ type MenuPermissionRequirement struct {
 }
 
 type MenuRepo interface {
-	data.Repo[Menu, string, v1.ListMenuRequest]
+	data.Repo[Menu, string, *v1.ListMenuRequest]
 	FindByName(ctx context.Context, name string) (*Menu, error)
 }
 

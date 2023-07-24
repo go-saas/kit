@@ -57,7 +57,7 @@ type TenantFeature struct {
 }
 
 type TenantRepo interface {
-	data.Repo[Tenant, string, v1.ListTenantRequest]
+	data.Repo[Tenant, string, *v1.ListTenantRequest]
 	FindByIdOrName(ctx context.Context, idOrName string) (*Tenant, error)
 }
 
