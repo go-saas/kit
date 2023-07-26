@@ -19,7 +19,6 @@ message Bootstrap {
   conf.Tracers tracing=7;
   conf.AppConfig app=8;
   conf.Dev dev=9;
-  idp.Config idp=10;
 }
 
 
@@ -39,6 +38,6 @@ message UserConf{
   google.protobuf.Duration phone_recover_expiry = 8;
 
   optional google.protobuf.StringValue totp_2fa_issuer=9;
-
+  idp.Config idp=10;
 }
 

@@ -289,35 +289,6 @@ func (m *Bootstrap) validate(all bool) error {
 		}
 	}
 
-	if all {
-		switch v := interface{}(m.GetIdp()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, BootstrapValidationError{
-					field:  "Idp",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, BootstrapValidationError{
-					field:  "Idp",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetIdp()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return BootstrapValidationError{
-				field:  "Idp",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if len(errors) > 0 {
 		return BootstrapMultiError(errors)
 	}
@@ -662,6 +633,35 @@ func (m *UserConf) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return UserConfValidationError{
 				field:  "PhoneRecoverExpiry",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetIdp()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserConfValidationError{
+					field:  "Idp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserConfValidationError{
+					field:  "Idp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetIdp()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserConfValidationError{
+				field:  "Idp",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
