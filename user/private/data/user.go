@@ -65,11 +65,15 @@ func buildUserScope(filter *v1.UserFilter) func(db *gorm.DB) *gorm.DB {
 }
 
 func buildUserTenantsScope() func(db *gorm.DB) *gorm.DB {
+	//TODO this logic is like shit
 	return func(db *gorm.DB) *gorm.DB {
 		if !biz.FromEnableUserTenantContext(db.Statement.Context) {
 			return db
 		}
 		ti, _ := saas.FromCurrentTenant(db.Statement.Context)
+		if len(ti.GetId()) == 0 {
+			return db
+		}
 		subQuery := db.Session(&gorm.Session{NewDB: true}).Model(new(biz.UserTenant))
 		subQuery = subQuery.Where("tenant_id = ?", ti.GetId())
 		subQuery = subQuery.Select("user_id")
