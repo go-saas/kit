@@ -35,7 +35,7 @@ services:
 
 
   hydra:
-    image: oryd/hydra:v2.0.3
+    image: oryd/hydra:v2.2.0
     ports:
       - "4444:4444" # Public port
       - "4445:4445" # Admin port
@@ -52,7 +52,7 @@ services:
       - hydra-migrate
 
   hydra-migrate:
-    image: oryd/hydra:v2.0.3
+    image: oryd/hydra:v2.2.0
     environment:
       - DSN=mysql://root:youShouldChangeThis@tcp(mysqld:3306)/kit?max_conns=20&max_idle_conns=4
     command:
