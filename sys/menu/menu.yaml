@@ -93,10 +93,6 @@ menus:
     icon: "ToolOutlined"
     meta:
     priority: 1000
-    requirement:
-      - namespace: "dev"
-        resource: "*"
-        action: "*"
     children:
       - name: "docs"
         icon: "ApiOutlined"
