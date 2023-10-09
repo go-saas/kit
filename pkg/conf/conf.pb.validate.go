@@ -716,39 +716,6 @@ func (m *Database) validate(all bool) error {
 
 	// no validation rules for Debug
 
-	if m.TablePrefix != nil {
-
-		if all {
-			switch v := interface{}(m.GetTablePrefix()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DatabaseValidationError{
-						field:  "TablePrefix",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, DatabaseValidationError{
-						field:  "TablePrefix",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetTablePrefix()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return DatabaseValidationError{
-					field:  "TablePrefix",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if len(errors) > 0 {
 		return DatabaseMultiError(errors)
 	}

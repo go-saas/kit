@@ -20,7 +20,6 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"gorm.io/gorm/schema"
 	"reflect"
 )
 
@@ -148,21 +147,12 @@ func (c *DbCache) GetOrSet(ctx context.Context, key, dsn string) (*gorm.DB, erro
 }
 
 func GetDbConf(l klog.Logger, key string, dbConfig *conf.Database) *gorm.Config {
-	tp := ""
-	if dbConfig.TablePrefix == nil {
-		tp = fmt.Sprintf("kit_%s_", key)
-	} else {
-		tp = dbConfig.TablePrefix.Value
-	}
 	dbLogger := &Logger{
 		Logger:   l,
 		LogLevel: logger.Info,
 	}
 	return &gorm.Config{
-		Logger: dbLogger,
-		NamingStrategy: schema.NamingStrategy{
-			TablePrefix: tp,
-		}}
+		Logger: dbLogger}
 }
 
 func ApplyDefault(client *gorm.DB, dbConfig *conf.Database) *gorm.DB {

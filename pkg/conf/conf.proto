@@ -72,7 +72,6 @@ message Database {
   string driver = 1;
   string source = 2;
   bool debug = 3;
-  optional google.protobuf.StringValue table_prefix = 4;
 }
 
 message Endpoints{
