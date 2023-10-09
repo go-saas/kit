@@ -3,26 +3,26 @@ package data
 import (
 	"errors"
 	gorm2 "github.com/go-saas/kit/pkg/gorm"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/kit/user/private/biz"
 	"github.com/go-saas/saas"
 	"github.com/google/uuid"
+	"github.com/goxiaoy/go-eventbus"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
-	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"gorm.io/gorm"
 )
 import "context"
 
 type UserRepo struct {
-	Repo
+	*kitgorm.Repo[biz.User, string, *v1.ListUsersRequest]
 }
 
-func NewUserRepo(data *Data) biz.UserRepo {
-	return &UserRepo{
-		Repo{
-			DbProvider: data.DbProvider,
-		},
-	}
+func NewUserRepo(data *Data, eventbus *eventbus.EventBus) biz.UserRepo {
+	res := &UserRepo{}
+	res.Repo = kitgorm.NewRepo[biz.User, string, *v1.ListUsersRequest](data.DbProvider, eventbus, res)
+	return res
 }
 
 var _ biz.UserRepo = (*UserRepo)(nil)
@@ -31,22 +31,12 @@ func (u *UserRepo) GetDb(ctx context.Context) *gorm.DB {
 	return GetDb(ctx, u.DbProvider)
 }
 
-func preloadUserScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		if withDetail {
-			return db.Preload("Roles").Preload("Tenants")
-		}
-		return db
-	}
-}
-
 func buildUserScope(filter *v1.UserFilter) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		ret := db
 		if filter == nil {
 			return ret
 		}
-
 		if len(filter.And) > 0 {
 			for _, filter := range filter.And {
 				ret = ret.Where(buildUserScope(filter)(db.Session(&gorm.Session{NewDB: true})))
@@ -65,43 +55,65 @@ func buildUserScope(filter *v1.UserFilter) func(db *gorm.DB) *gorm.DB {
 }
 
 func buildUserTenantsScope() func(db *gorm.DB) *gorm.DB {
-	//TODO this logic is like shit
 	return func(db *gorm.DB) *gorm.DB {
-		if !biz.FromEnableUserTenantContext(db.Statement.Context) {
-			return db
-		}
 		ti, _ := saas.FromCurrentTenant(db.Statement.Context)
-		if len(ti.GetId()) == 0 {
-			return db
-		}
-		subQuery := db.Session(&gorm.Session{NewDB: true}).Model(new(biz.UserTenant))
-		subQuery = subQuery.Where("tenant_id = ?", ti.GetId())
-		subQuery = subQuery.Select("user_id")
-		subQuery = subQuery.Group("user_id").Having("COUNT(user_id) > 0")
-		return db.Where("id in (?)", subQuery)
+		return db.Joins("INNER JOIN user_tenants on user_tenants.user_id = users.id").
+			Where("user_tenants.tenant_id = ?", ti.GetId()).Group("users.id")
 	}
 }
 
+func (u *UserRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Preload("Roles").Preload("Tenants")
+	}
+}
+func (u *UserRepo) BuildFilterScope(q *v1.ListUsersRequest) func(db *gorm.DB) *gorm.DB {
+	return buildUserScope(q.Filter)
+}
+
+// DefaultSorting get default sorting
+func (u *UserRepo) DefaultSorting() []string {
+	return []string{"-created_at"}
+}
+
 func (u *UserRepo) List(ctx context.Context, query *v1.ListUsersRequest) ([]*biz.User, error) {
-	db := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope())
-	db = db.Scopes(buildUserScope(query.Filter), func(db *gorm.DB) *gorm.DB {
-		return db.Preload("Roles")
-	}, gorm2.SortScope(query, []string{"-created_at"}), gorm2.PageScope(query))
+	var e biz.User
+	db := u.GetDb(ctx).Model(&e)
+	db = db.Scopes(u.BuildFilterScope(query), u.BuildDetailScope(false), buildUserTenantsScope(), kitgorm.SortScope(query, u.DefaultSorting()), kitgorm.PageScope(query))
 	var items []*biz.User
 	res := db.Find(&items)
 	return items, res.Error
 }
 
-func (u *UserRepo) Count(ctx context.Context, query *v1.UserFilter) (total int64, filtered int64, err error) {
-	db := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope())
+func (u *UserRepo) Count(ctx context.Context, query *v1.ListUsersRequest) (total int64, filtered int64, err error) {
+	var e biz.User
+	db := u.GetDb(ctx).Model(&e).Scopes(buildUserTenantsScope())
 	err = db.Count(&total).Error
 	if err != nil {
 		return
 	}
-	db = db.Scopes(buildUserScope(query))
+	db = db.Scopes(u.BuildFilterScope(query))
+	err = db.Count(&filtered).Error
+	return
+}
+
+func (u *UserRepo) ListAdmin(ctx context.Context, query *v1.AdminListUsersRequest) ([]*biz.User, error) {
+	var e biz.User
+	db := u.GetDb(ctx).Model(&e)
+	db = db.Scopes(buildUserScope(query.Filter), u.BuildDetailScope(false), kitgorm.SortScope(query, u.DefaultSorting()), kitgorm.PageScope(query))
+	var items []*biz.User
+	res := db.Find(&items)
+	return items, res.Error
+}
+
+func (u *UserRepo) CountAdmin(ctx context.Context, query *v1.AdminListUsersRequest) (total int64, filtered int64, err error) {
+	var e biz.User
+	db := u.GetDb(ctx).Model(&e)
+	err = db.Count(&total).Error
 	if err != nil {
 		return
 	}
+	db = db.Scopes(buildUserScope(query.Filter))
 	err = db.Count(&filtered).Error
 	return
 }
@@ -110,29 +122,17 @@ func (u *UserRepo) Create(ctx context.Context, user *biz.User) error {
 	return u.GetDb(ctx).Create(user).Error
 }
 
-func (u *UserRepo) Update(ctx context.Context, user *biz.User, p *fieldmaskpb.FieldMask) error {
+func (u *UserRepo) Update(ctx context.Context, id string, user *biz.User, p query.Select) error {
 	return concurrency.ConcurrentUpdates(u.GetDb(ctx).Model(user).Omit("Roles", "Tenants"), *user).Error
 }
 
-func (u *UserRepo) Delete(ctx context.Context, user *biz.User) error {
-	return u.GetDb(ctx).Delete(user).Error
-}
-
 func (u *UserRepo) FindByID(ctx context.Context, id string) (*biz.User, error) {
-	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope()).Scopes(preloadUserScope(true)).First(user, "id=?", id).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return user, nil
+	return u.Get(ctx, id)
 }
 
 func (u *UserRepo) FindByName(ctx context.Context, name string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope()).Scopes(preloadUserScope(true)).First(user, "normalized_username = ?", name).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(u.BuildDetailScope(true)).First(user, "normalized_username = ?", name).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -144,7 +144,7 @@ func (u *UserRepo) FindByName(ctx context.Context, name string) (*biz.User, erro
 
 func (u *UserRepo) FindByPhone(ctx context.Context, phone string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope()).Scopes(preloadUserScope(true)).First(user, "phone = ?", phone).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(u.BuildDetailScope(true)).First(user, "phone = ?", phone).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -156,7 +156,7 @@ func (u *UserRepo) FindByPhone(ctx context.Context, phone string) (*biz.User, er
 
 func (u *UserRepo) FindByEmail(ctx context.Context, email string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope()).Scopes(preloadUserScope(true)).First(user, "normalized_email = ?", email).Error
+	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(u.BuildDetailScope(true)).First(user, "normalized_email = ?", email).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -184,7 +184,7 @@ func (u *UserRepo) ListLogin(ctx context.Context, user *biz.User) (userLogins []
 
 func (u *UserRepo) FindByLogin(ctx context.Context, loginProvider string, providerKey string) (*biz.User, error) {
 	user := &biz.User{}
-	err := u.GetDb(ctx).Model(&biz.User{}).Scopes(buildUserTenantsScope()).
+	err := u.GetDb(ctx).Model(&biz.User{}).
 		Joins("left join user_logins on user_logins.user_id = users.id").
 		Where("user_logins.login_provider=? and user_logins.provider_key=?", loginProvider, providerKey).First(user).Error
 	return user, err

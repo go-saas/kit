@@ -1,0 +1,137 @@
+syntax = "proto3";
+
+package user.api.user.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "user/api/role/v1/role.proto";
+import "blob/blob.proto";
+import "query/operation.proto";
+import "saas/api/tenant/v1/tenant.proto";
+import "user/api/user/v1/user.proto";
+option go_package = "github.com/go-saas/kit/user/api/user/v1;v1";
+
+service UserAdminService{
+  //ListUsers
+  // authz: user.admin.user,*,list
+  rpc ListUsersAdmin(AdminListUsersRequest)returns(AdminListUsersResponse){
+    option (google.api.http) = {
+      get: "/v1/user/admin/users"
+      additional_bindings:{
+        post: "/v1/user/admin/user/list"
+        body: "*"
+      }
+    };
+  }
+  //GetUser
+  // authz: user.admin.user,id,get
+  rpc GetUserAdmin (AdminGetUserRequest) returns (User){
+    option (google.api.http) = {
+      get: "/v1/user/admin/user/{id}"
+    };
+  }
+  // CreateUser
+  // authz: user.admin.user,*,create
+  rpc CreateUserAdmin(AdminCreateUserRequest) returns(User){
+    option (google.api.http) = {
+      post: "/v1/user/admin/user"
+      body:"*"
+    };
+  }
+
+  //UpdateUser
+  // authz: user.admin.user,id,update
+  rpc UpdateUserAdmin(AdminUpdateUserRequest) returns(User){
+    option (google.api.http) = {
+      put: "/v1/user/admin/user/{user.id}"
+      body: "*"
+      additional_bindings: [
+        {
+          patch: "/v1/user/admin/user/{user.id}"
+          body: "*"
+        }
+      ]
+    };
+  }
+
+  //DeleteUser
+  // authz: user.admin.user,id,delete
+  rpc DeleteUserAdmin(AdminDeleteUserRequest) returns(AdminDeleteUserResponse){
+    option (google.api.http) = {
+      delete: "/v1/user/admin/user/{id}"
+    };
+  }
+}
+
+message AdminListUsersRequest{
+  int32 page_offset =1;
+  int32 page_size = 2;
+  string search = 3;
+  repeated string sort =4;
+  google.protobuf.FieldMask fields=5;
+  UserFilter filter =6;
+}
+
+message AdminGetUserRequest{
+  string  id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+message AdminListUsersResponse{
+  int32 total_size =1;
+  int32 filter_size =2;
+
+  repeated User items = 3;
+
+}
+
+message AdminCreateUserRequest{
+
+  optional google.protobuf.StringValue username =1;
+  optional google.protobuf.StringValue name=2;
+  optional google.protobuf.StringValue phone =3;
+  optional google.protobuf.StringValue email=4 [(validate.rules).string.email = true];
+
+  string password=5;
+  string confirm_password=6;
+  optional google.protobuf.Timestamp birthday=7;
+  //
+  Gender gender=8;
+  string avatar=9;
+
+}
+
+message AdminUpdateUserRequest{
+  AdminUpdateUser user=2 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 3;
+}
+
+message AdminUpdateUser{
+  string id =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+
+  optional google.protobuf.StringValue username =2;
+  optional google.protobuf.StringValue name=3;
+  optional google.protobuf.StringValue phone =4;
+  optional google.protobuf.StringValue email=5;
+  optional google.protobuf.Timestamp birthday=6;
+  //
+  Gender gender=7;
+
+  //reset password
+  string password=8;
+  string confirm_password=9;
+  string avatar=10;
+
+}
+
+message AdminDeleteUserRequest{
+  string id =1;
+}
+
+message AdminDeleteUserResponse{
+
+}

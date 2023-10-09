@@ -41,7 +41,14 @@ type AccountService struct {
 	normalizer    biz.LookupNormalizer
 }
 
-func NewAccountService(um *biz.UserManager, blob vfs.Blob, tenantService v13.TenantServiceServer, userSetting biz.UserSettingRepo, userAddr biz.UserAddressRepo, normalizer biz.LookupNormalizer) *AccountService {
+func NewAccountService(
+	um *biz.UserManager,
+	blob vfs.Blob,
+	tenantService v13.TenantServiceServer,
+	userSetting biz.UserSettingRepo,
+	userAddr biz.UserAddressRepo,
+	normalizer biz.LookupNormalizer,
+) *AccountService {
 	return &AccountService{
 		um:            um,
 		blob:          blob,
@@ -365,7 +372,7 @@ func (s *AccountService) UpdateAvatar(ctx http.Context) error {
 			return nil, err
 		}
 		u.Avatar = &normalizedName
-		err = s.um.Update(ctx, u, &fieldmaskpb.FieldMask{Paths: []string{"avatar"}})
+		err = s.um.Update(ctx, u, query.NewField(&fieldmaskpb.FieldMask{Paths: []string{"avatar"}}))
 		if err != nil {
 			return nil, err
 		}

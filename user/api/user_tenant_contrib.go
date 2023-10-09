@@ -12,10 +12,10 @@ import (
 //
 // check whether user can present in a tenant
 type UserTenantContrib struct {
-	srv v1.UserServiceServer
+	srv v1.UserInternalServiceServer
 }
 
-func NewUserTenantContrib(client v1.UserServiceServer) *UserTenantContrib {
+func NewUserTenantContrib(client v1.UserInternalServiceServer) *UserTenantContrib {
 	return &UserTenantContrib{
 		srv: client,
 	}

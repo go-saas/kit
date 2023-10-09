@@ -35,6 +35,17 @@ other = "更新用户"
 [permission.user.user.delete]
 other = "删除用户"
 
+[permission.user.admin.user.group]
+other = "管理员用户"
+[permission.user.admin.user.read]
+other = "管理员读取用户"
+[permission.user.admin.user.create]
+other = "管理员创建用户"
+[permission.user.admin.user.update]
+other = "管理员更新用户"
+[permission.user.admin.user.delete]
+other = "管理员删除用户"
+
 [permission.user.role.group]
 other = "角色"
 [permission.user.role.read]

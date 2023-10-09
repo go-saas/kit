@@ -35,7 +35,7 @@ var ProviderSet = kitdi.NewSet(
 	//idp
 	idp.NewWeChat,
 
-	kitdi.NewProvider(NewUserService, di.As(new(v12.UserServiceServer))),
+	kitdi.NewProvider(NewUserService, di.As(new(v12.UserServiceServer), new(v12.UserAdminServiceServer))),
 	kitdi.NewProvider(NewUserInternalService, di.As(new(v12.UserInternalServiceServer))),
 
 	kitdi.NewProvider(NewAccountService, di.As(new(v13.AccountServer))),
@@ -81,6 +81,7 @@ func NewHttpServerRegister(
 
 		srv.HandlePrefix("/v1/auth/web", http.StripPrefix("/v1/auth/web", router))
 
+		v12.RegisterUserAdminServiceHTTPServer(srv, user)
 		v12.RegisterUserServiceHTTPServer(srv, user)
 
 		v13.RegisterAccountHTTPServer(srv, account)
@@ -114,6 +115,7 @@ func NewGrpcServerRegister(
 	role *RoleService,
 	permission *PermissionService) kitgrpc.ServiceRegister {
 	return kitgrpc.ServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
+		v12.RegisterUserAdminServiceServer(srv, user)
 		v12.RegisterUserServiceServer(srv, user)
 		v12.RegisterUserInternalServiceServer(srv, userInternal)
 		v13.RegisterAccountServer(srv, account)

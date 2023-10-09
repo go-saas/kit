@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-saas/kit/event"
 	cache2 "github.com/go-saas/kit/pkg/cache"
+	"github.com/go-saas/kit/pkg/query"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	v12 "github.com/go-saas/kit/user/api/auth/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
@@ -73,8 +74,16 @@ func (um *UserManager) List(ctx context.Context, query *v1.ListUsersRequest) ([]
 	return um.userRepo.List(ctx, query)
 }
 
-func (um *UserManager) Count(ctx context.Context, query *v1.UserFilter) (total int64, filtered int64, err error) {
+func (um *UserManager) Count(ctx context.Context, query *v1.ListUsersRequest) (total int64, filtered int64, err error) {
 	return um.userRepo.Count(ctx, query)
+}
+
+func (um *UserManager) ListAdmin(ctx context.Context, query *v1.AdminListUsersRequest) ([]*User, error) {
+	return um.userRepo.ListAdmin(ctx, query)
+}
+
+func (um *UserManager) CountAdmin(ctx context.Context, query *v1.AdminListUsersRequest) (total int64, filtered int64, err error) {
+	return um.userRepo.CountAdmin(ctx, query)
 }
 
 func (um *UserManager) Create(ctx context.Context, u *User) (err error) {
@@ -176,7 +185,7 @@ func (um *UserManager) AddLogin(ctx context.Context, user *User, logins []UserLo
 	return nil
 }
 
-func (um *UserManager) Update(ctx context.Context, user *User, p *fieldmaskpb.FieldMask) (err error) {
+func (um *UserManager) Update(ctx context.Context, user *User, q query.Select) (err error) {
 	err = um.normalize(ctx, user)
 	if err != nil {
 		return err
@@ -184,11 +193,11 @@ func (um *UserManager) Update(ctx context.Context, user *User, p *fieldmaskpb.Fi
 	if err = um.validateUser(ctx, user); err != nil {
 		return
 	}
-	return um.userRepo.Update(ctx, user, p)
+	return um.userRepo.Update(ctx, user.ID.String(), user, q)
 }
 
 func (um *UserManager) Delete(ctx context.Context, user *User) error {
-	return um.userRepo.Delete(ctx, user)
+	return um.userRepo.Delete(ctx, user.ID.String())
 }
 
 func (um *UserManager) CheckPassword(ctx context.Context, user *User, password string) error {
@@ -200,7 +209,7 @@ func (um *UserManager) CheckPassword(ctx context.Context, user *User, password s
 		if err := um.updatePassword(ctx, user, &password, false); err != nil {
 			return err
 		}
-		err := um.userRepo.Update(ctx, user, &fieldmaskpb.FieldMask{Paths: []string{"password"}})
+		err := um.userRepo.Update(ctx, user.ID.String(), user, query.NewField(&fieldmaskpb.FieldMask{Paths: []string{"password"}}))
 		return err
 	}
 	//fail
@@ -214,14 +223,14 @@ func (um *UserManager) ChangePassword(ctx context.Context, user *User, current s
 	if err := um.updatePassword(ctx, user, &newPwd, true); err != nil {
 		return err
 	}
-	return um.Update(ctx, user, &fieldmaskpb.FieldMask{Paths: []string{"password"}})
+	return um.Update(ctx, user, query.NewField(&fieldmaskpb.FieldMask{Paths: []string{"password"}}))
 }
 
 func (um *UserManager) UpdatePassword(ctx context.Context, user *User, newPwd string) error {
 	if err := um.updatePassword(ctx, user, &newPwd, true); err != nil {
 		return err
 	}
-	return um.Update(ctx, user, &fieldmaskpb.FieldMask{Paths: []string{"password"}})
+	return um.Update(ctx, user, query.NewField(&fieldmaskpb.FieldMask{Paths: []string{"password"}}))
 }
 
 func (um *UserManager) GenerateEmailForgetPasswordToken(ctx context.Context, user *User) (string, error) {

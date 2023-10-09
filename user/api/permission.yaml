@@ -29,6 +29,26 @@ groups:
         namespace: "user.user"
         action: "delete"
 
+  - name: "permission.user.admin.user.group"
+    side: HOST_ONLY
+    def:
+      - name: "permission.user.admin.user.any"
+        namespace: "user.admin.user"
+        action: "*"
+        internal: true
+      - name: "permission.user.admin.user.read"
+        namespace: "user.admin.user"
+        action: "read"
+      - name: "permission.user.admin.user.create"
+        namespace: "user.admin.user"
+        action: "create"
+      - name: "permission.user.admin.user.update"
+        namespace: "user.admin.user"
+        action: "update"
+      - name: "permission.user.admin.user.delete"
+        namespace: "user.admin.user"
+        action: "delete"
+
   - name: "permission.user.role.group"
     def:
       - name: "permission.user.role.any"

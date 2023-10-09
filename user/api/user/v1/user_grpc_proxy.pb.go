@@ -55,9 +55,6 @@ func (c *userServiceClientProxy) InviteUser(ctx context.Context, in *InviteUserR
 func (c *userServiceClientProxy) SearchUser(ctx context.Context, in *SearchUserRequest) (*SearchUserResponse, error) {
 	return c.cc.SearchUser(ctx, in)
 }
-func (c *userServiceClientProxy) CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
-	return c.cc.CheckUserTenant(ctx, in)
-}
 
 // userInternalServiceClientProxy is the proxy to turn UserInternalService client to server interface.
 type userInternalServiceClientProxy struct {
@@ -70,4 +67,7 @@ func NewUserInternalServiceClientProxy(cc UserInternalServiceClient) UserInterna
 
 func (c *userInternalServiceClientProxy) CreateTenant(ctx context.Context, in *v1.CreateTenantRequest) (*emptypb.Empty, error) {
 	return c.cc.CreateTenant(ctx, in)
+}
+func (c *userInternalServiceClientProxy) CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
+	return c.cc.CheckUserTenant(ctx, in)
 }

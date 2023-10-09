@@ -5,8 +5,7 @@ import (
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
 	api2 "github.com/go-saas/kit/pkg/api"
-	"github.com/go-saas/kit/pkg/errors"
-	v12 "github.com/go-saas/kit/saas/api/tenant/v1"
+	"github.com/go-saas/kit/pkg/query"
 	"github.com/go-saas/saas"
 	"github.com/goxiaoy/vfs"
 	"io"
@@ -34,7 +33,6 @@ import (
 )
 
 type UserService struct {
-	pb.UnimplementedUserServiceServer
 	um     *biz.UserManager
 	rm     *biz.RoleManager
 	auth   authz.Service
@@ -43,7 +41,14 @@ type UserService struct {
 	logger *klog.Helper
 }
 
-func NewUserService(um *biz.UserManager, rm *biz.RoleManager, auth authz.Service, blob vfs.Blob, trust api2.TrustedContextValidator, l klog.Logger) *UserService {
+func NewUserService(
+	um *biz.UserManager,
+	rm *biz.RoleManager,
+	auth authz.Service,
+	blob vfs.Blob,
+	trust api2.TrustedContextValidator,
+	l klog.Logger,
+) *UserService {
 	return &UserService{
 		um:     um,
 		rm:     rm,
@@ -54,13 +59,15 @@ func NewUserService(um *biz.UserManager, rm *biz.RoleManager, auth authz.Service
 	}
 }
 
+var _ pb.UserServiceServer = (*UserService)(nil)
+var _ pb.UserAdminServiceServer = (*UserService)(nil)
+
 func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	ctx = biz.NewEnableUserTenantsContext(ctx)
 	ret := &pb.ListUsersResponse{}
-	totalCount, filterCount, err := s.um.Count(ctx, req.Filter)
+	totalCount, filterCount, err := s.um.Count(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -88,13 +95,15 @@ func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.Id), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	ctx = biz.NewEnableUserTenantsContext(ctx)
 	u, err := s.um.FindByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
 	if u == nil {
-		return nil, errors2.NotFound("", "")
+		return nil, pb.ErrorUserNotFoundLocalized(ctx, nil, nil)
+	}
+	if err := u.CheckInCurrentTenant(ctx); err != nil {
+		return nil, err
 	}
 	res := MapBizUserToApi(ctx, u, s.blob)
 	return res, nil
@@ -179,62 +188,17 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 }
 
 func (s *UserService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.User, error) {
-
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.User.Id), authz.UpdateAction); err != nil {
 		return nil, err
-	}
-	ctx = biz.NewEnableUserTenantsContext(ctx)
-	// check confirm password
-	if req.User.Password != "" {
-		if req.User.ConfirmPassword != req.User.Password {
-			return nil, pb.ErrorConfirmPasswordMismatchLocalized(ctx, nil, nil)
-		}
-	}
-
-	if req.UpdateMask != nil {
-		fmutils.Filter(req, req.UpdateMask.Paths)
 	}
 	u, err := s.um.FindByID(ctx, req.User.Id)
 	if err != nil {
 		return nil, err
 	}
 	if u == nil {
-		return nil, errors2.NotFound("", "")
+		return nil, pb.ErrorUserNotFoundLocalized(ctx, nil, nil)
 	}
-
-	if req.User.Password != "" {
-		//reset password
-		if err := s.um.UpdatePassword(ctx, u, req.User.Password); err != nil {
-			return nil, err
-		}
-	}
-	if req.GetUser().GetUsername() != nil {
-		v := req.GetUser().GetUsername().Value
-		u.Username = &v
-	}
-
-	if req.GetUser().GetName() != nil {
-		v := req.GetUser().GetName().Value
-		u.Name = &v
-	}
-	if req.GetUser().GetPhone() != nil {
-		v := req.GetUser().GetPhone().Value
-		u.Phone = &v
-	}
-	if req.GetUser().GetEmail() != nil {
-		v := req.GetUser().GetEmail().Value
-		u.Email = &v
-	}
-	if req.GetUser().GetBirthday() != nil {
-		v := req.GetUser().GetBirthday().AsTime()
-		u.Birthday = &v
-	}
-	if len(req.User.Avatar) > 0 {
-		u.Avatar = &req.User.Avatar
-	}
-	g := req.GetUser().Gender.Enum().String()
-	u.Gender = &g
-	if err := s.um.Update(ctx, u, nil); err != nil {
+	if err := u.CheckInCurrentTenant(ctx); err != nil {
 		return nil, err
 	}
 
@@ -263,34 +227,21 @@ func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.Id), authz.DeleteAction); err != nil {
 		return nil, err
 	}
-	ctx = biz.NewEnableUserTenantsContext(ctx)
+
 	u, err := s.um.FindByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
 	if u == nil {
-		return nil, errors2.NotFound("", "")
+		return nil, pb.ErrorUserNotFoundLocalized(ctx, nil, nil)
+	}
+	if err := u.CheckInCurrentTenant(ctx); err != nil {
+		return nil, err
 	}
 	ti, _ := saas.FromCurrentTenant(ctx)
-	if req.Force {
-
-		creatorId := ""
-		if u.CreatedTenant != nil {
-			creatorId = *u.CreatedTenant
-		}
-		if ti.GetId() != creatorId {
-			//TODO ??other matching?
-			return nil, errors2.Forbidden("", "")
-		}
-		if err := s.um.Delete(ctx, u); err != nil {
-			return nil, err
-		}
-		return &pb.DeleteUserResponse{}, nil
-	} else {
-		//just remove from tenant
-		if err := s.um.RemoveFromTenant(ctx, u.ID.String(), ti.GetId()); err != nil {
-			return nil, err
-		}
+	//just remove from tenant
+	if err := s.um.RemoveFromTenant(ctx, u.ID.String(), ti.GetId()); err != nil {
+		return nil, err
 	}
 	return &pb.DeleteUserResponse{}, nil
 }
@@ -299,13 +250,16 @@ func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleReque
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.Id), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	ctx = biz.NewEnableUserTenantsContext(ctx)
+
 	u, err := s.um.FindByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
 	if u == nil {
-		return nil, errors2.NotFound("", "")
+		return nil, pb.ErrorUserNotFoundLocalized(ctx, nil, nil)
+	}
+	if err := u.CheckInCurrentTenant(ctx); err != nil {
+		return nil, err
 	}
 	roles, err := s.um.GetRoles(ctx, u.ID.String())
 	if err != nil {
@@ -378,46 +332,6 @@ func (s *UserService) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 	return ret, err
 }
 
-// CheckUserTenant internal api for check user tenant
-func (s *UserService) CheckUserTenant(ctx context.Context, req *pb.CheckUserTenantRequest) (*pb.CheckUserTenantReply, error) {
-	//check permission
-	if err := api2.ErrIfUntrusted(ctx, s.trust); err != nil {
-		return nil, err
-	}
-
-	ok, err := s.checkUserTenantInternal(ctx, req.UserId, req.TenantId)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.CheckUserTenantReply{Ok: ok}, nil
-}
-
-func (s *UserService) checkUserTenantInternal(ctx context.Context, userId, tenantId string) (bool, error) {
-	//change to the request tenant
-	ctx = saas.NewCurrentTenant(ctx, tenantId, "")
-	ok, err := s.um.IsInTenant(ctx, userId, tenantId)
-	if err != nil {
-		return false, err
-	}
-	if ok {
-		//user in this tenant
-		return true, nil
-	}
-	s.logger.Debugf("user:%s not in tenant:%s", userId, tenantId)
-	//super permission check
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource("*", "*"), authz.AnyAction); err != nil {
-		//no permission
-		if errors.UnRecoverableError(err) {
-			//internal server error
-			s.logger.Errorf("no recover error:%v", err)
-			return false, err
-		}
-		return false, v12.ErrorTenantForbiddenLocalized(ctx, nil, nil)
-	}
-	return true, nil
-}
-
 func (s *UserService) UpdateAvatar(ctx http.Context) error {
 	req := ctx.Request()
 	//TODO do not know why should read form file first ...
@@ -466,7 +380,7 @@ func (s *UserService) UpdateAvatar(ctx http.Context) error {
 				return nil, err
 			}
 			u.Avatar = &normalizedName
-			err = s.um.Update(ctx, u, &fieldmaskpb.FieldMask{Paths: []string{"avatar"}})
+			err = s.um.Update(ctx, u, query.NewField(&fieldmaskpb.FieldMask{Paths: []string{"avatar"}}))
 			if err != nil {
 				return nil, err
 			}

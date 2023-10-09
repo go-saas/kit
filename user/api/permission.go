@@ -10,6 +10,8 @@ const (
 
 	ResourceUser = "user.user"
 	ResourceRole = "user.role"
+
+	ResourceAdminUser = "user.admin.user"
 )
 
 //go:embed permission.yaml

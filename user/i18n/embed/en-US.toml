@@ -35,6 +35,18 @@ other = "Update User"
 [permission.user.user.delete]
 other = "Delete User"
 
+
+[permission.user.admin.user.group]
+other = "Admin User"
+[permission.user.admin.user.read]
+other = "Admin Read User"
+[permission.user.admin.user.create]
+other = "Admin Create User"
+[permission.user.admin.user.update]
+other = "Admin Update User"
+[permission.user.admin.user.delete]
+other = "Admin Delete User"
+
 [permission.user.role.group]
 other = "Role"
 [permission.user.role.read]

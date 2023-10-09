@@ -21,15 +21,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_ListUsers_FullMethodName       = "/user.api.user.v1.UserService/ListUsers"
-	UserService_GetUser_FullMethodName         = "/user.api.user.v1.UserService/GetUser"
-	UserService_CreateUser_FullMethodName      = "/user.api.user.v1.UserService/CreateUser"
-	UserService_UpdateUser_FullMethodName      = "/user.api.user.v1.UserService/UpdateUser"
-	UserService_DeleteUser_FullMethodName      = "/user.api.user.v1.UserService/DeleteUser"
-	UserService_GetUserRoles_FullMethodName    = "/user.api.user.v1.UserService/GetUserRoles"
-	UserService_InviteUser_FullMethodName      = "/user.api.user.v1.UserService/InviteUser"
-	UserService_SearchUser_FullMethodName      = "/user.api.user.v1.UserService/SearchUser"
-	UserService_CheckUserTenant_FullMethodName = "/user.api.user.v1.UserService/CheckUserTenant"
+	UserService_ListUsers_FullMethodName    = "/user.api.user.v1.UserService/ListUsers"
+	UserService_GetUser_FullMethodName      = "/user.api.user.v1.UserService/GetUser"
+	UserService_CreateUser_FullMethodName   = "/user.api.user.v1.UserService/CreateUser"
+	UserService_UpdateUser_FullMethodName   = "/user.api.user.v1.UserService/UpdateUser"
+	UserService_DeleteUser_FullMethodName   = "/user.api.user.v1.UserService/DeleteUser"
+	UserService_GetUserRoles_FullMethodName = "/user.api.user.v1.UserService/GetUserRoles"
+	UserService_InviteUser_FullMethodName   = "/user.api.user.v1.UserService/InviteUser"
+	UserService_SearchUser_FullMethodName   = "/user.api.user.v1.UserService/SearchUser"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -58,8 +57,6 @@ type UserServiceClient interface {
 	// authz: user.user,*,create
 	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserReply, error)
 	SearchUser(ctx context.Context, in *SearchUserRequest, opts ...grpc.CallOption) (*SearchUserResponse, error)
-	// CheckUserTenant internal api for checking whether user is allowed in this tenant
-	CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error)
 }
 
 type userServiceClient struct {
@@ -142,15 +139,6 @@ func (c *userServiceClient) SearchUser(ctx context.Context, in *SearchUserReques
 	return out, nil
 }
 
-func (c *userServiceClient) CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error) {
-	out := new(CheckUserTenantReply)
-	err := c.cc.Invoke(ctx, UserService_CheckUserTenant_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserServiceServer is the server API for UserService service.
 // All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -177,8 +165,6 @@ type UserServiceServer interface {
 	// authz: user.user,*,create
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error)
 	SearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error)
-	// CheckUserTenant internal api for checking whether user is allowed in this tenant
-	CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error)
 }
 
 // UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
@@ -208,9 +194,6 @@ func (UnimplementedUserServiceServer) InviteUser(context.Context, *InviteUserReq
 }
 func (UnimplementedUserServiceServer) SearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchUser not implemented")
-}
-func (UnimplementedUserServiceServer) CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckUserTenant not implemented")
 }
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -368,24 +351,6 @@ func _UserService_SearchUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_CheckUserTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckUserTenantRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).CheckUserTenant(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserService_CheckUserTenant_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).CheckUserTenant(ctx, req.(*CheckUserTenantRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -425,17 +390,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "SearchUser",
 			Handler:    _UserService_SearchUser_Handler,
 		},
-		{
-			MethodName: "CheckUserTenant",
-			Handler:    _UserService_CheckUserTenant_Handler,
-		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "user/api/user/v1/user.proto",
 }
 
 const (
-	UserInternalService_CreateTenant_FullMethodName = "/user.api.user.v1.UserInternalService/CreateTenant"
+	UserInternalService_CreateTenant_FullMethodName    = "/user.api.user.v1.UserInternalService/CreateTenant"
+	UserInternalService_CheckUserTenant_FullMethodName = "/user.api.user.v1.UserInternalService/CheckUserTenant"
 )
 
 // UserInternalServiceClient is the client API for UserInternalService service.
@@ -443,6 +405,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserInternalServiceClient interface {
 	CreateTenant(ctx context.Context, in *v1.CreateTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// CheckUserTenant internal api for checking whether user is allowed in this tenant
+	CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error)
 }
 
 type userInternalServiceClient struct {
@@ -462,11 +426,22 @@ func (c *userInternalServiceClient) CreateTenant(ctx context.Context, in *v1.Cre
 	return out, nil
 }
 
+func (c *userInternalServiceClient) CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error) {
+	out := new(CheckUserTenantReply)
+	err := c.cc.Invoke(ctx, UserInternalService_CheckUserTenant_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserInternalServiceServer is the server API for UserInternalService service.
 // All implementations should embed UnimplementedUserInternalServiceServer
 // for forward compatibility
 type UserInternalServiceServer interface {
 	CreateTenant(context.Context, *v1.CreateTenantRequest) (*emptypb.Empty, error)
+	// CheckUserTenant internal api for checking whether user is allowed in this tenant
+	CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error)
 }
 
 // UnimplementedUserInternalServiceServer should be embedded to have forward compatible implementations.
@@ -475,6 +450,9 @@ type UnimplementedUserInternalServiceServer struct {
 
 func (UnimplementedUserInternalServiceServer) CreateTenant(context.Context, *v1.CreateTenantRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTenant not implemented")
+}
+func (UnimplementedUserInternalServiceServer) CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckUserTenant not implemented")
 }
 
 // UnsafeUserInternalServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -506,6 +484,24 @@ func _UserInternalService_CreateTenant_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserInternalService_CheckUserTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckUserTenantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserInternalServiceServer).CheckUserTenant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserInternalService_CheckUserTenant_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserInternalServiceServer).CheckUserTenant(ctx, req.(*CheckUserTenantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserInternalService_ServiceDesc is the grpc.ServiceDesc for UserInternalService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -516,6 +512,10 @@ var UserInternalService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateTenant",
 			Handler:    _UserInternalService_CreateTenant_Handler,
+		},
+		{
+			MethodName: "CheckUserTenant",
+			Handler:    _UserInternalService_CheckUserTenant_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

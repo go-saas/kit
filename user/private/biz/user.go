@@ -5,8 +5,9 @@ import (
 	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
+	"github.com/go-saas/saas"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
-	"google.golang.org/protobuf/types/known/fieldmaskpb"
+	"github.com/samber/lo"
 	gorm2 "gorm.io/gorm"
 	"time"
 )
@@ -66,11 +67,11 @@ type User struct {
 }
 
 type UserRepo interface {
-	List(ctx context.Context, query *v1.ListUsersRequest) ([]*User, error)
-	Count(ctx context.Context, query *v1.UserFilter) (total int64, filtered int64, err error)
-	Create(ctx context.Context, user *User) error
-	Update(ctx context.Context, user *User, p *fieldmaskpb.FieldMask) error
-	Delete(ctx context.Context, user *User) error
+	data.Repo[User, string, *v1.ListUsersRequest]
+
+	ListAdmin(ctx context.Context, query *v1.AdminListUsersRequest) ([]*User, error)
+	CountAdmin(ctx context.Context, query *v1.AdminListUsersRequest) (total int64, filtered int64, err error)
+
 	FindByID(ctx context.Context, id string) (*User, error)
 	FindByName(ctx context.Context, name string) (*User, error)
 	FindByPhone(ctx context.Context, phone string) (*User, error)
@@ -89,4 +90,15 @@ type UserRepo interface {
 	UpdateRoles(ctx context.Context, user *User, roles []Role) error
 	AddToRole(ctx context.Context, user *User, role *Role) error
 	RemoveFromRole(ctx context.Context, user *User, role *Role) error
+}
+
+func (u *User) CheckInCurrentTenant(ctx context.Context) error {
+	ct, _ := saas.FromCurrentTenant(ctx)
+	_, isIn := lo.Find(u.Tenants, func(tenant UserTenant) bool {
+		return tenant.TenantId == ct.GetId()
+	})
+	if !isIn {
+		return v1.ErrorUserNotFoundLocalized(ctx, nil, nil)
+	}
+	return nil
 }

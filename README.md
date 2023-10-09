@@ -23,6 +23,7 @@ address http://saas.nihaosaoya.com (Shanghai)
 
 * [x] Saas
 * [x] Modularity
+* [x] ACL(Access Control List), RBAC(Role-based Access Control)
 * [x] Localization
 * [x] Microservice/Monolithic compatible
 * [x] Distributed Eventbus: [kafka](https://kafka.apache.org/), [pulsar](https://pulsar.apache.org/)

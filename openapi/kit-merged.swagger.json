@@ -55,6 +55,9 @@
     },
     {
       "name": "AuthWeb"
+    },
+    {
+      "name": "UserAdminService"
     }
   ],
   "consumes": [
@@ -4096,6 +4099,779 @@
         ]
       }
     },
+    "/v1/user/admin/user": {
+      "post": {
+        "summary": "CreateUser\nauthz: user.admin.user,*,create",
+        "operationId": "UserAdminService_CreateUserAdmin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1User"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AdminCreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserAdminService"
+        ]
+      }
+    },
+    "/v1/user/admin/user/list": {
+      "post": {
+        "summary": "ListUsers\nauthz: user.admin.user,*,list",
+        "operationId": "UserAdminService_ListUsersAdmin2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AdminListUsersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AdminListUsersRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserAdminService"
+        ]
+      }
+    },
+    "/v1/user/admin/user/{id}": {
+      "get": {
+        "summary": "GetUser\nauthz: user.admin.user,id,get",
+        "operationId": "UserAdminService_GetUserAdmin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1User"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserAdminService"
+        ]
+      },
+      "delete": {
+        "summary": "DeleteUser\nauthz: user.admin.user,id,delete",
+        "operationId": "UserAdminService_DeleteUserAdmin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AdminDeleteUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserAdminService"
+        ]
+      }
+    },
+    "/v1/user/admin/user/{user.id}": {
+      "put": {
+        "summary": "UpdateUser\nauthz: user.admin.user,id,update",
+        "operationId": "UserAdminService_UpdateUserAdmin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1User"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "phone": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "email": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "birthday": {
+                      "type": "string",
+                      "format": "date-time",
+                      "x-nullable": true
+                    },
+                    "gender": {
+                      "$ref": "#/definitions/v1Gender"
+                    },
+                    "password": {
+                      "type": "string",
+                      "title": "reset password"
+                    },
+                    "confirmPassword": {
+                      "type": "string"
+                    },
+                    "avatar": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "UserAdminService"
+        ]
+      },
+      "patch": {
+        "summary": "UpdateUser\nauthz: user.admin.user,id,update",
+        "operationId": "UserAdminService_UpdateUserAdmin2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1User"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "phone": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "email": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "birthday": {
+                      "type": "string",
+                      "format": "date-time",
+                      "x-nullable": true
+                    },
+                    "gender": {
+                      "$ref": "#/definitions/v1Gender"
+                    },
+                    "password": {
+                      "type": "string",
+                      "title": "reset password"
+                    },
+                    "confirmPassword": {
+                      "type": "string"
+                    },
+                    "avatar": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "updateMask": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "UserAdminService"
+        ]
+      }
+    },
+    "/v1/user/admin/users": {
+      "get": {
+        "summary": "ListUsers\nauthz: user.admin.user,*,list",
+        "operationId": "UserAdminService_ListUsersAdmin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AdminListUsersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageOffset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$contains",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$starts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$nstarts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$ends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$nends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$in",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.id.$nin",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.id.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$empty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$nempty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$like",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.gender.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.gender.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.gender.$contains",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.gender.$starts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.gender.$nstarts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.gender.$ends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.gender.$nends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.gender.$in",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.gender.$nin",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.gender.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.gender.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.gender.$empty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.gender.$nempty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.gender.$like",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.birthday.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "filter.birthday.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "filter.birthday.$gt",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "filter.birthday.$gte",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "filter.birthday.$lt",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "filter.birthday.$lte",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "filter.birthday.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.birthday.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.roles.id.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.id.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.id.$contains",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.id.$starts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.id.$nstarts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.id.$ends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.id.$nends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.id.$in",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.roles.id.$nin",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.roles.id.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.roles.id.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.roles.id.$empty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.roles.id.$nempty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.roles.id.$like",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.name.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.name.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.name.$contains",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.name.$starts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.name.$nstarts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.name.$ends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.name.$nends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.roles.name.$in",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.roles.name.$nin",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.roles.name.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.roles.name.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.roles.name.$empty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.roles.name.$nempty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.roles.name.$like",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserAdminService"
+        ]
+      }
+    },
     "/v1/user/list": {
       "post": {
         "summary": "ListUsers\nauthz: user.user,*,list",
@@ -4269,13 +5045,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "force",
-            "description": "default false. Just remove user out of tenant. set to true to remove user from system",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
           }
         ],
         "tags": [
@@ -4349,40 +5118,6 @@
                 "user": {
                   "type": "object",
                   "properties": {
-                    "username": {
-                      "type": "string",
-                      "x-nullable": true
-                    },
-                    "name": {
-                      "type": "string",
-                      "x-nullable": true
-                    },
-                    "phone": {
-                      "type": "string",
-                      "x-nullable": true
-                    },
-                    "email": {
-                      "type": "string",
-                      "x-nullable": true
-                    },
-                    "birthday": {
-                      "type": "string",
-                      "format": "date-time",
-                      "x-nullable": true
-                    },
-                    "gender": {
-                      "$ref": "#/definitions/v1Gender"
-                    },
-                    "password": {
-                      "type": "string",
-                      "title": "reset password"
-                    },
-                    "confirmPassword": {
-                      "type": "string"
-                    },
-                    "avatar": {
-                      "type": "string"
-                    },
                     "rolesId": {
                       "type": "array",
                       "items": {
@@ -4436,40 +5171,6 @@
                 "user": {
                   "type": "object",
                   "properties": {
-                    "username": {
-                      "type": "string",
-                      "x-nullable": true
-                    },
-                    "name": {
-                      "type": "string",
-                      "x-nullable": true
-                    },
-                    "phone": {
-                      "type": "string",
-                      "x-nullable": true
-                    },
-                    "email": {
-                      "type": "string",
-                      "x-nullable": true
-                    },
-                    "birthday": {
-                      "type": "string",
-                      "format": "date-time",
-                      "x-nullable": true
-                    },
-                    "gender": {
-                      "$ref": "#/definitions/v1Gender"
-                    },
-                    "password": {
-                      "type": "string",
-                      "title": "reset password"
-                    },
-                    "confirmPassword": {
-                      "type": "string"
-                    },
-                    "avatar": {
-                      "type": "string"
-                    },
                     "rolesId": {
                       "type": "array",
                       "items": {
@@ -5755,6 +6456,140 @@
     },
     "v1AddSubjectPermissionResponse": {
       "type": "object"
+    },
+    "v1AdminCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "name": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "phone": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "email": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "password": {
+          "type": "string"
+        },
+        "confirmPassword": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string",
+          "format": "date-time",
+          "x-nullable": true
+        },
+        "gender": {
+          "$ref": "#/definitions/v1Gender"
+        },
+        "avatar": {
+          "type": "string"
+        }
+      }
+    },
+    "v1AdminDeleteUserResponse": {
+      "type": "object"
+    },
+    "v1AdminListUsersRequest": {
+      "type": "object",
+      "properties": {
+        "pageOffset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "search": {
+          "type": "string"
+        },
+        "sort": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fields": {
+          "type": "string"
+        },
+        "filter": {
+          "$ref": "#/definitions/v1UserFilter"
+        }
+      }
+    },
+    "v1AdminListUsersResponse": {
+      "type": "object",
+      "properties": {
+        "totalSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "filterSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1User"
+          }
+        }
+      }
+    },
+    "v1AdminUpdateUser": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "name": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "phone": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "email": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "birthday": {
+          "type": "string",
+          "format": "date-time",
+          "x-nullable": true
+        },
+        "gender": {
+          "$ref": "#/definitions/v1Gender"
+        },
+        "password": {
+          "type": "string",
+          "title": "reset password"
+        },
+        "confirmPassword": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
     },
     "v1ChangePasswordByForgetReply": {
       "type": "object"
@@ -7728,40 +8563,6 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string",
-          "x-nullable": true
-        },
-        "name": {
-          "type": "string",
-          "x-nullable": true
-        },
-        "phone": {
-          "type": "string",
-          "x-nullable": true
-        },
-        "email": {
-          "type": "string",
-          "x-nullable": true
-        },
-        "birthday": {
-          "type": "string",
-          "format": "date-time",
-          "x-nullable": true
-        },
-        "gender": {
-          "$ref": "#/definitions/v1Gender"
-        },
-        "password": {
-          "type": "string",
-          "title": "reset password"
-        },
-        "confirmPassword": {
-          "type": "string"
-        },
-        "avatar": {
           "type": "string"
         },
         "rolesId": {

@@ -17,6 +17,7 @@ import "saas/api/tenant/v1/tenant.proto";
 
 option go_package = "github.com/go-saas/kit/user/api/user/v1;v1";
 
+
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
     title: "User Service";
@@ -83,6 +84,7 @@ service UserService{
       ]
     };
   }
+
   //DeleteUser
   // authz: user.user,id,delete
   rpc DeleteUser(DeleteUserRequest) returns(DeleteUserResponse){
@@ -90,6 +92,7 @@ service UserService{
       delete: "/v1/user/{id}"
     };
   }
+
   //GetUserRoles
   // authz: user.user,id,get
   rpc GetUserRoles(GetUserRoleRequest) returns(GetUserRoleReply){
@@ -113,10 +116,7 @@ service UserService{
     };
   }
 
-  //CheckUserTenant internal api for checking whether user is allowed in this tenant
-  rpc CheckUserTenant(CheckUserTenantRequest)returns(CheckUserTenantReply){
 
-  }
 }
 
 message UserFilter{
@@ -160,13 +160,11 @@ message User{
 }
 
 
-
 message ListUsersResponse{
   int32 total_size =1;
   int32 filter_size =2;
 
   repeated User items = 3;
-
 }
 
 message CreateUserRequest{
@@ -201,26 +199,13 @@ message UpdateUserRequest{
 message UpdateUser{
   string id =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 
-  optional google.protobuf.StringValue username =2;
-  optional google.protobuf.StringValue name=3;
-  optional google.protobuf.StringValue phone =4;
-  optional google.protobuf.StringValue email=5;
-  optional google.protobuf.Timestamp birthday=6;
-  //
-  Gender gender=7;
-
-  //reset password
-  string password=8;
-  string confirm_password=9;
-  string avatar=10;
   repeated string roles_id=11;
 }
 
 message DeleteUserRequest{
   string id =1;
-  //default false. Just remove user out of tenant. set to true to remove user from system
-  bool force=2;
 }
+
 message DeleteUserResponse{
 
 }
@@ -228,6 +213,7 @@ message DeleteUserResponse{
 message GetUserRoleRequest{
   string id =1;
 }
+
 message GetUserRoleReply{
   repeated UserRole roles=1;
 }
@@ -279,4 +265,11 @@ service UserInternalService{
   rpc CreateTenant(saas.api.tenant.v1.CreateTenantRequest) returns(google.protobuf.Empty){
 
   }
+
+  //CheckUserTenant internal api for checking whether user is allowed in this tenant
+  rpc CheckUserTenant(CheckUserTenantRequest)returns(CheckUserTenantReply){
+
+  }
+
 }
+
