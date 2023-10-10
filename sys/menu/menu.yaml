@@ -12,7 +12,7 @@ menus:
         resource: "*"
         action: "read"
     children:
-      - name: "user"
+      - name: "admin.user"
         path: '/admin/users'
         icon: "User"
         is_preserved: true
