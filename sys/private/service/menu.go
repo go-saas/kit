@@ -158,7 +158,7 @@ func (s *MenuService) GetAvailableMenus(ctx context.Context, req *pb.GetAvailabl
 
 	var disAllowMenuId []string
 
-	var waitForCheckerRequirements = []lo.Tuple2[string, []biz.MenuPermissionRequirement]{}
+	var waitForCheckerRequirements []lo.Tuple2[string, []biz.MenuPermissionRequirement]
 
 	for _, item := range items {
 		if item.IgnoreAuth {
@@ -222,6 +222,16 @@ func (s *MenuService) GetAvailableMenus(ctx context.Context, req *pb.GetAvailabl
 			break
 		}
 	}
+	filter = lo.Filter(filter, func(m *biz.Menu, _ int) bool {
+		if m.Parent == "" {
+			//clear first level and has no child
+			_, hasChild := lo.Find(filter, func(m1 *biz.Menu) bool {
+				return m1.Parent == m.ID.String()
+			})
+			return hasChild
+		}
+		return true
+	})
 	var retItems = lo.Map(filter, func(a *biz.Menu, _ int) *pb.Menu {
 		ret := &pb.Menu{}
 		MapBizMenu2Pb(a, ret)
