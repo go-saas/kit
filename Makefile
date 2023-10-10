@@ -85,7 +85,6 @@ all:
 	make sys
 	make realtime
 	make apisix
-	make examples
 
 # show help
 help:
