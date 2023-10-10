@@ -1,4 +1,27 @@
 menus:
+  - name: "admin"
+    path: "/admin"
+    component: "LAYOUT"
+    is_preserved: true
+    redirect: '/admin/users'
+    title: "admin.title"
+    icon: "BarsOutlined"
+    priority: 99
+    requirement:
+      - namespace: "user.admin.user"
+        resource: "*"
+        action: "read"
+    children:
+      - name: "user"
+        path: '/admin/users'
+        icon: "User"
+        is_preserved: true
+        component: "/admin/user/index"
+        title: "admin.user.management"
+        requirement:
+          - namespace: "user.admin.user"
+            resource: "*"
+            action: "read"
   - name: "sys"
     path: "/sys"
     component: "LAYOUT"
