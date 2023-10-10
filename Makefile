@@ -66,10 +66,6 @@ api:
 	cd sys && $(MAKE) api
 	cd realtime && $(MAKE) api
 
-.PHONY: examples
-# examples
-examples:
-	cd examples/monolithic && $(MAKE) all
 
 .PHONY: build
 build:
@@ -78,7 +74,6 @@ build:
 	cd sys && $(MAKE) build
 	cd realtime && $(MAKE) build
 	cd gateway/apisix && $(MAKE) build
-	cd examples/monolithic && $(MAKE) build
 
 
 .PHONY: all
