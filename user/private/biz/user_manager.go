@@ -97,10 +97,6 @@ func (um *UserManager) Create(ctx context.Context, u *User) (err error) {
 	if err := um.userRepo.Create(ctx, u); err != nil {
 		return err
 	}
-	ct, _ := saas.FromCurrentTenant(ctx)
-	if err := um.JoinTenant(ctx, u.UIDBase.ID.String(), ct.GetId()); err != nil {
-		return err
-	}
 	return nil
 }
 

@@ -130,10 +130,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 			return nil, errors2.NotFound("", "")
 		}
 		u = *dbUser
-		err = s.um.JoinTenant(ctx, u.ID.String(), ct.GetId())
-		if err != nil {
-			return nil, err
-		}
+
 	} else {
 		if req.Name != nil {
 			u.Name = &req.Name.Value
@@ -167,7 +164,9 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 			return nil, err
 		}
 	}
-
+	if err := s.um.JoinTenant(ctx, u.ID.String(), ct.GetId()); err != nil {
+		return nil, err
+	}
 	//set roles
 	var roles []biz.Role
 	for _, r := range req.RolesId {

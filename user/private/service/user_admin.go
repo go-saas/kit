@@ -122,9 +122,6 @@ func (s *UserService) UpdateUserAdmin(ctx context.Context, req *pb.AdminUpdateUs
 	if u == nil {
 		return nil, pb.ErrorUserNotFoundLocalized(ctx, nil, nil)
 	}
-	if err := u.CheckInCurrentTenant(ctx); err != nil {
-		return nil, err
-	}
 
 	if req.User.Password != "" {
 		//reset password
