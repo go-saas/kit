@@ -139,10 +139,10 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 			u.Username = &req.Username.Value
 		}
 		if req.Email != nil {
-			u.Email = &req.Email.Value
+			u.SetEmail(req.Email.Value, false)
 		}
 		if req.Phone != nil {
-			u.Phone = &req.Phone.Value
+			u.SetPhone(req.Phone.Value, false)
 		}
 		if req.Birthday != nil {
 			b := req.Birthday.AsTime()

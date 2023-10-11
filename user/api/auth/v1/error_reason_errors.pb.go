@@ -417,3 +417,57 @@ func ErrorRefreshTokenInvalidLocalized(ctx context.Context, data map[string]inte
 		return errors.New(401, ErrorReason_REFRESH_TOKEN_INVALID.String(), "")
 	}
 }
+
+func IsEmailPasswordlessFailed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_EMAIL_PASSWORDLESS_FAILED.String() && e.Code == 403
+}
+
+func ErrorEmailPasswordlessFailedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_EMAIL_PASSWORDLESS_FAILED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "EmailPasswordlessFailed",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_EMAIL_PASSWORDLESS_FAILED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_EMAIL_PASSWORDLESS_FAILED.String(), "")
+	}
+}
+
+func IsPhonePasswordlessFailed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_PHONE_PASSWORDLESS_FAILED.String() && e.Code == 403
+}
+
+func ErrorPhonePasswordlessFailedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_PHONE_PASSWORDLESS_FAILED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "PhonePasswordlessFailed",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_PHONE_PASSWORDLESS_FAILED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_PHONE_PASSWORDLESS_FAILED.String(), "")
+	}
+}

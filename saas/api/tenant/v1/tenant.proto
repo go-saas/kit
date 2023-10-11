@@ -12,6 +12,7 @@ import "protoc-gen-openapiv2/options/annotations.proto";
 import "blob/blob.proto";
 import "google/api/field_behavior.proto";
 import "query/operation.proto";
+import "data/data.proto";
 
 option go_package = "github.com/go-saas/kit/saas/api/tenant/v1;v1";
 
@@ -217,7 +218,7 @@ message TenantConnectionString{
 
 message TenantFeature{
 	string key=1;
-	string value=2;
+	data.DynamicValue value=2;
 }
 
 //TenantInfo public tenant information

@@ -21,6 +21,7 @@ service Auth {
         };
     }
 
+
     rpc Login(LoginAuthRequest) returns (LoginAuthReply){
         option (google.api.http) = {
             post: "/v1/auth/login",
@@ -115,10 +116,20 @@ service Auth {
 }
 
 message RegisterAuthRequest{
-
+    string username =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+    string password=5 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+    string confirm_password=6 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+    bool web=10;
 }
-message RegisterAuthReply{
 
+message RegisterAuthReply{
+    string access_token=1;
+    // Bearer
+    string token_type=2;
+    // Refresh token to keep login state
+    string refresh_token=4;
+    // Expires time in seconds
+    int32 expires_in=5;
 }
 
 message LoginAuthRequest{
@@ -175,7 +186,7 @@ message RefreshTokenAuthReply{
 
 message PasswordlessTokenAuthRequest{
     optional google.protobuf.StringValue phone =4;
-    optional google.protobuf.StringValue email=5;
+    optional google.protobuf.StringValue email=5 [(validate.rules).string.email=true];
 }
 
 message PasswordlessTokenAuthReply{
@@ -187,6 +198,8 @@ message LoginPasswordlessRequest{
     optional google.protobuf.StringValue phone =4;
     optional google.protobuf.StringValue email=5;
     string  token=10 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+
+    bool web=20;
 }
 
 message LoginPasswordlessReply{

@@ -128,7 +128,8 @@ func (s *WeChatAuthService) MiniProgramPhoneCode(ctx context.Context, req *pb.We
 	}
 	if user == nil {
 		//register
-		user = &biz.User{Phone: &formattedNum, PhoneConfirmed: true}
+		user = &biz.User{}
+		user.SetPhone(formattedNum, true)
 		if err := s.um.Create(ctx, user); err != nil {
 			return nil, err
 		}

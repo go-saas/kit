@@ -750,6 +750,39 @@
         }
       }
     },
+    "dataDynamicValue": {
+      "type": "object",
+      "properties": {
+        "intValue": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "longValue": {
+          "type": "string",
+          "format": "int64"
+        },
+        "floatValue": {
+          "type": "number",
+          "format": "float"
+        },
+        "doubleValue": {
+          "type": "number",
+          "format": "double"
+        },
+        "stringValue": {
+          "type": "string"
+        },
+        "boolValue": {
+          "type": "boolean"
+        },
+        "nullValue": {
+          "type": "string"
+        },
+        "jsonValue": {
+          "type": "object"
+        }
+      }
+    },
     "googlerpcStatus": {
       "type": "object",
       "properties": {
@@ -1039,7 +1072,7 @@
           "type": "string"
         },
         "value": {
-          "type": "string"
+          "$ref": "#/definitions/dataDynamicValue"
         }
       }
     },

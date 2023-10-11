@@ -60,7 +60,7 @@ func (u *UserSeed) Seed(ctx context.Context, sCtx *seed.Context) error {
 			admin.Username = &adminUsername
 		}
 		if len(adminEmail) > 0 {
-			admin.Email = &adminEmail
+			admin.SetEmail(adminEmail, true)
 		}
 		if err = u.um.CreateWithPassword(ctx, admin, adminPassword, false); err != nil {
 			return err

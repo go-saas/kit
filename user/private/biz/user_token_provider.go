@@ -26,6 +26,10 @@ const (
 	EmailName   = "email"
 	PhoneName   = "phone"
 	TwoStepName = "twostep"
+	OtpName     = "otp"
+
+	EmailLoginPurpose = "login_email"
+	PhoneLoginPurpose = "login_phone"
 
 	ConfirmPurpose               TokenPurpose = "confirm"
 	RecoverPurpose               TokenPurpose = "recover"
@@ -140,11 +144,12 @@ func (e *EmailTokenProvider) CanGenerate(ctx context.Context, user *User) error 
 }
 
 type TwoStepTokenProvider[T proto.Message] struct {
-	c *cache2.ProtoCache[T]
+	c     *cache2.ProtoCache[T]
+	proxy cache.CacheInterface[string]
 }
 
 func NewTwoStepTokenProvider[T proto.Message](creator func() T, proxy cache.CacheInterface[string]) *TwoStepTokenProvider[T] {
-	return &TwoStepTokenProvider[T]{c: cache2.NewProtoCache[T](creator, proxy)}
+	return &TwoStepTokenProvider[T]{c: cache2.NewProtoCache[T](creator, proxy), proxy: proxy}
 }
 
 func (p *TwoStepTokenProvider[T]) Name() string {
@@ -161,7 +166,6 @@ func (p *TwoStepTokenProvider[T]) Generate(ctx context.Context, purpose TokenPur
 	}
 	return token, nil
 }
-
 func (p *TwoStepTokenProvider[T]) Retrieve(ctx context.Context, purpose TokenPurpose, token string) (T, error) {
 	key := fmt.Sprintf("%s:%s:%s", TwoStepName, purpose, token)
 	t, err := p.c.Get(ctx, key)
@@ -173,4 +177,41 @@ func (p *TwoStepTokenProvider[T]) Retrieve(ctx context.Context, purpose TokenPur
 		return n, err
 	}
 	return t, nil
+}
+
+type OtpTokenProvider interface {
+	GenerateOtp(ctx context.Context, purpose TokenPurpose, extraKey string, duration time.Duration) (string, error)
+	VerifyOtp(ctx context.Context, purpose TokenPurpose, extraKey string, token string) (bool, error)
+}
+
+type DefaultOtpTokenProvider struct {
+	c cache.CacheInterface[string]
+}
+
+func NewOtpTokenProvider(c cache.CacheInterface[string]) *DefaultOtpTokenProvider {
+	return &DefaultOtpTokenProvider{c: c}
+}
+
+func (p *DefaultOtpTokenProvider) GenerateOtp(ctx context.Context, purpose TokenPurpose, extraKey string, duration time.Duration) (string, error) {
+	token, err := GenerateOtp()
+	if err != nil {
+		return "", err
+	}
+	key := fmt.Sprintf("%s:%s:%s", OtpName, purpose, extraKey)
+	err = p.c.Set(ctx, key, token, store.WithExpiration(duration))
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
+func (p *DefaultOtpTokenProvider) VerifyOtp(ctx context.Context, purpose TokenPurpose, extraKey string, token string) (bool, error) {
+	key := fmt.Sprintf("%s:%s:%s", OtpName, purpose, extraKey)
+	otp, err := p.c.Get(ctx, key)
+	if err != nil {
+		if (store.NotFound{}).Is(err) {
+			return false, nil
+		}
+		return false, err
+	}
+	return otp == token, nil
 }

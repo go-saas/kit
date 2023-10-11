@@ -32,6 +32,7 @@ address http://saas.nihaosaoya.com (Shanghai)
 * [x] Virtual File System: [vfs](https://github.com/goxiaoy/vfs)
 * [x] Distributed Transaction: [dtm](https://dtm.pub/)
 * [x] OpenId Connect: [ory](https://www.ory.sh/)
+* [x] Logging/Tracing
 
 # Quick Start
 

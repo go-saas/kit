@@ -92,6 +92,16 @@ type UserRepo interface {
 	RemoveFromRole(ctx context.Context, user *User, role *Role) error
 }
 
+func (u *User) SetPhone(phone string, confirmed bool) {
+	u.Phone = &phone
+	u.PhoneConfirmed = confirmed
+}
+
+func (u *User) SetEmail(email string, confirmed bool) {
+	u.Email = &email
+	u.EmailConfirmed = confirmed
+}
+
 func (u *User) CheckInCurrentTenant(ctx context.Context) error {
 	ct, _ := saas.FromCurrentTenant(ctx)
 	_, isIn := lo.Find(u.Tenants, func(tenant UserTenant) bool {

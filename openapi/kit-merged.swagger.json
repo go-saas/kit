@@ -7648,6 +7648,9 @@
         },
         "token": {
           "type": "string"
+        },
+        "web": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -8006,10 +8009,47 @@
       ]
     },
     "v1RegisterAuthReply": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "tokenType": {
+          "type": "string",
+          "title": "Bearer"
+        },
+        "refreshToken": {
+          "type": "string",
+          "title": "Refresh token to keep login state"
+        },
+        "expiresIn": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Expires time in seconds"
+        }
+      }
     },
     "v1RegisterAuthRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "confirmPassword": {
+          "type": "string"
+        },
+        "web": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "username",
+        "password",
+        "confirmPassword"
+      ]
     },
     "v1RemoveSubjectPermissionReply": {
       "type": "object"
@@ -8181,7 +8221,7 @@
           "type": "string"
         },
         "value": {
-          "type": "string"
+          "$ref": "#/definitions/dataDynamicValue"
         }
       }
     },

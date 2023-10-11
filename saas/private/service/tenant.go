@@ -8,6 +8,7 @@ import (
 	dtmsrv "github.com/go-saas/kit/dtm/service"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
+	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/query"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	"github.com/go-saas/kit/pkg/utils"
@@ -36,6 +37,8 @@ import (
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+var wfName = "saas_create_tenant"
 
 type TenantService struct {
 	pb.UnimplementedTenantServiceServer
@@ -118,8 +121,9 @@ func NewTenantService(
 			return nil, err
 		}
 
+		//call new branch for later gRPC call
 		wf.NewBranch().OnRollback(func(bb *dtmcli.BranchBarrier) error {
-			//TODO rollback?
+			//do nothing
 			return nil
 		})
 		_, err = s.userInternalSrv.CreateTenant(wf.Context, req)
@@ -135,8 +139,6 @@ func NewTenantService(
 	}
 	return s
 }
-
-var wfName = "saas_create_tenant"
 
 func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRequest) (*pb.Tenant, error) {
 
@@ -189,7 +191,7 @@ func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRe
 	tenantFeature := lo.Map(req.Tenant.Features, func(t *pb.TenantFeature, _ int) biz.TenantFeature {
 		return biz.TenantFeature{
 			Key:   t.Key,
-			Value: t.Value,
+			Value: *data.NewFromDynamicValue(t.Value),
 		}
 	})
 	t.Conn = tenantConn
@@ -389,7 +391,7 @@ func mapBizTenantToApi(ctx context.Context, app *conf.AppConfig, blob vfs.Blob, 
 	features := lo.Map(tenant.Features, func(con biz.TenantFeature, _ int) *pb.TenantFeature {
 		return &pb.TenantFeature{
 			Key:   con.Key,
-			Value: con.Value,
+			Value: con.Value.ToDynamicValue(),
 		}
 	})
 

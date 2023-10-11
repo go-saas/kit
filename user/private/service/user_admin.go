@@ -72,10 +72,10 @@ func (s *UserService) CreateUserAdmin(ctx context.Context, req *pb.AdminCreateUs
 		u.Username = &req.Username.Value
 	}
 	if req.Email != nil {
-		u.Email = &req.Email.Value
+		u.SetEmail(req.Email.Value, false)
 	}
 	if req.Phone != nil {
-		u.Phone = &req.Phone.Value
+		u.SetPhone(req.Phone.Value, false)
 	}
 	if req.Birthday != nil {
 		b := req.Birthday.AsTime()
@@ -140,11 +140,11 @@ func (s *UserService) UpdateUserAdmin(ctx context.Context, req *pb.AdminUpdateUs
 	}
 	if req.GetUser().GetPhone() != nil {
 		v := req.GetUser().GetPhone().Value
-		u.Phone = &v
+		u.SetPhone(v, false)
 	}
 	if req.GetUser().GetEmail() != nil {
 		v := req.GetUser().GetEmail().Value
-		u.Email = &v
+		u.SetEmail(v, false)
 	}
 	if req.GetUser().GetBirthday() != nil {
 		v := req.GetUser().GetBirthday().AsTime()

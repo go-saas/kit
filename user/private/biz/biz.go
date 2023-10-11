@@ -17,6 +17,7 @@ var ProviderSet = kitdi.NewSet(
 	NewRoleManager,
 	NewLookupNormalizer,
 
+	kitdi.NewProvider(NewOtpTokenProvider, di.As(new(OtpTokenProvider))),
 	NewEmailTokenProvider,
 	NewPhoneTokenProvider,
 	NewPasswordHasher,

@@ -33,6 +33,7 @@ type UserManager struct {
 	emailToken       *EmailTokenProvider
 	phoneToken       *PhoneTokenProvider
 	forgetPwdTwoStep *TwoStepTokenProvider[*ForgetPasswordTwoStepTokenPayload]
+	otp              OtpTokenProvider
 	userRoleCache    *cache2.Helper[*UserRoleCacheItem]
 	log              log.Logger
 }
@@ -49,6 +50,7 @@ func NewUserManager(
 	userTenantRepo UserTenantRepo,
 	emailToken *EmailTokenProvider,
 	phoneToken *PhoneTokenProvider,
+	otp OtpTokenProvider,
 	strCache cache.CacheInterface[string],
 	logger log.Logger) *UserManager {
 	return &UserManager{
@@ -66,8 +68,9 @@ func NewUserManager(
 		forgetPwdTwoStep: NewTwoStepTokenProvider(func() *ForgetPasswordTwoStepTokenPayload {
 			return &ForgetPasswordTwoStepTokenPayload{}
 		}, strCache),
+		otp:           otp,
 		userRoleCache: cache2.NewHelper[*UserRoleCacheItem](cache2.NewProtoCache(func() *UserRoleCacheItem { return &UserRoleCacheItem{} }, strCache)),
-		log:           log.With(logger, "module", "/biz/user_manager")}
+		log:           log.With(logger, "module", "user/biz/user_manager")}
 }
 
 func (um *UserManager) List(ctx context.Context, query *v1.ListUsersRequest) ([]*User, error) {
@@ -281,7 +284,86 @@ func (um *UserManager) VerifyPhoneForgetPasswordToken(ctx context.Context, phone
 	return nil
 }
 
-func (um *UserManager) GenerateForgetPasswordToken(ctx context.Context, user *User) (string, error) {
+func (um *UserManager) GenerateEmailLoginPasswordlessToken(ctx context.Context, email string) (string, error) {
+	email, err := um.lookupNormalizer.Email(ctx, email)
+	if err != nil {
+		return "", err
+	}
+	duration := 5 * time.Minute
+	if um.cfg.LoginPasswordlessExpiry != nil {
+		duration = um.cfg.LoginPasswordlessExpiry.AsDuration()
+	}
+	return um.otp.GenerateOtp(ctx, EmailLoginPurpose, email, duration)
+}
+
+func (um *UserManager) VerifyEmailLoginPasswordlessToken(ctx context.Context, email, token string) (*User, error) {
+	email, err := um.lookupNormalizer.Email(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	ok, err := um.otp.VerifyOtp(ctx, EmailLoginPurpose, email, token)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, v12.ErrorEmailPasswordlessFailedLocalized(ctx, nil, nil)
+	}
+	//find or create user
+	user, err := um.FindByEmail(ctx, email)
+	if err != nil {
+		return user, err
+	}
+	if user == nil {
+		user = &User{}
+		user.SetEmail(email, true)
+		if err := um.Create(ctx, user); err != nil {
+			return nil, err
+		}
+	}
+
+	return user, nil
+}
+
+func (um *UserManager) GeneratePhoneLoginPasswordlessToken(ctx context.Context, phone string) (string, error) {
+	phone, err := um.lookupNormalizer.Phone(ctx, phone)
+	if err != nil {
+		return "", err
+	}
+	duration := 5 * time.Minute
+	if um.cfg.LoginPasswordlessExpiry != nil {
+		duration = um.cfg.LoginPasswordlessExpiry.AsDuration()
+	}
+	return um.otp.GenerateOtp(ctx, PhoneLoginPurpose, phone, duration)
+}
+
+func (um *UserManager) VerifyPhoneLoginPasswordlessToken(ctx context.Context, phone, token string) (*User, error) {
+	phone, err := um.lookupNormalizer.Phone(ctx, phone)
+	if err != nil {
+		return nil, err
+	}
+	ok, err := um.otp.VerifyOtp(ctx, PhoneLoginPurpose, phone, token)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, v12.ErrorPhonePasswordlessFailedLocalized(ctx, nil, nil)
+	}
+	//find or create user
+	user, err := um.FindByPhone(ctx, phone)
+	if err != nil {
+		return user, err
+	}
+	if user == nil {
+		user = &User{}
+		user.SetPhone(phone, true)
+		if err := um.Create(ctx, user); err != nil {
+			return nil, err
+		}
+	}
+	return user, nil
+}
+
+func (um *UserManager) GenerateForgetPasswordTwoStepToken(ctx context.Context, user *User) (string, error) {
 	duration := 5 * time.Minute
 	return um.forgetPwdTwoStep.Generate(ctx, RecoverChangePasswordPurpose, &ForgetPasswordTwoStepTokenPayload{UserId: user.ID.String()}, duration)
 }

@@ -38,6 +38,7 @@ type AuthService struct {
 	emailer          biz.EmailSender
 	auth             authz.Service
 	trust            api2.TrustedContextValidator
+	signIn           *biz.SignInManager
 }
 
 func NewAuthService(um *biz.UserManager,
@@ -48,6 +49,7 @@ func NewAuthService(um *biz.UserManager,
 	refreshTokenRepo biz.RefreshTokenRepo,
 	emailer biz.EmailSender,
 	security *conf.Security,
+	signIn *biz.SignInManager,
 	authz authz.Service,
 	trust api2.TrustedContextValidator,
 	logger klog.Logger) *AuthService {
@@ -60,6 +62,7 @@ func NewAuthService(um *biz.UserManager,
 		refreshTokenRepo: refreshTokenRepo,
 		emailer:          emailer,
 		security:         security,
+		signIn:           signIn,
 		auth:             authz,
 		trust:            trust,
 		logger:           klog.NewHelper(klog.With(logger, "module", "AuthService")),
@@ -67,12 +70,37 @@ func NewAuthService(um *biz.UserManager,
 }
 
 func (s *AuthService) Register(ctx context.Context, req *pb.RegisterAuthRequest) (*pb.RegisterAuthReply, error) {
-
-	return &pb.RegisterAuthReply{}, nil
+	// check confirm password
+	if req.Password != "" {
+		if req.ConfirmPassword != req.Password {
+			return nil, pb.ErrorConfirmPasswordMismatchLocalized(ctx, nil, nil)
+		}
+	}
+	user := &biz.User{}
+	user.Username = &req.Username
+	if err := s.um.CreateWithPassword(ctx, user, req.Password, true); err != nil {
+		return nil, err
+	}
+	//login success
+	if req.Web {
+		if err := s.signIn.SignIn(ctx, user, true); err != nil {
+			return nil, err
+		}
+		return &pb.RegisterAuthReply{}, nil
+	}
+	t, err := s.generateToken(ctx, user.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.RegisterAuthReply{
+		AccessToken:  t.accessToken,
+		ExpiresIn:    t.expiresIn,
+		TokenType:    "Bearer",
+		RefreshToken: t.refreshToken,
+	}, nil
 }
 
 func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.LoginAuthReply, error) {
-
 	user, err := FindUserByUsernameAndValidatePwd(ctx, s.um, req.Username, req.Password)
 	if err != nil {
 		return nil, err
@@ -82,7 +110,13 @@ func (s *AuthService) Login(ctx context.Context, req *pb.LoginAuthRequest) (*pb.
 	if err != nil {
 		return nil, err
 	}
-	return &pb.LoginAuthReply{AccessToken: t.accessToken, Expires: t.expiresIn, ExpiresIn: t.expiresIn, TokenType: "Bearer", RefreshToken: t.refreshToken}, nil
+	return &pb.LoginAuthReply{
+		AccessToken:  t.accessToken,
+		Expires:      t.expiresIn,
+		ExpiresIn:    t.expiresIn,
+		TokenType:    "Bearer",
+		RefreshToken: t.refreshToken,
+	}, nil
 }
 
 func (s *AuthService) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenReply, error) {
@@ -123,13 +157,64 @@ func (s *AuthService) Refresh(ctx context.Context, req *pb.RefreshTokenAuthReque
 	}
 	return &pb.RefreshTokenAuthReply{AccessToken: t.accessToken, ExpiresIn: t.expiresIn, TokenType: "Bearer", RefreshToken: t.refreshToken}, nil
 }
-func (s *AuthService) SendPasswordlessToken(ctx context.Context, req *pb.PasswordlessTokenAuthRequest) (*pb.PasswordlessTokenAuthReply, error) {
 
+func (s *AuthService) SendPasswordlessToken(ctx context.Context, req *pb.PasswordlessTokenAuthRequest) (*pb.PasswordlessTokenAuthReply, error) {
+	if req.Phone == nil && req.Email == nil {
+		return nil, errors.BadRequest("", "")
+	}
+	if req.Email != nil {
+		token, err := s.um.GenerateEmailLoginPasswordlessToken(ctx, req.Email.Value)
+		if err != nil {
+			return nil, err
+		}
+		if err := s.emailer.SendPasswordlessLogin(ctx, req.Email.Value, token); err != nil {
+			return nil, err
+		}
+	}
+	if req.Phone != nil {
+		token, err := s.um.GeneratePhoneLoginPasswordlessToken(ctx, req.Phone.Value)
+		if err != nil {
+			return nil, err
+		}
+		//TODO send token
+		s.logger.Infof("send passwordless login token %s to  phone %s", token, req.Phone.Value)
+	}
 	return &pb.PasswordlessTokenAuthReply{}, nil
 }
-func (s *AuthService) LoginPasswordless(ctx context.Context, req *pb.LoginPasswordlessRequest) (*pb.LoginPasswordlessReply, error) {
 
-	return &pb.LoginPasswordlessReply{}, nil
+func (s *AuthService) LoginPasswordless(ctx context.Context, req *pb.LoginPasswordlessRequest) (*pb.LoginPasswordlessReply, error) {
+	if req.Phone == nil && req.Email == nil {
+		return nil, errors.BadRequest("", "")
+	}
+	var user *biz.User
+	var err error
+	if req.Email != nil {
+		user, err = s.um.VerifyEmailLoginPasswordlessToken(ctx, req.Email.Value, req.Token)
+	}
+	if req.Phone != nil {
+		user, err = s.um.VerifyPhoneLoginPasswordlessToken(ctx, req.Phone.Value, req.Token)
+	}
+	if err != nil {
+		return nil, err
+	}
+	if req.Web {
+		if err := s.signIn.SignIn(ctx, user, true); err != nil {
+			return nil, err
+		}
+		return &pb.LoginPasswordlessReply{}, nil
+	}
+	//login success
+	t, err := s.generateToken(ctx, user.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.LoginPasswordlessReply{
+		AccessToken:  t.accessToken,
+		ExpiresIn:    t.expiresIn,
+		TokenType:    "Bearer",
+		RefreshToken: t.refreshToken,
+	}, nil
+
 }
 
 func (s *AuthService) SendForgetPasswordToken(ctx context.Context, req *pb.ForgetPasswordTokenRequest) (*pb.ForgetPasswordTokenReply, error) {
@@ -205,7 +290,7 @@ func (s *AuthService) ForgetPassword(ctx context.Context, req *pb.ForgetPassword
 			return nil, err
 		}
 	}
-	token, err := s.um.GenerateForgetPasswordToken(ctx, user)
+	token, err := s.um.GenerateForgetPasswordTwoStepToken(ctx, user)
 	if err != nil {
 		return nil, err
 	}

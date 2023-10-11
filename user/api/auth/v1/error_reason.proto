@@ -31,4 +31,7 @@ enum ErrorReason {
   USER_DELETED=12 [(errors.code) = 403];
 
   REFRESH_TOKEN_INVALID=13[(errors.code) = 401];
+
+  EMAIL_PASSWORDLESS_FAILED=20[(errors.code) = 403];
+  PHONE_PASSWORDLESS_FAILED=21[(errors.code) = 403];
 }

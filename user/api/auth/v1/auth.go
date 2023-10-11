@@ -25,3 +25,10 @@ func (x *WebLoginAuthRequest) StringWithMask(mask string) string {
 	ret.Password = mask
 	return ret.String()
 }
+
+func (x *RegisterAuthRequest) StringWithMask(mask string) string {
+	ret := proto.Clone(x).(*RegisterAuthRequest)
+	ret.Password = mask
+	ret.ConfirmPassword = mask
+	return ret.String()
+}
