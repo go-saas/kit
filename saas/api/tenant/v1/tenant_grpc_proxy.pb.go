@@ -53,6 +53,9 @@ func (c *tenantServiceClientProxy) GetCurrentTenant(ctx context.Context, in *Get
 func (c *tenantServiceClientProxy) ChangeTenant(ctx context.Context, in *ChangeTenantRequest) (*ChangeTenantReply, error) {
 	return c.cc.ChangeTenant(ctx, in)
 }
+func (c *tenantServiceClientProxy) UserCreateTenant(ctx context.Context, in *UserCreateTenantRequest) (*UserCreateTenantReply, error) {
+	return c.cc.UserCreateTenant(ctx, in)
+}
 
 // tenantInternalServiceClientProxy is the proxy to turn TenantInternalService client to server interface.
 type tenantInternalServiceClientProxy struct {

@@ -27,6 +27,7 @@ const OperationTenantServiceGetTenant = "/saas.api.tenant.v1.TenantService/GetTe
 const OperationTenantServiceGetTenantPublic = "/saas.api.tenant.v1.TenantService/GetTenantPublic"
 const OperationTenantServiceListTenant = "/saas.api.tenant.v1.TenantService/ListTenant"
 const OperationTenantServiceUpdateTenant = "/saas.api.tenant.v1.TenantService/UpdateTenant"
+const OperationTenantServiceUserCreateTenant = "/saas.api.tenant.v1.TenantService/UserCreateTenant"
 
 type TenantServiceHTTPServer interface {
 	ChangeTenant(context.Context, *ChangeTenantRequest) (*ChangeTenantReply, error)
@@ -50,6 +51,8 @@ type TenantServiceHTTPServer interface {
 	// UpdateTenantUpdateTenant
 	//authz: saas.tenant,{id},update
 	UpdateTenant(context.Context, *UpdateTenantRequest) (*Tenant, error)
+	// UserCreateTenantCreateTenant
+	UserCreateTenant(context.Context, *UserCreateTenantRequest) (*UserCreateTenantReply, error)
 }
 
 func RegisterTenantServiceHTTPServer(s *http.Server, srv TenantServiceHTTPServer) {
@@ -64,6 +67,7 @@ func RegisterTenantServiceHTTPServer(s *http.Server, srv TenantServiceHTTPServer
 	r.GET("/v1/saas/tenants", _TenantService_ListTenant1_HTTP_Handler(srv))
 	r.GET("/v1/saas/current", _TenantService_GetCurrentTenant0_HTTP_Handler(srv))
 	r.POST("/v1/saas/change-tenant/{id_or_name}", _TenantService_ChangeTenant0_HTTP_Handler(srv))
+	r.POST("/v1/saas/user/tenant", _TenantService_UserCreateTenant0_HTTP_Handler(srv))
 }
 
 func _TenantService_CreateTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
@@ -274,6 +278,25 @@ func _TenantService_ChangeTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func
 	}
 }
 
+func _TenantService_UserCreateTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UserCreateTenantRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTenantServiceUserCreateTenant)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UserCreateTenant(ctx, req.(*UserCreateTenantRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UserCreateTenantReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type TenantServiceHTTPClient interface {
 	ChangeTenant(ctx context.Context, req *ChangeTenantRequest, opts ...http.CallOption) (rsp *ChangeTenantReply, err error)
 	CreateTenant(ctx context.Context, req *CreateTenantRequest, opts ...http.CallOption) (rsp *Tenant, err error)
@@ -283,6 +306,7 @@ type TenantServiceHTTPClient interface {
 	GetTenantPublic(ctx context.Context, req *GetTenantPublicRequest, opts ...http.CallOption) (rsp *TenantInfo, err error)
 	ListTenant(ctx context.Context, req *ListTenantRequest, opts ...http.CallOption) (rsp *ListTenantReply, err error)
 	UpdateTenant(ctx context.Context, req *UpdateTenantRequest, opts ...http.CallOption) (rsp *Tenant, err error)
+	UserCreateTenant(ctx context.Context, req *UserCreateTenantRequest, opts ...http.CallOption) (rsp *UserCreateTenantReply, err error)
 }
 
 type TenantServiceHTTPClientImpl struct {
@@ -391,6 +415,19 @@ func (c *TenantServiceHTTPClientImpl) UpdateTenant(ctx context.Context, in *Upda
 	opts = append(opts, http.Operation(OperationTenantServiceUpdateTenant))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *TenantServiceHTTPClientImpl) UserCreateTenant(ctx context.Context, in *UserCreateTenantRequest, opts ...http.CallOption) (*UserCreateTenantReply, error) {
+	var out UserCreateTenantReply
+	pattern := "/v1/saas/user/tenant"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTenantServiceUserCreateTenant))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

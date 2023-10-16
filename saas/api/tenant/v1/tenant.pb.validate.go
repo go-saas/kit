@@ -2740,3 +2740,266 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ChangeTenantReplyValidationError{}
+
+// Validate checks the field values on UserCreateTenantRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UserCreateTenantRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserCreateTenantRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UserCreateTenantRequestMultiError, or nil if none found.
+func (m *UserCreateTenantRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserCreateTenantRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		err := UserCreateTenantRequestValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_UserCreateTenantRequest_Name_Pattern.MatchString(m.GetName()) {
+		err := UserCreateTenantRequestValidationError{
+			field:  "Name",
+			reason: "value does not match regex pattern \"^[A-Za-z0-9](?:[A-Za-z0-9\\\\-]{1,61}[A-Za-z0-9])?$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for DisplayName
+
+	// no validation rules for Region
+
+	// no validation rules for Logo
+
+	if len(errors) > 0 {
+		return UserCreateTenantRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserCreateTenantRequestMultiError is an error wrapping multiple validation
+// errors returned by UserCreateTenantRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UserCreateTenantRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserCreateTenantRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserCreateTenantRequestMultiError) AllErrors() []error { return m }
+
+// UserCreateTenantRequestValidationError is the validation error returned by
+// UserCreateTenantRequest.Validate if the designated constraints aren't met.
+type UserCreateTenantRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserCreateTenantRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserCreateTenantRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserCreateTenantRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserCreateTenantRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserCreateTenantRequestValidationError) ErrorName() string {
+	return "UserCreateTenantRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UserCreateTenantRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserCreateTenantRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserCreateTenantRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserCreateTenantRequestValidationError{}
+
+var _UserCreateTenantRequest_Name_Pattern = regexp.MustCompile("^[A-Za-z0-9](?:[A-Za-z0-9\\-]{1,61}[A-Za-z0-9])?$")
+
+// Validate checks the field values on UserCreateTenantReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UserCreateTenantReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserCreateTenantReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UserCreateTenantReplyMultiError, or nil if none found.
+func (m *UserCreateTenantReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserCreateTenantReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetTenant()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserCreateTenantReplyValidationError{
+					field:  "Tenant",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserCreateTenantReplyValidationError{
+					field:  "Tenant",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTenant()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserCreateTenantReplyValidationError{
+				field:  "Tenant",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UserCreateTenantReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserCreateTenantReplyMultiError is an error wrapping multiple validation
+// errors returned by UserCreateTenantReply.ValidateAll() if the designated
+// constraints aren't met.
+type UserCreateTenantReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserCreateTenantReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserCreateTenantReplyMultiError) AllErrors() []error { return m }
+
+// UserCreateTenantReplyValidationError is the validation error returned by
+// UserCreateTenantReply.Validate if the designated constraints aren't met.
+type UserCreateTenantReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserCreateTenantReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserCreateTenantReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserCreateTenantReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserCreateTenantReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserCreateTenantReplyValidationError) ErrorName() string {
+	return "UserCreateTenantReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UserCreateTenantReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserCreateTenantReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserCreateTenantReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserCreateTenantReplyValidationError{}

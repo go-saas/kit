@@ -116,18 +116,25 @@ service TenantService {
 		};
 	}
 
+	//CreateTenant
+	rpc UserCreateTenant (UserCreateTenantRequest) returns (UserCreateTenantReply){
+		option (google.api.http) = {
+			post: "/v1/saas/user/tenant"
+			body: "*"
+		};
+	};
+
 }
 
 
 service TenantInternalService{
-
 	//GetTenant internal api for remote tenant store
 	rpc GetTenant (GetTenantRequest) returns (Tenant){
 	}
 }
 
 message CreateTenantRequest {
-	string id = 1 ;
+	string id=1;
 	string name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED,(validate.rules).string.pattern="^[A-Za-z0-9](?:[A-Za-z0-9\\-]{1,61}[A-Za-z0-9])?$"];
 	string display_name=3;
 	string region = 4;
@@ -140,6 +147,7 @@ message CreateTenantRequest {
 	optional google.protobuf.StringValue admin_password=9;
 	optional google.protobuf.StringValue admin_user_id=10;
 }
+
 
 message UpdateTenantRequest {
 	UpdateTenant tenant=1  [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
@@ -248,4 +256,14 @@ message ChangeTenantRequest{
 message ChangeTenantReply{
 	TenantInfo tenant=1;
 	bool is_host=2;
+}
+
+message UserCreateTenantRequest{
+	string name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED,(validate.rules).string.pattern="^[A-Za-z0-9](?:[A-Za-z0-9\\-]{1,61}[A-Za-z0-9])?$"];
+	string display_name=3;
+	string region = 4;
+	string logo =5;
+}
+message UserCreateTenantReply{
+	Tenant tenant=1;
 }

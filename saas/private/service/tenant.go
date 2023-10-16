@@ -19,6 +19,7 @@ import (
 	"github.com/go-saas/sessions"
 	"github.com/goxiaoy/vfs"
 	"github.com/segmentio/ksuid"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"io"
 	"os"
 	"path/filepath"
@@ -41,7 +42,6 @@ import (
 var wfName = "saas_create_tenant"
 
 type TenantService struct {
-	pb.UnimplementedTenantServiceServer
 	useCase         *biz.TenantUseCase
 	auth            authz.Service
 	blob            vfs.Blob
@@ -52,6 +52,8 @@ type TenantService struct {
 	txhelper        *dtmsrv.Helper
 	userInternalSrv v1.UserInternalServiceServer
 }
+
+var _ pb.TenantServiceServer = (*TenantService)(nil)
 
 func NewTenantService(
 	useCase *biz.TenantUseCase,
@@ -162,6 +164,36 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 	}
 	utils.PbMustUnMarshalJson(data, createTenantResp)
 	return createTenantResp, err
+}
+
+func (s *TenantService) UserCreateTenant(ctx context.Context, req *pb.UserCreateTenantRequest) (*pb.UserCreateTenantReply, error) {
+	ui, err := authn.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(req.DisplayName) == 0 {
+		req.DisplayName = req.Name
+	}
+	uid := uuid.New()
+
+	var rawReq = &pb.CreateTenantRequest{
+		Id:          uid.String(),
+		Name:        req.Name,
+		DisplayName: req.DisplayName,
+		Region:      req.Region,
+		Logo:        req.Logo,
+		AdminUserId: &wrapperspb.StringValue{Value: ui.GetId()},
+	}
+	var createTenantResp = &pb.Tenant{}
+
+	//Workflow Transaction
+	data, err := workflow.ExecuteCtx(ctx, wfName, ksuid.New().String(), utils.PbMustMarshalJson(rawReq))
+	if err != nil {
+		return nil, err
+	}
+	utils.PbMustUnMarshalJson(data, createTenantResp)
+	return &pb.UserCreateTenantReply{Tenant: createTenantResp}, err
+
 }
 
 func (s *TenantService) UpdateTenant(ctx context.Context, req *pb.UpdateTenantRequest) (*pb.Tenant, error) {

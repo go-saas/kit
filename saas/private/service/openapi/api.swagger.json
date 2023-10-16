@@ -723,6 +723,39 @@
           "TenantService"
         ]
       }
+    },
+    "/v1/saas/user/tenant": {
+      "post": {
+        "summary": "CreateTenant",
+        "operationId": "TenantService_UserCreateTenant",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UserCreateTenantReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UserCreateTenantRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TenantService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -1146,6 +1179,34 @@
       },
       "required": [
         "id",
+        "name"
+      ]
+    },
+    "v1UserCreateTenantReply": {
+      "type": "object",
+      "properties": {
+        "tenant": {
+          "$ref": "#/definitions/v1Tenant"
+        }
+      }
+    },
+    "v1UserCreateTenantRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "logo": {
+          "type": "string"
+        }
+      },
+      "required": [
         "name"
       ]
     }
