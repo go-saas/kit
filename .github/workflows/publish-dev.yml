@@ -9,6 +9,8 @@ on:
 
 env:
   DOCKER_TAG: dev
+  STRIPE_TEST_KEY: '${{ secrets.STRIPE_TEST_KEY }}'
+  STRIPE_TEST_WEBHOOK_KEY: '${{ secrets.STRIPE_TEST_WEBHOOK_KEY }}'
 
 jobs:
 
@@ -37,11 +39,14 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          envs: DOCKER_TAG
+          envs: DOCKER_TAG,STRIPE_TEST_KEY,STRIPE_TEST_WEBHOOK_KEY
           script: |
             echo "$DOCKER_TAG"
             cd /app/go-saas-kit
             cp -r quickstart/demo/. quickstart/configs
+            sed -i -e 's/stripe_test_key/$STRIPE_TEST_KEY/g' quickstart/configs/payment.yaml
+            sed -i -e 's/stripe_test_webhook_key/STRIPE_TEST_WEBHOOK_KEY/g' quickstart/configs/payment.yaml
+            
             sudo docker compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml pull
             sudo docker compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml up -d --remove-orphans
             sudo docker compose -f docker-compose.yml -f docker-compose.tracing.yml -f docker-compose.kafka.yml -f docker-compose.ms.yml restart

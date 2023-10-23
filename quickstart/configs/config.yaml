@@ -30,6 +30,12 @@ data:
         group: sys-golang
       realtime:
         group: realtime-golang
+      payment:
+        group: payment-golang
+      order:
+        group: order-golang
+      product:
+        group: product-golang
   vfs:
     -
       public_url: http://localhost/assets

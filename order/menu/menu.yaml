@@ -1,11 +1,8 @@
 menus:
   - name: "order"
-    path: "/commerce/order/*"
+    path: "/order/*"
     component: "LAYOUT"
-    redirect: "/commerce/order/order"
-    micro_app: "/_commerce/"
-    micro_app_dev: "//localhost:7190/_commerce/"
-    micro_app_name: "commerce"
+    redirect: "/order/orders"
     is_preserved: true
     title: "order.manager"
     icon: "GroupOutlined"
@@ -14,9 +11,9 @@ menus:
     children:
       - name: "order.order"
         icon: "ant-design:api-outlined"
-        path: "order"
+        path: "/order/orders"
+        component: "/order/order/index"
         title: "order.order"
-        component: "MICROAPP"
         requirement:
           - namespace: "order.order"
             resource: "*"

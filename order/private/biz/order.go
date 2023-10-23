@@ -9,6 +9,7 @@ import (
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/price"
 	"github.com/go-saas/lbs"
+	gorm2 "github.com/go-saas/saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"github.com/lithammer/shortuuid/v3"
 	"github.com/samber/lo"
@@ -22,6 +23,7 @@ type Order struct {
 	ID string `gorm:"type:char(36)" json:"id"`
 	kitgorm.AuditedModel
 	concurrency.Version
+	gorm2.MultiTenancy
 
 	Status string
 
