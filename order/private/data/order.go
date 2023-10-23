@@ -12,12 +12,12 @@ import (
 )
 
 type OrderRepo struct {
-	*kitgorm.Repo[biz.Order, string, v1.ListOrderRequest]
+	*kitgorm.Repo[biz.Order, string, *v1.ListOrderRequest]
 }
 
 func NewOrderRepo(dbProvider sgorm.DbProvider, eventbus *eventbus.EventBus) biz.OrderRepo {
 	res := &OrderRepo{}
-	res.Repo = kitgorm.NewRepo[biz.Order, string, v1.ListOrderRequest](dbProvider, eventbus, res)
+	res.Repo = kitgorm.NewRepo[biz.Order, string, *v1.ListOrderRequest](dbProvider, eventbus, res)
 	return res
 }
 

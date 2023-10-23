@@ -305,7 +305,7 @@ type OrderProduct struct {
 }
 
 type OrderRepo interface {
-	data.Repo[Order, string, v1.ListOrderRequest]
+	data.Repo[Order, string, *v1.ListOrderRequest]
 }
 
 func (u *Order) BeforeCreate(tx *gorm.DB) error {

@@ -98,7 +98,9 @@ func (s *OrderService) RefundAppOrder(ctx context.Context, req *pb.RefundAppOrde
 		return nil, errors.NotFound("", "")
 	}
 	//call payment to refund
-	g.RequestFund(g.PayWay, g.TotalPriceInclTax)
+	g.RequestFund(g.PayWay, g.TotalPriceInclTax, nil)
+	//TODO
+	return nil, errors.BadRequest("", "")
 }
 
 func (s *OrderService) ListOrder(ctx context.Context, req *pb.ListOrderRequest) (*pb.ListOrderReply, error) {

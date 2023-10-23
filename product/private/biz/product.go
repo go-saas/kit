@@ -98,7 +98,7 @@ type KeyWord struct {
 }
 
 type ProductRepo interface {
-	data.Repo[Product, string, v1.ListProductRequest]
+	data.Repo[Product, string, *v1.ListProductRequest]
 }
 
 type CampaignRule struct {

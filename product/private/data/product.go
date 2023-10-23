@@ -12,12 +12,12 @@ import (
 )
 
 type ProductRepo struct {
-	*kitgorm.Repo[biz.Product, string, v1.ListProductRequest]
+	*kitgorm.Repo[biz.Product, string, *v1.ListProductRequest]
 }
 
 func NewProductRepo(dbProvider sgorm.DbProvider, eventbus *eventbus.EventBus) biz.ProductRepo {
 	res := &ProductRepo{}
-	res.Repo = kitgorm.NewRepo[biz.Product, string, v1.ListProductRequest](dbProvider, eventbus, res)
+	res.Repo = kitgorm.NewRepo[biz.Product, string, *v1.ListProductRequest](dbProvider, eventbus, res)
 	return res
 }
 
