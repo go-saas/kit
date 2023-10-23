@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package saas.api.plan.v1;
+import "errors/errors.proto";
+
+option go_package = "github.com/go-saas/kit/saas/api/plan/v1;v1";
+
+enum ErrorReason {
+
+  option (errors.default_code) = 500;
+
+  DUPLICATE_PLAN_KEY = 0 [(errors.code) = 400];
+}

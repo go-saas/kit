@@ -34,8 +34,8 @@ func migrateDb(db *gorm.DB) error {
 		&biz.Tenant{},
 		&biz.TenantConn{},
 		&biz.TenantFeature{},
-		&biz.Edition{},
-		&biz.EditionFeature{},
+		&biz.Plan{},
+		&biz.PlanFeature{},
 	); err != nil {
 		return err
 	}

@@ -46,6 +46,13 @@ import (
 	_ "github.com/go-saas/kit/saas/api"
 	_ "github.com/go-saas/kit/sys/api"
 	_ "github.com/go-saas/kit/user/api"
+
+	_ "github.com/go-saas/kit/order/api"
+	_ "github.com/go-saas/kit/payment/api"
+	_ "github.com/go-saas/kit/product/api"
+
+	//This helps to load menu in following services
+	_ "github.com/go-saas/kit/order/menu"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"

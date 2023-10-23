@@ -10,6 +10,7 @@ import (
 	kitdi "github.com/go-saas/kit/pkg/di"
 	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
+	v12 "github.com/go-saas/kit/saas/api/plan/v1"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/go-saas/kit/saas/private/biz"
 	"github.com/goava/di"
@@ -24,12 +25,14 @@ var spec []byte
 var ProviderSet = kitdi.NewSet(NewHttpServerRegister, NewGrpcServerRegister,
 	kitdi.NewProvider(NewTenantService, di.As(new(v1.TenantServiceServer))),
 	kitdi.NewProvider(NewTenantInternalService, di.As(new(v1.TenantInternalServiceServer))),
+	kitdi.NewProvider(NewPlanService, di.As(new(v12.PlanServiceServer))),
 )
 
 func NewHttpServerRegister(
 	tenant *TenantService,
 	errEncoder khttp.EncodeErrorFunc,
 	tenantInternal *TenantInternalService,
+	plan *PlanService,
 	blob vfs.Blob,
 ) kithttp.ServiceRegister {
 	return kithttp.ServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
@@ -39,6 +42,7 @@ func NewHttpServerRegister(
 		kithttp.MountBlob(srv, "", biz.TenantLogoPath, blob)
 
 		v1.RegisterTenantServiceHTTPServer(srv, tenant)
+		v12.RegisterPlanServiceHTTPServer(srv, plan)
 
 		router := chi.NewRouter()
 		//global filter
@@ -50,9 +54,11 @@ func NewHttpServerRegister(
 	})
 }
 
-func NewGrpcServerRegister(tenant *TenantService, tenantInternal *TenantInternalService) kitgrpc.ServiceRegister {
+func NewGrpcServerRegister(tenant *TenantService, tenantInternal *TenantInternalService, plan *PlanService) kitgrpc.ServiceRegister {
 	return kitgrpc.ServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v1.RegisterTenantInternalServiceServer(srv, tenantInternal)
 		v1.RegisterTenantServiceServer(srv, tenant)
+
+		v12.RegisterPlanServiceServer(srv, plan)
 	})
 }

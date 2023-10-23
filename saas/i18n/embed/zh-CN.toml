@@ -20,3 +20,17 @@ other = "创建租户"
 other = "更新租户"
 [permission.saas.tenant.delete]
 other = "删除租户"
+
+[permission.saas.plan.group]
+other = "计划"
+[permission.saas.plan.read]
+other = "读取计划"
+[permission.saas.plan.create]
+other = "创建计划"
+[permission.saas.plan.update]
+other = "更新计划"
+[permission.saas.plan.delete]
+other = "删除计划"
+
+[saas.plan.management]
+other = "计划管理"

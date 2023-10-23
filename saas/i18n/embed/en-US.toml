@@ -20,3 +20,17 @@ other = "Create Tenant"
 other = "Update Tenant"
 [permission.saas.tenant.delete]
 other = "Delete Tenant"
+
+[permission.saas.plan.group]
+other = "Plan"
+[permission.saas.plan.read]
+other = "Read Plan"
+[permission.saas.plan.create]
+other = "Create Plan"
+[permission.saas.plan.update]
+other = "Update Plan"
+[permission.saas.plan.delete]
+other = "Delete Plan"
+
+[saas.plan.management]
+other = "Plan Management"

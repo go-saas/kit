@@ -23,3 +23,28 @@ groups:
         namespace: "saas.tenant"
         action: "delete"
         side: HOST_ONLY
+
+  - name: "permission.saas.plan.group"
+    side: HOST_ONLY
+    def:
+      - name: "permission.saas.plan.any"
+        namespace: "saas.plan"
+        action: "*"
+        internal: true
+        side: HOST_ONLY
+      - name: "permission.saas.plan.read"
+        namespace: "saas.tenant"
+        action: "read"
+        side: HOST_ONLY
+      - name: "permission.saas.plan.create"
+        namespace: "saas.plan"
+        action: "create"
+        side: HOST_ONLY
+      - name: "permission.saas.plan.update"
+        namespace: "saas.plan"
+        action: "update"
+        side: HOST_ONLY
+      - name: "permission.saas.plan.delete"
+        namespace: "saas.plan"
+        action: "delete"
+        side: HOST_ONLY

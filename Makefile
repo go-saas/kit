@@ -1,6 +1,6 @@
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
-BUF_VERSION=v1.18.0
+BUF_VERSION=v1.27.1
 DIR=$(shell pwd)
 
 SRV_PROTO_DIR = dtm event oidc user sys saas realtime gateway payment order product
@@ -31,7 +31,7 @@ init:
 	go install github.com/go-saas/kit/cmd/protoc-gen-go-grpc-proxy@c2ded75bd3ee9f1229e50d7141966ecbde39a84f
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
 	go install github.com/go-saas/kit/cmd/protoc-gen-go-errors-i18n/v2@c2ded75bd3ee9f1229e50d7141966ecbde39a84f
-	go install github.com/envoyproxy/protoc-gen-validate@v0.6.7
+	go install github.com/envoyproxy/protoc-gen-validate@v1.0.2
 	go install github.com/bufbuild/buf/cmd/buf@$(BUF_VERSION)
 	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking@$(BUF_VERSION)
 	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-lint@$(BUF_VERSION)

@@ -7,6 +7,7 @@ import (
 
 const (
 	ResourceTenant = "saas.tenant"
+	ResourcePlan   = "saas.plan"
 )
 
 //go:embed permission.yaml

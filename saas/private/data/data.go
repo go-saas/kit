@@ -20,6 +20,7 @@ var ProviderSet = kitdi.NewSet(
 	NewData,
 	NewTenantRepo,
 	NewMigrate,
+	NewPlanRepo,
 	api.NewTenantStore,
 )
 

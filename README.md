@@ -34,6 +34,14 @@ address http://saas.nihaosaoya.com (Shanghai)
 * [x] OpenId Connect: [ory](https://www.ory.sh/)
 * [x] Logging/Tracing
 
+
+# Modules
+* [x] User Management
+* [x] Tenant Management, Tenant Plans and Subscription
+* [x] Payments and Orders
+* [x] Product Management
+
+
 # Quick Start
 
 ### For Microservice

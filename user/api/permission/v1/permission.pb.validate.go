@@ -1592,7 +1592,7 @@ func (m *AddSubjectPermissionRequest) validate(all bool) error {
 	if _, ok := _AddSubjectPermissionRequest_Effect_InLookup[m.GetEffect()]; !ok {
 		err := AddSubjectPermissionRequestValidationError{
 			field:  "Effect",
-			reason: "value must be in list [1 2]",
+			reason: "value must be in list [GRANT FORBIDDEN]",
 		}
 		if !all {
 			return err

@@ -61,30 +61,102 @@ func (m *DynamicValue) validate(all bool) error {
 
 	var errors []error
 
-	switch m.Value.(type) {
-
+	switch v := m.Value.(type) {
 	case *DynamicValue_IntValue:
+		if v == nil {
+			err := DynamicValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 		// no validation rules for IntValue
-
 	case *DynamicValue_LongValue:
+		if v == nil {
+			err := DynamicValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 		// no validation rules for LongValue
-
 	case *DynamicValue_FloatValue:
+		if v == nil {
+			err := DynamicValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 		// no validation rules for FloatValue
-
 	case *DynamicValue_DoubleValue:
+		if v == nil {
+			err := DynamicValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 		// no validation rules for DoubleValue
-
 	case *DynamicValue_StringValue:
+		if v == nil {
+			err := DynamicValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 		// no validation rules for StringValue
-
 	case *DynamicValue_BoolValue:
+		if v == nil {
+			err := DynamicValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 		// no validation rules for BoolValue
-
 	case *DynamicValue_NullValue:
+		if v == nil {
+			err := DynamicValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 		// no validation rules for NullValue
-
 	case *DynamicValue_JsonValue:
+		if v == nil {
+			err := DynamicValueValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetJsonValue()).(type) {
@@ -115,6 +187,8 @@ func (m *DynamicValue) validate(all bool) error {
 			}
 		}
 
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -216,9 +290,18 @@ func (m *DynamicValueFilter) validate(all bool) error {
 
 	var errors []error
 
-	switch m.Filter.(type) {
-
+	switch v := m.Filter.(type) {
 	case *DynamicValueFilter_IntValue:
+		if v == nil {
+			err := DynamicValueFilterValidationError{
+				field:  "Filter",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetIntValue()).(type) {
@@ -250,6 +333,16 @@ func (m *DynamicValueFilter) validate(all bool) error {
 		}
 
 	case *DynamicValueFilter_LongValue:
+		if v == nil {
+			err := DynamicValueFilterValidationError{
+				field:  "Filter",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetLongValue()).(type) {
@@ -281,6 +374,16 @@ func (m *DynamicValueFilter) validate(all bool) error {
 		}
 
 	case *DynamicValueFilter_FloatValue:
+		if v == nil {
+			err := DynamicValueFilterValidationError{
+				field:  "Filter",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetFloatValue()).(type) {
@@ -312,6 +415,16 @@ func (m *DynamicValueFilter) validate(all bool) error {
 		}
 
 	case *DynamicValueFilter_DoubleValue:
+		if v == nil {
+			err := DynamicValueFilterValidationError{
+				field:  "Filter",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetDoubleValue()).(type) {
@@ -343,6 +456,16 @@ func (m *DynamicValueFilter) validate(all bool) error {
 		}
 
 	case *DynamicValueFilter_StringValue:
+		if v == nil {
+			err := DynamicValueFilterValidationError{
+				field:  "Filter",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetStringValue()).(type) {
@@ -374,6 +497,16 @@ func (m *DynamicValueFilter) validate(all bool) error {
 		}
 
 	case *DynamicValueFilter_BoolValue:
+		if v == nil {
+			err := DynamicValueFilterValidationError{
+				field:  "Filter",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetBoolValue()).(type) {
@@ -405,6 +538,16 @@ func (m *DynamicValueFilter) validate(all bool) error {
 		}
 
 	case *DynamicValueFilter_NullValue:
+		if v == nil {
+			err := DynamicValueFilterValidationError{
+				field:  "Filter",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetNullValue()).(type) {
@@ -435,6 +578,8 @@ func (m *DynamicValueFilter) validate(all bool) error {
 			}
 		}
 
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {

@@ -10,6 +10,7 @@ import "google/api/field_behavior.proto";
 import "validate/validate.proto";
 import "query/operation.proto";
 import "lbs/address.proto";
+import "price/price.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 option go_package = "github.com/go-saas/kit/order/api/order/v1;v1";
 

@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package saas.api.plan.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "blob/blob.proto";
+import "google/api/field_behavior.proto";
+import "query/operation.proto";
+import "data/data.proto";
+
+option go_package = "github.com/go-saas/kit/saas/api/plan/v1;v1";
+
+service PlanService {
+  rpc ListPlan (ListPlanRequest) returns (ListPlanReply){
+    option (google.api.http) = {
+      get: "/v1/saas/plans",
+      additional_bindings:{
+        post:"/v1/saas/plan/list",
+        body:"*"
+      }
+    };
+  }
+
+  rpc GetPlan (GetPlanRequest) returns (Plan){
+    option (google.api.http) = {
+      get: "/v1/saas/plan/{key}"
+    };
+  }
+
+  rpc CreatePlan (CreatePlanRequest) returns (Plan){
+    option (google.api.http) = {
+      post: "/v1/saas/plan",
+      body: "*"
+    };
+  }
+
+  rpc UpdatePlan (UpdatePlanRequest) returns (Plan){
+    option (google.api.http) = {
+      put: "/v1/saas/plan/{plan.key}",
+      body: "*"
+      additional_bindings{
+        patch: "/v1/saas/plan/{plan.key}",
+        body: "*"
+      }
+    };
+  }
+
+  rpc DeletePlan (DeletePlanRequest) returns (DeletePlanReply){
+    option (google.api.http) = {
+      delete: "/v1/saas/plan/{key}"
+    };
+  }
+
+  rpc GetAvailablePlans(GetAvailablePlansRequest)returns(GetAvailablePlansReply){
+    option (google.api.http) = {
+      get: "/v1/saas/plans/available",
+    };
+  }
+}
+
+message CreatePlanRequest {
+  string key =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string display_name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdatePlanRequest {
+  UpdatePlan plan=1 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdatePlan{
+  string key=1;
+  string display_name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  bool active=3;
+}
+
+message DeletePlanRequest {
+  string key=1;
+}
+message DeletePlanReply {
+}
+
+message GetPlanRequest {
+  string key=1 [(validate.rules).string.min_len=1,(google.api.field_behavior)=REQUIRED];
+}
+
+message PlanFilter{
+  query.operation.StringFilterOperation key=1;
+  query.operation.StringFilterOperation display_name =2;
+  query.operation.BooleanFilterOperators active =3;
+}
+
+message ListPlanRequest {
+  int32 page_offset =1;
+  int32 page_size = 2;
+  string search = 3;
+  repeated string sort =4;
+  google.protobuf.FieldMask fields=5;
+  PlanFilter filter =6;
+}
+message ListPlanReply {
+  int32 total_size =1;
+  int32 filter_size =2;
+  repeated Plan items=3;
+}
+
+message Plan{
+  string key =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string display_name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  bool active=3;
+}
+
+message GetAvailablePlansRequest{
+
+}
+message GetAvailablePlansReply{
+  repeated Plan items=3;
+}

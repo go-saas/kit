@@ -87,6 +87,18 @@ sys:
               - name: "kit_authz"
                 value: "{\"requirement\":[{\"namespace\":\"dev.dtm\",\"resource\":\"*\",\"action\":\"*\"}]}"
 
+      payment-api:
+        uris: ["/v1/payment/*","/assets/payment/*"]
+        upstream_id: payment-http
+
+      order-api:
+        uris: ["/v1/order/*","/assets/order/*"]
+        upstream_id: order-http
+
+      product-api:
+        uris: ["/v1/product/*","/assets/product/*"]
+        upstream_id: product-http
+
       realtime-api:
         uris: ["/v1/realtime/*","/assets/realtime/*"]
         upstream_id: realtime-http
@@ -104,7 +116,6 @@ sys:
         priority: -99
         uris: ["/v1/*","/assets/user/*"]
         upstream_id: user-http
-
 
       web:
         priority: -100

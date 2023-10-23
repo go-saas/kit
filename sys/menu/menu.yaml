@@ -85,6 +85,15 @@ menus:
           - namespace: "saas.tenant"
             resource: "*"
             action: "read"
+      - name: "plans"
+        path: "/saas/plans"
+        component: "/saas/plan/index"
+        is_preserved: true
+        title: "saas.plan.management"
+        requirement:
+          - namespace: "saas.plan"
+            resource: "*"
+            action: "read"
 
   - name: "oidc"
     path: "/oidc"

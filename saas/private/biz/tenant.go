@@ -30,11 +30,12 @@ type Tenant struct {
 	//connection
 	Conn []TenantConn `gorm:"foreignKey:TenantId"`
 
-	//edition
-	EditionId string
-	Edition   Edition         `gorm:"foreignKey:EditionId"`
-	Features  []TenantFeature `gorm:"foreignKey:TenantId"`
-	Extra     data.JSONMap
+	//Plan
+	PlanId string
+	Plan   Plan `gorm:"foreignKey:PlanId"`
+
+	Features []TenantFeature `gorm:"foreignKey:TenantId"`
+	Extra    data.JSONMap
 }
 
 // TenantConn connection string info

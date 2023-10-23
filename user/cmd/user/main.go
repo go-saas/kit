@@ -46,6 +46,10 @@ import (
 	_ "github.com/go-saas/kit/realtime/api"
 	_ "github.com/go-saas/kit/saas/api"
 	_ "github.com/go-saas/kit/sys/api"
+
+	_ "github.com/go-saas/kit/order/api"
+	_ "github.com/go-saas/kit/payment/api"
+	_ "github.com/go-saas/kit/product/api"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"

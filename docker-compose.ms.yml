@@ -63,7 +63,6 @@ services:
     volumes:
       - ./quickstart/configs:/data/conf
       - ./quickstart/.assets:/app/.assets
-    command: ["./sys", "-conf", "/data/conf"]
     restart: unless-stopped
     build:
       context: .
@@ -71,4 +70,38 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  payment:
+    image: ${DOCKER_REGISTRY}go-saas-kit-payment:${DOCKER_TAG:-latest}
+    volumes:
+      - ./quickstart/configs:/data/conf
+      - ./quickstart/.assets:/app/.assets
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./payment/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
+  order:
+    image: ${DOCKER_REGISTRY}go-saas-kit-order:${DOCKER_TAG:-latest}
+    volumes:
+      - ./quickstart/configs:/data/conf
+      - ./quickstart/.assets:/app/.assets
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./order/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  product:
+    image: ${DOCKER_REGISTRY}go-saas-kit-product:${DOCKER_TAG:-latest}
+    volumes:
+      - ./quickstart/configs:/data/conf
+      - ./quickstart/.assets:/app/.assets
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./product/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
