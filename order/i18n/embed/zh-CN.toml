@@ -1,0 +1,11 @@
+[permission.order.order.group]
+other = "订单"
+[permission.order.order.read]
+other = "查看订单"
+[permission.order.order.write]
+other = "增加/修改/删除 订单"
+
+[order.manager]
+other = "订单管理"
+[order.order]
+other = "订单列表"

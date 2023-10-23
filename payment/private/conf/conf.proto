@@ -1,0 +1,35 @@
+syntax = "proto3";
+package payment.private.conf;
+
+option go_package = "github.com/go-saas/kit/payment/private/conf;conf";
+
+import "conf/conf.proto";
+import "blob/blob.proto";
+
+message Bootstrap {
+  .conf.Data data = 2;
+  .conf.Security security=3;
+  .conf.Services services =4;
+  .conf.Logging logging=6;
+  .conf.Tracers tracing=7;
+  .conf.AppConfig app=8;
+
+  PaymentConf payment=500;
+}
+
+
+message PaymentConf{
+  map<string,PaymentMethod> methods=1;
+}
+
+message PaymentMethod{
+    StripePayment stripe=1;
+}
+
+message StripePayment{
+  bool is_test=1;
+  string publish_key=2;
+  string private_key=3;
+  string webhook_key=4;
+}
+

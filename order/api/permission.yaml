@@ -1,0 +1,13 @@
+groups:
+  - name: "permission.order.order.group"
+    def:
+      - name: "permission.order.order.any"
+        namespace: "order.order"
+        action: "*"
+        internal: true
+      - name: "permission.permission.read"
+        namespace: "order.order"
+        action: "read"
+      - name: "permission.permission.write"
+        namespace: "order.order"
+        action: "write"

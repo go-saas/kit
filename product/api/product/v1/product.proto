@@ -1,0 +1,163 @@
+syntax = "proto3";
+
+package product.api.product.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
+import "query/operation.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "product/api/product/v1/common.proto";
+import "product/api/category/v1/category.proto";
+
+option go_package = "github.com/go-saas/kit/product/api/product/v1;v1";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  security_definitions: {
+    security: {
+      key: "bearer"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "Authorization"
+        description: "Authentication token, prefixed by Bearer: Bearer <token>"
+      }
+    }
+  }
+  security: {
+    security_requirement: {
+      key: "bearer"
+    }
+  }
+};
+
+service ProductService {
+  rpc ListProduct (ListProductRequest) returns (ListProductReply){
+    option (google.api.http) = {
+      get: "/v1/product/product",
+      additional_bindings:{
+        post:"/v1/product/product/list",
+        body:"*"
+      }
+    };
+  }
+  rpc GetProduct (GetProductRequest) returns (Product){
+    option (google.api.http) = {
+      get: "/v1/product/product/{id}"
+    };
+  }
+  rpc CreateProduct (CreateProductRequest) returns (Product){
+    option (google.api.http) = {
+      post: "/v1/product/product",
+      body: "*"
+    };
+  }
+  rpc UpdateProduct (UpdateProductRequest) returns (Product){
+    option (google.api.http) = {
+      put: "/v1/product/product/{product.id}",
+      body: "*"
+      additional_bindings{
+        patch: "/v1/product/product/{product.id}",
+        body: "*"
+      }
+    };
+  }
+  rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductReply){
+    option (google.api.http) = {
+      delete: "/v1/product/product/{id}"
+    };
+  }
+
+}
+
+message CreateProductRequest {
+  string title =10 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string short_desc=11;
+  string desc=12;
+
+  Media main_pic=13;
+  repeated Media medias=14;
+
+  repeated Badge badges=15;
+
+  google.protobuf.Timestamp visible_from=16;
+  google.protobuf.Timestamp visible_to=17;
+
+  bool is_new=18;
+
+
+  string main_category_id= 40;
+  repeated string categories=41;
+
+  string barcode=19;
+
+  string model=20;
+
+  string brand_id=21;
+
+  bool is_saleable=22;
+  google.protobuf.Timestamp saleable_from=23;
+  google.protobuf.Timestamp saleable_to=24;
+
+  Keyword keyword=25;
+  Price price=26;
+
+  bool is_giveaway=27;
+
+  bool multi_sku=50;
+
+  repeated CampaignRule campaign_rules=60;
+
+  bool need_shipping=61;
+  repeated Stock stock=62;
+}
+
+
+message UpdateProductRequest {
+  UpdateProduct product=1 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateProduct{
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string name=2;
+}
+
+
+message DeleteProductRequest {
+  string id=1;
+}
+message DeleteProductReply {
+  string id=1;
+  string name=2;
+}
+
+message GetProductRequest {
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior)=REQUIRED];
+}
+
+message ProductFilter{
+  query.operation.StringFilterOperation id=1;
+  query.operation.StringFilterOperation name =2;
+}
+message ListProductRequest {
+  int32 page_offset =1;
+  int32 page_size = 2;
+  string search = 3;
+  repeated string sort =4;
+  google.protobuf.FieldMask fields=5;
+  ProductFilter filter =6;
+}
+message ListProductReply {
+  int32 total_size =1;
+  int32 filter_size =2;
+  repeated Product items=3;
+}
+message Product{
+  string id=1;
+  string name=2;
+  google.protobuf.Timestamp created_at =4;
+}

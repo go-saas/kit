@@ -39,6 +39,7 @@ require (
 	github.com/aws/aws-sdk-go v1.44.189
 	github.com/bojanz/currency v1.1.2
 	github.com/centrifugal/centrifuge v0.29.1
+	github.com/cockroachdb/apd/v3 v3.1.2
 	github.com/dtm-labs/dtm v1.17.3
 	github.com/dtm-labs/dtmdriver-kratos v0.0.9
 	github.com/eko/gocache/v3 v3.1.1
@@ -68,6 +69,7 @@ require (
 	github.com/segmentio/ksuid v1.0.4
 	github.com/silenceper/wechat/v2 v2.1.5
 	github.com/spf13/afero v1.9.3
+	github.com/stripe/stripe-go/v74 v74.30.0
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.2.0
 	github.com/wneessen/go-mail v0.3.8
 	go.etcd.io/etcd/client/v3 v3.5.5
@@ -99,7 +101,6 @@ require (
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/centrifugal/protocol v0.10.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
-	github.com/cockroachdb/apd/v3 v3.1.2 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.4.0 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect

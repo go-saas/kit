@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package product.api.product.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
+import "query/operation.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+option go_package = "github.com/go-saas/kit/product/api/product/v1;v1";
+
+
+service BrandService {
+  rpc ListBrand (ListBrandRequest) returns (ListBrandReply){
+    option (google.api.http) = {
+      get: "/v1/product/brands",
+      additional_bindings:{
+        post:"/v1/product/brand/list",
+        body:"*"
+      }
+    };
+  }
+  rpc GetBrand (GetBrandRequest) returns (Brand){
+    option (google.api.http) = {
+      get: "/v1/product/brand/{id}"
+    };
+  }
+  rpc CreateBrand (CreateBrandRequest) returns (Brand){
+    option (google.api.http) = {
+      post: "/v1/product/brand",
+      body: "*"
+    };
+  }
+  rpc UpdateBrand (UpdateBrandRequest) returns (Brand){
+    option (google.api.http) = {
+      put: "/v1/product/brand/{brand.id}",
+      body: "*"
+      additional_bindings{
+        patch: "/v1/product/brand/{brand.id}",
+        body: "*"
+      }
+    };
+  }
+  rpc DeleteBrand (DeleteBrandRequest) returns (DeleteBrandReply){
+    option (google.api.http) = {
+      delete: "/v1/product/brand/{id}"
+    };
+  }
+
+}
+
+
+message CreateBrandRequest {
+  string code=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string name=3;
+  string logo=4;
+  string url=6;
+  string desc=7;
+}
+
+message UpdateBrandRequest {
+  UpdateBrand brand=1 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateBrand{
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string code=2;
+  string name=3;
+  string logo=4;
+  string url=6;
+  string desc=7;
+}
+
+
+message DeleteBrandRequest {
+  string id=1;
+}
+
+message DeleteBrandReply {
+  string id=1;
+  string code=2;
+}
+
+message GetBrandRequest {
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior)=REQUIRED];
+}
+
+message BrandFilter{
+  query.operation.StringFilterOperation id=1;
+  query.operation.StringFilterOperation code =2;
+}
+
+message ListBrandRequest {
+  int32 page_offset =1;
+  int32 page_size = 2;
+  string search = 3;
+  repeated string sort =4;
+  google.protobuf.FieldMask fields=5;
+  BrandFilter filter =6;
+}
+message ListBrandReply {
+  int32 total_size =1;
+  int32 filter_size =2;
+  repeated Brand items=3;
+}
+
+message Brand{
+  string id=1;
+  string code=2;
+  string name=3;
+  string logo=4;
+  string url=6;
+  string desc=7;
+}

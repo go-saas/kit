@@ -3,7 +3,7 @@ VERSION=$(shell git describe --tags --always)
 BUF_VERSION=v1.18.0
 DIR=$(shell pwd)
 
-SRV_PROTO_DIR = dtm event oidc user sys saas realtime gateway
+SRV_PROTO_DIR = dtm event oidc user sys saas realtime gateway payment order product
 PKG_PROTO_DIR = $(patsubst %/,%,$(shell cd pkg && ls -d */))
 OTHER_PROTO_DIR = $(patsubst %/,%,$(shell cd proto && ls -d */))
 THIRD_PARTY_PROTO_DIR = errors google lbs protoc-gen-openapiv2 validate
@@ -37,25 +37,43 @@ init:
 	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-lint@$(BUF_VERSION)
 
 .PHONY: user
+# user
 user:
 	cd user && $(MAKE) all
 
 .PHONY: saas
+# saas
 saas:
 	cd saas && $(MAKE) all
 
 .PHONY: realtime
+# realtime
 realtime:
 	cd realtime && $(MAKE) all
 
 .PHONY: sys
+# sys
 sys:
 	cd sys && $(MAKE) all
+
+.PHONY: payment
+# payment
+payment:
+	cd payment && $(MAKE) all
+
+.PHONY: order
+# order
+order:
+	cd order && $(MAKE) all
+
+.PHONY: product
+# product
+product:
+	cd product && $(MAKE) all
 
 .PHONY: apisix
 apisix:
 	cd gateway/apisix && $(MAKE) all
-
 
 .PHONY: api
 # generate api proto
@@ -65,7 +83,9 @@ api:
 	cd saas && $(MAKE) api
 	cd sys && $(MAKE) api
 	cd realtime && $(MAKE) api
-
+	cd payment && $(MAKE) api
+	cd order && $(MAKE) api
+	cd product && $(MAKE) api
 
 .PHONY: build
 build:
@@ -74,7 +94,9 @@ build:
 	cd sys && $(MAKE) build
 	cd realtime && $(MAKE) build
 	cd gateway/apisix && $(MAKE) build
-
+	cd payment && $(MAKE) build
+	cd order && $(MAKE) build
+	cd product && $(MAKE) build
 
 .PHONY: all
 all:
@@ -85,6 +107,9 @@ all:
 	make sys
 	make realtime
 	make apisix
+	make payment
+	make order
+	make product
 
 # show help
 help:
@@ -103,4 +128,4 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL := help

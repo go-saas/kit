@@ -1,0 +1,11 @@
+[permission.order.order.group]
+other = "Order"
+[permission.order.order.read]
+other = "Read Order"
+[permission.order.order.write]
+other = "Write Order"
+
+[order.manager]
+other = "Order Management"
+[order.order]
+other = "Order List"

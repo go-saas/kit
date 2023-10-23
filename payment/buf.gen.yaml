@@ -1,0 +1,8 @@
+version: v1
+plugins:
+  - plugin: buf.build/grpc-ecosystem/openapiv2:v2.15.2
+    out: ./payment/private/service/openapi
+    opt:
+      - allow_merge=true
+      - proto3_optional_nullable=true
+      - merge_file_name=api

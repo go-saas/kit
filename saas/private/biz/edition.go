@@ -7,9 +7,9 @@ import (
 
 type Edition struct {
 	gorm.UIDBase
-	Name string
-
-	Features []EditionFeature `gorm:"foreignKey:EditionId"`
+	Name        string
+	DisplayName string
+	Features    []EditionFeature `gorm:"foreignKey:EditionId"`
 }
 
 type EditionFeature struct {

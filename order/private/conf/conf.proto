@@ -1,0 +1,18 @@
+syntax = "proto3";
+package order.private.conf;
+
+option go_package = "github.com/go-saas/kit/order/private/conf;conf";
+
+import "conf/conf.proto";
+import "blob/blob.proto";
+
+message Bootstrap {
+  .conf.Data data = 2;
+  .conf.Security security=3;
+  .conf.Services services =4;
+  .conf.Logging logging=6;
+  .conf.Tracers tracing=7;
+  .conf.AppConfig app=8;
+}
+
+

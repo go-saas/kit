@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package product.api.product.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+import "google/protobuf/field_mask.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/go-saas/kit/product/api/product/v1;v1";
+
+message Media{
+  string id=1;
+  string type=2;
+  string title=3;
+}
+
+message Badge{
+  string id=1;
+  string code=3;
+  string label=4;
+}
+
+message Keyword{
+  string id=1;
+  string text=2;
+  string refer=3;
+}
+
+
+message CampaignRule{
+  string id=1;
+  string rule=2;
+  google.protobuf.Struct extra=3;
+}
+
+message Stock{
+  string id=1;
+  bool  in_stock=2;
+  string level=3 [(validate.rules).string={in:["out","in","low"]}];
+  int32 amount=10;
+  string delivery_code=11;
+}
+
+message Price{
+  string currency_code =1;
+  int32 default_amount=2;
+  int32 discounted_amount=3;
+  string discount_text=5;
+  bool deny_more_discounts=6;
+}

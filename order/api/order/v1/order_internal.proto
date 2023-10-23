@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package order.api.order.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
+import "query/operation.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "order/api/order/v1/order.proto";
+import "price/price.proto";
+import "lbs/address.proto";
+option go_package = "github.com/go-saas/kit/order/api/order/v1;v1";
+
+service OrderInternalService {
+  rpc CreateInternalOrder (CreateInternalOrderRequest) returns (Order){
+  }
+
+  rpc GetInternalOrder(GetInternalOrderRequest)returns(Order){
+
+  }
+
+  rpc InternalOrderPaySuccess(InternalOrderPaySuccessRequest)returns(InternalOrderPaySuccessReply){
+
+  }
+
+  rpc InternalOrderRefunded(InternalOrderRefundedRequest)returns(InternalOrderRefundedReply){
+
+  }
+
+}
+
+message CreateInternalOrderRequest{
+
+  .lbs.Address shipping_addr=16;
+  .lbs.Address billing_addr=17;
+
+  string customer_id=18;
+
+  optional google.protobuf.Duration pay_before=19;
+
+  google.protobuf.Struct extra=100;
+
+  repeated CreateInternalOrderItem items=200 [(validate.rules).repeated.min_items=1,(google.api.field_behavior) = REQUIRED];
+}
+
+
+message CreateInternalOrderItem{
+  int32 qty=1;
+
+  price.PricePb price=30;
+
+  price.PricePb original_price=40;
+
+  bool  is_giveaway=50;
+
+  OrderProduct product=100 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+
+}
+
+message GetInternalOrderRequest{
+  string id=1;
+}
+
+message InternalOrderPaySuccessRequest{
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+
+  google.protobuf.Struct pay_extra = 21;
+  google.protobuf.Timestamp paid_time=22;
+
+  price.PricePb paid_price=30;
+  string pay_way = 31;
+  string pay_method = 32;
+}
+
+message InternalOrderPaySuccessReply{
+
+}
+
+message InternalOrderRefundedRequest{
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+
+  google.protobuf.Struct pay_extra = 21;
+  google.protobuf.Timestamp refund_time=22;
+
+  price.PricePb refund_price=30;
+  string pay_way = 31;
+  string pay_method = 32;
+}
+
+message InternalOrderRefundedReply{
+
+}

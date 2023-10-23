@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package payment.api.gateway.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
+import "query/operation.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/go-saas/kit/payment/api/gateway/v1;v1";
+
+
+service PaymentGatewayService{
+  rpc GetPaymentMethod(GetPaymentMethodRequest)returns(GetPaymentMethodReply){
+    option (google.api.http) = {
+      get: "/v1/payment/methods",
+    };
+  }
+}
+
+
+service StripePaymentGatewayService{
+  rpc CreateStripePaymentIntent (CreateStripePaymentIntentRequest) returns (CreateStripePaymentIntentReply){
+    option (google.api.http) = {
+      post: "/v1/payment/stripe/intent",
+      body:"*"
+    };
+  }
+
+  rpc StripeWebhook(google.protobuf.Empty)returns(StripeWebhookReply){
+    option (google.api.http) = {
+      post: "/v1/payment/stripe/webhook",
+      body:"*"
+    };
+  }
+}
+
+
+message GetPaymentMethodRequest{
+  string order_id=1;
+  bool is_test=2;
+}
+
+
+message GetPaymentMethodReply{
+  repeated PaymentMethod methods=1;
+}
+
+
+message StripeWebhookRequest{
+
+}
+
+message StripeWebhookReply{
+
+}
+
+message PaymentMethod{
+  string name=1;
+  string logo=2;
+  string desc=3;
+  string notice=4;
+}
+
+message CreateStripePaymentIntentRequest{
+  string order_id=1;
+
+}
+
+message CreateStripePaymentIntentReply{
+  string payment_intent=1;
+  string  ephemeral_key=2;
+  string customer_id=3;
+}

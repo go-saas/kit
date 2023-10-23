@@ -1,0 +1,8 @@
+syntax = "proto3";
+package product.event;
+
+option go_package = "github.com/go-saas/kit/product/event/v1;v1";
+
+message DemoEvent{
+
+}

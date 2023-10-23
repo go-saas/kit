@@ -1,0 +1,40 @@
+package data
+
+import (
+	"context"
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-saas/kit/payment/private/biz"
+	_ "github.com/go-saas/kit/pkg/blob/memory"
+	_ "github.com/go-saas/kit/pkg/blob/os"
+	_ "github.com/go-saas/kit/pkg/blob/s3"
+	conf2 "github.com/go-saas/kit/pkg/conf"
+	kitdi "github.com/go-saas/kit/pkg/di"
+	"github.com/go-saas/saas/gorm"
+	g "gorm.io/gorm"
+)
+
+// ProviderSet is data providers.
+var ProviderSet = kitdi.NewSet(
+	NewData,
+	NewMigrate,
+)
+
+// Data .
+type Data struct {
+	DbProvider gorm.DbProvider
+}
+
+func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
+	db := provider.Get(ctx, string(biz.ConnName))
+	return db
+}
+
+// NewData .
+func NewData(c *conf2.Data, dbProvider gorm.DbProvider, logger log.Logger) (*Data, func(), error) {
+	cleanup := func() {
+		logger.Log(log.LevelInfo, "closing the data resources")
+	}
+	return &Data{
+		DbProvider: dbProvider,
+	}, cleanup, nil
+}
