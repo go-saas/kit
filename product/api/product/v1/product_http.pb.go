@@ -35,13 +35,13 @@ type ProductServiceHTTPServer interface {
 
 func RegisterProductServiceHTTPServer(s *http.Server, srv ProductServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/product/product/list", _ProductService_ListProduct0_HTTP_Handler(srv))
-	r.GET("/v1/product/product", _ProductService_ListProduct1_HTTP_Handler(srv))
-	r.GET("/v1/product/product/{id}", _ProductService_GetProduct0_HTTP_Handler(srv))
-	r.POST("/v1/product/product", _ProductService_CreateProduct0_HTTP_Handler(srv))
-	r.PATCH("/v1/product/product/{product.id}", _ProductService_UpdateProduct0_HTTP_Handler(srv))
-	r.PUT("/v1/product/product/{product.id}", _ProductService_UpdateProduct1_HTTP_Handler(srv))
-	r.DELETE("/v1/product/product/{id}", _ProductService_DeleteProduct0_HTTP_Handler(srv))
+	r.POST("/v1/product/list", _ProductService_ListProduct0_HTTP_Handler(srv))
+	r.GET("/v1/product", _ProductService_ListProduct1_HTTP_Handler(srv))
+	r.GET("/v1/product/{id}", _ProductService_GetProduct0_HTTP_Handler(srv))
+	r.POST("/v1/product", _ProductService_CreateProduct0_HTTP_Handler(srv))
+	r.PATCH("/v1/product/{product.id}", _ProductService_UpdateProduct0_HTTP_Handler(srv))
+	r.PUT("/v1/product/{product.id}", _ProductService_UpdateProduct1_HTTP_Handler(srv))
+	r.DELETE("/v1/product/{id}", _ProductService_DeleteProduct0_HTTP_Handler(srv))
 }
 
 func _ProductService_ListProduct0_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
@@ -219,7 +219,7 @@ func NewProductServiceHTTPClient(client *http.Client) ProductServiceHTTPClient {
 
 func (c *ProductServiceHTTPClientImpl) CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...http.CallOption) (*Product, error) {
 	var out Product
-	pattern := "/v1/product/product"
+	pattern := "/v1/product"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationProductServiceCreateProduct))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -232,7 +232,7 @@ func (c *ProductServiceHTTPClientImpl) CreateProduct(ctx context.Context, in *Cr
 
 func (c *ProductServiceHTTPClientImpl) DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...http.CallOption) (*DeleteProductReply, error) {
 	var out DeleteProductReply
-	pattern := "/v1/product/product/{id}"
+	pattern := "/v1/product/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductServiceDeleteProduct))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -245,7 +245,7 @@ func (c *ProductServiceHTTPClientImpl) DeleteProduct(ctx context.Context, in *De
 
 func (c *ProductServiceHTTPClientImpl) GetProduct(ctx context.Context, in *GetProductRequest, opts ...http.CallOption) (*Product, error) {
 	var out Product
-	pattern := "/v1/product/product/{id}"
+	pattern := "/v1/product/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductServiceGetProduct))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -258,7 +258,7 @@ func (c *ProductServiceHTTPClientImpl) GetProduct(ctx context.Context, in *GetPr
 
 func (c *ProductServiceHTTPClientImpl) ListProduct(ctx context.Context, in *ListProductRequest, opts ...http.CallOption) (*ListProductReply, error) {
 	var out ListProductReply
-	pattern := "/v1/product/product"
+	pattern := "/v1/product"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductServiceListProduct))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -271,7 +271,7 @@ func (c *ProductServiceHTTPClientImpl) ListProduct(ctx context.Context, in *List
 
 func (c *ProductServiceHTTPClientImpl) UpdateProduct(ctx context.Context, in *UpdateProductRequest, opts ...http.CallOption) (*Product, error) {
 	var out Product
-	pattern := "/v1/product/product/{product.id}"
+	pattern := "/v1/product/{product.id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationProductServiceUpdateProduct))
 	opts = append(opts, http.PathTemplate(pattern))

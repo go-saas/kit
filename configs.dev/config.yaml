@@ -31,7 +31,27 @@ services:
       grpc:
         addr: ":19381"
         endpoint: host.docker.internal:19381
-
+    payment:
+      http:
+        addr: ":19480"
+        endpoint: host.docker.internal:19480
+      grpc:
+        addr: ":19481"
+        endpoint: host.docker.internal:19481
+    order:
+      http:
+        addr: ":19580"
+        endpoint: host.docker.internal:19580
+      grpc:
+        addr: ":19581"
+        endpoint: host.docker.internal:19581
+    product:
+      http:
+        addr: ":19680"
+        endpoint: host.docker.internal:19680
+      grpc:
+        addr: ":19681"
+        endpoint: host.docker.internal:19681
 data:
   endpoints:
     events:
@@ -47,6 +67,7 @@ data:
       default:
         addrs: ["host.docker.internal:7379"]
         password: youShouldChangeThis
+
 logging:
   zap:
     level: "info"

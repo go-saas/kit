@@ -2,7 +2,7 @@ package biz
 
 import (
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
-	"github.com/go-saas/kit/pkg/price"
+	"time"
 )
 
 // ProductSku sku
@@ -19,9 +19,14 @@ type ProductSku struct {
 	MainPicID string
 	Medias    []ProductMedia `gorm:"polymorphic:Owner;polymorphicValue:product_sku"`
 
-	Price price.Info `gorm:"embedded;embeddedPrefix:price_"`
+	Prices []Price `gorm:"polymorphic:Owner;polymorphicValue:product_sku"`
 
 	Stock []Stock `gorm:"polymorphic:Owner;polymorphicValue:product_sku"`
 
-	Barcode string `gorm:"comment:商品条码"`
+	Keyword []KeyWord `gorm:"polymorphic:Owner;polymorphicValue:product_sku;comment:商品关键字"`
+
+	IsSaleable   bool
+	SaleableFrom *time.Time
+	SaleableTo   *time.Time
+	Barcode      string `gorm:"comment:商品条码"`
 }

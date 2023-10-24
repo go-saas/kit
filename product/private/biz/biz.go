@@ -6,3 +6,7 @@ import (
 
 // ProviderSet is biz providers.
 var ProviderSet = kitdi.NewSet(NewPostSeeder)
+
+var (
+	ProductMediaPath = "product/m"
+)

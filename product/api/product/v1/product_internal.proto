@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package product.api.product.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
+import "query/operation.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "product/api/product/v1/common.proto";
+import "product/api/category/v1/category.proto";
+import "product/api/product/v1/product.proto";
+
+option go_package = "github.com/go-saas/kit/product/api/product/v1;v1";
+
+service ProductInternalService{
+  rpc CreateInternalProduct(CreateInternalProductRequest)returns(.product.api.product.v1.Product){
+
+  }
+
+  rpc GetInternalProduct(GetInternalProductRequest)returns(.product.api.product.v1.Product){
+
+  }
+
+  rpc UpdateInternalProduct(UpdateInternalProductRequest)returns(.product.api.product.v1.Product){
+
+  }
+
+  rpc DeleteInternalProduct(DeleteInternalProductRequest)returns(DeleteInternalProductReply){
+
+  }
+
+}
+
+message CreateInternalProductRequest{
+
+}
+message CreateInternalProductReply{
+
+}
+
+message UpdateInternalProductRequest {
+  UpdateProduct product=1 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateInternalProduct{
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string name=2;
+}
+
+message GetInternalProductRequest {
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior)=REQUIRED];
+}
+
+message DeleteInternalProductRequest {
+  string id=1;
+}
+message DeleteInternalProductReply {
+  string id=1;
+}

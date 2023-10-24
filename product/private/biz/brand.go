@@ -24,7 +24,6 @@ type BrandTrans struct {
 	multilingual.Embed
 
 	BrandId string
-	Brand   Brand
 
 	Name        string
 	Url         string

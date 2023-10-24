@@ -11,19 +11,19 @@ import "validate/validate.proto";
 import "query/operation.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "product/api/product/v1/common.proto";
+import "product/api/price/v1/price.proto";
 
 option go_package = "github.com/go-saas/kit/product/api/product/v1;v1";
 
 
-
-message CreateOrUpdateProductSku{
+message CreateProductSku{
   string id=1;
   string title=2;
 
   Media main_pic=13;
   repeated Media medias=14;
 
-  Price price=15;
+  repeated .product.api.price.v1.CreatePriceRequest prices=26;
 
   string barcode=19;
 
@@ -37,7 +37,7 @@ message ProductSku{
   Media main_pic=13;
   repeated Media medias=14;
 
-  Price price=15;
+  repeated .product.api.price.v1.Price prices=26;
 
   string barcode=19;
 

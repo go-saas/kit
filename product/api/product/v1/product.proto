@@ -12,6 +12,7 @@ import "query/operation.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "product/api/product/v1/common.proto";
 import "product/api/category/v1/category.proto";
+import "product/api/price/v1/price.proto";
 
 option go_package = "github.com/go-saas/kit/product/api/product/v1;v1";
 
@@ -32,42 +33,45 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
       key: "bearer"
     }
   }
+  info:{
+    title:"Product"
+  }
 };
 
 service ProductService {
   rpc ListProduct (ListProductRequest) returns (ListProductReply){
     option (google.api.http) = {
-      get: "/v1/product/product",
+      get: "/v1/product",
       additional_bindings:{
-        post:"/v1/product/product/list",
+        post:"/v1/product/list",
         body:"*"
       }
     };
   }
   rpc GetProduct (GetProductRequest) returns (Product){
     option (google.api.http) = {
-      get: "/v1/product/product/{id}"
+      get: "/v1/product/{id}"
     };
   }
   rpc CreateProduct (CreateProductRequest) returns (Product){
     option (google.api.http) = {
-      post: "/v1/product/product",
+      post: "/v1/product",
       body: "*"
     };
   }
   rpc UpdateProduct (UpdateProductRequest) returns (Product){
     option (google.api.http) = {
-      put: "/v1/product/product/{product.id}",
+      put: "/v1/product/{product.id}",
       body: "*"
       additional_bindings{
-        patch: "/v1/product/product/{product.id}",
+        patch: "/v1/product/{product.id}",
         body: "*"
       }
     };
   }
   rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductReply){
     option (google.api.http) = {
-      delete: "/v1/product/product/{id}"
+      delete: "/v1/product/{id}"
     };
   }
 
@@ -88,8 +92,7 @@ message CreateProductRequest {
 
   bool is_new=18;
 
-
-  string main_category_id= 40;
+  string main_category_key= 40;
   repeated string categories=41;
 
   string barcode=19;
@@ -102,8 +105,8 @@ message CreateProductRequest {
   google.protobuf.Timestamp saleable_from=23;
   google.protobuf.Timestamp saleable_to=24;
 
-  Keyword keyword=25;
-  Price price=26;
+  repeated Keyword keywords=25;
+  repeated .product.api.price.v1.CreatePriceRequest prices=26;
 
   bool is_giveaway=27;
 
@@ -112,7 +115,9 @@ message CreateProductRequest {
   repeated CampaignRule campaign_rules=60;
 
   bool need_shipping=61;
-  repeated Stock stock=62;
+  repeated Stock stocks=62;
+
+  google.protobuf.Struct content=63;
 }
 
 
@@ -123,7 +128,45 @@ message UpdateProductRequest {
 
 message UpdateProduct{
   string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string name=2;
+
+  string title =10 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string short_desc=11;
+  string desc=12;
+
+  Media main_pic=13;
+  repeated Media medias=14;
+
+  repeated Badge badges=15;
+
+  google.protobuf.Timestamp visible_from=16;
+  google.protobuf.Timestamp visible_to=17;
+
+  bool is_new=18;
+
+  string barcode=19;
+
+  string model=20;
+
+  string brand_id=21;
+
+  bool is_saleable=22;
+  google.protobuf.Timestamp saleable_from=23;
+  google.protobuf.Timestamp saleable_to=24;
+
+  repeated Keyword keywords=25;
+  repeated .product.api.price.v1.UpdatePrice prices=26;
+
+  bool is_giveaway=27;
+
+  string main_category_key= 40;
+  repeated string categories=41;
+
+  repeated CampaignRule campaign_rules=60;
+
+  bool need_shipping=61;
+  repeated Stock stocks=62;
+
+  google.protobuf.Struct content=63;
 }
 
 
@@ -132,7 +175,6 @@ message DeleteProductRequest {
 }
 message DeleteProductReply {
   string id=1;
-  string name=2;
 }
 
 message GetProductRequest {
@@ -151,13 +193,65 @@ message ListProductRequest {
   google.protobuf.FieldMask fields=5;
   ProductFilter filter =6;
 }
+
 message ListProductReply {
   int32 total_size =1;
   int32 filter_size =2;
   repeated Product items=3;
 }
+
 message Product{
-  string id=1;
-  string name=2;
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+
   google.protobuf.Timestamp created_at =4;
+  google.protobuf.Timestamp updated_at =5;
+  string tenant_id=6;
+
+
+  string title =10 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string short_desc=11;
+  string desc=12;
+
+  Media main_pic=13;
+  repeated Media medias=14;
+
+  repeated Badge badges=15;
+
+  google.protobuf.Timestamp visible_from=16;
+  google.protobuf.Timestamp visible_to=17;
+
+  bool is_new=18;
+
+  string main_category_key= 40;
+  repeated string categories=41;
+
+  string barcode=19;
+
+  string model=20;
+
+  string brand_id=21;
+
+  bool is_saleable=22;
+  google.protobuf.Timestamp saleable_from=23;
+  google.protobuf.Timestamp saleable_to=24;
+
+  repeated Keyword keywords=25;
+  repeated .product.api.price.v1.Price prices=26;
+
+  bool is_giveaway=27;
+
+  bool multi_sku=50;
+
+  repeated CampaignRule campaign_rules=60;
+
+  bool need_shipping=61;
+  repeated Stock stocks=62;
+
+  google.protobuf.Struct content=63;
+
+}
+
+message ProductManageInfo{
+  bool managed=1;
+  string managed_by=2;
 }

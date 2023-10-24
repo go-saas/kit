@@ -1,0 +1,21 @@
+groups:
+  - name: "permission.product.product.group"
+    def:
+      - name: "permission.product.product.any"
+        namespace: "product.product"
+        action: "*"
+        internal: true
+      - name: "permission.product.product.read"
+        namespace: "product.product"
+        action: "read"
+      - name: "permission.product.product.create"
+        namespace: "product.product"
+        action: "create"
+      - name: "permission.product.product.update"
+        namespace: "product.product"
+        action: "update"
+      - name: "permission.product.product.delete"
+        namespace: "product.product"
+        action: "delete"
+
+

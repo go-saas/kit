@@ -58,7 +58,7 @@ logging:
     level: "info"
     outputPaths: [ "stdout", "rolling://.temp/logs" ]
     errorOutputPaths: [ "stderr" ]
-    encoding: json
+    encoding: console
     encoderConfig:
       messageKey: message
       levelKey: level

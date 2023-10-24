@@ -28,6 +28,11 @@ func (c *ProductRepo) GetDb(ctx context.Context) *gorm.DB {
 // BuildDetailScope preload relations
 func (c *ProductRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
+		db = db.Preload("MainPic").
+			Preload("Badges").Preload("Categories").Preload("MainCategory").Preload("Keywords").Preload("Attributes")
+		if withDetail {
+			db = db.Preload("Medias").Preload("CampaignRule").Preload("Stocks")
+		}
 		return db
 	}
 }

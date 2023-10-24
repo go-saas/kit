@@ -1,0 +1,15 @@
+[permission.product.product.group]
+other = "Product"
+[permission.product.product.read]
+other = "Read Product"
+[permission.product.product.create]
+other = "Create Product"
+[permission.product.product.update]
+other = "Update Product"
+[permission.product.product.delete]
+other = "Delete Product"
+
+[product.manager]
+other = "Product Management"
+[product.product]
+other = "Product List"

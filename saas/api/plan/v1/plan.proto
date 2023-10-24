@@ -13,6 +13,8 @@ import "blob/blob.proto";
 import "google/api/field_behavior.proto";
 import "query/operation.proto";
 import "data/data.proto";
+import "product/api/price/v1/price.proto";
+
 
 option go_package = "github.com/go-saas/kit/saas/api/plan/v1;v1";
 
@@ -67,6 +69,9 @@ service PlanService {
 message CreatePlanRequest {
   string key =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   string display_name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+
+  repeated .product.api.price.v1.CreatePriceRequest prices=10;
+
 }
 
 message UpdatePlanRequest {
@@ -78,6 +83,9 @@ message UpdatePlan{
   string key=1;
   string display_name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   bool active=3;
+
+  repeated .product.api.price.v1.UpdatePrice prices=10;
+
 }
 
 message DeletePlanRequest {
@@ -114,6 +122,10 @@ message Plan{
   string key =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   string display_name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   bool active=3;
+
+  string product_id=100;
+
+  repeated .product.api.price.v1.Price prices=10;
 }
 
 message GetAvailablePlansRequest{

@@ -1,0 +1,19 @@
+menus:
+  - name: "product"
+    path: "/product/*"
+    component: "LAYOUT"
+    redirect: "/product/products"
+    is_preserved: true
+    title: "product.manager"
+    icon: "ShoppingOutlined"
+    meta:
+    priority: 200
+    children:
+      - name: "product.product"
+        path: "/product/products"
+        component: "/Product/Product"
+        title: "product.product"
+        requirement:
+          - namespace: "product.product"
+            resource: "*"
+            action: "read"

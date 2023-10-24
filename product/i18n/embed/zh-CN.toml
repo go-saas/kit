@@ -1,0 +1,15 @@
+[permission.product.product.group]
+other = "产品"
+[permission.product.product.read]
+other = "读取产品"
+[permission.product.product.create]
+other = "创建产品"
+[permission.product.product.update]
+other = "更新产品"
+[permission.product.product.delete]
+other = "删除产品"
+
+[product.manager]
+other = "产品管理"
+[product.product]
+other = "产品列表"

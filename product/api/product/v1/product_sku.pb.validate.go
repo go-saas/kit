@@ -35,22 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on CreateOrUpdateProductSku with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateOrUpdateProductSku) Validate() error {
+// Validate checks the field values on CreateProductSku with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CreateProductSku) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateOrUpdateProductSku with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on CreateProductSku with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateOrUpdateProductSkuMultiError, or nil if none found.
-func (m *CreateOrUpdateProductSku) ValidateAll() error {
+// CreateProductSkuMultiError, or nil if none found.
+func (m *CreateProductSku) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateOrUpdateProductSku) validate(all bool) error {
+func (m *CreateProductSku) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -65,7 +65,7 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 		switch v := interface{}(m.GetMainPic()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateOrUpdateProductSkuValidationError{
+				errors = append(errors, CreateProductSkuValidationError{
 					field:  "MainPic",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -73,7 +73,7 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateOrUpdateProductSkuValidationError{
+				errors = append(errors, CreateProductSkuValidationError{
 					field:  "MainPic",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -82,7 +82,7 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetMainPic()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CreateOrUpdateProductSkuValidationError{
+			return CreateProductSkuValidationError{
 				field:  "MainPic",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -97,7 +97,7 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreateOrUpdateProductSkuValidationError{
+					errors = append(errors, CreateProductSkuValidationError{
 						field:  fmt.Sprintf("Medias[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -105,7 +105,7 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, CreateOrUpdateProductSkuValidationError{
+					errors = append(errors, CreateProductSkuValidationError{
 						field:  fmt.Sprintf("Medias[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -114,7 +114,7 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return CreateOrUpdateProductSkuValidationError{
+				return CreateProductSkuValidationError{
 					field:  fmt.Sprintf("Medias[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -124,33 +124,38 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 
 	}
 
-	if all {
-		switch v := interface{}(m.GetPrice()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateOrUpdateProductSkuValidationError{
-					field:  "Price",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	for idx, item := range m.GetPrices() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateProductSkuValidationError{
+						field:  fmt.Sprintf("Prices[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateProductSkuValidationError{
+						field:  fmt.Sprintf("Prices[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateOrUpdateProductSkuValidationError{
-					field:  "Price",
+				return CreateProductSkuValidationError{
+					field:  fmt.Sprintf("Prices[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetPrice()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreateOrUpdateProductSkuValidationError{
-				field:  "Price",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	// no validation rules for Barcode
@@ -162,7 +167,7 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreateOrUpdateProductSkuValidationError{
+					errors = append(errors, CreateProductSkuValidationError{
 						field:  fmt.Sprintf("Stock[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -170,7 +175,7 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, CreateOrUpdateProductSkuValidationError{
+					errors = append(errors, CreateProductSkuValidationError{
 						field:  fmt.Sprintf("Stock[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -179,7 +184,7 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return CreateOrUpdateProductSkuValidationError{
+				return CreateProductSkuValidationError{
 					field:  fmt.Sprintf("Stock[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -190,19 +195,19 @@ func (m *CreateOrUpdateProductSku) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CreateOrUpdateProductSkuMultiError(errors)
+		return CreateProductSkuMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateOrUpdateProductSkuMultiError is an error wrapping multiple validation
-// errors returned by CreateOrUpdateProductSku.ValidateAll() if the designated
-// constraints aren't met.
-type CreateOrUpdateProductSkuMultiError []error
+// CreateProductSkuMultiError is an error wrapping multiple validation errors
+// returned by CreateProductSku.ValidateAll() if the designated constraints
+// aren't met.
+type CreateProductSkuMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateOrUpdateProductSkuMultiError) Error() string {
+func (m CreateProductSkuMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -211,11 +216,11 @@ func (m CreateOrUpdateProductSkuMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateOrUpdateProductSkuMultiError) AllErrors() []error { return m }
+func (m CreateProductSkuMultiError) AllErrors() []error { return m }
 
-// CreateOrUpdateProductSkuValidationError is the validation error returned by
-// CreateOrUpdateProductSku.Validate if the designated constraints aren't met.
-type CreateOrUpdateProductSkuValidationError struct {
+// CreateProductSkuValidationError is the validation error returned by
+// CreateProductSku.Validate if the designated constraints aren't met.
+type CreateProductSkuValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -223,24 +228,22 @@ type CreateOrUpdateProductSkuValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateOrUpdateProductSkuValidationError) Field() string { return e.field }
+func (e CreateProductSkuValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateOrUpdateProductSkuValidationError) Reason() string { return e.reason }
+func (e CreateProductSkuValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateOrUpdateProductSkuValidationError) Cause() error { return e.cause }
+func (e CreateProductSkuValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateOrUpdateProductSkuValidationError) Key() bool { return e.key }
+func (e CreateProductSkuValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateOrUpdateProductSkuValidationError) ErrorName() string {
-	return "CreateOrUpdateProductSkuValidationError"
-}
+func (e CreateProductSkuValidationError) ErrorName() string { return "CreateProductSkuValidationError" }
 
 // Error satisfies the builtin error interface
-func (e CreateOrUpdateProductSkuValidationError) Error() string {
+func (e CreateProductSkuValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -252,14 +255,14 @@ func (e CreateOrUpdateProductSkuValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateOrUpdateProductSku.%s: %s%s",
+		"invalid %sCreateProductSku.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateOrUpdateProductSkuValidationError{}
+var _ error = CreateProductSkuValidationError{}
 
 var _ interface {
 	Field() string
@@ -267,7 +270,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateOrUpdateProductSkuValidationError{}
+} = CreateProductSkuValidationError{}
 
 // Validate checks the field values on ProductSku with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -358,33 +361,38 @@ func (m *ProductSku) validate(all bool) error {
 
 	}
 
-	if all {
-		switch v := interface{}(m.GetPrice()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ProductSkuValidationError{
-					field:  "Price",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	for idx, item := range m.GetPrices() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ProductSkuValidationError{
+						field:  fmt.Sprintf("Prices[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ProductSkuValidationError{
+						field:  fmt.Sprintf("Prices[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, ProductSkuValidationError{
-					field:  "Price",
+				return ProductSkuValidationError{
+					field:  fmt.Sprintf("Prices[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetPrice()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ProductSkuValidationError{
-				field:  "Price",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	// no validation rules for Barcode

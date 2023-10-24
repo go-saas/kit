@@ -42,11 +42,3 @@ message Stock{
   int32 amount=10;
   string delivery_code=11;
 }
-
-message Price{
-  string currency_code =1;
-  int32 default_amount=2;
-  int32 discounted_amount=3;
-  string discount_text=5;
-  bool deny_more_discounts=6;
-}

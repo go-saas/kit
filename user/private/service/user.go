@@ -5,7 +5,6 @@ import (
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
 	api2 "github.com/go-saas/kit/pkg/api"
-	"github.com/go-saas/kit/pkg/query"
 	"github.com/go-saas/saas"
 	"github.com/goxiaoy/vfs"
 	"io"
@@ -23,7 +22,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/samber/lo"
-	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	pb "github.com/go-saas/kit/user/api/user/v1"
@@ -337,19 +335,11 @@ func (s *UserService) UpdateAvatar(ctx http.Context) error {
 	if _, _, err := req.FormFile("file"); err != nil {
 		return err
 	}
-	userId := req.FormValue("id")
 	h := ctx.Middleware(func(ctx context.Context, _ interface{}) (interface{}, error) {
-		if len(userId) > 0 {
-			if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, userId), authz.UpdateAction); err != nil {
-				return nil, err
-			}
-		} else {
-			_, err := authn.ErrIfUnauthenticated(ctx)
-			if err != nil {
-				return nil, err
-			}
+		_, err := authn.ErrIfUnauthenticated(ctx)
+		if err != nil {
+			return nil, err
 		}
-
 		file, handle, err := req.FormFile("file")
 		if err != nil {
 			return nil, err
@@ -372,19 +362,6 @@ func (s *UserService) UpdateAvatar(ctx http.Context) error {
 		if err != nil {
 			return nil, err
 		}
-		if len(userId) > 0 {
-			//update avatar field
-			u, err := s.um.FindByID(ctx, userId)
-			if err != nil {
-				return nil, err
-			}
-			u.Avatar = &normalizedName
-			err = s.um.Update(ctx, u, query.NewField(&fieldmaskpb.FieldMask{Paths: []string{"avatar"}}))
-			if err != nil {
-				return nil, err
-			}
-		}
-
 		url, _ := s.blob.PublicUrl(ctx, normalizedName)
 		return &blob.BlobFile{
 			Id:   normalizedName,

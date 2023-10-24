@@ -35,13 +35,13 @@ type OrderServiceHTTPServer interface {
 
 func RegisterOrderServiceHTTPServer(s *http.Server, srv OrderServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/order/order/list", _OrderService_ListOrder0_HTTP_Handler(srv))
-	r.GET("/v1/order/order", _OrderService_ListOrder1_HTTP_Handler(srv))
-	r.GET("/v1/order/order/{id}", _OrderService_GetOrder0_HTTP_Handler(srv))
-	r.POST("/v1/order/order", _OrderService_CreateOrder0_HTTP_Handler(srv))
-	r.PATCH("/v1/order/order/{order.id}", _OrderService_UpdateOrder0_HTTP_Handler(srv))
-	r.PUT("/v1/order/order/{order.id}", _OrderService_UpdateOrder1_HTTP_Handler(srv))
-	r.DELETE("/v1/order/order/{id}", _OrderService_DeleteOrder0_HTTP_Handler(srv))
+	r.POST("/v1/order/list", _OrderService_ListOrder0_HTTP_Handler(srv))
+	r.GET("/v1/order", _OrderService_ListOrder1_HTTP_Handler(srv))
+	r.GET("/v1/order/{id}", _OrderService_GetOrder0_HTTP_Handler(srv))
+	r.POST("/v1/order", _OrderService_CreateOrder0_HTTP_Handler(srv))
+	r.PATCH("/v1/order/{order.id}", _OrderService_UpdateOrder0_HTTP_Handler(srv))
+	r.PUT("/v1/order/{order.id}", _OrderService_UpdateOrder1_HTTP_Handler(srv))
+	r.DELETE("/v1/order/{id}", _OrderService_DeleteOrder0_HTTP_Handler(srv))
 }
 
 func _OrderService_ListOrder0_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
@@ -219,7 +219,7 @@ func NewOrderServiceHTTPClient(client *http.Client) OrderServiceHTTPClient {
 
 func (c *OrderServiceHTTPClientImpl) CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...http.CallOption) (*Order, error) {
 	var out Order
-	pattern := "/v1/order/order"
+	pattern := "/v1/order"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationOrderServiceCreateOrder))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -232,7 +232,7 @@ func (c *OrderServiceHTTPClientImpl) CreateOrder(ctx context.Context, in *Create
 
 func (c *OrderServiceHTTPClientImpl) DeleteOrder(ctx context.Context, in *DeleteOrderRequest, opts ...http.CallOption) (*DeleteOrderReply, error) {
 	var out DeleteOrderReply
-	pattern := "/v1/order/order/{id}"
+	pattern := "/v1/order/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationOrderServiceDeleteOrder))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -245,7 +245,7 @@ func (c *OrderServiceHTTPClientImpl) DeleteOrder(ctx context.Context, in *Delete
 
 func (c *OrderServiceHTTPClientImpl) GetOrder(ctx context.Context, in *GetOrderRequest, opts ...http.CallOption) (*Order, error) {
 	var out Order
-	pattern := "/v1/order/order/{id}"
+	pattern := "/v1/order/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationOrderServiceGetOrder))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -258,7 +258,7 @@ func (c *OrderServiceHTTPClientImpl) GetOrder(ctx context.Context, in *GetOrderR
 
 func (c *OrderServiceHTTPClientImpl) ListOrder(ctx context.Context, in *ListOrderRequest, opts ...http.CallOption) (*ListOrderReply, error) {
 	var out ListOrderReply
-	pattern := "/v1/order/order"
+	pattern := "/v1/order"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationOrderServiceListOrder))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -271,7 +271,7 @@ func (c *OrderServiceHTTPClientImpl) ListOrder(ctx context.Context, in *ListOrde
 
 func (c *OrderServiceHTTPClientImpl) UpdateOrder(ctx context.Context, in *UpdateOrderRequest, opts ...http.CallOption) (*Order, error) {
 	var out Order
-	pattern := "/v1/order/order/{order.id}"
+	pattern := "/v1/order/{order.id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationOrderServiceUpdateOrder))
 	opts = append(opts, http.PathTemplate(pattern))

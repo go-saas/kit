@@ -3,7 +3,6 @@ package biz
 import (
 	"github.com/go-saas/kit/pkg/data"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
-	"github.com/go-saas/kit/pkg/price"
 	"github.com/go-saas/kit/pkg/sortable"
 	v1 "github.com/go-saas/kit/product/api/product/v1"
 	"github.com/go-saas/saas/gorm"
@@ -26,7 +25,7 @@ type Product struct {
 	MainPic ProductMedia   `gorm:"polymorphic:Owner;polymorphicValue:product"`
 	Medias  []ProductMedia `gorm:"polymorphic:Owner;polymorphicValue:product"`
 
-	Badges []Badge `gorm:"comment:商品徽章"`
+	Badges []Badge `gorm:"foreignKey:ProductId;comment:商品徽章"`
 
 	VisibleFrom *time.Time
 	VisibleTo   *time.Time
@@ -38,15 +37,12 @@ type Product struct {
 	MainCategoryKey *string
 	MainCategory    *ProductCategory `gorm:"foreignKey:MainCategoryKey;comment:商品主要分类"`
 
-	Keyword []KeyWord `gorm:"polymorphic:Owner;polymorphicValue:product;comment:商品关键字"`
+	Keywords []KeyWord `gorm:"polymorphic:Owner;polymorphicValue:product;comment:商品关键字"`
 
-	Barcode string `gorm:"comment:商品条码"`
-	Model   string `gorm:"comment:商品型号"`
+	Model string `gorm:"comment:商品型号"`
 
 	BrandId *string
 	Brand   *Brand
-
-	price.Saleable
 
 	IsGiveaway bool `gorm:"comment:是否赠品"`
 
@@ -57,31 +53,33 @@ type Product struct {
 	// CampaignRules
 	CampaignRules []CampaignRule `gorm:"polymorphic:Owner;polymorphicValue:product"`
 
-	NeedShipping bool    `gorm:"comment:是否需要邮寄"`
-	Stock        []Stock `gorm:"polymorphic:Owner;polymorphicValue:product"`
+	NeedShipping bool `gorm:"comment:是否需要邮寄"`
+
+	Stocks []Stock `gorm:"polymorphic:Owner;polymorphicValue:product"`
 
 	Sku []ProductSku
+
+	Prices []Price `gorm:"polymorphic:Owner;polymorphicValue:product"`
+
+	//Product Basic
+	IsSaleable   bool
+	SaleableFrom *time.Time
+	SaleableTo   *time.Time
+
+	Barcode string `gorm:"comment:商品条码"`
+
+	ManageInfo ProductManageInfo `gorm:"embedded"`
+	SyncLinks  []ProductSyncLink `gorm:"foreignKey:ProductId"`
 }
 
-type ProductMedia struct {
-	ID string `gorm:"primaryKey;size:128"`
-
-	OwnerID string
-	// OwnerType product/product_sku
-	OwnerType string
-
-	Type      string
-	MimeType  string
-	Usage     string
-	Name      string
-	Reference string
-	*sortable.Embed
+type ProductManageInfo struct {
+	Managed   bool
+	ManagedBy string
 }
 
 type Badge struct {
 	kitgorm.UIDBase
 	ProductId string
-	Product   *Product
 
 	Code  string
 	Label string
@@ -104,7 +102,7 @@ type ProductRepo interface {
 type CampaignRule struct {
 	kitgorm.UIDBase
 	OwnerID string
-	// OwnerType product/product_sku
+	// OwnerType product or product_sku
 	OwnerType string
 	Rule      string
 	Extra     data.JSONMap
@@ -118,7 +116,6 @@ type PriceContext struct {
 type ProductAttribute struct {
 	kitgorm.UIDBase
 	ProductId string
-	Product   *Product
 
 	Title string
 	*sortable.Embed
@@ -127,6 +124,7 @@ type ProductAttribute struct {
 // Stock holds data with product availability info
 type Stock struct {
 	kitgorm.UIDBase
+
 	OwnerID string
 	// OwnerType product/product_sku
 	OwnerType    string

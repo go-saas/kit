@@ -36,37 +36,37 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service OrderService {
   rpc ListOrder (ListOrderRequest) returns (ListOrderReply){
     option (google.api.http) = {
-      get: "/v1/order/order",
+      get: "/v1/order",
       additional_bindings:{
-        post:"/v1/order/order/list",
+        post:"/v1/order/list",
         body:"*"
       }
     };
   }
   rpc GetOrder (GetOrderRequest) returns (Order){
     option (google.api.http) = {
-      get: "/v1/order/order/{id}"
+      get: "/v1/order/{id}"
     };
   }
   rpc CreateOrder (CreateOrderRequest) returns (Order){
     option (google.api.http) = {
-      post: "/v1/order/order",
+      post: "/v1/order",
       body: "*"
     };
   }
   rpc UpdateOrder (UpdateOrderRequest) returns (Order){
     option (google.api.http) = {
-      put: "/v1/order/order/{order.id}",
+      put: "/v1/order/{order.id}",
       body: "*"
       additional_bindings{
-        patch: "/v1/order/order/{order.id}",
+        patch: "/v1/order/{order.id}",
         body: "*"
       }
     };
   }
   rpc DeleteOrder (DeleteOrderRequest) returns (DeleteOrderReply){
     option (google.api.http) = {
-      delete: "/v1/order/order/{id}"
+      delete: "/v1/order/{id}"
     };
   }
 }

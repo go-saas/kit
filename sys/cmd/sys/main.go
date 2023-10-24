@@ -53,6 +53,7 @@ import (
 
 	//This helps to load menu in following services
 	_ "github.com/go-saas/kit/order/menu"
+	_ "github.com/go-saas/kit/product/menu"
 )
 
 // go build -buildvcs=false -ldflags "-X main.Version=x.y.z"

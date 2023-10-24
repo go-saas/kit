@@ -17,6 +17,8 @@ var ProviderSet = kitdi.NewSet(
 	NewData,
 	NewMigrate,
 	NewProductRepo,
+	NewProductMediaRepo,
+	NewPriceRepo,
 )
 
 const ConnName = "product"

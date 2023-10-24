@@ -17,6 +17,7 @@ func NewMigrate(data *Data) *Migrate {
 		data: data,
 	}
 }
+
 func (m *Migrate) Seed(ctx context.Context, sCtx *seed.Context) error {
 	//make sure database exists
 	ctx = kitgorm.NewDbGuardianContext(ctx)
@@ -28,6 +29,8 @@ func migrateDb(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&biz.Brand{}, &biz.BrandTrans{},
 		&biz.Product{}, &biz.ProductMedia{}, &biz.Badge{}, &biz.KeyWord{}, &biz.ProductCategory{},
+		&biz.Price{}, &biz.PriceCurrencyOption{}, &biz.PriceCurrencyOptionTier{}, &biz.PriceRecurring{},
 		biz.ProductAttribute{}, &biz.Stock{},
-		&biz.ProductSku{})
+		&biz.ProductSku{},
+		&biz.ProductSyncLink{})
 }

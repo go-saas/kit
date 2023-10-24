@@ -10,9 +10,4 @@ message PricePb{
   string text=4;
 }
 
-message InfoPb{
-  PricePb default=1;
-  PricePb discounted=2;
-  string discount_text=3;
-  bool deny_more_discounts=4;
-}
+

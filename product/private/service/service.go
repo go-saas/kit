@@ -21,15 +21,19 @@ var spec []byte
 var ProviderSet = kitdi.NewSet(
 	NewGrpcServerRegister,
 	NewHttpServerRegister,
+	NewUploadService,
 	NewProductService,
 )
 
 func NewHttpServerRegister(
 	resEncoder khttp.EncodeResponseFunc,
 	errEncoder khttp.EncodeErrorFunc,
-	post *ProductService) kithttp.ServiceRegister {
+	product *ProductService) kithttp.ServiceRegister {
 	return kithttp.ServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
-		v12.RegisterProductServiceHTTPServer(srv, post)
+		v12.RegisterProductServiceHTTPServer(srv, product)
+
+		route := srv.Route("/")
+		route.POST("/v1/product/media", product.UploadMedias)
 
 		swaggerRouter := chi.NewRouter()
 		swaggerRouter.Use(
@@ -40,8 +44,10 @@ func NewHttpServerRegister(
 	})
 }
 
-func NewGrpcServerRegister(post *ProductService) kitgrpc.ServiceRegister {
+func NewGrpcServerRegister(product *ProductService) kitgrpc.ServiceRegister {
 	return kitgrpc.ServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
-		v12.RegisterProductServiceServer(srv, post)
+		v12.RegisterProductServiceServer(srv, product)
+
+		v12.RegisterProductInternalServiceServer(srv, product)
 	})
 }

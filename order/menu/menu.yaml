@@ -5,14 +5,14 @@ menus:
     redirect: "/order/orders"
     is_preserved: true
     title: "order.manager"
-    icon: "GroupOutlined"
+    icon: "DollarOutlined"
     meta:
     priority: 310
     children:
       - name: "order.order"
         icon: "ant-design:api-outlined"
         path: "/order/orders"
-        component: "/order/order/index"
+        component: "/Order/Order"
         title: "order.order"
         requirement:
           - namespace: "order.order"

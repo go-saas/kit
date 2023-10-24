@@ -1,0 +1,164 @@
+syntax = "proto3";
+
+package product.api.price.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
+import "query/operation.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "price/price.proto";
+
+option go_package = "github.com/go-saas/kit/product/api/price/v1;v1";
+
+message Price{
+  string id=1;
+
+  google.protobuf.Timestamp created_at =4;
+  google.protobuf.Timestamp updated_at =5;
+  string tenant_id=6;
+
+  // product/product_sku
+  string owner_type=50;
+  string owner_id=51;
+
+  .price.PricePb default=100;
+  .price.PricePb discounted=101;
+
+  string discount_text=102;
+  bool deny_more_discounts=103;
+
+  string billing_schema=104;
+
+  repeated PriceCurrencyOption currency_options=300;
+
+  PriceRecurring recurring=301;
+
+  repeated PriceTier tiers=302;
+  string tiers_mode=310;
+
+  PriceTransformQuantity transform_quantity=311;
+  string type=312;
+
+}
+
+message PriceCurrencyOption{
+  string currency_code=1;
+
+  .price.PricePb default=100;
+  .price.PricePb discounted=101;
+  string discount_text=102;
+  bool deny_more_discounts=103;
+
+  repeated  PriceCurrencyOptionTier tiers=200;
+}
+
+message PriceCurrencyOptionTier{
+  int64 flat_amount=1;
+  int64 unit_amount=2;
+  int64 up_to=3;
+}
+
+message PriceRecurring{
+  string interval=1 [(validate.rules).string={in:["day","week","month","year"]},(google.api.field_behavior) = REQUIRED];
+  int64  interval_count=2 [(validate.rules).int64={gt:0}];
+  int64 trial_period_days=3[(validate.rules).int64={gt:0}];
+  string aggregate_usage=4 [(validate.rules).string={in:["last_during_period","last_ever","max","sum"]},(google.api.field_behavior) = REQUIRED];
+  string usage_type=5 [(validate.rules).string={in:["licensed","metered"]},(google.api.field_behavior) = REQUIRED];
+}
+
+message PriceTier{
+  int64 flat_amount=1[(validate.rules).int64={gt:0}];
+  int64 unit_amount=2[(validate.rules).int64={gt:0}];
+  int64 up_to=3[(validate.rules).int64={gt:0}];
+}
+
+message PriceTransformQuantity{
+  int64 divide_by=1;
+  string round=2 [(validate.rules).string={in:["up","down"]},(google.api.field_behavior) = REQUIRED];
+}
+
+message CreatePriceRequest{
+  // product/product_sku
+  string owner_type=50 [(validate.rules).string={in:["product","product_sku"]},(google.api.field_behavior) = REQUIRED];
+  string owner_id=51;
+
+  string currency_code=99;
+  int64 default_amount=100;
+  int64 discounted_amount=101;
+
+  string discount_text=102;
+  bool deny_more_discounts=103;
+
+  string billing_schema=104 [(validate.rules).string={in:["per_unit","tiered"]},(google.api.field_behavior) = REQUIRED];
+
+  repeated PriceCurrencyOptionPrams currency_options=300;
+
+  PriceRecurring recurring=301;
+
+  repeated PriceTier tiers=302;
+  string tiers_mode=310 [(validate.rules).string={in:["per_unit","tiered"]}];
+
+  PriceTransformQuantity transform_quantity=311;
+  string type=312 [(validate.rules).string={in:["one_time","recurring"]},(google.api.field_behavior) = REQUIRED];
+}
+
+
+message PriceCurrencyOptionPrams{
+  string currency_code=1;
+
+  int64 default_amount=100;
+  int64 discounted_amount=101;
+  string discount_text=102;
+  bool deny_more_discounts=103;
+
+  repeated PriceCurrencyOptionTier tiers=200;
+}
+
+message UpdatePriceRequest{
+  UpdatePrice price=2 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 3;
+}
+
+message UpdatePrice{
+  string id=1;
+  // product/product_sku
+  string owner_type=50 [(validate.rules).string={in:["product","product_sku"]},(google.api.field_behavior) = REQUIRED];
+  string owner_id=51;
+
+  string currency_code=99;
+  int64 default_amount=100;
+  int64 discounted_amount=101;
+
+  string discount_text=102;
+  bool deny_more_discounts=103;
+
+  string billing_schema=104 [(validate.rules).string={in:["per_unit","tiered"]},(google.api.field_behavior) = REQUIRED];
+
+  repeated PriceCurrencyOptionPrams currency_options=300;
+
+  PriceRecurring recurring=301;
+
+  repeated PriceTier tiers=302;
+  string tiers_mode=310 [(validate.rules).string={in:["per_unit","tiered"]}];
+
+  PriceTransformQuantity transform_quantity=311;
+  string type=312 [(validate.rules).string={in:["one_time","recurring"]},(google.api.field_behavior) = REQUIRED];
+}
+
+message ListPriceRequest{
+  int32 page_offset =1;
+  int32 page_size = 2;
+  string search = 3;
+  repeated string sort =4;
+  google.protobuf.FieldMask fields=5;
+  PriceFilter filter =6;
+}
+
+message PriceFilter{
+  .query.operation.StringFilterOperation owner_type=50;
+  .query.operation.StringFilterOperation owner_id=51;
+}
