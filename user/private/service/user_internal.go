@@ -53,7 +53,7 @@ func NewUserInternalService(
 	}
 }
 
-func (s *UserInternalService) CreateTenant(ctx context.Context, req *v1.CreateTenantRequest) (res *emptypb.Empty, err error) {
+func (s *UserInternalService) CreateTenant(ctx context.Context, req *pb.UserInternalCreateTenantRequest) (res *emptypb.Empty, err error) {
 
 	if err := sapi.ErrIfUntrusted(ctx, s.trust); err != nil {
 		return nil, err
@@ -82,11 +82,11 @@ func (s *UserInternalService) CreateTenant(ctx context.Context, req *v1.CreateTe
 		if req.AdminUserId != nil {
 			extra[biz.AdminUserId] = req.AdminUserId.Value
 		}
-		if err := s.seeder.Seed(ctx, seed.AddTenant(req.Id), seed.WithExtra(extra)); err != nil {
+		if err := s.seeder.Seed(ctx, seed.AddTenant(req.TenantId), seed.WithExtra(extra)); err != nil {
 			return err
 		}
 		e := &v12.TenantReadyEvent{
-			Id:          req.Id,
+			Id:          req.TenantId,
 			ServiceName: api.ServiceName,
 		}
 		ee, _ := event.NewMessageFromProto(e)

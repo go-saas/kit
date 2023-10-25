@@ -127,7 +127,13 @@ func NewTenantService(
 			//do nothing
 			return nil
 		})
-		_, err = s.userInternalSrv.CreateTenant(wf.Context, req)
+		_, err = s.userInternalSrv.CreateTenant(wf.Context, &v1.UserInternalCreateTenantRequest{
+			TenantId:      tenantId,
+			AdminEmail:    req.AdminEmail,
+			AdminUsername: req.AdminUsername,
+			AdminPassword: req.AdminPassword,
+			AdminUserId:   req.AdminUserId,
+		})
 
 		if err != nil {
 			return nil, fmt.Errorf("%s %w", err.Error(), dtmcli.ErrFailure)

@@ -8,7 +8,6 @@ package v1
 
 import (
 	context "context"
-	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	grpc "google.golang.org/grpc"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
@@ -65,7 +64,7 @@ func NewUserInternalServiceClientProxy(cc UserInternalServiceClient) UserInterna
 	return &userInternalServiceClientProxy{cc}
 }
 
-func (c *userInternalServiceClientProxy) CreateTenant(ctx context.Context, in *v1.CreateTenantRequest) (*emptypb.Empty, error) {
+func (c *userInternalServiceClientProxy) CreateTenant(ctx context.Context, in *UserInternalCreateTenantRequest) (*emptypb.Empty, error) {
 	return c.cc.CreateTenant(ctx, in)
 }
 func (c *userInternalServiceClientProxy) CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest) (*CheckUserTenantReply, error) {

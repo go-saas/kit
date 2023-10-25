@@ -8,7 +8,6 @@ package v1
 
 import (
 	context "context"
-	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -404,7 +403,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserInternalServiceClient interface {
-	CreateTenant(ctx context.Context, in *v1.CreateTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CreateTenant(ctx context.Context, in *UserInternalCreateTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error)
 }
@@ -417,7 +416,7 @@ func NewUserInternalServiceClient(cc grpc.ClientConnInterface) UserInternalServi
 	return &userInternalServiceClient{cc}
 }
 
-func (c *userInternalServiceClient) CreateTenant(ctx context.Context, in *v1.CreateTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *userInternalServiceClient) CreateTenant(ctx context.Context, in *UserInternalCreateTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, UserInternalService_CreateTenant_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -439,7 +438,7 @@ func (c *userInternalServiceClient) CheckUserTenant(ctx context.Context, in *Che
 // All implementations should embed UnimplementedUserInternalServiceServer
 // for forward compatibility
 type UserInternalServiceServer interface {
-	CreateTenant(context.Context, *v1.CreateTenantRequest) (*emptypb.Empty, error)
+	CreateTenant(context.Context, *UserInternalCreateTenantRequest) (*emptypb.Empty, error)
 	// CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error)
 }
@@ -448,7 +447,7 @@ type UserInternalServiceServer interface {
 type UnimplementedUserInternalServiceServer struct {
 }
 
-func (UnimplementedUserInternalServiceServer) CreateTenant(context.Context, *v1.CreateTenantRequest) (*emptypb.Empty, error) {
+func (UnimplementedUserInternalServiceServer) CreateTenant(context.Context, *UserInternalCreateTenantRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTenant not implemented")
 }
 func (UnimplementedUserInternalServiceServer) CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
@@ -467,7 +466,7 @@ func RegisterUserInternalServiceServer(s grpc.ServiceRegistrar, srv UserInternal
 }
 
 func _UserInternalService_CreateTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v1.CreateTenantRequest)
+	in := new(UserInternalCreateTenantRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -479,7 +478,7 @@ func _UserInternalService_CreateTenant_Handler(srv interface{}, ctx context.Cont
 		FullMethod: UserInternalService_CreateTenant_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserInternalServiceServer).CreateTenant(ctx, req.(*v1.CreateTenantRequest))
+		return srv.(UserInternalServiceServer).CreateTenant(ctx, req.(*UserInternalCreateTenantRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

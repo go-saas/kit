@@ -263,7 +263,7 @@ message SearchUserResponse{
 }
 
 service UserInternalService{
-  rpc CreateTenant(saas.api.tenant.v1.CreateTenantRequest) returns(google.protobuf.Empty){
+  rpc CreateTenant(UserInternalCreateTenantRequest) returns(google.protobuf.Empty){
 
   }
 
@@ -272,5 +272,14 @@ service UserInternalService{
 
   }
 
+}
+
+message UserInternalCreateTenantRequest{
+  string tenant_id=1;
+
+  optional google.protobuf.StringValue admin_email = 7 [(validate.rules).string.email=true];
+  optional google.protobuf.StringValue admin_username=8;
+  optional google.protobuf.StringValue admin_password=9;
+  optional google.protobuf.StringValue admin_user_id=10;
 }
 

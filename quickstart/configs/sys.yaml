@@ -96,7 +96,7 @@ sys:
         upstream_id: order-http
 
       product-api:
-        uris: ["/v1/product/*","/assets/product/*"]
+        uris: ["/v1/product","/v1/product/*","/assets/product/*"]
         upstream_id: product-http
 
       realtime-api:
