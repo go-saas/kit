@@ -33,7 +33,7 @@ groups:
         internal: true
         side: HOST_ONLY
       - name: "permission.saas.plan.read"
-        namespace: "saas.tenant"
+        namespace: "saas.plan"
         action: "read"
         side: HOST_ONLY
       - name: "permission.saas.plan.create"
