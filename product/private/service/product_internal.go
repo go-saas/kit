@@ -15,8 +15,18 @@ func (s *ProductService) CreateInternalProduct(ctx context.Context, req *pb.Crea
 	if err := sapi.ErrIfUntrusted(ctx, s.trusted); err != nil {
 		return nil, err
 	}
-	//TODO implement me
-	panic("implement me")
+	e := &biz.Product{}
+	err := s.MapCreateInternalPbProduct2Biz(ctx, req, e)
+	if err != nil {
+		return nil, err
+	}
+	err = s.repo.Create(ctx, e)
+	if err != nil {
+		return nil, err
+	}
+	res := &pb.Product{}
+	s.MapBizProduct2Pb(ctx, e, res)
+	return res, nil
 }
 
 func (s *ProductService) GetInternalProduct(ctx context.Context, req *pb.GetInternalProductRequest) (*pb.Product, error) {
