@@ -30,12 +30,28 @@ func NewPrice(n, currencyCode string) (p Price, err error) {
 	return NewPriceFromCurrency(amount)
 }
 
+func MustNew(n, currencyCode string) Price {
+	p, err := NewPrice(n, currencyCode)
+	if err != nil {
+		panic(err)
+	}
+	return p
+}
+
 func NewPriceFromInt64(n int64, currencyCode string) (p Price, err error) {
 	amount, err := currency.NewAmountFromInt64(n, currencyCode)
 	if err != nil {
 		return
 	}
 	return NewPriceFromCurrency(amount)
+}
+
+func MustNewFromInt64(n int64, currencyCode string) Price {
+	p, err := NewPriceFromInt64(n, currencyCode)
+	if err != nil {
+		panic(err)
+	}
+	return p
 }
 
 func NewPriceFromPb(a *PricePb) (Price, error) {

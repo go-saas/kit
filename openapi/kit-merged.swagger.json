@@ -3742,12 +3742,12 @@
     },
     "/v1/product/category": {
       "get": {
-        "operationId": "ProductCategoryService_ListCategory",
+        "operationId": "ProductCategoryService_ListProductCategory",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ListCategoryReply"
+              "$ref": "#/definitions/v1ListProductCategoryReply"
             }
           },
           "default": {
@@ -4076,12 +4076,12 @@
         ]
       },
       "post": {
-        "operationId": "ProductCategoryService_CreateCategory",
+        "operationId": "ProductCategoryService_CreateProductCategory",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Category"
+              "$ref": "#/definitions/v1ProductCategory"
             }
           },
           "default": {
@@ -4097,7 +4097,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1CreateCategoryRequest"
+              "$ref": "#/definitions/v1CreateProductCategoryRequest"
             }
           }
         ],
@@ -4108,12 +4108,12 @@
     },
     "/v1/product/category/list": {
       "post": {
-        "operationId": "ProductCategoryService_ListCategory2",
+        "operationId": "ProductCategoryService_ListProductCategory2",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ListCategoryReply"
+              "$ref": "#/definitions/v1ListProductCategoryReply"
             }
           },
           "default": {
@@ -4129,7 +4129,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1ListCategoryRequest"
+              "$ref": "#/definitions/v1ListProductCategoryRequest"
             }
           }
         ],
@@ -4140,12 +4140,12 @@
     },
     "/v1/product/category/{category.key}": {
       "put": {
-        "operationId": "ProductCategoryService_UpdateCategory",
+        "operationId": "ProductCategoryService_UpdateProductCategory",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Category"
+              "$ref": "#/definitions/v1ProductCategory"
             }
           },
           "default": {
@@ -4189,12 +4189,12 @@
         ]
       },
       "patch": {
-        "operationId": "ProductCategoryService_UpdateCategory2",
+        "operationId": "ProductCategoryService_UpdateProductCategory2",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Category"
+              "$ref": "#/definitions/v1ProductCategory"
             }
           },
           "default": {
@@ -4240,12 +4240,12 @@
     },
     "/v1/product/category/{key}": {
       "get": {
-        "operationId": "ProductCategoryService_GetCategory",
+        "operationId": "ProductCategoryService_GetProductCategory",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Category"
+              "$ref": "#/definitions/v1ProductCategory"
             }
           },
           "default": {
@@ -4268,12 +4268,12 @@
         ]
       },
       "delete": {
-        "operationId": "ProductCategoryService_DeleteCategory",
+        "operationId": "ProductCategoryService_DeleteProductCategory",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1DeleteCategoryReply"
+              "$ref": "#/definitions/v1DeleteProductCategoryReply"
             }
           },
           "default": {
@@ -4420,6 +4420,9 @@
                 "product": {
                   "type": "object",
                   "properties": {
+                    "version": {
+                      "type": "string"
+                    },
                     "title": {
                       "type": "string"
                     },
@@ -4430,13 +4433,13 @@
                       "type": "string"
                     },
                     "mainPic": {
-                      "$ref": "#/definitions/v1Media"
+                      "$ref": "#/definitions/v1ProductMedia"
                     },
                     "medias": {
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "$ref": "#/definitions/v1Media"
+                        "$ref": "#/definitions/v1ProductMedia"
                       }
                     },
                     "badges": {
@@ -4572,6 +4575,9 @@
                 "product": {
                   "type": "object",
                   "properties": {
+                    "version": {
+                      "type": "string"
+                    },
                     "title": {
                       "type": "string"
                     },
@@ -4582,13 +4588,13 @@
                       "type": "string"
                     },
                     "mainPic": {
-                      "$ref": "#/definitions/v1Media"
+                      "$ref": "#/definitions/v1ProductMedia"
                     },
                     "medias": {
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "$ref": "#/definitions/v1Media"
+                        "$ref": "#/definitions/v1ProductMedia"
                       }
                     },
                     "badges": {
@@ -10127,38 +10133,6 @@
         }
       }
     },
-    "v1Category": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "parent": {
-          "type": "string"
-        }
-      }
-    },
-    "v1CategoryFilter": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "$ref": "#/definitions/operationStringFilterOperation"
-        },
-        "name": {
-          "$ref": "#/definitions/operationStringFilterOperation"
-        },
-        "parent": {
-          "$ref": "#/definitions/operationStringFilterOperation"
-        }
-      }
-    },
     "v1ChangePasswordByForgetReply": {
       "type": "object"
     },
@@ -10308,23 +10282,6 @@
       },
       "required": [
         "code"
-      ]
-    },
-    "v1CreateCategoryRequest": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "parent": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "name"
       ]
     },
     "v1CreateInternalOrderItem": {
@@ -10521,6 +10478,23 @@
         "type"
       ]
     },
+    "v1CreateProductCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parent": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
     "v1CreateProductRequest": {
       "type": "object",
       "properties": {
@@ -10534,13 +10508,13 @@
           "type": "string"
         },
         "mainPic": {
-          "$ref": "#/definitions/v1Media"
+          "$ref": "#/definitions/v1ProductMedia"
         },
         "medias": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1Media"
+            "$ref": "#/definitions/v1ProductMedia"
           }
         },
         "badges": {
@@ -10771,17 +10745,6 @@
         }
       }
     },
-    "v1DeleteCategoryReply": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
     "v1DeleteInternalProductReply": {
       "type": "object",
       "properties": {
@@ -10822,6 +10785,17 @@
     },
     "v1DeletePlanReply": {
       "type": "object"
+    },
+    "v1DeleteProductCategoryReply": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "v1DeleteProductReply": {
       "type": "object",
@@ -11256,54 +11230,6 @@
         }
       }
     },
-    "v1ListCategoryReply": {
-      "type": "object",
-      "properties": {
-        "totalSize": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "filterSize": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Category"
-          }
-        }
-      }
-    },
-    "v1ListCategoryRequest": {
-      "type": "object",
-      "properties": {
-        "pageOffset": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "pageSize": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "search": {
-          "type": "string"
-        },
-        "sort": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "fields": {
-          "type": "string"
-        },
-        "filter": {
-          "$ref": "#/definitions/v1CategoryFilter"
-        }
-      }
-    },
     "v1ListMenuReply": {
       "type": "object",
       "properties": {
@@ -11530,6 +11456,54 @@
         },
         "filter": {
           "$ref": "#/definitions/v1PlanFilter"
+        }
+      }
+    },
+    "v1ListProductCategoryReply": {
+      "type": "object",
+      "properties": {
+        "totalSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "filterSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductCategory"
+          }
+        }
+      }
+    },
+    "v1ListProductCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "pageOffset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "search": {
+          "type": "string"
+        },
+        "sort": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fields": {
+          "type": "string"
+        },
+        "filter": {
+          "$ref": "#/definitions/v1ProductCategoryFilter"
         }
       }
     },
@@ -11883,20 +11857,6 @@
       "type": "object",
       "properties": {
         "redirect": {
-          "type": "string"
-        }
-      }
-    },
-    "v1Media": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        },
-        "title": {
           "type": "string"
         }
       }
@@ -12593,6 +12553,9 @@
         "tenantId": {
           "type": "string"
         },
+        "version": {
+          "type": "string"
+        },
         "title": {
           "type": "string"
         },
@@ -12603,13 +12566,13 @@
           "type": "string"
         },
         "mainPic": {
-          "$ref": "#/definitions/v1Media"
+          "$ref": "#/definitions/v1ProductMedia"
         },
         "medias": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1Media"
+            "$ref": "#/definitions/v1ProductMedia"
           }
         },
         "badges": {
@@ -12630,15 +12593,6 @@
         "isNew": {
           "type": "boolean"
         },
-        "mainCategoryKey": {
-          "type": "string"
-        },
-        "categories": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "barcode": {
           "type": "string"
         },
@@ -12646,7 +12600,8 @@
           "type": "string"
         },
         "brandId": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "isSaleable": {
           "type": "boolean"
@@ -12676,6 +12631,26 @@
         "isGiveaway": {
           "type": "boolean"
         },
+        "mainCategoryKey": {
+          "type": "string"
+        },
+        "mainCategory": {
+          "$ref": "#/definitions/v1ProductCategory"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductCategory"
+          }
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductAttribute"
+          }
+        },
         "multiSku": {
           "type": "boolean"
         },
@@ -12698,12 +12673,54 @@
         },
         "content": {
           "type": "object"
+        },
+        "manageInfo": {
+          "$ref": "#/definitions/v1ProductManageInfo"
         }
-      },
-      "required": [
-        "id",
-        "title"
-      ]
+      }
+    },
+    "v1ProductAttribute": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ProductCategory": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "parent": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ProductCategoryFilter": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "$ref": "#/definitions/operationStringFilterOperation"
+        },
+        "name": {
+          "$ref": "#/definitions/operationStringFilterOperation"
+        },
+        "parent": {
+          "$ref": "#/definitions/operationStringFilterOperation"
+        }
+      }
     },
     "v1ProductFilter": {
       "type": "object",
@@ -12713,6 +12730,37 @@
         },
         "name": {
           "$ref": "#/definitions/operationStringFilterOperation"
+        }
+      }
+    },
+    "v1ProductManageInfo": {
+      "type": "object",
+      "properties": {
+        "managed": {
+          "type": "boolean"
+        },
+        "managedBy": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ProductMedia": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "mimeType": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -13132,20 +13180,6 @@
         "id"
       ]
     },
-    "v1UpdateCategory": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "key"
-      ]
-    },
     "v1UpdateMenu": {
       "type": "object",
       "properties": {
@@ -13334,6 +13368,9 @@
         "id": {
           "type": "string"
         },
+        "version": {
+          "type": "string"
+        },
         "title": {
           "type": "string"
         },
@@ -13344,13 +13381,13 @@
           "type": "string"
         },
         "mainPic": {
-          "$ref": "#/definitions/v1Media"
+          "$ref": "#/definitions/v1ProductMedia"
         },
         "medias": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1Media"
+            "$ref": "#/definitions/v1ProductMedia"
           }
         },
         "badges": {
@@ -13441,6 +13478,20 @@
       "required": [
         "id",
         "title"
+      ]
+    },
+    "v1UpdateProductCategory": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
       ]
     },
     "v1UpdateProfileRequest": {

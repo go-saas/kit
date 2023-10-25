@@ -296,6 +296,68 @@ func (m *ProductSku) validate(all bool) error {
 
 	// no validation rules for Id
 
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ProductSkuValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ProductSkuValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ProductSkuValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ProductSkuValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ProductSkuValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ProductSkuValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for TenantId
+
+	// no validation rules for Version
+
 	// no validation rules for Title
 
 	if all {
@@ -361,6 +423,102 @@ func (m *ProductSku) validate(all bool) error {
 
 	}
 
+	// no validation rules for Barcode
+
+	// no validation rules for IsSaleable
+
+	if all {
+		switch v := interface{}(m.GetSaleableFrom()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ProductSkuValidationError{
+					field:  "SaleableFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ProductSkuValidationError{
+					field:  "SaleableFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSaleableFrom()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ProductSkuValidationError{
+				field:  "SaleableFrom",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetSaleableTo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ProductSkuValidationError{
+					field:  "SaleableTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ProductSkuValidationError{
+					field:  "SaleableTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSaleableTo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ProductSkuValidationError{
+				field:  "SaleableTo",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetKeywords() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ProductSkuValidationError{
+						field:  fmt.Sprintf("Keywords[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ProductSkuValidationError{
+						field:  fmt.Sprintf("Keywords[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ProductSkuValidationError{
+					field:  fmt.Sprintf("Keywords[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	for idx, item := range m.GetPrices() {
 		_, _ = idx, item
 
@@ -395,9 +553,7 @@ func (m *ProductSku) validate(all bool) error {
 
 	}
 
-	// no validation rules for Barcode
-
-	for idx, item := range m.GetStock() {
+	for idx, item := range m.GetStocks() {
 		_, _ = idx, item
 
 		if all {
@@ -405,7 +561,7 @@ func (m *ProductSku) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ProductSkuValidationError{
-						field:  fmt.Sprintf("Stock[%v]", idx),
+						field:  fmt.Sprintf("Stocks[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -413,7 +569,7 @@ func (m *ProductSku) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ProductSkuValidationError{
-						field:  fmt.Sprintf("Stock[%v]", idx),
+						field:  fmt.Sprintf("Stocks[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -422,7 +578,7 @@ func (m *ProductSku) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ProductSkuValidationError{
-					field:  fmt.Sprintf("Stock[%v]", idx),
+					field:  fmt.Sprintf("Stocks[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

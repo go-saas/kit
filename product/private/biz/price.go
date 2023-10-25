@@ -78,7 +78,7 @@ const (
 type Price struct {
 	kitgorm.UIDBase
 	kitgorm.AuditedModel
-	concurrency.Version
+	concurrency.HasVersion
 	gorm.MultiTenancy
 
 	OwnerID string
@@ -113,7 +113,7 @@ type PriceCurrencyOption struct {
 	DiscountText      string
 	DenyMoreDiscounts bool
 
-	Tiers []*PriceCurrencyOptionTier `gorm:"foreignKey:PriceCurrencyOptionId"`
+	Tiers []PriceCurrencyOptionTier `gorm:"foreignKey:PriceCurrencyOptionId"`
 }
 
 type PriceRecurring struct {

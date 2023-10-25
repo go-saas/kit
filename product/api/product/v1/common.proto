@@ -10,10 +10,12 @@ import "validate/validate.proto";
 
 option go_package = "github.com/go-saas/kit/product/api/product/v1;v1";
 
-message Media{
-  string id=1;
+message ProductMedia{
+  string id =1;
   string type=2;
-  string title=3;
+  string mime_type=3;
+  string name=4;
+  string url=5;
 }
 
 message Badge{
@@ -41,4 +43,10 @@ message Stock{
   string level=3 [(validate.rules).string={in:["out","in","low"]}];
   int32 amount=10;
   string delivery_code=11;
+}
+
+
+message ProductAttribute{
+  string title=10;
+
 }

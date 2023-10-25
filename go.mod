@@ -16,7 +16,7 @@ require (
 	github.com/gorilla/csrf v1.7.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/goxiaoy/go-eventbus v0.0.5
-	github.com/goxiaoy/gorm-concurrency v1.1.0
+	github.com/goxiaoy/gorm-concurrency v1.1.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3
 	github.com/mennanov/fmutils v0.2.0
 	github.com/mitchellh/mapstructure v1.5.0
@@ -28,8 +28,8 @@ require (
 	google.golang.org/grpc v1.54.0
 	google.golang.org/protobuf v1.31.0
 	gorm.io/driver/mysql v1.4.4
-	gorm.io/driver/sqlite v1.4.4
-	gorm.io/gorm v1.24.5
+	gorm.io/driver/sqlite v1.5.4
+	gorm.io/gorm v1.25.5
 )
 
 require (
@@ -169,7 +169,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
-	github.com/mattn/go-sqlite3 v1.14.16 // indirect
+	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
 	github.com/microsoft/go-mssqldb v0.17.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect

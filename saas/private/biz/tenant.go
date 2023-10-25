@@ -15,7 +15,7 @@ import (
 type Tenant struct {
 	gorm2.UIDBase
 	gorm2.AggRoot
-	concurrency.Version
+	concurrency.HasVersion
 	//unique name. usually for domain name
 	Name string `gorm:"column:name;index;size:255;"`
 	//localed display name

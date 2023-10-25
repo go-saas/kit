@@ -36,7 +36,7 @@ func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
 // NewData .
 func NewData(c *conf2.Data, dbProvider gorm.DbProvider, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
-		logger.Log(log.LevelInfo, "closing the data resources")
+		logger.Log(log.LevelInfo, log.DefaultMessageKey, "closing the data resources")
 	}
 	return &Data{
 		DbProvider: dbProvider,

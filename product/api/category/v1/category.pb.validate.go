@@ -35,22 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on CreateCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on CreateProductCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateCategoryRequest) Validate() error {
+func (m *CreateProductCategoryRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on CreateProductCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateCategoryRequestMultiError, or nil if none found.
-func (m *CreateCategoryRequest) ValidateAll() error {
+// CreateProductCategoryRequestMultiError, or nil if none found.
+func (m *CreateProductCategoryRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateCategoryRequest) validate(all bool) error {
+func (m *CreateProductCategoryRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -60,7 +60,7 @@ func (m *CreateCategoryRequest) validate(all bool) error {
 	// no validation rules for Key
 
 	if utf8.RuneCountInString(m.GetName()) < 1 {
-		err := CreateCategoryRequestValidationError{
+		err := CreateProductCategoryRequestValidationError{
 			field:  "Name",
 			reason: "value length must be at least 1 runes",
 		}
@@ -73,19 +73,19 @@ func (m *CreateCategoryRequest) validate(all bool) error {
 	// no validation rules for Parent
 
 	if len(errors) > 0 {
-		return CreateCategoryRequestMultiError(errors)
+		return CreateProductCategoryRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateCategoryRequestMultiError is an error wrapping multiple validation
-// errors returned by CreateCategoryRequest.ValidateAll() if the designated
-// constraints aren't met.
-type CreateCategoryRequestMultiError []error
+// CreateProductCategoryRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateProductCategoryRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CreateProductCategoryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateCategoryRequestMultiError) Error() string {
+func (m CreateProductCategoryRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -94,11 +94,12 @@ func (m CreateCategoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateCategoryRequestMultiError) AllErrors() []error { return m }
+func (m CreateProductCategoryRequestMultiError) AllErrors() []error { return m }
 
-// CreateCategoryRequestValidationError is the validation error returned by
-// CreateCategoryRequest.Validate if the designated constraints aren't met.
-type CreateCategoryRequestValidationError struct {
+// CreateProductCategoryRequestValidationError is the validation error returned
+// by CreateProductCategoryRequest.Validate if the designated constraints
+// aren't met.
+type CreateProductCategoryRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -106,24 +107,24 @@ type CreateCategoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateCategoryRequestValidationError) Field() string { return e.field }
+func (e CreateProductCategoryRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateCategoryRequestValidationError) Reason() string { return e.reason }
+func (e CreateProductCategoryRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateCategoryRequestValidationError) Cause() error { return e.cause }
+func (e CreateProductCategoryRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateCategoryRequestValidationError) Key() bool { return e.key }
+func (e CreateProductCategoryRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateCategoryRequestValidationError) ErrorName() string {
-	return "CreateCategoryRequestValidationError"
+func (e CreateProductCategoryRequestValidationError) ErrorName() string {
+	return "CreateProductCategoryRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateCategoryRequestValidationError) Error() string {
+func (e CreateProductCategoryRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -135,14 +136,14 @@ func (e CreateCategoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateCategoryRequest.%s: %s%s",
+		"invalid %sCreateProductCategoryRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateCategoryRequestValidationError{}
+var _ error = CreateProductCategoryRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -150,24 +151,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateCategoryRequestValidationError{}
+} = CreateProductCategoryRequestValidationError{}
 
-// Validate checks the field values on UpdateCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on UpdateProductCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateCategoryRequest) Validate() error {
+func (m *UpdateProductCategoryRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on UpdateProductCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// UpdateCategoryRequestMultiError, or nil if none found.
-func (m *UpdateCategoryRequest) ValidateAll() error {
+// UpdateProductCategoryRequestMultiError, or nil if none found.
+func (m *UpdateProductCategoryRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateCategoryRequest) validate(all bool) error {
+func (m *UpdateProductCategoryRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -175,7 +176,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 	var errors []error
 
 	if m.GetCategory() == nil {
-		err := UpdateCategoryRequestValidationError{
+		err := UpdateProductCategoryRequestValidationError{
 			field:  "Category",
 			reason: "value is required",
 		}
@@ -189,7 +190,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 		switch v := interface{}(m.GetCategory()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateCategoryRequestValidationError{
+				errors = append(errors, UpdateProductCategoryRequestValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -197,7 +198,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateCategoryRequestValidationError{
+				errors = append(errors, UpdateProductCategoryRequestValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -206,7 +207,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return UpdateCategoryRequestValidationError{
+			return UpdateProductCategoryRequestValidationError{
 				field:  "Category",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -218,7 +219,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 		switch v := interface{}(m.GetUpdateMask()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateCategoryRequestValidationError{
+				errors = append(errors, UpdateProductCategoryRequestValidationError{
 					field:  "UpdateMask",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -226,7 +227,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateCategoryRequestValidationError{
+				errors = append(errors, UpdateProductCategoryRequestValidationError{
 					field:  "UpdateMask",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -235,7 +236,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetUpdateMask()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return UpdateCategoryRequestValidationError{
+			return UpdateProductCategoryRequestValidationError{
 				field:  "UpdateMask",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -244,19 +245,19 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UpdateCategoryRequestMultiError(errors)
+		return UpdateProductCategoryRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateCategoryRequestMultiError is an error wrapping multiple validation
-// errors returned by UpdateCategoryRequest.ValidateAll() if the designated
-// constraints aren't met.
-type UpdateCategoryRequestMultiError []error
+// UpdateProductCategoryRequestMultiError is an error wrapping multiple
+// validation errors returned by UpdateProductCategoryRequest.ValidateAll() if
+// the designated constraints aren't met.
+type UpdateProductCategoryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateCategoryRequestMultiError) Error() string {
+func (m UpdateProductCategoryRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -265,11 +266,12 @@ func (m UpdateCategoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateCategoryRequestMultiError) AllErrors() []error { return m }
+func (m UpdateProductCategoryRequestMultiError) AllErrors() []error { return m }
 
-// UpdateCategoryRequestValidationError is the validation error returned by
-// UpdateCategoryRequest.Validate if the designated constraints aren't met.
-type UpdateCategoryRequestValidationError struct {
+// UpdateProductCategoryRequestValidationError is the validation error returned
+// by UpdateProductCategoryRequest.Validate if the designated constraints
+// aren't met.
+type UpdateProductCategoryRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -277,24 +279,24 @@ type UpdateCategoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateCategoryRequestValidationError) Field() string { return e.field }
+func (e UpdateProductCategoryRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateCategoryRequestValidationError) Reason() string { return e.reason }
+func (e UpdateProductCategoryRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateCategoryRequestValidationError) Cause() error { return e.cause }
+func (e UpdateProductCategoryRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateCategoryRequestValidationError) Key() bool { return e.key }
+func (e UpdateProductCategoryRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateCategoryRequestValidationError) ErrorName() string {
-	return "UpdateCategoryRequestValidationError"
+func (e UpdateProductCategoryRequestValidationError) ErrorName() string {
+	return "UpdateProductCategoryRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateCategoryRequestValidationError) Error() string {
+func (e UpdateProductCategoryRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -306,14 +308,14 @@ func (e UpdateCategoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateCategoryRequest.%s: %s%s",
+		"invalid %sUpdateProductCategoryRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateCategoryRequestValidationError{}
+var _ error = UpdateProductCategoryRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -321,24 +323,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateCategoryRequestValidationError{}
+} = UpdateProductCategoryRequestValidationError{}
 
-// Validate checks the field values on UpdateCategory with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *UpdateCategory) Validate() error {
+// Validate checks the field values on UpdateProductCategory with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateProductCategory) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateCategory with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UpdateCategoryMultiError,
-// or nil if none found.
-func (m *UpdateCategory) ValidateAll() error {
+// ValidateAll checks the field values on UpdateProductCategory with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateProductCategoryMultiError, or nil if none found.
+func (m *UpdateProductCategory) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateCategory) validate(all bool) error {
+func (m *UpdateProductCategory) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -346,7 +348,7 @@ func (m *UpdateCategory) validate(all bool) error {
 	var errors []error
 
 	if utf8.RuneCountInString(m.GetKey()) < 1 {
-		err := UpdateCategoryValidationError{
+		err := UpdateProductCategoryValidationError{
 			field:  "Key",
 			reason: "value length must be at least 1 runes",
 		}
@@ -359,19 +361,19 @@ func (m *UpdateCategory) validate(all bool) error {
 	// no validation rules for Name
 
 	if len(errors) > 0 {
-		return UpdateCategoryMultiError(errors)
+		return UpdateProductCategoryMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateCategoryMultiError is an error wrapping multiple validation errors
-// returned by UpdateCategory.ValidateAll() if the designated constraints
-// aren't met.
-type UpdateCategoryMultiError []error
+// UpdateProductCategoryMultiError is an error wrapping multiple validation
+// errors returned by UpdateProductCategory.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateProductCategoryMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateCategoryMultiError) Error() string {
+func (m UpdateProductCategoryMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -380,11 +382,11 @@ func (m UpdateCategoryMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateCategoryMultiError) AllErrors() []error { return m }
+func (m UpdateProductCategoryMultiError) AllErrors() []error { return m }
 
-// UpdateCategoryValidationError is the validation error returned by
-// UpdateCategory.Validate if the designated constraints aren't met.
-type UpdateCategoryValidationError struct {
+// UpdateProductCategoryValidationError is the validation error returned by
+// UpdateProductCategory.Validate if the designated constraints aren't met.
+type UpdateProductCategoryValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -392,22 +394,24 @@ type UpdateCategoryValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateCategoryValidationError) Field() string { return e.field }
+func (e UpdateProductCategoryValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateCategoryValidationError) Reason() string { return e.reason }
+func (e UpdateProductCategoryValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateCategoryValidationError) Cause() error { return e.cause }
+func (e UpdateProductCategoryValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateCategoryValidationError) Key() bool { return e.key }
+func (e UpdateProductCategoryValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateCategoryValidationError) ErrorName() string { return "UpdateCategoryValidationError" }
+func (e UpdateProductCategoryValidationError) ErrorName() string {
+	return "UpdateProductCategoryValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e UpdateCategoryValidationError) Error() string {
+func (e UpdateProductCategoryValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -419,14 +423,14 @@ func (e UpdateCategoryValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateCategory.%s: %s%s",
+		"invalid %sUpdateProductCategory.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateCategoryValidationError{}
+var _ error = UpdateProductCategoryValidationError{}
 
 var _ interface {
 	Field() string
@@ -434,24 +438,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateCategoryValidationError{}
+} = UpdateProductCategoryValidationError{}
 
-// Validate checks the field values on DeleteCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on DeleteProductCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DeleteCategoryRequest) Validate() error {
+func (m *DeleteProductCategoryRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DeleteCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on DeleteProductCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DeleteCategoryRequestMultiError, or nil if none found.
-func (m *DeleteCategoryRequest) ValidateAll() error {
+// DeleteProductCategoryRequestMultiError, or nil if none found.
+func (m *DeleteProductCategoryRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DeleteCategoryRequest) validate(all bool) error {
+func (m *DeleteProductCategoryRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -461,19 +465,19 @@ func (m *DeleteCategoryRequest) validate(all bool) error {
 	// no validation rules for Key
 
 	if len(errors) > 0 {
-		return DeleteCategoryRequestMultiError(errors)
+		return DeleteProductCategoryRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// DeleteCategoryRequestMultiError is an error wrapping multiple validation
-// errors returned by DeleteCategoryRequest.ValidateAll() if the designated
-// constraints aren't met.
-type DeleteCategoryRequestMultiError []error
+// DeleteProductCategoryRequestMultiError is an error wrapping multiple
+// validation errors returned by DeleteProductCategoryRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DeleteProductCategoryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DeleteCategoryRequestMultiError) Error() string {
+func (m DeleteProductCategoryRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -482,11 +486,12 @@ func (m DeleteCategoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DeleteCategoryRequestMultiError) AllErrors() []error { return m }
+func (m DeleteProductCategoryRequestMultiError) AllErrors() []error { return m }
 
-// DeleteCategoryRequestValidationError is the validation error returned by
-// DeleteCategoryRequest.Validate if the designated constraints aren't met.
-type DeleteCategoryRequestValidationError struct {
+// DeleteProductCategoryRequestValidationError is the validation error returned
+// by DeleteProductCategoryRequest.Validate if the designated constraints
+// aren't met.
+type DeleteProductCategoryRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -494,24 +499,24 @@ type DeleteCategoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e DeleteCategoryRequestValidationError) Field() string { return e.field }
+func (e DeleteProductCategoryRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DeleteCategoryRequestValidationError) Reason() string { return e.reason }
+func (e DeleteProductCategoryRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DeleteCategoryRequestValidationError) Cause() error { return e.cause }
+func (e DeleteProductCategoryRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DeleteCategoryRequestValidationError) Key() bool { return e.key }
+func (e DeleteProductCategoryRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DeleteCategoryRequestValidationError) ErrorName() string {
-	return "DeleteCategoryRequestValidationError"
+func (e DeleteProductCategoryRequestValidationError) ErrorName() string {
+	return "DeleteProductCategoryRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DeleteCategoryRequestValidationError) Error() string {
+func (e DeleteProductCategoryRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -523,14 +528,14 @@ func (e DeleteCategoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDeleteCategoryRequest.%s: %s%s",
+		"invalid %sDeleteProductCategoryRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DeleteCategoryRequestValidationError{}
+var _ error = DeleteProductCategoryRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -538,24 +543,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DeleteCategoryRequestValidationError{}
+} = DeleteProductCategoryRequestValidationError{}
 
-// Validate checks the field values on DeleteCategoryReply with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on DeleteProductCategoryReply with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DeleteCategoryReply) Validate() error {
+func (m *DeleteProductCategoryReply) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DeleteCategoryReply with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on DeleteProductCategoryReply with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DeleteCategoryReplyMultiError, or nil if none found.
-func (m *DeleteCategoryReply) ValidateAll() error {
+// DeleteProductCategoryReplyMultiError, or nil if none found.
+func (m *DeleteProductCategoryReply) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DeleteCategoryReply) validate(all bool) error {
+func (m *DeleteProductCategoryReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -567,19 +572,19 @@ func (m *DeleteCategoryReply) validate(all bool) error {
 	// no validation rules for Name
 
 	if len(errors) > 0 {
-		return DeleteCategoryReplyMultiError(errors)
+		return DeleteProductCategoryReplyMultiError(errors)
 	}
 
 	return nil
 }
 
-// DeleteCategoryReplyMultiError is an error wrapping multiple validation
-// errors returned by DeleteCategoryReply.ValidateAll() if the designated
-// constraints aren't met.
-type DeleteCategoryReplyMultiError []error
+// DeleteProductCategoryReplyMultiError is an error wrapping multiple
+// validation errors returned by DeleteProductCategoryReply.ValidateAll() if
+// the designated constraints aren't met.
+type DeleteProductCategoryReplyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DeleteCategoryReplyMultiError) Error() string {
+func (m DeleteProductCategoryReplyMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -588,11 +593,11 @@ func (m DeleteCategoryReplyMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DeleteCategoryReplyMultiError) AllErrors() []error { return m }
+func (m DeleteProductCategoryReplyMultiError) AllErrors() []error { return m }
 
-// DeleteCategoryReplyValidationError is the validation error returned by
-// DeleteCategoryReply.Validate if the designated constraints aren't met.
-type DeleteCategoryReplyValidationError struct {
+// DeleteProductCategoryReplyValidationError is the validation error returned
+// by DeleteProductCategoryReply.Validate if the designated constraints aren't met.
+type DeleteProductCategoryReplyValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -600,24 +605,24 @@ type DeleteCategoryReplyValidationError struct {
 }
 
 // Field function returns field value.
-func (e DeleteCategoryReplyValidationError) Field() string { return e.field }
+func (e DeleteProductCategoryReplyValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DeleteCategoryReplyValidationError) Reason() string { return e.reason }
+func (e DeleteProductCategoryReplyValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DeleteCategoryReplyValidationError) Cause() error { return e.cause }
+func (e DeleteProductCategoryReplyValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DeleteCategoryReplyValidationError) Key() bool { return e.key }
+func (e DeleteProductCategoryReplyValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DeleteCategoryReplyValidationError) ErrorName() string {
-	return "DeleteCategoryReplyValidationError"
+func (e DeleteProductCategoryReplyValidationError) ErrorName() string {
+	return "DeleteProductCategoryReplyValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DeleteCategoryReplyValidationError) Error() string {
+func (e DeleteProductCategoryReplyValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -629,14 +634,14 @@ func (e DeleteCategoryReplyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDeleteCategoryReply.%s: %s%s",
+		"invalid %sDeleteProductCategoryReply.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DeleteCategoryReplyValidationError{}
+var _ error = DeleteProductCategoryReplyValidationError{}
 
 var _ interface {
 	Field() string
@@ -644,24 +649,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DeleteCategoryReplyValidationError{}
+} = DeleteProductCategoryReplyValidationError{}
 
-// Validate checks the field values on GetCategoryRequest with the rules
+// Validate checks the field values on GetProductCategoryRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetCategoryRequest) Validate() error {
+func (m *GetProductCategoryRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on GetProductCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetCategoryRequestMultiError, or nil if none found.
-func (m *GetCategoryRequest) ValidateAll() error {
+// GetProductCategoryRequestMultiError, or nil if none found.
+func (m *GetProductCategoryRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetCategoryRequest) validate(all bool) error {
+func (m *GetProductCategoryRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -669,7 +674,7 @@ func (m *GetCategoryRequest) validate(all bool) error {
 	var errors []error
 
 	if utf8.RuneCountInString(m.GetKey()) < 1 {
-		err := GetCategoryRequestValidationError{
+		err := GetProductCategoryRequestValidationError{
 			field:  "Key",
 			reason: "value length must be at least 1 runes",
 		}
@@ -680,19 +685,19 @@ func (m *GetCategoryRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return GetCategoryRequestMultiError(errors)
+		return GetProductCategoryRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetCategoryRequestMultiError is an error wrapping multiple validation errors
-// returned by GetCategoryRequest.ValidateAll() if the designated constraints
-// aren't met.
-type GetCategoryRequestMultiError []error
+// GetProductCategoryRequestMultiError is an error wrapping multiple validation
+// errors returned by GetProductCategoryRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GetProductCategoryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetCategoryRequestMultiError) Error() string {
+func (m GetProductCategoryRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -701,11 +706,11 @@ func (m GetCategoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetCategoryRequestMultiError) AllErrors() []error { return m }
+func (m GetProductCategoryRequestMultiError) AllErrors() []error { return m }
 
-// GetCategoryRequestValidationError is the validation error returned by
-// GetCategoryRequest.Validate if the designated constraints aren't met.
-type GetCategoryRequestValidationError struct {
+// GetProductCategoryRequestValidationError is the validation error returned by
+// GetProductCategoryRequest.Validate if the designated constraints aren't met.
+type GetProductCategoryRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -713,24 +718,24 @@ type GetCategoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetCategoryRequestValidationError) Field() string { return e.field }
+func (e GetProductCategoryRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetCategoryRequestValidationError) Reason() string { return e.reason }
+func (e GetProductCategoryRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetCategoryRequestValidationError) Cause() error { return e.cause }
+func (e GetProductCategoryRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetCategoryRequestValidationError) Key() bool { return e.key }
+func (e GetProductCategoryRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetCategoryRequestValidationError) ErrorName() string {
-	return "GetCategoryRequestValidationError"
+func (e GetProductCategoryRequestValidationError) ErrorName() string {
+	return "GetProductCategoryRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetCategoryRequestValidationError) Error() string {
+func (e GetProductCategoryRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -742,14 +747,14 @@ func (e GetCategoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetCategoryRequest.%s: %s%s",
+		"invalid %sGetProductCategoryRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetCategoryRequestValidationError{}
+var _ error = GetProductCategoryRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -757,24 +762,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetCategoryRequestValidationError{}
+} = GetProductCategoryRequestValidationError{}
 
-// Validate checks the field values on CategoryFilter with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *CategoryFilter) Validate() error {
+// Validate checks the field values on ProductCategoryFilter with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ProductCategoryFilter) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CategoryFilter with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in CategoryFilterMultiError,
-// or nil if none found.
-func (m *CategoryFilter) ValidateAll() error {
+// ValidateAll checks the field values on ProductCategoryFilter with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ProductCategoryFilterMultiError, or nil if none found.
+func (m *ProductCategoryFilter) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CategoryFilter) validate(all bool) error {
+func (m *ProductCategoryFilter) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -785,7 +790,7 @@ func (m *CategoryFilter) validate(all bool) error {
 		switch v := interface{}(m.GetKey()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CategoryFilterValidationError{
+				errors = append(errors, ProductCategoryFilterValidationError{
 					field:  "Key",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -793,7 +798,7 @@ func (m *CategoryFilter) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CategoryFilterValidationError{
+				errors = append(errors, ProductCategoryFilterValidationError{
 					field:  "Key",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -802,7 +807,7 @@ func (m *CategoryFilter) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetKey()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CategoryFilterValidationError{
+			return ProductCategoryFilterValidationError{
 				field:  "Key",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -814,7 +819,7 @@ func (m *CategoryFilter) validate(all bool) error {
 		switch v := interface{}(m.GetName()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CategoryFilterValidationError{
+				errors = append(errors, ProductCategoryFilterValidationError{
 					field:  "Name",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -822,7 +827,7 @@ func (m *CategoryFilter) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CategoryFilterValidationError{
+				errors = append(errors, ProductCategoryFilterValidationError{
 					field:  "Name",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -831,7 +836,7 @@ func (m *CategoryFilter) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CategoryFilterValidationError{
+			return ProductCategoryFilterValidationError{
 				field:  "Name",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -843,7 +848,7 @@ func (m *CategoryFilter) validate(all bool) error {
 		switch v := interface{}(m.GetParent()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CategoryFilterValidationError{
+				errors = append(errors, ProductCategoryFilterValidationError{
 					field:  "Parent",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -851,7 +856,7 @@ func (m *CategoryFilter) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CategoryFilterValidationError{
+				errors = append(errors, ProductCategoryFilterValidationError{
 					field:  "Parent",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -860,7 +865,7 @@ func (m *CategoryFilter) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetParent()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CategoryFilterValidationError{
+			return ProductCategoryFilterValidationError{
 				field:  "Parent",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -869,19 +874,19 @@ func (m *CategoryFilter) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CategoryFilterMultiError(errors)
+		return ProductCategoryFilterMultiError(errors)
 	}
 
 	return nil
 }
 
-// CategoryFilterMultiError is an error wrapping multiple validation errors
-// returned by CategoryFilter.ValidateAll() if the designated constraints
-// aren't met.
-type CategoryFilterMultiError []error
+// ProductCategoryFilterMultiError is an error wrapping multiple validation
+// errors returned by ProductCategoryFilter.ValidateAll() if the designated
+// constraints aren't met.
+type ProductCategoryFilterMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CategoryFilterMultiError) Error() string {
+func (m ProductCategoryFilterMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -890,11 +895,11 @@ func (m CategoryFilterMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CategoryFilterMultiError) AllErrors() []error { return m }
+func (m ProductCategoryFilterMultiError) AllErrors() []error { return m }
 
-// CategoryFilterValidationError is the validation error returned by
-// CategoryFilter.Validate if the designated constraints aren't met.
-type CategoryFilterValidationError struct {
+// ProductCategoryFilterValidationError is the validation error returned by
+// ProductCategoryFilter.Validate if the designated constraints aren't met.
+type ProductCategoryFilterValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -902,22 +907,24 @@ type CategoryFilterValidationError struct {
 }
 
 // Field function returns field value.
-func (e CategoryFilterValidationError) Field() string { return e.field }
+func (e ProductCategoryFilterValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CategoryFilterValidationError) Reason() string { return e.reason }
+func (e ProductCategoryFilterValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CategoryFilterValidationError) Cause() error { return e.cause }
+func (e ProductCategoryFilterValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CategoryFilterValidationError) Key() bool { return e.key }
+func (e ProductCategoryFilterValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CategoryFilterValidationError) ErrorName() string { return "CategoryFilterValidationError" }
+func (e ProductCategoryFilterValidationError) ErrorName() string {
+	return "ProductCategoryFilterValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e CategoryFilterValidationError) Error() string {
+func (e ProductCategoryFilterValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -929,14 +936,14 @@ func (e CategoryFilterValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCategoryFilter.%s: %s%s",
+		"invalid %sProductCategoryFilter.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CategoryFilterValidationError{}
+var _ error = ProductCategoryFilterValidationError{}
 
 var _ interface {
 	Field() string
@@ -944,24 +951,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CategoryFilterValidationError{}
+} = ProductCategoryFilterValidationError{}
 
-// Validate checks the field values on ListCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on ListProductCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ListCategoryRequest) Validate() error {
+func (m *ListProductCategoryRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ListCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on ListProductCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ListCategoryRequestMultiError, or nil if none found.
-func (m *ListCategoryRequest) ValidateAll() error {
+// ListProductCategoryRequestMultiError, or nil if none found.
+func (m *ListProductCategoryRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ListCategoryRequest) validate(all bool) error {
+func (m *ListProductCategoryRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -978,7 +985,7 @@ func (m *ListCategoryRequest) validate(all bool) error {
 		switch v := interface{}(m.GetFields()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ListCategoryRequestValidationError{
+				errors = append(errors, ListProductCategoryRequestValidationError{
 					field:  "Fields",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -986,7 +993,7 @@ func (m *ListCategoryRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, ListCategoryRequestValidationError{
+				errors = append(errors, ListProductCategoryRequestValidationError{
 					field:  "Fields",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -995,7 +1002,7 @@ func (m *ListCategoryRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return ListCategoryRequestValidationError{
+			return ListProductCategoryRequestValidationError{
 				field:  "Fields",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1007,7 +1014,7 @@ func (m *ListCategoryRequest) validate(all bool) error {
 		switch v := interface{}(m.GetFilter()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ListCategoryRequestValidationError{
+				errors = append(errors, ListProductCategoryRequestValidationError{
 					field:  "Filter",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1015,7 +1022,7 @@ func (m *ListCategoryRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, ListCategoryRequestValidationError{
+				errors = append(errors, ListProductCategoryRequestValidationError{
 					field:  "Filter",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1024,7 +1031,7 @@ func (m *ListCategoryRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return ListCategoryRequestValidationError{
+			return ListProductCategoryRequestValidationError{
 				field:  "Filter",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1033,19 +1040,19 @@ func (m *ListCategoryRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ListCategoryRequestMultiError(errors)
+		return ListProductCategoryRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// ListCategoryRequestMultiError is an error wrapping multiple validation
-// errors returned by ListCategoryRequest.ValidateAll() if the designated
-// constraints aren't met.
-type ListCategoryRequestMultiError []error
+// ListProductCategoryRequestMultiError is an error wrapping multiple
+// validation errors returned by ListProductCategoryRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ListProductCategoryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ListCategoryRequestMultiError) Error() string {
+func (m ListProductCategoryRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1054,11 +1061,11 @@ func (m ListCategoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ListCategoryRequestMultiError) AllErrors() []error { return m }
+func (m ListProductCategoryRequestMultiError) AllErrors() []error { return m }
 
-// ListCategoryRequestValidationError is the validation error returned by
-// ListCategoryRequest.Validate if the designated constraints aren't met.
-type ListCategoryRequestValidationError struct {
+// ListProductCategoryRequestValidationError is the validation error returned
+// by ListProductCategoryRequest.Validate if the designated constraints aren't met.
+type ListProductCategoryRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1066,24 +1073,24 @@ type ListCategoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListCategoryRequestValidationError) Field() string { return e.field }
+func (e ListProductCategoryRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListCategoryRequestValidationError) Reason() string { return e.reason }
+func (e ListProductCategoryRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListCategoryRequestValidationError) Cause() error { return e.cause }
+func (e ListProductCategoryRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListCategoryRequestValidationError) Key() bool { return e.key }
+func (e ListProductCategoryRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListCategoryRequestValidationError) ErrorName() string {
-	return "ListCategoryRequestValidationError"
+func (e ListProductCategoryRequestValidationError) ErrorName() string {
+	return "ListProductCategoryRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ListCategoryRequestValidationError) Error() string {
+func (e ListProductCategoryRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1095,14 +1102,14 @@ func (e ListCategoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListCategoryRequest.%s: %s%s",
+		"invalid %sListProductCategoryRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListCategoryRequestValidationError{}
+var _ error = ListProductCategoryRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1110,24 +1117,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListCategoryRequestValidationError{}
+} = ListProductCategoryRequestValidationError{}
 
-// Validate checks the field values on ListCategoryReply with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *ListCategoryReply) Validate() error {
+// Validate checks the field values on ListProductCategoryReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListProductCategoryReply) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ListCategoryReply with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on ListProductCategoryReply with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ListCategoryReplyMultiError, or nil if none found.
-func (m *ListCategoryReply) ValidateAll() error {
+// ListProductCategoryReplyMultiError, or nil if none found.
+func (m *ListProductCategoryReply) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ListCategoryReply) validate(all bool) error {
+func (m *ListProductCategoryReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1145,7 +1152,7 @@ func (m *ListCategoryReply) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListCategoryReplyValidationError{
+					errors = append(errors, ListProductCategoryReplyValidationError{
 						field:  fmt.Sprintf("Items[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1153,7 +1160,7 @@ func (m *ListCategoryReply) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ListCategoryReplyValidationError{
+					errors = append(errors, ListProductCategoryReplyValidationError{
 						field:  fmt.Sprintf("Items[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1162,7 +1169,7 @@ func (m *ListCategoryReply) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ListCategoryReplyValidationError{
+				return ListProductCategoryReplyValidationError{
 					field:  fmt.Sprintf("Items[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1173,19 +1180,19 @@ func (m *ListCategoryReply) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ListCategoryReplyMultiError(errors)
+		return ListProductCategoryReplyMultiError(errors)
 	}
 
 	return nil
 }
 
-// ListCategoryReplyMultiError is an error wrapping multiple validation errors
-// returned by ListCategoryReply.ValidateAll() if the designated constraints
-// aren't met.
-type ListCategoryReplyMultiError []error
+// ListProductCategoryReplyMultiError is an error wrapping multiple validation
+// errors returned by ListProductCategoryReply.ValidateAll() if the designated
+// constraints aren't met.
+type ListProductCategoryReplyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ListCategoryReplyMultiError) Error() string {
+func (m ListProductCategoryReplyMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1194,11 +1201,11 @@ func (m ListCategoryReplyMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ListCategoryReplyMultiError) AllErrors() []error { return m }
+func (m ListProductCategoryReplyMultiError) AllErrors() []error { return m }
 
-// ListCategoryReplyValidationError is the validation error returned by
-// ListCategoryReply.Validate if the designated constraints aren't met.
-type ListCategoryReplyValidationError struct {
+// ListProductCategoryReplyValidationError is the validation error returned by
+// ListProductCategoryReply.Validate if the designated constraints aren't met.
+type ListProductCategoryReplyValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1206,24 +1213,24 @@ type ListCategoryReplyValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListCategoryReplyValidationError) Field() string { return e.field }
+func (e ListProductCategoryReplyValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListCategoryReplyValidationError) Reason() string { return e.reason }
+func (e ListProductCategoryReplyValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListCategoryReplyValidationError) Cause() error { return e.cause }
+func (e ListProductCategoryReplyValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListCategoryReplyValidationError) Key() bool { return e.key }
+func (e ListProductCategoryReplyValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListCategoryReplyValidationError) ErrorName() string {
-	return "ListCategoryReplyValidationError"
+func (e ListProductCategoryReplyValidationError) ErrorName() string {
+	return "ListProductCategoryReplyValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ListCategoryReplyValidationError) Error() string {
+func (e ListProductCategoryReplyValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1235,14 +1242,14 @@ func (e ListCategoryReplyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListCategoryReply.%s: %s%s",
+		"invalid %sListProductCategoryReply.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListCategoryReplyValidationError{}
+var _ error = ListProductCategoryReplyValidationError{}
 
 var _ interface {
 	Field() string
@@ -1250,24 +1257,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListCategoryReplyValidationError{}
+} = ListProductCategoryReplyValidationError{}
 
-// Validate checks the field values on Category with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *Category) Validate() error {
+// Validate checks the field values on ProductCategory with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ProductCategory) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Category with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in CategoryMultiError, or nil
-// if none found.
-func (m *Category) ValidateAll() error {
+// ValidateAll checks the field values on ProductCategory with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ProductCategoryMultiError, or nil if none found.
+func (m *ProductCategory) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Category) validate(all bool) error {
+func (m *ProductCategory) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1278,11 +1285,13 @@ func (m *Category) validate(all bool) error {
 
 	// no validation rules for Name
 
+	// no validation rules for Path
+
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CategoryValidationError{
+				errors = append(errors, ProductCategoryValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1290,7 +1299,7 @@ func (m *Category) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CategoryValidationError{
+				errors = append(errors, ProductCategoryValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1299,7 +1308,7 @@ func (m *Category) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CategoryValidationError{
+			return ProductCategoryValidationError{
 				field:  "CreatedAt",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1310,18 +1319,19 @@ func (m *Category) validate(all bool) error {
 	// no validation rules for Parent
 
 	if len(errors) > 0 {
-		return CategoryMultiError(errors)
+		return ProductCategoryMultiError(errors)
 	}
 
 	return nil
 }
 
-// CategoryMultiError is an error wrapping multiple validation errors returned
-// by Category.ValidateAll() if the designated constraints aren't met.
-type CategoryMultiError []error
+// ProductCategoryMultiError is an error wrapping multiple validation errors
+// returned by ProductCategory.ValidateAll() if the designated constraints
+// aren't met.
+type ProductCategoryMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CategoryMultiError) Error() string {
+func (m ProductCategoryMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1330,11 +1340,11 @@ func (m CategoryMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CategoryMultiError) AllErrors() []error { return m }
+func (m ProductCategoryMultiError) AllErrors() []error { return m }
 
-// CategoryValidationError is the validation error returned by
-// Category.Validate if the designated constraints aren't met.
-type CategoryValidationError struct {
+// ProductCategoryValidationError is the validation error returned by
+// ProductCategory.Validate if the designated constraints aren't met.
+type ProductCategoryValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1342,22 +1352,22 @@ type CategoryValidationError struct {
 }
 
 // Field function returns field value.
-func (e CategoryValidationError) Field() string { return e.field }
+func (e ProductCategoryValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CategoryValidationError) Reason() string { return e.reason }
+func (e ProductCategoryValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CategoryValidationError) Cause() error { return e.cause }
+func (e ProductCategoryValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CategoryValidationError) Key() bool { return e.key }
+func (e ProductCategoryValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CategoryValidationError) ErrorName() string { return "CategoryValidationError" }
+func (e ProductCategoryValidationError) ErrorName() string { return "ProductCategoryValidationError" }
 
 // Error satisfies the builtin error interface
-func (e CategoryValidationError) Error() string {
+func (e ProductCategoryValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1369,14 +1379,14 @@ func (e CategoryValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCategory.%s: %s%s",
+		"invalid %sProductCategory.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CategoryValidationError{}
+var _ error = ProductCategoryValidationError{}
 
 var _ interface {
 	Field() string
@@ -1384,4 +1394,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CategoryValidationError{}
+} = ProductCategoryValidationError{}

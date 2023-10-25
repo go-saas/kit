@@ -3,22 +3,22 @@ package biz
 import (
 	"context"
 	"github.com/go-saas/kit/pkg/data"
-	"github.com/go-saas/kit/pkg/gorm"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/saas"
 	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"github.com/samber/lo"
-	gorm2 "gorm.io/gorm"
+	"gorm.io/gorm"
 	"time"
 )
 
 type User struct {
-	gorm.UIDBase        `json:",squash"`
-	concurrency.Version `gorm:"type:char(36)"`
-	gorm.AuditedModel
-	gorm.AggRoot
+	kitgorm.UIDBase        `json:",squash"`
+	concurrency.HasVersion `gorm:"type:char(36)"`
+	kitgorm.AuditedModel
+	kitgorm.AggRoot
 
-	DeletedAt gorm2.DeletedAt `gorm:"index"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 
 	Name      *string `json:"name"`
 	FirstName *string `json:"first_name"`

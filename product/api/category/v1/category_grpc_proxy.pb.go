@@ -27,18 +27,18 @@ func NewProductCategoryServiceClientProxy(cc ProductCategoryServiceClient) Produ
 	return &productCategoryServiceClientProxy{cc}
 }
 
-func (c *productCategoryServiceClientProxy) ListCategory(ctx context.Context, in *ListCategoryRequest) (*ListCategoryReply, error) {
-	return c.cc.ListCategory(ctx, in)
+func (c *productCategoryServiceClientProxy) ListProductCategory(ctx context.Context, in *ListProductCategoryRequest) (*ListProductCategoryReply, error) {
+	return c.cc.ListProductCategory(ctx, in)
 }
-func (c *productCategoryServiceClientProxy) GetCategory(ctx context.Context, in *GetCategoryRequest) (*Category, error) {
-	return c.cc.GetCategory(ctx, in)
+func (c *productCategoryServiceClientProxy) GetProductCategory(ctx context.Context, in *GetProductCategoryRequest) (*ProductCategory, error) {
+	return c.cc.GetProductCategory(ctx, in)
 }
-func (c *productCategoryServiceClientProxy) CreateCategory(ctx context.Context, in *CreateCategoryRequest) (*Category, error) {
-	return c.cc.CreateCategory(ctx, in)
+func (c *productCategoryServiceClientProxy) CreateProductCategory(ctx context.Context, in *CreateProductCategoryRequest) (*ProductCategory, error) {
+	return c.cc.CreateProductCategory(ctx, in)
 }
-func (c *productCategoryServiceClientProxy) UpdateCategory(ctx context.Context, in *UpdateCategoryRequest) (*Category, error) {
-	return c.cc.UpdateCategory(ctx, in)
+func (c *productCategoryServiceClientProxy) UpdateProductCategory(ctx context.Context, in *UpdateProductCategoryRequest) (*ProductCategory, error) {
+	return c.cc.UpdateProductCategory(ctx, in)
 }
-func (c *productCategoryServiceClientProxy) DeleteCategory(ctx context.Context, in *DeleteCategoryRequest) (*DeleteCategoryReply, error) {
-	return c.cc.DeleteCategory(ctx, in)
+func (c *productCategoryServiceClientProxy) DeleteProductCategory(ctx context.Context, in *DeleteProductCategoryRequest) (*DeleteProductCategoryReply, error) {
+	return c.cc.DeleteProductCategory(ctx, in)
 }

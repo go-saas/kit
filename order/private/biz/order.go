@@ -22,7 +22,7 @@ import (
 type Order struct {
 	ID string `gorm:"type:char(36)" json:"id"`
 	kitgorm.AuditedModel
-	concurrency.Version
+	concurrency.HasVersion
 	gorm2.MultiTenancy
 
 	Status string

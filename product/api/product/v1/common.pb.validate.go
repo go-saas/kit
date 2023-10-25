@@ -35,21 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on Media with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on ProductMedia with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *Media) Validate() error {
+func (m *ProductMedia) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Media with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in MediaMultiError, or nil if none found.
-func (m *Media) ValidateAll() error {
+// ValidateAll checks the field values on ProductMedia with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ProductMediaMultiError, or
+// nil if none found.
+func (m *ProductMedia) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Media) validate(all bool) error {
+func (m *ProductMedia) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -60,21 +61,25 @@ func (m *Media) validate(all bool) error {
 
 	// no validation rules for Type
 
-	// no validation rules for Title
+	// no validation rules for MimeType
+
+	// no validation rules for Name
+
+	// no validation rules for Url
 
 	if len(errors) > 0 {
-		return MediaMultiError(errors)
+		return ProductMediaMultiError(errors)
 	}
 
 	return nil
 }
 
-// MediaMultiError is an error wrapping multiple validation errors returned by
-// Media.ValidateAll() if the designated constraints aren't met.
-type MediaMultiError []error
+// ProductMediaMultiError is an error wrapping multiple validation errors
+// returned by ProductMedia.ValidateAll() if the designated constraints aren't met.
+type ProductMediaMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m MediaMultiError) Error() string {
+func (m ProductMediaMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -83,11 +88,11 @@ func (m MediaMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m MediaMultiError) AllErrors() []error { return m }
+func (m ProductMediaMultiError) AllErrors() []error { return m }
 
-// MediaValidationError is the validation error returned by Media.Validate if
-// the designated constraints aren't met.
-type MediaValidationError struct {
+// ProductMediaValidationError is the validation error returned by
+// ProductMedia.Validate if the designated constraints aren't met.
+type ProductMediaValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -95,22 +100,22 @@ type MediaValidationError struct {
 }
 
 // Field function returns field value.
-func (e MediaValidationError) Field() string { return e.field }
+func (e ProductMediaValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e MediaValidationError) Reason() string { return e.reason }
+func (e ProductMediaValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e MediaValidationError) Cause() error { return e.cause }
+func (e ProductMediaValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e MediaValidationError) Key() bool { return e.key }
+func (e ProductMediaValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e MediaValidationError) ErrorName() string { return "MediaValidationError" }
+func (e ProductMediaValidationError) ErrorName() string { return "ProductMediaValidationError" }
 
 // Error satisfies the builtin error interface
-func (e MediaValidationError) Error() string {
+func (e ProductMediaValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -122,14 +127,14 @@ func (e MediaValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sMedia.%s: %s%s",
+		"invalid %sProductMedia.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = MediaValidationError{}
+var _ error = ProductMediaValidationError{}
 
 var _ interface {
 	Field() string
@@ -137,7 +142,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = MediaValidationError{}
+} = ProductMediaValidationError{}
 
 // Validate checks the field values on Badge with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -601,3 +606,105 @@ var _Stock_Level_InLookup = map[string]struct{}{
 	"in":  {},
 	"low": {},
 }
+
+// Validate checks the field values on ProductAttribute with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ProductAttribute) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ProductAttribute with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ProductAttributeMultiError, or nil if none found.
+func (m *ProductAttribute) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ProductAttribute) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Title
+
+	if len(errors) > 0 {
+		return ProductAttributeMultiError(errors)
+	}
+
+	return nil
+}
+
+// ProductAttributeMultiError is an error wrapping multiple validation errors
+// returned by ProductAttribute.ValidateAll() if the designated constraints
+// aren't met.
+type ProductAttributeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ProductAttributeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ProductAttributeMultiError) AllErrors() []error { return m }
+
+// ProductAttributeValidationError is the validation error returned by
+// ProductAttribute.Validate if the designated constraints aren't met.
+type ProductAttributeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ProductAttributeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ProductAttributeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ProductAttributeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ProductAttributeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ProductAttributeValidationError) ErrorName() string { return "ProductAttributeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ProductAttributeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sProductAttribute.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ProductAttributeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ProductAttributeValidationError{}

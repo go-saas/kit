@@ -2,6 +2,8 @@ package biz
 
 import (
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	sgorm "github.com/go-saas/saas/gorm"
+	concurrency "github.com/goxiaoy/gorm-concurrency"
 	"time"
 )
 
@@ -9,21 +11,22 @@ import (
 type ProductSku struct {
 	kitgorm.UIDBase
 	kitgorm.AuditedModel
+	concurrency.HasVersion
+	sgorm.MultiTenancy
 
 	ProductId string
-	Product   Product
 
 	Title string
 
-	MainPic   ProductMedia `gorm:"foreignKey:MainPicID"`
-	MainPicID string
+	MainPic   *ProductMedia `gorm:"foreignKey:MainPicID"`
+	MainPicID *string
 	Medias    []ProductMedia `gorm:"polymorphic:Owner;polymorphicValue:product_sku"`
 
 	Prices []Price `gorm:"polymorphic:Owner;polymorphicValue:product_sku"`
 
-	Stock []Stock `gorm:"polymorphic:Owner;polymorphicValue:product_sku"`
+	Stocks []Stock `gorm:"polymorphic:Owner;polymorphicValue:product_sku"`
 
-	Keyword []KeyWord `gorm:"polymorphic:Owner;polymorphicValue:product_sku;comment:商品关键字"`
+	Keywords []KeyWord `gorm:"polymorphic:Owner;polymorphicValue:product_sku;comment:商品关键字"`
 
 	IsSaleable   bool
 	SaleableFrom *time.Time

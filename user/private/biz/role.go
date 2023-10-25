@@ -13,7 +13,7 @@ import (
 
 type Role struct {
 	kitgorm.UIDBase
-	concurrency.Version `gorm:"type:char(36)"`
+	concurrency.HasVersion `gorm:"type:char(36)"`
 	kitgorm.AuditedModel
 	TenantId       gorm2.HasTenant `gorm:"index:,unique,composite:tenant_role""`
 	Name           string          `json:"name" gorm:"size:200"`

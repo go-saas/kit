@@ -14,7 +14,7 @@ import (
 type Product struct {
 	kitgorm.UIDBase
 	kitgorm.AuditedModel
-	concurrency.Version
+	concurrency.HasVersion
 	gorm.MultiTenancy
 
 	Title     string       `gorm:"comment:商品标题"`
@@ -22,7 +22,7 @@ type Product struct {
 	Desc      string       `gorm:"comment:商品描述"`
 	Content   data.JSONMap `gorm:"comment:描述页面内容"`
 
-	MainPic ProductMedia   `gorm:"polymorphic:Owner;polymorphicValue:product"`
+	MainPic *ProductMedia  `gorm:"polymorphic:Owner;polymorphicValue:product"`
 	Medias  []ProductMedia `gorm:"polymorphic:Owner;polymorphicValue:product"`
 
 	Badges []Badge `gorm:"foreignKey:ProductId;comment:商品徽章"`
@@ -32,7 +32,7 @@ type Product struct {
 
 	IsNew bool
 
-	Categories []ProductCategory `gorm:"many2many:product_categories;"`
+	Categories []ProductCategory `gorm:"many2many:product_2_category"`
 
 	MainCategoryKey *string
 	MainCategory    *ProductCategory `gorm:"foreignKey:MainCategoryKey;comment:商品主要分类"`
@@ -57,7 +57,7 @@ type Product struct {
 
 	Stocks []Stock `gorm:"polymorphic:Owner;polymorphicValue:product"`
 
-	Sku []ProductSku
+	Sku []ProductSku `gorm:"foreignKey:ProductId"`
 
 	Prices []Price `gorm:"polymorphic:Owner;polymorphicValue:product"`
 

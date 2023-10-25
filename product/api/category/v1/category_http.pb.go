@@ -19,144 +19,119 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationProductCategoryServiceCreateCategory = "/product.api.category.v1.ProductCategoryService/CreateCategory"
-const OperationProductCategoryServiceDeleteCategory = "/product.api.category.v1.ProductCategoryService/DeleteCategory"
-const OperationProductCategoryServiceGetCategory = "/product.api.category.v1.ProductCategoryService/GetCategory"
-const OperationProductCategoryServiceListCategory = "/product.api.category.v1.ProductCategoryService/ListCategory"
-const OperationProductCategoryServiceUpdateCategory = "/product.api.category.v1.ProductCategoryService/UpdateCategory"
+const OperationProductCategoryServiceCreateProductCategory = "/product.api.category.v1.ProductCategoryService/CreateProductCategory"
+const OperationProductCategoryServiceDeleteProductCategory = "/product.api.category.v1.ProductCategoryService/DeleteProductCategory"
+const OperationProductCategoryServiceGetProductCategory = "/product.api.category.v1.ProductCategoryService/GetProductCategory"
+const OperationProductCategoryServiceListProductCategory = "/product.api.category.v1.ProductCategoryService/ListProductCategory"
+const OperationProductCategoryServiceUpdateProductCategory = "/product.api.category.v1.ProductCategoryService/UpdateProductCategory"
 
 type ProductCategoryServiceHTTPServer interface {
-	CreateCategory(context.Context, *CreateCategoryRequest) (*Category, error)
-	DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryReply, error)
-	GetCategory(context.Context, *GetCategoryRequest) (*Category, error)
-	ListCategory(context.Context, *ListCategoryRequest) (*ListCategoryReply, error)
-	UpdateCategory(context.Context, *UpdateCategoryRequest) (*Category, error)
+	CreateProductCategory(context.Context, *CreateProductCategoryRequest) (*ProductCategory, error)
+	DeleteProductCategory(context.Context, *DeleteProductCategoryRequest) (*DeleteProductCategoryReply, error)
+	GetProductCategory(context.Context, *GetProductCategoryRequest) (*ProductCategory, error)
+	ListProductCategory(context.Context, *ListProductCategoryRequest) (*ListProductCategoryReply, error)
+	UpdateProductCategory(context.Context, *UpdateProductCategoryRequest) (*ProductCategory, error)
 }
 
 func RegisterProductCategoryServiceHTTPServer(s *http.Server, srv ProductCategoryServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/product/category/list", _ProductCategoryService_ListCategory0_HTTP_Handler(srv))
-	r.GET("/v1/product/category", _ProductCategoryService_ListCategory1_HTTP_Handler(srv))
-	r.GET("/v1/product/category/{key}", _ProductCategoryService_GetCategory0_HTTP_Handler(srv))
-	r.POST("/v1/product/category", _ProductCategoryService_CreateCategory0_HTTP_Handler(srv))
-	r.PATCH("/v1/product/category/{category.key}", _ProductCategoryService_UpdateCategory0_HTTP_Handler(srv))
-	r.PUT("/v1/product/category/{category.key}", _ProductCategoryService_UpdateCategory1_HTTP_Handler(srv))
-	r.DELETE("/v1/product/category/{key}", _ProductCategoryService_DeleteCategory0_HTTP_Handler(srv))
+	r.POST("/v1/product/category/list", _ProductCategoryService_ListProductCategory0_HTTP_Handler(srv))
+	r.GET("/v1/product/category", _ProductCategoryService_ListProductCategory1_HTTP_Handler(srv))
+	r.GET("/v1/product/category/{key}", _ProductCategoryService_GetProductCategory0_HTTP_Handler(srv))
+	r.POST("/v1/product/category", _ProductCategoryService_CreateProductCategory0_HTTP_Handler(srv))
+	r.PATCH("/v1/product/category/{category.key}", _ProductCategoryService_UpdateProductCategory0_HTTP_Handler(srv))
+	r.PUT("/v1/product/category/{category.key}", _ProductCategoryService_UpdateProductCategory1_HTTP_Handler(srv))
+	r.DELETE("/v1/product/category/{key}", _ProductCategoryService_DeleteProductCategory0_HTTP_Handler(srv))
 }
 
-func _ProductCategoryService_ListCategory0_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _ProductCategoryService_ListProductCategory0_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in ListCategoryRequest
+		var in ListProductCategoryRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationProductCategoryServiceListCategory)
+		http.SetOperation(ctx, OperationProductCategoryServiceListProductCategory)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ListCategory(ctx, req.(*ListCategoryRequest))
+			return srv.ListProductCategory(ctx, req.(*ListProductCategoryRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*ListCategoryReply)
+		reply := out.(*ListProductCategoryReply)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _ProductCategoryService_ListCategory1_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _ProductCategoryService_ListProductCategory1_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in ListCategoryRequest
+		var in ListProductCategoryRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationProductCategoryServiceListCategory)
+		http.SetOperation(ctx, OperationProductCategoryServiceListProductCategory)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ListCategory(ctx, req.(*ListCategoryRequest))
+			return srv.ListProductCategory(ctx, req.(*ListProductCategoryRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*ListCategoryReply)
+		reply := out.(*ListProductCategoryReply)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _ProductCategoryService_GetCategory0_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _ProductCategoryService_GetProductCategory0_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in GetCategoryRequest
+		var in GetProductCategoryRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationProductCategoryServiceGetCategory)
+		http.SetOperation(ctx, OperationProductCategoryServiceGetProductCategory)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetCategory(ctx, req.(*GetCategoryRequest))
+			return srv.GetProductCategory(ctx, req.(*GetProductCategoryRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*Category)
+		reply := out.(*ProductCategory)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _ProductCategoryService_CreateCategory0_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _ProductCategoryService_CreateProductCategory0_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in CreateCategoryRequest
+		var in CreateProductCategoryRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationProductCategoryServiceCreateCategory)
+		http.SetOperation(ctx, OperationProductCategoryServiceCreateProductCategory)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.CreateCategory(ctx, req.(*CreateCategoryRequest))
+			return srv.CreateProductCategory(ctx, req.(*CreateProductCategoryRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*Category)
+		reply := out.(*ProductCategory)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _ProductCategoryService_UpdateCategory0_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _ProductCategoryService_UpdateProductCategory0_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in UpdateCategoryRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationProductCategoryServiceUpdateCategory)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateCategory(ctx, req.(*UpdateCategoryRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*Category)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _ProductCategoryService_UpdateCategory1_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in UpdateCategoryRequest
+		var in UpdateProductCategoryRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -166,47 +141,72 @@ func _ProductCategoryService_UpdateCategory1_HTTP_Handler(srv ProductCategorySer
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationProductCategoryServiceUpdateCategory)
+		http.SetOperation(ctx, OperationProductCategoryServiceUpdateProductCategory)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateCategory(ctx, req.(*UpdateCategoryRequest))
+			return srv.UpdateProductCategory(ctx, req.(*UpdateProductCategoryRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*Category)
+		reply := out.(*ProductCategory)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _ProductCategoryService_DeleteCategory0_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
+func _ProductCategoryService_UpdateProductCategory1_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in DeleteCategoryRequest
+		var in UpdateProductCategoryRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationProductCategoryServiceDeleteCategory)
+		http.SetOperation(ctx, OperationProductCategoryServiceUpdateProductCategory)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DeleteCategory(ctx, req.(*DeleteCategoryRequest))
+			return srv.UpdateProductCategory(ctx, req.(*UpdateProductCategoryRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*DeleteCategoryReply)
+		reply := out.(*ProductCategory)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ProductCategoryService_DeleteProductCategory0_HTTP_Handler(srv ProductCategoryServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeleteProductCategoryRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationProductCategoryServiceDeleteProductCategory)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteProductCategory(ctx, req.(*DeleteProductCategoryRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*DeleteProductCategoryReply)
 		return ctx.Result(200, reply)
 	}
 }
 
 type ProductCategoryServiceHTTPClient interface {
-	CreateCategory(ctx context.Context, req *CreateCategoryRequest, opts ...http.CallOption) (rsp *Category, err error)
-	DeleteCategory(ctx context.Context, req *DeleteCategoryRequest, opts ...http.CallOption) (rsp *DeleteCategoryReply, err error)
-	GetCategory(ctx context.Context, req *GetCategoryRequest, opts ...http.CallOption) (rsp *Category, err error)
-	ListCategory(ctx context.Context, req *ListCategoryRequest, opts ...http.CallOption) (rsp *ListCategoryReply, err error)
-	UpdateCategory(ctx context.Context, req *UpdateCategoryRequest, opts ...http.CallOption) (rsp *Category, err error)
+	CreateProductCategory(ctx context.Context, req *CreateProductCategoryRequest, opts ...http.CallOption) (rsp *ProductCategory, err error)
+	DeleteProductCategory(ctx context.Context, req *DeleteProductCategoryRequest, opts ...http.CallOption) (rsp *DeleteProductCategoryReply, err error)
+	GetProductCategory(ctx context.Context, req *GetProductCategoryRequest, opts ...http.CallOption) (rsp *ProductCategory, err error)
+	ListProductCategory(ctx context.Context, req *ListProductCategoryRequest, opts ...http.CallOption) (rsp *ListProductCategoryReply, err error)
+	UpdateProductCategory(ctx context.Context, req *UpdateProductCategoryRequest, opts ...http.CallOption) (rsp *ProductCategory, err error)
 }
 
 type ProductCategoryServiceHTTPClientImpl struct {
@@ -217,11 +217,11 @@ func NewProductCategoryServiceHTTPClient(client *http.Client) ProductCategorySer
 	return &ProductCategoryServiceHTTPClientImpl{client}
 }
 
-func (c *ProductCategoryServiceHTTPClientImpl) CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...http.CallOption) (*Category, error) {
-	var out Category
+func (c *ProductCategoryServiceHTTPClientImpl) CreateProductCategory(ctx context.Context, in *CreateProductCategoryRequest, opts ...http.CallOption) (*ProductCategory, error) {
+	var out ProductCategory
 	pattern := "/v1/product/category"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationProductCategoryServiceCreateCategory))
+	opts = append(opts, http.Operation(OperationProductCategoryServiceCreateProductCategory))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -230,11 +230,11 @@ func (c *ProductCategoryServiceHTTPClientImpl) CreateCategory(ctx context.Contex
 	return &out, err
 }
 
-func (c *ProductCategoryServiceHTTPClientImpl) DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...http.CallOption) (*DeleteCategoryReply, error) {
-	var out DeleteCategoryReply
+func (c *ProductCategoryServiceHTTPClientImpl) DeleteProductCategory(ctx context.Context, in *DeleteProductCategoryRequest, opts ...http.CallOption) (*DeleteProductCategoryReply, error) {
+	var out DeleteProductCategoryReply
 	pattern := "/v1/product/category/{key}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationProductCategoryServiceDeleteCategory))
+	opts = append(opts, http.Operation(OperationProductCategoryServiceDeleteProductCategory))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
@@ -243,11 +243,11 @@ func (c *ProductCategoryServiceHTTPClientImpl) DeleteCategory(ctx context.Contex
 	return &out, err
 }
 
-func (c *ProductCategoryServiceHTTPClientImpl) GetCategory(ctx context.Context, in *GetCategoryRequest, opts ...http.CallOption) (*Category, error) {
-	var out Category
+func (c *ProductCategoryServiceHTTPClientImpl) GetProductCategory(ctx context.Context, in *GetProductCategoryRequest, opts ...http.CallOption) (*ProductCategory, error) {
+	var out ProductCategory
 	pattern := "/v1/product/category/{key}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationProductCategoryServiceGetCategory))
+	opts = append(opts, http.Operation(OperationProductCategoryServiceGetProductCategory))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -256,11 +256,11 @@ func (c *ProductCategoryServiceHTTPClientImpl) GetCategory(ctx context.Context, 
 	return &out, err
 }
 
-func (c *ProductCategoryServiceHTTPClientImpl) ListCategory(ctx context.Context, in *ListCategoryRequest, opts ...http.CallOption) (*ListCategoryReply, error) {
-	var out ListCategoryReply
+func (c *ProductCategoryServiceHTTPClientImpl) ListProductCategory(ctx context.Context, in *ListProductCategoryRequest, opts ...http.CallOption) (*ListProductCategoryReply, error) {
+	var out ListProductCategoryReply
 	pattern := "/v1/product/category"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationProductCategoryServiceListCategory))
+	opts = append(opts, http.Operation(OperationProductCategoryServiceListProductCategory))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -269,11 +269,11 @@ func (c *ProductCategoryServiceHTTPClientImpl) ListCategory(ctx context.Context,
 	return &out, err
 }
 
-func (c *ProductCategoryServiceHTTPClientImpl) UpdateCategory(ctx context.Context, in *UpdateCategoryRequest, opts ...http.CallOption) (*Category, error) {
-	var out Category
+func (c *ProductCategoryServiceHTTPClientImpl) UpdateProductCategory(ctx context.Context, in *UpdateProductCategoryRequest, opts ...http.CallOption) (*ProductCategory, error) {
+	var out ProductCategory
 	pattern := "/v1/product/category/{category.key}"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationProductCategoryServiceUpdateCategory))
+	opts = append(opts, http.Operation(OperationProductCategoryServiceUpdateProductCategory))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
