@@ -1,6 +1,6 @@
 menus:
   - name: "product"
-    path: "/product/*"
+    path: "/product"
     component: "LAYOUT"
     redirect: "/product/products"
     is_preserved: true

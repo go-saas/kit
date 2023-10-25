@@ -38,17 +38,53 @@ type watcherSync struct {
 	ctx        context.Context
 	updateFunc func(ins []*registry.ServiceInstance) error
 	wg         *sync.WaitGroup
+	dirty      bool
+	ticker     *time.Ticker
+	latestIns  []*registry.ServiceInstance
+	lock       sync.Mutex
 }
 
 func (r *watcherSync) watch() {
 	defer r.wg.Done()
+	update := func() error {
+		r.lock.Lock()
+		defer r.lock.Unlock()
+		if !r.dirty {
+			return nil
+		}
+		err := r.updateFunc(r.latestIns)
+		if err != nil {
+			r.dirty = true
+			klog.Errorf("[apisix] Failed to update service %s : %v", strings.Join(lo.Map(r.latestIns, func(t *registry.ServiceInstance, _ int) string {
+				return t.Name
+			}), ","), err)
+		} else {
+			r.dirty = false
+		}
+		return nil
+	}
+	go func() {
+		for {
+			select {
+			case <-r.ctx.Done():
+				return
+			case <-r.ticker.C:
+				update()
+			default:
+			}
+		}
+	}()
 	for {
 		select {
 		case <-r.ctx.Done():
 			return
 		default:
 		}
-		ins, err := r.w.Next()
+		var err error
+		r.latestIns, err = r.w.Next()
+		r.lock.Lock()
+		r.dirty = true
+		r.lock.Unlock()
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				return
@@ -57,12 +93,7 @@ func (r *watcherSync) watch() {
 			time.Sleep(time.Second)
 			continue
 		}
-		err = r.updateFunc(ins)
-		if err != nil {
-			klog.Errorf("[apisix] Failed to update service %s : %v", strings.Join(lo.Map(ins, func(t *registry.ServiceInstance, _ int) string {
-				return t.Name
-			}), ","), err)
-		}
+		update()
 
 	}
 }
@@ -157,7 +188,8 @@ func (w *WatchSyncAdmin) Start(ctx context.Context) (err error) {
 					updateFunc: func(ins []*registry.ServiceInstance) error {
 						return putServices(w.client, ins)
 					},
-					wg: &stopWg,
+					wg:     &stopWg,
+					ticker: time.NewTicker(1 * time.Second),
 				}
 				stopWg.Add(1)
 				go s.watch()
@@ -181,7 +213,8 @@ func (w *WatchSyncAdmin) Start(ctx context.Context) (err error) {
 						updateFunc: func(ins []*registry.ServiceInstance) error {
 							return putServices(w.client, ins)
 						},
-						wg: &stopWg,
+						wg:     &stopWg,
+						ticker: time.NewTicker(1 * time.Second),
 					}
 					stopWg.Add(1)
 					go s.watch()

@@ -1,6 +1,6 @@
 menus:
   - name: "order"
-    path: "/order/*"
+    path: "/order"
     component: "LAYOUT"
     redirect: "/order/orders"
     is_preserved: true
