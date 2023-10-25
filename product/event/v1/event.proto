@@ -3,6 +3,7 @@ package product.event;
 
 option go_package = "github.com/go-saas/kit/product/event/v1;v1";
 
-message DemoEvent{
-
+message ProductUpdatedEvent{
+  string product_id=1;
+  string product_version=2;
 }

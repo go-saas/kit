@@ -35,41 +35,46 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on DemoEvent with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *DemoEvent) Validate() error {
+// Validate checks the field values on ProductUpdatedEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ProductUpdatedEvent) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DemoEvent with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in DemoEventMultiError, or nil
-// if none found.
-func (m *DemoEvent) ValidateAll() error {
+// ValidateAll checks the field values on ProductUpdatedEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ProductUpdatedEventMultiError, or nil if none found.
+func (m *ProductUpdatedEvent) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DemoEvent) validate(all bool) error {
+func (m *ProductUpdatedEvent) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for ProductId
+
+	// no validation rules for ProductVersion
+
 	if len(errors) > 0 {
-		return DemoEventMultiError(errors)
+		return ProductUpdatedEventMultiError(errors)
 	}
 
 	return nil
 }
 
-// DemoEventMultiError is an error wrapping multiple validation errors returned
-// by DemoEvent.ValidateAll() if the designated constraints aren't met.
-type DemoEventMultiError []error
+// ProductUpdatedEventMultiError is an error wrapping multiple validation
+// errors returned by ProductUpdatedEvent.ValidateAll() if the designated
+// constraints aren't met.
+type ProductUpdatedEventMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DemoEventMultiError) Error() string {
+func (m ProductUpdatedEventMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -78,11 +83,11 @@ func (m DemoEventMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DemoEventMultiError) AllErrors() []error { return m }
+func (m ProductUpdatedEventMultiError) AllErrors() []error { return m }
 
-// DemoEventValidationError is the validation error returned by
-// DemoEvent.Validate if the designated constraints aren't met.
-type DemoEventValidationError struct {
+// ProductUpdatedEventValidationError is the validation error returned by
+// ProductUpdatedEvent.Validate if the designated constraints aren't met.
+type ProductUpdatedEventValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -90,22 +95,24 @@ type DemoEventValidationError struct {
 }
 
 // Field function returns field value.
-func (e DemoEventValidationError) Field() string { return e.field }
+func (e ProductUpdatedEventValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DemoEventValidationError) Reason() string { return e.reason }
+func (e ProductUpdatedEventValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DemoEventValidationError) Cause() error { return e.cause }
+func (e ProductUpdatedEventValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DemoEventValidationError) Key() bool { return e.key }
+func (e ProductUpdatedEventValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DemoEventValidationError) ErrorName() string { return "DemoEventValidationError" }
+func (e ProductUpdatedEventValidationError) ErrorName() string {
+	return "ProductUpdatedEventValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e DemoEventValidationError) Error() string {
+func (e ProductUpdatedEventValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -117,14 +124,14 @@ func (e DemoEventValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDemoEvent.%s: %s%s",
+		"invalid %sProductUpdatedEvent.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DemoEventValidationError{}
+var _ error = ProductUpdatedEventValidationError{}
 
 var _ interface {
 	Field() string
@@ -132,4 +139,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DemoEventValidationError{}
+} = ProductUpdatedEventValidationError{}

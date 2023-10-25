@@ -162,13 +162,6 @@ func (s *PlanService) UpdatePlan(ctx context.Context, req *pb.UpdatePlanRequest)
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourcePlan, req.Plan.Key), authz.UpdateAction); err != nil {
 		return nil, err
 	}
-
-	//check duplicate name
-	if dbP, err := s.repo.Get(ctx, normalizeName(req.Plan.Key)); err != nil {
-		return nil, err
-	} else if dbP != nil && dbP.Key != req.Plan.Key {
-		return nil, pb.ErrorDuplicatePlanKeyLocalized(ctx, nil, nil)
-	}
 	g, err := s.repo.Get(ctx, req.Plan.Key)
 	if err != nil {
 		return nil, err
@@ -179,7 +172,7 @@ func (s *PlanService) UpdatePlan(ctx context.Context, req *pb.UpdatePlanRequest)
 
 	//update plan ->update product(2-phase msg)
 	updateReq := &v1.UpdateInternalProductRequest{
-		Product:    &v1.UpdateProduct{Id: g.ProductId, Title: g.DisplayName},
+		Product:    &v1.UpdateProduct{Id: g.ProductId, Title: req.Plan.DisplayName},
 		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"title"}},
 	}
 	msg := s.txhelper.NewMsgGrpc(ksuid.New().String()).
@@ -188,6 +181,20 @@ func (s *PlanService) UpdatePlan(ctx context.Context, req *pb.UpdatePlanRequest)
 	res := &pb.Plan{}
 	err = msg.DoAndSubmit(api.ServiceName+v12.MsgService_QueryPrepared_FullMethodName, func(bb *dtmcli.BranchBarrier) error {
 		return s.txhelper.BarrierUow(msg.Context, bb, biz.ConnName, func(ctx context.Context) error {
+			//check duplicate name
+			if dbP, err := s.repo.Get(ctx, normalizeName(req.Plan.Key)); err != nil {
+				return err
+			} else if dbP != nil && dbP.Key != req.Plan.Key {
+				return pb.ErrorDuplicatePlanKeyLocalized(ctx, nil, nil)
+			}
+			g, err := s.repo.Get(ctx, req.Plan.Key)
+			if err != nil {
+				return err
+			}
+			if g == nil {
+				return errors.NotFound("", "")
+			}
+
 			MapUpdatePbPlan2Biz(req.Plan, g)
 			if err := s.repo.Update(ctx, req.Plan.Key, g, nil); err != nil {
 				return err
@@ -203,7 +210,6 @@ func (s *PlanService) DeletePlan(ctx context.Context, req *pb.DeletePlanRequest)
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourcePlan, req.Key), authz.DeleteAction); err != nil {
 		return nil, err
 	}
-
 	g, err := s.repo.Get(ctx, req.Key)
 	if err != nil {
 		return nil, err
@@ -254,7 +260,6 @@ func MapBizPlan2Pb(a *biz.Plan, b *pb.Plan) {
 }
 
 func MapUpdatePbPlan2Biz(a *pb.UpdatePlan, b *biz.Plan) {
-
 	b.DisplayName = a.DisplayName
 	b.Active = a.Active
 }
