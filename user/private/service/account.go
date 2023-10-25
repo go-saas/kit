@@ -267,7 +267,7 @@ func (s *AccountService) CreateAddresses(ctx context.Context, req *pb.CreateAddr
 	}
 	addr := &biz.UserAddress{}
 	mapCreateAddr2Biz(req, addr)
-	addr.UserId = u.GetId()
+	addr.UserId = uuid.MustParse(u.GetId())
 
 	if len(addr.Phone) > 0 {
 		p, err := s.normalizer.Phone(ctx, addr.Phone)
@@ -297,7 +297,7 @@ func (s *AccountService) UpdateAddresses(ctx context.Context, req *pb.UpdateAddr
 	if err != nil {
 		return nil, err
 	}
-	if addr == nil || addr.UserId != ui.GetId() {
+	if addr == nil || addr.UserId.String() != ui.GetId() {
 		return nil, errors.NotFound("", "")
 	}
 	mapUpdateAddr2Biz(req.Address, addr)
@@ -323,7 +323,7 @@ func (s *AccountService) DeleteAddresses(ctx context.Context, req *pb.DeleteAddr
 	if err != nil {
 		return nil, err
 	}
-	if addr == nil || addr.UserId != ui.GetId() {
+	if addr == nil || addr.UserId.String() != ui.GetId() {
 		return nil, errors.NotFound("", "")
 	}
 	if err := s.userAddr.Delete(ctx, addr.ID.String()); err != nil {

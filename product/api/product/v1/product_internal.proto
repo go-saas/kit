@@ -13,6 +13,7 @@ import "protoc-gen-openapiv2/options/annotations.proto";
 import "product/api/product/v1/common.proto";
 import "product/api/category/v1/category.proto";
 import "product/api/product/v1/product.proto";
+import "product/api/price/v1/price.proto";
 
 option go_package = "github.com/go-saas/kit/product/api/product/v1;v1";
 
@@ -36,21 +37,63 @@ service ProductInternalService{
 }
 
 message CreateInternalProductRequest{
+  string title =10 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string short_desc=11;
+  string desc=12;
+
+  ProductMedia main_pic=13;
+  repeated ProductMedia medias=14;
+
+  repeated Badge badges=15;
+
+  google.protobuf.Timestamp visible_from=16;
+  google.protobuf.Timestamp visible_to=17;
+
+  bool is_new=18;
+
+  optional string main_category_key= 40;
+  repeated string category_keys=41;
+
+  string barcode=19;
+
+  string model=20;
+
+  optional string brand_id=21;
+
+  bool is_saleable=22;
+
+  google.protobuf.Timestamp saleable_from=23;
+  google.protobuf.Timestamp saleable_to=24;
+
+  repeated Keyword keywords=25;
+  repeated .product.api.price.v1.CreatePriceRequest prices=26;
+
+  bool is_giveaway=27;
+
+  repeated ProductAttribute attributes=43;
+
+  bool multi_sku=50;
+
+  repeated CampaignRule campaign_rules=60;
+
+  bool need_shipping=61;
+
+  repeated Stock stocks=62;
+
+  google.protobuf.Struct content=63;
+
+  //internal extra fields
+  ProductManageInfo manage_info=100;
 
 }
-message CreateInternalProductReply{
 
-}
 
 message UpdateInternalProductRequest {
   UpdateProduct product=1 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
   google.protobuf.FieldMask update_mask = 2;
 }
 
-message UpdateInternalProduct{
-  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string name=2;
-}
+
 
 message GetInternalProductRequest {
   string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior)=REQUIRED];

@@ -16,6 +16,7 @@ import (
 	"github.com/go-saas/kit/pkg/server/common"
 	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
 	"github.com/go-saas/kit/saas/api"
+	v12 "github.com/go-saas/kit/saas/api/plan/v1"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas"
@@ -42,7 +43,7 @@ func NewGRPCServer(c *conf.Services, tokenizer jwt.Tokenizer, ts saas.TenantStor
 		server.Saas(mOpt, ts, validator, func(o *saas.TenantResolveOption) {
 			o.AppendContribs(userTenant)
 		}),
-		kuow.Uow(uowMgr, kuow.WithForceSkipOp(v1.TenantService_CreateTenant_FullMethodName)),
+		kuow.Uow(uowMgr, kuow.WithForceSkipOp(v1.TenantService_CreateTenant_FullMethodName, v12.PlanService_CreatePlan_FullMethodName)),
 	}
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(

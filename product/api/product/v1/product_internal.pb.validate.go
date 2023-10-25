@@ -57,6 +57,484 @@ func (m *CreateInternalProductRequest) validate(all bool) error {
 
 	var errors []error
 
+	if utf8.RuneCountInString(m.GetTitle()) < 1 {
+		err := CreateInternalProductRequestValidationError{
+			field:  "Title",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for ShortDesc
+
+	// no validation rules for Desc
+
+	if all {
+		switch v := interface{}(m.GetMainPic()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "MainPic",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "MainPic",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetMainPic()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateInternalProductRequestValidationError{
+				field:  "MainPic",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetMedias() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Medias[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Medias[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateInternalProductRequestValidationError{
+					field:  fmt.Sprintf("Medias[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetBadges() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Badges[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Badges[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateInternalProductRequestValidationError{
+					field:  fmt.Sprintf("Badges[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if all {
+		switch v := interface{}(m.GetVisibleFrom()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "VisibleFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "VisibleFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetVisibleFrom()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateInternalProductRequestValidationError{
+				field:  "VisibleFrom",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetVisibleTo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "VisibleTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "VisibleTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetVisibleTo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateInternalProductRequestValidationError{
+				field:  "VisibleTo",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for IsNew
+
+	// no validation rules for Barcode
+
+	// no validation rules for Model
+
+	// no validation rules for IsSaleable
+
+	if all {
+		switch v := interface{}(m.GetSaleableFrom()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "SaleableFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "SaleableFrom",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSaleableFrom()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateInternalProductRequestValidationError{
+				field:  "SaleableFrom",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetSaleableTo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "SaleableTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "SaleableTo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSaleableTo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateInternalProductRequestValidationError{
+				field:  "SaleableTo",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetKeywords() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Keywords[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Keywords[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateInternalProductRequestValidationError{
+					field:  fmt.Sprintf("Keywords[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetPrices() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Prices[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Prices[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateInternalProductRequestValidationError{
+					field:  fmt.Sprintf("Prices[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for IsGiveaway
+
+	for idx, item := range m.GetAttributes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateInternalProductRequestValidationError{
+					field:  fmt.Sprintf("Attributes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for MultiSku
+
+	for idx, item := range m.GetCampaignRules() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("CampaignRules[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("CampaignRules[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateInternalProductRequestValidationError{
+					field:  fmt.Sprintf("CampaignRules[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for NeedShipping
+
+	for idx, item := range m.GetStocks() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Stocks[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateInternalProductRequestValidationError{
+						field:  fmt.Sprintf("Stocks[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateInternalProductRequestValidationError{
+					field:  fmt.Sprintf("Stocks[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if all {
+		switch v := interface{}(m.GetContent()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "Content",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "Content",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetContent()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateInternalProductRequestValidationError{
+				field:  "Content",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetManageInfo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "ManageInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateInternalProductRequestValidationError{
+					field:  "ManageInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetManageInfo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateInternalProductRequestValidationError{
+				field:  "ManageInfo",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.MainCategoryKey != nil {
+		// no validation rules for MainCategoryKey
+	}
+
+	if m.BrandId != nil {
+		// no validation rules for BrandId
+	}
+
 	if len(errors) > 0 {
 		return CreateInternalProductRequestMultiError(errors)
 	}
@@ -137,108 +615,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CreateInternalProductRequestValidationError{}
-
-// Validate checks the field values on CreateInternalProductReply with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateInternalProductReply) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on CreateInternalProductReply with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CreateInternalProductReplyMultiError, or nil if none found.
-func (m *CreateInternalProductReply) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *CreateInternalProductReply) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return CreateInternalProductReplyMultiError(errors)
-	}
-
-	return nil
-}
-
-// CreateInternalProductReplyMultiError is an error wrapping multiple
-// validation errors returned by CreateInternalProductReply.ValidateAll() if
-// the designated constraints aren't met.
-type CreateInternalProductReplyMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m CreateInternalProductReplyMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m CreateInternalProductReplyMultiError) AllErrors() []error { return m }
-
-// CreateInternalProductReplyValidationError is the validation error returned
-// by CreateInternalProductReply.Validate if the designated constraints aren't met.
-type CreateInternalProductReplyValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e CreateInternalProductReplyValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e CreateInternalProductReplyValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e CreateInternalProductReplyValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e CreateInternalProductReplyValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e CreateInternalProductReplyValidationError) ErrorName() string {
-	return "CreateInternalProductReplyValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e CreateInternalProductReplyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCreateInternalProductReply.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = CreateInternalProductReplyValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = CreateInternalProductReplyValidationError{}
 
 // Validate checks the field values on UpdateInternalProductRequest with the
 // rules defined in the proto definition for this message. If any rules are
@@ -411,121 +787,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateInternalProductRequestValidationError{}
-
-// Validate checks the field values on UpdateInternalProduct with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateInternalProduct) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UpdateInternalProduct with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UpdateInternalProductMultiError, or nil if none found.
-func (m *UpdateInternalProduct) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UpdateInternalProduct) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if utf8.RuneCountInString(m.GetId()) < 1 {
-		err := UpdateInternalProductValidationError{
-			field:  "Id",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for Name
-
-	if len(errors) > 0 {
-		return UpdateInternalProductMultiError(errors)
-	}
-
-	return nil
-}
-
-// UpdateInternalProductMultiError is an error wrapping multiple validation
-// errors returned by UpdateInternalProduct.ValidateAll() if the designated
-// constraints aren't met.
-type UpdateInternalProductMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UpdateInternalProductMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UpdateInternalProductMultiError) AllErrors() []error { return m }
-
-// UpdateInternalProductValidationError is the validation error returned by
-// UpdateInternalProduct.Validate if the designated constraints aren't met.
-type UpdateInternalProductValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UpdateInternalProductValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UpdateInternalProductValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UpdateInternalProductValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UpdateInternalProductValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UpdateInternalProductValidationError) ErrorName() string {
-	return "UpdateInternalProductValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UpdateInternalProductValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdateInternalProduct.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UpdateInternalProductValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UpdateInternalProductValidationError{}
 
 // Validate checks the field values on GetInternalProductRequest with the rules
 // defined in the proto definition for this message. If any rules are

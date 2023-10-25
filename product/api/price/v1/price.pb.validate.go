@@ -184,7 +184,7 @@ func (m *Price) validate(all bool) error {
 
 	// no validation rules for DenyMoreDiscounts
 
-	// no validation rules for BillingSchema
+	// no validation rules for BillingScheme
 
 	for idx, item := range m.GetCurrencyOptions() {
 		_, _ = idx, item
@@ -1172,9 +1172,9 @@ func (m *CreatePriceRequest) validate(all bool) error {
 
 	// no validation rules for DenyMoreDiscounts
 
-	if _, ok := _CreatePriceRequest_BillingSchema_InLookup[m.GetBillingSchema()]; !ok {
+	if _, ok := _CreatePriceRequest_BillingScheme_InLookup[m.GetBillingScheme()]; !ok {
 		err := CreatePriceRequestValidationError{
-			field:  "BillingSchema",
+			field:  "BillingScheme",
 			reason: "value must be in list [per_unit tiered]",
 		}
 		if !all {
@@ -1416,7 +1416,7 @@ var _CreatePriceRequest_OwnerType_InLookup = map[string]struct{}{
 	"product_sku": {},
 }
 
-var _CreatePriceRequest_BillingSchema_InLookup = map[string]struct{}{
+var _CreatePriceRequest_BillingScheme_InLookup = map[string]struct{}{
 	"per_unit": {},
 	"tiered":   {},
 }
@@ -1772,19 +1772,6 @@ func (m *UpdatePrice) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if _, ok := _UpdatePrice_OwnerType_InLookup[m.GetOwnerType()]; !ok {
-		err := UpdatePriceValidationError{
-			field:  "OwnerType",
-			reason: "value must be in list [product product_sku]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for OwnerId
-
 	// no validation rules for CurrencyCode
 
 	// no validation rules for DefaultAmount
@@ -1795,9 +1782,9 @@ func (m *UpdatePrice) validate(all bool) error {
 
 	// no validation rules for DenyMoreDiscounts
 
-	if _, ok := _UpdatePrice_BillingSchema_InLookup[m.GetBillingSchema()]; !ok {
+	if _, ok := _UpdatePrice_BillingScheme_InLookup[m.GetBillingScheme()]; !ok {
 		err := UpdatePriceValidationError{
-			field:  "BillingSchema",
+			field:  "BillingScheme",
 			reason: "value must be in list [per_unit tiered]",
 		}
 		if !all {
@@ -2031,12 +2018,7 @@ var _ interface {
 	ErrorName() string
 } = UpdatePriceValidationError{}
 
-var _UpdatePrice_OwnerType_InLookup = map[string]struct{}{
-	"product":     {},
-	"product_sku": {},
-}
-
-var _UpdatePrice_BillingSchema_InLookup = map[string]struct{}{
+var _UpdatePrice_BillingScheme_InLookup = map[string]struct{}{
 	"per_unit": {},
 	"tiered":   {},
 }

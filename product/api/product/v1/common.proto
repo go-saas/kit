@@ -48,5 +48,4 @@ message Stock{
 
 message ProductAttribute{
   string title=10;
-
 }

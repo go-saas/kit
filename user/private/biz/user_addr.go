@@ -5,12 +5,13 @@ import (
 	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/lbs"
+	"github.com/google/uuid"
 )
 
 type UserAddress struct {
 	gorm.UIDBase
 	gorm.AuditedModel
-	UserId   string            `json:"user_id" gorm:"index:"`
+	UserId   uuid.UUID         `json:"user_id" gorm:"index"`
 	Phone    string            `json:"phone"`
 	Usage    string            `json:"usage"`
 	Prefer   bool              `json:"prefer"`

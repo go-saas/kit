@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
-	"github.com/go-saas/kit/pkg/price"
 	"github.com/go-saas/kit/pkg/utils"
 	"github.com/go-saas/kit/product/api"
 	v1 "github.com/go-saas/kit/product/api/category/v1"
@@ -19,9 +19,11 @@ import (
 )
 
 type ProductService struct {
-	repo biz.ProductRepo
-	auth authz.Service
-	blob vfs.Blob
+	repo         biz.ProductRepo
+	auth         authz.Service
+	blob         vfs.Blob
+	trusted      sapi.TrustedContextValidator
+	categoryRepo biz.ProductCategoryRepo
 	*UploadService
 }
 
@@ -32,9 +34,11 @@ func NewProductService(
 	repo biz.ProductRepo,
 	auth authz.Service,
 	upload *UploadService,
+	trusted sapi.TrustedContextValidator,
+	categoryRepo biz.ProductCategoryRepo,
 	blob vfs.Blob,
 ) *ProductService {
-	return &ProductService{repo: repo, auth: auth, UploadService: upload, blob: blob}
+	return &ProductService{repo: repo, auth: auth, UploadService: upload, trusted: trusted, categoryRepo: categoryRepo, blob: blob}
 }
 
 func (s *ProductService) ListProduct(ctx context.Context, req *pb.ListProductRequest) (*pb.ListProductReply, error) {
@@ -85,8 +89,11 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *pb.CreateProduc
 		return nil, err
 	}
 	e := &biz.Product{}
-	MapCreatePbProduct2Biz(req, e)
-	err := s.repo.Create(ctx, e)
+	err := s.MapCreatePbProduct2Biz(ctx, req, e)
+	if err != nil {
+		return nil, err
+	}
+	err = s.repo.Create(ctx, e)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +114,9 @@ func (s *ProductService) UpdateProduct(ctx context.Context, req *pb.UpdateProduc
 		return nil, errors.NotFound("", "")
 	}
 
-	MapUpdatePbProduct2Biz(req.Product, g)
+	if err := s.MapUpdatePbProduct2Biz(ctx, req.Product, g); err != nil {
+		return nil, err
+	}
 	if err := s.repo.Update(ctx, g.ID.String(), g, nil); err != nil {
 		return nil, err
 	}
@@ -173,7 +182,7 @@ func (s *ProductService) MapBizProduct2Pb(ctx context.Context, a *biz.Product, b
 		b.MainCategory = r
 	}
 
-	b.Keywords = lo.Map(a.Keywords, func(t biz.KeyWord, _ int) *pb.Keyword {
+	b.Keywords = lo.Map(a.Keywords, func(t biz.Keyword, _ int) *pb.Keyword {
 		r := &pb.Keyword{}
 		mapBizKeyword2Pb(&t, r)
 		return r
@@ -221,13 +230,164 @@ func (s *ProductService) MapBizProduct2Pb(ctx context.Context, a *biz.Product, b
 	b.ManageInfo = manageInfo
 }
 
-func MapUpdatePbProduct2Biz(a *pb.UpdateProduct, b *biz.Product) {
-	//b.Name = a.Name
-	//TODO
+func (s *ProductService) MapUpdatePbProduct2Biz(ctx context.Context, a *pb.UpdateProduct, b *biz.Product) error {
+	b.Title = a.Title
+	b.ShortDesc = a.ShortDesc
+	b.Desc = a.Desc
+	b.Content = utils.Structpb2Map(a.Content)
+
+	b.MainPic = mapPbMedia2Biz(a.MainPic)
+	b.Medias = lo.Map(a.Medias, func(t *pb.ProductMedia, _ int) biz.ProductMedia {
+		return *mapPbMedia2Biz(t)
+	})
+
+	b.Badges = lo.Map(a.Badges, func(t *pb.Badge, _ int) biz.Badge {
+		r := &biz.Badge{}
+		mapPbBadge2Biz(t, r)
+		return *r
+	})
+	b.VisibleFrom = utils.Timepb2Time(a.VisibleFrom)
+	b.VisibleTo = utils.Timepb2Time(a.VisibleTo)
+	b.IsNew = a.IsNew
+
+	if len(a.CategoryKeys) > 0 {
+		c, err := s.categoryRepo.FindByKeys(ctx, a.CategoryKeys)
+		if err != nil {
+			return err
+		}
+		b.Categories = c
+	}
+
+	b.MainCategoryKey = a.MainCategoryKey
+
+	b.Keywords = lo.Map(a.Keywords, func(t *pb.Keyword, _ int) biz.Keyword {
+		r := &biz.Keyword{}
+		mapPbKeyword2Biz(t, r)
+		return *r
+	})
+
+	b.Model = a.Model
+	b.BrandId = a.BrandId
+	b.IsGiveaway = a.IsGiveaway
+
+	b.Attributes = lo.Map(a.Attributes, func(t *pb.ProductAttribute, _ int) biz.ProductAttribute {
+		r := &biz.ProductAttribute{}
+		mapPbAttribute2Biz(t, r)
+		return *r
+	})
+
+	//b.MultiSku = a.MultiSku
+
+	b.CampaignRules = lo.Map(a.CampaignRules, func(t *pb.CampaignRule, _ int) biz.CampaignRule {
+		r := &biz.CampaignRule{}
+		mapPbCampaignRule2Biz(t, r)
+		return *r
+	})
+
+	b.NeedShipping = a.NeedShipping
+
+	b.Stocks = lo.Map(a.Stocks, func(t *pb.Stock, _ int) biz.Stock {
+		r := &biz.Stock{}
+		mapPbStock2Biz(t, r)
+		return *r
+	})
+
+	b.Prices = lo.Map(a.Prices, func(t *v12.UpdatePrice, _ int) biz.Price {
+		r := &biz.Price{}
+		mapPbUpdatePrice2Biz(t, r)
+		return *r
+	})
+
+	b.IsSaleable = a.IsSaleable
+	b.SaleableFrom = utils.Timepb2Time(a.SaleableFrom)
+	b.SaleableTo = utils.Timepb2Time(a.SaleableTo)
+	b.Barcode = a.Barcode
+
+	//manageInfo := &pb.ProductManageInfo{}
+	//mapBizManageInfo2Pb(&a.ManageInfo, manageInfo)
+	//
+	//b.ManageInfo = manageInfo
+	return nil
 }
-func MapCreatePbProduct2Biz(a *pb.CreateProductRequest, b *biz.Product) {
-	//b.Name = a.Name
-	//TODO
+
+func (s *ProductService) MapCreatePbProduct2Biz(ctx context.Context, a *pb.CreateProductRequest, b *biz.Product) error {
+	b.Title = a.Title
+	b.ShortDesc = a.ShortDesc
+	b.Desc = a.Desc
+	b.Content = utils.Structpb2Map(a.Content)
+
+	b.MainPic = mapPbMedia2Biz(a.MainPic)
+	b.Medias = lo.Map(a.Medias, func(t *pb.ProductMedia, _ int) biz.ProductMedia {
+		return *mapPbMedia2Biz(t)
+	})
+
+	b.Badges = lo.Map(a.Badges, func(t *pb.Badge, _ int) biz.Badge {
+		r := &biz.Badge{}
+		mapPbBadge2Biz(t, r)
+		return *r
+	})
+	b.VisibleFrom = utils.Timepb2Time(a.VisibleFrom)
+	b.VisibleTo = utils.Timepb2Time(a.VisibleTo)
+	b.IsNew = a.IsNew
+
+	if len(a.CategoryKeys) > 0 {
+		c, err := s.categoryRepo.FindByKeys(ctx, a.CategoryKeys)
+		if err != nil {
+			return err
+		}
+		b.Categories = c
+	}
+
+	b.MainCategoryKey = a.MainCategoryKey
+
+	b.Keywords = lo.Map(a.Keywords, func(t *pb.Keyword, _ int) biz.Keyword {
+		r := &biz.Keyword{}
+		mapPbKeyword2Biz(t, r)
+		return *r
+	})
+
+	b.Model = a.Model
+	b.BrandId = a.BrandId
+	b.IsGiveaway = a.IsGiveaway
+
+	b.Attributes = lo.Map(a.Attributes, func(t *pb.ProductAttribute, _ int) biz.ProductAttribute {
+		r := &biz.ProductAttribute{}
+		mapPbAttribute2Biz(t, r)
+		return *r
+	})
+
+	b.MultiSku = a.MultiSku
+
+	b.CampaignRules = lo.Map(a.CampaignRules, func(t *pb.CampaignRule, _ int) biz.CampaignRule {
+		r := &biz.CampaignRule{}
+		mapPbCampaignRule2Biz(t, r)
+		return *r
+	})
+
+	b.NeedShipping = a.NeedShipping
+
+	b.Stocks = lo.Map(a.Stocks, func(t *pb.Stock, _ int) biz.Stock {
+		r := &biz.Stock{}
+		mapPbStock2Biz(t, r)
+		return *r
+	})
+
+	b.Prices = lo.Map(a.Prices, func(t *v12.CreatePriceRequest, _ int) biz.Price {
+		r := &biz.Price{}
+		mapPbCreatePrice2Biz(t, r)
+		return *r
+	})
+
+	b.IsSaleable = a.IsSaleable
+	b.SaleableFrom = utils.Timepb2Time(a.SaleableFrom)
+	b.SaleableTo = utils.Timepb2Time(a.SaleableTo)
+	b.Barcode = a.Barcode
+
+	//manageInfo := &pb.ProductManageInfo{}
+	//mapBizManageInfo2Pb(&a.ManageInfo, manageInfo)
+	//
+	//b.ManageInfo = manageInfo
+	return nil
 }
 
 func mapBizMedia2Pb(ctx context.Context, v vfs.Blob, a *biz.ProductMedia) *pb.ProductMedia {
@@ -274,7 +434,15 @@ func mapPbBadge2Biz(a *pb.Badge, b *biz.Badge) {
 	b.Label = a.Label
 }
 
-func mapBizKeyword2Pb(a *biz.KeyWord, b *pb.Keyword) {
+func mapBizKeyword2Pb(a *biz.Keyword, b *pb.Keyword) {
+	b.Text = a.Text
+	b.Refer = a.Refer
+}
+
+func mapPbKeyword2Biz(a *pb.Keyword, b *biz.Keyword) {
+	if len(a.Id) > 0 {
+		b.ID = uuid.MustParse(a.Id)
+	}
 	b.Text = a.Text
 	b.Refer = a.Refer
 }
@@ -292,15 +460,31 @@ func mapBizAttribute2Pb(a *biz.ProductAttribute, b *pb.ProductAttribute) {
 	b.Title = a.Title
 }
 
+func mapPbAttribute2Biz(a *pb.ProductAttribute, b *biz.ProductAttribute) {
+	b.Title = a.Title
+}
+
 func mapBizCampaignRule2Pb(a *biz.CampaignRule, b *pb.CampaignRule) {
 	b.Rule = a.Rule
 	b.Extra = utils.Map2Structpb(a.Extra)
+}
+
+func mapPbCampaignRule2Biz(a *pb.CampaignRule, b *biz.CampaignRule) {
+	b.Rule = a.Rule
+	b.Extra = utils.Structpb2Map(a.Extra)
 }
 
 func mapBizStock2Pb(a *biz.Stock, b *pb.Stock) {
 	b.InStock = a.InStock
 	b.Level = a.Level
 	b.Amount = int32(a.Amount)
+	b.DeliveryCode = a.DeliveryCode
+}
+
+func mapPbStock2Biz(a *pb.Stock, b *biz.Stock) {
+	b.InStock = a.InStock
+	b.Level = a.Level
+	b.Amount = int(a.Amount)
 	b.DeliveryCode = a.DeliveryCode
 }
 
@@ -330,7 +514,7 @@ func mapBizProductSku2Pb(ctx context.Context, blob vfs.Blob, a *biz.ProductSku, 
 		mapBizStock2Pb(&t, r)
 		return r
 	})
-	b.Keywords = lo.Map(a.Keywords, func(t biz.KeyWord, _ int) *pb.Keyword {
+	b.Keywords = lo.Map(a.Keywords, func(t biz.Keyword, _ int) *pb.Keyword {
 		r := &pb.Keyword{}
 		mapBizKeyword2Pb(&t, r)
 		return r
@@ -347,79 +531,11 @@ func mapBizManageInfo2Pb(a *biz.ProductManageInfo, b *pb.ProductManageInfo) {
 	b.ManagedBy = a.ManagedBy
 }
 
-func mapBizPrice2Pb(ctx context.Context, a *biz.Price, b *v12.Price) {
-	b.Id = a.ID.String()
-
-	b.CreatedAt = timestamppb.New(a.CreatedAt)
-	b.UpdatedAt = timestamppb.New(a.UpdatedAt)
-	b.TenantId = a.TenantId.String
-
-	b.Default = price.MustNewFromInt64(a.DefaultAmount, a.CurrencyCode).ToPricePb(ctx)
-	b.Discounted = price.MustNewFromInt64(a.DiscountedAmount, a.CurrencyCode).ToPricePb(ctx)
-	b.DiscountText = a.DiscountText
-	b.DenyMoreDiscounts = a.DenyMoreDiscounts
-
-	b.BillingSchema = string(a.BillingScheme)
-	b.CurrencyOptions = lo.Map(a.CurrencyOptions, func(t biz.PriceCurrencyOption, i int) *v12.PriceCurrencyOption {
-		r := &v12.PriceCurrencyOption{}
-		mapBizCurrencyOption2Pb(ctx, &t, r)
-		return r
-	})
-
-	if a.Recurring != nil {
-		b.Recurring = &v12.PriceRecurring{}
-		maoBizPriceRecurring2Pb(a.Recurring, b.Recurring)
-	}
-	b.Tiers = lo.Map(a.Tiers, func(t biz.PriceTier, i int) *v12.PriceTier {
-		r := &v12.PriceTier{}
-		mapBizPriceTier2Pb(&t, r)
-		return r
-	})
-	b.TiersMode = string(a.TiersMode)
-	b.TransformQuantity = &v12.PriceTransformQuantity{}
-	mapBizPriceTransformQuantity2Pb(&a.TransformQuantity, b.TransformQuantity)
-	b.Type = string(a.Type)
-
+func mapPbManageInfo2Biz(a *pb.ProductManageInfo, b *biz.ProductManageInfo) {
+	b.Managed = a.Managed
+	b.ManagedBy = a.ManagedBy
 }
 
-func mapBizCurrencyOption2Pb(ctx context.Context, a *biz.PriceCurrencyOption, b *v12.PriceCurrencyOption) {
-	b.Default = price.MustNewFromInt64(a.DefaultAmount, a.CurrencyCode).ToPricePb(ctx)
-	b.Discounted = price.MustNewFromInt64(a.DiscountedAmount, a.CurrencyCode).ToPricePb(ctx)
-	b.DiscountText = a.DiscountText
-	b.DenyMoreDiscounts = a.DenyMoreDiscounts
-	b.CurrencyCode = a.CurrencyCode
-	b.Tiers = lo.Map(a.Tiers, func(t biz.PriceCurrencyOptionTier, i int) *v12.PriceCurrencyOptionTier {
-		r := &v12.PriceCurrencyOptionTier{}
-		mapBizPriceCurrencyOptionTier2Pb(ctx, &t, r)
-		return r
-	})
-
-}
-
-func mapBizPriceCurrencyOptionTier2Pb(ctx context.Context, a *biz.PriceCurrencyOptionTier, b *v12.PriceCurrencyOptionTier) {
-	b.FlatAmount = a.FlatAmount
-	b.UnitAmount = a.UnitAmount
-	b.UpTo = a.UpTo
-}
-
-func maoBizPriceRecurring2Pb(a *biz.PriceRecurring, b *v12.PriceRecurring) {
-	b.Interval = string(a.Interval)
-	b.IntervalCount = a.IntervalCount
-	b.TrialPeriodDays = a.TrialPeriodDays
-	b.AggregateUsage = string(a.AggregateUsage)
-	b.UsageType = string(a.UsageType)
-}
-
-func mapBizPriceTier2Pb(a *biz.PriceTier, b *v12.PriceTier) {
-	b.FlatAmount = a.FlatAmount
-	b.UnitAmount = a.UnitAmount
-	b.UpTo = a.UpTo
-}
-
-func mapBizPriceTransformQuantity2Pb(a *biz.PriceTransformQuantity, b *v12.PriceTransformQuantity) {
-	b.DivideBy = a.DivideBy
-	b.Round = string(a.Round)
-}
 func (s *ProductService) UploadMedias(ctx http.Context) error {
 	return s.upload(ctx, biz.ProductMediaPath, func(ctx context.Context) error {
 		_, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceProduct, "*"), authz.WriteAction)

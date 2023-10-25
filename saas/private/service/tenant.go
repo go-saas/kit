@@ -39,7 +39,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-var wfName = "saas_create_tenant"
+var wfCreateTenantName = "saas_create_tenant"
 
 type TenantService struct {
 	useCase         *biz.TenantUseCase
@@ -78,14 +78,15 @@ func NewTenantService(
 		userInternalSrv: userInternalSrv,
 	}
 
-	err := s.txhelper.WorkflowRegister2(wfName, func(wf *workflow.Workflow, data []byte) ([]byte, error) {
+	err := s.txhelper.WorkflowRegister2(wfCreateTenantName, func(wf *workflow.Workflow, data []byte) ([]byte, error) {
 		var req = &pb.CreateTenantRequest{}
 		utils.PbMustUnMarshalJson(data, req)
 
+		var tenantId string
 		resp, err := wf.NewBranch().OnRollback(func(bb *dtmcli.BranchBarrier) error {
 			//delete tenant
 			return s.txhelper.BarrierUow(wf.Context, bb, biz.ConnName, func(ctx context.Context) error {
-				if err := s.useCase.Delete(ctx, req.Id); err != nil {
+				if err := s.useCase.Delete(ctx, tenantId); err != nil {
 					return err
 				}
 				return nil
@@ -104,9 +105,6 @@ func NewTenantService(
 					Logo:        req.Logo,
 					SeparateDb:  req.SeparateDb,
 				}
-				if len(req.Id) > 0 {
-					t.UIDBase.ID = uuid.MustParse(req.Id)
-				}
 
 				if err := s.useCase.Create(ctx, t); err != nil {
 					return err
@@ -117,6 +115,7 @@ func NewTenantService(
 			if err != nil {
 				return nil, err
 			}
+			tenantId = resp.Id
 			return utils.PbMustMarshalJson(resp), err
 		})
 		if err != nil {
@@ -151,19 +150,16 @@ func (s *TenantService) CreateTenant(ctx context.Context, req *pb.CreateTenantRe
 	if len(req.DisplayName) == 0 {
 		req.DisplayName = req.Name
 	}
-	uid := uuid.New()
-	req.Id = uid.String()
 
 	var err error
-	var createTenantResp = &pb.Tenant{}
-
+	var resp = &pb.Tenant{}
 	//Workflow Transaction
-	data, err := workflow.ExecuteCtx(ctx, wfName, ksuid.New().String(), utils.PbMustMarshalJson(req))
+	data, err := workflow.ExecuteCtx(ctx, wfCreateTenantName, ksuid.New().String(), utils.PbMustMarshalJson(req))
 	if err != nil {
 		return nil, err
 	}
-	utils.PbMustUnMarshalJson(data, createTenantResp)
-	return createTenantResp, err
+	utils.PbMustUnMarshalJson(data, resp)
+	return resp, err
 }
 
 func (s *TenantService) UserCreateTenant(ctx context.Context, req *pb.UserCreateTenantRequest) (*pb.UserCreateTenantReply, error) {
@@ -174,10 +170,7 @@ func (s *TenantService) UserCreateTenant(ctx context.Context, req *pb.UserCreate
 	if len(req.DisplayName) == 0 {
 		req.DisplayName = req.Name
 	}
-	uid := uuid.New()
-
 	var rawReq = &pb.CreateTenantRequest{
-		Id:          uid.String(),
 		Name:        req.Name,
 		DisplayName: req.DisplayName,
 		Region:      req.Region,
@@ -187,7 +180,7 @@ func (s *TenantService) UserCreateTenant(ctx context.Context, req *pb.UserCreate
 	var createTenantResp = &pb.Tenant{}
 
 	//Workflow Transaction
-	data, err := workflow.ExecuteCtx(ctx, wfName, ksuid.New().String(), utils.PbMustMarshalJson(rawReq))
+	data, err := workflow.ExecuteCtx(ctx, wfCreateTenantName, ksuid.New().String(), utils.PbMustMarshalJson(rawReq))
 	if err != nil {
 		return nil, err
 	}

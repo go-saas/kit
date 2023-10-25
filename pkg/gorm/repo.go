@@ -63,7 +63,7 @@ type (
 
 	// UpdateAssociation implement to override default behaviour of how to apply association update before entity update
 	UpdateAssociation[TEntity any] interface {
-		UpdateAssociation(ctx context.Context, entity *TEntity) error
+		UpdateAssociation(ctx context.Context, entity *TEntity, p query.Select) error
 	}
 
 	// BuildPrimaryField implement to override default  primary field name("id")
@@ -267,7 +267,7 @@ func (r *Repo[TEntity, TKey, TQuery]) BatchCreate(ctx context.Context, entity []
 			return err
 		}
 	}
-	if err := r.getDb(ctx).CreateInBatches(entity, batchSize).Error; err != nil {
+	if err := r.getDb(ctx).Session(&gorm.Session{FullSaveAssociations: true}).CreateInBatches(entity, batchSize).Error; err != nil {
 		return err
 	}
 	for _, tEntity := range entity {
@@ -281,19 +281,18 @@ func (r *Repo[TEntity, TKey, TQuery]) BatchCreate(ctx context.Context, entity []
 func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entity *TEntity, p query.Select) error {
 	var e TEntity
 	db := r.getDb(ctx).Model(&e)
-	if p == nil {
-		db = db.Select("*")
-	}
+
 	if err := eventbus.Publish[*data.BeforeUpdate[*TEntity]](r.Eventbus)(ctx, data.NewBeforeUpdate(entity)); err != nil {
 		return err
 	}
 
 	if u, ok := r.override.(UpdateAssociation[TEntity]); ok {
-		if err := u.UpdateAssociation(ctx, entity); err != nil {
+		if err := u.UpdateAssociation(ctx, entity, p); err != nil {
 			return err
 		}
 	}
-	updateRet := db.Where(fmt.Sprintf("%s = ?", r.buildPrimaryField()), id).Select("*").Updates(entity)
+	db = db.Where(fmt.Sprintf("%s = ?", r.buildPrimaryField()), id)
+	updateRet := db.Select(query.SelectGetCurrentLevelPath(p)).Updates(entity)
 	if err := updateRet.Error; err != nil {
 		return err
 	}

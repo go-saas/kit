@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/product/api/product/v1"
 	"github.com/go-saas/kit/product/private/biz"
 	sgorm "github.com/go-saas/saas/gorm"
@@ -60,6 +61,58 @@ func (c *ProductRepo) BuildFilterScope(q *v1.ListProductRequest) func(db *gorm.D
 	}
 }
 
+func (c *ProductRepo) UpdateAssociation(ctx context.Context, entity *biz.Product, p query.Select) error {
+	if query.SelectContains(p, "Medias") {
+		if err := c.GetDb(ctx).Model(entity).
+			Association("Medias").Replace(entity.Medias); err != nil {
+			return err
+		}
+	}
+	if query.SelectContains(p, "Badges") {
+		if err := c.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).
+			Association("Badges").Replace(entity.Badges); err != nil {
+			return err
+		}
+	}
+	if query.SelectContains(p, "Categories") {
+		if err := c.GetDb(ctx).Model(entity).
+			Association("Badges").Replace(entity.Badges); err != nil {
+			return err
+		}
+	}
+	if query.SelectContains(p, "Keywords") {
+		if err := c.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).
+			Association("Keywords").Replace(entity.Keywords); err != nil {
+			return err
+		}
+	}
+	if query.SelectContains(p, "Attributes") {
+		if err := c.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).
+			Association("Attributes").Replace(entity.Attributes); err != nil {
+			return err
+		}
+	}
+	if query.SelectContains(p, "CampaignRules") {
+		if err := c.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).
+			Association("CampaignRules").Replace(entity.CampaignRules); err != nil {
+			return err
+		}
+	}
+	if query.SelectContains(p, "Stocks") {
+		if err := c.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).
+			Association("Stocks").Replace(entity.Stocks); err != nil {
+			return err
+		}
+	}
+	if query.SelectContains(p, "Prices") {
+		if err := c.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).
+			Association("Prices").Replace(entity.Prices); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (c *ProductRepo) DefaultSorting() []string {
-	return []string{"created_at"}
+	return []string{"-created_at"}
 }

@@ -229,13 +229,9 @@ func (m *CreateProductRequest) validate(all bool) error {
 
 	// no validation rules for IsNew
 
-	// no validation rules for MainCategoryKey
-
 	// no validation rules for Barcode
 
 	// no validation rules for Model
-
-	// no validation rules for BrandId
 
 	// no validation rules for IsSaleable
 
@@ -367,6 +363,40 @@ func (m *CreateProductRequest) validate(all bool) error {
 
 	// no validation rules for IsGiveaway
 
+	for idx, item := range m.GetAttributes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateProductRequestValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateProductRequestValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateProductRequestValidationError{
+					field:  fmt.Sprintf("Attributes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	// no validation rules for MultiSku
 
 	for idx, item := range m.GetCampaignRules() {
@@ -466,6 +496,14 @@ func (m *CreateProductRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.MainCategoryKey != nil {
+		// no validation rules for MainCategoryKey
+	}
+
+	if m.BrandId != nil {
+		// no validation rules for BrandId
 	}
 
 	if len(errors) > 0 {
@@ -930,8 +968,6 @@ func (m *UpdateProduct) validate(all bool) error {
 
 	// no validation rules for Model
 
-	// no validation rules for BrandId
-
 	// no validation rules for IsSaleable
 
 	if all {
@@ -1062,7 +1098,39 @@ func (m *UpdateProduct) validate(all bool) error {
 
 	// no validation rules for IsGiveaway
 
-	// no validation rules for MainCategoryKey
+	for idx, item := range m.GetAttributes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateProductValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateProductValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateProductValidationError{
+					field:  fmt.Sprintf("Attributes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	for idx, item := range m.GetCampaignRules() {
 		_, _ = idx, item
@@ -1161,6 +1229,14 @@ func (m *UpdateProduct) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.MainCategoryKey != nil {
+		// no validation rules for MainCategoryKey
+	}
+
+	if m.BrandId != nil {
+		// no validation rules for BrandId
 	}
 
 	if len(errors) > 0 {

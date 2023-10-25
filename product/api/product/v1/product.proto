@@ -79,6 +79,7 @@ service ProductService {
 }
 
 message CreateProductRequest {
+
   string title =10 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   string short_desc=11;
   string desc=12;
@@ -93,16 +94,17 @@ message CreateProductRequest {
 
   bool is_new=18;
 
-  string main_category_key= 40;
-  repeated string categories=41;
+  optional string main_category_key= 40;
+  repeated string category_keys=41;
 
   string barcode=19;
 
   string model=20;
 
-  string brand_id=21;
+  optional string brand_id=21;
 
   bool is_saleable=22;
+
   google.protobuf.Timestamp saleable_from=23;
   google.protobuf.Timestamp saleable_to=24;
 
@@ -111,15 +113,17 @@ message CreateProductRequest {
 
   bool is_giveaway=27;
 
+  repeated ProductAttribute attributes=43;
+
   bool multi_sku=50;
 
   repeated CampaignRule campaign_rules=60;
 
   bool need_shipping=61;
+
   repeated Stock stocks=62;
 
   google.protobuf.Struct content=63;
-
 
 
 }
@@ -149,13 +153,17 @@ message UpdateProduct{
 
   bool is_new=18;
 
+  optional string main_category_key= 40;
+  repeated string category_keys=41;
+
   string barcode=19;
 
   string model=20;
 
-  string brand_id=21;
+  optional string brand_id=21;
 
   bool is_saleable=22;
+
   google.protobuf.Timestamp saleable_from=23;
   google.protobuf.Timestamp saleable_to=24;
 
@@ -164,12 +172,14 @@ message UpdateProduct{
 
   bool is_giveaway=27;
 
-  string main_category_key= 40;
-  repeated string categories=41;
+  repeated ProductAttribute attributes=43;
+
+//  bool multi_sku=50;
 
   repeated CampaignRule campaign_rules=60;
 
   bool need_shipping=61;
+
   repeated Stock stocks=62;
 
   google.protobuf.Struct content=63;

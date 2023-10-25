@@ -57,6 +57,7 @@ require (
 	github.com/goxiaoy/vfs v0.0.0-20230130063220-b20a45e86d37
 	github.com/hibiken/asynq v0.23.0
 	github.com/hibiken/asynqmon v0.7.1
+	github.com/iancoleman/strcase v0.2.0
 	github.com/jackc/pgx/v4 v4.17.2
 	github.com/lithammer/shortuuid/v3 v3.0.7
 	github.com/natefinch/lumberjack v2.0.0+incompatible

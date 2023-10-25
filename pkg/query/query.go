@@ -1,7 +1,10 @@
 package query
 
 import (
+	"github.com/iancoleman/strcase"
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
+	"strings"
 )
 
 type HasPageSize interface {
@@ -27,6 +30,44 @@ type Sort interface {
 // Select fields to query or update
 type Select interface {
 	GetFields() *fieldmaskpb.FieldMask
+}
+
+func SelectContains(p Select, name string) bool {
+	if p == nil || p.GetFields() == nil {
+		return true
+	}
+	name = strcase.ToSnake(name)
+	_, r := lo.Find(p.GetFields().Paths, func(s string) bool {
+		return s == name || strings.HasPrefix(s, name+".")
+	})
+	return r
+}
+
+func SelectGetCurrentLevelPath(p Select) []string {
+	if p == nil || p.GetFields() == nil {
+		return []string{"*"}
+	}
+	return GetCurrentLevelPath(p.GetFields().Paths)
+}
+
+func GetCurrentLevelPath(paths []string) []string {
+	ret := map[string]bool{}
+	for _, path := range paths {
+		p, _, _ := strings.Cut(path, ".")
+		ret[p] = true
+	}
+	return lo.Keys(ret)
+}
+
+func GetNextLevelPath(paths []string) []string {
+	ret := map[string]bool{}
+	for _, path := range paths {
+		_, p, found := strings.Cut(path, ".")
+		if found {
+			ret[p] = true
+		}
+	}
+	return lo.Keys(ret)
 }
 
 type Filter[TFilter any] interface {

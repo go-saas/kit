@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/go-saas/kit/saas/private/biz"
 	"github.com/google/uuid"
@@ -82,22 +83,14 @@ func (g *TenantRepo) FindByIdOrName(ctx context.Context, idOrName string) (*biz.
 	return &tDb, err
 }
 
-func (g *TenantRepo) UpdateAssociation(ctx context.Context, entity *biz.Tenant) error {
-	if entity.Conn != nil {
+func (g *TenantRepo) UpdateAssociation(ctx context.Context, entity *biz.Tenant, p query.Select) error {
+	if query.SelectContains(p, "Conn") {
 		if err := g.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).Association("Conn").Replace(entity.Conn); err != nil {
 			return err
 		}
-	} else {
-		if err := g.GetDb(ctx).Model(entity).Association("Conn").Clear(); err != nil {
-			return err
-		}
 	}
-	if entity.Features != nil {
+	if query.SelectContains(p, "Features") {
 		if err := g.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).Association("Features").Replace(entity.Features); err != nil {
-			return err
-		}
-	} else {
-		if err := g.GetDb(ctx).Model(entity).Association("Features").Clear(); err != nil {
 			return err
 		}
 	}

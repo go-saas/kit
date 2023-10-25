@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
+	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/sys/api/menu/v1"
 	"github.com/go-saas/kit/sys/private/biz"
 	sgorm "github.com/go-saas/saas/gorm"
@@ -75,13 +76,13 @@ func (c *MenuRepo) FindByName(ctx context.Context, name string) (*biz.Menu, erro
 	return &item, nil
 }
 
-func (c *MenuRepo) UpdateAssociation(ctx context.Context, entity *biz.Menu) error {
-	if entity.Requirement != nil {
-		if err := c.GetDb(ctx).Model(entity).Session(&gorm.Session{FullSaveAssociations: true}).Association("Requirement").Replace(entity.Requirement); err != nil {
+func (c *MenuRepo) UpdateAssociation(ctx context.Context, entity *biz.Menu, p query.Select) error {
+	if query.SelectContains(p, "Requirement") {
+		if err := c.GetDb(ctx).Model(entity).
+			Session(&gorm.Session{FullSaveAssociations: true}).
+			Association("Requirement").Replace(entity.Requirement); err != nil {
 			return err
 		}
-	} else {
-		return c.GetDb(ctx).Model(entity).Association("Requirement").Clear()
 	}
 	return nil
 }

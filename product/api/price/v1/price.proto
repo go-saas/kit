@@ -31,7 +31,7 @@ message Price{
   string discount_text=102;
   bool deny_more_discounts=103;
 
-  string billing_schema=104;
+  string billing_scheme=104;
 
   repeated PriceCurrencyOption currency_options=300;
 
@@ -82,6 +82,7 @@ message PriceTransformQuantity{
 }
 
 message CreatePriceRequest{
+
   // product/product_sku
   string owner_type=50 [(validate.rules).string={in:["product","product_sku"]},(google.api.field_behavior) = REQUIRED];
   string owner_id=51;
@@ -93,7 +94,7 @@ message CreatePriceRequest{
   string discount_text=102;
   bool deny_more_discounts=103;
 
-  string billing_schema=104 [(validate.rules).string={in:["per_unit","tiered"]},(google.api.field_behavior) = REQUIRED];
+  string billing_scheme=104 [(validate.rules).string={in:["per_unit","tiered"]},(google.api.field_behavior) = REQUIRED];
 
   repeated PriceCurrencyOptionPrams currency_options=300;
 
@@ -125,9 +126,6 @@ message UpdatePriceRequest{
 
 message UpdatePrice{
   string id=1;
-  // product/product_sku
-  string owner_type=50 [(validate.rules).string={in:["product","product_sku"]},(google.api.field_behavior) = REQUIRED];
-  string owner_id=51;
 
   string currency_code=99;
   int64 default_amount=100;
@@ -136,7 +134,7 @@ message UpdatePrice{
   string discount_text=102;
   bool deny_more_discounts=103;
 
-  string billing_schema=104 [(validate.rules).string={in:["per_unit","tiered"]},(google.api.field_behavior) = REQUIRED];
+  string billing_scheme=104 [(validate.rules).string={in:["per_unit","tiered"]},(google.api.field_behavior) = REQUIRED];
 
   repeated PriceCurrencyOptionPrams currency_options=300;
 

@@ -10,3 +10,10 @@ var ProviderSet = kitdi.NewSet(NewPostSeeder)
 var (
 	ProductMediaPath = "product/m"
 )
+
+type ProductManageProvider string
+
+const (
+	ProductManageProviderInternal ProductManageProvider = "internal"
+	ProductManageProviderStripe   ProductManageProvider = "stripe"
+)

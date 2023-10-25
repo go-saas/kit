@@ -4460,6 +4460,16 @@
                     "isNew": {
                       "type": "boolean"
                     },
+                    "mainCategoryKey": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "categoryKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "barcode": {
                       "type": "string"
                     },
@@ -4467,7 +4477,8 @@
                       "type": "string"
                     },
                     "brandId": {
-                      "type": "string"
+                      "type": "string",
+                      "x-nullable": true
                     },
                     "isSaleable": {
                       "type": "boolean"
@@ -4497,13 +4508,11 @@
                     "isGiveaway": {
                       "type": "boolean"
                     },
-                    "mainCategoryKey": {
-                      "type": "string"
-                    },
-                    "categories": {
+                    "attributes": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "type": "object",
+                        "$ref": "#/definitions/v1ProductAttribute"
                       }
                     },
                     "campaignRules": {
@@ -4615,6 +4624,16 @@
                     "isNew": {
                       "type": "boolean"
                     },
+                    "mainCategoryKey": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "categoryKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "barcode": {
                       "type": "string"
                     },
@@ -4622,7 +4641,8 @@
                       "type": "string"
                     },
                     "brandId": {
-                      "type": "string"
+                      "type": "string",
+                      "x-nullable": true
                     },
                     "isSaleable": {
                       "type": "boolean"
@@ -4652,13 +4672,11 @@
                     "isGiveaway": {
                       "type": "boolean"
                     },
-                    "mainCategoryKey": {
-                      "type": "string"
-                    },
-                    "categories": {
+                    "attributes": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "type": "object",
+                        "$ref": "#/definitions/v1ProductAttribute"
                       }
                     },
                     "campaignRules": {
@@ -5710,13 +5728,6 @@
                     },
                     "active": {
                       "type": "boolean"
-                    },
-                    "prices": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "$ref": "#/definitions/v1UpdatePrice"
-                      }
                     }
                   }
                 },
@@ -5772,13 +5783,6 @@
                     },
                     "active": {
                       "type": "boolean"
-                    },
-                    "prices": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "$ref": "#/definitions/v1UpdatePrice"
-                      }
                     }
                   }
                 },
@@ -10401,13 +10405,6 @@
         },
         "displayName": {
           "type": "string"
-        },
-        "prices": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1CreatePriceRequest"
-          }
         }
       },
       "required": [
@@ -10442,7 +10439,7 @@
         "denyMoreDiscounts": {
           "type": "boolean"
         },
-        "billingSchema": {
+        "billingScheme": {
           "type": "string"
         },
         "currencyOptions": {
@@ -10474,7 +10471,7 @@
       },
       "required": [
         "ownerType",
-        "billingSchema",
+        "billingScheme",
         "type"
       ]
     },
@@ -10536,9 +10533,10 @@
           "type": "boolean"
         },
         "mainCategoryKey": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
-        "categories": {
+        "categoryKeys": {
           "type": "array",
           "items": {
             "type": "string"
@@ -10551,7 +10549,8 @@
           "type": "string"
         },
         "brandId": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "isSaleable": {
           "type": "boolean"
@@ -10580,6 +10579,13 @@
         },
         "isGiveaway": {
           "type": "boolean"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductAttribute"
+          }
         },
         "multiSku": {
           "type": "boolean"
@@ -10645,9 +10651,6 @@
     "v1CreateTenantRequest": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
@@ -12309,13 +12312,6 @@
         },
         "productId": {
           "type": "string"
-        },
-        "prices": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Price"
-          }
         }
       },
       "required": [
@@ -12373,7 +12369,7 @@
         "denyMoreDiscounts": {
           "type": "boolean"
         },
-        "billingSchema": {
+        "billingScheme": {
           "type": "string"
         },
         "currencyOptions": {
@@ -13283,16 +13279,10 @@
         },
         "active": {
           "type": "boolean"
-        },
-        "prices": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1UpdatePrice"
-          }
         }
       },
       "required": [
+        "key",
         "displayName"
       ]
     },
@@ -13300,13 +13290,6 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
-        },
-        "ownerType": {
-          "type": "string",
-          "title": "product/product_sku"
-        },
-        "ownerId": {
           "type": "string"
         },
         "currencyCode": {
@@ -13326,7 +13309,7 @@
         "denyMoreDiscounts": {
           "type": "boolean"
         },
-        "billingSchema": {
+        "billingScheme": {
           "type": "string"
         },
         "currencyOptions": {
@@ -13357,8 +13340,7 @@
         }
       },
       "required": [
-        "ownerType",
-        "billingSchema",
+        "billingScheme",
         "type"
       ]
     },
@@ -13408,6 +13390,16 @@
         "isNew": {
           "type": "boolean"
         },
+        "mainCategoryKey": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "categoryKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "barcode": {
           "type": "string"
         },
@@ -13415,7 +13407,8 @@
           "type": "string"
         },
         "brandId": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "isSaleable": {
           "type": "boolean"
@@ -13445,13 +13438,11 @@
         "isGiveaway": {
           "type": "boolean"
         },
-        "mainCategoryKey": {
-          "type": "string"
-        },
-        "categories": {
+        "attributes": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "$ref": "#/definitions/v1ProductAttribute"
           }
         },
         "campaignRules": {

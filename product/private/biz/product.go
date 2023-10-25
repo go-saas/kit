@@ -37,7 +37,7 @@ type Product struct {
 	MainCategoryKey *string
 	MainCategory    *ProductCategory `gorm:"foreignKey:MainCategoryKey;comment:商品主要分类"`
 
-	Keywords []KeyWord `gorm:"polymorphic:Owner;polymorphicValue:product;comment:商品关键字"`
+	Keywords []Keyword `gorm:"polymorphic:Owner;polymorphicValue:product;comment:商品关键字"`
 
 	Model string `gorm:"comment:商品型号"`
 
@@ -85,7 +85,7 @@ type Badge struct {
 	Label string
 }
 
-type KeyWord struct {
+type Keyword struct {
 	kitgorm.UIDBase
 	OwnerID string
 	// OwnerType product/product_sku

@@ -59,6 +59,7 @@ require (
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/goxiaoy/go-eventbus v0.0.5 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3 // indirect
+	github.com/iancoleman/strcase v0.2.0 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
