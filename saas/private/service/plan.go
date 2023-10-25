@@ -150,7 +150,7 @@ func (s *PlanService) CreatePlan(ctx context.Context, req *pb.CreatePlanRequest)
 	var err error
 	var resp = &pb.Plan{}
 	//Workflow Transaction
-	data, err := workflow.ExecuteCtx(ctx, wfCreateTenantName, ksuid.New().String(), utils.PbMustMarshalJson(req))
+	data, err := workflow.ExecuteCtx(ctx, wfCreatePlanName, ksuid.New().String(), utils.PbMustMarshalJson(req))
 	if err != nil {
 		return nil, err
 	}
