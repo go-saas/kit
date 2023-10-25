@@ -3,7 +3,7 @@ package biz
 import (
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	sgorm "github.com/go-saas/saas/gorm"
-	concurrency "github.com/goxiaoy/gorm-concurrency"
+	concurrency "github.com/goxiaoy/gorm-concurrency/v2"
 	"time"
 )
 

@@ -469,8 +469,8 @@ github.com/goxiaoy/dtm v0.0.0-20230516072701-a236481fe440 h1:VcGxazRHwT13k4yshVJ
 github.com/goxiaoy/dtm v0.0.0-20230516072701-a236481fe440/go.mod h1:q15LDhNBSZ6PocdP6rgbZSPqtrx2Pty5YNJdw8z8Lkc=
 github.com/goxiaoy/go-eventbus v0.0.5 h1:i+/btPzl+YTAjix8StqTVF3b6NIXMGn8SEVnrwSBXic=
 github.com/goxiaoy/go-eventbus v0.0.5/go.mod h1:b5yykGpYE+OOVJC/0nlJRzulL5GSyVPPp4Msmwi4vYY=
-github.com/goxiaoy/gorm-concurrency v1.1.1 h1:Ebd7JlttjwNUuYBaD+S2WIcz110YgIrdoRNUT/MAqV0=
-github.com/goxiaoy/gorm-concurrency v1.1.1/go.mod h1:7trNdJGKn+F0pvR1E9Pc5Nojq8AaUZo4t3lx+Ylv/Ng=
+github.com/goxiaoy/gorm-concurrency/v2 v2.0.1 h1:0iJeQctTs3EvzvKWDcUJbC/bsLNRG5oQqweo5zPzSlg=
+github.com/goxiaoy/gorm-concurrency/v2 v2.0.1/go.mod h1:5MOG2qDInLvN1HzQB5oFUMXD54h04Yw/Q1oMkWnRDck=
 github.com/goxiaoy/vfs v0.0.0-20230130063220-b20a45e86d37 h1:O0api3M4IzApkMnt7TStD3cUwf4WRy46jvv6G5Sz0WM=
 github.com/goxiaoy/vfs v0.0.0-20230130063220-b20a45e86d37/go.mod h1:duJK57rd5QXcd/2OuUun+nTCTwhX7P0GSMPALNUKqR0=
 github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=

@@ -16,7 +16,7 @@ require (
 	github.com/gorilla/csrf v1.7.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/goxiaoy/go-eventbus v0.0.5
-	github.com/goxiaoy/gorm-concurrency v1.1.1
+	github.com/goxiaoy/gorm-concurrency/v2 v2.0.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3
 	github.com/mennanov/fmutils v0.2.0
 	github.com/mitchellh/mapstructure v1.5.0

@@ -10,7 +10,7 @@ import (
 	"github.com/go-saas/kit/pkg/price"
 	"github.com/go-saas/lbs"
 	gorm2 "github.com/go-saas/saas/gorm"
-	concurrency "github.com/goxiaoy/gorm-concurrency"
+	concurrency "github.com/goxiaoy/gorm-concurrency/v2"
 	"github.com/lithammer/shortuuid/v3"
 	"github.com/samber/lo"
 	"github.com/segmentio/ksuid"

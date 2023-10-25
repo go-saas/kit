@@ -6,7 +6,7 @@ import (
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/saas"
-	concurrency "github.com/goxiaoy/gorm-concurrency"
+	concurrency "github.com/goxiaoy/gorm-concurrency/v2"
 	"github.com/samber/lo"
 	"gorm.io/gorm"
 	"time"

@@ -8,7 +8,7 @@ import (
 	"github.com/go-saas/kit/pkg/query"
 	v12 "github.com/go-saas/kit/user/api/role/v1"
 	gorm2 "github.com/go-saas/saas/gorm"
-	concurrency "github.com/goxiaoy/gorm-concurrency"
+	concurrency "github.com/goxiaoy/gorm-concurrency/v2"
 )
 
 type Role struct {

@@ -10,7 +10,7 @@ import (
 	"github.com/go-saas/saas"
 	"github.com/google/uuid"
 	"github.com/goxiaoy/go-eventbus"
-	concurrency "github.com/goxiaoy/gorm-concurrency"
+	concurrency "github.com/goxiaoy/gorm-concurrency/v2"
 	"gorm.io/gorm"
 )
 import "context"

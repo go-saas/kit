@@ -6,7 +6,7 @@ import (
 	"github.com/go-saas/kit/pkg/sortable"
 	v1 "github.com/go-saas/kit/product/api/product/v1"
 	"github.com/go-saas/saas/gorm"
-	concurrency "github.com/goxiaoy/gorm-concurrency"
+	concurrency "github.com/goxiaoy/gorm-concurrency/v2"
 	"time"
 )
 

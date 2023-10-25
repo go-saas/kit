@@ -7,7 +7,7 @@ import (
 	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/google/uuid"
-	concurrency "github.com/goxiaoy/gorm-concurrency"
+	concurrency "github.com/goxiaoy/gorm-concurrency/v2"
 	"gorm.io/gorm"
 	"time"
 )
