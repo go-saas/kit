@@ -98,7 +98,7 @@ services:
       - etcd_data:/bitnami/etcd
 
   dtm:
-    image: yedf/dtm:1.17.3
+    image: yedf/dtm:1.17.8
     restart: unless-stopped
     command: ["-c", "/data/conf.yml"]
     volumes:

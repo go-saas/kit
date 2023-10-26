@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/go-saas/kit/event"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/utils"
@@ -11,6 +12,7 @@ import (
 	v1 "github.com/go-saas/kit/product/api/category/v1"
 	v12 "github.com/go-saas/kit/product/api/price/v1"
 	pb "github.com/go-saas/kit/product/api/product/v1"
+	v13 "github.com/go-saas/kit/product/event/v1"
 	"github.com/go-saas/kit/product/private/biz"
 	"github.com/google/uuid"
 	"github.com/goxiaoy/vfs"
@@ -25,6 +27,7 @@ type ProductService struct {
 	trusted      sapi.TrustedContextValidator
 	categoryRepo biz.ProductCategoryRepo
 	*UploadService
+	producer event.Producer
 }
 
 var _ pb.ProductServiceServer = (*ProductService)(nil)
@@ -37,8 +40,9 @@ func NewProductService(
 	trusted sapi.TrustedContextValidator,
 	categoryRepo biz.ProductCategoryRepo,
 	blob vfs.Blob,
+	producer event.Producer,
 ) *ProductService {
-	return &ProductService{repo: repo, auth: auth, UploadService: upload, trusted: trusted, categoryRepo: categoryRepo, blob: blob}
+	return &ProductService{repo: repo, auth: auth, UploadService: upload, trusted: trusted, categoryRepo: categoryRepo, blob: blob, producer: producer}
 }
 
 func (s *ProductService) ListProduct(ctx context.Context, req *pb.ListProductRequest) (*pb.ListProductReply, error) {
@@ -93,7 +97,11 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *pb.CreateProduc
 	if err != nil {
 		return nil, err
 	}
-	err = s.repo.Create(ctx, e)
+	err = s.fWithEvent(ctx, func() (*biz.Product, error) {
+		err = s.repo.Create(ctx, e)
+		return e, err
+	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -117,9 +125,14 @@ func (s *ProductService) UpdateProduct(ctx context.Context, req *pb.UpdateProduc
 	if err := s.MapUpdatePbProduct2Biz(ctx, req.Product, g); err != nil {
 		return nil, err
 	}
-	if err := s.repo.Update(ctx, g.ID.String(), g, nil); err != nil {
+	err = s.fWithEvent(ctx, func() (*biz.Product, error) {
+		err := s.repo.Update(ctx, g.ID.String(), g, nil)
+		return g, err
+	})
+	if err != nil {
 		return nil, err
 	}
+
 	res := &pb.Product{}
 	s.MapBizProduct2Pb(ctx, g, res)
 	return res, nil
@@ -137,11 +150,35 @@ func (s *ProductService) DeleteProduct(ctx context.Context, req *pb.DeleteProduc
 		return nil, errors.NotFound("", "")
 	}
 
-	err = s.repo.Delete(ctx, req.Id)
+	err = s.fWithEvent(ctx, func() (*biz.Product, error) {
+		err = s.repo.Delete(ctx, req.Id)
+		return g, err
+	}, true)
 	if err != nil {
 		return nil, err
 	}
+
 	return &pb.DeleteProductReply{Id: g.ID.String()}, nil
+}
+
+func (s *ProductService) fWithEvent(ctx context.Context, f func() (*biz.Product, error), isDelete ...bool) error {
+	entity, err := f()
+	if err != nil {
+		return err
+	}
+	updateEvent := &v13.ProductUpdatedEvent{
+		ProductId:      entity.ID.String(),
+		ProductVersion: entity.Version.String,
+		TenantId:       entity.TenantId.String,
+	}
+	if len(isDelete) > 0 {
+		updateEvent.IsDelete = isDelete[0]
+	}
+	e, err := event.NewMessageFromProto(updateEvent)
+	if err != nil {
+		return err
+	}
+	return s.producer.Send(ctx, e)
 }
 
 func (s *ProductService) MapBizProduct2Pb(ctx context.Context, a *biz.Product, b *pb.Product) {

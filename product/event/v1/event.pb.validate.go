@@ -61,6 +61,10 @@ func (m *ProductUpdatedEvent) validate(all bool) error {
 
 	// no validation rules for ProductVersion
 
+	// no validation rules for TenantId
+
+	// no validation rules for IsDelete
+
 	if len(errors) > 0 {
 		return ProductUpdatedEventMultiError(errors)
 	}

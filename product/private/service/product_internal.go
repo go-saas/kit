@@ -20,7 +20,11 @@ func (s *ProductService) CreateInternalProduct(ctx context.Context, req *pb.Crea
 	if err != nil {
 		return nil, err
 	}
-	err = s.repo.Create(ctx, e)
+	err = s.fWithEvent(ctx, func() (*biz.Product, error) {
+		err = s.repo.Create(ctx, e)
+		return e, err
+	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +64,11 @@ func (s *ProductService) UpdateInternalProduct(ctx context.Context, req *pb.Upda
 	if err := s.MapUpdatePbProduct2Biz(ctx, req.Product, g); err != nil {
 		return nil, err
 	}
-	if err := s.repo.Update(ctx, g.ID.String(), g, nil); err != nil {
+	err = s.fWithEvent(ctx, func() (*biz.Product, error) {
+		err := s.repo.Update(ctx, g.ID.String(), g, nil)
+		return g, err
+	})
+	if err != nil {
 		return nil, err
 	}
 	res := &pb.Product{}
@@ -81,7 +89,10 @@ func (s *ProductService) DeleteInternalProduct(ctx context.Context, req *pb.Dele
 		return nil, errors.NotFound("", "")
 	}
 
-	err = s.repo.Delete(ctx, req.Id)
+	err = s.fWithEvent(ctx, func() (*biz.Product, error) {
+		err = s.repo.Delete(ctx, req.Id)
+		return g, err
+	}, true)
 	if err != nil {
 		return nil, err
 	}
