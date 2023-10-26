@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "product/api/product/v1/product.proto",
+    "title": "Product",
     "version": "version not set"
   },
   "tags": [
@@ -13,6 +13,9 @@
     },
     {
       "name": "BrandService"
+    },
+    {
+      "name": "ProductInternalService"
     }
   ],
   "consumes": [
@@ -22,6 +25,280 @@
     "application/json"
   ],
   "paths": {
+    "/v1/product": {
+      "get": {
+        "operationId": "ProductService_ListProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListProductReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageOffset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$contains",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$starts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$nstarts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$ends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$nends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.id.$in",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.id.$nin",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.id.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$empty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$nempty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.id.$like",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$eq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$neq",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$contains",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$starts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$nstarts_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$ends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$nends_with",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.name.$in",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.name.$nin",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "filter.name.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.name.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.name.$empty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.name.$nempty",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.name.$like",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      },
+      "post": {
+        "operationId": "ProductService_CreateProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Product"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    },
     "/v1/product/brand": {
       "post": {
         "operationId": "BrandService_CreateBrand",
@@ -514,12 +791,12 @@
     },
     "/v1/product/category": {
       "get": {
-        "operationId": "ProductCategoryService_ListCategory",
+        "operationId": "ProductCategoryService_ListProductCategory",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ListCategoryReply"
+              "$ref": "#/definitions/v1ListProductCategoryReply"
             }
           },
           "default": {
@@ -848,12 +1125,12 @@
         ]
       },
       "post": {
-        "operationId": "ProductCategoryService_CreateCategory",
+        "operationId": "ProductCategoryService_CreateProductCategory",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Category"
+              "$ref": "#/definitions/v1ProductCategory"
             }
           },
           "default": {
@@ -869,7 +1146,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1CreateCategoryRequest"
+              "$ref": "#/definitions/v1CreateProductCategoryRequest"
             }
           }
         ],
@@ -880,12 +1157,12 @@
     },
     "/v1/product/category/list": {
       "post": {
-        "operationId": "ProductCategoryService_ListCategory2",
+        "operationId": "ProductCategoryService_ListProductCategory2",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ListCategoryReply"
+              "$ref": "#/definitions/v1ListProductCategoryReply"
             }
           },
           "default": {
@@ -901,7 +1178,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1ListCategoryRequest"
+              "$ref": "#/definitions/v1ListProductCategoryRequest"
             }
           }
         ],
@@ -912,12 +1189,12 @@
     },
     "/v1/product/category/{category.key}": {
       "put": {
-        "operationId": "ProductCategoryService_UpdateCategory",
+        "operationId": "ProductCategoryService_UpdateProductCategory",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Category"
+              "$ref": "#/definitions/v1ProductCategory"
             }
           },
           "default": {
@@ -961,12 +1238,12 @@
         ]
       },
       "patch": {
-        "operationId": "ProductCategoryService_UpdateCategory2",
+        "operationId": "ProductCategoryService_UpdateProductCategory2",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Category"
+              "$ref": "#/definitions/v1ProductCategory"
             }
           },
           "default": {
@@ -1012,12 +1289,12 @@
     },
     "/v1/product/category/{key}": {
       "get": {
-        "operationId": "ProductCategoryService_GetCategory",
+        "operationId": "ProductCategoryService_GetProductCategory",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Category"
+              "$ref": "#/definitions/v1ProductCategory"
             }
           },
           "default": {
@@ -1040,12 +1317,12 @@
         ]
       },
       "delete": {
-        "operationId": "ProductCategoryService_DeleteCategory",
+        "operationId": "ProductCategoryService_DeleteProductCategory",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1DeleteCategoryReply"
+              "$ref": "#/definitions/v1DeleteProductCategoryReply"
             }
           },
           "default": {
@@ -1068,281 +1345,7 @@
         ]
       }
     },
-    "/v1/product/product": {
-      "get": {
-        "operationId": "ProductService_ListProduct",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1ListProductReply"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/googlerpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "pageOffset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "fields",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.id.$eq",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.id.$neq",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.id.$contains",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.id.$starts_with",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.id.$nstarts_with",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.id.$ends_with",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.id.$nends_with",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.id.$in",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "filter.id.$nin",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "filter.id.$null",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.id.$nnull",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.id.$empty",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.id.$nempty",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.id.$like",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.$eq",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.$neq",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.$contains",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.$starts_with",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.$nstarts_with",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.$ends_with",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.$nends_with",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter.name.$in",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "filter.name.$nin",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "filter.name.$null",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.name.$nnull",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.name.$empty",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.name.$nempty",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "filter.name.$like",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "ProductService"
-        ]
-      },
-      "post": {
-        "operationId": "ProductService_CreateProduct",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1Product"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/googlerpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1CreateProductRequest"
-            }
-          }
-        ],
-        "tags": [
-          "ProductService"
-        ]
-      }
-    },
-    "/v1/product/product/list": {
+    "/v1/product/list": {
       "post": {
         "operationId": "ProductService_ListProduct2",
         "responses": {
@@ -1374,7 +1377,7 @@
         ]
       }
     },
-    "/v1/product/product/{id}": {
+    "/v1/product/{id}": {
       "get": {
         "operationId": "ProductService_GetProduct",
         "responses": {
@@ -1432,7 +1435,7 @@
         ]
       }
     },
-    "/v1/product/product/{product.id}": {
+    "/v1/product/{product.id}": {
       "put": {
         "operationId": "ProductService_UpdateProduct",
         "responses": {
@@ -1466,15 +1469,133 @@
                 "product": {
                   "type": "object",
                   "properties": {
-                    "name": {
+                    "version": {
                       "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "shortDesc": {
+                      "type": "string"
+                    },
+                    "desc": {
+                      "type": "string"
+                    },
+                    "mainPic": {
+                      "$ref": "#/definitions/v1ProductMedia"
+                    },
+                    "medias": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1ProductMedia"
+                      }
+                    },
+                    "badges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1Badge"
+                      }
+                    },
+                    "visibleFrom": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "visibleTo": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "isNew": {
+                      "type": "boolean"
+                    },
+                    "mainCategoryKey": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "categoryKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "barcode": {
+                      "type": "string"
+                    },
+                    "model": {
+                      "type": "string"
+                    },
+                    "brandId": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "isSaleable": {
+                      "type": "boolean"
+                    },
+                    "saleableFrom": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "saleableTo": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "keywords": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1Keyword"
+                      }
+                    },
+                    "prices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1UpdatePrice"
+                      }
+                    },
+                    "isGiveaway": {
+                      "type": "boolean"
+                    },
+                    "attributes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1ProductAttribute"
+                      }
+                    },
+                    "campaignRules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1CampaignRule"
+                      }
+                    },
+                    "needShipping": {
+                      "type": "boolean"
+                    },
+                    "stocks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1Stock"
+                      }
+                    },
+                    "content": {
+                      "type": "object"
+                    },
+                    "active": {
+                      "type": "boolean"
                     }
                   }
                 },
                 "updateMask": {
                   "type": "string"
                 }
-              }
+              },
+              "required": [
+                "title"
+              ]
             }
           }
         ],
@@ -1515,15 +1636,133 @@
                 "product": {
                   "type": "object",
                   "properties": {
-                    "name": {
+                    "version": {
                       "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "shortDesc": {
+                      "type": "string"
+                    },
+                    "desc": {
+                      "type": "string"
+                    },
+                    "mainPic": {
+                      "$ref": "#/definitions/v1ProductMedia"
+                    },
+                    "medias": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1ProductMedia"
+                      }
+                    },
+                    "badges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1Badge"
+                      }
+                    },
+                    "visibleFrom": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "visibleTo": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "isNew": {
+                      "type": "boolean"
+                    },
+                    "mainCategoryKey": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "categoryKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "barcode": {
+                      "type": "string"
+                    },
+                    "model": {
+                      "type": "string"
+                    },
+                    "brandId": {
+                      "type": "string",
+                      "x-nullable": true
+                    },
+                    "isSaleable": {
+                      "type": "boolean"
+                    },
+                    "saleableFrom": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "saleableTo": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "keywords": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1Keyword"
+                      }
+                    },
+                    "prices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1UpdatePrice"
+                      }
+                    },
+                    "isGiveaway": {
+                      "type": "boolean"
+                    },
+                    "attributes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1ProductAttribute"
+                      }
+                    },
+                    "campaignRules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1CampaignRule"
+                      }
+                    },
+                    "needShipping": {
+                      "type": "boolean"
+                    },
+                    "stocks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1Stock"
+                      }
+                    },
+                    "content": {
+                      "type": "object"
+                    },
+                    "active": {
+                      "type": "boolean"
                     }
                   }
                 },
                 "updateMask": {
                   "type": "string"
                 }
-              }
+              },
+              "required": [
+                "title"
+              ]
             }
           }
         ],
@@ -1618,6 +1857,25 @@
         }
       }
     },
+    "pricePricePb": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "digits": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -1697,38 +1955,6 @@
         }
       }
     },
-    "v1Category": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "parent": {
-          "type": "string"
-        }
-      }
-    },
-    "v1CategoryFilter": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "$ref": "#/definitions/operationStringFilterOperation"
-        },
-        "name": {
-          "$ref": "#/definitions/operationStringFilterOperation"
-        },
-        "parent": {
-          "$ref": "#/definitions/operationStringFilterOperation"
-        }
-      }
-    },
     "v1CreateBrandRequest": {
       "type": "object",
       "properties": {
@@ -1752,7 +1978,70 @@
         "code"
       ]
     },
-    "v1CreateCategoryRequest": {
+    "v1CreatePriceRequest": {
+      "type": "object",
+      "properties": {
+        "ownerType": {
+          "type": "string",
+          "title": "product/product_sku"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "defaultAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "discountedAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "billingScheme": {
+          "type": "string"
+        },
+        "currencyOptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOptionPrams"
+          }
+        },
+        "recurring": {
+          "$ref": "#/definitions/v1PriceRecurring"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceTier"
+          }
+        },
+        "tiersMode": {
+          "type": "string"
+        },
+        "transformQuantity": {
+          "$ref": "#/definitions/v1PriceTransformQuantity"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ownerType",
+        "billingScheme",
+        "type"
+      ]
+    },
+    "v1CreateProductCategoryRequest": {
       "type": "object",
       "properties": {
         "key": {
@@ -1782,13 +2071,13 @@
           "type": "string"
         },
         "mainPic": {
-          "$ref": "#/definitions/v1Media"
+          "$ref": "#/definitions/v1ProductMedia"
         },
         "medias": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1Media"
+            "$ref": "#/definitions/v1ProductMedia"
           }
         },
         "badges": {
@@ -1809,10 +2098,11 @@
         "isNew": {
           "type": "boolean"
         },
-        "mainCategoryId": {
-          "type": "string"
+        "mainCategoryKey": {
+          "type": "string",
+          "x-nullable": true
         },
-        "categories": {
+        "categoryKeys": {
           "type": "array",
           "items": {
             "type": "string"
@@ -1825,7 +2115,8 @@
           "type": "string"
         },
         "brandId": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "isSaleable": {
           "type": "boolean"
@@ -1838,14 +2129,29 @@
           "type": "string",
           "format": "date-time"
         },
-        "keyword": {
-          "$ref": "#/definitions/v1Keyword"
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Keyword"
+          }
         },
-        "price": {
-          "$ref": "#/definitions/v1Price"
+        "prices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1CreatePriceRequest"
+          }
         },
         "isGiveaway": {
           "type": "boolean"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductAttribute"
+          }
         },
         "multiSku": {
           "type": "boolean"
@@ -1860,12 +2166,18 @@
         "needShipping": {
           "type": "boolean"
         },
-        "stock": {
+        "stocks": {
           "type": "array",
           "items": {
             "type": "object",
             "$ref": "#/definitions/v1Stock"
           }
+        },
+        "content": {
+          "type": "object"
+        },
+        "active": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -1883,7 +2195,15 @@
         }
       }
     },
-    "v1DeleteCategoryReply": {
+    "v1DeleteInternalProductReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1DeleteProductCategoryReply": {
       "type": "object",
       "properties": {
         "key": {
@@ -1898,9 +2218,6 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
-        },
-        "name": {
           "type": "string"
         }
       }
@@ -1967,7 +2284,7 @@
         }
       }
     },
-    "v1ListCategoryReply": {
+    "v1ListProductCategoryReply": {
       "type": "object",
       "properties": {
         "totalSize": {
@@ -1982,12 +2299,12 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1Category"
+            "$ref": "#/definitions/v1ProductCategory"
           }
         }
       }
     },
-    "v1ListCategoryRequest": {
+    "v1ListProductCategoryRequest": {
       "type": "object",
       "properties": {
         "pageOffset": {
@@ -2011,7 +2328,7 @@
           "type": "string"
         },
         "filter": {
-          "$ref": "#/definitions/v1CategoryFilter"
+          "$ref": "#/definitions/v1ProductCategoryFilter"
         }
       }
     },
@@ -2063,41 +2380,204 @@
         }
       }
     },
-    "v1Media": {
+    "v1Price": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "type": {
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tenantId": {
           "type": "string"
         },
-        "title": {
-          "type": "string"
-        }
-      }
-    },
-    "v1Price": {
-      "type": "object",
-      "properties": {
-        "currencyCode": {
+        "ownerType": {
+          "type": "string",
+          "title": "product/product_sku"
+        },
+        "ownerId": {
           "type": "string"
         },
-        "defaultAmount": {
-          "type": "integer",
-          "format": "int32"
+        "default": {
+          "$ref": "#/definitions/pricePricePb"
         },
-        "discountedAmount": {
-          "type": "integer",
-          "format": "int32"
+        "discounted": {
+          "$ref": "#/definitions/pricePricePb"
         },
         "discountText": {
           "type": "string"
         },
         "denyMoreDiscounts": {
           "type": "boolean"
+        },
+        "billingScheme": {
+          "type": "string"
+        },
+        "currencyOptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOption"
+          }
+        },
+        "recurring": {
+          "$ref": "#/definitions/v1PriceRecurring"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceTier"
+          }
+        },
+        "tiersMode": {
+          "type": "string"
+        },
+        "transformQuantity": {
+          "$ref": "#/definitions/v1PriceTransformQuantity"
+        },
+        "type": {
+          "type": "string"
         }
       }
+    },
+    "v1PriceCurrencyOption": {
+      "type": "object",
+      "properties": {
+        "currencyCode": {
+          "type": "string"
+        },
+        "default": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discounted": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOptionTier"
+          }
+        }
+      }
+    },
+    "v1PriceCurrencyOptionPrams": {
+      "type": "object",
+      "properties": {
+        "currencyCode": {
+          "type": "string"
+        },
+        "defaultAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "discountedAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOptionTier"
+          }
+        }
+      }
+    },
+    "v1PriceCurrencyOptionTier": {
+      "type": "object",
+      "properties": {
+        "flatAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "unitAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceRecurring": {
+      "type": "object",
+      "properties": {
+        "interval": {
+          "type": "string"
+        },
+        "intervalCount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "trialPeriodDays": {
+          "type": "string",
+          "format": "int64"
+        },
+        "aggregateUsage": {
+          "type": "string"
+        },
+        "usageType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "interval",
+        "aggregateUsage",
+        "usageType"
+      ]
+    },
+    "v1PriceTier": {
+      "type": "object",
+      "properties": {
+        "flatAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "unitAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceTransformQuantity": {
+      "type": "object",
+      "properties": {
+        "divideBy": {
+          "type": "string",
+          "format": "int64"
+        },
+        "round": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "round"
+      ]
     },
     "v1Product": {
       "type": "object",
@@ -2105,12 +2585,186 @@
         "id": {
           "type": "string"
         },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "shortDesc": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "mainPic": {
+          "$ref": "#/definitions/v1ProductMedia"
+        },
+        "medias": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductMedia"
+          }
+        },
+        "badges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Badge"
+          }
+        },
+        "visibleFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "visibleTo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "isNew": {
+          "type": "boolean"
+        },
+        "barcode": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "brandId": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "isSaleable": {
+          "type": "boolean"
+        },
+        "saleableFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "saleableTo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Keyword"
+          }
+        },
+        "prices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Price"
+          }
+        },
+        "isGiveaway": {
+          "type": "boolean"
+        },
+        "mainCategoryKey": {
+          "type": "string"
+        },
+        "mainCategory": {
+          "$ref": "#/definitions/v1ProductCategory"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductCategory"
+          }
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductAttribute"
+          }
+        },
+        "multiSku": {
+          "type": "boolean"
+        },
+        "campaignRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1CampaignRule"
+          }
+        },
+        "needShipping": {
+          "type": "boolean"
+        },
+        "stocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Stock"
+          }
+        },
+        "content": {
+          "type": "object"
+        },
+        "manageInfo": {
+          "$ref": "#/definitions/v1ProductManageInfo"
+        },
+        "active": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1ProductAttribute": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ProductCategory": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
         "name": {
+          "type": "string"
+        },
+        "path": {
           "type": "string"
         },
         "createdAt": {
           "type": "string",
           "format": "date-time"
+        },
+        "parent": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ProductCategoryFilter": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "$ref": "#/definitions/operationStringFilterOperation"
+        },
+        "name": {
+          "$ref": "#/definitions/operationStringFilterOperation"
+        },
+        "parent": {
+          "$ref": "#/definitions/operationStringFilterOperation"
         }
       }
     },
@@ -2122,6 +2776,37 @@
         },
         "name": {
           "$ref": "#/definitions/operationStringFilterOperation"
+        }
+      }
+    },
+    "v1ProductManageInfo": {
+      "type": "object",
+      "properties": {
+        "managed": {
+          "type": "boolean"
+        },
+        "managedBy": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ProductMedia": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "mimeType": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -2172,7 +2857,195 @@
         "id"
       ]
     },
-    "v1UpdateCategory": {
+    "v1UpdatePrice": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "defaultAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "discountedAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "billingScheme": {
+          "type": "string"
+        },
+        "currencyOptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOptionPrams"
+          }
+        },
+        "recurring": {
+          "$ref": "#/definitions/v1PriceRecurring"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceTier"
+          }
+        },
+        "tiersMode": {
+          "type": "string"
+        },
+        "transformQuantity": {
+          "$ref": "#/definitions/v1PriceTransformQuantity"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "billingScheme",
+        "type"
+      ]
+    },
+    "v1UpdateProduct": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "shortDesc": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "mainPic": {
+          "$ref": "#/definitions/v1ProductMedia"
+        },
+        "medias": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductMedia"
+          }
+        },
+        "badges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Badge"
+          }
+        },
+        "visibleFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "visibleTo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "isNew": {
+          "type": "boolean"
+        },
+        "mainCategoryKey": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "categoryKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "barcode": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "brandId": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "isSaleable": {
+          "type": "boolean"
+        },
+        "saleableFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "saleableTo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Keyword"
+          }
+        },
+        "prices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1UpdatePrice"
+          }
+        },
+        "isGiveaway": {
+          "type": "boolean"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductAttribute"
+          }
+        },
+        "campaignRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1CampaignRule"
+          }
+        },
+        "needShipping": {
+          "type": "boolean"
+        },
+        "stocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Stock"
+          }
+        },
+        "content": {
+          "type": "object"
+        },
+        "active": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ]
+    },
+    "v1UpdateProductCategory": {
       "type": "object",
       "properties": {
         "key": {
@@ -2184,20 +3057,6 @@
       },
       "required": [
         "key"
-      ]
-    },
-    "v1UpdateProduct": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "id"
       ]
     }
   },

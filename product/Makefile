@@ -7,6 +7,15 @@ VERSION=$(shell git describe --tags --always)
 build:
 	mkdir -p bin/ && go build -buildvcs=false -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
 
+.PHONY: api
+# generate api proto
+api:
+	cd .. && buf generate --path ./buf/product --template ./product/buf.gen.yaml
+
+.PHONY: all
+# generate all
+all:
+	make api;
 
 # show help
 help:
