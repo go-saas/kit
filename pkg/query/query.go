@@ -38,7 +38,7 @@ func SelectContains(p Select, name string) bool {
 	}
 	name = strcase.ToSnake(name)
 	_, r := lo.Find(p.GetFields().Paths, func(s string) bool {
-		return s == name || strings.HasPrefix(s, name+".")
+		return s == "*" || s == name || strings.HasPrefix(s, name+".")
 	})
 	return r
 }

@@ -163,7 +163,7 @@ menus:
         icon: "CloudServerOutlined"
         path: "/dev/events-kafka"
         component: "IFRAME"
-        iframe: "/kafka-ui"
+        iframe: "/kafka-ui/"
         is_preserved: true
         title: "dev.events.kafka"
         requirement:

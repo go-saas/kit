@@ -117,6 +117,6 @@ require (
 )
 
 replace (
-	github.com/dtm-labs/dtm => github.com/goxiaoy/dtm v0.0.0-20231026053028-8e05396111c7
+	github.com/dtm-labs/dtm => github.com/goxiaoy/dtm v0.0.0-20231026165303-b379b7f910b5
 	github.com/go-saas/kit => ../../
 )

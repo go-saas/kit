@@ -17,7 +17,7 @@ import (
 	kitserver "github.com/go-saas/kit/pkg/server"
 	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
 	"github.com/goava/di"
-	"google.golang.org/grpc"
+	"google.golang.org/grpc/resolver"
 	"sync"
 )
 
@@ -44,8 +44,8 @@ func NewInit(dis registry.Discovery, name kitserver.Name, cache *gorm.SqlDbCache
 		opts = append(opts, discovery.WithSubset(*opt.Subset))
 	}
 	dtmimp.SetDbCache(cache)
-	dtmgrpc.AddDailOption(grpc.WithResolvers(discovery.NewBuilder(dis, opts...)))
 	dtmgrpc.UseDriver(driver.DriverName)
+	resolver.Register(discovery.NewBuilder(dis, opts...))
 	workflow.InitGrpc(sapi.WithDiscovery(dtmapi.ServiceName), sapi.WithDiscovery(string(name)), srv.Server.Server)
 	return "", nil
 }

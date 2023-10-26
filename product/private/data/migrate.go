@@ -28,9 +28,9 @@ func (m *Migrate) Seed(ctx context.Context, sCtx *seed.Context) error {
 func migrateDb(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&biz.Brand{}, &biz.BrandTrans{}, &biz.ProductCategory{},
-		&biz.Product{}, &biz.ProductMedia{}, &biz.Badge{}, &biz.Keyword{},
+		&biz.Product{}, &biz.ProductMedia{}, &biz.Badge{}, &biz.Keyword{}, &biz.CampaignRule{},
 		&biz.Price{}, &biz.PriceCurrencyOption{}, &biz.PriceCurrencyOptionTier{}, &biz.PriceRecurring{},
-		biz.ProductAttribute{}, &biz.Stock{},
+		&biz.ProductAttribute{}, &biz.Stock{},
 		&biz.ProductSku{},
 		&biz.ProductSyncLink{})
 }

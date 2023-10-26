@@ -464,8 +464,8 @@ github.com/gorilla/websocket v1.5.0 h1:PPwGk2jz7EePpoHN/+ClbZu8SPxiqlu12wZP/3sWm
 github.com/gorilla/websocket v1.5.0/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/goxiaoy/asynqmon v0.7.2-0.20220620161318-80231130441b h1:R5fHYumvXoGydp3dV1Fz/OvnYdU7NIXXgmZWrmxA2cA=
 github.com/goxiaoy/asynqmon v0.7.2-0.20220620161318-80231130441b/go.mod h1:35Tg9h0C/MIMlZK4ZkDoI7QcIFG6l0VpMTanw3K4mY8=
-github.com/goxiaoy/dtm v0.0.0-20231026053028-8e05396111c7 h1:O7VdsnqDXkkydC+q6dAAvi4jvaCgtPEbqsO/1mzNbzw=
-github.com/goxiaoy/dtm v0.0.0-20231026053028-8e05396111c7/go.mod h1:knn04SHT+vn77pmdVly1yFOFdSMGZiV5MAlK4hHS1q4=
+github.com/goxiaoy/dtm v0.0.0-20231026165303-b379b7f910b5 h1:xUNS5H60LRQwy9Hu/9r2197FpK+dX6jwkarONVDYmqA=
+github.com/goxiaoy/dtm v0.0.0-20231026165303-b379b7f910b5/go.mod h1:knn04SHT+vn77pmdVly1yFOFdSMGZiV5MAlK4hHS1q4=
 github.com/goxiaoy/go-eventbus v0.0.5 h1:i+/btPzl+YTAjix8StqTVF3b6NIXMGn8SEVnrwSBXic=
 github.com/goxiaoy/go-eventbus v0.0.5/go.mod h1:b5yykGpYE+OOVJC/0nlJRzulL5GSyVPPp4Msmwi4vYY=
 github.com/goxiaoy/gorm-concurrency/v2 v2.0.1 h1:0iJeQctTs3EvzvKWDcUJbC/bsLNRG5oQqweo5zPzSlg=

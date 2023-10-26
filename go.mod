@@ -231,6 +231,6 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/99designs/keyring v1.2.1
-	github.com/dtm-labs/dtm => github.com/goxiaoy/dtm v0.0.0-20231026053028-8e05396111c7
+	github.com/dtm-labs/dtm => github.com/goxiaoy/dtm v0.0.0-20231026165303-b379b7f910b5
 	github.com/hibiken/asynqmon => github.com/goxiaoy/asynqmon v0.7.2-0.20220620161318-80231130441b
 )
