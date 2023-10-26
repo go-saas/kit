@@ -76,7 +76,9 @@ func (h *Helper) TccGlobalTransaction2(ctx context.Context, gid string, custom f
 	return dtmgrpc.TccGlobalTransaction2(sapi.WithDiscovery(dtmapi.ServiceName), gid, custom1, tccFunc)
 }
 
-func (h *Helper) NewMsgGrpc(gid string, opts ...dtmgrpc.TransBaseOption) *dtmgrpc.MsgGrpc {
+func (h *Helper) NewMsgGrpc(ctx context.Context, gid string, opts ...dtmgrpc.TransBaseOption) *dtmgrpc.MsgGrpc {
+	//add token into header to pass TrustedContext validator
+	opts = append(opts, dtmgrpc.WithBranchHeaders(h.propagateHeader(ctx)))
 	return dtmgrpc.NewMsgGrpc(sapi.WithDiscovery(dtmapi.ServiceName), gid, opts...)
 }
 

@@ -9,6 +9,7 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	v12 "github.com/go-saas/kit/dtm/api/dtm/v1"
 	dtmsrv "github.com/go-saas/kit/dtm/service"
+	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/query"
 	"github.com/go-saas/kit/pkg/utils"
@@ -74,7 +75,7 @@ func NewPlanService(auth authz.Service, repo biz.PlanRepo, logger klog.Logger, t
 				} else if dbP != nil {
 					return pb.ErrorDuplicatePlanKeyLocalized(ctx, nil, nil)
 				}
-				e := &biz.Plan{}
+				e := &biz.Plan{ProductId: productId}
 				MapCreatePbPlan2Biz(req, e)
 				err := s.repo.Create(ctx, e)
 				if err != nil {
@@ -172,14 +173,14 @@ func (s *PlanService) UpdatePlan(ctx context.Context, req *pb.UpdatePlanRequest)
 
 	//update plan ->update product(2-phase msg)
 	updateReq := &v1.UpdateInternalProductRequest{
-		Product:    &v1.UpdateProduct{Id: g.ProductId, Title: req.Plan.DisplayName},
+		Product:    &v1.UpdateProduct{Id: g.ProductId, Title: req.Plan.DisplayName, Active: req.Plan.Active},
 		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"title"}},
 	}
-	msg := s.txhelper.NewMsgGrpc(ksuid.New().String()).
-		Add(productapi.ServiceName+v1.ProductInternalService_UpdateInternalProduct_FullMethodName, updateReq)
+	msg := s.txhelper.NewMsgGrpc(ctx, ksuid.New().String()).
+		Add(sapi.WithDiscovery(productapi.ServiceName)+v1.ProductInternalService_UpdateInternalProduct_FullMethodName, updateReq)
 
 	res := &pb.Plan{}
-	err = msg.DoAndSubmit(api.ServiceName+v12.MsgService_QueryPrepared_FullMethodName, func(bb *dtmcli.BranchBarrier) error {
+	err = msg.DoAndSubmit(sapi.WithDiscovery(api.ServiceName)+v12.MsgService_QueryPrepared_FullMethodName, func(bb *dtmcli.BranchBarrier) error {
 		return s.txhelper.BarrierUow(msg.Context, bb, biz.ConnName, func(ctx context.Context) error {
 			//check duplicate name
 			if dbP, err := s.repo.Get(ctx, normalizeName(req.Plan.Key)); err != nil {
@@ -220,11 +221,11 @@ func (s *PlanService) DeletePlan(ctx context.Context, req *pb.DeletePlanRequest)
 	//delete plan-> delete product
 
 	msgReq := &v1.DeleteInternalProductRequest{Id: g.ProductId}
-	msg := s.txhelper.NewMsgGrpc(ksuid.New().String()).
-		Add(productapi.ServiceName+v1.ProductInternalService_DeleteInternalProduct_FullMethodName, msgReq)
+	msg := s.txhelper.NewMsgGrpc(ctx, ksuid.New().String()).
+		Add(sapi.WithDiscovery(productapi.ServiceName)+v1.ProductInternalService_DeleteInternalProduct_FullMethodName, msgReq)
 
 	res := &pb.DeletePlanReply{}
-	err = msg.DoAndSubmit(api.ServiceName+v12.MsgService_QueryPrepared_FullMethodName, func(bb *dtmcli.BranchBarrier) error {
+	err = msg.DoAndSubmit(sapi.WithDiscovery(api.ServiceName)+v12.MsgService_QueryPrepared_FullMethodName, func(bb *dtmcli.BranchBarrier) error {
 		return s.txhelper.BarrierUow(msg.Context, bb, biz.ConnName, func(ctx context.Context) error {
 			return s.repo.Delete(ctx, req.Key)
 		})

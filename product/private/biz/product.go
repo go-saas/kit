@@ -70,6 +70,8 @@ type Product struct {
 
 	ManageInfo ProductManageInfo `gorm:"embedded"`
 	SyncLinks  []ProductSyncLink `gorm:"foreignKey:ProductId"`
+
+	Active bool
 }
 
 type ProductManageInfo struct {

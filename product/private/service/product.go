@@ -228,6 +228,8 @@ func (s *ProductService) MapBizProduct2Pb(ctx context.Context, a *biz.Product, b
 	mapBizManageInfo2Pb(&a.ManageInfo, manageInfo)
 
 	b.ManageInfo = manageInfo
+
+	b.Active = a.Active
 }
 
 func (s *ProductService) MapUpdatePbProduct2Biz(ctx context.Context, a *pb.UpdateProduct, b *biz.Product) error {
@@ -303,10 +305,7 @@ func (s *ProductService) MapUpdatePbProduct2Biz(ctx context.Context, a *pb.Updat
 	b.SaleableTo = utils.Timepb2Time(a.SaleableTo)
 	b.Barcode = a.Barcode
 
-	//manageInfo := &pb.ProductManageInfo{}
-	//mapBizManageInfo2Pb(&a.ManageInfo, manageInfo)
-	//
-	//b.ManageInfo = manageInfo
+	b.Active = a.Active
 	return nil
 }
 
@@ -383,10 +382,7 @@ func (s *ProductService) MapCreatePbProduct2Biz(ctx context.Context, a *pb.Creat
 	b.SaleableTo = utils.Timepb2Time(a.SaleableTo)
 	b.Barcode = a.Barcode
 
-	//manageInfo := &pb.ProductManageInfo{}
-	//mapBizManageInfo2Pb(&a.ManageInfo, manageInfo)
-	//
-	//b.ManageInfo = manageInfo
+	b.Active = a.Active
 	return nil
 }
 

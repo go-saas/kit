@@ -164,5 +164,7 @@ func (s *ProductService) MapCreateInternalPbProduct2Biz(ctx context.Context, a *
 	b.ManageInfo = biz.ProductManageInfo{}
 	mapPbManageInfo2Biz(a.ManageInfo, &b.ManageInfo)
 
+	b.Active = a.Active
+
 	return nil
 }

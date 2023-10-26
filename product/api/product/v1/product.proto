@@ -125,7 +125,7 @@ message CreateProductRequest {
 
   google.protobuf.Struct content=63;
 
-
+  bool active=100;
 }
 
 
@@ -183,6 +183,8 @@ message UpdateProduct{
   repeated Stock stocks=62;
 
   google.protobuf.Struct content=63;
+
+  bool active=100;
 }
 
 
@@ -275,6 +277,7 @@ message Product{
 
   ProductManageInfo manage_info=100;
 
+  bool active=101;
 }
 
 message ProductManageInfo{

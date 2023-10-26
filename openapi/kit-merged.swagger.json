@@ -4534,6 +4534,9 @@
                     },
                     "content": {
                       "type": "object"
+                    },
+                    "active": {
+                      "type": "boolean"
                     }
                   }
                 },
@@ -4698,6 +4701,9 @@
                     },
                     "content": {
                       "type": "object"
+                    },
+                    "active": {
+                      "type": "boolean"
                     }
                   }
                 },
@@ -10609,6 +10615,9 @@
         },
         "content": {
           "type": "object"
+        },
+        "active": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -12672,6 +12681,9 @@
         },
         "manageInfo": {
           "$ref": "#/definitions/v1ProductManageInfo"
+        },
+        "active": {
+          "type": "boolean"
         }
       }
     },
@@ -13464,6 +13476,9 @@
         },
         "content": {
           "type": "object"
+        },
+        "active": {
+          "type": "boolean"
         }
       },
       "required": [

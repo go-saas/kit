@@ -498,6 +498,8 @@ func (m *CreateProductRequest) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for Active
+
 	if m.MainCategoryKey != nil {
 		// no validation rules for MainCategoryKey
 	}
@@ -1230,6 +1232,8 @@ func (m *UpdateProduct) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for Active
 
 	if m.MainCategoryKey != nil {
 		// no validation rules for MainCategoryKey
@@ -2710,6 +2714,8 @@ func (m *Product) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for Active
 
 	if m.BrandId != nil {
 		// no validation rules for BrandId

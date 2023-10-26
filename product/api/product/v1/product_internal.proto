@@ -85,6 +85,7 @@ message CreateInternalProductRequest{
   //internal extra fields
   ProductManageInfo manage_info=100;
 
+  bool active=101;
 }
 
 
