@@ -8,6 +8,7 @@ import (
 	_ "github.com/go-saas/kit/pkg/blob/s3"
 	conf2 "github.com/go-saas/kit/pkg/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
+	"github.com/go-saas/kit/product/private/biz"
 	"github.com/go-saas/saas/gorm"
 	g "gorm.io/gorm"
 )
@@ -22,15 +23,13 @@ var ProviderSet = kitdi.NewSet(
 	NewCategoryRepo,
 )
 
-const ConnName = "product"
-
 // Data .
 type Data struct {
 	DbProvider gorm.DbProvider
 }
 
 func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
-	db := provider.Get(ctx, ConnName)
+	db := provider.Get(ctx, biz.ConnName)
 	return db
 }
 

@@ -17,3 +17,5 @@ const (
 	ProductManageProviderInternal ProductManageProvider = "internal"
 	ProductManageProviderStripe   ProductManageProvider = "stripe"
 )
+
+const ConnName = "product"
