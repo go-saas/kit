@@ -1,6 +1,7 @@
 package biz
 
 import (
+	"github.com/go-saas/kit/pkg/dal"
 	kitdi "github.com/go-saas/kit/pkg/di"
 )
 
@@ -18,4 +19,4 @@ const (
 	ProductManageProviderStripe   ProductManageProvider = "stripe"
 )
 
-const ConnName = "product"
+const ConnName dal.ConnName = "product"

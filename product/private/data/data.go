@@ -29,7 +29,7 @@ type Data struct {
 }
 
 func GetDb(ctx context.Context, provider gorm.DbProvider) *g.DB {
-	db := provider.Get(ctx, biz.ConnName)
+	db := provider.Get(ctx, string(biz.ConnName))
 	return db
 }
 
