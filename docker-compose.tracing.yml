@@ -9,13 +9,13 @@ services:
 #      - "14250"
     environment:
       - QUERY_BASE_PATH=/jaeger
-
+    restart: unless-stopped
   otel-collector:
     image: otel/opentelemetry-collector-contrib-dev:latest
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
       - ./quickstart/configs/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml
-
+    restart: unless-stopped
     ports:
 #      - "1888"   # pprof extension
 #      - "8888:8888"   # Prometheus metrics exposed by the collector

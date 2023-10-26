@@ -10,9 +10,9 @@ exporters:
     const_labels:
       label1: value1
 
-  logging:
+  debug:
 
-  jaeger:
+  otlp:
     endpoint: jaeger-all-in-one:14250
     tls:
       insecure: true
@@ -33,8 +33,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, jaeger]
+      exporters: [debug, otlp]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, prometheus]
+      exporters: [debug, prometheus]
