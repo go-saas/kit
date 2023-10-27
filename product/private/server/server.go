@@ -20,6 +20,7 @@ var ProviderSet = kitdi.NewSet(
 	NewAuthorizationOption,
 	kitdi.NewProvider(NewHTTPServer, di.As(new(transport.Server))),
 	kitdi.NewProvider(NewGRPCServer, di.As(new(transport.Server))),
+	kitdi.NewProvider(NewJobServer, di.As(new(transport.Server))),
 	NewSeeder,
 	NewSeeding,
 	kitdi.Value(ClientName),

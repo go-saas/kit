@@ -8,11 +8,10 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	v1 "github.com/go-saas/kit/payment/api/gateway/v1"
-	"github.com/go-saas/kit/payment/private/conf"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
-	"github.com/stripe/stripe-go/v74/client"
+	"github.com/go-saas/kit/pkg/stripe"
 	"net/http"
 )
 
@@ -24,7 +23,7 @@ var ProviderSet = kitdi.NewSet(
 	NewGrpcServerRegister,
 	NewHttpServerRegister,
 	NewPaymentService,
-	NewStripeClient,
+	stripe.ProviderSet,
 )
 
 func NewHttpServerRegister(
@@ -50,10 +49,4 @@ func NewGrpcServerRegister(
 		v1.RegisterPaymentGatewayServiceServer(srv, paymentSrv)
 		v1.RegisterStripePaymentGatewayServiceServer(srv, paymentSrv)
 	})
-}
-
-func NewStripeClient(c *conf.PaymentConf) *client.API {
-	sc := &client.API{}
-	sc.Init(c.GetMethodOrDefault("").Stripe.PrivateKey, nil)
-	return sc
 }

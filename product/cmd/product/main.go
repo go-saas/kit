@@ -19,6 +19,7 @@ import (
 	kdal "github.com/go-saas/kit/pkg/dal"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	kitflag "github.com/go-saas/kit/pkg/flag"
+	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/logging"
 	kitserver "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/tracers"
@@ -142,9 +143,11 @@ func main() {
 		kitdi.Value(bc.Security),
 		kitdi.Value(bc.App),
 		kitdi.Value(bc.Data),
+		kitdi.Value(bc.Stripe),
 		kitdi.Value(logger),
 		kitdi.Value([]grpc.ClientOption{}),
 		authz.ProviderSet, kitserver.DefaultProviderSet, jwt.ProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
+		job.DefaultProviderSet,
 		uapi.GrpcProviderSet,
 		sapi.GrpcProviderSet,
 		server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, kitdi.NewSet(newApp))

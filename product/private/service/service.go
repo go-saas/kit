@@ -10,6 +10,7 @@ import (
 	kitdi "github.com/go-saas/kit/pkg/di"
 	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
+	"github.com/go-saas/kit/pkg/stripe"
 	v12 "github.com/go-saas/kit/product/api/product/v1"
 	"net/http"
 )
@@ -19,10 +20,14 @@ var spec []byte
 
 // ProviderSet is service providers.
 var ProviderSet = kitdi.NewSet(
+	stripe.ProviderSet,
+
 	NewGrpcServerRegister,
 	NewHttpServerRegister,
 	NewUploadService,
 	NewProductService,
+
+	NewProductUpdatedTaskHandler,
 )
 
 func NewHttpServerRegister(

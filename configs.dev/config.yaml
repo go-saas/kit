@@ -79,3 +79,7 @@ logging:
       messageKey: message
       levelKey: level
       levelEncoder: lowercase
+
+tracing:
+  otel:
+    grpc: host.docker.internal:4317

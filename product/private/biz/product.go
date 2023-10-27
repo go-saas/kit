@@ -1,6 +1,7 @@
 package biz
 
 import (
+	"context"
 	"github.com/go-saas/kit/pkg/data"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/sortable"
@@ -75,8 +76,9 @@ type Product struct {
 }
 
 type ProductManageInfo struct {
-	Managed   bool
-	ManagedBy string
+	Managed      bool
+	ManagedBy    string
+	LastSyncTime *time.Time
 }
 
 type Badge struct {
@@ -99,6 +101,8 @@ type Keyword struct {
 
 type ProductRepo interface {
 	data.Repo[Product, string, *v1.ListProductRequest]
+	GetSyncLinks(ctx context.Context, product *Product) ([]ProductSyncLink, error)
+	UpdateSyncLink(ctx context.Context, product *Product, syncLink *ProductSyncLink) error
 }
 
 type CampaignRule struct {

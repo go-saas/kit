@@ -9,6 +9,7 @@ import (
 	"github.com/go-saas/kit/product/private/biz"
 	sgorm "github.com/go-saas/saas/gorm"
 	"github.com/goxiaoy/go-eventbus"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"gorm.io/gorm"
 )
 
@@ -32,7 +33,7 @@ func (c *ProductRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.
 		db = db.Preload("MainPic").
 			Preload("Badges").Preload("Categories").Preload("MainCategory").Preload("Keywords").Preload("Attributes")
 		if withDetail {
-			db = db.Preload("Medias").Preload("CampaignRule").Preload("Stocks")
+			db = db.Preload("Medias").Preload("CampaignRules").Preload("Stocks").Preload("SyncLinks")
 		}
 		return db
 	}
@@ -115,4 +116,24 @@ func (c *ProductRepo) UpdateAssociation(ctx context.Context, entity *biz.Product
 
 func (c *ProductRepo) DefaultSorting() []string {
 	return []string{"-created_at"}
+}
+
+func (c *ProductRepo) GetSyncLinks(ctx context.Context, product *biz.Product) ([]biz.ProductSyncLink, error) {
+	var links []biz.ProductSyncLink
+	if err := c.GetDb(ctx).Model(&biz.ProductSyncLink{}).Where("product_id = ?", product.ID.String()).Find(&links).Error; err != nil {
+		return links, err
+	}
+	return links, nil
+}
+
+func (c *ProductRepo) UpdateSyncLink(ctx context.Context, product *biz.Product, syncLink *biz.ProductSyncLink) error {
+	syncLink.ProductId = product.ID.String()
+	if err := c.GetDb(ctx).Select("*").Save(syncLink).Error; err != nil {
+		return err
+	}
+	if product.ManageInfo.Managed && product.ManageInfo.ManagedBy == syncLink.ProviderName {
+		product.ManageInfo.LastSyncTime = syncLink.LastSyncTime
+		return c.Update(ctx, product.ID.String(), product, query.NewField(&fieldmaskpb.FieldMask{Paths: []string{"last_sync_time"}}))
+	}
+	return nil
 }

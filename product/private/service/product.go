@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/go-saas/kit/event"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/utils"
@@ -12,10 +11,10 @@ import (
 	v1 "github.com/go-saas/kit/product/api/category/v1"
 	v12 "github.com/go-saas/kit/product/api/price/v1"
 	pb "github.com/go-saas/kit/product/api/product/v1"
-	v13 "github.com/go-saas/kit/product/event/v1"
 	"github.com/go-saas/kit/product/private/biz"
 	"github.com/google/uuid"
 	"github.com/goxiaoy/vfs"
+	"github.com/hibiken/asynq"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -27,7 +26,7 @@ type ProductService struct {
 	trusted      sapi.TrustedContextValidator
 	categoryRepo biz.ProductCategoryRepo
 	*UploadService
-	producer event.Producer
+	client *asynq.Client
 }
 
 var _ pb.ProductServiceServer = (*ProductService)(nil)
@@ -40,9 +39,9 @@ func NewProductService(
 	trusted sapi.TrustedContextValidator,
 	categoryRepo biz.ProductCategoryRepo,
 	blob vfs.Blob,
-	producer event.Producer,
+	client *asynq.Client,
 ) *ProductService {
-	return &ProductService{repo: repo, auth: auth, UploadService: upload, trusted: trusted, categoryRepo: categoryRepo, blob: blob, producer: producer}
+	return &ProductService{repo: repo, auth: auth, UploadService: upload, trusted: trusted, categoryRepo: categoryRepo, blob: blob, client: client}
 }
 
 func (s *ProductService) ListProduct(ctx context.Context, req *pb.ListProductRequest) (*pb.ListProductReply, error) {
@@ -166,7 +165,7 @@ func (s *ProductService) fWithEvent(ctx context.Context, f func() (*biz.Product,
 	if err != nil {
 		return err
 	}
-	updateEvent := &v13.ProductUpdatedEvent{
+	updateEvent := &biz.ProductUpdatedJobPram{
 		ProductId:      entity.ID.String(),
 		ProductVersion: entity.Version.String,
 		TenantId:       entity.TenantId.String,
@@ -174,11 +173,12 @@ func (s *ProductService) fWithEvent(ctx context.Context, f func() (*biz.Product,
 	if len(isDelete) > 0 {
 		updateEvent.IsDelete = isDelete[0]
 	}
-	e, err := event.NewMessageFromProto(updateEvent)
+	j, err := NewProductUpdatedTask(updateEvent)
 	if err != nil {
 		return err
 	}
-	return s.producer.Send(ctx, e)
+	_, err = s.client.EnqueueContext(ctx, j)
+	return err
 }
 
 func (s *ProductService) MapBizProduct2Pb(ctx context.Context, a *biz.Product, b *pb.Product) {
@@ -562,6 +562,7 @@ func mapBizProductSku2Pb(ctx context.Context, blob vfs.Blob, a *biz.ProductSku, 
 func mapBizManageInfo2Pb(a *biz.ProductManageInfo, b *pb.ProductManageInfo) {
 	b.Managed = a.Managed
 	b.ManagedBy = a.ManagedBy
+	b.LastSyncTime = utils.Time2Timepb(a.LastSyncTime)
 }
 
 func mapPbManageInfo2Biz(a *pb.ProductManageInfo, b *biz.ProductManageInfo) {

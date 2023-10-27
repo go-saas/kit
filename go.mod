@@ -70,7 +70,7 @@ require (
 	github.com/segmentio/ksuid v1.0.4
 	github.com/silenceper/wechat/v2 v2.1.5
 	github.com/spf13/afero v1.9.3
-	github.com/stripe/stripe-go/v74 v74.30.0
+	github.com/stripe/stripe-go/v76 v76.2.0
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.2.3
 	github.com/wneessen/go-mail v0.3.8
 	go.etcd.io/etcd/client/v3 v3.5.5

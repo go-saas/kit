@@ -122,23 +122,6 @@
     }
   },
   "definitions": {
-    "gatewayv1PaymentMethod": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "logo": {
-          "type": "string"
-        },
-        "desc": {
-          "type": "string"
-        },
-        "notice": {
-          "type": "string"
-        }
-      }
-    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -196,8 +179,25 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/gatewayv1PaymentMethod"
+            "$ref": "#/definitions/v1PaymentMethod"
           }
+        }
+      }
+    },
+    "v1PaymentMethod": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "logo": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "notice": {
+          "type": "string"
         }
       }
     },

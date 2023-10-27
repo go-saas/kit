@@ -5,6 +5,7 @@ option go_package = "github.com/go-saas/kit/product/private/conf;conf";
 
 import "conf/conf.proto";
 import "blob/blob.proto";
+import "stripe/stripe.proto";
 
 message Bootstrap {
   .conf.Data data = 2;
@@ -13,6 +14,8 @@ message Bootstrap {
   .conf.Logging logging=6;
   .conf.Tracers tracing=7;
   .conf.AppConfig app=8;
+
+  .stripe.StripeConf stripe=501;
 }
 
 

@@ -8,16 +8,16 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "github.com/go-saas/kit/order/api/order/v1"
 	pb "github.com/go-saas/kit/payment/api/gateway/v1"
-	"github.com/go-saas/kit/payment/private/conf"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/price"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
+	stripe2 "github.com/go-saas/kit/pkg/stripe"
 	"github.com/go-saas/kit/pkg/utils"
-	"github.com/stripe/stripe-go/v74"
-	"github.com/stripe/stripe-go/v74/client"
-	"github.com/stripe/stripe-go/v74/webhook"
+	"github.com/stripe/stripe-go/v76"
+	stripeclient "github.com/stripe/stripe-go/v76/client"
+	"github.com/stripe/stripe-go/v76/webhook"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"io"
 	"strings"
@@ -28,9 +28,9 @@ type PaymentService struct {
 	trust            sapi.TrustedContextValidator
 	auth             authz.Service
 	orderInternalSrv v1.OrderInternalServiceServer
-	stripeClient     *client.API
+	stripeClient     *stripeclient.API
 	l                *log.Helper
-	c                *conf.PaymentConf
+	c                *stripe2.StripeConf
 }
 
 var _ pb.PaymentGatewayServiceServer = (*PaymentService)(nil)
@@ -40,9 +40,9 @@ func NewPaymentService(
 	trust sapi.TrustedContextValidator,
 	auth authz.Service,
 	orderInternalSrv v1.OrderInternalServiceServer,
-	stripeClient *client.API,
+	stripeClient *stripeclient.API,
 	logger log.Logger,
-	c *conf.PaymentConf,
+	c *stripe2.StripeConf,
 ) *PaymentService {
 	return &PaymentService{
 		trust:            trust,
@@ -106,7 +106,7 @@ func (s *PaymentService) StripeWebhook(ctx context.Context, req *emptypb.Empty) 
 		if err != nil {
 			return nil, err
 		}
-		event, err := webhook.ConstructEvent(body, req.Header.Get("Stripe-Signature"), s.c.GetMethodOrDefault("").Stripe.WebhookKey)
+		event, err := webhook.ConstructEvent(body, req.Header.Get("Stripe-Signature"), s.c.WebhookKey)
 		if err != nil {
 			return nil, handleStripeError(err)
 		}

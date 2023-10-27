@@ -2787,6 +2787,10 @@
         },
         "managedBy": {
           "type": "string"
+        },
+        "lastSyncTime": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

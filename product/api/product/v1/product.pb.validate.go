@@ -2824,6 +2824,35 @@ func (m *ProductManageInfo) validate(all bool) error {
 
 	// no validation rules for ManagedBy
 
+	if all {
+		switch v := interface{}(m.GetLastSyncTime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ProductManageInfoValidationError{
+					field:  "LastSyncTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ProductManageInfoValidationError{
+					field:  "LastSyncTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLastSyncTime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ProductManageInfoValidationError{
+				field:  "LastSyncTime",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return ProductManageInfoMultiError(errors)
 	}

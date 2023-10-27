@@ -283,4 +283,5 @@ message Product{
 message ProductManageInfo{
   bool managed=1;
   string managed_by=2;
+  google.protobuf.Timestamp last_sync_time=3;
 }
