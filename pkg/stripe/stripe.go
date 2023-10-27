@@ -15,3 +15,11 @@ func NewStripeClient(c *StripeConf) *stripeclient.API {
 	sc.Init(c.PrivateKey, nil)
 	return sc
 }
+
+// String returns a pointer to the string value passed in.
+func String(v string) *string {
+	if v == "" {
+		return nil
+	}
+	return &v
+}

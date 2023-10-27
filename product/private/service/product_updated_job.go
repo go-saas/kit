@@ -5,6 +5,7 @@ import (
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-saas/kit/pkg/job"
+	stripe2 "github.com/go-saas/kit/pkg/stripe"
 	"github.com/go-saas/kit/product/private/biz"
 	"github.com/go-saas/saas"
 	"github.com/hibiken/asynq"
@@ -108,8 +109,8 @@ func syncWithStripe(ctx context.Context, client *stripeclient.API, repo biz.Prod
 func mapBizProduct2Stripe(product *biz.Product) *stripe.ProductParams {
 	return &stripe.ProductParams{
 		Active:      stripe.Bool(product.Active),
-		Name:        stripe.String(product.Title),
-		Description: stripe.String(product.Desc),
+		Name:        stripe2.String(product.Title),
+		Description: stripe2.String(product.Desc),
 		Shippable:   stripe.Bool(product.NeedShipping),
 		Metadata:    map[string]string{"version": product.Version.String},
 		//TODO type
