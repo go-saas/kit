@@ -1672,6 +1672,16 @@
         "active": {
           "type": "boolean"
         },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-nullable": true
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-nullable": true
+        },
         "productId": {
           "type": "string"
         }

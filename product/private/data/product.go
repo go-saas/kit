@@ -35,6 +35,9 @@ func (c *ProductRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.
 		if withDetail {
 			db = db.Preload("Medias").Preload("CampaignRules").Preload("Stocks").Preload("SyncLinks")
 		}
+		if !withDetail {
+			db = db.Omit("Content")
+		}
 		return db
 	}
 }

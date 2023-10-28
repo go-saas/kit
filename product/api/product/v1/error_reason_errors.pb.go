@@ -39,3 +39,30 @@ func ErrorContentMissingLocalized(ctx context.Context, data map[string]interface
 		return errors.New(400, ErrorReason_CONTENT_MISSING.String(), "")
 	}
 }
+
+func IsProductManaged(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_PRODUCT_MANAGED.String() && e.Code == 403
+}
+
+func ErrorProductManagedLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
+	localizer := localize.FromContext(ctx)
+	if localizer == nil {
+		return errors.New(403, ErrorReason_PRODUCT_MANAGED.String(), "")
+	}
+	msg, err := localizer.Localize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "ProductManaged",
+		},
+		TemplateData: data,
+		PluralCount:  pluralCount,
+	})
+	if err == nil {
+		return errors.New(403, ErrorReason_PRODUCT_MANAGED.String(), msg)
+	} else {
+		return errors.New(403, ErrorReason_PRODUCT_MANAGED.String(), "")
+	}
+}

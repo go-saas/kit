@@ -120,6 +120,9 @@ func (s *ProductService) UpdateProduct(ctx context.Context, req *pb.UpdateProduc
 	if g == nil {
 		return nil, errors.NotFound("", "")
 	}
+	if g.ManageInfo.Managed {
+		return nil, pb.ErrorProductManagedLocalized(ctx, nil, nil)
+	}
 
 	if err := s.MapUpdatePbProduct2Biz(ctx, req.Product, g); err != nil {
 		return nil, err
@@ -148,7 +151,9 @@ func (s *ProductService) DeleteProduct(ctx context.Context, req *pb.DeleteProduc
 	if g == nil {
 		return nil, errors.NotFound("", "")
 	}
-
+	if g.ManageInfo.Managed {
+		return nil, pb.ErrorProductManagedLocalized(ctx, nil, nil)
+	}
 	err = s.fWithEvent(ctx, func() (*biz.Product, error) {
 		err = s.repo.Delete(ctx, req.Id)
 		return g, err

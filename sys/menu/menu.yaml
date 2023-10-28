@@ -16,7 +16,7 @@ menus:
         path: '/admin/users'
         icon: "User"
         is_preserved: true
-        component: "/admin/user/index"
+        component: "/Admin/User"
         title: "admin.user.management"
         requirement:
           - namespace: "user.admin.user"
@@ -35,7 +35,7 @@ menus:
         path: '/sys/users'
         icon: "User"
         is_preserved: true
-        component: "/sys/user/index"
+        component: "/Sys/User"
         title: "sys.user.management"
         requirement:
           - namespace: "user.user"
@@ -45,7 +45,7 @@ menus:
         path: "/sys/roles"
         icon: "TeamOutlined"
         is_preserved: true
-        component: "/sys/role/index"
+        component: "/Sys/Role"
         meta:
         title: "sys.role.management"
         requirement:
@@ -55,7 +55,7 @@ menus:
       - name: "menu"
         path: "/sys/menus"
         is_preserved: true
-        component: "/system/menu/index"
+        component: "/System/Menu"
         icon: "MenuOutlined"
         title: "sys.menu.management"
         requirement:
@@ -78,7 +78,7 @@ menus:
     children:
       - name: "tenant"
         path: "/saas/tenants"
-        component: "/saas/tenant/index"
+        component: "/Saas/Tenant"
         is_preserved: true
         title: "saas.tenant.management"
         requirement:
@@ -87,7 +87,7 @@ menus:
             action: "read"
       - name: "plans"
         path: "/saas/plans"
-        component: "/saas/plan/index"
+        component: "/Saas/Plan"
         is_preserved: true
         title: "saas.plan.management"
         requirement:

@@ -9,4 +9,5 @@ enum ErrorReason {
   option (errors.default_code) = 500;
 
   CONTENT_MISSING = 0 [(errors.code) = 400];
+  PRODUCT_MANAGED= 1 [(errors.code) = 403];
 }

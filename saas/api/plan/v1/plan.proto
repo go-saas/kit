@@ -118,6 +118,9 @@ message Plan{
   string display_name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   bool active=3;
 
+  optional google.protobuf.Timestamp created_at=5;
+  optional google.protobuf.Timestamp updated_at=6;
+
   string product_id=100;
 
 }

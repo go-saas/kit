@@ -21,6 +21,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/segmentio/ksuid"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"strings"
 
@@ -258,6 +259,8 @@ func MapBizPlan2Pb(a *biz.Plan, b *pb.Plan) {
 	b.Key = a.Key
 	b.DisplayName = a.DisplayName
 	b.Active = a.Active
+	b.CreatedAt = timestamppb.New(a.CreatedAt)
+	b.UpdatedAt = timestamppb.New(a.UpdatedAt)
 }
 
 func MapUpdatePbPlan2Biz(a *pb.UpdatePlan, b *biz.Plan) {

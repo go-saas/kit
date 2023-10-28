@@ -13,3 +13,6 @@ other = "Delete Product"
 other = "Product Management"
 [product.product]
 other = "Product List"
+
+[ProductManaged]
+other = "Product is managed!"

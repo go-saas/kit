@@ -13,3 +13,6 @@ other = "删除产品"
 other = "产品管理"
 [product.product]
 other = "产品列表"
+
+[ProductManaged]
+other = "产品已被托管"
