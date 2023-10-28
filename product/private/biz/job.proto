@@ -3,9 +3,16 @@ package product.private.biz;
 
 option go_package = "github.com/go-saas/kit/product/private/biz;biz";
 
-message ProductUpdatedJobPram{
+message ProductUpdatedJobParam{
   string product_id=1;
   string product_version=2;
   string tenant_id=3;
   bool is_delete=4;
+
+  message SyncLink{
+    string provider_name=1;
+    string provider_id=2;
+  }
+  repeated SyncLink sync_links=5;
 }
+

@@ -22,7 +22,7 @@ const (
 	JobTypeProductUpdated = "product" + ":" + "product_updated"
 )
 
-func NewProductUpdatedTask(prams *biz.ProductUpdatedJobPram) (*asynq.Task, error) {
+func NewProductUpdatedTask(prams *biz.ProductUpdatedJobParam) (*asynq.Task, error) {
 	payload, err := protojson.Marshal(prams)
 	if err != nil {
 		return nil, err
@@ -32,36 +32,55 @@ func NewProductUpdatedTask(prams *biz.ProductUpdatedJobPram) (*asynq.Task, error
 
 func NewProductUpdatedTaskHandler(repo biz.ProductRepo, client *stripeclient.API) *job.Handler {
 	return job.NewHandlerFunc(JobTypeProductUpdated, func(ctx context.Context, t *asynq.Task) error {
-		msg := &biz.ProductUpdatedJobPram{}
+		msg := &biz.ProductUpdatedJobParam{}
 		if err := protojson.Unmarshal(t.Payload(), msg); err != nil {
 			return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
 		}
 		//change to product tenant
 		ctx = saas.NewCurrentTenant(ctx, msg.TenantId, "")
-		product, err := repo.Get(ctx, msg.ProductId)
-		if err != nil {
-			return err
+
+		var product *biz.Product
+		var err error
+		if !msg.IsDelete {
+			product, err = repo.Get(ctx, msg.ProductId)
+			if err != nil {
+				return err
+			}
+			if product == nil {
+				return fmt.Errorf("can not find %s: %w", msg.ProductId, asynq.SkipRetry)
+			}
+			if product.Version.String != msg.ProductVersion {
+				return fmt.Errorf("product:%s version mismatch, should be:%s, got:%s: %w", msg.ProductId, msg.ProductVersion, product.Version.String, asynq.SkipRetry)
+			}
 		}
-		if product == nil {
-			return fmt.Errorf("can not find %s: %w", msg.ProductId, asynq.SkipRetry)
-		}
-		if product.Version.String != msg.ProductVersion {
-			return fmt.Errorf("product:%s version mismatch, should be:%s, got:%s: %w", msg.ProductId, msg.ProductVersion, product.Version.String, asynq.SkipRetry)
-		}
+
 		group, ctx := errgroup.WithContext(ctx)
 		//sync with stripe
 		group.Go(func() error {
-			return syncWithStripe(ctx, client, repo, product, msg.ProductVersion)
+			return syncWithStripe(ctx, client, repo, product, msg)
 		})
 		return group.Wait()
 
 	})
 }
 
-func syncWithStripe(ctx context.Context, client *stripeclient.API, repo biz.ProductRepo, product *biz.Product, version string) error {
+func syncWithStripe(ctx context.Context, client *stripeclient.API, repo biz.ProductRepo, product *biz.Product, jobParams *biz.ProductUpdatedJobParam) error {
 	if client == nil {
 		return nil
 	}
+	if jobParams.IsDelete {
+		stripeInfo, ok := lo.Find(jobParams.SyncLinks, func(t *biz.ProductUpdatedJobParam_SyncLink) bool {
+			return t.ProviderName == string(biz.ProductManageProviderStripe)
+		})
+		if ok {
+			_, err := client.Products.Del(stripeInfo.ProviderId, &stripe.ProductParams{})
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
 	links, err := repo.GetSyncLinks(ctx, product)
 	if err != nil {
 		return err
@@ -91,8 +110,8 @@ func syncWithStripe(ctx context.Context, client *stripeclient.API, repo biz.Prod
 		stripeProductId = stripeInfo.ProviderId
 		//update product if needed
 		stripeProduct, err := client.Products.Get(stripeProductId, &stripe.ProductParams{})
-		if stripeProduct.Metadata["version"] != version {
-			klog.Infof("product_id:%s version:%s same with stipe, skip updates", product.ID.String(), version)
+		if stripeProduct.Metadata["version"] != jobParams.ProductVersion {
+			klog.Infof("product_id:%s version:%s same with stipe, skip updates", product.ID.String(), jobParams.ProductVersion)
 			return nil
 		}
 		params := mapBizProduct2Stripe(product)

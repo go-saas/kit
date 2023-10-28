@@ -170,10 +170,16 @@ func (s *ProductService) fWithEvent(ctx context.Context, f func() (*biz.Product,
 	if err != nil {
 		return err
 	}
-	updateEvent := &biz.ProductUpdatedJobPram{
+	updateEvent := &biz.ProductUpdatedJobParam{
 		ProductId:      entity.ID.String(),
 		ProductVersion: entity.Version.String,
 		TenantId:       entity.TenantId.String,
+		SyncLinks: lo.Map(entity.SyncLinks, func(t biz.ProductSyncLink, i int) *biz.ProductUpdatedJobParam_SyncLink {
+			return &biz.ProductUpdatedJobParam_SyncLink{
+				ProviderName: t.ProviderName,
+				ProviderId:   t.ProviderId,
+			}
+		}),
 	}
 	if len(isDelete) > 0 {
 		updateEvent.IsDelete = isDelete[0]
