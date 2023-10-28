@@ -28,7 +28,6 @@ type ProductSku struct {
 
 	Keywords []Keyword `gorm:"polymorphic:Owner;polymorphicValue:product_sku;comment:商品关键字"`
 
-	IsSaleable   bool
 	SaleableFrom *time.Time
 	SaleableTo   *time.Time
 	Barcode      string `gorm:"comment:商品条码"`

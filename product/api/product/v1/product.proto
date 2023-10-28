@@ -249,7 +249,6 @@ message Product{
 
   optional string brand_id=21;
 
-  bool is_saleable=22;
   google.protobuf.Timestamp saleable_from=23;
   google.protobuf.Timestamp saleable_to=24;
 

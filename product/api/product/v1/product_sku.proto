@@ -45,7 +45,6 @@ message ProductSku{
   repeated ProductMedia medias=14;
 
   string barcode=19;
-  bool is_saleable=22;
   google.protobuf.Timestamp saleable_from=23;
   google.protobuf.Timestamp saleable_to=24;
 

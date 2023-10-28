@@ -12618,9 +12618,6 @@
           "type": "string",
           "x-nullable": true
         },
-        "isSaleable": {
-          "type": "boolean"
-        },
         "saleableFrom": {
           "type": "string",
           "format": "date-time"

@@ -2356,8 +2356,6 @@ func (m *Product) validate(all bool) error {
 
 	// no validation rules for Model
 
-	// no validation rules for IsSaleable
-
 	if all {
 		switch v := interface{}(m.GetSaleableFrom()).(type) {
 		case interface{ ValidateAll() error }:

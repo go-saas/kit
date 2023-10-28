@@ -101,7 +101,7 @@ menus:
     redirect: "/oidc/clients"
     title: "oidc.title"
     icon: "ShopOutlined"
-    priority: 102
+    priority: 900
     is_preserved: true
     requirement:
       - namespace: "oidc.client"

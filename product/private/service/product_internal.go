@@ -167,7 +167,6 @@ func (s *ProductService) MapCreateInternalPbProduct2Biz(ctx context.Context, a *
 		return *r
 	})
 
-	b.IsSaleable = a.IsSaleable
 	b.SaleableFrom = utils.Timepb2Time(a.SaleableFrom)
 	b.SaleableTo = utils.Timepb2Time(a.SaleableTo)
 	b.Barcode = a.Barcode

@@ -88,7 +88,7 @@ func (s *ProductService) GetProduct(ctx context.Context, req *pb.GetProductReque
 }
 
 func (s *ProductService) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.Product, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceProduct, "*"), authz.WriteAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceProduct, "*"), authz.CreateAction); err != nil {
 		return nil, err
 	}
 	e := &biz.Product{}
@@ -110,7 +110,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *pb.CreateProduc
 }
 
 func (s *ProductService) UpdateProduct(ctx context.Context, req *pb.UpdateProductRequest) (*pb.Product, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceProduct, req.GetProduct().GetId()), authz.WriteAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceProduct, req.GetProduct().GetId()), authz.UpdateAction); err != nil {
 		return nil, err
 	}
 	g, err := s.repo.Get(ctx, req.Product.Id)
@@ -141,7 +141,7 @@ func (s *ProductService) UpdateProduct(ctx context.Context, req *pb.UpdateProduc
 }
 
 func (s *ProductService) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*pb.DeleteProductReply, error) {
-	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceProduct, req.GetId()), authz.WriteAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceProduct, req.GetId()), authz.DeleteAction); err != nil {
 		return nil, err
 	}
 	g, err := s.repo.Get(ctx, req.Id)
@@ -261,7 +261,6 @@ func (s *ProductService) MapBizProduct2Pb(ctx context.Context, a *biz.Product, b
 		return r
 	})
 
-	b.IsSaleable = a.IsSaleable
 	b.SaleableFrom = utils.Time2Timepb(a.SaleableFrom)
 	b.SaleableTo = utils.Time2Timepb(a.SaleableTo)
 	b.Barcode = a.Barcode
@@ -342,7 +341,6 @@ func (s *ProductService) MapUpdatePbProduct2Biz(ctx context.Context, a *pb.Updat
 		return *r
 	})
 
-	b.IsSaleable = a.IsSaleable
 	b.SaleableFrom = utils.Timepb2Time(a.SaleableFrom)
 	b.SaleableTo = utils.Timepb2Time(a.SaleableTo)
 	b.Barcode = a.Barcode
@@ -419,7 +417,6 @@ func (s *ProductService) MapCreatePbProduct2Biz(ctx context.Context, a *pb.Creat
 		return *r
 	})
 
-	b.IsSaleable = a.IsSaleable
 	b.SaleableFrom = utils.Timepb2Time(a.SaleableFrom)
 	b.SaleableTo = utils.Timepb2Time(a.SaleableTo)
 	b.Barcode = a.Barcode
@@ -558,7 +555,6 @@ func mapBizProductSku2Pb(ctx context.Context, blob vfs.Blob, a *biz.ProductSku, 
 		return r
 	})
 
-	b.IsSaleable = a.IsSaleable
 	b.SaleableFrom = utils.Time2Timepb(a.SaleableFrom)
 	b.SaleableTo = utils.Time2Timepb(a.SaleableTo)
 	b.Barcode = a.Barcode

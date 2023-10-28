@@ -63,7 +63,6 @@ type Product struct {
 	Prices []Price `gorm:"polymorphic:Owner;polymorphicValue:product"`
 
 	//Product Basic
-	IsSaleable   bool
 	SaleableFrom *time.Time
 	SaleableTo   *time.Time
 

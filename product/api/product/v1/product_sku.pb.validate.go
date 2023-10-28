@@ -425,8 +425,6 @@ func (m *ProductSku) validate(all bool) error {
 
 	// no validation rules for Barcode
 
-	// no validation rules for IsSaleable
-
 	if all {
 		switch v := interface{}(m.GetSaleableFrom()).(type) {
 		case interface{ ValidateAll() error }:
