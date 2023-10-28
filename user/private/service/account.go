@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/query"
 	"github.com/go-saas/lbs"
@@ -34,7 +33,7 @@ import (
 type AccountService struct {
 	pb.UnimplementedAccountServer
 	um            *biz.UserManager
-	tenantService v13.TenantServiceServer
+	tenantService v13.TenantInternalServiceServer
 	blob          vfs.Blob
 	userSetting   biz.UserSettingRepo
 	userAddr      biz.UserAddressRepo
@@ -44,7 +43,7 @@ type AccountService struct {
 func NewAccountService(
 	um *biz.UserManager,
 	blob vfs.Blob,
-	tenantService v13.TenantServiceServer,
+	tenantService v13.TenantInternalServiceServer,
 	userSetting biz.UserSettingRepo,
 	userAddr biz.UserAddressRepo,
 	normalizer biz.LookupNormalizer,
@@ -110,11 +109,8 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	tenantIds = append(tenantIds, currentTenant.GetId())
 
 	if len(tenantIds) > 0 {
-		//change to host side
-		ctx = saas.NewCurrentTenant(ctx, "", "")
 
-		tempCtx := authz.NewAlwaysAuthorizationContext(ctx, true)
-		tenants, err := s.tenantService.ListTenant(tempCtx,
+		tenants, err := s.tenantService.ListTenant(ctx,
 			&v13.ListTenantRequest{Filter: &v13.TenantFilter{
 				Id: &query.StringFilterOperation{In: lo.Map(tenantIds, func(t string, _ int) *wrapperspb.StringValue {
 					return &wrapperspb.StringValue{Value: t}
@@ -122,9 +118,6 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		if err != nil {
 			return nil, err
 		}
-
-		//back to current
-		ctx = saas.NewCurrentTenant(ctx, currentTenant.GetId(), currentTenant.GetName())
 
 		reTenants := lo.Map(u.Tenants, func(ut biz.UserTenant, _ int) *pb.UserTenant {
 			//get tenant info

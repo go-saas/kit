@@ -131,6 +131,10 @@ service TenantInternalService{
 	//GetTenant internal api for remote tenant store
 	rpc GetTenant (GetTenantRequest) returns (Tenant){
 	}
+
+	rpc ListTenant (ListTenantRequest) returns (ListTenantReply){
+	}
+
 }
 
 message CreateTenantRequest {

@@ -69,3 +69,6 @@ func NewTenantInternalServiceClientProxy(cc TenantInternalServiceClient) TenantI
 func (c *tenantInternalServiceClientProxy) GetTenant(ctx context.Context, in *GetTenantRequest) (*Tenant, error) {
 	return c.cc.GetTenant(ctx, in)
 }
+func (c *tenantInternalServiceClientProxy) ListTenant(ctx context.Context, in *ListTenantRequest) (*ListTenantReply, error) {
+	return c.cc.ListTenant(ctx, in)
+}

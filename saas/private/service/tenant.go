@@ -295,12 +295,9 @@ func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrent
 
 func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantRequest) (*pb.ListTenantReply, error) {
 
-	if authResult, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, "*"), authz.ReadAction); err != nil {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, "*"), authz.ReadAction); err != nil {
 		return nil, err
-	} else if !authResult.Allowed {
-		return nil, errors.Forbidden("", "")
 	}
-
 	ret := &pb.ListTenantReply{}
 
 	totalCount, filterCount, err := s.useCase.Count(ctx, req)
