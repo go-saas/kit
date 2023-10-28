@@ -593,6 +593,152 @@ var _ interface {
 	ErrorName() string
 } = PriceCurrencyOptionValidationError{}
 
+// Validate checks the field values on PriceCurrencyOptionParams with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PriceCurrencyOptionParams) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PriceCurrencyOptionParams with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PriceCurrencyOptionParamsMultiError, or nil if none found.
+func (m *PriceCurrencyOptionParams) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PriceCurrencyOptionParams) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CurrencyCode
+
+	// no validation rules for DefaultAmountDecimal
+
+	// no validation rules for DiscountedAmountDecimal
+
+	// no validation rules for DiscountText
+
+	// no validation rules for DenyMoreDiscounts
+
+	for idx, item := range m.GetTiers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PriceCurrencyOptionParamsValidationError{
+						field:  fmt.Sprintf("Tiers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PriceCurrencyOptionParamsValidationError{
+						field:  fmt.Sprintf("Tiers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PriceCurrencyOptionParamsValidationError{
+					field:  fmt.Sprintf("Tiers[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PriceCurrencyOptionParamsMultiError(errors)
+	}
+
+	return nil
+}
+
+// PriceCurrencyOptionParamsMultiError is an error wrapping multiple validation
+// errors returned by PriceCurrencyOptionParams.ValidateAll() if the
+// designated constraints aren't met.
+type PriceCurrencyOptionParamsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PriceCurrencyOptionParamsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PriceCurrencyOptionParamsMultiError) AllErrors() []error { return m }
+
+// PriceCurrencyOptionParamsValidationError is the validation error returned by
+// PriceCurrencyOptionParams.Validate if the designated constraints aren't met.
+type PriceCurrencyOptionParamsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PriceCurrencyOptionParamsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PriceCurrencyOptionParamsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PriceCurrencyOptionParamsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PriceCurrencyOptionParamsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PriceCurrencyOptionParamsValidationError) ErrorName() string {
+	return "PriceCurrencyOptionParamsValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PriceCurrencyOptionParamsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPriceCurrencyOptionParams.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PriceCurrencyOptionParamsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PriceCurrencyOptionParamsValidationError{}
+
 // Validate checks the field values on PriceCurrencyOptionTier with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -615,9 +761,63 @@ func (m *PriceCurrencyOptionTier) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for FlatAmount
+	if all {
+		switch v := interface{}(m.GetFlat()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PriceCurrencyOptionTierValidationError{
+					field:  "Flat",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PriceCurrencyOptionTierValidationError{
+					field:  "Flat",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetFlat()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PriceCurrencyOptionTierValidationError{
+				field:  "Flat",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
-	// no validation rules for UnitAmount
+	if all {
+		switch v := interface{}(m.GetUnit()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PriceCurrencyOptionTierValidationError{
+					field:  "Unit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PriceCurrencyOptionTierValidationError{
+					field:  "Unit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PriceCurrencyOptionTierValidationError{
+				field:  "Unit",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	// no validation rules for UpTo
 
@@ -700,6 +900,115 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PriceCurrencyOptionTierValidationError{}
+
+// Validate checks the field values on PriceCurrencyOptionTierParams with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PriceCurrencyOptionTierParams) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PriceCurrencyOptionTierParams with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// PriceCurrencyOptionTierParamsMultiError, or nil if none found.
+func (m *PriceCurrencyOptionTierParams) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PriceCurrencyOptionTierParams) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for FlatAmountDecimal
+
+	// no validation rules for UnitAmountDecimal
+
+	// no validation rules for UpTo
+
+	if len(errors) > 0 {
+		return PriceCurrencyOptionTierParamsMultiError(errors)
+	}
+
+	return nil
+}
+
+// PriceCurrencyOptionTierParamsMultiError is an error wrapping multiple
+// validation errors returned by PriceCurrencyOptionTierParams.ValidateAll()
+// if the designated constraints aren't met.
+type PriceCurrencyOptionTierParamsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PriceCurrencyOptionTierParamsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PriceCurrencyOptionTierParamsMultiError) AllErrors() []error { return m }
+
+// PriceCurrencyOptionTierParamsValidationError is the validation error
+// returned by PriceCurrencyOptionTierParams.Validate if the designated
+// constraints aren't met.
+type PriceCurrencyOptionTierParamsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PriceCurrencyOptionTierParamsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PriceCurrencyOptionTierParamsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PriceCurrencyOptionTierParamsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PriceCurrencyOptionTierParamsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PriceCurrencyOptionTierParamsValidationError) ErrorName() string {
+	return "PriceCurrencyOptionTierParamsValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PriceCurrencyOptionTierParamsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPriceCurrencyOptionTierParams.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PriceCurrencyOptionTierParamsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PriceCurrencyOptionTierParamsValidationError{}
 
 // Validate checks the field values on PriceRecurring with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -897,26 +1206,62 @@ func (m *PriceTier) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetFlatAmount() <= 0 {
-		err := PriceTierValidationError{
-			field:  "FlatAmount",
-			reason: "value must be greater than 0",
+	if all {
+		switch v := interface{}(m.GetFlat()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PriceTierValidationError{
+					field:  "Flat",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PriceTierValidationError{
+					field:  "Flat",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
 		}
-		if !all {
-			return err
+	} else if v, ok := interface{}(m.GetFlat()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PriceTierValidationError{
+				field:  "Flat",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
 		}
-		errors = append(errors, err)
 	}
 
-	if m.GetUnitAmount() <= 0 {
-		err := PriceTierValidationError{
-			field:  "UnitAmount",
-			reason: "value must be greater than 0",
+	if all {
+		switch v := interface{}(m.GetUnit()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PriceTierValidationError{
+					field:  "Unit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PriceTierValidationError{
+					field:  "Unit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
 		}
-		if !all {
-			return err
+	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PriceTierValidationError{
+				field:  "Unit",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
 		}
-		errors = append(errors, err)
 	}
 
 	if m.GetUpTo() <= 0 {
@@ -1006,6 +1351,121 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PriceTierValidationError{}
+
+// Validate checks the field values on PriceTierParams with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *PriceTierParams) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PriceTierParams with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PriceTierParamsMultiError, or nil if none found.
+func (m *PriceTierParams) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PriceTierParams) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for FlatAmountDecimal
+
+	// no validation rules for UnitAmountDecimal
+
+	if m.GetUpTo() <= 0 {
+		err := PriceTierParamsValidationError{
+			field:  "UpTo",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return PriceTierParamsMultiError(errors)
+	}
+
+	return nil
+}
+
+// PriceTierParamsMultiError is an error wrapping multiple validation errors
+// returned by PriceTierParams.ValidateAll() if the designated constraints
+// aren't met.
+type PriceTierParamsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PriceTierParamsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PriceTierParamsMultiError) AllErrors() []error { return m }
+
+// PriceTierParamsValidationError is the validation error returned by
+// PriceTierParams.Validate if the designated constraints aren't met.
+type PriceTierParamsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PriceTierParamsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PriceTierParamsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PriceTierParamsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PriceTierParamsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PriceTierParamsValidationError) ErrorName() string { return "PriceTierParamsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PriceTierParamsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPriceTierParams.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PriceTierParamsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PriceTierParamsValidationError{}
 
 // Validate checks the field values on PriceTransformQuantity with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1127,30 +1587,32 @@ var _PriceTransformQuantity_Round_InLookup = map[string]struct{}{
 	"down": {},
 }
 
-// Validate checks the field values on CreatePriceRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreatePriceRequest) Validate() error {
+// Validate checks the field values on PriceParams with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PriceParams) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreatePriceRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CreatePriceRequestMultiError, or nil if none found.
-func (m *CreatePriceRequest) ValidateAll() error {
+// ValidateAll checks the field values on PriceParams with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PriceParamsMultiError, or
+// nil if none found.
+func (m *PriceParams) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreatePriceRequest) validate(all bool) error {
+func (m *PriceParams) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	if _, ok := _CreatePriceRequest_OwnerType_InLookup[m.GetOwnerType()]; !ok {
-		err := CreatePriceRequestValidationError{
+	// no validation rules for Id
+
+	if _, ok := _PriceParams_OwnerType_InLookup[m.GetOwnerType()]; !ok {
+		err := PriceParamsValidationError{
 			field:  "OwnerType",
 			reason: "value must be in list [product product_sku]",
 		}
@@ -1164,16 +1626,16 @@ func (m *CreatePriceRequest) validate(all bool) error {
 
 	// no validation rules for CurrencyCode
 
-	// no validation rules for DefaultAmount
+	// no validation rules for DefaultAmountDecimal
 
-	// no validation rules for DiscountedAmount
+	// no validation rules for DiscountedAmountDecimal
 
 	// no validation rules for DiscountText
 
 	// no validation rules for DenyMoreDiscounts
 
-	if _, ok := _CreatePriceRequest_BillingScheme_InLookup[m.GetBillingScheme()]; !ok {
-		err := CreatePriceRequestValidationError{
+	if _, ok := _PriceParams_BillingScheme_InLookup[m.GetBillingScheme()]; !ok {
+		err := PriceParamsValidationError{
 			field:  "BillingScheme",
 			reason: "value must be in list [per_unit tiered]",
 		}
@@ -1190,7 +1652,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreatePriceRequestValidationError{
+					errors = append(errors, PriceParamsValidationError{
 						field:  fmt.Sprintf("CurrencyOptions[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1198,7 +1660,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, CreatePriceRequestValidationError{
+					errors = append(errors, PriceParamsValidationError{
 						field:  fmt.Sprintf("CurrencyOptions[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1207,7 +1669,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return CreatePriceRequestValidationError{
+				return PriceParamsValidationError{
 					field:  fmt.Sprintf("CurrencyOptions[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1221,7 +1683,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 		switch v := interface{}(m.GetRecurring()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreatePriceRequestValidationError{
+				errors = append(errors, PriceParamsValidationError{
 					field:  "Recurring",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1229,7 +1691,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreatePriceRequestValidationError{
+				errors = append(errors, PriceParamsValidationError{
 					field:  "Recurring",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1238,7 +1700,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetRecurring()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CreatePriceRequestValidationError{
+			return PriceParamsValidationError{
 				field:  "Recurring",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1253,7 +1715,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreatePriceRequestValidationError{
+					errors = append(errors, PriceParamsValidationError{
 						field:  fmt.Sprintf("Tiers[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1261,7 +1723,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, CreatePriceRequestValidationError{
+					errors = append(errors, PriceParamsValidationError{
 						field:  fmt.Sprintf("Tiers[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1270,7 +1732,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return CreatePriceRequestValidationError{
+				return PriceParamsValidationError{
 					field:  fmt.Sprintf("Tiers[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1280,8 +1742,8 @@ func (m *CreatePriceRequest) validate(all bool) error {
 
 	}
 
-	if _, ok := _CreatePriceRequest_TiersMode_InLookup[m.GetTiersMode()]; !ok {
-		err := CreatePriceRequestValidationError{
+	if _, ok := _PriceParams_TiersMode_InLookup[m.GetTiersMode()]; !ok {
+		err := PriceParamsValidationError{
 			field:  "TiersMode",
 			reason: "value must be in list [per_unit tiered]",
 		}
@@ -1295,7 +1757,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 		switch v := interface{}(m.GetTransformQuantity()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreatePriceRequestValidationError{
+				errors = append(errors, PriceParamsValidationError{
 					field:  "TransformQuantity",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1303,7 +1765,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreatePriceRequestValidationError{
+				errors = append(errors, PriceParamsValidationError{
 					field:  "TransformQuantity",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1312,7 +1774,7 @@ func (m *CreatePriceRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetTransformQuantity()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CreatePriceRequestValidationError{
+			return PriceParamsValidationError{
 				field:  "TransformQuantity",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1320,8 +1782,8 @@ func (m *CreatePriceRequest) validate(all bool) error {
 		}
 	}
 
-	if _, ok := _CreatePriceRequest_Type_InLookup[m.GetType()]; !ok {
-		err := CreatePriceRequestValidationError{
+	if _, ok := _PriceParams_Type_InLookup[m.GetType()]; !ok {
+		err := PriceParamsValidationError{
 			field:  "Type",
 			reason: "value must be in list [one_time recurring]",
 		}
@@ -1332,19 +1794,18 @@ func (m *CreatePriceRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CreatePriceRequestMultiError(errors)
+		return PriceParamsMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreatePriceRequestMultiError is an error wrapping multiple validation errors
-// returned by CreatePriceRequest.ValidateAll() if the designated constraints
-// aren't met.
-type CreatePriceRequestMultiError []error
+// PriceParamsMultiError is an error wrapping multiple validation errors
+// returned by PriceParams.ValidateAll() if the designated constraints aren't met.
+type PriceParamsMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreatePriceRequestMultiError) Error() string {
+func (m PriceParamsMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1353,11 +1814,11 @@ func (m CreatePriceRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreatePriceRequestMultiError) AllErrors() []error { return m }
+func (m PriceParamsMultiError) AllErrors() []error { return m }
 
-// CreatePriceRequestValidationError is the validation error returned by
-// CreatePriceRequest.Validate if the designated constraints aren't met.
-type CreatePriceRequestValidationError struct {
+// PriceParamsValidationError is the validation error returned by
+// PriceParams.Validate if the designated constraints aren't met.
+type PriceParamsValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1365,24 +1826,22 @@ type CreatePriceRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreatePriceRequestValidationError) Field() string { return e.field }
+func (e PriceParamsValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreatePriceRequestValidationError) Reason() string { return e.reason }
+func (e PriceParamsValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreatePriceRequestValidationError) Cause() error { return e.cause }
+func (e PriceParamsValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreatePriceRequestValidationError) Key() bool { return e.key }
+func (e PriceParamsValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreatePriceRequestValidationError) ErrorName() string {
-	return "CreatePriceRequestValidationError"
-}
+func (e PriceParamsValidationError) ErrorName() string { return "PriceParamsValidationError" }
 
 // Error satisfies the builtin error interface
-func (e CreatePriceRequestValidationError) Error() string {
+func (e PriceParamsValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1394,14 +1853,14 @@ func (e CreatePriceRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreatePriceRequest.%s: %s%s",
+		"invalid %sPriceParams.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreatePriceRequestValidationError{}
+var _ error = PriceParamsValidationError{}
 
 var _ interface {
 	Field() string
@@ -1409,173 +1868,27 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreatePriceRequestValidationError{}
+} = PriceParamsValidationError{}
 
-var _CreatePriceRequest_OwnerType_InLookup = map[string]struct{}{
+var _PriceParams_OwnerType_InLookup = map[string]struct{}{
 	"product":     {},
 	"product_sku": {},
 }
 
-var _CreatePriceRequest_BillingScheme_InLookup = map[string]struct{}{
+var _PriceParams_BillingScheme_InLookup = map[string]struct{}{
 	"per_unit": {},
 	"tiered":   {},
 }
 
-var _CreatePriceRequest_TiersMode_InLookup = map[string]struct{}{
+var _PriceParams_TiersMode_InLookup = map[string]struct{}{
 	"per_unit": {},
 	"tiered":   {},
 }
 
-var _CreatePriceRequest_Type_InLookup = map[string]struct{}{
+var _PriceParams_Type_InLookup = map[string]struct{}{
 	"one_time":  {},
 	"recurring": {},
 }
-
-// Validate checks the field values on PriceCurrencyOptionPrams with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *PriceCurrencyOptionPrams) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on PriceCurrencyOptionPrams with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// PriceCurrencyOptionPramsMultiError, or nil if none found.
-func (m *PriceCurrencyOptionPrams) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *PriceCurrencyOptionPrams) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for CurrencyCode
-
-	// no validation rules for DefaultAmount
-
-	// no validation rules for DiscountedAmount
-
-	// no validation rules for DiscountText
-
-	// no validation rules for DenyMoreDiscounts
-
-	for idx, item := range m.GetTiers() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, PriceCurrencyOptionPramsValidationError{
-						field:  fmt.Sprintf("Tiers[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, PriceCurrencyOptionPramsValidationError{
-						field:  fmt.Sprintf("Tiers[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return PriceCurrencyOptionPramsValidationError{
-					field:  fmt.Sprintf("Tiers[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return PriceCurrencyOptionPramsMultiError(errors)
-	}
-
-	return nil
-}
-
-// PriceCurrencyOptionPramsMultiError is an error wrapping multiple validation
-// errors returned by PriceCurrencyOptionPrams.ValidateAll() if the designated
-// constraints aren't met.
-type PriceCurrencyOptionPramsMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m PriceCurrencyOptionPramsMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m PriceCurrencyOptionPramsMultiError) AllErrors() []error { return m }
-
-// PriceCurrencyOptionPramsValidationError is the validation error returned by
-// PriceCurrencyOptionPrams.Validate if the designated constraints aren't met.
-type PriceCurrencyOptionPramsValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e PriceCurrencyOptionPramsValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e PriceCurrencyOptionPramsValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e PriceCurrencyOptionPramsValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e PriceCurrencyOptionPramsValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e PriceCurrencyOptionPramsValidationError) ErrorName() string {
-	return "PriceCurrencyOptionPramsValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e PriceCurrencyOptionPramsValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sPriceCurrencyOptionPrams.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = PriceCurrencyOptionPramsValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = PriceCurrencyOptionPramsValidationError{}
 
 // Validate checks the field values on UpdatePriceRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1747,291 +2060,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdatePriceRequestValidationError{}
-
-// Validate checks the field values on UpdatePrice with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *UpdatePrice) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UpdatePrice with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UpdatePriceMultiError, or
-// nil if none found.
-func (m *UpdatePrice) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UpdatePrice) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	// no validation rules for CurrencyCode
-
-	// no validation rules for DefaultAmount
-
-	// no validation rules for DiscountedAmount
-
-	// no validation rules for DiscountText
-
-	// no validation rules for DenyMoreDiscounts
-
-	if _, ok := _UpdatePrice_BillingScheme_InLookup[m.GetBillingScheme()]; !ok {
-		err := UpdatePriceValidationError{
-			field:  "BillingScheme",
-			reason: "value must be in list [per_unit tiered]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	for idx, item := range m.GetCurrencyOptions() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UpdatePriceValidationError{
-						field:  fmt.Sprintf("CurrencyOptions[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UpdatePriceValidationError{
-						field:  fmt.Sprintf("CurrencyOptions[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UpdatePriceValidationError{
-					field:  fmt.Sprintf("CurrencyOptions[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if all {
-		switch v := interface{}(m.GetRecurring()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdatePriceValidationError{
-					field:  "Recurring",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdatePriceValidationError{
-					field:  "Recurring",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetRecurring()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdatePriceValidationError{
-				field:  "Recurring",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	for idx, item := range m.GetTiers() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UpdatePriceValidationError{
-						field:  fmt.Sprintf("Tiers[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UpdatePriceValidationError{
-						field:  fmt.Sprintf("Tiers[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UpdatePriceValidationError{
-					field:  fmt.Sprintf("Tiers[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if _, ok := _UpdatePrice_TiersMode_InLookup[m.GetTiersMode()]; !ok {
-		err := UpdatePriceValidationError{
-			field:  "TiersMode",
-			reason: "value must be in list [per_unit tiered]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetTransformQuantity()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdatePriceValidationError{
-					field:  "TransformQuantity",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdatePriceValidationError{
-					field:  "TransformQuantity",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetTransformQuantity()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdatePriceValidationError{
-				field:  "TransformQuantity",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if _, ok := _UpdatePrice_Type_InLookup[m.GetType()]; !ok {
-		err := UpdatePriceValidationError{
-			field:  "Type",
-			reason: "value must be in list [one_time recurring]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(errors) > 0 {
-		return UpdatePriceMultiError(errors)
-	}
-
-	return nil
-}
-
-// UpdatePriceMultiError is an error wrapping multiple validation errors
-// returned by UpdatePrice.ValidateAll() if the designated constraints aren't met.
-type UpdatePriceMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UpdatePriceMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UpdatePriceMultiError) AllErrors() []error { return m }
-
-// UpdatePriceValidationError is the validation error returned by
-// UpdatePrice.Validate if the designated constraints aren't met.
-type UpdatePriceValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UpdatePriceValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UpdatePriceValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UpdatePriceValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UpdatePriceValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UpdatePriceValidationError) ErrorName() string { return "UpdatePriceValidationError" }
-
-// Error satisfies the builtin error interface
-func (e UpdatePriceValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdatePrice.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UpdatePriceValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UpdatePriceValidationError{}
-
-var _UpdatePrice_BillingScheme_InLookup = map[string]struct{}{
-	"per_unit": {},
-	"tiered":   {},
-}
-
-var _UpdatePrice_TiersMode_InLookup = map[string]struct{}{
-	"per_unit": {},
-	"tiered":   {},
-}
-
-var _UpdatePrice_Type_InLookup = map[string]struct{}{
-	"one_time":  {},
-	"recurring": {},
-}
 
 // Validate checks the field values on ListPriceRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the

@@ -34,7 +34,7 @@ func mapBizPrice2Pb(ctx context.Context, a *biz.Price, b *v12.Price) {
 	}
 	b.Tiers = lo.Map(a.Tiers, func(t biz.PriceTier, i int) *v12.PriceTier {
 		r := &v12.PriceTier{}
-		mapBizPriceTier2Pb(&t, r)
+		mapBizPriceTier2Pb(ctx, a.CurrencyCode, &t, r)
 		return r
 	})
 	b.TiersMode = string(a.TiersMode)
@@ -51,14 +51,14 @@ func mapBizCurrencyOption2Pb(ctx context.Context, a *biz.PriceCurrencyOption, b 
 	b.CurrencyCode = a.CurrencyCode
 	b.Tiers = lo.Map(a.Tiers, func(t biz.PriceCurrencyOptionTier, i int) *v12.PriceCurrencyOptionTier {
 		r := &v12.PriceCurrencyOptionTier{}
-		mapBizPriceCurrencyOptionTier2Pb(&t, r)
+		mapBizPriceCurrencyOptionTier2Pb(ctx, a.CurrencyCode, &t, r)
 		return r
 	})
 }
 
-func mapBizPriceCurrencyOptionTier2Pb(a *biz.PriceCurrencyOptionTier, b *v12.PriceCurrencyOptionTier) {
-	b.FlatAmount = a.FlatAmount
-	b.UnitAmount = a.UnitAmount
+func mapBizPriceCurrencyOptionTier2Pb(ctx context.Context, currency string, a *biz.PriceCurrencyOptionTier, b *v12.PriceCurrencyOptionTier) {
+	b.Flat = price.MustNewFromInt64(a.FlatAmount, currency).ToPricePb(ctx)
+	b.Unit = price.MustNewFromInt64(a.UnitAmount, currency).ToPricePb(ctx)
 	b.UpTo = a.UpTo
 }
 
@@ -70,9 +70,9 @@ func mapBizPriceRecurring2Pb(a *biz.PriceRecurring, b *v12.PriceRecurring) {
 	b.UsageType = string(a.UsageType)
 }
 
-func mapBizPriceTier2Pb(a *biz.PriceTier, b *v12.PriceTier) {
-	b.FlatAmount = a.FlatAmount
-	b.UnitAmount = a.UnitAmount
+func mapBizPriceTier2Pb(ctx context.Context, currency string, a *biz.PriceTier, b *v12.PriceTier) {
+	b.Flat = price.MustNewFromInt64(a.FlatAmount, currency).ToPricePb(ctx)
+	b.Unit = price.MustNewFromInt64(a.UnitAmount, currency).ToPricePb(ctx)
 	b.UpTo = a.UpTo
 }
 
@@ -81,16 +81,16 @@ func mapBizPriceTransformQuantity2Pb(a *biz.PriceTransformQuantity, b *v12.Price
 	b.Round = string(a.Round)
 }
 
-func mapPbCreatePrice2Biz(a *v12.CreatePriceRequest, b *biz.Price) {
+func mapPbPrice2Biz(a *v12.PriceParams, b *biz.Price) {
 
-	b.DefaultAmount = a.DefaultAmount
-	b.DiscountedAmount = a.DiscountedAmount
+	b.DefaultAmount = price.MustNew(a.DefaultAmountDecimal, a.CurrencyCode).Amount
+	b.DiscountedAmount = price.MustNew(a.DiscountedAmountDecimal, a.CurrencyCode).Amount
 
 	b.DiscountText = a.DiscountText
 	b.DenyMoreDiscounts = a.DenyMoreDiscounts
 
 	b.BillingScheme = biz.PriceBillingScheme(a.BillingScheme)
-	b.CurrencyOptions = lo.Map(a.CurrencyOptions, func(t *v12.PriceCurrencyOptionPrams, i int) biz.PriceCurrencyOption {
+	b.CurrencyOptions = lo.Map(a.CurrencyOptions, func(t *v12.PriceCurrencyOptionParams, i int) biz.PriceCurrencyOption {
 		r := &biz.PriceCurrencyOption{}
 		mapPbCurrencyOption2Biz(t, r)
 		return *r
@@ -100,9 +100,9 @@ func mapPbCreatePrice2Biz(a *v12.CreatePriceRequest, b *biz.Price) {
 		b.Recurring = &biz.PriceRecurring{}
 		mapPbPriceRecurring2Biz(a.Recurring, b.Recurring)
 	}
-	b.Tiers = lo.Map(a.Tiers, func(t *v12.PriceTier, i int) biz.PriceTier {
+	b.Tiers = lo.Map(a.Tiers, func(t *v12.PriceTierParams, i int) biz.PriceTier {
 		r := &biz.PriceTier{}
-		mapPbPriceTier2Biz(t, r)
+		mapPbPriceTier2Biz(a.CurrencyCode, t, r)
 		return *r
 	})
 	b.TiersMode = biz.PriceTiersMode(a.TiersMode)
@@ -111,45 +111,15 @@ func mapPbCreatePrice2Biz(a *v12.CreatePriceRequest, b *biz.Price) {
 	b.Type = biz.PriceType(a.Type)
 }
 
-func mapPbUpdatePrice2Biz(a *v12.UpdatePrice, b *biz.Price) {
-
-	b.DefaultAmount = a.DefaultAmount
-	b.DiscountedAmount = a.DiscountedAmount
-
-	b.DiscountText = a.DiscountText
-	b.DenyMoreDiscounts = a.DenyMoreDiscounts
-
-	b.BillingScheme = biz.PriceBillingScheme(a.BillingScheme)
-	b.CurrencyOptions = lo.Map(a.CurrencyOptions, func(t *v12.PriceCurrencyOptionPrams, i int) biz.PriceCurrencyOption {
-		r := &biz.PriceCurrencyOption{}
-		mapPbCurrencyOption2Biz(t, r)
-		return *r
-	})
-
-	if a.Recurring != nil {
-		b.Recurring = &biz.PriceRecurring{}
-		mapPbPriceRecurring2Biz(a.Recurring, b.Recurring)
-	}
-	b.Tiers = lo.Map(a.Tiers, func(t *v12.PriceTier, i int) biz.PriceTier {
-		r := &biz.PriceTier{}
-		mapPbPriceTier2Biz(t, r)
-		return *r
-	})
-	b.TiersMode = biz.PriceTiersMode(a.TiersMode)
-	b.TransformQuantity = biz.PriceTransformQuantity{}
-	mapPbPriceTransformQuantity2Biz(a.TransformQuantity, &b.TransformQuantity)
-	b.Type = biz.PriceType(a.Type)
-}
-
-func mapPbCurrencyOption2Biz(a *v12.PriceCurrencyOptionPrams, b *biz.PriceCurrencyOption) {
-	b.DefaultAmount = a.DefaultAmount
-	b.DiscountedAmount = a.DiscountedAmount
+func mapPbCurrencyOption2Biz(a *v12.PriceCurrencyOptionParams, b *biz.PriceCurrencyOption) {
+	b.DefaultAmount = price.MustNew(a.DefaultAmountDecimal, a.CurrencyCode).Amount
+	b.DiscountedAmount = price.MustNew(a.DiscountedAmountDecimal, a.CurrencyCode).Amount
 	b.DiscountText = a.DiscountText
 	b.DenyMoreDiscounts = a.DenyMoreDiscounts
 	b.CurrencyCode = a.CurrencyCode
-	b.Tiers = lo.Map(a.Tiers, func(t *v12.PriceCurrencyOptionTier, i int) biz.PriceCurrencyOptionTier {
+	b.Tiers = lo.Map(a.Tiers, func(t *v12.PriceCurrencyOptionTierParams, i int) biz.PriceCurrencyOptionTier {
 		r := &biz.PriceCurrencyOptionTier{}
-		mapPbPriceCurrencyOptionTier2Biz(t, r)
+		mapPbPriceCurrencyOptionTier2Biz(a.CurrencyCode, t, r)
 		return *r
 	})
 }
@@ -162,14 +132,15 @@ func mapPbPriceRecurring2Biz(a *v12.PriceRecurring, b *biz.PriceRecurring) {
 	b.UsageType = biz.PriceRecurringUsageType(a.UsageType)
 }
 
-func mapPbPriceCurrencyOptionTier2Biz(a *v12.PriceCurrencyOptionTier, b *biz.PriceCurrencyOptionTier) {
-	b.FlatAmount = a.FlatAmount
-	b.UnitAmount = a.UnitAmount
+func mapPbPriceCurrencyOptionTier2Biz(currencyCode string, a *v12.PriceCurrencyOptionTierParams, b *biz.PriceCurrencyOptionTier) {
+	b.FlatAmount = price.MustNew(a.FlatAmountDecimal, currencyCode).Amount
+	b.UnitAmount = price.MustNew(a.UnitAmountDecimal, currencyCode).Amount
 	b.UpTo = a.UpTo
 }
-func mapPbPriceTier2Biz(a *v12.PriceTier, b *biz.PriceTier) {
-	b.FlatAmount = a.FlatAmount
-	b.UnitAmount = a.UnitAmount
+
+func mapPbPriceTier2Biz(currencyCode string, a *v12.PriceTierParams, b *biz.PriceTier) {
+	b.FlatAmount = price.MustNew(a.FlatAmountDecimal, currencyCode).Amount
+	b.UnitAmount = price.MustNew(a.UnitAmountDecimal, currencyCode).Amount
 	b.UpTo = a.UpTo
 }
 func mapPbPriceTransformQuantity2Biz(a *v12.PriceTransformQuantity, b *biz.PriceTransformQuantity) {

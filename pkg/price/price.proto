@@ -8,6 +8,7 @@ message PricePb{
   string currency_code=2;
   int32 digits=3;
   string text=4;
+  string amount_decimal=5;
 }
 
 

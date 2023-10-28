@@ -335,9 +335,9 @@ func (s *ProductService) MapUpdatePbProduct2Biz(ctx context.Context, a *pb.Updat
 		return *r
 	})
 
-	b.Prices = lo.Map(a.Prices, func(t *v12.UpdatePrice, _ int) biz.Price {
+	b.Prices = lo.Map(a.Prices, func(t *v12.PriceParams, _ int) biz.Price {
 		r := &biz.Price{}
-		mapPbUpdatePrice2Biz(t, r)
+		mapPbPrice2Biz(t, r)
 		return *r
 	})
 
@@ -411,9 +411,9 @@ func (s *ProductService) MapCreatePbProduct2Biz(ctx context.Context, a *pb.Creat
 		return *r
 	})
 
-	b.Prices = lo.Map(a.Prices, func(t *v12.CreatePriceRequest, _ int) biz.Price {
+	b.Prices = lo.Map(a.Prices, func(t *v12.PriceParams, _ int) biz.Price {
 		r := &biz.Price{}
-		mapPbCreatePrice2Biz(t, r)
+		mapPbPrice2Biz(t, r)
 		return *r
 	})
 

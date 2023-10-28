@@ -161,9 +161,9 @@ func (s *ProductService) MapCreateInternalPbProduct2Biz(ctx context.Context, a *
 		return *r
 	})
 
-	b.Prices = lo.Map(a.Prices, func(t *v12.CreatePriceRequest, _ int) biz.Price {
+	b.Prices = lo.Map(a.Prices, func(t *v12.PriceParams, _ int) biz.Price {
 		r := &biz.Price{}
-		mapPbCreatePrice2Biz(t, r)
+		mapPbPrice2Biz(t, r)
 		return *r
 	})
 

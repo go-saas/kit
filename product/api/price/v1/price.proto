@@ -55,12 +55,30 @@ message PriceCurrencyOption{
 
   repeated  PriceCurrencyOptionTier tiers=200;
 }
+message PriceCurrencyOptionParams{
+  string currency_code=1;
+
+  string default_amount_decimal=100;
+  string discounted_amount_decimal=101;
+  string discount_text=102;
+  bool deny_more_discounts=103;
+
+  repeated PriceCurrencyOptionTierParams tiers=200;
+}
+
 
 message PriceCurrencyOptionTier{
-  int64 flat_amount=1;
-  int64 unit_amount=2;
+  .price.PricePb flat=1;
+  .price.PricePb unit=2;
   int64 up_to=3;
 }
+
+message PriceCurrencyOptionTierParams{
+  string flat_amount_decimal=1;
+  string unit_amount_decimal=2;
+  int64 up_to=3;
+}
+
 
 message PriceRecurring{
   string interval=1 [(validate.rules).string={in:["day","week","month","year"]},(google.api.field_behavior) = REQUIRED];
@@ -71,8 +89,14 @@ message PriceRecurring{
 }
 
 message PriceTier{
-  int64 flat_amount=1[(validate.rules).int64={gt:0}];
-  int64 unit_amount=2[(validate.rules).int64={gt:0}];
+  .price.PricePb flat=1;
+  .price.PricePb unit=2;
+  int64 up_to=3[(validate.rules).int64={gt:0}];
+}
+
+message PriceTierParams{
+  string flat_amount_decimal=1;
+  string unit_amount_decimal=2;
   int64 up_to=3[(validate.rules).int64={gt:0}];
 }
 
@@ -81,26 +105,29 @@ message PriceTransformQuantity{
   string round=2 [(validate.rules).string={in:["up","down"]},(google.api.field_behavior) = REQUIRED];
 }
 
-message CreatePriceRequest{
+message PriceParams{
+
+  string id=1;
 
   // product/product_sku
   string owner_type=50 [(validate.rules).string={in:["product","product_sku"]},(google.api.field_behavior) = REQUIRED];
   string owner_id=51;
 
   string currency_code=99;
-  int64 default_amount=100;
-  int64 discounted_amount=101;
+
+  string default_amount_decimal=100;
+  string discounted_amount_decimal=101;
 
   string discount_text=102;
   bool deny_more_discounts=103;
 
   string billing_scheme=104 [(validate.rules).string={in:["per_unit","tiered"]},(google.api.field_behavior) = REQUIRED];
 
-  repeated PriceCurrencyOptionPrams currency_options=300;
+  repeated PriceCurrencyOptionParams currency_options=300;
 
   PriceRecurring recurring=301;
 
-  repeated PriceTier tiers=302;
+  repeated PriceTierParams tiers=302;
   string tiers_mode=310 [(validate.rules).string={in:["per_unit","tiered"]}];
 
   PriceTransformQuantity transform_quantity=311;
@@ -108,44 +135,13 @@ message CreatePriceRequest{
 }
 
 
-message PriceCurrencyOptionPrams{
-  string currency_code=1;
-
-  int64 default_amount=100;
-  int64 discounted_amount=101;
-  string discount_text=102;
-  bool deny_more_discounts=103;
-
-  repeated PriceCurrencyOptionTier tiers=200;
-}
 
 message UpdatePriceRequest{
-  UpdatePrice price=2 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  PriceParams price=2 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
   google.protobuf.FieldMask update_mask = 3;
 }
 
-message UpdatePrice{
-  string id=1;
 
-  string currency_code=99;
-  int64 default_amount=100;
-  int64 discounted_amount=101;
-
-  string discount_text=102;
-  bool deny_more_discounts=103;
-
-  string billing_scheme=104 [(validate.rules).string={in:["per_unit","tiered"]},(google.api.field_behavior) = REQUIRED];
-
-  repeated PriceCurrencyOptionPrams currency_options=300;
-
-  PriceRecurring recurring=301;
-
-  repeated PriceTier tiers=302;
-  string tiers_mode=310 [(validate.rules).string={in:["per_unit","tiered"]}];
-
-  PriceTransformQuantity transform_quantity=311;
-  string type=312 [(validate.rules).string={in:["one_time","recurring"]},(google.api.field_behavior) = REQUIRED];
-}
 
 message ListPriceRequest{
   int32 page_offset =1;

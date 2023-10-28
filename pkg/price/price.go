@@ -89,9 +89,10 @@ func (p Price) ToPricePb(ctx context.Context) *PricePb {
 		s = p.CurrencyCode
 	}
 	return &PricePb{
-		Amount:       p.Amount,
-		CurrencyCode: p.CurrencyCode,
-		Text:         s + a.Number(),
-		Digits:       int32(d),
+		Amount:        p.Amount,
+		AmountDecimal: a.Number(),
+		CurrencyCode:  p.CurrencyCode,
+		Text:          s + a.Number(),
+		Digits:        int32(d),
 	}
 }

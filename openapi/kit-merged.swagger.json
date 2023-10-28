@@ -4502,7 +4502,7 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "$ref": "#/definitions/v1UpdatePrice"
+                        "$ref": "#/definitions/v1PriceParams"
                       }
                     },
                     "isGiveaway": {
@@ -4669,7 +4669,7 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "$ref": "#/definitions/v1UpdatePrice"
+                        "$ref": "#/definitions/v1PriceParams"
                       }
                     },
                     "isGiveaway": {
@@ -9866,6 +9866,9 @@
         },
         "text": {
           "type": "string"
+        },
+        "amountDecimal": {
+          "type": "string"
         }
       }
     },
@@ -10401,69 +10404,6 @@
         "displayName"
       ]
     },
-    "v1CreatePriceRequest": {
-      "type": "object",
-      "properties": {
-        "ownerType": {
-          "type": "string",
-          "title": "product/product_sku"
-        },
-        "ownerId": {
-          "type": "string"
-        },
-        "currencyCode": {
-          "type": "string"
-        },
-        "defaultAmount": {
-          "type": "string",
-          "format": "int64"
-        },
-        "discountedAmount": {
-          "type": "string",
-          "format": "int64"
-        },
-        "discountText": {
-          "type": "string"
-        },
-        "denyMoreDiscounts": {
-          "type": "boolean"
-        },
-        "billingScheme": {
-          "type": "string"
-        },
-        "currencyOptions": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1PriceCurrencyOptionPrams"
-          }
-        },
-        "recurring": {
-          "$ref": "#/definitions/v1PriceRecurring"
-        },
-        "tiers": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1PriceTier"
-          }
-        },
-        "tiersMode": {
-          "type": "string"
-        },
-        "transformQuantity": {
-          "$ref": "#/definitions/v1PriceTransformQuantity"
-        },
-        "type": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "ownerType",
-        "billingScheme",
-        "type"
-      ]
-    },
     "v1CreateProductCategoryRequest": {
       "type": "object",
       "properties": {
@@ -10563,7 +10503,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1CreatePriceRequest"
+            "$ref": "#/definitions/v1PriceParams"
           }
         },
         "isGiveaway": {
@@ -12446,19 +12386,17 @@
         }
       }
     },
-    "v1PriceCurrencyOptionPrams": {
+    "v1PriceCurrencyOptionParams": {
       "type": "object",
       "properties": {
         "currencyCode": {
           "type": "string"
         },
-        "defaultAmount": {
-          "type": "string",
-          "format": "int64"
+        "defaultAmountDecimal": {
+          "type": "string"
         },
-        "discountedAmount": {
-          "type": "string",
-          "format": "int64"
+        "discountedAmountDecimal": {
+          "type": "string"
         },
         "discountText": {
           "type": "string"
@@ -12470,7 +12408,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1PriceCurrencyOptionTier"
+            "$ref": "#/definitions/v1PriceCurrencyOptionTierParams"
           }
         }
       }
@@ -12478,19 +12416,96 @@
     "v1PriceCurrencyOptionTier": {
       "type": "object",
       "properties": {
-        "flatAmount": {
-          "type": "string",
-          "format": "int64"
+        "flat": {
+          "$ref": "#/definitions/pricePricePb"
         },
-        "unitAmount": {
-          "type": "string",
-          "format": "int64"
+        "unit": {
+          "$ref": "#/definitions/pricePricePb"
         },
         "upTo": {
           "type": "string",
           "format": "int64"
         }
       }
+    },
+    "v1PriceCurrencyOptionTierParams": {
+      "type": "object",
+      "properties": {
+        "flatAmountDecimal": {
+          "type": "string"
+        },
+        "unitAmountDecimal": {
+          "type": "string"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceParams": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "ownerType": {
+          "type": "string",
+          "title": "product/product_sku"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "defaultAmountDecimal": {
+          "type": "string"
+        },
+        "discountedAmountDecimal": {
+          "type": "string"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "billingScheme": {
+          "type": "string"
+        },
+        "currencyOptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOptionParams"
+          }
+        },
+        "recurring": {
+          "$ref": "#/definitions/v1PriceRecurring"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceTierParams"
+          }
+        },
+        "tiersMode": {
+          "type": "string"
+        },
+        "transformQuantity": {
+          "$ref": "#/definitions/v1PriceTransformQuantity"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ownerType",
+        "billingScheme",
+        "type"
+      ]
     },
     "v1PriceRecurring": {
       "type": "object",
@@ -12522,13 +12537,26 @@
     "v1PriceTier": {
       "type": "object",
       "properties": {
-        "flatAmount": {
-          "type": "string",
-          "format": "int64"
+        "flat": {
+          "$ref": "#/definitions/pricePricePb"
         },
-        "unitAmount": {
+        "unit": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "upTo": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "v1PriceTierParams": {
+      "type": "object",
+      "properties": {
+        "flatAmountDecimal": {
+          "type": "string"
+        },
+        "unitAmountDecimal": {
+          "type": "string"
         },
         "upTo": {
           "type": "string",
@@ -13309,64 +13337,6 @@
         "displayName"
       ]
     },
-    "v1UpdatePrice": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "currencyCode": {
-          "type": "string"
-        },
-        "defaultAmount": {
-          "type": "string",
-          "format": "int64"
-        },
-        "discountedAmount": {
-          "type": "string",
-          "format": "int64"
-        },
-        "discountText": {
-          "type": "string"
-        },
-        "denyMoreDiscounts": {
-          "type": "boolean"
-        },
-        "billingScheme": {
-          "type": "string"
-        },
-        "currencyOptions": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1PriceCurrencyOptionPrams"
-          }
-        },
-        "recurring": {
-          "$ref": "#/definitions/v1PriceRecurring"
-        },
-        "tiers": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1PriceTier"
-          }
-        },
-        "tiersMode": {
-          "type": "string"
-        },
-        "transformQuantity": {
-          "$ref": "#/definitions/v1PriceTransformQuantity"
-        },
-        "type": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "billingScheme",
-        "type"
-      ]
-    },
     "v1UpdateProduct": {
       "type": "object",
       "properties": {
@@ -13455,7 +13425,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1UpdatePrice"
+            "$ref": "#/definitions/v1PriceParams"
           }
         },
         "isGiveaway": {

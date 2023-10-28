@@ -64,6 +64,8 @@ func (m *PricePb) validate(all bool) error {
 
 	// no validation rules for Text
 
+	// no validation rules for AmountDecimal
+
 	if len(errors) > 0 {
 		return PricePbMultiError(errors)
 	}

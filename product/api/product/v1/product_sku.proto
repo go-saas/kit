@@ -23,7 +23,7 @@ message CreateProductSku{
   ProductMedia main_pic=13;
   repeated ProductMedia medias=14;
 
-  repeated .product.api.price.v1.CreatePriceRequest prices=26;
+  repeated .product.api.price.v1.PriceParams prices=26;
 
   string barcode=19;
 

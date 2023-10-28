@@ -1178,6 +1178,9 @@
         },
         "text": {
           "type": "string"
+        },
+        "amountDecimal": {
+          "type": "string"
         }
       }
     },
