@@ -17,7 +17,9 @@ func mapBizPrice2Pb(ctx context.Context, a *biz.Price, b *v12.Price) {
 	b.TenantId = a.TenantId.String
 
 	b.Default = price.MustNewFromInt64(a.DefaultAmount, a.CurrencyCode).ToPricePb(ctx)
-	b.Discounted = price.MustNewFromInt64(a.DiscountedAmount, a.CurrencyCode).ToPricePb(ctx)
+	if a.DiscountedAmount != nil {
+		b.Discounted = price.MustNewFromInt64(*a.DiscountedAmount, a.CurrencyCode).ToPricePb(ctx)
+	}
 	b.DiscountText = a.DiscountText
 	b.DenyMoreDiscounts = a.DenyMoreDiscounts
 
@@ -45,7 +47,9 @@ func mapBizPrice2Pb(ctx context.Context, a *biz.Price, b *v12.Price) {
 
 func mapBizCurrencyOption2Pb(ctx context.Context, a *biz.PriceCurrencyOption, b *v12.PriceCurrencyOption) {
 	b.Default = price.MustNewFromInt64(a.DefaultAmount, a.CurrencyCode).ToPricePb(ctx)
-	b.Discounted = price.MustNewFromInt64(a.DiscountedAmount, a.CurrencyCode).ToPricePb(ctx)
+	if a.DiscountedAmount != nil {
+		b.Discounted = price.MustNewFromInt64(*a.DiscountedAmount, a.CurrencyCode).ToPricePb(ctx)
+	}
 	b.DiscountText = a.DiscountText
 	b.DenyMoreDiscounts = a.DenyMoreDiscounts
 	b.CurrencyCode = a.CurrencyCode
@@ -84,7 +88,10 @@ func mapBizPriceTransformQuantity2Pb(a *biz.PriceTransformQuantity, b *v12.Price
 func mapPbPrice2Biz(a *v12.PriceParams, b *biz.Price) {
 
 	b.DefaultAmount = price.MustNew(a.DefaultAmountDecimal, a.CurrencyCode).Amount
-	b.DiscountedAmount = price.MustNew(a.DiscountedAmountDecimal, a.CurrencyCode).Amount
+	if a.DiscountedAmountDecimal != nil {
+		dis := price.MustNew(*a.DiscountedAmountDecimal, a.CurrencyCode).Amount
+		b.DiscountedAmount = &dis
+	}
 
 	b.DiscountText = a.DiscountText
 	b.DenyMoreDiscounts = a.DenyMoreDiscounts
@@ -115,7 +122,10 @@ func mapPbPrice2Biz(a *v12.PriceParams, b *biz.Price) {
 
 func mapPbCurrencyOption2Biz(a *v12.PriceCurrencyOptionParams, b *biz.PriceCurrencyOption) {
 	b.DefaultAmount = price.MustNew(a.DefaultAmountDecimal, a.CurrencyCode).Amount
-	b.DiscountedAmount = price.MustNew(a.DiscountedAmountDecimal, a.CurrencyCode).Amount
+	if a.DiscountedAmountDecimal != nil {
+		dis := price.MustNew(*a.DiscountedAmountDecimal, a.CurrencyCode).Amount
+		b.DiscountedAmount = &dis
+	}
 	b.DiscountText = a.DiscountText
 	b.DenyMoreDiscounts = a.DenyMoreDiscounts
 	b.CurrencyCode = a.CurrencyCode

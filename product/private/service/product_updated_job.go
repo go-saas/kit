@@ -191,7 +191,11 @@ func mapBizPrice2Stripe(stripeProductId string, price *biz.Price) *stripe.PriceP
 			DivideBy: stripe.Int64(price.TransformQuantity.DivideBy),
 			Round:    stripe2.String(string(price.TransformQuantity.Round)),
 		},
-		UnitAmount: stripe.Int64(price.DefaultAmount),
+	}
+	if price.DiscountedAmount != nil {
+		r.UnitAmount = stripe.Int64(*price.DiscountedAmount)
+	} else {
+		r.UnitAmount = stripe.Int64(price.DefaultAmount)
 	}
 	r.CurrencyOptions = lo.SliceToMap(price.CurrencyOptions, func(t biz.PriceCurrencyOption) (string, *stripe.PriceCurrencyOptionsParams) {
 		return strings.ToLower(t.CurrencyCode), &stripe.PriceCurrencyOptionsParams{

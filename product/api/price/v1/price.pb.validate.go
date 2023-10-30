@@ -619,8 +619,6 @@ func (m *PriceCurrencyOptionParams) validate(all bool) error {
 
 	// no validation rules for DefaultAmountDecimal
 
-	// no validation rules for DiscountedAmountDecimal
-
 	// no validation rules for DiscountText
 
 	// no validation rules for DenyMoreDiscounts
@@ -657,6 +655,10 @@ func (m *PriceCurrencyOptionParams) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.DiscountedAmountDecimal != nil {
+		// no validation rules for DiscountedAmountDecimal
 	}
 
 	if len(errors) > 0 {
@@ -1617,8 +1619,6 @@ func (m *PriceParams) validate(all bool) error {
 
 	// no validation rules for DefaultAmountDecimal
 
-	// no validation rules for DiscountedAmountDecimal
-
 	// no validation rules for DiscountText
 
 	// no validation rules for DenyMoreDiscounts
@@ -1780,6 +1780,10 @@ func (m *PriceParams) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.DiscountedAmountDecimal != nil {
+		// no validation rules for DiscountedAmountDecimal
 	}
 
 	if len(errors) > 0 {

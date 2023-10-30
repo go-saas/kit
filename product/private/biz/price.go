@@ -86,7 +86,7 @@ type Price struct {
 	OwnerType string
 
 	DefaultAmount     int64
-	DiscountedAmount  int64
+	DiscountedAmount  *int64
 	CurrencyCode      string
 	DiscountText      string
 	DenyMoreDiscounts bool
@@ -108,7 +108,7 @@ type PriceCurrencyOption struct {
 	PriceId string
 
 	DefaultAmount     int64
-	DiscountedAmount  int64
+	DiscountedAmount  *int64
 	CurrencyCode      string
 	DiscountText      string
 	DenyMoreDiscounts bool

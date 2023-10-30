@@ -60,7 +60,7 @@ message PriceCurrencyOptionParams{
   string currency_code=1;
 
   string default_amount_decimal=100;
-  string discounted_amount_decimal=101;
+  optional string discounted_amount_decimal=101;
   string discount_text=102;
   bool deny_more_discounts=103;
 
@@ -113,7 +113,7 @@ message PriceParams{
   string currency_code=99;
 
   string default_amount_decimal=100;
-  string discounted_amount_decimal=101;
+  optional string discounted_amount_decimal=101;
 
   string discount_text=102;
   bool deny_more_discounts=103;

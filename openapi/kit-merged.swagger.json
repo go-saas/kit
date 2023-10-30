@@ -12396,7 +12396,8 @@
           "type": "string"
         },
         "discountedAmountDecimal": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "discountText": {
           "type": "string"
@@ -12456,7 +12457,8 @@
           "type": "string"
         },
         "discountedAmountDecimal": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "discountText": {
           "type": "string"
