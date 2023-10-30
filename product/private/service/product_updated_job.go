@@ -38,7 +38,6 @@ func NewProductUpdatedTaskHandler(repo biz.ProductRepo, client *stripeclient.API
 		}
 		//change to product tenant
 		ctx = saas.NewCurrentTenant(ctx, msg.TenantId, "")
-
 		var product *biz.Product
 		var err error
 		if !msg.IsDelete {

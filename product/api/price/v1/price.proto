@@ -55,6 +55,7 @@ message PriceCurrencyOption{
 
   repeated  PriceCurrencyOptionTier tiers=200;
 }
+
 message PriceCurrencyOptionParams{
   string currency_code=1;
 
@@ -83,9 +84,9 @@ message PriceCurrencyOptionTierParams{
 message PriceRecurring{
   string interval=1 [(validate.rules).string={in:["day","week","month","year"]},(google.api.field_behavior) = REQUIRED];
   int64  interval_count=2 [(validate.rules).int64={gt:0}];
-  int64 trial_period_days=3[(validate.rules).int64={gt:0}];
-  string aggregate_usage=4 [(validate.rules).string={in:["last_during_period","last_ever","max","sum"]},(google.api.field_behavior) = REQUIRED];
-  string usage_type=5 [(validate.rules).string={in:["licensed","metered"]},(google.api.field_behavior) = REQUIRED];
+  int64 trial_period_days=3[(validate.rules).int64={gte:0}];
+  string aggregate_usage=4 [(validate.rules).string={in:["last_during_period","last_ever","max","sum",""]}];
+  string usage_type=5 [(validate.rules).string={in:["licensed","metered",""]}];
 }
 
 message PriceTier{
@@ -109,10 +110,6 @@ message PriceParams{
 
   string id=1;
 
-  // product/product_sku
-  string owner_type=50 [(validate.rules).string={in:["product","product_sku"]},(google.api.field_behavior) = REQUIRED];
-  string owner_id=51;
-
   string currency_code=99;
 
   string default_amount_decimal=100;
@@ -128,7 +125,7 @@ message PriceParams{
   PriceRecurring recurring=301;
 
   repeated PriceTierParams tiers=302;
-  string tiers_mode=310 [(validate.rules).string={in:["per_unit","tiered"]}];
+  string tiers_mode=310 [(validate.rules).string={in:["graduated","volume",""]}];
 
   PriceTransformQuantity transform_quantity=311;
   string type=312 [(validate.rules).string={in:["one_time","recurring"]},(google.api.field_behavior) = REQUIRED];

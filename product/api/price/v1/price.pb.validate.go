@@ -1054,10 +1054,10 @@ func (m *PriceRecurring) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetTrialPeriodDays() <= 0 {
+	if m.GetTrialPeriodDays() < 0 {
 		err := PriceRecurringValidationError{
 			field:  "TrialPeriodDays",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than or equal to 0",
 		}
 		if !all {
 			return err
@@ -1068,7 +1068,7 @@ func (m *PriceRecurring) validate(all bool) error {
 	if _, ok := _PriceRecurring_AggregateUsage_InLookup[m.GetAggregateUsage()]; !ok {
 		err := PriceRecurringValidationError{
 			field:  "AggregateUsage",
-			reason: "value must be in list [last_during_period last_ever max sum]",
+			reason: "value must be in list [last_during_period last_ever max sum ]",
 		}
 		if !all {
 			return err
@@ -1079,7 +1079,7 @@ func (m *PriceRecurring) validate(all bool) error {
 	if _, ok := _PriceRecurring_UsageType_InLookup[m.GetUsageType()]; !ok {
 		err := PriceRecurringValidationError{
 			field:  "UsageType",
-			reason: "value must be in list [licensed metered]",
+			reason: "value must be in list [licensed metered ]",
 		}
 		if !all {
 			return err
@@ -1177,11 +1177,13 @@ var _PriceRecurring_AggregateUsage_InLookup = map[string]struct{}{
 	"last_ever":          {},
 	"max":                {},
 	"sum":                {},
+	"":                   {},
 }
 
 var _PriceRecurring_UsageType_InLookup = map[string]struct{}{
 	"licensed": {},
 	"metered":  {},
+	"":         {},
 }
 
 // Validate checks the field values on PriceTier with the rules defined in the
@@ -1611,19 +1613,6 @@ func (m *PriceParams) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if _, ok := _PriceParams_OwnerType_InLookup[m.GetOwnerType()]; !ok {
-		err := PriceParamsValidationError{
-			field:  "OwnerType",
-			reason: "value must be in list [product product_sku]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for OwnerId
-
 	// no validation rules for CurrencyCode
 
 	// no validation rules for DefaultAmountDecimal
@@ -1745,7 +1734,7 @@ func (m *PriceParams) validate(all bool) error {
 	if _, ok := _PriceParams_TiersMode_InLookup[m.GetTiersMode()]; !ok {
 		err := PriceParamsValidationError{
 			field:  "TiersMode",
-			reason: "value must be in list [per_unit tiered]",
+			reason: "value must be in list [graduated volume ]",
 		}
 		if !all {
 			return err
@@ -1870,19 +1859,15 @@ var _ interface {
 	ErrorName() string
 } = PriceParamsValidationError{}
 
-var _PriceParams_OwnerType_InLookup = map[string]struct{}{
-	"product":     {},
-	"product_sku": {},
-}
-
 var _PriceParams_BillingScheme_InLookup = map[string]struct{}{
 	"per_unit": {},
 	"tiered":   {},
 }
 
 var _PriceParams_TiersMode_InLookup = map[string]struct{}{
-	"per_unit": {},
-	"tiered":   {},
+	"graduated": {},
+	"volume":    {},
+	"":          {},
 }
 
 var _PriceParams_Type_InLookup = map[string]struct{}{

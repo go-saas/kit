@@ -2477,13 +2477,6 @@
         "id": {
           "type": "string"
         },
-        "ownerType": {
-          "type": "string",
-          "title": "product/product_sku"
-        },
-        "ownerId": {
-          "type": "string"
-        },
         "currencyCode": {
           "type": "string"
         },
@@ -2530,7 +2523,6 @@
         }
       },
       "required": [
-        "ownerType",
         "billingScheme",
         "type"
       ]
@@ -2557,9 +2549,7 @@
         }
       },
       "required": [
-        "interval",
-        "aggregateUsage",
-        "usageType"
+        "interval"
       ]
     },
     "v1PriceTier": {
