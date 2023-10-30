@@ -244,6 +244,13 @@
                     },
                     "active": {
                       "type": "boolean"
+                    },
+                    "prices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1PriceParams"
+                      }
                     }
                   }
                 },
@@ -299,6 +306,13 @@
                     },
                     "active": {
                       "type": "boolean"
+                    },
+                    "prices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1PriceParams"
+                      }
                     }
                   }
                 },
@@ -1448,6 +1462,28 @@
         }
       }
     },
+    "pricePricePb": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "digits": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "text": {
+          "type": "string"
+        },
+        "amountDecimal": {
+          "type": "string"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -1484,6 +1520,13 @@
         },
         "displayName": {
           "type": "string"
+        },
+        "prices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceParams"
+          }
         }
       },
       "required": [
@@ -1684,6 +1727,13 @@
         },
         "productId": {
           "type": "string"
+        },
+        "prices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Price"
+          }
         }
       },
       "required": [
@@ -1704,6 +1754,285 @@
           "$ref": "#/definitions/operationBooleanFilterOperators"
         }
       }
+    },
+    "v1Price": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "ownerType": {
+          "type": "string",
+          "title": "product/product_sku"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "default": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discounted": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "billingScheme": {
+          "type": "string"
+        },
+        "currencyOptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOption"
+          }
+        },
+        "recurring": {
+          "$ref": "#/definitions/v1PriceRecurring"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceTier"
+          }
+        },
+        "tiersMode": {
+          "type": "string"
+        },
+        "transformQuantity": {
+          "$ref": "#/definitions/v1PriceTransformQuantity"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PriceCurrencyOption": {
+      "type": "object",
+      "properties": {
+        "currencyCode": {
+          "type": "string"
+        },
+        "default": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discounted": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOptionTier"
+          }
+        }
+      }
+    },
+    "v1PriceCurrencyOptionParams": {
+      "type": "object",
+      "properties": {
+        "currencyCode": {
+          "type": "string"
+        },
+        "defaultAmountDecimal": {
+          "type": "string"
+        },
+        "discountedAmountDecimal": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOptionTierParams"
+          }
+        }
+      }
+    },
+    "v1PriceCurrencyOptionTier": {
+      "type": "object",
+      "properties": {
+        "flat": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "unit": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceCurrencyOptionTierParams": {
+      "type": "object",
+      "properties": {
+        "flatAmountDecimal": {
+          "type": "string"
+        },
+        "unitAmountDecimal": {
+          "type": "string"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceParams": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "defaultAmountDecimal": {
+          "type": "string"
+        },
+        "discountedAmountDecimal": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "billingScheme": {
+          "type": "string"
+        },
+        "currencyOptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOptionParams"
+          }
+        },
+        "recurring": {
+          "$ref": "#/definitions/v1PriceRecurring"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceTierParams"
+          }
+        },
+        "tiersMode": {
+          "type": "string"
+        },
+        "transformQuantity": {
+          "$ref": "#/definitions/v1PriceTransformQuantity"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "billingScheme",
+        "type"
+      ]
+    },
+    "v1PriceRecurring": {
+      "type": "object",
+      "properties": {
+        "interval": {
+          "type": "string"
+        },
+        "intervalCount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "trialPeriodDays": {
+          "type": "string",
+          "format": "int64"
+        },
+        "aggregateUsage": {
+          "type": "string"
+        },
+        "usageType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "interval"
+      ]
+    },
+    "v1PriceTier": {
+      "type": "object",
+      "properties": {
+        "flat": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "unit": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceTierParams": {
+      "type": "object",
+      "properties": {
+        "flatAmountDecimal": {
+          "type": "string"
+        },
+        "unitAmountDecimal": {
+          "type": "string"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceTransformQuantity": {
+      "type": "object",
+      "properties": {
+        "divideBy": {
+          "type": "string",
+          "format": "int64"
+        },
+        "round": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "round"
+      ]
     },
     "v1Tenant": {
       "type": "object",
@@ -1826,6 +2155,13 @@
         },
         "active": {
           "type": "boolean"
+        },
+        "prices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceParams"
+          }
         }
       },
       "required": [

@@ -58,6 +58,7 @@ func NewPlanService(auth authz.Service, repo biz.PlanRepo, logger klog.Logger, t
 			&v1.CreateInternalProductRequest{
 				Title:      req.DisplayName,
 				ManageInfo: &v1.ProductManageInfo{Managed: true, ManagedBy: string(productbiz.ProductManageProviderInternal)},
+				Prices:     req.Prices,
 			})
 		if err != nil {
 			return nil, err
@@ -141,6 +142,13 @@ func (s *PlanService) GetPlan(ctx context.Context, req *pb.GetPlanRequest) (*pb.
 	}
 	res := &pb.Plan{}
 	MapBizPlan2Pb(g, res)
+
+	product, err := s.productSrv.GetInternalProduct(ctx, &v1.GetInternalProductRequest{Id: g.ProductId})
+	if err != nil {
+		return nil, err
+	}
+	res.Prices = product.Prices
+
 	return res, nil
 }
 
@@ -174,8 +182,13 @@ func (s *PlanService) UpdatePlan(ctx context.Context, req *pb.UpdatePlanRequest)
 
 	//update plan ->update product(2-phase msg)
 	updateReq := &v1.UpdateInternalProductRequest{
-		Product:    &v1.UpdateProduct{Id: g.ProductId, Title: req.Plan.DisplayName, Active: req.Plan.Active},
-		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"title"}},
+		Product: &v1.UpdateProduct{
+			Id:     g.ProductId,
+			Title:  req.Plan.DisplayName,
+			Active: req.Plan.Active,
+			Prices: req.Plan.Prices,
+		},
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"title", "active", "prices"}},
 	}
 	msg := s.txhelper.NewMsgGrpc(ctx, ksuid.New().String()).
 		Add(sapi.WithDiscovery(productapi.ServiceName)+v1.ProductInternalService_UpdateInternalProduct_FullMethodName, updateReq)

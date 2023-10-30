@@ -5734,6 +5734,13 @@
                     },
                     "active": {
                       "type": "boolean"
+                    },
+                    "prices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1PriceParams"
+                      }
                     }
                   }
                 },
@@ -5789,6 +5796,13 @@
                     },
                     "active": {
                       "type": "boolean"
+                    },
+                    "prices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/definitions/v1PriceParams"
+                      }
                     }
                   }
                 },
@@ -10397,6 +10411,13 @@
         },
         "displayName": {
           "type": "string"
+        },
+        "prices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceParams"
+          }
         }
       },
       "required": [
@@ -12271,6 +12292,13 @@
         },
         "productId": {
           "type": "string"
+        },
+        "prices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Price"
+          }
         }
       },
       "required": [
@@ -13322,6 +13350,13 @@
         },
         "active": {
           "type": "boolean"
+        },
+        "prices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceParams"
+          }
         }
       },
       "required": [
