@@ -106,8 +106,10 @@ func mapPbPrice2Biz(a *v12.PriceParams, b *biz.Price) {
 		return *r
 	})
 	b.TiersMode = biz.PriceTiersMode(a.TiersMode)
-	b.TransformQuantity = biz.PriceTransformQuantity{}
-	mapPbPriceTransformQuantity2Biz(a.TransformQuantity, &b.TransformQuantity)
+	if a.TransformQuantity != nil {
+		b.TransformQuantity = biz.PriceTransformQuantity{}
+		mapPbPriceTransformQuantity2Biz(a.TransformQuantity, &b.TransformQuantity)
+	}
 	b.Type = biz.PriceType(a.Type)
 }
 
