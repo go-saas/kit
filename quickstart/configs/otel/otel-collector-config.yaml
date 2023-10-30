@@ -1,3 +1,5 @@
+# https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/58ee30b6bbe6c940690c63d5f8882fc5e7b2895b/examples/demo/otel-collector-config.yaml
+
 receivers:
   otlp:
     protocols:

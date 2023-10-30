@@ -86,7 +86,7 @@ func mapBizPriceTransformQuantity2Pb(a *biz.PriceTransformQuantity, b *v12.Price
 }
 
 func mapPbPrice2Biz(a *v12.PriceParams, b *biz.Price) {
-
+	b.CurrencyCode = a.CurrencyCode
 	b.DefaultAmount = price.MustNew(a.DefaultAmountDecimal, a.CurrencyCode).Amount
 	if a.DiscountedAmountDecimal != nil {
 		dis := price.MustNew(*a.DiscountedAmountDecimal, a.CurrencyCode).Amount
