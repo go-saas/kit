@@ -27,7 +27,7 @@ func NewProductUpdatedTask(prams *biz.ProductUpdatedJobParam) (*asynq.Task, erro
 	if err != nil {
 		return nil, err
 	}
-	return asynq.NewTask(JobTypeProductUpdated, payload, asynq.Queue(string(biz.ConnName))), nil
+	return asynq.NewTask(JobTypeProductUpdated, payload, asynq.Queue(string(biz.ConnName)), asynq.Retention(time.Hour*24*30)), nil
 }
 
 func NewProductUpdatedTaskHandler(repo biz.ProductRepo, client *stripeclient.API) *job.Handler {
@@ -185,30 +185,35 @@ func mapBizPrice2Stripe(stripeProductId string, price *biz.Price) *stripe.PriceP
 		Currency:      stripe2.String(strings.ToLower(price.CurrencyCode)),
 		LookupKey:     stripe2.String(price.ID.String()),
 		Product:       stripe2.String(stripeProductId),
-		Tiers:         nil,
 		TiersMode:     stripe2.String(string(price.TiersMode)),
-		TransformQuantity: &stripe.PriceTransformQuantityParams{
+	}
+	if price.TransformQuantity.DivideBy >= 1 {
+		r.TransformQuantity = &stripe.PriceTransformQuantityParams{
 			DivideBy: stripe.Int64(price.TransformQuantity.DivideBy),
 			Round:    stripe2.String(string(price.TransformQuantity.Round)),
-		},
+		}
 	}
 	if price.DiscountedAmount != nil {
 		r.UnitAmount = stripe.Int64(*price.DiscountedAmount)
 	} else {
 		r.UnitAmount = stripe.Int64(price.DefaultAmount)
 	}
-	r.CurrencyOptions = lo.SliceToMap(price.CurrencyOptions, func(t biz.PriceCurrencyOption) (string, *stripe.PriceCurrencyOptionsParams) {
-		return strings.ToLower(t.CurrencyCode), &stripe.PriceCurrencyOptionsParams{
-			Tiers: lo.Map(t.Tiers, func(t biz.PriceCurrencyOptionTier, _ int) *stripe.PriceCurrencyOptionsTierParams {
-				return &stripe.PriceCurrencyOptionsTierParams{
-					FlatAmount: stripe.Int64(t.FlatAmount),
-					UnitAmount: stripe.Int64(t.UnitAmount),
-					UpTo:       stripe.Int64(t.UpTo),
-				}
-			}),
-			UnitAmount: stripe.Int64(t.DefaultAmount),
-		}
-	})
+
+	if len(price.CurrencyOptions) > 0 {
+		r.CurrencyOptions = lo.SliceToMap(price.CurrencyOptions, func(t biz.PriceCurrencyOption) (string, *stripe.PriceCurrencyOptionsParams) {
+			return strings.ToLower(t.CurrencyCode), &stripe.PriceCurrencyOptionsParams{
+				Tiers: lo.Map(t.Tiers, func(t biz.PriceCurrencyOptionTier, _ int) *stripe.PriceCurrencyOptionsTierParams {
+					return &stripe.PriceCurrencyOptionsTierParams{
+						FlatAmount: stripe.Int64(t.FlatAmount),
+						UnitAmount: stripe.Int64(t.UnitAmount),
+						UpTo:       stripe.Int64(t.UpTo),
+					}
+				}),
+				UnitAmount: stripe.Int64(t.DefaultAmount),
+			}
+		})
+	}
+
 	if price.Recurring != nil {
 		r.Recurring = &stripe.PriceRecurringParams{
 			AggregateUsage:  stripe2.String(string(price.Recurring.AggregateUsage)),
@@ -218,13 +223,15 @@ func mapBizPrice2Stripe(stripeProductId string, price *biz.Price) *stripe.PriceP
 			UsageType:       stripe2.String(string(price.Recurring.UsageType)),
 		}
 	}
-	r.Tiers = lo.Map(price.Tiers, func(t biz.PriceTier, _ int) *stripe.PriceTierParams {
-		return &stripe.PriceTierParams{
-			FlatAmount: stripe.Int64(t.FlatAmount),
-			UnitAmount: stripe.Int64(t.UnitAmount),
-			UpTo:       stripe.Int64(t.UpTo),
-		}
-	})
+	if len(price.Tiers) > 0 {
+		r.Tiers = lo.Map(price.Tiers, func(t biz.PriceTier, _ int) *stripe.PriceTierParams {
+			return &stripe.PriceTierParams{
+				FlatAmount: stripe.Int64(t.FlatAmount),
+				UnitAmount: stripe.Int64(t.UnitAmount),
+				UpTo:       stripe.Int64(t.UpTo),
+			}
+		})
+	}
 
 	return r
 }

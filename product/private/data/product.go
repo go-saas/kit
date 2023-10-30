@@ -33,7 +33,7 @@ func (c *ProductRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.
 		db = db.Preload("MainPic").
 			Preload("Badges").Preload("Categories").Preload("MainCategory").Preload("Keywords").Preload("Attributes")
 		if withDetail {
-			db = db.Preload("Medias").Preload("CampaignRules").Preload("Stocks").Preload("SyncLinks")
+			db = db.Preload("Medias").Preload("CampaignRules").Preload("Stocks").Preload("SyncLinks").Preload("Prices")
 		}
 		if !withDetail {
 			db = db.Omit("Content")
@@ -131,7 +131,7 @@ func (c *ProductRepo) GetSyncLinks(ctx context.Context, product *biz.Product) ([
 
 func (c *ProductRepo) UpdateSyncLink(ctx context.Context, product *biz.Product, syncLink *biz.ProductSyncLink) error {
 	syncLink.ProductId = product.ID.String()
-	if err := c.GetDb(ctx).Select("*").Save(syncLink).Error; err != nil {
+	if err := c.GetDb(ctx).Save(syncLink).Error; err != nil {
 		return err
 	}
 	if product.ManageInfo.Managed && product.ManageInfo.ManagedBy == syncLink.ProviderName {
