@@ -114,7 +114,7 @@ func syncWithStripe(ctx context.Context, client *stripeclient.API, productRepo b
 		stripeProductId = stripeInfo.ProviderId
 		//update product if needed
 		stripeProduct, err := client.Products.Get(stripeProductId, &stripe.ProductParams{})
-		if stripeProduct.Metadata["version"] != jobParams.ProductVersion {
+		if stripeProduct.Metadata["version"] == jobParams.ProductVersion {
 			klog.Infof("product_id:%s version:%s same with stipe, skip updates", product.ID.String(), jobParams.ProductVersion)
 			return nil
 		}
@@ -162,8 +162,8 @@ func syncWithStripe(ctx context.Context, client *stripeclient.API, productRepo b
 			if err != nil {
 				return err
 			}
-
 		} else {
+			// TODO stripe price can not be updated by sdk Received unknown parameters: billing_scheme, currency, unit_amount, product
 			_, err = client.Prices.Update(stripePrice.ID, params)
 			if err != nil {
 				return err
