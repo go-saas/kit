@@ -6,7 +6,9 @@ import (
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/sortable"
 	v1 "github.com/go-saas/kit/product/api/product/v1"
-	"github.com/go-saas/saas/gorm"
+	sgorm "github.com/go-saas/saas/gorm"
+	"gorm.io/gorm"
+
 	concurrency "github.com/goxiaoy/gorm-concurrency/v2"
 	"time"
 )
@@ -16,7 +18,8 @@ type Product struct {
 	kitgorm.UIDBase
 	kitgorm.AuditedModel
 	concurrency.HasVersion
-	gorm.MultiTenancy
+	sgorm.MultiTenancy
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 
 	Title     string       `gorm:"comment:商品标题"`
 	ShortDesc string       `gorm:"comment:商品简述"`
