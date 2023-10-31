@@ -44,6 +44,7 @@ func mapBizPrice2Pb(ctx context.Context, a *biz.Price, b *v12.Price) {
 	b.TransformQuantity = &v12.PriceTransformQuantity{}
 	mapBizPriceTransformQuantity2Pb(&a.TransformQuantity, b.TransformQuantity)
 	b.Type = string(a.Type)
+	b.StripePriceId = a.StripePriceId
 }
 
 func mapBizCurrencyOption2Pb(ctx context.Context, a *biz.PriceCurrencyOption, b *v12.PriceCurrencyOption) {
