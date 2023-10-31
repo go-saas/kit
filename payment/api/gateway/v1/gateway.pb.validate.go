@@ -929,6 +929,8 @@ func (m *GetStripeConfigReply) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for IsTest
+
 	// no validation rules for PublishKey
 
 	if len(errors) > 0 {

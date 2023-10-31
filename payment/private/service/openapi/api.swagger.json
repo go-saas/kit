@@ -209,6 +209,9 @@
     "v1GetStripeConfigReply": {
       "type": "object",
       "properties": {
+        "isTest": {
+          "type": "boolean"
+        },
         "publishKey": {
           "type": "string"
         }

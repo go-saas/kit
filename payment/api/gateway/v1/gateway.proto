@@ -89,5 +89,6 @@ message GetStripeConfigRequest{
 
 }
 message GetStripeConfigReply{
-  string publish_key=1;
+  bool is_test=1;
+  string publish_key=2;
 }
