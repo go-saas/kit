@@ -29,7 +29,7 @@ func migrateDb(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&biz.Brand{}, &biz.BrandTrans{}, &biz.ProductCategory{},
 		&biz.Product{}, &biz.ProductMedia{}, &biz.Badge{}, &biz.Keyword{}, &biz.CampaignRule{},
-		&biz.Price{}, &biz.PriceCurrencyOption{}, &biz.PriceCurrencyOptionTier{}, &biz.PriceRecurring{},
+		&biz.Price{}, &biz.PriceCurrencyOption{}, &biz.PriceCurrencyOptionTier{}, &biz.PriceRecurring{}, &biz.PriceTier{},
 		&biz.ProductAttribute{}, &biz.Stock{},
 		&biz.ProductSku{},
 		&biz.ProductSyncLink{})
