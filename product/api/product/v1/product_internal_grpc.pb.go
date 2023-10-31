@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	ProductInternalService_ListInternalProduct_FullMethodName   = "/product.api.product.v1.ProductInternalService/ListInternalProduct"
 	ProductInternalService_CreateInternalProduct_FullMethodName = "/product.api.product.v1.ProductInternalService/CreateInternalProduct"
 	ProductInternalService_GetInternalProduct_FullMethodName    = "/product.api.product.v1.ProductInternalService/GetInternalProduct"
 	ProductInternalService_UpdateInternalProduct_FullMethodName = "/product.api.product.v1.ProductInternalService/UpdateInternalProduct"
@@ -29,6 +30,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductInternalServiceClient interface {
+	ListInternalProduct(ctx context.Context, in *ListProductRequest, opts ...grpc.CallOption) (*ListProductReply, error)
 	CreateInternalProduct(ctx context.Context, in *CreateInternalProductRequest, opts ...grpc.CallOption) (*Product, error)
 	GetInternalProduct(ctx context.Context, in *GetInternalProductRequest, opts ...grpc.CallOption) (*Product, error)
 	UpdateInternalProduct(ctx context.Context, in *UpdateInternalProductRequest, opts ...grpc.CallOption) (*Product, error)
@@ -41,6 +43,15 @@ type productInternalServiceClient struct {
 
 func NewProductInternalServiceClient(cc grpc.ClientConnInterface) ProductInternalServiceClient {
 	return &productInternalServiceClient{cc}
+}
+
+func (c *productInternalServiceClient) ListInternalProduct(ctx context.Context, in *ListProductRequest, opts ...grpc.CallOption) (*ListProductReply, error) {
+	out := new(ListProductReply)
+	err := c.cc.Invoke(ctx, ProductInternalService_ListInternalProduct_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *productInternalServiceClient) CreateInternalProduct(ctx context.Context, in *CreateInternalProductRequest, opts ...grpc.CallOption) (*Product, error) {
@@ -83,6 +94,7 @@ func (c *productInternalServiceClient) DeleteInternalProduct(ctx context.Context
 // All implementations should embed UnimplementedProductInternalServiceServer
 // for forward compatibility
 type ProductInternalServiceServer interface {
+	ListInternalProduct(context.Context, *ListProductRequest) (*ListProductReply, error)
 	CreateInternalProduct(context.Context, *CreateInternalProductRequest) (*Product, error)
 	GetInternalProduct(context.Context, *GetInternalProductRequest) (*Product, error)
 	UpdateInternalProduct(context.Context, *UpdateInternalProductRequest) (*Product, error)
@@ -93,6 +105,9 @@ type ProductInternalServiceServer interface {
 type UnimplementedProductInternalServiceServer struct {
 }
 
+func (UnimplementedProductInternalServiceServer) ListInternalProduct(context.Context, *ListProductRequest) (*ListProductReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListInternalProduct not implemented")
+}
 func (UnimplementedProductInternalServiceServer) CreateInternalProduct(context.Context, *CreateInternalProductRequest) (*Product, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateInternalProduct not implemented")
 }
@@ -115,6 +130,24 @@ type UnsafeProductInternalServiceServer interface {
 
 func RegisterProductInternalServiceServer(s grpc.ServiceRegistrar, srv ProductInternalServiceServer) {
 	s.RegisterService(&ProductInternalService_ServiceDesc, srv)
+}
+
+func _ProductInternalService_ListInternalProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductInternalServiceServer).ListInternalProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductInternalService_ListInternalProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductInternalServiceServer).ListInternalProduct(ctx, req.(*ListProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ProductInternalService_CreateInternalProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -196,6 +229,10 @@ var ProductInternalService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "product.api.product.v1.ProductInternalService",
 	HandlerType: (*ProductInternalServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListInternalProduct",
+			Handler:    _ProductInternalService_ListInternalProduct_Handler,
+		},
 		{
 			MethodName: "CreateInternalProduct",
 			Handler:    _ProductInternalService_CreateInternalProduct_Handler,

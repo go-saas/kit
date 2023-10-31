@@ -1822,6 +1822,10 @@
         },
         "type": {
           "type": "string"
+        },
+        "stripePriceId": {
+          "type": "string",
+          "x-nullable": true
         }
       }
     },

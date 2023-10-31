@@ -804,3 +804,209 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CreateStripePaymentIntentReplyValidationError{}
+
+// Validate checks the field values on GetStripeConfigRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetStripeConfigRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetStripeConfigRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetStripeConfigRequestMultiError, or nil if none found.
+func (m *GetStripeConfigRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetStripeConfigRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetStripeConfigRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetStripeConfigRequestMultiError is an error wrapping multiple validation
+// errors returned by GetStripeConfigRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetStripeConfigRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetStripeConfigRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetStripeConfigRequestMultiError) AllErrors() []error { return m }
+
+// GetStripeConfigRequestValidationError is the validation error returned by
+// GetStripeConfigRequest.Validate if the designated constraints aren't met.
+type GetStripeConfigRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetStripeConfigRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetStripeConfigRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetStripeConfigRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetStripeConfigRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetStripeConfigRequestValidationError) ErrorName() string {
+	return "GetStripeConfigRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetStripeConfigRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetStripeConfigRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetStripeConfigRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetStripeConfigRequestValidationError{}
+
+// Validate checks the field values on GetStripeConfigReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetStripeConfigReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetStripeConfigReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetStripeConfigReplyMultiError, or nil if none found.
+func (m *GetStripeConfigReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetStripeConfigReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PublishKey
+
+	if len(errors) > 0 {
+		return GetStripeConfigReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetStripeConfigReplyMultiError is an error wrapping multiple validation
+// errors returned by GetStripeConfigReply.ValidateAll() if the designated
+// constraints aren't met.
+type GetStripeConfigReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetStripeConfigReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetStripeConfigReplyMultiError) AllErrors() []error { return m }
+
+// GetStripeConfigReplyValidationError is the validation error returned by
+// GetStripeConfigReply.Validate if the designated constraints aren't met.
+type GetStripeConfigReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetStripeConfigReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetStripeConfigReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetStripeConfigReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetStripeConfigReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetStripeConfigReplyValidationError) ErrorName() string {
+	return "GetStripeConfigReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetStripeConfigReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetStripeConfigReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetStripeConfigReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetStripeConfigReplyValidationError{}

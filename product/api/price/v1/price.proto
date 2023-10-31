@@ -44,6 +44,7 @@ message Price{
   PriceTransformQuantity transform_quantity=311;
   string type=312;
 
+  optional string stripe_price_id=1000;
 }
 
 message PriceCurrencyOption{

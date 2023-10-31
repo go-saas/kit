@@ -101,6 +101,8 @@ type Price struct {
 	TransformQuantity PriceTransformQuantity `gorm:"embedded"`
 
 	Type PriceType
+
+	StripePriceId *string
 }
 
 type PriceCurrencyOption struct {

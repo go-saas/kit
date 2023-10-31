@@ -76,17 +76,39 @@ func (c *PaymentGatewayServiceHTTPClientImpl) GetPaymentMethod(ctx context.Conte
 }
 
 const OperationStripePaymentGatewayServiceCreateStripePaymentIntent = "/payment.api.gateway.v1.StripePaymentGatewayService/CreateStripePaymentIntent"
+const OperationStripePaymentGatewayServiceGetStripeConfig = "/payment.api.gateway.v1.StripePaymentGatewayService/GetStripeConfig"
 const OperationStripePaymentGatewayServiceStripeWebhook = "/payment.api.gateway.v1.StripePaymentGatewayService/StripeWebhook"
 
 type StripePaymentGatewayServiceHTTPServer interface {
 	CreateStripePaymentIntent(context.Context, *CreateStripePaymentIntentRequest) (*CreateStripePaymentIntentReply, error)
+	GetStripeConfig(context.Context, *GetStripeConfigRequest) (*GetStripeConfigReply, error)
 	StripeWebhook(context.Context, *emptypb.Empty) (*StripeWebhookReply, error)
 }
 
 func RegisterStripePaymentGatewayServiceHTTPServer(s *http.Server, srv StripePaymentGatewayServiceHTTPServer) {
 	r := s.Route("/")
+	r.GET("/v1/payment/stripe/config", _StripePaymentGatewayService_GetStripeConfig0_HTTP_Handler(srv))
 	r.POST("/v1/payment/stripe/intent", _StripePaymentGatewayService_CreateStripePaymentIntent0_HTTP_Handler(srv))
 	r.POST("/v1/payment/stripe/webhook", _StripePaymentGatewayService_StripeWebhook0_HTTP_Handler(srv))
+}
+
+func _StripePaymentGatewayService_GetStripeConfig0_HTTP_Handler(srv StripePaymentGatewayServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetStripeConfigRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStripePaymentGatewayServiceGetStripeConfig)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetStripeConfig(ctx, req.(*GetStripeConfigRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetStripeConfigReply)
+		return ctx.Result(200, reply)
+	}
 }
 
 func _StripePaymentGatewayService_CreateStripePaymentIntent0_HTTP_Handler(srv StripePaymentGatewayServiceHTTPServer) func(ctx http.Context) error {
@@ -135,6 +157,7 @@ func _StripePaymentGatewayService_StripeWebhook0_HTTP_Handler(srv StripePaymentG
 
 type StripePaymentGatewayServiceHTTPClient interface {
 	CreateStripePaymentIntent(ctx context.Context, req *CreateStripePaymentIntentRequest, opts ...http.CallOption) (rsp *CreateStripePaymentIntentReply, err error)
+	GetStripeConfig(ctx context.Context, req *GetStripeConfigRequest, opts ...http.CallOption) (rsp *GetStripeConfigReply, err error)
 	StripeWebhook(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *StripeWebhookReply, err error)
 }
 
@@ -153,6 +176,19 @@ func (c *StripePaymentGatewayServiceHTTPClientImpl) CreateStripePaymentIntent(ct
 	opts = append(opts, http.Operation(OperationStripePaymentGatewayServiceCreateStripePaymentIntent))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *StripePaymentGatewayServiceHTTPClientImpl) GetStripeConfig(ctx context.Context, in *GetStripeConfigRequest, opts ...http.CallOption) (*GetStripeConfigReply, error) {
+	var out GetStripeConfigReply
+	pattern := "/v1/payment/stripe/config"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationStripePaymentGatewayServiceGetStripeConfig))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

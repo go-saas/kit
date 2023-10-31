@@ -2693,6 +2693,28 @@
         ]
       }
     },
+    "/v1/payment/stripe/config": {
+      "get": {
+        "operationId": "StripePaymentGatewayService_GetStripeConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetStripeConfigReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "StripePaymentGatewayService"
+        ]
+      }
+    },
     "/v1/payment/stripe/intent": {
       "post": {
         "operationId": "StripePaymentGatewayService_CreateStripePaymentIntent",
@@ -11060,6 +11082,14 @@
         }
       }
     },
+    "v1GetStripeConfigReply": {
+      "type": "object",
+      "properties": {
+        "publishKey": {
+          "type": "string"
+        }
+      }
+    },
     "v1GetUserRoleReply": {
       "type": "object",
       "properties": {
@@ -12387,6 +12417,10 @@
         },
         "type": {
           "type": "string"
+        },
+        "stripePriceId": {
+          "type": "string",
+          "x-nullable": true
         }
       }
     },

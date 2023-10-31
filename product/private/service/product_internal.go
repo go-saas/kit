@@ -11,6 +11,33 @@ import (
 	"github.com/samber/lo"
 )
 
+func (s *ProductService) ListInternalProduct(ctx context.Context, req *pb.ListProductRequest) (*pb.ListProductReply, error) {
+	if err := sapi.ErrIfUntrusted(ctx, s.trusted); err != nil {
+		return nil, err
+	}
+	ret := &pb.ListProductReply{}
+
+	totalCount, filterCount, err := s.repo.Count(ctx, req)
+	ret.TotalSize = int32(totalCount)
+	ret.FilterSize = int32(filterCount)
+
+	if err != nil {
+		return ret, err
+	}
+	items, err := s.repo.List(ctx, req)
+	if err != nil {
+		return ret, err
+	}
+	rItems := lo.Map(items, func(g *biz.Product, _ int) *pb.Product {
+		b := &pb.Product{}
+		s.MapBizProduct2Pb(ctx, g, b)
+		return b
+	})
+
+	ret.Items = rItems
+	return ret, nil
+}
+
 func (s *ProductService) CreateInternalProduct(ctx context.Context, req *pb.CreateInternalProductRequest) (*pb.Product, error) {
 	if err := sapi.ErrIfUntrusted(ctx, s.trusted); err != nil {
 		return nil, err

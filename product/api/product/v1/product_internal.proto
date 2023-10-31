@@ -18,6 +18,9 @@ import "product/api/price/v1/price.proto";
 option go_package = "github.com/go-saas/kit/product/api/product/v1;v1";
 
 service ProductInternalService{
+  rpc ListInternalProduct (ListProductRequest) returns (ListProductReply){
+  }
+
   rpc CreateInternalProduct(CreateInternalProductRequest)returns(.product.api.product.v1.Product){
 
   }

@@ -318,6 +318,10 @@ func (m *Price) validate(all bool) error {
 
 	// no validation rules for Type
 
+	if m.StripePriceId != nil {
+		// no validation rules for StripePriceId
+	}
+
 	if len(errors) > 0 {
 		return PriceMultiError(errors)
 	}

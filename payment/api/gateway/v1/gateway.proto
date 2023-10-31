@@ -25,6 +25,13 @@ service PaymentGatewayService{
 
 
 service StripePaymentGatewayService{
+  rpc GetStripeConfig(GetStripeConfigRequest)returns(GetStripeConfigReply){
+    option (google.api.http) = {
+      get: "/v1/payment/stripe/config",
+    };
+  }
+
+
   rpc CreateStripePaymentIntent (CreateStripePaymentIntentRequest) returns (CreateStripePaymentIntentReply){
     option (google.api.http) = {
       post: "/v1/payment/stripe/intent",
@@ -76,4 +83,11 @@ message CreateStripePaymentIntentReply{
   string payment_intent=1;
   string  ephemeral_key=2;
   string customer_id=3;
+}
+
+message GetStripeConfigRequest{
+
+}
+message GetStripeConfigReply{
+  string publish_key=1;
 }

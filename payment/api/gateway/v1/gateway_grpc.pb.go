@@ -108,6 +108,7 @@ var PaymentGatewayService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	StripePaymentGatewayService_GetStripeConfig_FullMethodName           = "/payment.api.gateway.v1.StripePaymentGatewayService/GetStripeConfig"
 	StripePaymentGatewayService_CreateStripePaymentIntent_FullMethodName = "/payment.api.gateway.v1.StripePaymentGatewayService/CreateStripePaymentIntent"
 	StripePaymentGatewayService_StripeWebhook_FullMethodName             = "/payment.api.gateway.v1.StripePaymentGatewayService/StripeWebhook"
 )
@@ -116,6 +117,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StripePaymentGatewayServiceClient interface {
+	GetStripeConfig(ctx context.Context, in *GetStripeConfigRequest, opts ...grpc.CallOption) (*GetStripeConfigReply, error)
 	CreateStripePaymentIntent(ctx context.Context, in *CreateStripePaymentIntentRequest, opts ...grpc.CallOption) (*CreateStripePaymentIntentReply, error)
 	StripeWebhook(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*StripeWebhookReply, error)
 }
@@ -126,6 +128,15 @@ type stripePaymentGatewayServiceClient struct {
 
 func NewStripePaymentGatewayServiceClient(cc grpc.ClientConnInterface) StripePaymentGatewayServiceClient {
 	return &stripePaymentGatewayServiceClient{cc}
+}
+
+func (c *stripePaymentGatewayServiceClient) GetStripeConfig(ctx context.Context, in *GetStripeConfigRequest, opts ...grpc.CallOption) (*GetStripeConfigReply, error) {
+	out := new(GetStripeConfigReply)
+	err := c.cc.Invoke(ctx, StripePaymentGatewayService_GetStripeConfig_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *stripePaymentGatewayServiceClient) CreateStripePaymentIntent(ctx context.Context, in *CreateStripePaymentIntentRequest, opts ...grpc.CallOption) (*CreateStripePaymentIntentReply, error) {
@@ -150,6 +161,7 @@ func (c *stripePaymentGatewayServiceClient) StripeWebhook(ctx context.Context, i
 // All implementations should embed UnimplementedStripePaymentGatewayServiceServer
 // for forward compatibility
 type StripePaymentGatewayServiceServer interface {
+	GetStripeConfig(context.Context, *GetStripeConfigRequest) (*GetStripeConfigReply, error)
 	CreateStripePaymentIntent(context.Context, *CreateStripePaymentIntentRequest) (*CreateStripePaymentIntentReply, error)
 	StripeWebhook(context.Context, *emptypb.Empty) (*StripeWebhookReply, error)
 }
@@ -158,6 +170,9 @@ type StripePaymentGatewayServiceServer interface {
 type UnimplementedStripePaymentGatewayServiceServer struct {
 }
 
+func (UnimplementedStripePaymentGatewayServiceServer) GetStripeConfig(context.Context, *GetStripeConfigRequest) (*GetStripeConfigReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStripeConfig not implemented")
+}
 func (UnimplementedStripePaymentGatewayServiceServer) CreateStripePaymentIntent(context.Context, *CreateStripePaymentIntentRequest) (*CreateStripePaymentIntentReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateStripePaymentIntent not implemented")
 }
@@ -174,6 +189,24 @@ type UnsafeStripePaymentGatewayServiceServer interface {
 
 func RegisterStripePaymentGatewayServiceServer(s grpc.ServiceRegistrar, srv StripePaymentGatewayServiceServer) {
 	s.RegisterService(&StripePaymentGatewayService_ServiceDesc, srv)
+}
+
+func _StripePaymentGatewayService_GetStripeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStripeConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StripePaymentGatewayServiceServer).GetStripeConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StripePaymentGatewayService_GetStripeConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StripePaymentGatewayServiceServer).GetStripeConfig(ctx, req.(*GetStripeConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _StripePaymentGatewayService_CreateStripePaymentIntent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -219,6 +252,10 @@ var StripePaymentGatewayService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "payment.api.gateway.v1.StripePaymentGatewayService",
 	HandlerType: (*StripePaymentGatewayServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetStripeConfig",
+			Handler:    _StripePaymentGatewayService_GetStripeConfig_Handler,
+		},
 		{
 			MethodName: "CreateStripePaymentIntent",
 			Handler:    _StripePaymentGatewayService_CreateStripePaymentIntent_Handler,

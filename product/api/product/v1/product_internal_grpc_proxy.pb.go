@@ -27,6 +27,9 @@ func NewProductInternalServiceClientProxy(cc ProductInternalServiceClient) Produ
 	return &productInternalServiceClientProxy{cc}
 }
 
+func (c *productInternalServiceClientProxy) ListInternalProduct(ctx context.Context, in *ListProductRequest) (*ListProductReply, error) {
+	return c.cc.ListInternalProduct(ctx, in)
+}
 func (c *productInternalServiceClientProxy) CreateInternalProduct(ctx context.Context, in *CreateInternalProductRequest) (*Product, error) {
 	return c.cc.CreateInternalProduct(ctx, in)
 }

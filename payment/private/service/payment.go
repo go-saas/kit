@@ -58,6 +58,10 @@ func (s *PaymentService) GetPaymentMethod(ctx context.Context, req *pb.GetPaymen
 	return &pb.GetPaymentMethodReply{}, nil
 }
 
+func (s *PaymentService) GetStripeConfig(ctx context.Context, req *pb.GetStripeConfigRequest) (*pb.GetStripeConfigReply, error) {
+	return &pb.GetStripeConfigReply{PublishKey: s.c.PublishKey}, nil
+}
+
 func (s *PaymentService) CreateStripePaymentIntent(ctx context.Context, req *pb.CreateStripePaymentIntentRequest) (*pb.CreateStripePaymentIntentReply, error) {
 	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {

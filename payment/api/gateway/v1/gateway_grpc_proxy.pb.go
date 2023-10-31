@@ -43,6 +43,9 @@ func NewStripePaymentGatewayServiceClientProxy(cc StripePaymentGatewayServiceCli
 	return &stripePaymentGatewayServiceClientProxy{cc}
 }
 
+func (c *stripePaymentGatewayServiceClientProxy) GetStripeConfig(ctx context.Context, in *GetStripeConfigRequest) (*GetStripeConfigReply, error) {
+	return c.cc.GetStripeConfig(ctx, in)
+}
 func (c *stripePaymentGatewayServiceClientProxy) CreateStripePaymentIntent(ctx context.Context, in *CreateStripePaymentIntentRequest) (*CreateStripePaymentIntentReply, error) {
 	return c.cc.CreateStripePaymentIntent(ctx, in)
 }

@@ -260,11 +260,19 @@ func (s *PlanService) GetAvailablePlans(ctx context.Context, req *pb.GetAvailabl
 	if err != nil {
 		return nil, err
 	}
-	var retItems = lo.Map(items, func(a *biz.Plan, _ int) *pb.Plan {
+
+	var retItems []*pb.Plan
+	for _, a := range items {
 		ret := &pb.Plan{}
 		MapBizPlan2Pb(a, ret)
-		return ret
-	})
+		//get prices of each plan
+		product, err := s.productSrv.GetInternalProduct(ctx, &v1.GetInternalProductRequest{Id: ret.ProductId})
+		if err != nil {
+			return nil, err
+		}
+		ret.Prices = product.Prices
+		retItems = append(retItems, ret)
+	}
 	return &pb.GetAvailablePlansReply{Items: retItems}, nil
 }
 
@@ -274,6 +282,7 @@ func MapBizPlan2Pb(a *biz.Plan, b *pb.Plan) {
 	b.Active = a.Active
 	b.CreatedAt = timestamppb.New(a.CreatedAt)
 	b.UpdatedAt = timestamppb.New(a.UpdatedAt)
+	b.ProductId = a.ProductId
 }
 
 func MapUpdatePbPlan2Biz(a *pb.UpdatePlan, b *biz.Plan) {

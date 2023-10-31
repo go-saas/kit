@@ -5,6 +5,7 @@ import (
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-saas/kit/pkg/job"
+	"github.com/go-saas/kit/pkg/query"
 	stripe2 "github.com/go-saas/kit/pkg/stripe"
 	"github.com/go-saas/kit/product/private/biz"
 	"github.com/go-saas/saas"
@@ -14,6 +15,7 @@ import (
 	stripeclient "github.com/stripe/stripe-go/v76/client"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"strings"
 	"time"
 )
@@ -30,7 +32,7 @@ func NewProductUpdatedTask(prams *biz.ProductUpdatedJobParam) (*asynq.Task, erro
 	return asynq.NewTask(JobTypeProductUpdated, payload, asynq.Queue(string(biz.ConnName)), asynq.Retention(time.Hour*24*30)), nil
 }
 
-func NewProductUpdatedTaskHandler(repo biz.ProductRepo, client *stripeclient.API) *job.Handler {
+func NewProductUpdatedTaskHandler(productRepo biz.ProductRepo, priceRepo biz.PriceRepo, client *stripeclient.API) *job.Handler {
 	return job.NewHandlerFunc(JobTypeProductUpdated, func(ctx context.Context, t *asynq.Task) error {
 		msg := &biz.ProductUpdatedJobParam{}
 		if err := protojson.Unmarshal(t.Payload(), msg); err != nil {
@@ -41,7 +43,7 @@ func NewProductUpdatedTaskHandler(repo biz.ProductRepo, client *stripeclient.API
 		var product *biz.Product
 		var err error
 		if !msg.IsDelete {
-			product, err = repo.Get(ctx, msg.ProductId)
+			product, err = productRepo.Get(ctx, msg.ProductId)
 			if err != nil {
 				return err
 			}
@@ -56,14 +58,14 @@ func NewProductUpdatedTaskHandler(repo biz.ProductRepo, client *stripeclient.API
 		group, ctx := errgroup.WithContext(ctx)
 		//sync with stripe
 		group.Go(func() error {
-			return syncWithStripe(ctx, client, repo, product, msg)
+			return syncWithStripe(ctx, client, productRepo, priceRepo, product, msg)
 		})
 		return group.Wait()
 
 	})
 }
 
-func syncWithStripe(ctx context.Context, client *stripeclient.API, repo biz.ProductRepo, product *biz.Product, jobParams *biz.ProductUpdatedJobParam) error {
+func syncWithStripe(ctx context.Context, client *stripeclient.API, productRepo biz.ProductRepo, priceRepo biz.PriceRepo, product *biz.Product, jobParams *biz.ProductUpdatedJobParam) error {
 	if client == nil {
 		return nil
 	}
@@ -80,7 +82,7 @@ func syncWithStripe(ctx context.Context, client *stripeclient.API, repo biz.Prod
 		return nil
 	}
 
-	links, err := repo.GetSyncLinks(ctx, product)
+	links, err := productRepo.GetSyncLinks(ctx, product)
 	if err != nil {
 		return err
 	}
@@ -97,7 +99,7 @@ func syncWithStripe(ctx context.Context, client *stripeclient.API, repo biz.Prod
 		}
 		stripeProductId = stripeProduct.ID
 		t := time.Now()
-		err = repo.UpdateSyncLink(ctx, product, &biz.ProductSyncLink{
+		err = productRepo.UpdateSyncLink(ctx, product, &biz.ProductSyncLink{
 			ProviderName: string(biz.ProductManageProviderStripe),
 			ProviderId:   stripeProductId,
 			LastSyncTime: &t,
@@ -153,12 +155,20 @@ func syncWithStripe(ctx context.Context, client *stripeclient.API, repo biz.Prod
 		params := mapBizPrice2Stripe(stripeProductId, &price)
 		if !ok {
 			//create
-			_, err = client.Prices.New(params)
+			stripePrice, err = client.Prices.New(params)
 			if err != nil {
 				return err
 			}
+
 		} else {
 			_, err = client.Prices.Update(stripePrice.ID, params)
+			if err != nil {
+				return err
+			}
+		}
+		if price.StripePriceId == nil {
+			price.StripePriceId = &stripePrice.ID
+			err = priceRepo.Update(ctx, price.ID.String(), &price, query.NewField(&fieldmaskpb.FieldMask{Paths: []string{"stripe_price_id"}}))
 			if err != nil {
 				return err
 			}
