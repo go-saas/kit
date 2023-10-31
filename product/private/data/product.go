@@ -33,7 +33,8 @@ func (c *ProductRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.
 		db = db.Preload("MainPic").
 			Preload("Badges").Preload("Categories").Preload("MainCategory").Preload("Keywords").Preload("Attributes")
 		if withDetail {
-			db = db.Preload("Medias").Preload("CampaignRules").Preload("Stocks").Preload("SyncLinks").Preload("Prices")
+			db = db.Preload("Medias").Preload("CampaignRules").Preload("Stocks").Preload("SyncLinks").
+				Preload("Prices").Preload("Prices.CurrencyOptions").Preload("Prices.CurrencyOptions.Tiers").Preload("Prices.Recurring").Preload("Prices.Tiers")
 		}
 		if !withDetail {
 			db = db.Omit("Content")

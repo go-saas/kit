@@ -1779,6 +1779,9 @@
         "ownerId": {
           "type": "string"
         },
+        "currencyCode": {
+          "type": "string"
+        },
         "default": {
           "$ref": "#/definitions/pricePricePb"
         },

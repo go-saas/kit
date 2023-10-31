@@ -122,6 +122,8 @@ func (m *Price) validate(all bool) error {
 
 	// no validation rules for OwnerId
 
+	// no validation rules for CurrencyCode
+
 	if all {
 		switch v := interface{}(m.GetDefault()).(type) {
 		case interface{ ValidateAll() error }:

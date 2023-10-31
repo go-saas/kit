@@ -25,6 +25,7 @@ message Price{
   string owner_type=50;
   string owner_id=51;
 
+  string currency_code=99;
   .price.PricePb default=100;
   .price.PricePb discounted=101;
 
