@@ -43,5 +43,6 @@ bin/
 buf/*
 !buf/buf.yaml
 
-
-pulsardata/
+# Local config files
+*.local.yml
+*.local.yaml

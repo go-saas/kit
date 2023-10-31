@@ -9,6 +9,7 @@ import (
 	stripe2 "github.com/go-saas/kit/pkg/stripe"
 	"github.com/go-saas/kit/product/private/biz"
 	"github.com/go-saas/saas"
+	"github.com/go-saas/uow"
 	"github.com/hibiken/asynq"
 	"github.com/samber/lo"
 	"github.com/stripe/stripe-go/v76"
@@ -32,36 +33,38 @@ func NewProductUpdatedTask(prams *biz.ProductUpdatedJobParam) (*asynq.Task, erro
 	return asynq.NewTask(JobTypeProductUpdated, payload, asynq.Queue(string(biz.ConnName)), asynq.Retention(time.Hour*24*30)), nil
 }
 
-func NewProductUpdatedTaskHandler(productRepo biz.ProductRepo, priceRepo biz.PriceRepo, client *stripeclient.API) *job.Handler {
+func NewProductUpdatedTaskHandler(productRepo biz.ProductRepo, priceRepo biz.PriceRepo, uowMgr uow.Manager, client *stripeclient.API) *job.Handler {
 	return job.NewHandlerFunc(JobTypeProductUpdated, func(ctx context.Context, t *asynq.Task) error {
-		msg := &biz.ProductUpdatedJobParam{}
-		if err := protojson.Unmarshal(t.Payload(), msg); err != nil {
-			return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
-		}
-		//change to product tenant
-		ctx = saas.NewCurrentTenant(ctx, msg.TenantId, "")
-		var product *biz.Product
-		var err error
-		if !msg.IsDelete {
-			product, err = productRepo.Get(ctx, msg.ProductId)
-			if err != nil {
-				return err
+		return uowMgr.WithNew(ctx, func(ctx context.Context) error {
+			msg := &biz.ProductUpdatedJobParam{}
+			if err := protojson.Unmarshal(t.Payload(), msg); err != nil {
+				return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
 			}
-			if product == nil {
-				return fmt.Errorf("can not find %s: %w", msg.ProductId, asynq.SkipRetry)
+			//change to product tenant
+			ctx = saas.NewCurrentTenant(ctx, msg.TenantId, "")
+			var product *biz.Product
+			var err error
+			if !msg.IsDelete {
+				product, err = productRepo.Get(ctx, msg.ProductId)
+				if err != nil {
+					return err
+				}
+				if product == nil {
+					return fmt.Errorf("can not find %s: %w", msg.ProductId, asynq.SkipRetry)
+				}
+				if product.Version.String != msg.ProductVersion {
+					return fmt.Errorf("product:%s version mismatch, should be:%s, got:%s: %w", msg.ProductId, msg.ProductVersion, product.Version.String, asynq.SkipRetry)
+				}
 			}
-			if product.Version.String != msg.ProductVersion {
-				return fmt.Errorf("product:%s version mismatch, should be:%s, got:%s: %w", msg.ProductId, msg.ProductVersion, product.Version.String, asynq.SkipRetry)
-			}
-		}
 
-		group, ctx := errgroup.WithContext(ctx)
-		//sync with stripe
-		group.Go(func() error {
-			return syncWithStripe(ctx, client, productRepo, priceRepo, product, msg)
+			group, ctx := errgroup.WithContext(ctx)
+			//sync with stripe
+			group.Go(func() error {
+				return syncWithStripe(ctx, client, productRepo, priceRepo, product, msg)
+			})
+			return group.Wait()
+
 		})
-		return group.Wait()
-
 	})
 }
 
@@ -211,16 +214,19 @@ func mapBizPrice2Stripe(stripeProductId string, price *biz.Price) *stripe.PriceP
 
 	if len(price.CurrencyOptions) > 0 {
 		r.CurrencyOptions = lo.SliceToMap(price.CurrencyOptions, func(t biz.PriceCurrencyOption) (string, *stripe.PriceCurrencyOptionsParams) {
-			return strings.ToLower(t.CurrencyCode), &stripe.PriceCurrencyOptionsParams{
-				Tiers: lo.Map(t.Tiers, func(t biz.PriceCurrencyOptionTier, _ int) *stripe.PriceCurrencyOptionsTierParams {
+			cop := &stripe.PriceCurrencyOptionsParams{
+				UnitAmount: stripe.Int64(t.DefaultAmount),
+			}
+			if len(t.Tiers) > 0 {
+				cop.Tiers = lo.Map(t.Tiers, func(t biz.PriceCurrencyOptionTier, _ int) *stripe.PriceCurrencyOptionsTierParams {
 					return &stripe.PriceCurrencyOptionsTierParams{
 						FlatAmount: stripe.Int64(t.FlatAmount),
 						UnitAmount: stripe.Int64(t.UnitAmount),
 						UpTo:       stripe.Int64(t.UpTo),
 					}
-				}),
-				UnitAmount: stripe.Int64(t.DefaultAmount),
+				})
 			}
+			return strings.ToLower(t.CurrencyCode), cop
 		})
 	}
 
