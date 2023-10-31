@@ -59,7 +59,7 @@ func (s *PaymentService) GetPaymentMethod(ctx context.Context, req *pb.GetPaymen
 }
 
 func (s *PaymentService) GetStripeConfig(ctx context.Context, req *pb.GetStripeConfigRequest) (*pb.GetStripeConfigReply, error) {
-	return &pb.GetStripeConfigReply{IsTest: s.c.IsTest, PublishKey: s.c.PublishKey}, nil
+	return &pb.GetStripeConfigReply{IsTest: s.c.IsTest, PublishKey: s.c.PublishKey, PriceTables: s.c.PriceTables}, nil
 }
 
 func (s *PaymentService) CreateStripePaymentIntent(ctx context.Context, req *pb.CreateStripePaymentIntentRequest) (*pb.CreateStripePaymentIntentReply, error) {

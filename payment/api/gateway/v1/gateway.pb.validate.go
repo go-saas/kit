@@ -933,6 +933,8 @@ func (m *GetStripeConfigReply) validate(all bool) error {
 
 	// no validation rules for PublishKey
 
+	// no validation rules for PriceTables
+
 	if len(errors) > 0 {
 		return GetStripeConfigReplyMultiError(errors)
 	}

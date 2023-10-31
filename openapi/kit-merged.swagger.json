@@ -11090,6 +11090,12 @@
         },
         "publishKey": {
           "type": "string"
+        },
+        "priceTables": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },

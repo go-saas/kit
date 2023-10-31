@@ -65,6 +65,8 @@ func (m *StripeConf) validate(all bool) error {
 
 	// no validation rules for WebhookKey
 
+	// no validation rules for PriceTables
+
 	if len(errors) > 0 {
 		return StripeConfMultiError(errors)
 	}

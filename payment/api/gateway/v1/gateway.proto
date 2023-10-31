@@ -31,7 +31,6 @@ service StripePaymentGatewayService{
     };
   }
 
-
   rpc CreateStripePaymentIntent (CreateStripePaymentIntentRequest) returns (CreateStripePaymentIntentReply){
     option (google.api.http) = {
       post: "/v1/payment/stripe/intent",
@@ -91,4 +90,5 @@ message GetStripeConfigRequest{
 message GetStripeConfigReply{
   bool is_test=1;
   string publish_key=2;
+  map<string,string> price_tables=3;
 }
