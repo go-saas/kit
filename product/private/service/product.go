@@ -579,7 +579,20 @@ func mapPbManageInfo2Biz(a *pb.ProductManageInfo, b *biz.ProductManageInfo) {
 
 func (s *ProductService) UploadMedias(ctx http.Context) error {
 	return s.upload(ctx, biz.ProductMediaPath, func(ctx context.Context) error {
-		_, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceProduct, "*"), authz.WriteAction)
-		return err
+		res, err := s.auth.BatchCheck(ctx, []*authz.Requirement{
+			authz.NewRequirement(authz.NewEntityResource(api.ResourceProduct, "*"), authz.CreateAction),
+			authz.NewRequirement(authz.NewEntityResource(api.ResourceProduct, "*"), authz.UpdateAction),
+			authz.NewRequirement(authz.NewEntityResource(api.ResourceProduct, "*"), authz.DeleteAction),
+		})
+		if err != nil {
+			return err
+		}
+		var re *authz.Result
+		for _, re = range res {
+			if re.Allowed {
+				return nil
+			}
+		}
+		return errors.Forbidden("", "")
 	})
 }
