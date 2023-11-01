@@ -27,7 +27,7 @@ func (g *PlanRepo) GetDb(ctx context.Context) *gorm.DB {
 
 func (g *PlanRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		return db.Preload("Plan")
+		return db
 	}
 }
 func (g *PlanRepo) DefaultSorting() []string {

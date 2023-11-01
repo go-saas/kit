@@ -30,6 +30,7 @@ func (g *TenantRepo) GetDb(ctx context.Context) *gorm.DB {
 
 func (g *TenantRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
+		db = db.Preload("Plan")
 		if withDetail {
 			return db.Preload("Conn").Preload("Features")
 		}
