@@ -6,7 +6,7 @@ require (
 	github.com/apache/apisix-go-plugin-runner v0.4.0
 	github.com/go-kratos/kratos/v2 v2.7.1
 	github.com/go-saas/kit v0.0.1
-	github.com/go-saas/saas v0.6.2
+	github.com/go-saas/saas v0.6.3
 	github.com/go-saas/sessions v1.2.2-0.20220626044315-a7a87c87f120
 	github.com/goava/di v1.11.1
 	github.com/goxiaoy/vfs v0.0.0-20230130063220-b20a45e86d37

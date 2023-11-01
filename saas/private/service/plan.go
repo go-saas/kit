@@ -77,8 +77,7 @@ func NewPlanService(auth authz.Service, repo biz.PlanRepo, logger klog.Logger, t
 				} else if dbP != nil {
 					return pb.ErrorDuplicatePlanKeyLocalized(ctx, nil, nil)
 				}
-				e := &biz.Plan{ProductId: productId}
-				MapCreatePbPlan2Biz(req, e)
+				e := biz.NewPlan(req.Key, req.DisplayName, productId, int(req.Sort))
 				err := s.repo.Create(ctx, e)
 				if err != nil {
 					return err
@@ -283,16 +282,12 @@ func MapBizPlan2Pb(a *biz.Plan, b *pb.Plan) {
 	b.CreatedAt = timestamppb.New(a.CreatedAt)
 	b.UpdatedAt = timestamppb.New(a.UpdatedAt)
 	b.ProductId = a.ProductId
+	b.Sort = int32(a.Sort)
 }
 
 func MapUpdatePbPlan2Biz(a *pb.UpdatePlan, b *biz.Plan) {
 	b.DisplayName = a.DisplayName
 	b.Active = a.Active
-}
-
-func MapCreatePbPlan2Biz(a *pb.CreatePlanRequest, b *biz.Plan) {
-	b.Key = a.Key
-	b.DisplayName = a.DisplayName
 }
 
 func normalizeName(name string) string {

@@ -70,6 +70,7 @@ message CreatePlanRequest {
   string key =1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   string display_name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   repeated .product.api.price.v1.PriceParams prices=3;
+  int32 sort=10;
 }
 
 message UpdatePlanRequest {
@@ -82,6 +83,7 @@ message UpdatePlan{
   string display_name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   bool active=3;
   repeated .product.api.price.v1.PriceParams prices=4;
+  int32 sort=10;
 }
 
 message DeletePlanRequest {
@@ -121,6 +123,8 @@ message Plan{
 
   optional google.protobuf.Timestamp created_at=5;
   optional google.protobuf.Timestamp updated_at=6;
+
+  int32 sort=10;
 
   string product_id=100;
 

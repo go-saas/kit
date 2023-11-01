@@ -275,17 +275,26 @@ func (s *TenantService) GetTenantPublic(ctx context.Context, req *pb.GetTenantPu
 
 func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrentTenantRequest) (*pb.GetCurrentTenantReply, error) {
 	ti, _ := saas.FromCurrentTenant(ctx)
+	ui, _ := authn.FromUserContext(ctx)
 	if len(ti.GetId()) == 0 {
 		return &pb.GetCurrentTenantReply{IsHost: true, Tenant: mapBizTenantToInfo(ctx, s.blob, nil, s.app)}, nil
 	} else {
-		t, err := s.useCase.FindByIdOrName(ctx, ti.GetId())
+		tenant, err := s.useCase.FindByIdOrName(ctx, ti.GetId())
 		if err != nil {
 			return nil, err
 		}
-		if t == nil {
+		if tenant == nil {
 			return nil, pb.ErrorTenantNotFoundLocalized(ctx, nil, nil)
 		}
-		info := mapBizTenantToInfo(ctx, s.blob, t, s.app)
+		info := mapBizTenantToInfo(ctx, s.blob, tenant, s.app)
+		if len(ui.GetId()) > 0 {
+			info.PlanKey = tenant.PlanKey
+			if tenant.Plan != nil {
+				info.Plan = &v12.Plan{}
+				MapBizPlan2Pb(tenant.Plan, info.Plan)
+			}
+		}
+
 		return &pb.GetCurrentTenantReply{
 			IsHost: false,
 			Tenant: info,

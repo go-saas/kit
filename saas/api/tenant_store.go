@@ -24,7 +24,11 @@ func (r *TenantStore) GetByNameOrId(ctx context.Context, nameOrId string) (*saas
 	if err != nil {
 		return nil, err
 	}
-	ret := saas.NewTenantConfig(tenant.Id, tenant.Name, tenant.Region)
+	pk := ""
+	if tenant.PlanKey != nil {
+		pk = *tenant.PlanKey
+	}
+	ret := saas.NewTenantConfig(tenant.Id, tenant.Name, tenant.Region, pk)
 	for _, conn := range tenant.Conn {
 		ret.Conn[conn.Key] = conn.Value
 	}

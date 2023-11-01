@@ -113,6 +113,8 @@ func (m *CreatePlanRequest) validate(all bool) error {
 
 	}
 
+	// no validation rules for Sort
+
 	if len(errors) > 0 {
 		return CreatePlanRequestMultiError(errors)
 	}
@@ -443,6 +445,8 @@ func (m *UpdatePlan) validate(all bool) error {
 		}
 
 	}
+
+	// no validation rules for Sort
 
 	if len(errors) > 0 {
 		return UpdatePlanMultiError(errors)
@@ -1368,6 +1372,8 @@ func (m *Plan) validate(all bool) error {
 	}
 
 	// no validation rules for Active
+
+	// no validation rules for Sort
 
 	// no validation rules for ProductId
 

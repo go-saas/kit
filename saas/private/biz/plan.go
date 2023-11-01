@@ -27,13 +27,16 @@ type PlanFeature struct {
 	Value  data.Value `gorm:"embedded"`
 }
 
-func NewPlan(key, displayName string) *Plan {
-	return &Plan{
+func NewPlan(key, displayName, productId string, sort int) *Plan {
+	res := &Plan{
 		Embed:       &sortable.Embed{},
 		Key:         key,
 		DisplayName: displayName,
+		ProductId:   productId,
 		Active:      false,
 	}
+	res.Sort = sort
+	return res
 }
 
 type PlanRepo interface {

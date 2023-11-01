@@ -3822,6 +3822,28 @@
         }
       }
     },
+    "pricePricePb": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "digits": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "text": {
+          "type": "string"
+        },
+        "amountDecimal": {
+          "type": "string"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -4867,6 +4889,219 @@
       ],
       "default": "BOTH"
     },
+    "v1Plan": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-nullable": true
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-nullable": true
+        },
+        "sort": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "productId": {
+          "type": "string"
+        },
+        "prices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Price"
+          }
+        }
+      },
+      "required": [
+        "key",
+        "displayName"
+      ]
+    },
+    "v1Price": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "ownerType": {
+          "type": "string",
+          "title": "product/product_sku"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "default": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discounted": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "billingScheme": {
+          "type": "string"
+        },
+        "currencyOptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOption"
+          }
+        },
+        "recurring": {
+          "$ref": "#/definitions/v1PriceRecurring"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceTier"
+          }
+        },
+        "tiersMode": {
+          "type": "string"
+        },
+        "transformQuantity": {
+          "$ref": "#/definitions/v1PriceTransformQuantity"
+        },
+        "type": {
+          "type": "string"
+        },
+        "stripePriceId": {
+          "type": "string",
+          "x-nullable": true
+        }
+      }
+    },
+    "v1PriceCurrencyOption": {
+      "type": "object",
+      "properties": {
+        "currencyCode": {
+          "type": "string"
+        },
+        "default": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discounted": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOptionTier"
+          }
+        }
+      }
+    },
+    "v1PriceCurrencyOptionTier": {
+      "type": "object",
+      "properties": {
+        "flat": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "unit": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceRecurring": {
+      "type": "object",
+      "properties": {
+        "interval": {
+          "type": "string"
+        },
+        "intervalCount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "trialPeriodDays": {
+          "type": "string",
+          "format": "int64"
+        },
+        "aggregateUsage": {
+          "type": "string"
+        },
+        "usageType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "interval"
+      ]
+    },
+    "v1PriceTier": {
+      "type": "object",
+      "properties": {
+        "flat": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "unit": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceTransformQuantity": {
+      "type": "object",
+      "properties": {
+        "divideBy": {
+          "type": "string",
+          "format": "int64"
+        },
+        "round": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "round"
+      ]
+    },
     "v1RefreshRememberTokenReply": {
       "type": "object",
       "properties": {
@@ -5075,6 +5310,13 @@
         },
         "host": {
           "type": "string"
+        },
+        "planKey": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "plan": {
+          "$ref": "#/definitions/v1Plan"
         }
       },
       "title": "TenantInfo public tenant information"

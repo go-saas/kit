@@ -251,6 +251,10 @@
                         "type": "object",
                         "$ref": "#/definitions/v1PriceParams"
                       }
+                    },
+                    "sort": {
+                      "type": "integer",
+                      "format": "int32"
                     }
                   }
                 },
@@ -313,6 +317,10 @@
                         "type": "object",
                         "$ref": "#/definitions/v1PriceParams"
                       }
+                    },
+                    "sort": {
+                      "type": "integer",
+                      "format": "int32"
                     }
                   }
                 },
@@ -1527,6 +1535,10 @@
             "type": "object",
             "$ref": "#/definitions/v1PriceParams"
           }
+        },
+        "sort": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "required": [
@@ -1724,6 +1736,10 @@
           "type": "string",
           "format": "date-time",
           "x-nullable": true
+        },
+        "sort": {
+          "type": "integer",
+          "format": "int32"
         },
         "productId": {
           "type": "string"
@@ -2154,6 +2170,13 @@
         },
         "host": {
           "type": "string"
+        },
+        "planKey": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "plan": {
+          "$ref": "#/definitions/v1Plan"
         }
       },
       "title": "TenantInfo public tenant information"
@@ -2176,6 +2199,10 @@
             "type": "object",
             "$ref": "#/definitions/v1PriceParams"
           }
+        },
+        "sort": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "required": [

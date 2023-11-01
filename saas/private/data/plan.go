@@ -32,7 +32,7 @@ func (g *PlanRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB 
 }
 func (g *PlanRepo) DefaultSorting() []string {
 	return []string{
-		"-created_at",
+		"sort",
 	}
 }
 

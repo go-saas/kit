@@ -244,6 +244,9 @@ message TenantInfo{
 	string region=4;
 	blob.BlobFile logo = 9;
 	string host=10;
+
+	optional string plan_key=20;
+	.saas.api.plan.v1.Plan plan=21;
 }
 
 
