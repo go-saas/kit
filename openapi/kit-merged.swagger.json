@@ -4524,8 +4524,9 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "$ref": "#/definitions/v1UpdatePriceParams"
-                      }
+                        "$ref": "#/definitions/v1PriceParams"
+                      },
+                      "title": "could update or create new prices"
                     },
                     "isGiveaway": {
                       "type": "boolean"
@@ -4691,8 +4692,9 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "$ref": "#/definitions/v1UpdatePriceParams"
-                      }
+                        "$ref": "#/definitions/v1PriceParams"
+                      },
+                      "title": "could update or create new prices"
                     },
                     "isGiveaway": {
                       "type": "boolean"
@@ -5761,7 +5763,7 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "$ref": "#/definitions/v1UpdatePriceParams"
+                        "$ref": "#/definitions/v1PriceParams"
                       }
                     },
                     "sort": {
@@ -5827,7 +5829,7 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "$ref": "#/definitions/v1UpdatePriceParams"
+                        "$ref": "#/definitions/v1PriceParams"
                       }
                     },
                     "sort": {
@@ -13431,7 +13433,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1UpdatePriceParams"
+            "$ref": "#/definitions/v1PriceParams"
           }
         },
         "sort": {
@@ -13443,44 +13445,6 @@
         "key",
         "displayName"
       ]
-    },
-    "v1UpdatePriceParams": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "currencyCode": {
-          "type": "string"
-        },
-        "defaultAmountDecimal": {
-          "type": "string"
-        },
-        "discountedAmountDecimal": {
-          "type": "string",
-          "x-nullable": true
-        },
-        "discountText": {
-          "type": "string"
-        },
-        "denyMoreDiscounts": {
-          "type": "boolean"
-        },
-        "currencyOptions": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1PriceCurrencyOptionParams"
-          }
-        },
-        "tiers": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1PriceTierParams"
-          }
-        }
-      }
     },
     "v1UpdateProduct": {
       "type": "object",
@@ -13570,8 +13534,9 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1UpdatePriceParams"
-          }
+            "$ref": "#/definitions/v1PriceParams"
+          },
+          "title": "could update or create new prices"
         },
         "isGiveaway": {
           "type": "boolean"
