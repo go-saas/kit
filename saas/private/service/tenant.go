@@ -12,6 +12,7 @@ import (
 	"github.com/go-saas/kit/pkg/query"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	"github.com/go-saas/kit/pkg/utils"
+	v12 "github.com/go-saas/kit/saas/api/plan/v1"
 	conf2 "github.com/go-saas/kit/saas/private/conf"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/saas"
@@ -35,7 +36,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/samber/lo"
-	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -342,17 +342,11 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 	if _, _, err := req.FormFile("file"); err != nil {
 		return err
 	}
-	tenantID := req.FormValue("id")
+
 	h := ctx.Middleware(func(ctx context.Context, _ interface{}) (interface{}, error) {
-		if len(tenantID) > 0 {
-			if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, tenantID), authz.UpdateAction); err != nil {
-				return nil, err
-			}
-		} else {
-			_, err := authn.ErrIfUnauthenticated(ctx)
-			if err != nil {
-				return nil, err
-			}
+		_, err := authn.ErrIfUnauthenticated(ctx)
+		if err != nil {
+			return nil, err
 		}
 
 		file, handle, err := req.FormFile("file")
@@ -377,22 +371,6 @@ func (s *TenantService) UpdateLogo(ctx http.Context) error {
 		if err != nil {
 			return nil, err
 		}
-		if len(tenantID) > 0 {
-			//update field
-			t, err := s.useCase.FindByIdOrName(ctx, tenantID)
-			if err != nil {
-				return nil, err
-			}
-			if t == nil {
-				return nil, errors.NotFound("", "")
-			}
-
-			t.Logo = normalizedName
-			if err := s.useCase.Update(ctx, t, query.NewField(&fieldmaskpb.FieldMask{Paths: []string{"logo"}})); err != nil {
-				return nil, err
-			}
-		}
-
 		url, _ := s.blob.PublicUrl(ctx, normalizedName)
 		return &blob.BlobFile{
 			Id:   normalizedName,
@@ -434,6 +412,11 @@ func mapBizTenantToApi(ctx context.Context, app *conf.AppConfig, blob vfs.Blob, 
 		Features:    features,
 		Logo:        mapLogo(ctx, blob, tenant),
 		SeparateDb:  tenant.SeparateDb,
+		PlanKey:     tenant.PlanKey,
+	}
+	if tenant.Plan != nil {
+		res.Plan = &v12.Plan{}
+		MapBizPlan2Pb(tenant.Plan, res.Plan)
 	}
 	res.NormalizeHost(ctx, app)
 	return res

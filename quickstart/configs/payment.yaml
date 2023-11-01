@@ -1,7 +1,7 @@
 stripe:
   is_test: true
-  publish_key: stripe_publish_key
+  publish_key: stripe_test_publish_key
   private_key: stripe_test_key
   webhook_key: stripe_test_webhook_key
   price_tables:
-    plan: prctbl_1O7KgaJYyL5pFgToY813JeWU
+    plan: stripe_test_plan_price

@@ -31,8 +31,8 @@ type Tenant struct {
 	Conn []TenantConn `gorm:"foreignKey:TenantId"`
 
 	//Plan
-	PlanId string
-	Plan   Plan `gorm:"foreignKey:PlanId"`
+	PlanKey *string
+	Plan    *Plan `gorm:"foreignKey:PlanKey"`
 
 	Features []TenantFeature `gorm:"foreignKey:TenantId"`
 	Extra    data.JSONMap

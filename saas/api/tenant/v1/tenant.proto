@@ -13,6 +13,7 @@ import "blob/blob.proto";
 import "google/api/field_behavior.proto";
 import "query/operation.proto";
 import "data/data.proto";
+import "saas/api/plan/v1/plan.proto";
 
 option go_package = "github.com/go-saas/kit/saas/api/tenant/v1;v1";
 
@@ -220,6 +221,9 @@ message Tenant{
 	bool separate_db=10;
 	string host=11;
 
+	optional string plan_key=20;
+
+	.saas.api.plan.v1.Plan plan=21;
 }
 
 message TenantConnectionString{
@@ -266,6 +270,7 @@ message UserCreateTenantRequest{
 	string display_name=3;
 	string region = 4;
 	string logo =5;
+
 }
 message UserCreateTenantReply{
 	Tenant tenant=1;

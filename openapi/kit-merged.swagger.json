@@ -13136,6 +13136,13 @@
         },
         "host": {
           "type": "string"
+        },
+        "planKey": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "plan": {
+          "$ref": "#/definitions/v1Plan"
         }
       }
     },

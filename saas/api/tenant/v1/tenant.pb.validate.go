@@ -1749,6 +1749,35 @@ func (m *Tenant) validate(all bool) error {
 
 	// no validation rules for Host
 
+	if all {
+		switch v := interface{}(m.GetPlan()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TenantValidationError{
+					field:  "Plan",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TenantValidationError{
+					field:  "Plan",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPlan()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TenantValidationError{
+				field:  "Plan",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {
@@ -1813,6 +1842,10 @@ func (m *Tenant) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.PlanKey != nil {
+		// no validation rules for PlanKey
 	}
 
 	if len(errors) > 0 {
