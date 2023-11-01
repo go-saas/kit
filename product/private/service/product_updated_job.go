@@ -254,9 +254,10 @@ func mapBizPrice2CreateStripe(stripeProductId string, price *biz.Price) *stripe.
 
 func mapBizPrice2UpdateStripe(stripeProductId string, price *biz.Price) *stripe.PriceParams {
 	r := &stripe.PriceParams{
+		Currency:  stripe2.String(strings.ToLower(price.CurrencyCode)),
 		LookupKey: stripe2.String(price.ID.String()),
 	}
-
+	r.UnitAmount = stripe.Int64(price.GetNeedPayAmount())
 	r.CurrencyOptions = map[string]*stripe.PriceCurrencyOptionsParams{}
 	if len(price.CurrencyOptions) > 0 {
 		r.CurrencyOptions = lo.SliceToMap(price.CurrencyOptions, func(t biz.PriceCurrencyOption) (string, *stripe.PriceCurrencyOptionsParams) {
@@ -275,18 +276,15 @@ func mapBizPrice2UpdateStripe(stripeProductId string, price *biz.Price) *stripe.
 			return strings.ToLower(t.CurrencyCode), cop
 		})
 	}
-	defaultPriceParams := &stripe.PriceCurrencyOptionsParams{
-		UnitAmount: stripe.Int64(price.GetNeedPayAmount()),
-	}
+
 	if len(price.Tiers) > 0 {
-		defaultPriceParams.Tiers = lo.Map(price.Tiers, func(t biz.PriceTier, _ int) *stripe.PriceCurrencyOptionsTierParams {
-			return &stripe.PriceCurrencyOptionsTierParams{
+		r.Tiers = lo.Map(price.Tiers, func(t biz.PriceTier, _ int) *stripe.PriceTierParams {
+			return &stripe.PriceTierParams{
 				FlatAmount: stripe.Int64(t.FlatAmount),
 				UnitAmount: stripe.Int64(t.UnitAmount),
 				UpTo:       stripe.Int64(t.UpTo),
 			}
 		})
 	}
-	r.CurrencyOptions[strings.ToLower(price.CurrencyCode)] = defaultPriceParams
 	return r
 }
