@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-saas/kit/pkg/job"
 	"github.com/go-saas/kit/pkg/query"
 	stripe2 "github.com/go-saas/kit/pkg/stripe"
@@ -119,12 +118,11 @@ func syncWithStripe(ctx context.Context, client *stripeclient.API, productRepo b
 		stripeProductId = stripeInfo.ProviderId
 		//update product if needed
 		stripeProduct, err := client.Products.Get(stripeProductId, &stripe.ProductParams{})
-		if stripeProduct.Metadata["version"] == jobParams.ProductVersion {
-			klog.Infof("product_id:%s version:%s same with stipe, skip updates", product.ID.String(), jobParams.ProductVersion)
-			return nil
+		if err != nil {
+			return err
 		}
 		params := mapBizProduct2Stripe(product)
-		_, err = client.Products.Update(stripeProductId, params)
+		_, err = client.Products.Update(stripeProduct.ID, params)
 		if err != nil {
 			return err
 		}
@@ -259,6 +257,7 @@ func mapBizPrice2UpdateStripe(stripeProductId string, price *biz.Price) *stripe.
 		LookupKey: stripe2.String(price.ID.String()),
 	}
 
+	r.CurrencyOptions = map[string]*stripe.PriceCurrencyOptionsParams{}
 	if len(price.CurrencyOptions) > 0 {
 		r.CurrencyOptions = lo.SliceToMap(price.CurrencyOptions, func(t biz.PriceCurrencyOption) (string, *stripe.PriceCurrencyOptionsParams) {
 			cop := &stripe.PriceCurrencyOptionsParams{
