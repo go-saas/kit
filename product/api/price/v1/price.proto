@@ -134,9 +134,26 @@ message PriceParams{
 }
 
 
+message UpdatePriceParams{
+  string id=1;
+
+  string currency_code=99;
+
+  string default_amount_decimal=100;
+  optional string discounted_amount_decimal=101;
+
+  string discount_text=102;
+  bool deny_more_discounts=103;
+
+  repeated PriceCurrencyOptionParams currency_options=300;
+
+  repeated PriceTierParams tiers=302;
+
+}
+
 
 message UpdatePriceRequest{
-  PriceParams price=2 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  UpdatePriceParams price=2 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
   google.protobuf.FieldMask update_mask = 3;
 }
 

@@ -82,7 +82,7 @@ message UpdatePlan{
   string key=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   string display_name=2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
   bool active=3;
-  repeated .product.api.price.v1.PriceParams prices=4;
+  repeated .product.api.price.v1.UpdatePriceParams prices=4;
   int32 sort=10;
 }
 

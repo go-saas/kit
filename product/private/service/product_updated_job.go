@@ -77,7 +77,12 @@ func syncWithStripe(ctx context.Context, client *stripeclient.API, productRepo b
 			return t.ProviderName == string(biz.ProductManageProviderStripe)
 		})
 		if ok {
-			_, err := client.Products.Del(stripeInfo.ProviderId, &stripe.ProductParams{})
+			// stripe product which has prices can't be deleted
+			//_, err := client.Products.Del(stripeInfo.ProviderId, &stripe.ProductParams{})
+			//if err != nil {
+			//	return err
+			//}
+			_, err := client.Products.Update(stripeInfo.ProviderId, &stripe.ProductParams{Active: stripe.Bool(false)})
 			if err != nil {
 				return err
 			}

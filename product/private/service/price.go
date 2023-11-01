@@ -126,6 +126,33 @@ func mapPbPrice2Biz(a *v12.PriceParams, b *biz.Price) {
 	b.Type = biz.PriceType(a.Type)
 }
 
+func mapPbUpdatePrice2Biz(a *v12.UpdatePriceParams, b *biz.Price) {
+	if len(a.Id) > 0 {
+		b.UIDBase.ID = uuid.MustParse(a.Id)
+	}
+	b.CurrencyCode = a.CurrencyCode
+	b.DefaultAmount = price.MustNew(a.DefaultAmountDecimal, a.CurrencyCode).Amount
+	if a.DiscountedAmountDecimal != nil {
+		dis := price.MustNew(*a.DiscountedAmountDecimal, a.CurrencyCode).Amount
+		b.DiscountedAmount = &dis
+	}
+
+	b.DiscountText = a.DiscountText
+	b.DenyMoreDiscounts = a.DenyMoreDiscounts
+	
+	b.CurrencyOptions = lo.Map(a.CurrencyOptions, func(t *v12.PriceCurrencyOptionParams, i int) biz.PriceCurrencyOption {
+		r := &biz.PriceCurrencyOption{}
+		mapPbCurrencyOption2Biz(t, r)
+		return *r
+	})
+
+	b.Tiers = lo.Map(a.Tiers, func(t *v12.PriceTierParams, i int) biz.PriceTier {
+		r := &biz.PriceTier{}
+		mapPbPriceTier2Biz(a.CurrencyCode, t, r)
+		return *r
+	})
+}
+
 func mapPbCurrencyOption2Biz(a *v12.PriceCurrencyOptionParams, b *biz.PriceCurrencyOption) {
 	b.DefaultAmount = price.MustNew(a.DefaultAmountDecimal, a.CurrencyCode).Amount
 	if a.DiscountedAmountDecimal != nil {

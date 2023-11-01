@@ -168,7 +168,7 @@ message UpdateProduct{
   google.protobuf.Timestamp saleable_to=24;
 
   repeated Keyword keywords=25;
-  repeated .product.api.price.v1.PriceParams prices=26;
+  repeated .product.api.price.v1.UpdatePriceParams prices=26;
 
   bool is_giveaway=27;
 
