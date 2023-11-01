@@ -6,6 +6,7 @@ import (
 	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/query"
+	"github.com/go-saas/kit/pkg/utils"
 	"github.com/go-saas/lbs"
 	"github.com/go-saas/saas"
 	"github.com/goxiaoy/vfs"
@@ -25,7 +26,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	pb "github.com/go-saas/kit/user/api/account/v1"
@@ -77,20 +77,13 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 
 	res := &pb.GetProfileResponse{
 		Id:       u.ID.String(),
-		Username: &wrapperspb.StringValue{Value: *u.Username},
+		Username: u.Username,
+		Name:     u.Name,
+		Phone:    u.Phone,
+		Email:    u.Email,
+		Birthday: utils.Time2Timepb(u.Birthday),
 	}
-	if u.Name != nil {
-		res.Name = &wrapperspb.StringValue{Value: *u.Name}
-	}
-	if u.Phone != nil {
-		res.Phone = &wrapperspb.StringValue{Value: *u.Phone}
-	}
-	if u.Email != nil {
-		res.Email = &wrapperspb.StringValue{Value: *u.Email}
-	}
-	if u.Birthday != nil {
-		res.Birthday = timestamppb.New(*u.Birthday)
-	}
+
 	if u.Gender != nil {
 		v, ok := v1.Gender_value[*u.Gender]
 		if ok {
@@ -115,7 +108,6 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 		Logo:        &blob.BlobFile{Url: s.appCfg.HostLogo},
 	}}
 	if len(tenantIds) > 0 {
-
 		tenants, err := s.tenantService.ListTenant(ctx,
 			&v13.ListTenantRequest{Filter: &v13.TenantFilter{
 				Id: &query.StringFilterOperation{In: lo.Map(tenantIds, func(t string, _ int) *wrapperspb.StringValue {
@@ -135,23 +127,11 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 			if !ok {
 				return nil
 			}
-			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.GetTenantId(), Tenant: &v13.TenantInfo{
-				Id:          t.Id,
-				Name:        t.Name,
-				DisplayName: t.DisplayName,
-				Region:      t.Region,
-				Logo:        t.Logo,
-			}}
+			return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.GetTenantId(), Tenant: mapTenant2TenantInfo(t)}
 		})
 		for _, tt := range tenants.Items {
 			if currentTenant.GetId() == tt.GetId() {
-				res.CurrentTenant = &pb.UserTenant{UserId: userInfo.GetId(), TenantId: currentTenant.GetId(), Tenant: &v13.TenantInfo{
-					Id:          tt.Id,
-					Name:        tt.Name,
-					DisplayName: tt.DisplayName,
-					Region:      tt.Region,
-					Logo:        tt.Logo,
-				}}
+				res.CurrentTenant = &pb.UserTenant{UserId: userInfo.GetId(), TenantId: currentTenant.GetId(), Tenant: mapTenant2TenantInfo(tt)}
 				break
 			}
 		}
@@ -166,8 +146,20 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 
 	return res, nil
 }
-func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {
 
+func mapTenant2TenantInfo(tt *v13.Tenant) *v13.TenantInfo {
+	return &v13.TenantInfo{
+		Id:          tt.Id,
+		Name:        tt.Name,
+		DisplayName: tt.DisplayName,
+		Region:      tt.Region,
+		Logo:        tt.Logo,
+		PlanKey:     tt.PlanKey,
+		Plan:        tt.Plan,
+	}
+}
+
+func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {
 	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -179,12 +171,8 @@ func (s *AccountService) UpdateProfile(ctx context.Context, req *pb.UpdateProfil
 	if u == nil {
 		return nil, errors.Unauthorized("", "")
 	}
-	if req.Username != nil {
-		u.Username = &req.Username.Value
-	}
-	if req.Name != nil {
-		u.Name = &req.Name.Value
-	}
+	u.Username = req.Username
+	u.Name = req.Name
 	if req.Gender != v1.Gender_UNKNOWN {
 		g := req.Gender.String()
 		u.Gender = &g

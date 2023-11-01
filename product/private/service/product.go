@@ -342,9 +342,14 @@ func (s *ProductService) MapUpdatePbProduct2Biz(ctx context.Context, a *pb.Updat
 	})
 
 	b.Prices = lo.Map(a.Prices, func(t *v12.UpdatePriceParams, _ int) biz.Price {
-		r := &biz.Price{}
-		mapPbUpdatePrice2Biz(t, r)
-		return *r
+		r, ok := lo.Find(b.Prices, func(price biz.Price) bool {
+			return price.ID.String() == t.Id
+		})
+		if !ok {
+			r = biz.Price{}
+		}
+		mapPbUpdatePrice2Biz(t, &r)
+		return r
 	})
 
 	b.SaleableFrom = utils.Timepb2Time(a.SaleableFrom)

@@ -294,135 +294,19 @@ func (m *GetProfileResponse) validate(all bool) error {
 	}
 
 	if m.Username != nil {
-
-		if all {
-			switch v := interface{}(m.GetUsername()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, GetProfileResponseValidationError{
-						field:  "Username",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, GetProfileResponseValidationError{
-						field:  "Username",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return GetProfileResponseValidationError{
-					field:  "Username",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Username
 	}
 
 	if m.Name != nil {
-
-		if all {
-			switch v := interface{}(m.GetName()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, GetProfileResponseValidationError{
-						field:  "Name",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, GetProfileResponseValidationError{
-						field:  "Name",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return GetProfileResponseValidationError{
-					field:  "Name",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Name
 	}
 
 	if m.Phone != nil {
-
-		if all {
-			switch v := interface{}(m.GetPhone()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, GetProfileResponseValidationError{
-						field:  "Phone",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, GetProfileResponseValidationError{
-						field:  "Phone",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return GetProfileResponseValidationError{
-					field:  "Phone",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Phone
 	}
 
 	if m.Email != nil {
-
-		if all {
-			switch v := interface{}(m.GetEmail()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, GetProfileResponseValidationError{
-						field:  "Email",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, GetProfileResponseValidationError{
-						field:  "Email",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return GetProfileResponseValidationError{
-					field:  "Email",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Email
 	}
 
 	if m.Birthday != nil {
@@ -563,69 +447,11 @@ func (m *UpdateProfileRequest) validate(all bool) error {
 	// no validation rules for Gender
 
 	if m.Username != nil {
-
-		if all {
-			switch v := interface{}(m.GetUsername()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UpdateProfileRequestValidationError{
-						field:  "Username",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UpdateProfileRequestValidationError{
-						field:  "Username",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UpdateProfileRequestValidationError{
-					field:  "Username",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Username
 	}
 
 	if m.Name != nil {
-
-		if all {
-			switch v := interface{}(m.GetName()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UpdateProfileRequestValidationError{
-						field:  "Name",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UpdateProfileRequestValidationError{
-						field:  "Name",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UpdateProfileRequestValidationError{
-					field:  "Name",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Name
 	}
 
 	if len(errors) > 0 {

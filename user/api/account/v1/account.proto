@@ -74,10 +74,10 @@ message GetProfileRequest{
 }
 message GetProfileResponse{
   string  id=1;
-  optional google.protobuf.StringValue username =2;
-  optional google.protobuf.StringValue name=3;
-  optional google.protobuf.StringValue phone =4;
-  optional google.protobuf.StringValue email=5;
+  optional string username =2;
+  optional string name=3;
+  optional string phone =4;
+  optional string email=5;
   optional google.protobuf.Timestamp birthday=6;
   //
   .user.api.user.v1.Gender gender=7;
@@ -89,8 +89,8 @@ message GetProfileResponse{
 }
 
 message UpdateProfileRequest{
-  optional google.protobuf.StringValue username =2;
-  optional google.protobuf.StringValue name=3;
+  optional string username =2;
+  optional string name=3;
   .user.api.user.v1.Gender gender=7;
 }
 
