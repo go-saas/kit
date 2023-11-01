@@ -18,6 +18,7 @@ import (
 	productbiz "github.com/go-saas/kit/product/private/biz"
 	"github.com/go-saas/kit/saas/api"
 	"github.com/go-saas/kit/saas/private/biz"
+	"github.com/go-saas/saas"
 	"github.com/samber/lo"
 	"github.com/segmentio/ksuid"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -264,8 +265,9 @@ func (s *PlanService) GetAvailablePlans(ctx context.Context, req *pb.GetAvailabl
 	for _, a := range items {
 		ret := &pb.Plan{}
 		MapBizPlan2Pb(a, ret)
-		//get prices of each plan
-		product, err := s.productSrv.GetInternalProduct(ctx, &v1.GetInternalProductRequest{Id: ret.ProductId})
+		//get prices of each plan. product belongs to host
+		hostCtx := saas.NewCurrentTenant(ctx, "", "")
+		product, err := s.productSrv.GetInternalProduct(hostCtx, &v1.GetInternalProductRequest{Id: ret.ProductId})
 		if err != nil {
 			return nil, err
 		}
