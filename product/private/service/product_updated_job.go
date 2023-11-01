@@ -287,6 +287,6 @@ func mapBizPrice2UpdateStripe(stripeProductId string, price *biz.Price) *stripe.
 			}
 		})
 	}
-	r.CurrencyOptions[price.CurrencyCode] = defaultPriceParams
+	r.CurrencyOptions[strings.ToLower(price.CurrencyCode)] = defaultPriceParams
 	return r
 }
