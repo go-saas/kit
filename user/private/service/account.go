@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/go-saas/kit/pkg/conf"
 	"github.com/go-saas/kit/pkg/data"
 	"github.com/go-saas/kit/pkg/query"
 	"github.com/go-saas/lbs"
@@ -38,6 +39,7 @@ type AccountService struct {
 	userSetting   biz.UserSettingRepo
 	userAddr      biz.UserAddressRepo
 	normalizer    biz.LookupNormalizer
+	appCfg        *conf.AppConfig
 }
 
 func NewAccountService(
@@ -47,6 +49,7 @@ func NewAccountService(
 	userSetting biz.UserSettingRepo,
 	userAddr biz.UserAddressRepo,
 	normalizer biz.LookupNormalizer,
+	appCfg *conf.AppConfig,
 ) *AccountService {
 	return &AccountService{
 		um:            um,
@@ -55,12 +58,11 @@ func NewAccountService(
 		userSetting:   userSetting,
 		userAddr:      userAddr,
 		normalizer:    normalizer,
+		appCfg:        appCfg,
 	}
 }
 
 func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileRequest) (*pb.GetProfileResponse, error) {
-	//TODO clean
-
 	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -108,6 +110,10 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 	currentTenant, _ := saas.FromCurrentTenant(ctx)
 	tenantIds = append(tenantIds, currentTenant.GetId())
 
+	hostTenantInfo := &pb.UserTenant{UserId: userInfo.GetId(), TenantId: "", IsHost: true, Tenant: &v13.TenantInfo{
+		DisplayName: s.appCfg.HostDisplayName,
+		Logo:        &blob.BlobFile{Url: s.appCfg.HostLogo},
+	}}
 	if len(tenantIds) > 0 {
 
 		tenants, err := s.tenantService.ListTenant(ctx,
@@ -123,7 +129,7 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 			//get tenant info
 			if len(ut.TenantId) == 0 {
 				//host
-				return &pb.UserTenant{UserId: ut.UserId, TenantId: ut.GetTenantId(), IsHost: true}
+				return hostTenantInfo
 			}
 			t, ok := lo.Find(tenants.Items, func(t *v13.Tenant) bool { return t.Id == ut.GetTenantId() })
 			if !ok {
@@ -149,12 +155,11 @@ func (s *AccountService) GetProfile(ctx context.Context, req *pb.GetProfileReque
 				break
 			}
 		}
-
 		res.Tenants = reTenants
 	}
 	if len(currentTenant.GetId()) == 0 {
 		//host
-		res.CurrentTenant = &pb.UserTenant{UserId: userInfo.GetId(), TenantId: currentTenant.GetId(), IsHost: true}
+		res.CurrentTenant = hostTenantInfo
 	}
 	//avatar
 	res.Avatar = mapAvatar(ctx, s.blob, u)

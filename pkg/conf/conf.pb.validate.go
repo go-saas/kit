@@ -2241,6 +2241,8 @@ func (m *AppConfig) validate(all bool) error {
 
 	// no validation rules for HostLogo
 
+	// no validation rules for AppName
+
 	if m.TenantKey != nil {
 
 		if all {

@@ -156,6 +156,7 @@ message AppConfig{
   string host_logo=4;
   // see https://github.com/google/libphonenumber/blob/master/java/libphonenumber/test/com/google/i18n/phonenumbers/RegionCode.java
   optional string phone_default_region=100;
+  string app_name=5;
 }
 
 
