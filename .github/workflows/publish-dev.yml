@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          envs: DOCKER_TAG,STRIPE_TEST_KEY,STRIPE_TEST_WEBHOOK_KEY
+          envs: DOCKER_TAG,STRIPE_TEST_PUBLISH_KEY,STRIPE_TEST_KEY,STRIPE_TEST_WEBHOOK_KEY,STRIPE_TEST_PLAN_PRICE
           script: |
             echo "$DOCKER_TAG"
             cd /app/go-saas-kit
