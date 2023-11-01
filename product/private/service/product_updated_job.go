@@ -155,15 +155,16 @@ func syncWithStripe(ctx context.Context, client *stripeclient.API, productRepo b
 		stripePrice, ok := lo.Find(stripePrices, func(p *stripe.Price) bool {
 			return p.LookupKey == price.ID.String()
 		})
-		params := mapBizPrice2Stripe(stripeProductId, &price)
+
 		if !ok {
+			params := mapBizPrice2CreateStripe(stripeProductId, &price)
 			//create
 			stripePrice, err = client.Prices.New(params)
 			if err != nil {
 				return err
 			}
 		} else {
-			// TODO stripe price can not be updated by sdk Received unknown parameters: billing_scheme, currency, unit_amount, product
+			params := mapBizPrice2UpdateStripe(stripeProductId, &price)
 			_, err = client.Prices.Update(stripePrice.ID, params)
 			if err != nil {
 				return err
@@ -192,7 +193,7 @@ func mapBizProduct2Stripe(product *biz.Product) *stripe.ProductParams {
 	}
 }
 
-func mapBizPrice2Stripe(stripeProductId string, price *biz.Price) *stripe.PriceParams {
+func mapBizPrice2CreateStripe(stripeProductId string, price *biz.Price) *stripe.PriceParams {
 	r := &stripe.PriceParams{
 		BillingScheme: stripe2.String(string(price.BillingScheme)),
 		Currency:      stripe2.String(strings.ToLower(price.CurrencyCode)),
@@ -206,11 +207,7 @@ func mapBizPrice2Stripe(stripeProductId string, price *biz.Price) *stripe.PriceP
 			Round:    stripe2.String(string(price.TransformQuantity.Round)),
 		}
 	}
-	if price.DiscountedAmount != nil {
-		r.UnitAmount = stripe.Int64(*price.DiscountedAmount)
-	} else {
-		r.UnitAmount = stripe.Int64(price.DefaultAmount)
-	}
+	r.UnitAmount = stripe.Int64(price.GetNeedPayAmount())
 
 	if len(price.CurrencyOptions) > 0 {
 		r.CurrencyOptions = lo.SliceToMap(price.CurrencyOptions, func(t biz.PriceCurrencyOption) (string, *stripe.PriceCurrencyOptionsParams) {
@@ -249,5 +246,43 @@ func mapBizPrice2Stripe(stripeProductId string, price *biz.Price) *stripe.PriceP
 		})
 	}
 
+	return r
+}
+
+func mapBizPrice2UpdateStripe(stripeProductId string, price *biz.Price) *stripe.PriceParams {
+	r := &stripe.PriceParams{
+		LookupKey: stripe2.String(price.ID.String()),
+	}
+
+	if len(price.CurrencyOptions) > 0 {
+		r.CurrencyOptions = lo.SliceToMap(price.CurrencyOptions, func(t biz.PriceCurrencyOption) (string, *stripe.PriceCurrencyOptionsParams) {
+			cop := &stripe.PriceCurrencyOptionsParams{
+				UnitAmount: stripe.Int64(t.GetNeedPayAmount()),
+			}
+			if len(t.Tiers) > 0 {
+				cop.Tiers = lo.Map(t.Tiers, func(t biz.PriceCurrencyOptionTier, _ int) *stripe.PriceCurrencyOptionsTierParams {
+					return &stripe.PriceCurrencyOptionsTierParams{
+						FlatAmount: stripe.Int64(t.FlatAmount),
+						UnitAmount: stripe.Int64(t.UnitAmount),
+						UpTo:       stripe.Int64(t.UpTo),
+					}
+				})
+			}
+			return strings.ToLower(t.CurrencyCode), cop
+		})
+	}
+	defaultPriceParams := &stripe.PriceCurrencyOptionsParams{
+		UnitAmount: stripe.Int64(price.GetNeedPayAmount()),
+	}
+	if len(price.Tiers) > 0 {
+		defaultPriceParams.Tiers = lo.Map(price.Tiers, func(t biz.PriceTier, _ int) *stripe.PriceCurrencyOptionsTierParams {
+			return &stripe.PriceCurrencyOptionsTierParams{
+				FlatAmount: stripe.Int64(t.FlatAmount),
+				UnitAmount: stripe.Int64(t.UnitAmount),
+				UpTo:       stripe.Int64(t.UpTo),
+			}
+		})
+	}
+	r.CurrencyOptions[price.CurrencyCode] = defaultPriceParams
 	return r
 }

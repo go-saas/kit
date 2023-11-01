@@ -5,6 +5,7 @@ import (
 	"github.com/go-saas/kit/pkg/price"
 	v12 "github.com/go-saas/kit/product/api/price/v1"
 	"github.com/go-saas/kit/product/private/biz"
+	"github.com/google/uuid"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -88,10 +89,9 @@ func mapBizPriceTransformQuantity2Pb(a *biz.PriceTransformQuantity, b *v12.Price
 }
 
 func mapPbPrice2Biz(a *v12.PriceParams, b *biz.Price) {
-	// TODO stripe price can not be updated by sdk
-	//if len(a.Id) > 0 {
-	//	b.UIDBase.ID = uuid.MustParse(a.Id)
-	//}
+	if len(a.Id) > 0 {
+		b.UIDBase.ID = uuid.MustParse(a.Id)
+	}
 	b.CurrencyCode = a.CurrencyCode
 	b.DefaultAmount = price.MustNew(a.DefaultAmountDecimal, a.CurrencyCode).Amount
 	if a.DiscountedAmountDecimal != nil {

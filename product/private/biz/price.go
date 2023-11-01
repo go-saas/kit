@@ -103,6 +103,13 @@ type Price struct {
 	StripePriceId *string
 }
 
+func (p *Price) GetNeedPayAmount() int64 {
+	if p.DiscountedAmount != nil {
+		return *p.DiscountedAmount
+	}
+	return p.DefaultAmount
+}
+
 type PriceCurrencyOption struct {
 	kitgorm.UIDBase
 	PriceId string
@@ -114,6 +121,13 @@ type PriceCurrencyOption struct {
 	DenyMoreDiscounts bool
 
 	Tiers []PriceCurrencyOptionTier `gorm:"foreignKey:PriceCurrencyOptionId"`
+}
+
+func (p *PriceCurrencyOption) GetNeedPayAmount() int64 {
+	if p.DiscountedAmount != nil {
+		return *p.DiscountedAmount
+	}
+	return p.DefaultAmount
 }
 
 type PriceRecurring struct {
