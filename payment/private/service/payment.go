@@ -149,7 +149,7 @@ func (s *PaymentService) StripeWebhook(ctx context.Context, req *emptypb.Empty) 
 				Id:        intent.Metadata["order_id"],
 				PayExtra:  utils.Map2Structpb(data.Object),
 				PaidPrice: totalPrice.ToPricePb(ctx),
-				PayWay:    "stripe",
+				PayWay:    stripe2.ProviderName,
 				PaidTime:  utils.Time2Timepb(&t),
 			})
 			if err != nil {
@@ -172,7 +172,7 @@ func (s *PaymentService) StripeWebhook(ctx context.Context, req *emptypb.Empty) 
 				PayExtra:    utils.Map2Structpb(data.Object),
 				RefundTime:  utils.Time2Timepb(&t),
 				RefundPrice: refundPrice.ToPricePb(ctx),
-				PayWay:      "stripe",
+				PayWay:      stripe2.ProviderName,
 			})
 			if err != nil {
 				return nil, err

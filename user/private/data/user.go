@@ -178,7 +178,7 @@ func (u *UserRepo) RemoveLogin(ctx context.Context, user *biz.User, loginProvide
 }
 
 func (u *UserRepo) ListLogin(ctx context.Context, user *biz.User) (userLogins []*biz.UserLogin, err error) {
-	err = u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID.String())).Model(&biz.UserLogin{}).Find(userLogins).Error
+	err = u.GetDb(ctx).Model(&biz.UserLogin{}).Scopes(gorm2.WhereUserId(user.ID.String())).Find(&userLogins).Error
 	return
 }
 
