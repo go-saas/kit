@@ -682,135 +682,19 @@ func (m *User) validate(all bool) error {
 	}
 
 	if m.Username != nil {
-
-		if all {
-			switch v := interface{}(m.GetUsername()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserValidationError{
-						field:  "Username",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserValidationError{
-						field:  "Username",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserValidationError{
-					field:  "Username",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Username
 	}
 
 	if m.Name != nil {
-
-		if all {
-			switch v := interface{}(m.GetName()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserValidationError{
-						field:  "Name",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserValidationError{
-						field:  "Name",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserValidationError{
-					field:  "Name",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Name
 	}
 
 	if m.Phone != nil {
-
-		if all {
-			switch v := interface{}(m.GetPhone()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserValidationError{
-						field:  "Phone",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserValidationError{
-						field:  "Phone",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserValidationError{
-					field:  "Phone",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Phone
 	}
 
 	if m.Email != nil {
-
-		if all {
-			switch v := interface{}(m.GetEmail()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserValidationError{
-						field:  "Email",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserValidationError{
-						field:  "Email",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetEmail()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserValidationError{
-					field:  "Email",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Email
 	}
 
 	if m.Birthday != nil {
@@ -1096,120 +980,29 @@ func (m *CreateUserRequest) validate(all bool) error {
 	// no validation rules for Id
 
 	if m.Username != nil {
-
-		if all {
-			switch v := interface{}(m.GetUsername()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreateUserRequestValidationError{
-						field:  "Username",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, CreateUserRequestValidationError{
-						field:  "Username",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return CreateUserRequestValidationError{
-					field:  "Username",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Username
 	}
 
 	if m.Name != nil {
-
-		if all {
-			switch v := interface{}(m.GetName()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreateUserRequestValidationError{
-						field:  "Name",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, CreateUserRequestValidationError{
-						field:  "Name",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return CreateUserRequestValidationError{
-					field:  "Name",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Name
 	}
 
 	if m.Phone != nil {
-
-		if all {
-			switch v := interface{}(m.GetPhone()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreateUserRequestValidationError{
-						field:  "Phone",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, CreateUserRequestValidationError{
-						field:  "Phone",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetPhone()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return CreateUserRequestValidationError{
-					field:  "Phone",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Phone
 	}
 
 	if m.Email != nil {
 
-		if wrapper := m.GetEmail(); wrapper != nil {
-
-			if err := m._validateEmail(wrapper.GetValue()); err != nil {
-				err = CreateUserRequestValidationError{
-					field:  "Email",
-					reason: "value must be a valid email address",
-					cause:  err,
-				}
-				if !all {
-					return err
-				}
-				errors = append(errors, err)
+		if err := m._validateEmail(m.GetEmail()); err != nil {
+			err = CreateUserRequestValidationError{
+				field:  "Email",
+				reason: "value must be a valid email address",
+				cause:  err,
 			}
-
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}
@@ -2652,28 +2445,6 @@ func (m *SearchUserRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Identity
-
-	// no validation rules for Username
-
-	if wrapper := m.GetEmail(); wrapper != nil {
-
-		if err := m._validateEmail(wrapper.GetValue()); err != nil {
-			err = SearchUserRequestValidationError{
-				field:  "Email",
-				reason: "value must be a valid email address",
-				cause:  err,
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	// no validation rules for Phone
-
 	if all {
 		switch v := interface{}(m.GetFields()).(type) {
 		case interface{ ValidateAll() error }:
@@ -2701,6 +2472,34 @@ func (m *SearchUserRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.Identity != nil {
+		// no validation rules for Identity
+	}
+
+	if m.Username != nil {
+		// no validation rules for Username
+	}
+
+	if m.Email != nil {
+
+		if err := m._validateEmail(m.GetEmail()); err != nil {
+			err = SearchUserRequestValidationError{
+				field:  "Email",
+				reason: "value must be a valid email address",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Phone != nil {
+		// no validation rules for Phone
 	}
 
 	if len(errors) > 0 {
@@ -2990,121 +2789,30 @@ func (m *UserInternalCreateTenantRequest) validate(all bool) error {
 
 	if m.AdminEmail != nil {
 
-		if wrapper := m.GetAdminEmail(); wrapper != nil {
-
-			if err := m._validateEmail(wrapper.GetValue()); err != nil {
-				err = UserInternalCreateTenantRequestValidationError{
-					field:  "AdminEmail",
-					reason: "value must be a valid email address",
-					cause:  err,
-				}
-				if !all {
-					return err
-				}
-				errors = append(errors, err)
+		if err := m._validateEmail(m.GetAdminEmail()); err != nil {
+			err = UserInternalCreateTenantRequestValidationError{
+				field:  "AdminEmail",
+				reason: "value must be a valid email address",
+				cause:  err,
 			}
-
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}
 
 	if m.AdminUsername != nil {
-
-		if all {
-			switch v := interface{}(m.GetAdminUsername()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserInternalCreateTenantRequestValidationError{
-						field:  "AdminUsername",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserInternalCreateTenantRequestValidationError{
-						field:  "AdminUsername",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetAdminUsername()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserInternalCreateTenantRequestValidationError{
-					field:  "AdminUsername",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for AdminUsername
 	}
 
 	if m.AdminPassword != nil {
-
-		if all {
-			switch v := interface{}(m.GetAdminPassword()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserInternalCreateTenantRequestValidationError{
-						field:  "AdminPassword",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserInternalCreateTenantRequestValidationError{
-						field:  "AdminPassword",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetAdminPassword()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserInternalCreateTenantRequestValidationError{
-					field:  "AdminPassword",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for AdminPassword
 	}
 
 	if m.AdminUserId != nil {
-
-		if all {
-			switch v := interface{}(m.GetAdminUserId()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserInternalCreateTenantRequestValidationError{
-						field:  "AdminUserId",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserInternalCreateTenantRequestValidationError{
-						field:  "AdminUserId",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetAdminUserId()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserInternalCreateTenantRequestValidationError{
-					field:  "AdminUserId",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for AdminUserId
 	}
 
 	if len(errors) > 0 {
@@ -3238,6 +2946,253 @@ var _ interface {
 	ErrorName() string
 } = UserInternalCreateTenantRequestValidationError{}
 
+// Validate checks the field values on FindOrCreateStripeCustomerRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *FindOrCreateStripeCustomerRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FindOrCreateStripeCustomerRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// FindOrCreateStripeCustomerRequestMultiError, or nil if none found.
+func (m *FindOrCreateStripeCustomerRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FindOrCreateStripeCustomerRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
+	if m.StripeCustomerId != nil {
+		// no validation rules for StripeCustomerId
+	}
+
+	if len(errors) > 0 {
+		return FindOrCreateStripeCustomerRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// FindOrCreateStripeCustomerRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// FindOrCreateStripeCustomerRequest.ValidateAll() if the designated
+// constraints aren't met.
+type FindOrCreateStripeCustomerRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FindOrCreateStripeCustomerRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FindOrCreateStripeCustomerRequestMultiError) AllErrors() []error { return m }
+
+// FindOrCreateStripeCustomerRequestValidationError is the validation error
+// returned by FindOrCreateStripeCustomerRequest.Validate if the designated
+// constraints aren't met.
+type FindOrCreateStripeCustomerRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FindOrCreateStripeCustomerRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FindOrCreateStripeCustomerRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FindOrCreateStripeCustomerRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FindOrCreateStripeCustomerRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FindOrCreateStripeCustomerRequestValidationError) ErrorName() string {
+	return "FindOrCreateStripeCustomerRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FindOrCreateStripeCustomerRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFindOrCreateStripeCustomerRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FindOrCreateStripeCustomerRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FindOrCreateStripeCustomerRequestValidationError{}
+
+// Validate checks the field values on FindOrCreateStripeCustomerReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *FindOrCreateStripeCustomerReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FindOrCreateStripeCustomerReply with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// FindOrCreateStripeCustomerReplyMultiError, or nil if none found.
+func (m *FindOrCreateStripeCustomerReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FindOrCreateStripeCustomerReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, FindOrCreateStripeCustomerReplyValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, FindOrCreateStripeCustomerReplyValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FindOrCreateStripeCustomerReplyValidationError{
+				field:  "User",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for StripeCustomerId
+
+	if len(errors) > 0 {
+		return FindOrCreateStripeCustomerReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// FindOrCreateStripeCustomerReplyMultiError is an error wrapping multiple
+// validation errors returned by FindOrCreateStripeCustomerReply.ValidateAll()
+// if the designated constraints aren't met.
+type FindOrCreateStripeCustomerReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FindOrCreateStripeCustomerReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FindOrCreateStripeCustomerReplyMultiError) AllErrors() []error { return m }
+
+// FindOrCreateStripeCustomerReplyValidationError is the validation error
+// returned by FindOrCreateStripeCustomerReply.Validate if the designated
+// constraints aren't met.
+type FindOrCreateStripeCustomerReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FindOrCreateStripeCustomerReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FindOrCreateStripeCustomerReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FindOrCreateStripeCustomerReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FindOrCreateStripeCustomerReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FindOrCreateStripeCustomerReplyValidationError) ErrorName() string {
+	return "FindOrCreateStripeCustomerReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FindOrCreateStripeCustomerReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFindOrCreateStripeCustomerReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FindOrCreateStripeCustomerReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FindOrCreateStripeCustomerReplyValidationError{}
+
 // Validate checks the field values on SearchUserResponse_SearchUser with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -3292,36 +3247,7 @@ func (m *SearchUserResponse_SearchUser) validate(all bool) error {
 	}
 
 	if m.Username != nil {
-
-		if all {
-			switch v := interface{}(m.GetUsername()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SearchUserResponse_SearchUserValidationError{
-						field:  "Username",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, SearchUserResponse_SearchUserValidationError{
-						field:  "Username",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUsername()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return SearchUserResponse_SearchUserValidationError{
-					field:  "Username",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Username
 	}
 
 	if len(errors) > 0 {

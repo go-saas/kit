@@ -935,6 +935,8 @@ func (m *GetStripeConfigReply) validate(all bool) error {
 
 	// no validation rules for PriceTables
 
+	// no validation rules for CustomerId
+
 	if len(errors) > 0 {
 		return GetStripeConfigReplyMultiError(errors)
 	}

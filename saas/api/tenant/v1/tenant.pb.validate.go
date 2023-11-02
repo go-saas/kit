@@ -89,121 +89,30 @@ func (m *CreateTenantRequest) validate(all bool) error {
 
 	if m.AdminEmail != nil {
 
-		if wrapper := m.GetAdminEmail(); wrapper != nil {
-
-			if err := m._validateEmail(wrapper.GetValue()); err != nil {
-				err = CreateTenantRequestValidationError{
-					field:  "AdminEmail",
-					reason: "value must be a valid email address",
-					cause:  err,
-				}
-				if !all {
-					return err
-				}
-				errors = append(errors, err)
+		if err := m._validateEmail(m.GetAdminEmail()); err != nil {
+			err = CreateTenantRequestValidationError{
+				field:  "AdminEmail",
+				reason: "value must be a valid email address",
+				cause:  err,
 			}
-
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}
 
 	if m.AdminUsername != nil {
-
-		if all {
-			switch v := interface{}(m.GetAdminUsername()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreateTenantRequestValidationError{
-						field:  "AdminUsername",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, CreateTenantRequestValidationError{
-						field:  "AdminUsername",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetAdminUsername()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return CreateTenantRequestValidationError{
-					field:  "AdminUsername",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for AdminUsername
 	}
 
 	if m.AdminPassword != nil {
-
-		if all {
-			switch v := interface{}(m.GetAdminPassword()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreateTenantRequestValidationError{
-						field:  "AdminPassword",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, CreateTenantRequestValidationError{
-						field:  "AdminPassword",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetAdminPassword()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return CreateTenantRequestValidationError{
-					field:  "AdminPassword",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for AdminPassword
 	}
 
 	if m.AdminUserId != nil {
-
-		if all {
-			switch v := interface{}(m.GetAdminUserId()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreateTenantRequestValidationError{
-						field:  "AdminUserId",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, CreateTenantRequestValidationError{
-						field:  "AdminUserId",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetAdminUserId()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return CreateTenantRequestValidationError{
-					field:  "AdminUserId",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for AdminUserId
 	}
 
 	if len(errors) > 0 {

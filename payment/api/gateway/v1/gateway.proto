@@ -91,4 +91,5 @@ message GetStripeConfigReply{
   bool is_test=1;
   string publish_key=2;
   map<string,string> price_tables=3;
+  string customer_id=4;
 }

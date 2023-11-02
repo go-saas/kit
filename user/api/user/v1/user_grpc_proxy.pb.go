@@ -70,3 +70,6 @@ func (c *userInternalServiceClientProxy) CreateTenant(ctx context.Context, in *U
 func (c *userInternalServiceClientProxy) CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
 	return c.cc.CheckUserTenant(ctx, in)
 }
+func (c *userInternalServiceClientProxy) FindOrCreateStripeCustomer(ctx context.Context, in *FindOrCreateStripeCustomerRequest) (*FindOrCreateStripeCustomerReply, error) {
+	return c.cc.FindOrCreateStripeCustomer(ctx, in)
+}

@@ -4232,6 +4232,17 @@
       ],
       "default": "UNKNOWN"
     },
+    "v1FindOrCreateStripeCustomerReply": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1User"
+        },
+        "stripeCustomerId": {
+          "type": "string"
+        }
+      }
+    },
     "v1ForgetPasswordReply": {
       "type": "object",
       "properties": {

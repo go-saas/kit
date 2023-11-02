@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	kerrors "github.com/go-kratos/kratos/v2/errors"
 	klog "github.com/go-kratos/kratos/v2/log"
 	dtmsrv "github.com/go-saas/kit/dtm/service"
 	"github.com/go-saas/kit/dtm/utils"
@@ -10,6 +11,7 @@ import (
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/errors"
+	"github.com/go-saas/kit/pkg/idp"
 	"github.com/go-saas/kit/pkg/uow"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	v12 "github.com/go-saas/kit/saas/event/v1"
@@ -18,20 +20,26 @@ import (
 	"github.com/go-saas/kit/user/private/biz"
 	"github.com/go-saas/saas"
 	"github.com/go-saas/saas/seed"
+	"github.com/goxiaoy/vfs"
+	"github.com/samber/lo"
+	"github.com/stripe/stripe-go/v76"
+	stripeclient "github.com/stripe/stripe-go/v76/client"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type UserInternalService struct {
-	pb.UnimplementedUserInternalServiceServer
-
-	producer  event.Producer
-	auth      authz.Service
-	trust     api2.TrustedContextValidator
-	seeder    seed.Seeder
-	dtmHelper *dtmsrv.Helper
-	um        *biz.UserManager
-	logger    *klog.Helper
+	producer     event.Producer
+	auth         authz.Service
+	trust        api2.TrustedContextValidator
+	seeder       seed.Seeder
+	dtmHelper    *dtmsrv.Helper
+	blob         vfs.Blob
+	um           *biz.UserManager
+	logger       *klog.Helper
+	stripeClient *stripeclient.API
 }
+
+var _ pb.UserInternalServiceServer = (*UserInternalService)(nil)
 
 func NewUserInternalService(
 	seeder seed.Seeder,
@@ -39,17 +47,21 @@ func NewUserInternalService(
 	auth authz.Service,
 	trust api2.TrustedContextValidator,
 	dtmHelper *dtmsrv.Helper,
+	blob vfs.Blob,
 	um *biz.UserManager,
 	l klog.Logger,
+	stripeClient *stripeclient.API,
 ) *UserInternalService {
 	return &UserInternalService{
-		producer:  producer,
-		auth:      auth,
-		trust:     trust,
-		seeder:    seeder,
-		dtmHelper: dtmHelper,
-		um:        um,
-		logger:    klog.NewHelper(klog.With(l, "module", "user.UserInternalService")),
+		producer:     producer,
+		auth:         auth,
+		trust:        trust,
+		seeder:       seeder,
+		dtmHelper:    dtmHelper,
+		blob:         blob,
+		um:           um,
+		stripeClient: stripeClient,
+		logger:       klog.NewHelper(klog.With(l, "module", "user.UserInternalService")),
 	}
 }
 
@@ -71,16 +83,16 @@ func (s *UserInternalService) CreateTenant(ctx context.Context, req *pb.UserInte
 
 		extra := map[string]interface{}{}
 		if req.AdminEmail != nil {
-			extra[biz.AdminEmailKey] = req.AdminEmail.Value
+			extra[biz.AdminEmailKey] = *req.AdminEmail
 		}
 		if req.AdminUsername != nil {
-			extra[biz.AdminUsernameKey] = req.AdminUsername.Value
+			extra[biz.AdminUsernameKey] = *req.AdminUsername
 		}
 		if req.AdminPassword != nil {
-			extra[biz.AdminPasswordKey] = req.AdminPassword.Value
+			extra[biz.AdminPasswordKey] = *req.AdminPassword
 		}
 		if req.AdminUserId != nil {
-			extra[biz.AdminUserId] = req.AdminUserId.Value
+			extra[biz.AdminUserId] = *req.AdminUserId
 		}
 		if err := s.seeder.Seed(ctx, seed.AddTenant(req.TenantId), seed.WithExtra(extra)); err != nil {
 			return err
@@ -95,6 +107,68 @@ func (s *UserInternalService) CreateTenant(ctx context.Context, req *pb.UserInte
 	})
 	return
 
+}
+
+func (s *UserInternalService) FindOrCreateStripeCustomer(ctx context.Context, req *pb.FindOrCreateStripeCustomerRequest) (*pb.FindOrCreateStripeCustomerReply, error) {
+	if err := sapi.ErrIfUntrusted(ctx, s.trust); err != nil {
+		return nil, err
+	}
+	if req.UserId == nil && req.StripeCustomerId == nil {
+		return nil, kerrors.BadRequest("", "")
+	}
+	ret := &pb.FindOrCreateStripeCustomerReply{}
+	if req.UserId != nil {
+		user, err := s.um.FindByID(ctx, *req.UserId)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil {
+			return nil, pb.ErrorUserNotFoundLocalized(ctx, nil, nil)
+		}
+		//get login providers
+		logins, err := s.um.ListLogin(ctx, user)
+		if err != nil {
+			return nil, err
+		}
+		stripeLogin, ok := lo.Find(logins, func(login *biz.UserLogin) bool {
+			return login.LoginProvider == idp.StripeLoginProvider
+		})
+		if !ok {
+			params := &stripe.CustomerParams{
+				Name: user.Name,
+			}
+			params.Metadata = map[string]string{
+				"user_id": user.ID.String(),
+			}
+			//create stripe customer
+			stripeCustomer, err := s.stripeClient.Customers.New(params)
+			if err != nil {
+				return nil, err
+			}
+			stripeLogin = &biz.UserLogin{
+				UserId:        user.ID,
+				LoginProvider: idp.StripeLoginProvider,
+				ProviderKey:   stripeCustomer.ID,
+			}
+			err = s.um.AddLogin(ctx, user, []biz.UserLogin{*stripeLogin})
+			if err != nil {
+				return nil, err
+			}
+		}
+		ret.StripeCustomerId = stripeLogin.ProviderKey
+		ret.User = MapBizUserToApi(ctx, user, s.blob)
+	} else if req.StripeCustomerId != nil {
+		user, err := s.um.FindByLogin(ctx, idp.StripeLoginProvider, *req.StripeCustomerId)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil {
+			return nil, pb.ErrorUserNotFoundLocalized(ctx, nil, nil)
+		}
+		ret.StripeCustomerId = *req.StripeCustomerId
+		ret.User = MapBizUserToApi(ctx, user, s.blob)
+	}
+	return ret, nil
 }
 
 // CheckUserTenant internal api for check user tenant

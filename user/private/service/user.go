@@ -5,6 +5,7 @@ import (
 	"fmt"
 	klog "github.com/go-kratos/kratos/v2/log"
 	api2 "github.com/go-saas/kit/pkg/api"
+	"github.com/go-saas/kit/pkg/utils"
 	"github.com/go-saas/saas"
 	"github.com/goxiaoy/vfs"
 	"io"
@@ -21,13 +22,10 @@ import (
 	v1 "github.com/go-saas/kit/user/api/role/v1"
 	"github.com/google/uuid"
 
-	"github.com/samber/lo"
-	"google.golang.org/protobuf/types/known/wrapperspb"
-
 	pb "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/kit/user/private/biz"
 	"github.com/mennanov/fmutils"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/samber/lo"
 )
 
 type UserService struct {
@@ -128,19 +126,14 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 			return nil, errors2.NotFound("", "")
 		}
 		u = *dbUser
-
 	} else {
-		if req.Name != nil {
-			u.Name = &req.Name.Value
-		}
-		if req.Username != nil {
-			u.Username = &req.Username.Value
-		}
+		u.Name = req.Name
+		u.Username = req.Username
 		if req.Email != nil {
-			u.SetEmail(req.Email.Value, false)
+			u.SetEmail(*req.Email, false)
 		}
 		if req.Phone != nil {
-			u.SetPhone(req.Phone.Value, false)
+			u.SetPhone(*req.Phone, false)
 		}
 		if req.Birthday != nil {
 			b := req.Birthday.AsTime()
@@ -150,7 +143,6 @@ func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		if len(req.Avatar) > 0 {
 			u.Avatar = &req.Avatar
 		}
-
 		u.Gender = &gender
 		var err error
 		if req.Password != "" {
@@ -277,7 +269,6 @@ func (s *UserService) InviteUser(ctx context.Context, req *pb.InviteUserRequest)
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, "*"), authz.CreateAction); err != nil {
 		return nil, err
 	}
-
 	//find user
 	u, err := s.um.FindByIdentity(ctx, req.Identify)
 	if err != nil {
@@ -302,14 +293,14 @@ func (s *UserService) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 	}
 	var user *biz.User
 	var err error
-	if len(req.Identity) > 0 {
-		user, err = s.um.FindByIdentity(ctx, req.Identity)
+	if req.Identity != nil {
+		user, err = s.um.FindByIdentity(ctx, *req.Identity)
 	} else if req.Email != nil {
-		user, err = s.um.FindByEmail(ctx, req.Email.Value)
-	} else if len(req.Phone) > 0 {
-		user, err = s.um.FindByPhone(ctx, req.Phone)
-	} else if len(req.Username) > 0 {
-		user, err = s.um.FindByName(ctx, req.Username)
+		user, err = s.um.FindByEmail(ctx, *req.Email)
+	} else if req.Phone != nil {
+		user, err = s.um.FindByPhone(ctx, *req.Phone)
+	} else if req.Username != nil {
+		user, err = s.um.FindByName(ctx, *req.Username)
 	}
 	if err != nil {
 		return nil, err
@@ -320,11 +311,10 @@ func (s *UserService) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 	}
 
 	ret.User = &pb.SearchUserResponse_SearchUser{
-		Id: user.ID.String(),
+		Id:       user.ID.String(),
+		Username: user.Username,
 	}
-	if user.Username != nil {
-		ret.User.Username = &wrapperspb.StringValue{Value: *user.Username}
-	}
+
 	ret.User.Avatar = mapAvatar(ctx, s.blob, user)
 	return ret, err
 }
@@ -381,21 +371,11 @@ func MapBizUserToApi(ctx context.Context, u *biz.User, b vfs.Blob) *pb.User {
 		Id:    u.ID.String(),
 		Roles: nil,
 	}
-	if u.Username != nil {
-		res.Username = &wrapperspb.StringValue{Value: *u.Username}
-	}
-	if u.Name != nil {
-		res.Name = &wrapperspb.StringValue{Value: *u.Name}
-	}
-	if u.Phone != nil {
-		res.Phone = &wrapperspb.StringValue{Value: *u.Phone}
-	}
-	if u.Email != nil {
-		res.Email = &wrapperspb.StringValue{Value: *u.Email}
-	}
-	if u.Birthday != nil {
-		res.Birthday = timestamppb.New(*u.Birthday)
-	}
+	res.Username = u.Username
+	res.Name = u.Name
+	res.Phone = u.Phone
+	res.Email = u.Email
+	res.Birthday = utils.Time2Timepb(u.Birthday)
 	if u.Gender != nil {
 		if v, ok := pb.Gender_value[*u.Gender]; ok {
 			res.Gender = pb.Gender(v)

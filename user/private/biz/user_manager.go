@@ -160,6 +160,10 @@ func (um *UserManager) FindByLogin(ctx context.Context, loginProvider string, pr
 	return um.userRepo.FindByLogin(ctx, loginProvider, providerKey)
 }
 
+func (um *UserManager) ListLogin(ctx context.Context, user *User) ([]*UserLogin, error) {
+	return um.userRepo.ListLogin(ctx, user)
+}
+
 func (um *UserManager) AddLogin(ctx context.Context, user *User, logins []UserLogin) error {
 	//find logins
 	existing, err := um.userRepo.ListLogin(ctx, user)

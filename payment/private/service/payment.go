@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "github.com/go-saas/kit/order/api/order/v1"
@@ -15,6 +14,7 @@ import (
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	stripe2 "github.com/go-saas/kit/pkg/stripe"
 	"github.com/go-saas/kit/pkg/utils"
+	v12 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/stripe/stripe-go/v76"
 	stripeclient "github.com/stripe/stripe-go/v76/client"
 	"github.com/stripe/stripe-go/v76/webhook"
@@ -28,6 +28,7 @@ type PaymentService struct {
 	trust            sapi.TrustedContextValidator
 	auth             authz.Service
 	orderInternalSrv v1.OrderInternalServiceServer
+	userInternalSrv  v12.UserInternalServiceServer
 	stripeClient     *stripeclient.API
 	l                *log.Helper
 	c                *stripe2.StripeConf
@@ -40,6 +41,7 @@ func NewPaymentService(
 	trust sapi.TrustedContextValidator,
 	auth authz.Service,
 	orderInternalSrv v1.OrderInternalServiceServer,
+	userInternalSrv v12.UserInternalServiceServer,
 	stripeClient *stripeclient.API,
 	logger log.Logger,
 	c *stripe2.StripeConf,
@@ -48,6 +50,7 @@ func NewPaymentService(
 		trust:            trust,
 		auth:             auth,
 		orderInternalSrv: orderInternalSrv,
+		userInternalSrv:  userInternalSrv,
 		stripeClient:     stripeClient,
 		l:                log.NewHelper(logger),
 		c:                c,
@@ -59,7 +62,17 @@ func (s *PaymentService) GetPaymentMethod(ctx context.Context, req *pb.GetPaymen
 }
 
 func (s *PaymentService) GetStripeConfig(ctx context.Context, req *pb.GetStripeConfigRequest) (*pb.GetStripeConfigReply, error) {
-	return &pb.GetStripeConfigReply{IsTest: s.c.IsTest, PublishKey: s.c.PublishKey, PriceTables: s.c.PriceTables}, nil
+	ui, _ := authn.FromUserContext(ctx)
+	ret := &pb.GetStripeConfigReply{IsTest: s.c.IsTest, PublishKey: s.c.PublishKey, PriceTables: s.c.PriceTables}
+	uid := ui.GetId()
+	if len(uid) > 0 {
+		customer, err := s.userInternalSrv.FindOrCreateStripeCustomer(ctx, &v12.FindOrCreateStripeCustomerRequest{UserId: &uid})
+		if err != nil {
+			return nil, err
+		}
+		ret.CustomerId = customer.StripeCustomerId
+	}
+	return ret, nil
 }
 
 func (s *PaymentService) CreateStripePaymentIntent(ctx context.Context, req *pb.CreateStripePaymentIntentRequest) (*pb.CreateStripePaymentIntentReply, error) {
@@ -75,9 +88,14 @@ func (s *PaymentService) CreateStripePaymentIntent(ctx context.Context, req *pb.
 		return nil, errors.NotFound("", "")
 	}
 	userId := userInfo.GetId()
-	customer, err := s.findOrCreateCustomer(userId)
+	customer, err := s.userInternalSrv.FindOrCreateStripeCustomer(ctx, &v12.FindOrCreateStripeCustomerRequest{
+		UserId: &userId,
+	})
+	if err != nil {
+		return nil, err
+	}
 	ephemeralKey, err := s.stripeClient.EphemeralKeys.New(&stripe.EphemeralKeyParams{
-		Customer:      &customer.ID,
+		Customer:      &customer.StripeCustomerId,
 		StripeVersion: stripe.String(stripe.APIVersion),
 	})
 	if err != nil {
@@ -87,7 +105,7 @@ func (s *PaymentService) CreateStripePaymentIntent(ctx context.Context, req *pb.
 	paymentIntentParams := &stripe.PaymentIntentParams{
 		Amount:   &order.TotalPrice.Amount,
 		Currency: &order.TotalPrice.CurrencyCode,
-		Customer: &customer.ID,
+		Customer: &customer.StripeCustomerId,
 	}
 	paymentIntentParams.Metadata = map[string]string{
 		"user_id":  userInfo.GetId(),
@@ -99,7 +117,7 @@ func (s *PaymentService) CreateStripePaymentIntent(ctx context.Context, req *pb.
 	}
 	return &pb.CreateStripePaymentIntentReply{
 		PaymentIntent: intent.ClientSecret,
-		CustomerId:    customer.ID,
+		CustomerId:    customer.StripeCustomerId,
 		EphemeralKey:  ephemeralKey.Secret,
 	}, nil
 }
@@ -175,38 +193,4 @@ func (s *PaymentService) StripeWebhook(ctx context.Context, req *emptypb.Empty) 
 func handleStripeError(err error) error {
 	//TODO handle stripe
 	return err
-}
-
-func (s *PaymentService) findOrCreateCustomer(userId string) (*stripe.Customer, error) {
-	var err error
-	customerSearch := &stripe.CustomerSearchParams{}
-	customerSearch.Query = fmt.Sprintf("metadata['user_id']:'%s'", userId)
-	searchIter := s.stripeClient.Customers.Search(customerSearch)
-	if searchIter.Err() != nil {
-		return nil, handleStripeError(searchIter.Err())
-	}
-	var customer *stripe.Customer
-	for searchIter.Next() {
-		if searchIter.Err() != nil {
-			return nil, handleStripeError(searchIter.Err())
-		}
-		customer = searchIter.Customer()
-		break
-	}
-	if searchIter.Err() != nil {
-		return nil, handleStripeError(searchIter.Err())
-	}
-	if customer == nil {
-		params := &stripe.CustomerParams{
-			Name: &userId,
-		}
-		params.Metadata = map[string]string{
-			"user_id": userId,
-		}
-		customer, err = s.stripeClient.Customers.New(params)
-		if err != nil {
-			return nil, handleStripeError(err)
-		}
-	}
-	return customer, nil
 }

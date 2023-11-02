@@ -20,7 +20,6 @@ import (
 	"github.com/go-saas/sessions"
 	"github.com/goxiaoy/vfs"
 	"github.com/segmentio/ksuid"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 	"io"
 	"os"
 	"path/filepath"
@@ -176,12 +175,13 @@ func (s *TenantService) UserCreateTenant(ctx context.Context, req *pb.UserCreate
 	if len(req.DisplayName) == 0 {
 		req.DisplayName = req.Name
 	}
+	uid := ui.GetId()
 	var rawReq = &pb.CreateTenantRequest{
 		Name:        req.Name,
 		DisplayName: req.DisplayName,
 		Region:      req.Region,
 		Logo:        req.Logo,
-		AdminUserId: &wrapperspb.StringValue{Value: ui.GetId()},
+		AdminUserId: &uid,
 	}
 	var createTenantResp = &pb.Tenant{}
 

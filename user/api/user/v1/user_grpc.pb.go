@@ -395,8 +395,9 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	UserInternalService_CreateTenant_FullMethodName    = "/user.api.user.v1.UserInternalService/CreateTenant"
-	UserInternalService_CheckUserTenant_FullMethodName = "/user.api.user.v1.UserInternalService/CheckUserTenant"
+	UserInternalService_CreateTenant_FullMethodName               = "/user.api.user.v1.UserInternalService/CreateTenant"
+	UserInternalService_CheckUserTenant_FullMethodName            = "/user.api.user.v1.UserInternalService/CheckUserTenant"
+	UserInternalService_FindOrCreateStripeCustomer_FullMethodName = "/user.api.user.v1.UserInternalService/FindOrCreateStripeCustomer"
 )
 
 // UserInternalServiceClient is the client API for UserInternalService service.
@@ -406,6 +407,7 @@ type UserInternalServiceClient interface {
 	CreateTenant(ctx context.Context, in *UserInternalCreateTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(ctx context.Context, in *CheckUserTenantRequest, opts ...grpc.CallOption) (*CheckUserTenantReply, error)
+	FindOrCreateStripeCustomer(ctx context.Context, in *FindOrCreateStripeCustomerRequest, opts ...grpc.CallOption) (*FindOrCreateStripeCustomerReply, error)
 }
 
 type userInternalServiceClient struct {
@@ -434,6 +436,15 @@ func (c *userInternalServiceClient) CheckUserTenant(ctx context.Context, in *Che
 	return out, nil
 }
 
+func (c *userInternalServiceClient) FindOrCreateStripeCustomer(ctx context.Context, in *FindOrCreateStripeCustomerRequest, opts ...grpc.CallOption) (*FindOrCreateStripeCustomerReply, error) {
+	out := new(FindOrCreateStripeCustomerReply)
+	err := c.cc.Invoke(ctx, UserInternalService_FindOrCreateStripeCustomer_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserInternalServiceServer is the server API for UserInternalService service.
 // All implementations should embed UnimplementedUserInternalServiceServer
 // for forward compatibility
@@ -441,6 +452,7 @@ type UserInternalServiceServer interface {
 	CreateTenant(context.Context, *UserInternalCreateTenantRequest) (*emptypb.Empty, error)
 	// CheckUserTenant internal api for checking whether user is allowed in this tenant
 	CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error)
+	FindOrCreateStripeCustomer(context.Context, *FindOrCreateStripeCustomerRequest) (*FindOrCreateStripeCustomerReply, error)
 }
 
 // UnimplementedUserInternalServiceServer should be embedded to have forward compatible implementations.
@@ -452,6 +464,9 @@ func (UnimplementedUserInternalServiceServer) CreateTenant(context.Context, *Use
 }
 func (UnimplementedUserInternalServiceServer) CheckUserTenant(context.Context, *CheckUserTenantRequest) (*CheckUserTenantReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckUserTenant not implemented")
+}
+func (UnimplementedUserInternalServiceServer) FindOrCreateStripeCustomer(context.Context, *FindOrCreateStripeCustomerRequest) (*FindOrCreateStripeCustomerReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindOrCreateStripeCustomer not implemented")
 }
 
 // UnsafeUserInternalServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -501,6 +516,24 @@ func _UserInternalService_CheckUserTenant_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserInternalService_FindOrCreateStripeCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindOrCreateStripeCustomerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserInternalServiceServer).FindOrCreateStripeCustomer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserInternalService_FindOrCreateStripeCustomer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserInternalServiceServer).FindOrCreateStripeCustomer(ctx, req.(*FindOrCreateStripeCustomerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserInternalService_ServiceDesc is the grpc.ServiceDesc for UserInternalService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -515,6 +548,10 @@ var UserInternalService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckUserTenant",
 			Handler:    _UserInternalService_CheckUserTenant_Handler,
+		},
+		{
+			MethodName: "FindOrCreateStripeCustomer",
+			Handler:    _UserInternalService_FindOrCreateStripeCustomer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

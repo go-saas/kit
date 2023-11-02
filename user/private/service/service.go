@@ -11,6 +11,7 @@ import (
 	"github.com/go-saas/kit/pkg/idp"
 	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
+	"github.com/go-saas/kit/pkg/stripe"
 	"github.com/go-saas/kit/user/api"
 	v13 "github.com/go-saas/kit/user/api/account/v1"
 	v14 "github.com/go-saas/kit/user/api/auth/v1"
@@ -34,6 +35,7 @@ var ProviderSet = kitdi.NewSet(
 	NewUserRoleContrib,
 	//idp
 	idp.NewWeChat,
+	stripe.ProviderSet,
 
 	kitdi.NewProvider(NewUserService, di.As(new(v12.UserServiceServer), new(v12.UserAdminServiceServer))),
 	kitdi.NewProvider(NewUserInternalService, di.As(new(v12.UserInternalServiceServer))),

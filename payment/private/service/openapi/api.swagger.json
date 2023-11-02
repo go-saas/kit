@@ -220,6 +220,9 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "customerId": {
+          "type": "string"
         }
       }
     },

@@ -164,6 +164,7 @@ func main() {
 		kitdi.Value(bc.Dev),
 		kitdi.Value(bc.User),
 		kitdi.Value(bc.User.Idp),
+		kitdi.Value(bc.Stripe),
 		kitdi.Value(bc.Data),
 		kitdi.Value(logger),
 		kitdi.Value([]grpc.ClientOption{}),

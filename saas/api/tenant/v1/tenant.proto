@@ -146,10 +146,10 @@ message CreateTenantRequest {
 
 	bool separate_db=6;
 
-	optional google.protobuf.StringValue admin_email = 7 [(validate.rules).string.email=true];
-	optional google.protobuf.StringValue admin_username=8;
-	optional google.protobuf.StringValue admin_password=9;
-	optional google.protobuf.StringValue admin_user_id=10;
+	optional string admin_email = 7 [(validate.rules).string.email=true];
+	optional string admin_username=8;
+	optional string admin_password=9;
+	optional string admin_user_id=10;
 }
 
 

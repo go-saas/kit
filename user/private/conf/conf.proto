@@ -9,6 +9,7 @@ import "blob/blob.proto";
 import "google/protobuf/duration.proto";
 import "authz/authz/def.proto";
 import "idp/idp.proto";
+import "stripe/stripe.proto";
 
 message Bootstrap {
   conf.Data data = 2;
@@ -19,6 +20,7 @@ message Bootstrap {
   conf.Tracers tracing=7;
   conf.AppConfig app=8;
   conf.Dev dev=9;
+  .stripe.StripeConf stripe=501;
 }
 
 

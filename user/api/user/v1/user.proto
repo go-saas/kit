@@ -149,10 +149,10 @@ message GetUserRequest{
 
 message User{
   string  id=1;
-  optional google.protobuf.StringValue username =2;
-  optional google.protobuf.StringValue name=3;
-  optional google.protobuf.StringValue phone =4;
-  optional google.protobuf.StringValue email=5;
+  optional string username =2;
+  optional string name=3;
+  optional string phone =4;
+  optional string email=5;
   optional google.protobuf.Timestamp birthday=6;
   //
   Gender gender=7;
@@ -170,10 +170,10 @@ message ListUsersResponse{
 
 message CreateUserRequest{
 
-    optional google.protobuf.StringValue username =1;
-    optional google.protobuf.StringValue name=2;
-    optional google.protobuf.StringValue phone =3;
-    optional google.protobuf.StringValue email=4 [(validate.rules).string.email = true];
+    optional string username =1;
+    optional string name=2;
+    optional string phone =3;
+    optional string email=4 [(validate.rules).string.email = true];
 
     string password=5;
     string confirm_password=6;
@@ -244,10 +244,10 @@ message CheckUserTenantReply{
 }
 
 message SearchUserRequest{
-  string identity=1;
-  string username=2;
-  google.protobuf.StringValue email=4 [(validate.rules).string.email=true];
-  string phone=5;
+  optional string identity=1;
+  optional string username=2;
+  optional string email=4 [(validate.rules).string.email=true];
+  optional string phone=5;
   google.protobuf.FieldMask fields=10;
 }
 
@@ -255,7 +255,7 @@ message SearchUserRequest{
 message SearchUserResponse{
   message SearchUser{
     string id=1;
-    optional google.protobuf.StringValue username =2;
+    optional string username =2;
     blob.BlobFile avatar=10;
   }
 
@@ -263,6 +263,7 @@ message SearchUserResponse{
 }
 
 service UserInternalService{
+
   rpc CreateTenant(UserInternalCreateTenantRequest) returns(google.protobuf.Empty){
 
   }
@@ -272,14 +273,28 @@ service UserInternalService{
 
   }
 
+
+  rpc FindOrCreateStripeCustomer(FindOrCreateStripeCustomerRequest)returns(FindOrCreateStripeCustomerReply){
+
+  }
+
 }
 
 message UserInternalCreateTenantRequest{
   string tenant_id=1;
 
-  optional google.protobuf.StringValue admin_email = 7 [(validate.rules).string.email=true];
-  optional google.protobuf.StringValue admin_username=8;
-  optional google.protobuf.StringValue admin_password=9;
-  optional google.protobuf.StringValue admin_user_id=10;
+  optional string admin_email = 7 [(validate.rules).string.email=true];
+  optional string admin_username=8;
+  optional string admin_password=9;
+  optional string admin_user_id=10;
 }
 
+message FindOrCreateStripeCustomerRequest{
+  optional string user_id=1;
+  optional string stripe_customer_id=2;
+}
+
+message FindOrCreateStripeCustomerReply{
+  User user=1;
+  string stripe_customer_id=2;
+}
