@@ -34,7 +34,7 @@ func (u *UserAddrRepo) FindByUser(ctx context.Context, userId string) ([]*biz.Us
 func (u *UserAddrRepo) SetPrefer(ctx context.Context, addr *biz.UserAddress) error {
 	db := u.GetDb(ctx)
 	//set other prefer as no
-	if err := db.Model(&biz.UserAddress{}).Scopes(kitgorm.WhereUserId(addr.UserId)).Update("prefer", false); err != nil {
+	if err := db.Model(&biz.UserAddress{}).Scopes(kitgorm.WhereUserId(addr.UserId.String())).Update("prefer", false); err != nil {
 		return nil
 	}
 	if err := db.Model(addr).Update("prefer", true); err != nil {

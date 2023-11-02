@@ -173,12 +173,12 @@ func (u *UserRepo) AddLogin(ctx context.Context, user *biz.User, userLogin *biz.
 }
 
 func (u *UserRepo) RemoveLogin(ctx context.Context, user *biz.User, loginProvider string, providerKey string) error {
-	err := u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID)).Where("login_provider =?", loginProvider).Where("provider_key =?", providerKey).Delete(&biz.UserLogin{}).Error
+	err := u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID.String())).Where("login_provider =?", loginProvider).Where("provider_key =?", providerKey).Delete(&biz.UserLogin{}).Error
 	return err
 }
 
 func (u *UserRepo) ListLogin(ctx context.Context, user *biz.User) (userLogins []*biz.UserLogin, err error) {
-	err = u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID)).Model(&biz.UserLogin{}).Find(userLogins).Error
+	err = u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID.String())).Model(&biz.UserLogin{}).Find(userLogins).Error
 	return
 }
 
@@ -200,13 +200,13 @@ func (u *UserRepo) SetToken(ctx context.Context, user *biz.User, loginProvider s
 }
 
 func (u *UserRepo) RemoveToken(ctx context.Context, user *biz.User, loginProvider string, name string) (err error) {
-	err = u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID)).Where("login_provider =?", loginProvider).Where("name =?", name).Delete(&biz.UserToken{}).Error
+	err = u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID.String())).Where("login_provider =?", loginProvider).Where("name =?", name).Delete(&biz.UserToken{}).Error
 	return
 }
 
 func (u *UserRepo) GetToken(ctx context.Context, user *biz.User, loginProvider string, name string) (token *string, err error) {
 	var t biz.UserToken
-	err = u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID)).Where("login_provider =?", loginProvider).Where("name =?", name).First(&t).Error
+	err = u.GetDb(ctx).Scopes(gorm2.WhereUserId(user.ID.String())).Where("login_provider =?", loginProvider).Where("name =?", name).First(&t).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
