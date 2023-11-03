@@ -12,6 +12,8 @@ import "validate/validate.proto";
 import "query/operation.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "stripe/stripe.proto";
+import "user/api/user/v1/user.proto";
+import "product/api/price/v1/price.proto";
 
 option go_package = "github.com/go-saas/kit/payment/api/subscription/v1;v1";
 
@@ -61,6 +63,13 @@ service SubscriptionService{
     };
   };
 
+  rpc GetMySubscription (GetMySubscriptionRequest) returns (Subscription){
+    option (google.api.http) = {
+      post: "/v1/subscription/my"
+      body: "*"
+    };
+  };
+
   rpc CancelMySubscription (CancelSubscriptionRequest) returns (Subscription){
     option (google.api.http) = {
       post: "/v1/subscription/my/{id}/cancel"
@@ -98,9 +107,12 @@ message CreateSubscriptionRequest{
 message Subscription{
   string id=1;
   string user_id=2;
+  .user.api.user.v1.User user=3;
 
   string provider=10;
   string provider_key=11;
+
+  string status=20;
 
   repeated SubscriptionItem items=100;
 
@@ -113,13 +125,13 @@ message SubscriptionProviderInfo{
 }
 
 
-
-
-
 message SubscriptionItem{
   string id=1;
   string price_id=10;
   string product_id=11;
+
+  .product.api.price.v1.Price price=100;
+
 }
 
 message SubscriptionItemParams{
@@ -148,8 +160,10 @@ message ResumeSubscriptionRequest{
 
 
 message GetSubscriptionRequest{
-  string id=1;
+  string id=1 [(validate.rules).string.min_len = 1, (google.api.field_behavior) = REQUIRED];
 }
+
+
 
 message ListSubscriptionRequest {
   int32 page_offset =1;
@@ -180,6 +194,10 @@ message CreateMySubscriptionRequest{
   string provider=10 [(validate.rules).string={in:["stripe"]}];
 
   repeated SubscriptionItemParams items=100 [(validate.rules).repeated={min_items:1}];
+}
+
+message GetMySubscriptionRequest{
+  string id=1 [(validate.rules).string.min_len = 1, (google.api.field_behavior) = REQUIRED];
 }
 
 message UpdateMySubscriptionRequest{

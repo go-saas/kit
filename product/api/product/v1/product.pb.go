@@ -364,7 +364,7 @@ type UpdateProduct struct {
 	SaleableFrom    *timestamppb.Timestamp `protobuf:"bytes,23,opt,name=saleable_from,json=saleableFrom,proto3" json:"saleable_from,omitempty"`
 	SaleableTo      *timestamppb.Timestamp `protobuf:"bytes,24,opt,name=saleable_to,json=saleableTo,proto3" json:"saleable_to,omitempty"`
 	Keywords        []*Keyword             `protobuf:"bytes,25,rep,name=keywords,proto3" json:"keywords,omitempty"`
-	// could update or create new prices
+	//could update or create new prices
 	Prices        []*v1.PriceParams   `protobuf:"bytes,26,rep,name=prices,proto3" json:"prices,omitempty"`
 	IsGiveaway    bool                `protobuf:"varint,27,opt,name=is_giveaway,json=isGiveaway,proto3" json:"is_giveaway,omitempty"`
 	Attributes    []*ProductAttribute `protobuf:"bytes,43,rep,name=attributes,proto3" json:"attributes,omitempty"`

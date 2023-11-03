@@ -179,7 +179,7 @@
     },
     "/v1/subscription/my": {
       "post": {
-        "operationId": "SubscriptionService_CreateMySubscription",
+        "operationId": "SubscriptionService_GetMySubscription",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -200,7 +200,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1CreateMySubscriptionRequest"
+              "$ref": "#/definitions/v1GetMySubscriptionRequest"
             }
           }
         ],
@@ -1306,6 +1306,30 @@
     }
   },
   "definitions": {
+    "blobBlobFile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "mime": {
+          "type": "string"
+        },
+        "size": {
+          "type": "string",
+          "format": "int64"
+        },
+        "url": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
     "googlerpcStatus": {
       "type": "object",
       "properties": {
@@ -1390,6 +1414,28 @@
         }
       }
     },
+    "pricePricePb": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "digits": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "text": {
+          "type": "string"
+        },
+        "amountDecimal": {
+          "type": "string"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -1398,6 +1444,14 @@
         }
       },
       "additionalProperties": {}
+    },
+    "protobufNullValue": {
+      "type": "string",
+      "enum": [
+        "NULL_VALUE"
+      ],
+      "default": "NULL_VALUE",
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
     },
     "stripeInvoice": {
       "type": "object",
@@ -1441,10 +1495,16 @@
         "userId": {
           "type": "string"
         },
+        "user": {
+          "$ref": "#/definitions/v1User"
+        },
         "provider": {
           "type": "string"
         },
         "providerKey": {
+          "type": "string"
+        },
+        "status": {
           "type": "string"
         },
         "items": {
@@ -1495,6 +1555,36 @@
           "type": "string"
         }
       }
+    },
+    "v1Effect": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "GRANT",
+        "FORBIDDEN"
+      ],
+      "default": "UNKNOWN"
+    },
+    "v1Gender": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "MALE",
+        "FEMALE",
+        "OTHER"
+      ],
+      "default": "UNKNOWN"
+    },
+    "v1GetMySubscriptionRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
     },
     "v1GetPaymentMethodReply": {
       "type": "object",
@@ -1641,6 +1731,291 @@
         }
       }
     },
+    "v1Permission": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "effect": {
+          "$ref": "#/definitions/v1Effect"
+        },
+        "tenantId": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PermissionDef": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "side": {
+          "$ref": "#/definitions/v1PermissionSide"
+        },
+        "extra": {
+          "type": "object"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "granted": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PermissionDefGroup": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "side": {
+          "$ref": "#/definitions/v1PermissionSide"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "def": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PermissionDef"
+          }
+        },
+        "extra": {
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PermissionSide": {
+      "type": "string",
+      "enum": [
+        "BOTH",
+        "HOST_ONLY",
+        "TENANT_ONLY"
+      ],
+      "default": "BOTH"
+    },
+    "v1Price": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "ownerType": {
+          "type": "string",
+          "title": "product/product_sku"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "default": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discounted": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "billingScheme": {
+          "type": "string"
+        },
+        "currencyOptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOption"
+          }
+        },
+        "recurring": {
+          "$ref": "#/definitions/v1PriceRecurring"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceTier"
+          }
+        },
+        "tiersMode": {
+          "type": "string"
+        },
+        "transformQuantity": {
+          "$ref": "#/definitions/v1PriceTransformQuantity"
+        },
+        "type": {
+          "type": "string"
+        },
+        "stripePriceId": {
+          "type": "string",
+          "x-nullable": true
+        }
+      }
+    },
+    "v1PriceCurrencyOption": {
+      "type": "object",
+      "properties": {
+        "currencyCode": {
+          "type": "string"
+        },
+        "default": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discounted": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discountText": {
+          "type": "string"
+        },
+        "denyMoreDiscounts": {
+          "type": "boolean"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PriceCurrencyOptionTier"
+          }
+        }
+      }
+    },
+    "v1PriceCurrencyOptionTier": {
+      "type": "object",
+      "properties": {
+        "flat": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "unit": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceRecurring": {
+      "type": "object",
+      "properties": {
+        "interval": {
+          "type": "string"
+        },
+        "intervalCount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "trialPeriodDays": {
+          "type": "string",
+          "format": "int64"
+        },
+        "aggregateUsage": {
+          "type": "string"
+        },
+        "usageType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "interval"
+      ]
+    },
+    "v1PriceTier": {
+      "type": "object",
+      "properties": {
+        "flat": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "unit": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "upTo": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1PriceTransformQuantity": {
+      "type": "object",
+      "properties": {
+        "divideBy": {
+          "type": "string",
+          "format": "int64"
+        },
+        "round": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "round"
+      ]
+    },
+    "v1Role": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "isPreserved": {
+          "type": "boolean"
+        },
+        "acl": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Permission"
+          }
+        },
+        "defGroups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1PermissionDefGroup"
+          }
+        }
+      }
+    },
     "v1StripeWebhookReply": {
       "type": "object"
     },
@@ -1686,6 +2061,9 @@
         },
         "productId": {
           "type": "string"
+        },
+        "price": {
+          "$ref": "#/definitions/v1Price"
         }
       }
     },
@@ -1736,6 +2114,48 @@
       "required": [
         "id"
       ]
+    },
+    "v1User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "name": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "phone": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "email": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "birthday": {
+          "type": "string",
+          "format": "date-time",
+          "x-nullable": true
+        },
+        "gender": {
+          "$ref": "#/definitions/v1Gender"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Role"
+          }
+        },
+        "avatar": {
+          "$ref": "#/definitions/blobBlobFile"
+        }
+      }
     }
   }
 }

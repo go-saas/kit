@@ -214,9 +214,40 @@ func (m *Subscription) validate(all bool) error {
 
 	// no validation rules for UserId
 
+	if all {
+		switch v := interface{}(m.GetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubscriptionValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubscriptionValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubscriptionValidationError{
+				field:  "User",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	// no validation rules for Provider
 
 	// no validation rules for ProviderKey
+
+	// no validation rules for Status
 
 	for idx, item := range m.GetItems() {
 		_, _ = idx, item
@@ -516,6 +547,35 @@ func (m *SubscriptionItem) validate(all bool) error {
 	// no validation rules for PriceId
 
 	// no validation rules for ProductId
+
+	if all {
+		switch v := interface{}(m.GetPrice()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubscriptionItemValidationError{
+					field:  "Price",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubscriptionItemValidationError{
+					field:  "Price",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPrice()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubscriptionItemValidationError{
+				field:  "Price",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return SubscriptionItemMultiError(errors)
@@ -1249,7 +1309,16 @@ func (m *GetSubscriptionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if utf8.RuneCountInString(m.GetId()) < 1 {
+		err := GetSubscriptionRequestValidationError{
+			field:  "Id",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetSubscriptionRequestMultiError(errors)
@@ -2085,6 +2154,119 @@ var _ interface {
 var _CreateMySubscriptionRequest_Provider_InLookup = map[string]struct{}{
 	"stripe": {},
 }
+
+// Validate checks the field values on GetMySubscriptionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetMySubscriptionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetMySubscriptionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetMySubscriptionRequestMultiError, or nil if none found.
+func (m *GetMySubscriptionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetMySubscriptionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetId()) < 1 {
+		err := GetMySubscriptionRequestValidationError{
+			field:  "Id",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetMySubscriptionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetMySubscriptionRequestMultiError is an error wrapping multiple validation
+// errors returned by GetMySubscriptionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetMySubscriptionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetMySubscriptionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetMySubscriptionRequestMultiError) AllErrors() []error { return m }
+
+// GetMySubscriptionRequestValidationError is the validation error returned by
+// GetMySubscriptionRequest.Validate if the designated constraints aren't met.
+type GetMySubscriptionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetMySubscriptionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetMySubscriptionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetMySubscriptionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetMySubscriptionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetMySubscriptionRequestValidationError) ErrorName() string {
+	return "GetMySubscriptionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetMySubscriptionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetMySubscriptionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetMySubscriptionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetMySubscriptionRequestValidationError{}
 
 // Validate checks the field values on UpdateMySubscriptionRequest with the
 // rules defined in the proto definition for this message. If any rules are

@@ -33,6 +33,27 @@
       "name": "StripePaymentGatewayService"
     },
     {
+      "name": "PermissionService"
+    },
+    {
+      "name": "RoleService"
+    },
+    {
+      "name": "PlanService"
+    },
+    {
+      "name": "TenantService"
+    },
+    {
+      "name": "TenantInternalService"
+    },
+    {
+      "name": "UserService"
+    },
+    {
+      "name": "UserInternalService"
+    },
+    {
       "name": "SubscriptionService"
     },
     {
@@ -51,31 +72,10 @@
       "name": "NotificationService"
     },
     {
-      "name": "PlanService"
-    },
-    {
-      "name": "TenantService"
-    },
-    {
-      "name": "TenantInternalService"
-    },
-    {
-      "name": "PermissionService"
-    },
-    {
       "name": "LocaleService"
     },
     {
       "name": "MenuService"
-    },
-    {
-      "name": "RoleService"
-    },
-    {
-      "name": "UserService"
-    },
-    {
-      "name": "UserInternalService"
     },
     {
       "name": "Account"
@@ -6857,7 +6857,7 @@
     },
     "/v1/subscription/my": {
       "post": {
-        "operationId": "SubscriptionService_CreateMySubscription",
+        "operationId": "SubscriptionService_GetMySubscription",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -6878,7 +6878,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1CreateMySubscriptionRequest"
+              "$ref": "#/definitions/v1GetMySubscriptionRequest"
             }
           }
         ],
@@ -11139,10 +11139,16 @@
         "userId": {
           "type": "string"
         },
+        "user": {
+          "$ref": "#/definitions/v1User"
+        },
         "provider": {
           "type": "string"
         },
         "providerKey": {
+          "type": "string"
+        },
+        "status": {
           "type": "string"
         },
         "items": {
@@ -12247,6 +12253,17 @@
           "type": "string"
         }
       }
+    },
+    "v1GetMySubscriptionRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
     },
     "v1GetPaymentMethodReply": {
       "type": "object",
@@ -14496,6 +14513,9 @@
         },
         "productId": {
           "type": "string"
+        },
+        "price": {
+          "$ref": "#/definitions/v1Price"
         }
       }
     },

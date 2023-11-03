@@ -120,17 +120,35 @@ func (s *SubscriptionService) CreateMySubscription(ctx context.Context, req *pb.
 	if err != nil {
 		return nil, err
 	}
-	ret := &pb.Subscription{Provider: req.Provider, ProviderKey: subs.ID}
-	ret.ProviderInfo = &pb.SubscriptionProviderInfo{Stripe: &stripe2.Subscription{
-		Id: subs.ID,
-		LatestInvoice: &stripe2.Invoice{
-			Id: subs.LatestInvoice.ID,
-			PaymentIntent: &stripe2.PaymentIntent{
-				Id:           subs.LatestInvoice.PaymentIntent.ID,
-				ClientSecret: subs.LatestInvoice.PaymentIntent.ClientSecret,
-			},
-		},
-	}}
+	ret := &pb.Subscription{}
+	mapBizSubscription2Pb(localSubs, ret)
+	infoSubs := &stripe2.Subscription{}
+	stripe2.MapStripeSubscription(subs, infoSubs)
+	ret.ProviderInfo = &pb.SubscriptionProviderInfo{Stripe: infoSubs}
+	return ret, nil
+}
+func (s *SubscriptionService) GetMySubscription(ctx context.Context, req *pb.GetMySubscriptionRequest) (*pb.Subscription, error) {
+	ui, err := authn.ErrIfUnauthenticated(ctx)
+	if err != nil {
+		return nil, err
+	}
+	// disable tenant filter
+	ctx = data.NewMultiTenancyDataFilter(ctx, false)
+	ctx = data.NewAutoSetTenantId(ctx, false)
+
+	g, err := s.subsRepo.Get(ctx, req.GetId())
+	if err != nil {
+		return nil, err
+	}
+	if g == nil || g.UserId != ui.GetId() {
+		return nil, pb.ErrorSubscriptionNotFoundLocalized(ctx, nil, nil)
+	}
+	subs, err := s.stripeClient.Subscriptions.Get(g.ProviderKey, nil)
+	ret := &pb.Subscription{}
+	mapBizSubscription2Pb(g, ret)
+	infoSubs := &stripe2.Subscription{}
+	stripe2.MapStripeSubscription(subs, infoSubs)
+	ret.ProviderInfo = &pb.SubscriptionProviderInfo{Stripe: infoSubs}
 	return ret, nil
 }
 
@@ -175,8 +193,10 @@ func (s *SubscriptionService) UpdateMySubscription(ctx context.Context, req *pb.
 	if g == nil || g.UserId != ui.GetId() {
 		return nil, pb.ErrorSubscriptionNotFoundLocalized(ctx, nil, nil)
 	}
-	//TODO
-	return &pb.Subscription{}, nil
+	ret := &pb.Subscription{}
+	mapBizSubscription2Pb(g, ret)
+
+	return ret, nil
 }
 
 func (s *SubscriptionService) ListMySubscription(ctx context.Context, req *pb.ListMySubscriptionRequest) (*pb.ListMySubscriptionReply, error) {

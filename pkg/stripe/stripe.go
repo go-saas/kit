@@ -2,6 +2,7 @@ package stripe
 
 import (
 	kitdi "github.com/go-saas/kit/pkg/di"
+	"github.com/stripe/stripe-go/v76"
 	stripeclient "github.com/stripe/stripe-go/v76/client"
 )
 
@@ -27,3 +28,24 @@ func String(v string) *string {
 const (
 	ProviderName = "stripe"
 )
+
+func MapStripeSubscription(a *stripe.Subscription, b *Subscription) {
+	b.Id = a.ID
+	if a.LatestInvoice != nil {
+		b.LatestInvoice = &Invoice{}
+		MapStripeInvoice(a.LatestInvoice, b.LatestInvoice)
+	}
+}
+
+func MapStripeInvoice(a *stripe.Invoice, b *Invoice) {
+	b.Id = a.ID
+	if a.PaymentIntent != nil {
+		b.PaymentIntent = &PaymentIntent{}
+		MapStripePaymentIntent(a.PaymentIntent, b.PaymentIntent)
+	}
+}
+
+func MapStripePaymentIntent(a *stripe.PaymentIntent, b *PaymentIntent) {
+	b.Id = a.ID
+	b.ClientSecret = a.ClientSecret
+}
