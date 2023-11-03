@@ -18,6 +18,7 @@ import "product/api/price/v1/price.proto";
 option go_package = "github.com/go-saas/kit/product/api/product/v1;v1";
 
 service ProductInternalService{
+
   rpc ListInternalProduct (ListProductRequest) returns (ListProductReply){
   }
 
@@ -34,6 +35,10 @@ service ProductInternalService{
   }
 
   rpc DeleteInternalProduct(DeleteInternalProductRequest)returns(DeleteInternalProductReply){
+
+  }
+
+  rpc GetInternalPrice(GetInternalPriceRequest)returns(.product.api.price.v1.Price){
 
   }
 
@@ -108,4 +113,8 @@ message DeleteInternalProductRequest {
 }
 message DeleteInternalProductReply {
   string id=1;
+}
+
+message GetInternalPriceRequest {
+  string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior)=REQUIRED];
 }

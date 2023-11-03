@@ -21,6 +21,7 @@ import (
 
 type ProductService struct {
 	repo         biz.ProductRepo
+	priceRepo    biz.PriceRepo
 	auth         authz.Service
 	blob         vfs.Blob
 	trusted      sapi.TrustedContextValidator
@@ -34,6 +35,7 @@ var _ pb.ProductInternalServiceServer = (*ProductService)(nil)
 
 func NewProductService(
 	repo biz.ProductRepo,
+	priceRepo biz.PriceRepo,
 	auth authz.Service,
 	upload *UploadService,
 	trusted sapi.TrustedContextValidator,
@@ -41,7 +43,7 @@ func NewProductService(
 	blob vfs.Blob,
 	client *asynq.Client,
 ) *ProductService {
-	return &ProductService{repo: repo, auth: auth, UploadService: upload, trusted: trusted, categoryRepo: categoryRepo, blob: blob, client: client}
+	return &ProductService{repo: repo, priceRepo: priceRepo, auth: auth, UploadService: upload, trusted: trusted, categoryRepo: categoryRepo, blob: blob, client: client}
 }
 
 func (s *ProductService) ListProduct(ctx context.Context, req *pb.ListProductRequest) (*pb.ListProductReply, error) {

@@ -303,7 +303,6 @@ func (s *TenantService) GetCurrentTenant(ctx context.Context, req *pb.GetCurrent
 }
 
 func (s *TenantService) ListTenant(ctx context.Context, req *pb.ListTenantRequest) (*pb.ListTenantReply, error) {
-
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceTenant, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}

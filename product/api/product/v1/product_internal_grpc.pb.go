@@ -8,6 +8,7 @@ package v1
 
 import (
 	context "context"
+	v1 "github.com/go-saas/kit/product/api/price/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -24,6 +25,7 @@ const (
 	ProductInternalService_GetInternalProduct_FullMethodName    = "/product.api.product.v1.ProductInternalService/GetInternalProduct"
 	ProductInternalService_UpdateInternalProduct_FullMethodName = "/product.api.product.v1.ProductInternalService/UpdateInternalProduct"
 	ProductInternalService_DeleteInternalProduct_FullMethodName = "/product.api.product.v1.ProductInternalService/DeleteInternalProduct"
+	ProductInternalService_GetInternalPrice_FullMethodName      = "/product.api.product.v1.ProductInternalService/GetInternalPrice"
 )
 
 // ProductInternalServiceClient is the client API for ProductInternalService service.
@@ -35,6 +37,7 @@ type ProductInternalServiceClient interface {
 	GetInternalProduct(ctx context.Context, in *GetInternalProductRequest, opts ...grpc.CallOption) (*Product, error)
 	UpdateInternalProduct(ctx context.Context, in *UpdateInternalProductRequest, opts ...grpc.CallOption) (*Product, error)
 	DeleteInternalProduct(ctx context.Context, in *DeleteInternalProductRequest, opts ...grpc.CallOption) (*DeleteInternalProductReply, error)
+	GetInternalPrice(ctx context.Context, in *GetInternalPriceRequest, opts ...grpc.CallOption) (*v1.Price, error)
 }
 
 type productInternalServiceClient struct {
@@ -90,6 +93,15 @@ func (c *productInternalServiceClient) DeleteInternalProduct(ctx context.Context
 	return out, nil
 }
 
+func (c *productInternalServiceClient) GetInternalPrice(ctx context.Context, in *GetInternalPriceRequest, opts ...grpc.CallOption) (*v1.Price, error) {
+	out := new(v1.Price)
+	err := c.cc.Invoke(ctx, ProductInternalService_GetInternalPrice_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductInternalServiceServer is the server API for ProductInternalService service.
 // All implementations should embed UnimplementedProductInternalServiceServer
 // for forward compatibility
@@ -99,6 +111,7 @@ type ProductInternalServiceServer interface {
 	GetInternalProduct(context.Context, *GetInternalProductRequest) (*Product, error)
 	UpdateInternalProduct(context.Context, *UpdateInternalProductRequest) (*Product, error)
 	DeleteInternalProduct(context.Context, *DeleteInternalProductRequest) (*DeleteInternalProductReply, error)
+	GetInternalPrice(context.Context, *GetInternalPriceRequest) (*v1.Price, error)
 }
 
 // UnimplementedProductInternalServiceServer should be embedded to have forward compatible implementations.
@@ -119,6 +132,9 @@ func (UnimplementedProductInternalServiceServer) UpdateInternalProduct(context.C
 }
 func (UnimplementedProductInternalServiceServer) DeleteInternalProduct(context.Context, *DeleteInternalProductRequest) (*DeleteInternalProductReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteInternalProduct not implemented")
+}
+func (UnimplementedProductInternalServiceServer) GetInternalPrice(context.Context, *GetInternalPriceRequest) (*v1.Price, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetInternalPrice not implemented")
 }
 
 // UnsafeProductInternalServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -222,6 +238,24 @@ func _ProductInternalService_DeleteInternalProduct_Handler(srv interface{}, ctx 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductInternalService_GetInternalPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInternalPriceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductInternalServiceServer).GetInternalPrice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductInternalService_GetInternalPrice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductInternalServiceServer).GetInternalPrice(ctx, req.(*GetInternalPriceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductInternalService_ServiceDesc is the grpc.ServiceDesc for ProductInternalService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -248,6 +282,10 @@ var ProductInternalService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteInternalProduct",
 			Handler:    _ProductInternalService_DeleteInternalProduct_Handler,
+		},
+		{
+			MethodName: "GetInternalPrice",
+			Handler:    _ProductInternalService_GetInternalPrice_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

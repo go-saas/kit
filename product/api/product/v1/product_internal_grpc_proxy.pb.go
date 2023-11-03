@@ -8,6 +8,7 @@ package v1
 
 import (
 	context "context"
+	v1 "github.com/go-saas/kit/product/api/price/v1"
 	grpc "google.golang.org/grpc"
 )
 
@@ -41,4 +42,7 @@ func (c *productInternalServiceClientProxy) UpdateInternalProduct(ctx context.Co
 }
 func (c *productInternalServiceClientProxy) DeleteInternalProduct(ctx context.Context, in *DeleteInternalProductRequest) (*DeleteInternalProductReply, error) {
 	return c.cc.DeleteInternalProduct(ctx, in)
+}
+func (c *productInternalServiceClientProxy) GetInternalPrice(ctx context.Context, in *GetInternalPriceRequest) (*v1.Price, error) {
+	return c.cc.GetInternalPrice(ctx, in)
 }

@@ -17,6 +17,7 @@ import (
 var ProviderSet = kitdi.NewSet(
 	NewData,
 	NewMigrate,
+	NewSubscriptionRepo,
 )
 
 // Data .

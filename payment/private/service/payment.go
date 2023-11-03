@@ -31,7 +31,7 @@ type PaymentService struct {
 	userInternalSrv  v12.UserInternalServiceServer
 	stripeClient     *stripeclient.API
 	l                *log.Helper
-	c                *stripe2.StripeConf
+	c                *stripe2.Conf
 }
 
 var _ pb.PaymentGatewayServiceServer = (*PaymentService)(nil)
@@ -44,7 +44,7 @@ func NewPaymentService(
 	userInternalSrv v12.UserInternalServiceServer,
 	stripeClient *stripeclient.API,
 	logger log.Logger,
-	c *stripe2.StripeConf,
+	c *stripe2.Conf,
 ) *PaymentService {
 	return &PaymentService{
 		trust:            trust,

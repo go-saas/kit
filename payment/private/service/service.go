@@ -8,6 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	v1 "github.com/go-saas/kit/payment/api/gateway/v1"
+	v12 "github.com/go-saas/kit/payment/api/subscription/v1"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	kitgrpc "github.com/go-saas/kit/pkg/server/grpc"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
@@ -23,17 +24,20 @@ var ProviderSet = kitdi.NewSet(
 	NewGrpcServerRegister,
 	NewHttpServerRegister,
 	NewPaymentService,
+	NewSubscriptionService,
 	stripe.ProviderSet,
 )
 
 func NewHttpServerRegister(
 	resEncoder khttp.EncodeResponseFunc,
 	errEncoder khttp.EncodeErrorFunc,
-	paymentSrv *PaymentService) kithttp.ServiceRegister {
+	paymentSrv *PaymentService, subscription *SubscriptionService) kithttp.ServiceRegister {
 	return kithttp.ServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 
 		v1.RegisterPaymentGatewayServiceHTTPServer(srv, paymentSrv)
 		v1.RegisterStripePaymentGatewayServiceHTTPServer(srv, paymentSrv)
+
+		v12.RegisterSubscriptionServiceHTTPServer(srv, subscription)
 		swaggerRouter := chi.NewRouter()
 		swaggerRouter.Use(
 			kithttp.MiddlewareConvert(errEncoder, middleware...))
@@ -44,9 +48,10 @@ func NewHttpServerRegister(
 }
 
 func NewGrpcServerRegister(
-	paymentSrv *PaymentService) kitgrpc.ServiceRegister {
+	paymentSrv *PaymentService, subscription *SubscriptionService) kitgrpc.ServiceRegister {
 	return kitgrpc.ServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v1.RegisterPaymentGatewayServiceServer(srv, paymentSrv)
 		v1.RegisterStripePaymentGatewayServiceServer(srv, paymentSrv)
+		v12.RegisterSubscriptionServiceServer(srv, subscription)
 	})
 }

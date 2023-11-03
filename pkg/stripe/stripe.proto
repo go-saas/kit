@@ -4,10 +4,26 @@ package stripe;
 
 option go_package = "github.com/go-saas/kit/pkg/stripe;stripe";
 
-message StripeConf{
+message Conf{
   bool is_test=1;
   string publish_key=2;
   string private_key=3;
   string webhook_key=4;
   map<string,string> price_tables=5;
+}
+
+message Invoice{
+  string id=1;
+
+  PaymentIntent payment_intent=10;
+}
+
+message PaymentIntent{
+  string id=1;
+  string client_secret=2;
+}
+
+message Subscription{
+  string id=1;
+  Invoice latest_invoice=100;
 }

@@ -7,7 +7,7 @@ import (
 
 var ProviderSet = kitdi.NewSet(NewStripeClient)
 
-func NewStripeClient(c *StripeConf) *stripeclient.API {
+func NewStripeClient(c *Conf) *stripeclient.API {
 	if c == nil {
 		return nil
 	}

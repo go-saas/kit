@@ -15,7 +15,7 @@ message Bootstrap {
   .conf.Tracers tracing=7;
   .conf.AppConfig app=8;
 
-  .stripe.StripeConf stripe=501;
+  .stripe.Conf stripe=501;
 }
 
 

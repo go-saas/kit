@@ -126,6 +126,22 @@ func (s *ProductService) DeleteInternalProduct(ctx context.Context, req *pb.Dele
 	return &pb.DeleteInternalProductReply{Id: g.ID.String()}, nil
 }
 
+func (s *ProductService) GetInternalPrice(ctx context.Context, req *pb.GetInternalPriceRequest) (*v12.Price, error) {
+	if err := sapi.ErrIfUntrusted(ctx, s.trusted); err != nil {
+		return nil, err
+	}
+	p, err := s.priceRepo.Get(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if p == nil {
+		return nil, errors.NotFound("", "")
+	}
+	ret := &v12.Price{}
+	mapBizPrice2Pb(ctx, p, ret)
+	return ret, nil
+}
+
 func (s *ProductService) MapCreateInternalPbProduct2Biz(ctx context.Context, a *pb.CreateInternalProductRequest, b *biz.Product) error {
 	b.Title = a.Title
 	b.ShortDesc = a.ShortDesc

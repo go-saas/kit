@@ -28,6 +28,7 @@ import (
 	"github.com/go-saas/kit/pkg/logging"
 	kitserver "github.com/go-saas/kit/pkg/server"
 	"github.com/go-saas/kit/pkg/tracers"
+	productapi "github.com/go-saas/kit/product/api"
 	sapi "github.com/go-saas/kit/saas/api"
 	uapi "github.com/go-saas/kit/user/api"
 	"github.com/go-saas/saas/seed"
@@ -143,7 +144,7 @@ func main() {
 		authz.ProviderSet, kitserver.DefaultProviderSet, jwt.ProviderSet, kapi.DefaultProviderSet, kdal.DefaultProviderSet,
 		uapi.GrpcProviderSet,
 		sapi.GrpcProviderSet,
-		orderapi.GrpcProviderSet,
+		orderapi.GrpcProviderSet, productapi.GrpcProviderSet,
 		server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, kitdi.NewSet(newApp))
 	if err != nil {
 		panic(err)

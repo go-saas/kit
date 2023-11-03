@@ -88,7 +88,7 @@ sys:
                 value: "{\"requirement\":[{\"namespace\":\"dev.dtm\",\"resource\":\"*\",\"action\":\"*\"}]}"
 
       payment-api:
-        uris: ["/v1/payment/*","/assets/payment/*"]
+        uris: ["/v1/payment/*","/v1/subscription*","/assets/payment/*"]
         upstream_id: payment-http
 
       order-api:

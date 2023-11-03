@@ -1,0 +1,208 @@
+syntax = "proto3";
+
+package payment.api.subscription.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
+import "query/operation.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "stripe/stripe.proto";
+
+option go_package = "github.com/go-saas/kit/payment/api/subscription/v1;v1";
+
+service SubscriptionService{
+
+//  rpc CreateSubscription (CreateSubscriptionRequest) returns (Subscription){
+//    option (google.api.http) = {
+//      post: "/v1/subscription"
+//      body: "*"
+//    };
+//  };
+
+  rpc UpdateSubscription (UpdateSubscriptionRequest) returns (Subscription){
+    option (google.api.http) = {
+      put: "/v1/subscription/{subscription.id}"
+      body: "*"
+    };
+  }
+
+  rpc ListSubscription (ListSubscriptionRequest) returns (ListSubscriptionReply){
+    option (google.api.http) = {
+      get: "/v1/subscriptions"
+      additional_bindings:{
+        post: "/v1/subscription/list"
+        body: "*"
+      }
+    };
+  }
+
+  rpc GetSubscription (GetSubscriptionRequest) returns (Subscription){
+    option (google.api.http) = {
+      get: "/v1/subscription/{id}"
+    };
+  }
+
+  rpc CancelSubscription (CancelSubscriptionRequest) returns (Subscription){
+    option (google.api.http) = {
+      post: "/v1/subscription/{id}/cancel"
+      body: "*"
+    };
+  }
+
+  rpc CreateMySubscription (CreateMySubscriptionRequest) returns (Subscription){
+    option (google.api.http) = {
+      post: "/v1/subscription/my"
+      body: "*"
+    };
+  };
+
+  rpc CancelMySubscription (CancelSubscriptionRequest) returns (Subscription){
+    option (google.api.http) = {
+      post: "/v1/subscription/my/{id}/cancel"
+      body: "*"
+    };
+  }
+
+  rpc UpdateMySubscription (UpdateMySubscriptionRequest) returns (Subscription){
+    option (google.api.http) = {
+      put: "/v1/subscription/my/{subscription.id}"
+      body: "*"
+    };
+  }
+
+  rpc ListMySubscription (ListMySubscriptionRequest) returns (ListMySubscriptionReply){
+    option (google.api.http) = {
+      get: "/v1/subscriptions/my"
+      additional_bindings:{
+        post: "/v1/subscription/my/list"
+        body: "*"
+      }
+    };
+  }
+
+}
+
+message CreateSubscriptionRequest{
+  string user_id=2;
+
+  string provider=10 [(validate.rules).string={in:["stripe"]}];
+
+  repeated SubscriptionItemParams items=100;
+}
+
+message Subscription{
+  string id=1;
+  string user_id=2;
+
+  string provider=10;
+  string provider_key=11;
+
+  repeated SubscriptionItem items=100;
+
+  SubscriptionProviderInfo provider_info=200;
+}
+
+
+message SubscriptionProviderInfo{
+  .stripe.Subscription stripe=11;
+}
+
+
+
+
+
+message SubscriptionItem{
+  string id=1;
+  string price_id=10;
+  string product_id=11;
+}
+
+message SubscriptionItemParams{
+  string id=1;
+  string price_id=10;
+}
+
+message UpdateSubscriptionRequest{
+  UpdateSubscription subscription=1  [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateSubscription{
+  string id = 1 [(validate.rules).string.min_len = 1, (google.api.field_behavior) = REQUIRED];
+  repeated SubscriptionItemParams items=100;
+}
+
+
+message CancelSubscriptionRequest{
+  string id=1;
+}
+
+message ResumeSubscriptionRequest{
+  string id=1;
+}
+
+
+message GetSubscriptionRequest{
+  string id=1;
+}
+
+message ListSubscriptionRequest {
+  int32 page_offset =1;
+  int32 page_size = 2;
+  string search = 3;
+  repeated string sort =4;
+  google.protobuf.FieldMask fields=5;
+  SubscriptionFilter filter =6;
+}
+
+message SubscriptionFilter{
+  query.operation.StringFilterOperation id=1;
+  query.operation.StringFilterOperation user_id=2;
+  query.operation.StringFilterOperation provider=3;
+  query.operation.StringFilterOperation provider_key=4;
+  repeated SubscriptionFilter and=100;
+  repeated SubscriptionFilter or=101;
+}
+
+message ListSubscriptionReply {
+  int32 total_size =1;
+  int32 filter_size =2;
+
+  repeated Subscription items = 3;
+}
+
+message CreateMySubscriptionRequest{
+  string provider=10 [(validate.rules).string={in:["stripe"]}];
+
+  repeated SubscriptionItemParams items=100 [(validate.rules).repeated={min_items:1}];
+}
+
+message UpdateMySubscriptionRequest{
+  UpdateMySubscription subscription=1  [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateMySubscription{
+  string id = 1 [(validate.rules).string.min_len = 1, (google.api.field_behavior) = REQUIRED];
+}
+
+message ListMySubscriptionRequest {
+  int32 page_offset =1;
+  int32 page_size = 2;
+  string search = 3;
+  repeated string sort =4;
+  google.protobuf.FieldMask fields=5;
+  SubscriptionFilter filter =6;
+}
+
+message ListMySubscriptionReply {
+  int32 total_size =1;
+  int32 filter_size =2;
+
+  repeated Subscription items = 3;
+}

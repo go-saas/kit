@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package payment.api.subscription.v1;
+import "errors/errors.proto";
+
+option go_package = "github.com/go-saas/kit/payment/api/subscription/v1;v1";
+
+enum ErrorReason {
+
+  option (errors.default_code) = 500;
+
+  PRODUCT_ACROSS_TENANT = 0 [(errors.code) = 400];
+  SUBSCRIPTION_NOT_FOUND=1[(errors.code) = 404];
+}

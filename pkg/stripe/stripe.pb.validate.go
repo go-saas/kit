@@ -35,22 +35,21 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on StripeConf with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *StripeConf) Validate() error {
+// Validate checks the field values on Conf with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Conf) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on StripeConf with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in StripeConfMultiError, or
-// nil if none found.
-func (m *StripeConf) ValidateAll() error {
+// ValidateAll checks the field values on Conf with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in ConfMultiError, or nil if none found.
+func (m *Conf) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *StripeConf) validate(all bool) error {
+func (m *Conf) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -68,18 +67,18 @@ func (m *StripeConf) validate(all bool) error {
 	// no validation rules for PriceTables
 
 	if len(errors) > 0 {
-		return StripeConfMultiError(errors)
+		return ConfMultiError(errors)
 	}
 
 	return nil
 }
 
-// StripeConfMultiError is an error wrapping multiple validation errors
-// returned by StripeConf.ValidateAll() if the designated constraints aren't met.
-type StripeConfMultiError []error
+// ConfMultiError is an error wrapping multiple validation errors returned by
+// Conf.ValidateAll() if the designated constraints aren't met.
+type ConfMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m StripeConfMultiError) Error() string {
+func (m ConfMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -88,11 +87,11 @@ func (m StripeConfMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m StripeConfMultiError) AllErrors() []error { return m }
+func (m ConfMultiError) AllErrors() []error { return m }
 
-// StripeConfValidationError is the validation error returned by
-// StripeConf.Validate if the designated constraints aren't met.
-type StripeConfValidationError struct {
+// ConfValidationError is the validation error returned by Conf.Validate if the
+// designated constraints aren't met.
+type ConfValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -100,22 +99,22 @@ type StripeConfValidationError struct {
 }
 
 // Field function returns field value.
-func (e StripeConfValidationError) Field() string { return e.field }
+func (e ConfValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e StripeConfValidationError) Reason() string { return e.reason }
+func (e ConfValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e StripeConfValidationError) Cause() error { return e.cause }
+func (e ConfValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e StripeConfValidationError) Key() bool { return e.key }
+func (e ConfValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e StripeConfValidationError) ErrorName() string { return "StripeConfValidationError" }
+func (e ConfValidationError) ErrorName() string { return "ConfValidationError" }
 
 // Error satisfies the builtin error interface
-func (e StripeConfValidationError) Error() string {
+func (e ConfValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -127,14 +126,14 @@ func (e StripeConfValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sStripeConf.%s: %s%s",
+		"invalid %sConf.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = StripeConfValidationError{}
+var _ error = ConfValidationError{}
 
 var _ interface {
 	Field() string
@@ -142,4 +141,367 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = StripeConfValidationError{}
+} = ConfValidationError{}
+
+// Validate checks the field values on Invoice with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Invoice) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Invoice with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in InvoiceMultiError, or nil if none found.
+func (m *Invoice) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Invoice) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetPaymentIntent()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, InvoiceValidationError{
+					field:  "PaymentIntent",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, InvoiceValidationError{
+					field:  "PaymentIntent",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPaymentIntent()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return InvoiceValidationError{
+				field:  "PaymentIntent",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return InvoiceMultiError(errors)
+	}
+
+	return nil
+}
+
+// InvoiceMultiError is an error wrapping multiple validation errors returned
+// by Invoice.ValidateAll() if the designated constraints aren't met.
+type InvoiceMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m InvoiceMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m InvoiceMultiError) AllErrors() []error { return m }
+
+// InvoiceValidationError is the validation error returned by Invoice.Validate
+// if the designated constraints aren't met.
+type InvoiceValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e InvoiceValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e InvoiceValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e InvoiceValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e InvoiceValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e InvoiceValidationError) ErrorName() string { return "InvoiceValidationError" }
+
+// Error satisfies the builtin error interface
+func (e InvoiceValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sInvoice.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = InvoiceValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = InvoiceValidationError{}
+
+// Validate checks the field values on PaymentIntent with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PaymentIntent) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PaymentIntent with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PaymentIntentMultiError, or
+// nil if none found.
+func (m *PaymentIntent) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PaymentIntent) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for ClientSecret
+
+	if len(errors) > 0 {
+		return PaymentIntentMultiError(errors)
+	}
+
+	return nil
+}
+
+// PaymentIntentMultiError is an error wrapping multiple validation errors
+// returned by PaymentIntent.ValidateAll() if the designated constraints
+// aren't met.
+type PaymentIntentMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PaymentIntentMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PaymentIntentMultiError) AllErrors() []error { return m }
+
+// PaymentIntentValidationError is the validation error returned by
+// PaymentIntent.Validate if the designated constraints aren't met.
+type PaymentIntentValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PaymentIntentValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PaymentIntentValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PaymentIntentValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PaymentIntentValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PaymentIntentValidationError) ErrorName() string { return "PaymentIntentValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PaymentIntentValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPaymentIntent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PaymentIntentValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PaymentIntentValidationError{}
+
+// Validate checks the field values on Subscription with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Subscription) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Subscription with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SubscriptionMultiError, or
+// nil if none found.
+func (m *Subscription) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Subscription) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetLatestInvoice()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubscriptionValidationError{
+					field:  "LatestInvoice",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubscriptionValidationError{
+					field:  "LatestInvoice",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLatestInvoice()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubscriptionValidationError{
+				field:  "LatestInvoice",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SubscriptionMultiError(errors)
+	}
+
+	return nil
+}
+
+// SubscriptionMultiError is an error wrapping multiple validation errors
+// returned by Subscription.ValidateAll() if the designated constraints aren't met.
+type SubscriptionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SubscriptionMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SubscriptionMultiError) AllErrors() []error { return m }
+
+// SubscriptionValidationError is the validation error returned by
+// Subscription.Validate if the designated constraints aren't met.
+type SubscriptionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SubscriptionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SubscriptionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SubscriptionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SubscriptionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SubscriptionValidationError) ErrorName() string { return "SubscriptionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SubscriptionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSubscription.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SubscriptionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SubscriptionValidationError{}
