@@ -13,7 +13,6 @@ import "google/api/field_behavior.proto";
 import "user/api/role/v1/role.proto";
 import "blob/blob.proto";
 import "query/operation.proto";
-import "saas/api/tenant/v1/tenant.proto";
 import "user/api/user/v1/user.proto";
 option go_package = "github.com/go-saas/kit/user/api/user/v1;v1";
 
