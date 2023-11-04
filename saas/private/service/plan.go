@@ -36,7 +36,7 @@ type PlanService struct {
 	pb.UnimplementedPlanServiceServer
 	auth                    authz.Service
 	repo                    biz.PlanRepo
-	tenantUseCase           biz.TenantUseCase
+	tenantUseCase           *biz.TenantUseCase
 	logger                  *klog.Helper
 	txhelper                *dtmsrv.Helper
 	productSrv              v1.ProductInternalServiceServer
@@ -46,7 +46,7 @@ type PlanService struct {
 func NewPlanService(
 	auth authz.Service,
 	repo biz.PlanRepo,
-	tenantUseCase biz.TenantUseCase,
+	tenantUseCase *biz.TenantUseCase,
 	logger klog.Logger,
 	txhelper *dtmsrv.Helper,
 	productSrv v1.ProductInternalServiceServer,
