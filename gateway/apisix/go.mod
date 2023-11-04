@@ -81,6 +81,7 @@ require (
 	github.com/pilagod/gorm-cursor-paginator/v2 v2.4.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stripe/stripe-go/v76 v76.2.0 // indirect
 	github.com/twpayne/go-geom v1.4.4 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.2.3 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.2.3 // indirect
