@@ -11,6 +11,7 @@ import (
 	query "github.com/go-saas/kit/pkg/query"
 	stripe "github.com/go-saas/kit/pkg/stripe"
 	v11 "github.com/go-saas/kit/product/api/price/v1"
+	v12 "github.com/go-saas/kit/product/api/product/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -249,10 +250,12 @@ type SubscriptionItem struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        string     `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	PriceId   string     `protobuf:"bytes,10,opt,name=price_id,json=priceId,proto3" json:"price_id,omitempty"`
-	ProductId string     `protobuf:"bytes,11,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	Price     *v11.Price `protobuf:"bytes,100,opt,name=price,proto3" json:"price,omitempty"`
+	Id         string          `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	PriceId    string          `protobuf:"bytes,10,opt,name=price_id,json=priceId,proto3" json:"price_id,omitempty"`
+	ProductId  string          `protobuf:"bytes,11,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Price      *v11.Price      `protobuf:"bytes,100,opt,name=price,proto3" json:"price,omitempty"`
+	Product    *v12.Product    `protobuf:"bytes,101,opt,name=product,proto3" json:"product,omitempty"`
+	ProductSku *v12.ProductSku `protobuf:"bytes,102,opt,name=product_sku,json=productSku,proto3" json:"product_sku,omitempty"`
 }
 
 func (x *SubscriptionItem) Reset() {
@@ -311,6 +314,20 @@ func (x *SubscriptionItem) GetProductId() string {
 func (x *SubscriptionItem) GetPrice() *v11.Price {
 	if x != nil {
 		return x.Price
+	}
+	return nil
+}
+
+func (x *SubscriptionItem) GetProduct() *v12.Product {
+	if x != nil {
+		return x.Product
+	}
+	return nil
+}
+
+func (x *SubscriptionItem) GetProductSku() *v12.ProductSku {
+	if x != nil {
+		return x.ProductSku
 	}
 	return nil
 }
@@ -1242,7 +1259,12 @@ var file_payment_api_subscription_v1_subscription_proto_rawDesc = []byte{
 	0x1b, 0x75, 0x73, 0x65, 0x72, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x75, 0x73, 0x65, 0x72, 0x2f, 0x76,
 	0x31, 0x2f, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x20, 0x70, 0x72,
 	0x6f, 0x64, 0x75, 0x63, 0x74, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x2f,
-	0x76, 0x31, 0x2f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xaa,
+	0x76, 0x31, 0x2f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x24,
+	0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x70, 0x72, 0x6f, 0x64,
+	0x75, 0x63, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x28, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x2f, 0x61, 0x70,
+	0x69, 0x2f, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f,
+	0x64, 0x75, 0x63, 0x74, 0x5f, 0x73, 0x6b, 0x75, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xaa,
 	0x01, 0x0a, 0x19, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69,
 	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a, 0x07,
 	0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75,
@@ -1280,7 +1302,7 @@ var file_payment_api_subscription_v1_subscription_proto_rawDesc = []byte{
 	0x65, 0x72, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x2c, 0x0a, 0x06, 0x73, 0x74, 0x72, 0x69, 0x70, 0x65,
 	0x18, 0x0b, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x73, 0x74, 0x72, 0x69, 0x70, 0x65, 0x2e,
 	0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x06, 0x73, 0x74,
-	0x72, 0x69, 0x70, 0x65, 0x22, 0x8f, 0x01, 0x0a, 0x10, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69,
+	0x72, 0x69, 0x70, 0x65, 0x22, 0x8f, 0x02, 0x0a, 0x10, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69,
 	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x74, 0x65, 0x6d, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x19, 0x0a, 0x08, 0x70, 0x72, 0x69,
 	0x63, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x70, 0x72, 0x69,
@@ -1289,7 +1311,15 @@ var file_payment_api_subscription_v1_subscription_proto_rawDesc = []byte{
 	0x74, 0x49, 0x64, 0x12, 0x31, 0x0a, 0x05, 0x70, 0x72, 0x69, 0x63, 0x65, 0x18, 0x64, 0x20, 0x01,
 	0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x2e, 0x61, 0x70, 0x69,
 	0x2e, 0x70, 0x72, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x72, 0x69, 0x63, 0x65, 0x52,
-	0x05, 0x70, 0x72, 0x69, 0x63, 0x65, 0x22, 0x43, 0x0a, 0x16, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72,
+	0x05, 0x70, 0x72, 0x69, 0x63, 0x65, 0x12, 0x39, 0x0a, 0x07, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63,
+	0x74, 0x18, 0x65, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63,
+	0x74, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x2e, 0x76, 0x31,
+	0x2e, 0x50, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x52, 0x07, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63,
+	0x74, 0x12, 0x43, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x5f, 0x73, 0x6b, 0x75,
+	0x18, 0x66, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x22, 0x2e, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74,
+	0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x2e, 0x76, 0x31, 0x2e,
+	0x50, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x53, 0x6b, 0x75, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x64,
+	0x75, 0x63, 0x74, 0x53, 0x6b, 0x75, 0x22, 0x43, 0x0a, 0x16, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72,
 	0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x74, 0x65, 0x6d, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73,
 	0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64,
 	0x12, 0x19, 0x0a, 0x08, 0x70, 0x72, 0x69, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x0a, 0x20, 0x01,
@@ -1568,8 +1598,10 @@ var file_payment_api_subscription_v1_subscription_proto_goTypes = []interface{}{
 	(*v1.User)(nil),                     // 19: user.api.user.v1.User
 	(*stripe.Subscription)(nil),         // 20: stripe.Subscription
 	(*v11.Price)(nil),                   // 21: product.api.price.v1.Price
-	(*fieldmaskpb.FieldMask)(nil),       // 22: google.protobuf.FieldMask
-	(*query.StringFilterOperation)(nil), // 23: query.operation.StringFilterOperation
+	(*v12.Product)(nil),                 // 22: product.api.product.v1.Product
+	(*v12.ProductSku)(nil),              // 23: product.api.product.v1.ProductSku
+	(*fieldmaskpb.FieldMask)(nil),       // 24: google.protobuf.FieldMask
+	(*query.StringFilterOperation)(nil), // 25: query.operation.StringFilterOperation
 }
 var file_payment_api_subscription_v1_subscription_proto_depIdxs = []int32{
 	4,  // 0: payment.api.subscription.v1.CreateSubscriptionRequest.items:type_name -> payment.api.subscription.v1.SubscriptionItemParams
@@ -1578,47 +1610,49 @@ var file_payment_api_subscription_v1_subscription_proto_depIdxs = []int32{
 	2,  // 3: payment.api.subscription.v1.Subscription.provider_info:type_name -> payment.api.subscription.v1.SubscriptionProviderInfo
 	20, // 4: payment.api.subscription.v1.SubscriptionProviderInfo.stripe:type_name -> stripe.Subscription
 	21, // 5: payment.api.subscription.v1.SubscriptionItem.price:type_name -> product.api.price.v1.Price
-	6,  // 6: payment.api.subscription.v1.UpdateSubscriptionRequest.subscription:type_name -> payment.api.subscription.v1.UpdateSubscription
-	22, // 7: payment.api.subscription.v1.UpdateSubscriptionRequest.update_mask:type_name -> google.protobuf.FieldMask
-	4,  // 8: payment.api.subscription.v1.UpdateSubscription.items:type_name -> payment.api.subscription.v1.SubscriptionItemParams
-	22, // 9: payment.api.subscription.v1.ListSubscriptionRequest.fields:type_name -> google.protobuf.FieldMask
-	11, // 10: payment.api.subscription.v1.ListSubscriptionRequest.filter:type_name -> payment.api.subscription.v1.SubscriptionFilter
-	23, // 11: payment.api.subscription.v1.SubscriptionFilter.id:type_name -> query.operation.StringFilterOperation
-	23, // 12: payment.api.subscription.v1.SubscriptionFilter.user_id:type_name -> query.operation.StringFilterOperation
-	23, // 13: payment.api.subscription.v1.SubscriptionFilter.provider:type_name -> query.operation.StringFilterOperation
-	23, // 14: payment.api.subscription.v1.SubscriptionFilter.provider_key:type_name -> query.operation.StringFilterOperation
-	11, // 15: payment.api.subscription.v1.SubscriptionFilter.and:type_name -> payment.api.subscription.v1.SubscriptionFilter
-	11, // 16: payment.api.subscription.v1.SubscriptionFilter.or:type_name -> payment.api.subscription.v1.SubscriptionFilter
-	1,  // 17: payment.api.subscription.v1.ListSubscriptionReply.items:type_name -> payment.api.subscription.v1.Subscription
-	4,  // 18: payment.api.subscription.v1.CreateMySubscriptionRequest.items:type_name -> payment.api.subscription.v1.SubscriptionItemParams
-	16, // 19: payment.api.subscription.v1.UpdateMySubscriptionRequest.subscription:type_name -> payment.api.subscription.v1.UpdateMySubscription
-	22, // 20: payment.api.subscription.v1.UpdateMySubscriptionRequest.update_mask:type_name -> google.protobuf.FieldMask
-	22, // 21: payment.api.subscription.v1.ListMySubscriptionRequest.fields:type_name -> google.protobuf.FieldMask
-	11, // 22: payment.api.subscription.v1.ListMySubscriptionRequest.filter:type_name -> payment.api.subscription.v1.SubscriptionFilter
-	1,  // 23: payment.api.subscription.v1.ListMySubscriptionReply.items:type_name -> payment.api.subscription.v1.Subscription
-	5,  // 24: payment.api.subscription.v1.SubscriptionService.UpdateSubscription:input_type -> payment.api.subscription.v1.UpdateSubscriptionRequest
-	10, // 25: payment.api.subscription.v1.SubscriptionService.ListSubscription:input_type -> payment.api.subscription.v1.ListSubscriptionRequest
-	9,  // 26: payment.api.subscription.v1.SubscriptionService.GetSubscription:input_type -> payment.api.subscription.v1.GetSubscriptionRequest
-	7,  // 27: payment.api.subscription.v1.SubscriptionService.CancelSubscription:input_type -> payment.api.subscription.v1.CancelSubscriptionRequest
-	13, // 28: payment.api.subscription.v1.SubscriptionService.CreateMySubscription:input_type -> payment.api.subscription.v1.CreateMySubscriptionRequest
-	14, // 29: payment.api.subscription.v1.SubscriptionService.GetMySubscription:input_type -> payment.api.subscription.v1.GetMySubscriptionRequest
-	7,  // 30: payment.api.subscription.v1.SubscriptionService.CancelMySubscription:input_type -> payment.api.subscription.v1.CancelSubscriptionRequest
-	15, // 31: payment.api.subscription.v1.SubscriptionService.UpdateMySubscription:input_type -> payment.api.subscription.v1.UpdateMySubscriptionRequest
-	17, // 32: payment.api.subscription.v1.SubscriptionService.ListMySubscription:input_type -> payment.api.subscription.v1.ListMySubscriptionRequest
-	1,  // 33: payment.api.subscription.v1.SubscriptionService.UpdateSubscription:output_type -> payment.api.subscription.v1.Subscription
-	12, // 34: payment.api.subscription.v1.SubscriptionService.ListSubscription:output_type -> payment.api.subscription.v1.ListSubscriptionReply
-	1,  // 35: payment.api.subscription.v1.SubscriptionService.GetSubscription:output_type -> payment.api.subscription.v1.Subscription
-	1,  // 36: payment.api.subscription.v1.SubscriptionService.CancelSubscription:output_type -> payment.api.subscription.v1.Subscription
-	1,  // 37: payment.api.subscription.v1.SubscriptionService.CreateMySubscription:output_type -> payment.api.subscription.v1.Subscription
-	1,  // 38: payment.api.subscription.v1.SubscriptionService.GetMySubscription:output_type -> payment.api.subscription.v1.Subscription
-	1,  // 39: payment.api.subscription.v1.SubscriptionService.CancelMySubscription:output_type -> payment.api.subscription.v1.Subscription
-	1,  // 40: payment.api.subscription.v1.SubscriptionService.UpdateMySubscription:output_type -> payment.api.subscription.v1.Subscription
-	18, // 41: payment.api.subscription.v1.SubscriptionService.ListMySubscription:output_type -> payment.api.subscription.v1.ListMySubscriptionReply
-	33, // [33:42] is the sub-list for method output_type
-	24, // [24:33] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	22, // 6: payment.api.subscription.v1.SubscriptionItem.product:type_name -> product.api.product.v1.Product
+	23, // 7: payment.api.subscription.v1.SubscriptionItem.product_sku:type_name -> product.api.product.v1.ProductSku
+	6,  // 8: payment.api.subscription.v1.UpdateSubscriptionRequest.subscription:type_name -> payment.api.subscription.v1.UpdateSubscription
+	24, // 9: payment.api.subscription.v1.UpdateSubscriptionRequest.update_mask:type_name -> google.protobuf.FieldMask
+	4,  // 10: payment.api.subscription.v1.UpdateSubscription.items:type_name -> payment.api.subscription.v1.SubscriptionItemParams
+	24, // 11: payment.api.subscription.v1.ListSubscriptionRequest.fields:type_name -> google.protobuf.FieldMask
+	11, // 12: payment.api.subscription.v1.ListSubscriptionRequest.filter:type_name -> payment.api.subscription.v1.SubscriptionFilter
+	25, // 13: payment.api.subscription.v1.SubscriptionFilter.id:type_name -> query.operation.StringFilterOperation
+	25, // 14: payment.api.subscription.v1.SubscriptionFilter.user_id:type_name -> query.operation.StringFilterOperation
+	25, // 15: payment.api.subscription.v1.SubscriptionFilter.provider:type_name -> query.operation.StringFilterOperation
+	25, // 16: payment.api.subscription.v1.SubscriptionFilter.provider_key:type_name -> query.operation.StringFilterOperation
+	11, // 17: payment.api.subscription.v1.SubscriptionFilter.and:type_name -> payment.api.subscription.v1.SubscriptionFilter
+	11, // 18: payment.api.subscription.v1.SubscriptionFilter.or:type_name -> payment.api.subscription.v1.SubscriptionFilter
+	1,  // 19: payment.api.subscription.v1.ListSubscriptionReply.items:type_name -> payment.api.subscription.v1.Subscription
+	4,  // 20: payment.api.subscription.v1.CreateMySubscriptionRequest.items:type_name -> payment.api.subscription.v1.SubscriptionItemParams
+	16, // 21: payment.api.subscription.v1.UpdateMySubscriptionRequest.subscription:type_name -> payment.api.subscription.v1.UpdateMySubscription
+	24, // 22: payment.api.subscription.v1.UpdateMySubscriptionRequest.update_mask:type_name -> google.protobuf.FieldMask
+	24, // 23: payment.api.subscription.v1.ListMySubscriptionRequest.fields:type_name -> google.protobuf.FieldMask
+	11, // 24: payment.api.subscription.v1.ListMySubscriptionRequest.filter:type_name -> payment.api.subscription.v1.SubscriptionFilter
+	1,  // 25: payment.api.subscription.v1.ListMySubscriptionReply.items:type_name -> payment.api.subscription.v1.Subscription
+	5,  // 26: payment.api.subscription.v1.SubscriptionService.UpdateSubscription:input_type -> payment.api.subscription.v1.UpdateSubscriptionRequest
+	10, // 27: payment.api.subscription.v1.SubscriptionService.ListSubscription:input_type -> payment.api.subscription.v1.ListSubscriptionRequest
+	9,  // 28: payment.api.subscription.v1.SubscriptionService.GetSubscription:input_type -> payment.api.subscription.v1.GetSubscriptionRequest
+	7,  // 29: payment.api.subscription.v1.SubscriptionService.CancelSubscription:input_type -> payment.api.subscription.v1.CancelSubscriptionRequest
+	13, // 30: payment.api.subscription.v1.SubscriptionService.CreateMySubscription:input_type -> payment.api.subscription.v1.CreateMySubscriptionRequest
+	14, // 31: payment.api.subscription.v1.SubscriptionService.GetMySubscription:input_type -> payment.api.subscription.v1.GetMySubscriptionRequest
+	7,  // 32: payment.api.subscription.v1.SubscriptionService.CancelMySubscription:input_type -> payment.api.subscription.v1.CancelSubscriptionRequest
+	15, // 33: payment.api.subscription.v1.SubscriptionService.UpdateMySubscription:input_type -> payment.api.subscription.v1.UpdateMySubscriptionRequest
+	17, // 34: payment.api.subscription.v1.SubscriptionService.ListMySubscription:input_type -> payment.api.subscription.v1.ListMySubscriptionRequest
+	1,  // 35: payment.api.subscription.v1.SubscriptionService.UpdateSubscription:output_type -> payment.api.subscription.v1.Subscription
+	12, // 36: payment.api.subscription.v1.SubscriptionService.ListSubscription:output_type -> payment.api.subscription.v1.ListSubscriptionReply
+	1,  // 37: payment.api.subscription.v1.SubscriptionService.GetSubscription:output_type -> payment.api.subscription.v1.Subscription
+	1,  // 38: payment.api.subscription.v1.SubscriptionService.CancelSubscription:output_type -> payment.api.subscription.v1.Subscription
+	1,  // 39: payment.api.subscription.v1.SubscriptionService.CreateMySubscription:output_type -> payment.api.subscription.v1.Subscription
+	1,  // 40: payment.api.subscription.v1.SubscriptionService.GetMySubscription:output_type -> payment.api.subscription.v1.Subscription
+	1,  // 41: payment.api.subscription.v1.SubscriptionService.CancelMySubscription:output_type -> payment.api.subscription.v1.Subscription
+	1,  // 42: payment.api.subscription.v1.SubscriptionService.UpdateMySubscription:output_type -> payment.api.subscription.v1.Subscription
+	18, // 43: payment.api.subscription.v1.SubscriptionService.ListMySubscription:output_type -> payment.api.subscription.v1.ListMySubscriptionReply
+	35, // [35:44] is the sub-list for method output_type
+	26, // [26:35] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_payment_api_subscription_v1_subscription_proto_init() }

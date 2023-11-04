@@ -14,7 +14,8 @@ import "protoc-gen-openapiv2/options/annotations.proto";
 import "stripe/stripe.proto";
 import "user/api/user/v1/user.proto";
 import "product/api/price/v1/price.proto";
-
+import "product/api/product/v1/product.proto";
+import "product/api/product/v1/product_sku.proto";
 option go_package = "github.com/go-saas/kit/payment/api/subscription/v1;v1";
 
 service SubscriptionService{
@@ -131,6 +132,8 @@ message SubscriptionItem{
   string product_id=11;
 
   .product.api.price.v1.Price price=100;
+  .product.api.product.v1.Product product=101;
+  .product.api.product.v1.ProductSku product_sku=102;
 
 }
 

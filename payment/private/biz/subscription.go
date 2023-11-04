@@ -47,8 +47,9 @@ type SubscriptionItem struct {
 	kitgorm.AuditedModel
 	SubscriptionID string
 	//PriceID linked with product.Prices
-	PriceID   string
-	ProductID string
+	PriceID        string
+	ProductOrSkuID string
+	ProductType    string
 }
 
 type SubscriptionListPrams interface {

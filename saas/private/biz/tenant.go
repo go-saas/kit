@@ -33,7 +33,7 @@ type Tenant struct {
 	//Plan
 	PlanKey *string
 	Plan    *Plan `gorm:"foreignKey:PlanKey"`
-
+	
 	Features []TenantFeature `gorm:"foreignKey:TenantId"`
 	Extra    data.JSONMap
 }
