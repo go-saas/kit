@@ -13,6 +13,9 @@
     },
     {
       "name": "SubscriptionService"
+    },
+    {
+      "name": "SubscriptionInternalService"
     }
   ],
   "consumes": [

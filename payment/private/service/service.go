@@ -38,6 +38,7 @@ func NewHttpServerRegister(
 		v1.RegisterStripePaymentGatewayServiceHTTPServer(srv, paymentSrv)
 
 		v12.RegisterSubscriptionServiceHTTPServer(srv, subscription)
+
 		swaggerRouter := chi.NewRouter()
 		swaggerRouter.Use(
 			kithttp.MiddlewareConvert(errEncoder, middleware...))
@@ -53,5 +54,6 @@ func NewGrpcServerRegister(
 		v1.RegisterPaymentGatewayServiceServer(srv, paymentSrv)
 		v1.RegisterStripePaymentGatewayServiceServer(srv, paymentSrv)
 		v12.RegisterSubscriptionServiceServer(srv, subscription)
+		v12.RegisterSubscriptionInternalServiceServer(srv, subscription)
 	})
 }

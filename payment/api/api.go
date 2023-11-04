@@ -5,6 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/registry"
 	grpc2 "github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	v1 "github.com/go-saas/kit/payment/api/subscription/v1"
 	_ "github.com/go-saas/kit/payment/i18n"
 	"github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/conf"
@@ -25,5 +26,12 @@ func NewHttpClient(client *conf.Client, services *conf.Services, dis registry.Di
 	return api.NewHttpClient(client, ServiceName, services, dis, opt, tokenMgr, logger, opts)
 }
 
-var GrpcProviderSet = kitdi.NewSet(NewGrpcConn)
-var HttpProviderSet = kitdi.NewSet(NewHttpClient)
+func NewSubscriptionGrpcClient(conn GrpcConn) v1.SubscriptionServiceServer {
+	return v1.NewSubscriptionServiceClientProxy(v1.NewSubscriptionServiceClient(conn))
+}
+
+func NewSubscriptionInternalGrpcClient(conn GrpcConn) v1.SubscriptionInternalServiceServer {
+	return v1.NewSubscriptionInternalServiceClientProxy(v1.NewSubscriptionInternalServiceClient(conn))
+}
+
+var GrpcProviderSet = kitdi.NewSet(NewGrpcConn, NewSubscriptionGrpcClient, NewSubscriptionInternalGrpcClient)

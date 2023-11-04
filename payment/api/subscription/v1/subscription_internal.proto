@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package payment.api.subscription.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
+import "query/operation.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "stripe/stripe.proto";
+import "user/api/user/v1/user.proto";
+import "product/api/price/v1/price.proto";
+import "product/api/product/v1/product.proto";
+import "product/api/product/v1/product_sku.proto";
+import "payment/api/subscription/v1/subscription.proto";
+option go_package = "github.com/go-saas/kit/payment/api/subscription/v1;v1";
+
+service SubscriptionInternalService{
+  rpc GetInternalSubscription (GetInternalSubscriptionRequest) returns (Subscription){
+
+  }
+}
+message GetInternalSubscriptionRequest{
+  string id=1 [(validate.rules).string.min_len = 1, (google.api.field_behavior) = REQUIRED];
+}

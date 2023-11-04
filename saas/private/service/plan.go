@@ -9,6 +9,7 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	v12 "github.com/go-saas/kit/dtm/api/dtm/v1"
 	dtmsrv "github.com/go-saas/kit/dtm/service"
+	v13 "github.com/go-saas/kit/payment/api/subscription/v1"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/query"
@@ -33,15 +34,33 @@ var wfCreatePlanName = "saas_create_plan"
 
 type PlanService struct {
 	pb.UnimplementedPlanServiceServer
-	auth       authz.Service
-	repo       biz.PlanRepo
-	logger     *klog.Helper
-	txhelper   *dtmsrv.Helper
-	productSrv v1.ProductInternalServiceServer
+	auth                    authz.Service
+	repo                    biz.PlanRepo
+	tenantUseCase           biz.TenantUseCase
+	logger                  *klog.Helper
+	txhelper                *dtmsrv.Helper
+	productSrv              v1.ProductInternalServiceServer
+	subscriptionInternalSrv v13.SubscriptionInternalServiceServer
 }
 
-func NewPlanService(auth authz.Service, repo biz.PlanRepo, logger klog.Logger, txhelper *dtmsrv.Helper, productSrv v1.ProductInternalServiceServer) *PlanService {
-	s := &PlanService{auth: auth, repo: repo, logger: klog.NewHelper(klog.With(logger, "module", "PlanService")), txhelper: txhelper, productSrv: productSrv}
+func NewPlanService(
+	auth authz.Service,
+	repo biz.PlanRepo,
+	tenantUseCase biz.TenantUseCase,
+	logger klog.Logger,
+	txhelper *dtmsrv.Helper,
+	productSrv v1.ProductInternalServiceServer,
+	subscriptionInternalSrv v13.SubscriptionInternalServiceServer,
+) *PlanService {
+	s := &PlanService{
+		auth:                    auth,
+		repo:                    repo,
+		tenantUseCase:           tenantUseCase,
+		logger:                  klog.NewHelper(klog.With(logger, "module", "PlanService")),
+		txhelper:                txhelper,
+		productSrv:              productSrv,
+		subscriptionInternalSrv: subscriptionInternalSrv,
+	}
 
 	err := s.txhelper.WorkflowRegister2(wfCreatePlanName, func(wf *workflow.Workflow, data []byte) ([]byte, error) {
 
@@ -274,7 +293,25 @@ func (s *PlanService) GetAvailablePlans(ctx context.Context, req *pb.GetAvailabl
 		ret.Prices = product.Prices
 		retItems = append(retItems, ret)
 	}
-	return &pb.GetAvailablePlansReply{Items: retItems}, nil
+	ret := &pb.GetAvailablePlansReply{Items: retItems}
+	ct, _ := saas.FromCurrentTenant(ctx)
+	if len(ct.GetId()) > 0 {
+		//get tenant subscription info
+		tenant, err := s.tenantUseCase.Get(ctx, ct.GetId())
+		if err != nil {
+			return nil, err
+		}
+		if tenant.ActiveSubscriptionID != nil {
+			subs, err := s.subscriptionInternalSrv.GetInternalSubscription(ctx, &v13.GetInternalSubscriptionRequest{Id: *tenant.ActiveSubscriptionID})
+			if err != nil {
+				return nil, err
+			}
+			ret.ActiveSubscription = subs
+
+		}
+
+	}
+	return ret, nil
 }
 
 func MapBizPlan2Pb(a *biz.Plan, b *pb.Plan) {

@@ -39,15 +39,6 @@
       "name": "RoleService"
     },
     {
-      "name": "PlanService"
-    },
-    {
-      "name": "TenantService"
-    },
-    {
-      "name": "TenantInternalService"
-    },
-    {
       "name": "UserService"
     },
     {
@@ -63,6 +54,9 @@
       "name": "SubscriptionService"
     },
     {
+      "name": "SubscriptionInternalService"
+    },
+    {
       "name": "BrandService"
     },
     {
@@ -70,6 +64,15 @@
     },
     {
       "name": "NotificationService"
+    },
+    {
+      "name": "PlanService"
+    },
+    {
+      "name": "TenantService"
+    },
+    {
+      "name": "TenantInternalService"
     },
     {
       "name": "LocaleService"
@@ -12164,6 +12167,9 @@
             "type": "object",
             "$ref": "#/definitions/v1Plan"
           }
+        },
+        "activeSubscription": {
+          "$ref": "#/definitions/subscriptionv1Subscription"
         }
       }
     },

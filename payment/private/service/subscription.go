@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-saas/kit/payment/private/biz"
+	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/query"
@@ -27,9 +28,11 @@ type SubscriptionService struct {
 	prodInternalSrv v12.ProductInternalServiceServer
 	stripeClient    *stripeclient.API
 	subsRepo        biz.SubscriptionRepo
+	trusted         sapi.TrustedContextValidator
 }
 
 var _ pb.SubscriptionServiceServer = (*SubscriptionService)(nil)
+var _ pb.SubscriptionInternalServiceServer = (*SubscriptionService)(nil)
 
 func NewSubscriptionService(
 	auth authz.Service,
@@ -37,6 +40,7 @@ func NewSubscriptionService(
 	prodInternalSrv v12.ProductInternalServiceServer,
 	stripeClient *stripeclient.API,
 	subsRepo biz.SubscriptionRepo,
+	trusted sapi.TrustedContextValidator,
 ) *SubscriptionService {
 	return &SubscriptionService{
 		auth:            auth,
@@ -44,6 +48,7 @@ func NewSubscriptionService(
 		prodInternalSrv: prodInternalSrv,
 		stripeClient:    stripeClient,
 		subsRepo:        subsRepo,
+		trusted:         trusted,
 	}
 }
 
