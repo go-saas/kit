@@ -3,3 +3,10 @@ other = "Payment Management"
 
 [payment.subscription]
 other = "订阅管理"
+
+[permission.payment.subscription.group]
+other = "Subscription"
+[permission.payment.subscription.read]
+other = "Read Subscription"
+[permission.payment.subscription.write]
+other = "Write Subscription"

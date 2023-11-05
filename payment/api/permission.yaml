@@ -1,0 +1,13 @@
+groups:
+  - name: "permission.payment.subscription.group"
+    def:
+      - name: "permission.payment.subscription.any"
+        namespace: "payment.subscription"
+        action: "*"
+        internal: true
+      - name: "permission.permission.read"
+        namespace: "payment.subscription"
+        action: "read"
+      - name: "permission.permission.write"
+        namespace: "payment.subscription"
+        action: "write"
