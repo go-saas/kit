@@ -66,8 +66,7 @@ service SubscriptionService{
 
   rpc GetMySubscription (GetMySubscriptionRequest) returns (Subscription){
     option (google.api.http) = {
-      post: "/v1/subscription/my/{id}"
-      body: "*"
+      get: "/v1/subscription/my/{id}"
     };
   };
 

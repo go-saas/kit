@@ -277,7 +277,7 @@
       }
     },
     "/v1/subscription/my/{id}": {
-      "post": {
+      "get": {
         "operationId": "SubscriptionService_GetMySubscription",
         "responses": {
           "200": {
@@ -299,14 +299,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object"
-            }
           }
         ],
         "tags": [

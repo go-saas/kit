@@ -52,7 +52,7 @@ func RegisterSubscriptionServiceHTTPServer(s *http.Server, srv SubscriptionServi
 	r.GET("/v1/subscription/{id}", _SubscriptionService_GetSubscription0_HTTP_Handler(srv))
 	r.POST("/v1/subscription/{id}/cancel", _SubscriptionService_CancelSubscription0_HTTP_Handler(srv))
 	r.POST("/v1/subscription/my", _SubscriptionService_CreateMySubscription0_HTTP_Handler(srv))
-	r.POST("/v1/subscription/my/{id}", _SubscriptionService_GetMySubscription0_HTTP_Handler(srv))
+	r.GET("/v1/subscription/my/{id}", _SubscriptionService_GetMySubscription0_HTTP_Handler(srv))
 	r.POST("/v1/subscription/my/{id}/cancel", _SubscriptionService_CancelMySubscription0_HTTP_Handler(srv))
 	r.PUT("/v1/subscription/my/{subscription.id}", _SubscriptionService_UpdateMySubscription0_HTTP_Handler(srv))
 	r.POST("/v1/subscription/my/list", _SubscriptionService_ListMySubscription0_HTTP_Handler(srv))
@@ -219,9 +219,6 @@ func _SubscriptionService_CreateMySubscription0_HTTP_Handler(srv SubscriptionSer
 func _SubscriptionService_GetMySubscription0_HTTP_Handler(srv SubscriptionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetMySubscriptionRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -408,10 +405,10 @@ func (c *SubscriptionServiceHTTPClientImpl) CreateSubscription(ctx context.Conte
 func (c *SubscriptionServiceHTTPClientImpl) GetMySubscription(ctx context.Context, in *GetMySubscriptionRequest, opts ...http.CallOption) (*Subscription, error) {
 	var out Subscription
 	pattern := "/v1/subscription/my/{id}"
-	path := binding.EncodeURL(pattern, in, false)
+	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationSubscriptionServiceGetMySubscription))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
