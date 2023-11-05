@@ -49,7 +49,7 @@ func (s *SaasPropagator) Extract(ctx context.Context, headers Header) (context.C
 		}
 	}
 	if headers.HasKey(TenantFilterKey) {
-		if v, err := strconv.ParseBool(headers.Get(TenantInfoKey)); err == nil {
+		if v, err := strconv.ParseBool(headers.Get(TenantFilterKey)); err == nil {
 			s.l.Debugf("recover tenant data filter: %s", v)
 			ctx = data.NewMultiTenancyDataFilter(ctx, v)
 		}
