@@ -50,11 +50,13 @@ func (s *SaasPropagator) Extract(ctx context.Context, headers Header) (context.C
 	}
 	if headers.HasKey(TenantFilterKey) {
 		if v, err := strconv.ParseBool(headers.Get(TenantInfoKey)); err == nil {
+			s.l.Debugf("recover tenant data filter: %s", v)
 			ctx = data.NewMultiTenancyDataFilter(ctx, v)
 		}
 	}
 	if headers.HasKey(TenantAutoSetKey) {
 		if v, err := strconv.ParseBool(headers.Get(TenantAutoSetKey)); err == nil {
+			s.l.Debugf("recover tenant auto set: %s", v)
 			ctx = data.NewAutoSetTenantId(ctx, v)
 		}
 	}
@@ -72,6 +74,9 @@ func (s *SaasPropagator) Inject(ctx context.Context, headers Header) error {
 	headers.Set(TenantFilterKey, strconv.FormatBool(filter))
 	autoset := data.FromAutoSetTenantId(ctx)
 	headers.Set(TenantAutoSetKey, strconv.FormatBool(autoset))
+	for _, k := range headers.Keys() {
+		s.l.Debugf("inject header key:%s value: %s", k, headers.Get(k))
+	}
 	return nil
 }
 

@@ -55,7 +55,7 @@ security:
 
 logging:
   zap:
-    level: "info"
+    level: "debug"
     outputPaths: [ "stdout", "rolling://.temp/logs" ]
     errorOutputPaths: [ "stderr" ]
     encoding: console

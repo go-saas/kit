@@ -47,6 +47,7 @@ type Header interface {
 	Get(key string) string
 	Set(key, value string)
 	HasKey(key string) bool
+	Keys() []string
 }
 
 type HeaderCarrier map[string]string
