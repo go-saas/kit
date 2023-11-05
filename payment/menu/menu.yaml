@@ -1,0 +1,30 @@
+menus:
+  - name: "payment"
+    path: "/payment"
+    component: "LAYOUT"
+    redirect: "/payment/orders"
+    is_preserved: true
+    title: "payment.manager"
+    icon: "DollarOutlined"
+    meta:
+    priority: 310
+    children:
+      - name: "order.order"
+        icon: "ant-design:api-outlined"
+        path: "/payment/orders"
+        component: "/Order/Order"
+        title: "order.order"
+        requirement:
+          - namespace: "order.order"
+            resource: "*"
+            action: "read"
+
+      - name: "payment.subscription"
+        icon: "ant-design:api-outlined"
+        path: "/payment/subscriptions"
+        component: "/Subscription/Subscription"
+        title: "payment.subscription"
+        requirement:
+          - namespace: "payment.subscription"
+            resource: "*"
+            action: "read"

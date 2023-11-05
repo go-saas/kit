@@ -1,0 +1,5 @@
+[payment.manager]
+other = "Payment Management"
+
+[payment.subscription]
+other = "订阅管理"
