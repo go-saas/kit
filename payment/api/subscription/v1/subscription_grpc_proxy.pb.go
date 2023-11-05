@@ -27,6 +27,9 @@ func NewSubscriptionServiceClientProxy(cc SubscriptionServiceClient) Subscriptio
 	return &subscriptionServiceClientProxy{cc}
 }
 
+func (c *subscriptionServiceClientProxy) CreateSubscription(ctx context.Context, in *CreateSubscriptionRequest) (*Subscription, error) {
+	return c.cc.CreateSubscription(ctx, in)
+}
 func (c *subscriptionServiceClientProxy) UpdateSubscription(ctx context.Context, in *UpdateSubscriptionRequest) (*Subscription, error) {
 	return c.cc.UpdateSubscription(ctx, in)
 }

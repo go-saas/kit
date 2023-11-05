@@ -148,6 +148,38 @@
         ]
       }
     },
+    "/v1/subscription": {
+      "post": {
+        "operationId": "SubscriptionService_CreateSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subscriptionv1Subscription"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateSubscriptionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SubscriptionService"
+        ]
+      }
+    },
     "/v1/subscription/list": {
       "post": {
         "operationId": "SubscriptionService_ListSubscription2",
@@ -182,7 +214,7 @@
     },
     "/v1/subscription/my": {
       "post": {
-        "operationId": "SubscriptionService_GetMySubscription",
+        "operationId": "SubscriptionService_CreateMySubscription",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -203,7 +235,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1GetMySubscriptionRequest"
+              "$ref": "#/definitions/v1CreateMySubscriptionRequest"
             }
           }
         ],
@@ -236,6 +268,44 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/v1ListMySubscriptionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SubscriptionService"
+        ]
+      }
+    },
+    "/v1/subscription/my/{id}": {
+      "post": {
+        "operationId": "SubscriptionService_GetMySubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subscriptionv1Subscription"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
             }
           }
         ],
@@ -1587,6 +1657,24 @@
         }
       }
     },
+    "v1CreateSubscriptionRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1SubscriptionItemParams"
+          }
+        }
+      }
+    },
     "v1Effect": {
       "type": "string",
       "enum": [
@@ -1605,17 +1693,6 @@
         "OTHER"
       ],
       "default": "UNKNOWN"
-    },
-    "v1GetMySubscriptionRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "id"
-      ]
     },
     "v1GetPaymentMethodReply": {
       "type": "object",

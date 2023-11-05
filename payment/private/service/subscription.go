@@ -52,6 +52,11 @@ func NewSubscriptionService(
 	}
 }
 
+func (s *SubscriptionService) CreateSubscription(ctx context.Context, req *pb.CreateSubscriptionRequest) (*pb.Subscription, error) {
+	//TODO
+	return &pb.Subscription{}, nil
+}
+
 func (s *SubscriptionService) UpdateSubscription(ctx context.Context, req *pb.UpdateSubscriptionRequest) (*pb.Subscription, error) {
 	//TODO
 	return &pb.Subscription{}, nil

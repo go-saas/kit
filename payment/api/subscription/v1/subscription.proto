@@ -20,12 +20,12 @@ option go_package = "github.com/go-saas/kit/payment/api/subscription/v1;v1";
 
 service SubscriptionService{
 
-//  rpc CreateSubscription (CreateSubscriptionRequest) returns (Subscription){
-//    option (google.api.http) = {
-//      post: "/v1/subscription"
-//      body: "*"
-//    };
-//  };
+  rpc CreateSubscription (CreateSubscriptionRequest) returns (Subscription){
+    option (google.api.http) = {
+      post: "/v1/subscription"
+      body: "*"
+    };
+  };
 
   rpc UpdateSubscription (UpdateSubscriptionRequest) returns (Subscription){
     option (google.api.http) = {
@@ -66,7 +66,7 @@ service SubscriptionService{
 
   rpc GetMySubscription (GetMySubscriptionRequest) returns (Subscription){
     option (google.api.http) = {
-      post: "/v1/subscription/my"
+      post: "/v1/subscription/my/{id}"
       body: "*"
     };
   };
