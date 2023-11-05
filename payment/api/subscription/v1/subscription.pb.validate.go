@@ -548,6 +548,8 @@ func (m *SubscriptionItem) validate(all bool) error {
 
 	// no validation rules for ProductId
 
+	// no validation rules for Quantity
+
 	if all {
 		switch v := interface{}(m.GetPrice()).(type) {
 		case interface{ ValidateAll() error }:
@@ -738,6 +740,8 @@ func (m *SubscriptionItemParams) validate(all bool) error {
 	// no validation rules for Id
 
 	// no validation rules for PriceId
+
+	// no validation rules for Quantity
 
 	if len(errors) > 0 {
 		return SubscriptionItemParamsMultiError(errors)

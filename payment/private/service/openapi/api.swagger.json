@@ -2402,6 +2402,10 @@
         "productId": {
           "type": "string"
         },
+        "quantity": {
+          "type": "integer",
+          "format": "int32"
+        },
         "price": {
           "$ref": "#/definitions/v1Price"
         },
@@ -2421,6 +2425,10 @@
         },
         "priceId": {
           "type": "string"
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

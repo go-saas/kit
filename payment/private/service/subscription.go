@@ -107,8 +107,8 @@ func (s *SubscriptionService) CreateMySubscription(ctx context.Context, req *pb.
 	}
 	subsNewParams := &stripe.SubscriptionParams{
 		Customer: stripe2.String(customer.StripeCustomerId),
-		Items: lo.Map(prices, func(t *v13.Price, _ int) *stripe.SubscriptionItemsParams {
-			return &stripe.SubscriptionItemsParams{Price: t.StripePriceId}
+		Items: lo.Map(prices, func(t *v13.Price, i int) *stripe.SubscriptionItemsParams {
+			return &stripe.SubscriptionItemsParams{Price: t.StripePriceId, Quantity: stripe2.Int64(int64(req.Items[i].Quantity))}
 		}),
 		PaymentBehavior: stripe.String("default_incomplete"),
 		//TrialPeriodDays:            nil,
@@ -246,4 +246,16 @@ func mapBizSubscription2Pb(a *biz.Subscription, b *pb.Subscription) {
 	b.Provider = a.Provider
 	b.ProviderKey = a.ProviderKey
 	b.UserId = a.UserId
+	b.Items = lo.Map(a.Items, func(t biz.SubscriptionItem, i int) *pb.SubscriptionItem {
+		ret := &pb.SubscriptionItem{}
+		mapBizSubscriptionItem2Pb(&t, ret)
+		return ret
+	})
+}
+
+func mapBizSubscriptionItem2Pb(a *biz.SubscriptionItem, b *pb.SubscriptionItem) {
+	b.Id = a.ID.String()
+	b.PriceId = a.PriceID
+	b.Quantity = a.Quantity
+	//TODO product,price,product_sku?
 }

@@ -50,6 +50,7 @@ type SubscriptionItem struct {
 	PriceID        string
 	ProductOrSkuID string
 	ProductType    string
+	Quantity       int32
 }
 
 type SubscriptionListPrams interface {

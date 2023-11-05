@@ -130,6 +130,7 @@ message SubscriptionItem{
   string id=1;
   string price_id=10;
   string product_id=11;
+  int32 quantity=12;
 
   .product.api.price.v1.Price price=100;
   .product.api.product.v1.Product product=101;
@@ -140,6 +141,7 @@ message SubscriptionItem{
 message SubscriptionItemParams{
   string id=1;
   string price_id=10;
+  int32 quantity=11;
 }
 
 message UpdateSubscriptionRequest{
