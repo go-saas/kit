@@ -120,7 +120,7 @@ func (s *SubscriptionService) CreateMySubscription(ctx context.Context, req *pb.
 	}
 	localSubs := &biz.Subscription{Provider: stripe2.ProviderName, ProviderKey: subs.ID, UserId: uid}
 	localSubs.Items = lo.Map(req.Items, func(t *pb.SubscriptionItemParams, i int) biz.SubscriptionItem {
-		return biz.SubscriptionItem{PriceID: t.PriceId, ProductOrSkuID: prices[i].OwnerId, ProductType: prices[i].OwnerType}
+		return biz.SubscriptionItem{PriceID: t.PriceId, ProductOrSkuID: prices[i].OwnerId, ProductType: prices[i].OwnerType, Quantity: t.Quantity}
 	})
 	localSubs.TenantId = gorm.NewTenantId(tenantId)
 	MapStripeSubscription2Biz(subs, localSubs)
