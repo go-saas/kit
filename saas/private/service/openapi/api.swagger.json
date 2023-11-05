@@ -1528,6 +1528,9 @@
         },
         "clientSecret": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },

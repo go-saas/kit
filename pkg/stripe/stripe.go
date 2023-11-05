@@ -55,4 +55,5 @@ func MapStripeInvoice(a *stripe.Invoice, b *Invoice) {
 func MapStripePaymentIntent(a *stripe.PaymentIntent, b *PaymentIntent) {
 	b.Id = a.ID
 	b.ClientSecret = a.ClientSecret
+	b.Status = string(a.Status)
 }

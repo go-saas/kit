@@ -21,6 +21,7 @@ message Invoice{
 message PaymentIntent{
   string id=1;
   string client_secret=2;
+  string status=10;
 }
 
 message Subscription{

@@ -298,6 +298,8 @@ func (m *PaymentIntent) validate(all bool) error {
 
 	// no validation rules for ClientSecret
 
+	// no validation rules for Status
+
 	if len(errors) > 0 {
 		return PaymentIntentMultiError(errors)
 	}
