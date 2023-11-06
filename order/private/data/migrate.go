@@ -25,5 +25,5 @@ func (m *Migrate) Seed(ctx context.Context, sCtx *seed.Context) error {
 }
 
 func migrateDb(db *gorm.DB) error {
-	return db.AutoMigrate(&biz.Order{}, &biz.OrderItem{}, &biz.OrderFlowData{})
+	return db.AutoMigrate(&biz.Order{}, &biz.OrderItem{}, &biz.OrderPaymentProvider{})
 }

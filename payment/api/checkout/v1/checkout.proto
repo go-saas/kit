@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package payment.api.checkout.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
+import "query/operation.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "payment/api/subscription/v1/subscription.proto";
+import "order/api/order/v1/order.proto";
+
+option go_package = "github.com/go-saas/kit/payment/api/checkout/v1;v1";
+
+
+service CheckoutService{
+  rpc CheckoutNow(CheckoutNowRequest)returns(CheckoutNowReply){
+    option (google.api.http) = {
+      post: "/v1/payment/checkout/now",
+      body:"*"
+    };
+  }
+
+  rpc CheckoutOrder(CheckOutOrderRequest)returns(CheckoutOrderReply){
+    option (google.api.http) = {
+      post: "/v1/payment/checkout/order/{order_id}",
+      body:"*"
+    };
+  }
+
+}
+
+message CheckoutNowRequest{
+  string provider=2 [(validate.rules).string={in:["stripe"]}, (google.api.field_behavior) = REQUIRED];
+  string currency_code=3;
+  repeated CheckoutItemParams items=100 [(validate.rules).repeated={min_items:1}];
+}
+
+
+message CheckoutItemParams{
+  string id=1;
+  string price_id=10;
+  int64 quantity=11;
+}
+
+message CheckoutNowReply{
+  .payment.api.subscription.v1.Subscription subscription=1;
+  .order.api.order.v1.Order order=2;
+}
+
+message CheckOutOrderRequest{
+  string order_id=1[(validate.rules).string.min_len = 1, (google.api.field_behavior) = REQUIRED];
+  string provider=2 [(validate.rules).string={in:["stripe"]}, (google.api.field_behavior) = REQUIRED];
+  string currency_code=3;
+}
+
+message CheckoutOrderReply{
+  .order.api.order.v1.OrderPaymentProviderInfo payment_provider_info=200;
+}

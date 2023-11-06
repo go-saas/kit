@@ -57,13 +57,6 @@ service SubscriptionService{
     };
   }
 
-  rpc CreateMySubscription (CreateMySubscriptionRequest) returns (Subscription){
-    option (google.api.http) = {
-      post: "/v1/subscription/my"
-      body: "*"
-    };
-  };
-
   rpc GetMySubscription (GetMySubscriptionRequest) returns (Subscription){
     option (google.api.http) = {
       get: "/v1/subscription/my/{id}"
@@ -119,21 +112,22 @@ message Subscription{
   SubscriptionProviderInfo provider_info=200;
 }
 
-
 message SubscriptionProviderInfo{
-  .stripe.Subscription stripe=11;
+  SubscriptionStripeInfo stripe=11;
 }
 
+message SubscriptionStripeInfo{
+  .stripe.Subscription subscription=1;
+}
 
 message SubscriptionItem{
   string id=1;
   string price_id=10;
   string product_id=11;
-  int32 quantity=12;
 
-  .product.api.price.v1.Price price=100;
-  .product.api.product.v1.Product product=101;
-  .product.api.product.v1.ProductSku product_sku=102;
+  int64 quantity=12;
+  string price_owner_id=13;
+  string price_owner_type=14;
 
 }
 
@@ -194,11 +188,6 @@ message ListSubscriptionReply {
   repeated Subscription items = 3;
 }
 
-message CreateMySubscriptionRequest{
-  string provider=10 [(validate.rules).string={in:["stripe"]}];
-
-  repeated SubscriptionItemParams items=100 [(validate.rules).repeated={min_items:1}];
-}
 
 message GetMySubscriptionRequest{
   string id=1 [(validate.rules).string.min_len = 1, (google.api.field_behavior) = REQUIRED];

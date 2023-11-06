@@ -48,9 +48,10 @@ type SubscriptionItem struct {
 	SubscriptionID string
 	//PriceID linked with product.Prices
 	PriceID        string
-	ProductOrSkuID string
-	ProductType    string
-	Quantity       int32
+	ProductID      string
+	PriceOwnerID   string
+	PriceOwnerType string
+	Quantity       int64
 }
 
 type SubscriptionListPrams interface {

@@ -24,6 +24,7 @@ message Price{
   // product/product_sku
   string owner_type=50;
   string owner_id=51;
+  string product_id=52;
 
   string currency_code=99;
   .price.PricePb default=100;
@@ -43,6 +44,7 @@ message Price{
 
   PriceTransformQuantity transform_quantity=311;
   string type=312;
+
 
   optional string stripe_price_id=1000;
 }

@@ -92,7 +92,7 @@ sys:
         upstream_id: payment-http
 
       order-api:
-        uris: ["/v1/order","/v1/order/*","/assets/order/*"]
+        uris: ["/v1/order*","/assets/order/*"]
         upstream_id: order-http
 
       product-api:

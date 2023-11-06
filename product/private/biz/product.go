@@ -75,6 +75,8 @@ type Product struct {
 	SyncLinks  []ProductSyncLink `gorm:"foreignKey:ProductId"`
 
 	Active bool
+
+	Internal bool
 }
 
 type ProductManageInfo struct {

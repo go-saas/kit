@@ -507,3 +507,104 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SubscriptionValidationError{}
+
+// Validate checks the field values on EphemeralKey with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *EphemeralKey) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on EphemeralKey with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in EphemeralKeyMultiError, or
+// nil if none found.
+func (m *EphemeralKey) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *EphemeralKey) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Secret
+
+	if len(errors) > 0 {
+		return EphemeralKeyMultiError(errors)
+	}
+
+	return nil
+}
+
+// EphemeralKeyMultiError is an error wrapping multiple validation errors
+// returned by EphemeralKey.ValidateAll() if the designated constraints aren't met.
+type EphemeralKeyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m EphemeralKeyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m EphemeralKeyMultiError) AllErrors() []error { return m }
+
+// EphemeralKeyValidationError is the validation error returned by
+// EphemeralKey.Validate if the designated constraints aren't met.
+type EphemeralKeyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EphemeralKeyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EphemeralKeyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EphemeralKeyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EphemeralKeyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EphemeralKeyValidationError) ErrorName() string { return "EphemeralKeyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e EphemeralKeyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEphemeralKey.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EphemeralKeyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EphemeralKeyValidationError{}

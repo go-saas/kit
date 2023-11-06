@@ -17,6 +17,7 @@ func mapBizPrice2Pb(ctx context.Context, a *biz.Price, b *v12.Price) {
 	b.UpdatedAt = timestamppb.New(a.UpdatedAt)
 	b.TenantId = a.TenantId.String
 	b.CurrencyCode = a.CurrencyCode
+	b.ProductId = a.ProductID
 
 	b.Default = price.MustNewFromInt64(a.DefaultAmount, a.CurrencyCode).ToPricePb(ctx)
 	if a.DiscountedAmount != nil {

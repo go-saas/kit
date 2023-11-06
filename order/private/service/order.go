@@ -2,12 +2,10 @@ package service
 
 import (
 	"context"
-	"github.com/cockroachdb/apd/v3"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-saas/kit/event"
 	"github.com/go-saas/kit/order/api"
 	pb "github.com/go-saas/kit/order/api/order/v1"
-	v1 "github.com/go-saas/kit/order/event/v1"
 	"github.com/go-saas/kit/order/private/biz"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn"
@@ -15,10 +13,8 @@ import (
 	"github.com/go-saas/kit/pkg/price"
 	"github.com/go-saas/kit/pkg/query"
 	"github.com/go-saas/kit/pkg/utils"
-	"github.com/go-saas/lbs"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/wrapperspb"
-	"time"
 )
 
 type OrderService struct {
@@ -31,13 +27,13 @@ type OrderService struct {
 
 var _ pb.OrderServiceServer = (*OrderService)(nil)
 var _ pb.OrderInternalServiceServer = (*OrderService)(nil)
-var _ pb.OrderAppServiceServer = (*OrderService)(nil)
+var _ pb.MyOrderServiceServer = (*OrderService)(nil)
 
 func NewOrderService(repo biz.OrderRepo, auth authz.Service, trust sapi.TrustedContextValidator, producer event.Producer) *OrderService {
 	return &OrderService{repo: repo, auth: auth, trust: trust, producer: producer}
 }
 
-func (s *OrderService) ListAppOrder(ctx context.Context, req *pb.ListOrderRequest) (*pb.ListOrderReply, error) {
+func (s *OrderService) ListMyOrder(ctx context.Context, req *pb.ListOrderRequest) (*pb.ListOrderReply, error) {
 	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -68,7 +64,7 @@ func (s *OrderService) ListAppOrder(ctx context.Context, req *pb.ListOrderReques
 	return ret, nil
 }
 
-func (s *OrderService) GetAppOrder(ctx context.Context, req *pb.GetOrderRequest) (*pb.Order, error) {
+func (s *OrderService) GetMyOrder(ctx context.Context, req *pb.GetOrderRequest) (*pb.Order, error) {
 	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -85,7 +81,7 @@ func (s *OrderService) GetAppOrder(ctx context.Context, req *pb.GetOrderRequest)
 	return res, nil
 }
 
-func (s *OrderService) RefundAppOrder(ctx context.Context, req *pb.RefundAppOrderRequest) (*pb.Order, error) {
+func (s *OrderService) RefundMyOrder(ctx context.Context, req *pb.RefundMyOrderRequest) (*pb.Order, error) {
 	userInfo, err := authn.ErrIfUnauthenticated(ctx)
 	if err != nil {
 		return nil, err
@@ -98,7 +94,7 @@ func (s *OrderService) RefundAppOrder(ctx context.Context, req *pb.RefundAppOrde
 		return nil, errors.NotFound("", "")
 	}
 	//call payment to refund
-	g.RequestFund(g.PayWay, g.TotalPriceInclTax, nil)
+	g.RequestFund(g.PayProvider, g.TotalPriceAmount, nil)
 	//TODO
 	return nil, errors.BadRequest("", "")
 }
@@ -197,176 +193,44 @@ func (s *OrderService) DeleteOrder(ctx context.Context, req *pb.DeleteOrderReque
 	return &pb.DeleteOrderReply{Id: g.ID}, nil
 }
 
-func (s *OrderService) CreateInternalOrder(ctx context.Context, req *pb.CreateInternalOrderRequest) (*pb.Order, error) {
-	if ok, _ := s.trust.Trusted(ctx); !ok {
-		return nil, errors.Forbidden("", "")
-	}
-	taxRate, _, _ := apd.NewFromString("0")
-	var orderItems []biz.OrderItem
-	for _, item := range req.Items {
-		pricee, err := price.NewPriceFromPb(item.Price)
-		if err != nil {
-			return nil, err
-		}
-		originalPrice, err := price.NewPriceFromPb(item.OriginalPrice)
-		if err != nil {
-			return nil, err
-		}
-
-		orderItem, err := biz.NewOrderItemFromPriceAndOriginalPrice(biz.OrderProduct{
-			ProductName:     item.Product.Name,
-			ProductMainPic:  item.Product.MainPic,
-			ProductID:       item.Product.Id,
-			ProductVersion:  item.Product.Version,
-			ProductType:     item.Product.Type,
-			ProductSkuID:    item.Product.SkuId,
-			ProductSkuTitle: item.Product.SkuTitle,
-		}, item.Qty, *taxRate, pricee, originalPrice, item.IsGiveaway)
-		if err != nil {
-			return nil, err
-		}
-		orderItems = append(orderItems, *orderItem)
-	}
-	e, err := biz.NewOrder(*taxRate, orderItems)
-	if err != nil {
-		return nil, err
-	}
-	e.CustomerID = req.CustomerId
-	e.Extra = utils.Structpb2Map(req.Extra)
-
-	if req.BillingAddr != nil {
-		billingAddr, _ := lbs.NewAddressEntityFromPb(req.BillingAddr)
-		e.BillingAddr = *billingAddr
-	}
-	if req.ShippingAddr != nil {
-		shippingAddr, _ := lbs.NewAddressEntityFromPb(req.ShippingAddr)
-		e.ShippingAddr = *shippingAddr
-	}
-
-	if req.PayBefore != nil {
-		t := time.Now().Add(req.PayBefore.AsDuration())
-		e.PayBefore = &t
-	}
-
-	err = s.repo.Create(ctx, e)
-	if err != nil {
-		return nil, err
-	}
-	res := &pb.Order{}
-	MapBizOrder2Pb(ctx, e, res)
-	return res, nil
-}
-
-func (s *OrderService) GetInternalOrder(ctx context.Context, req *pb.GetInternalOrderRequest) (*pb.Order, error) {
-	if ok, _ := s.trust.Trusted(ctx); !ok {
-		return nil, errors.Forbidden("", "")
-	}
-	g, err := s.repo.Get(ctx, req.GetId())
-	if err != nil {
-		return nil, err
-	}
-	if g == nil {
-		return nil, errors.NotFound("", "")
-	}
-	res := &pb.Order{}
-	MapBizOrder2Pb(ctx, g, res)
-	return res, nil
-}
-
-func (s *OrderService) InternalOrderPaySuccess(ctx context.Context, req *pb.InternalOrderPaySuccessRequest) (*pb.InternalOrderPaySuccessReply, error) {
-	if ok, _ := s.trust.Trusted(ctx); !ok {
-		return nil, errors.Forbidden("", "")
-	}
-	g, err := s.repo.Get(ctx, req.GetId())
-	if err != nil {
-		return nil, err
-	}
-	if g == nil {
-		return nil, errors.NotFound("", "")
-	}
-	p, err := price.NewPriceFromPb(req.PaidPrice)
-	if err != nil {
-		return nil, err
-	}
-	g.ChangeToPaid(req.PayWay, req.PayMethod, p, utils.Structpb2Map(req.PayExtra), utils.Timepb2Time(req.PaidTime))
-	if err := s.repo.Update(ctx, g.ID, g, nil); err != nil {
-		return nil, err
-	}
-	//publish event
-	orderPb := &pb.Order{}
-	MapBizOrder2Pb(ctx, g, orderPb)
-	msg, _ := event.NewMessageFromProto(&v1.OrderPaySuccessEvent{Order: orderPb})
-	err = s.producer.Send(ctx, msg)
-	if err != nil {
-		return nil, err
-	}
-	return &pb.InternalOrderPaySuccessReply{}, err
-}
-
-func (s *OrderService) InternalOrderRefunded(ctx context.Context, req *pb.InternalOrderRefundedRequest) (*pb.InternalOrderRefundedReply, error) {
-	if ok, _ := s.trust.Trusted(ctx); !ok {
-		return nil, errors.Forbidden("", "")
-	}
-	g, err := s.repo.Get(ctx, req.GetId())
-	if err != nil {
-		return nil, err
-	}
-	if g == nil {
-		return nil, errors.NotFound("", "")
-	}
-	p, err := price.NewPriceFromPb(req.RefundPrice)
-	if err != nil {
-		return nil, err
-	}
-	g.ChangeToRefunded(req.PayWay, p, utils.Structpb2Map(req.PayExtra))
-	if err := s.repo.Update(ctx, g.ID, g, nil); err != nil {
-		return nil, err
-	}
-	//publish event
-	orderPb := &pb.Order{}
-	MapBizOrder2Pb(ctx, g, orderPb)
-	msg, _ := event.NewMessageFromProto(&v1.OrderRefundSuccessEvent{Order: orderPb})
-	err = s.producer.Send(ctx, msg)
-	if err != nil {
-		return nil, err
-	}
-	return &pb.InternalOrderRefundedReply{}, err
-}
-
 func MapBizOrder2Pb(ctx context.Context, a *biz.Order, b *pb.Order) {
 	b.Id = a.ID
 
 	b.Status = a.Status
 	b.CreatedAt = utils.Time2Timepb(&a.CreatedAt)
 
-	b.TotalPrice = a.TotalPrice.ToPricePb(ctx)
-	b.TotalPriceInclTax = a.TotalPriceInclTax.ToPricePb(ctx)
-	b.Discount = a.Discount.ToPricePb(ctx)
-	b.OriginalPrice = a.OriginalPrice.ToPricePb(ctx)
-	b.OriginalPriceInclTax = a.OriginalPriceInclTax.ToPricePb(ctx)
-	b.PaidPrice = a.PaidPrice.ToPricePb(ctx)
+	b.TotalPrice = price.MustNewFromInt64(a.TotalPriceAmount, a.CurrencyCode).ToPricePb(ctx)
+	b.TotalPriceInclTax = price.MustNewFromInt64(a.TotalPriceInclTaxAmount, a.CurrencyCode).ToPricePb(ctx)
+	b.Discount = price.MustNewFromInt64(a.DiscountAmount, a.CurrencyCode).ToPricePb(ctx)
+	b.OriginalPrice = price.MustNewFromInt64(a.OriginalPriceAmount, a.CurrencyCode).ToPricePb(ctx)
+
+	b.PaidPrice = price.MustNewFromInt64(a.PaidPriceAmount, a.CurrencyCode).ToPricePb(ctx)
 	b.PaidTime = utils.Time2Timepb(a.PaidTime)
 	b.PayBefore = utils.Time2Timepb(a.PayBefore)
-	b.PayWay = a.PayWay
+	b.PayProvider = a.PayProvider
 
 	b.CustomerId = a.CustomerID
 	b.Items = lo.Map(a.Items, func(item biz.OrderItem, _ int) *pb.OrderItem {
 		return MapBizOrderItem2Pb(ctx, &item)
 	})
+	b.PaymentProviders = lo.Map(a.PaymentProviders, func(t biz.OrderPaymentProvider, _ int) *pb.OrderPaymentProvider {
+		return MapBizOrderPaymentProvider2Pb(&t)
+	})
 }
 
 func MapBizOrderItem2Pb(ctx context.Context, a *biz.OrderItem) *pb.OrderItem {
 	return &pb.OrderItem{
-		Id:              a.ID,
-		Qty:             a.Qty,
-		Price:           a.Price.ToPricePb(ctx),
-		Tax:             a.Tax.ToPricePb(ctx),
-		PriceInclTax:    a.PriceInclTax.ToPricePb(ctx),
-		RowTotal:        a.RowTotal.ToPricePb(ctx),
-		RowTotalTax:     a.RowTotalTax.ToPricePb(ctx),
-		RowTotalInclTax: a.RowTotalInclTax.ToPricePb(ctx),
-		OriginalPrice:   a.OriginalPrice.ToPricePb(ctx),
-		RowDiscount:     a.RowDiscount.ToPricePb(ctx),
+		Id:  a.ID,
+		Qty: a.Qty,
+
+		Price:           price.MustNewFromInt64(a.PriceAmount, a.CurrencyCode).ToPricePb(ctx),
+		PriceTax:        price.MustNewFromInt64(a.PriceTaxAmount, a.CurrencyCode).ToPricePb(ctx),
+		PriceInclTax:    price.MustNewFromInt64(a.PriceInclTaxAmount, a.CurrencyCode).ToPricePb(ctx),
+		RowTotal:        price.MustNewFromInt64(a.RowTotalAmount, a.CurrencyCode).ToPricePb(ctx),
+		RowTotalTax:     price.MustNewFromInt64(a.RowTotalTaxAmount, a.CurrencyCode).ToPricePb(ctx),
+		RowTotalInclTax: price.MustNewFromInt64(a.RowTotalInclTaxAmount, a.CurrencyCode).ToPricePb(ctx),
+		OriginalPrice:   price.MustNewFromInt64(a.OriginalPriceAmount, a.CurrencyCode).ToPricePb(ctx),
+		RowDiscount:     price.MustNewFromInt64(a.RowDiscountAmount, a.CurrencyCode).ToPricePb(ctx),
 		Product: &pb.OrderProduct{
 			Name:     a.Product.ProductName,
 			MainPic:  a.Product.ProductMainPic,
@@ -375,11 +239,18 @@ func MapBizOrderItem2Pb(ctx context.Context, a *biz.OrderItem) *pb.OrderItem {
 			Type:     a.Product.ProductType,
 			SkuId:    a.Product.ProductSkuID,
 			SkuTitle: a.Product.ProductSkuTitle,
+			PriceId:  a.Product.PriceID,
 		},
 		IsGiveaway: a.IsGiveaway,
 	}
 }
 
+func MapBizOrderPaymentProvider2Pb(a *biz.OrderPaymentProvider) *pb.OrderPaymentProvider {
+	return &pb.OrderPaymentProvider{
+		Provider:    a.Provider,
+		ProviderKey: a.ProviderKey,
+	}
+}
 func MapUpdatePbOrder2Biz(a *pb.UpdateOrder, b *biz.Order) {
 
 }

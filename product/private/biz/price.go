@@ -98,9 +98,15 @@ type Price struct {
 
 	TransformQuantity PriceTransformQuantity `gorm:"embedded"`
 
+	ProductID string
+
 	Type PriceType
 
 	StripePriceId *string
+}
+
+func NewPrice(productID string) *Price {
+	return &Price{ProductID: productID}
 }
 
 func (p *Price) GetNeedPayAmount() int64 {

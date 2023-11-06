@@ -1302,7 +1302,38 @@ func (m *Order) validate(all bool) error {
 		}
 	}
 
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, OrderValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, OrderValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return OrderValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	// no validation rules for Status
+
+	// no validation rules for CurrencyCode
 
 	if all {
 		switch v := interface{}(m.GetTotalPrice()).(type) {
@@ -1421,35 +1452,6 @@ func (m *Order) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(m.GetOriginalPriceInclTax()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, OrderValidationError{
-					field:  "OriginalPriceInclTax",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, OrderValidationError{
-					field:  "OriginalPriceInclTax",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetOriginalPriceInclTax()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return OrderValidationError{
-				field:  "OriginalPriceInclTax",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
 		switch v := interface{}(m.GetPaidPrice()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -1536,7 +1538,7 @@ func (m *Order) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for PayWay
+	// no validation rules for PayProvider
 
 	if all {
 		switch v := interface{}(m.GetShippingAddr()).(type) {
@@ -1624,6 +1626,69 @@ func (m *Order) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return OrderValidationError{
 					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if all {
+		switch v := interface{}(m.GetPaymentProviderInfo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, OrderValidationError{
+					field:  "PaymentProviderInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, OrderValidationError{
+					field:  "PaymentProviderInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPaymentProviderInfo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return OrderValidationError{
+				field:  "PaymentProviderInfo",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetPaymentProviders() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, OrderValidationError{
+						field:  fmt.Sprintf("PaymentProviders[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, OrderValidationError{
+						field:  fmt.Sprintf("PaymentProviders[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return OrderValidationError{
+					field:  fmt.Sprintf("PaymentProviders[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -1735,6 +1800,8 @@ func (m *OrderItem) validate(all bool) error {
 
 	// no validation rules for Qty
 
+	// no validation rules for CurrencyCode
+
 	if all {
 		switch v := interface{}(m.GetPrice()).(type) {
 		case interface{ ValidateAll() error }:
@@ -1765,11 +1832,11 @@ func (m *OrderItem) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(m.GetTax()).(type) {
+		switch v := interface{}(m.GetPriceTax()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, OrderItemValidationError{
-					field:  "Tax",
+					field:  "PriceTax",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1777,16 +1844,16 @@ func (m *OrderItem) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, OrderItemValidationError{
-					field:  "Tax",
+					field:  "PriceTax",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetTax()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetPriceTax()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return OrderItemValidationError{
-				field:  "Tax",
+				field:  "PriceTax",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1816,6 +1883,35 @@ func (m *OrderItem) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return OrderItemValidationError{
 				field:  "PriceInclTax",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetOriginalPrice()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, OrderItemValidationError{
+					field:  "OriginalPrice",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, OrderItemValidationError{
+					field:  "OriginalPrice",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetOriginalPrice()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return OrderItemValidationError{
+				field:  "OriginalPrice",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1903,35 +1999,6 @@ func (m *OrderItem) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return OrderItemValidationError{
 				field:  "RowTotalInclTax",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetOriginalPrice()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, OrderItemValidationError{
-					field:  "OriginalPrice",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, OrderItemValidationError{
-					field:  "OriginalPrice",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetOriginalPrice()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return OrderItemValidationError{
-				field:  "OriginalPrice",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -2075,6 +2142,112 @@ var _ interface {
 	ErrorName() string
 } = OrderItemValidationError{}
 
+// Validate checks the field values on OrderPaymentProvider with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OrderPaymentProvider) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OrderPaymentProvider with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OrderPaymentProviderMultiError, or nil if none found.
+func (m *OrderPaymentProvider) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OrderPaymentProvider) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Provider
+
+	// no validation rules for ProviderKey
+
+	if len(errors) > 0 {
+		return OrderPaymentProviderMultiError(errors)
+	}
+
+	return nil
+}
+
+// OrderPaymentProviderMultiError is an error wrapping multiple validation
+// errors returned by OrderPaymentProvider.ValidateAll() if the designated
+// constraints aren't met.
+type OrderPaymentProviderMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OrderPaymentProviderMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OrderPaymentProviderMultiError) AllErrors() []error { return m }
+
+// OrderPaymentProviderValidationError is the validation error returned by
+// OrderPaymentProvider.Validate if the designated constraints aren't met.
+type OrderPaymentProviderValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OrderPaymentProviderValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OrderPaymentProviderValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OrderPaymentProviderValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OrderPaymentProviderValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OrderPaymentProviderValidationError) ErrorName() string {
+	return "OrderPaymentProviderValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OrderPaymentProviderValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOrderPaymentProvider.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OrderPaymentProviderValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OrderPaymentProviderValidationError{}
+
 // Validate checks the field values on OrderProduct with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -2101,15 +2274,23 @@ func (m *OrderProduct) validate(all bool) error {
 
 	// no validation rules for MainPic
 
-	// no validation rules for Id
-
 	// no validation rules for Version
 
 	// no validation rules for Type
 
-	// no validation rules for SkuId
-
 	// no validation rules for SkuTitle
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.SkuId != nil {
+		// no validation rules for SkuId
+	}
+
+	if m.PriceId != nil {
+		// no validation rules for PriceId
+	}
 
 	if len(errors) > 0 {
 		return OrderProductMultiError(errors)
@@ -2188,22 +2369,22 @@ var _ interface {
 	ErrorName() string
 } = OrderProductValidationError{}
 
-// Validate checks the field values on RefundAppOrderRequest with the rules
+// Validate checks the field values on RefundMyOrderRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RefundAppOrderRequest) Validate() error {
+func (m *RefundMyOrderRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RefundAppOrderRequest with the rules
+// ValidateAll checks the field values on RefundMyOrderRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// RefundAppOrderRequestMultiError, or nil if none found.
-func (m *RefundAppOrderRequest) ValidateAll() error {
+// RefundMyOrderRequestMultiError, or nil if none found.
+func (m *RefundMyOrderRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RefundAppOrderRequest) validate(all bool) error {
+func (m *RefundMyOrderRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -2213,19 +2394,19 @@ func (m *RefundAppOrderRequest) validate(all bool) error {
 	// no validation rules for OrderId
 
 	if len(errors) > 0 {
-		return RefundAppOrderRequestMultiError(errors)
+		return RefundMyOrderRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// RefundAppOrderRequestMultiError is an error wrapping multiple validation
-// errors returned by RefundAppOrderRequest.ValidateAll() if the designated
+// RefundMyOrderRequestMultiError is an error wrapping multiple validation
+// errors returned by RefundMyOrderRequest.ValidateAll() if the designated
 // constraints aren't met.
-type RefundAppOrderRequestMultiError []error
+type RefundMyOrderRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RefundAppOrderRequestMultiError) Error() string {
+func (m RefundMyOrderRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -2234,11 +2415,11 @@ func (m RefundAppOrderRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RefundAppOrderRequestMultiError) AllErrors() []error { return m }
+func (m RefundMyOrderRequestMultiError) AllErrors() []error { return m }
 
-// RefundAppOrderRequestValidationError is the validation error returned by
-// RefundAppOrderRequest.Validate if the designated constraints aren't met.
-type RefundAppOrderRequestValidationError struct {
+// RefundMyOrderRequestValidationError is the validation error returned by
+// RefundMyOrderRequest.Validate if the designated constraints aren't met.
+type RefundMyOrderRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -2246,24 +2427,24 @@ type RefundAppOrderRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e RefundAppOrderRequestValidationError) Field() string { return e.field }
+func (e RefundMyOrderRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RefundAppOrderRequestValidationError) Reason() string { return e.reason }
+func (e RefundMyOrderRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RefundAppOrderRequestValidationError) Cause() error { return e.cause }
+func (e RefundMyOrderRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RefundAppOrderRequestValidationError) Key() bool { return e.key }
+func (e RefundMyOrderRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RefundAppOrderRequestValidationError) ErrorName() string {
-	return "RefundAppOrderRequestValidationError"
+func (e RefundMyOrderRequestValidationError) ErrorName() string {
+	return "RefundMyOrderRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e RefundAppOrderRequestValidationError) Error() string {
+func (e RefundMyOrderRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2275,14 +2456,14 @@ func (e RefundAppOrderRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRefundAppOrderRequest.%s: %s%s",
+		"invalid %sRefundMyOrderRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RefundAppOrderRequestValidationError{}
+var _ error = RefundMyOrderRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -2290,4 +2471,295 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RefundAppOrderRequestValidationError{}
+} = RefundMyOrderRequestValidationError{}
+
+// Validate checks the field values on OrderPaymentProviderInfo with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OrderPaymentProviderInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OrderPaymentProviderInfo with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OrderPaymentProviderInfoMultiError, or nil if none found.
+func (m *OrderPaymentProviderInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OrderPaymentProviderInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetStripe()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, OrderPaymentProviderInfoValidationError{
+					field:  "Stripe",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, OrderPaymentProviderInfoValidationError{
+					field:  "Stripe",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetStripe()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return OrderPaymentProviderInfoValidationError{
+				field:  "Stripe",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return OrderPaymentProviderInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// OrderPaymentProviderInfoMultiError is an error wrapping multiple validation
+// errors returned by OrderPaymentProviderInfo.ValidateAll() if the designated
+// constraints aren't met.
+type OrderPaymentProviderInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OrderPaymentProviderInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OrderPaymentProviderInfoMultiError) AllErrors() []error { return m }
+
+// OrderPaymentProviderInfoValidationError is the validation error returned by
+// OrderPaymentProviderInfo.Validate if the designated constraints aren't met.
+type OrderPaymentProviderInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OrderPaymentProviderInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OrderPaymentProviderInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OrderPaymentProviderInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OrderPaymentProviderInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OrderPaymentProviderInfoValidationError) ErrorName() string {
+	return "OrderPaymentProviderInfoValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OrderPaymentProviderInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOrderPaymentProviderInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OrderPaymentProviderInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OrderPaymentProviderInfoValidationError{}
+
+// Validate checks the field values on OrderPaymentStripeInfo with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *OrderPaymentStripeInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OrderPaymentStripeInfo with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OrderPaymentStripeInfoMultiError, or nil if none found.
+func (m *OrderPaymentStripeInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OrderPaymentStripeInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPaymentIntent()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, OrderPaymentStripeInfoValidationError{
+					field:  "PaymentIntent",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, OrderPaymentStripeInfoValidationError{
+					field:  "PaymentIntent",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPaymentIntent()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return OrderPaymentStripeInfoValidationError{
+				field:  "PaymentIntent",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetEphemeralKey()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, OrderPaymentStripeInfoValidationError{
+					field:  "EphemeralKey",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, OrderPaymentStripeInfoValidationError{
+					field:  "EphemeralKey",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEphemeralKey()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return OrderPaymentStripeInfoValidationError{
+				field:  "EphemeralKey",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return OrderPaymentStripeInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// OrderPaymentStripeInfoMultiError is an error wrapping multiple validation
+// errors returned by OrderPaymentStripeInfo.ValidateAll() if the designated
+// constraints aren't met.
+type OrderPaymentStripeInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OrderPaymentStripeInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OrderPaymentStripeInfoMultiError) AllErrors() []error { return m }
+
+// OrderPaymentStripeInfoValidationError is the validation error returned by
+// OrderPaymentStripeInfo.Validate if the designated constraints aren't met.
+type OrderPaymentStripeInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OrderPaymentStripeInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OrderPaymentStripeInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OrderPaymentStripeInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OrderPaymentStripeInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OrderPaymentStripeInfoValidationError) ErrorName() string {
+	return "OrderPaymentStripeInfoValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OrderPaymentStripeInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOrderPaymentStripeInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OrderPaymentStripeInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OrderPaymentStripeInfoValidationError{}

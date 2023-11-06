@@ -31,12 +31,6 @@ service StripePaymentGatewayService{
     };
   }
 
-  rpc CreateStripePaymentIntent (CreateStripePaymentIntentRequest) returns (CreateStripePaymentIntentReply){
-    option (google.api.http) = {
-      post: "/v1/payment/stripe/intent",
-      body:"*"
-    };
-  }
 
   rpc StripeWebhook(google.protobuf.Empty)returns(StripeWebhookReply){
     option (google.api.http) = {
@@ -73,16 +67,6 @@ message PaymentMethod{
   string notice=4;
 }
 
-message CreateStripePaymentIntentRequest{
-  string order_id=1;
-
-}
-
-message CreateStripePaymentIntentReply{
-  string payment_intent=1;
-  string  ephemeral_key=2;
-  string customer_id=3;
-}
 
 message GetStripeConfigRequest{
 

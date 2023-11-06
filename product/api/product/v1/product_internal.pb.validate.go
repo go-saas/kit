@@ -529,6 +529,8 @@ func (m *CreateInternalProductRequest) validate(all bool) error {
 
 	// no validation rules for Active
 
+	// no validation rules for Internal
+
 	if m.MainCategoryKey != nil {
 		// no validation rules for MainCategoryKey
 	}

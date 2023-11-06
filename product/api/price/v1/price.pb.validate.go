@@ -122,6 +122,8 @@ func (m *Price) validate(all bool) error {
 
 	// no validation rules for OwnerId
 
+	// no validation rules for ProductId
+
 	// no validation rules for CurrencyCode
 
 	if all {

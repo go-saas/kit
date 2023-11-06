@@ -12,6 +12,8 @@ import "query/operation.proto";
 import "lbs/address.proto";
 import "price/price.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
+import "stripe/stripe.proto";
+
 option go_package = "github.com/go-saas/kit/order/api/order/v1;v1";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
@@ -54,6 +56,7 @@ service OrderService {
       body: "*"
     };
   }
+
   rpc UpdateOrder (UpdateOrderRequest) returns (Order){
     option (google.api.http) = {
       put: "/v1/order/{order.id}",
@@ -64,43 +67,38 @@ service OrderService {
       }
     };
   }
+
   rpc DeleteOrder (DeleteOrderRequest) returns (DeleteOrderReply){
     option (google.api.http) = {
       delete: "/v1/order/{id}"
     };
   }
+
 }
 
 
-service OrderAppService{
-  rpc ListAppOrder (ListOrderRequest) returns (ListOrderReply){
+service MyOrderService{
+  rpc ListMyOrder (ListOrderRequest) returns (ListOrderReply){
     option (google.api.http) = {
-      get: "/v1/order/app/order",
+      get: "/v1/order/my",
       additional_bindings:{
-        post:"/v1/order/app/order/list",
+        post:"/v1/order/my/list",
         body:"*"
       }
     };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: ["OrderAppService","UsageApp"];
-    };
-  }
-  rpc GetAppOrder (GetOrderRequest) returns (Order){
-    option (google.api.http) = {
-      get: "/v1/order/app/order/{id}"
-    };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: ["OrderAppService","UsageApp"];
-    };
   }
 
-  rpc RefundAppOrder (RefundAppOrderRequest) returns (Order){
+  rpc GetMyOrder (GetOrderRequest) returns (Order){
     option (google.api.http) = {
-      post: "/v1/order/app/refund/{order_id}"
-      body:"*"
+      get: "/v1/order/my/{id}"
     };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      tags: ["OrderAppService","UsageApp"];
+
+  }
+
+  rpc RefundMyOrder (RefundMyOrderRequest) returns (Order){
+    option (google.api.http) = {
+      post: "/v1/order/my/{order_id}/refund"
+      body:"*"
     };
   }
 
@@ -165,20 +163,22 @@ message Order{
   string id=1;
 
   google.protobuf.Timestamp created_at =4;
+  google.protobuf.Timestamp updated_at =5;
 
   string status=10;
+  string currency_code=11;
 
   price.PricePb total_price=20;
   price.PricePb total_price_incl_tax=21;
   price.PricePb discount =22;
 
   price.PricePb original_price=24;
-  price.PricePb original_price_incl_tax=25;
 
   price.PricePb paid_price=26;
   google.protobuf.Timestamp paid_time=27;
   google.protobuf.Timestamp pay_before=28;
-  string pay_way=29;
+
+  string pay_provider=29;
 
   lbs.Address shipping_addr =50;
   lbs.Address billing_addr =51;
@@ -187,40 +187,61 @@ message Order{
 
   repeated OrderItem items=100;
 
+  OrderPaymentProviderInfo payment_provider_info=200;
+  repeated OrderPaymentProvider payment_providers=201;
 }
 
 message OrderItem{
   string id=1;
-  int32 qty=2;
+  int64 qty=2;
+
+  string currency_code=3;
+
   price.PricePb price=10;
-  price.PricePb tax=11;
+  price.PricePb price_tax=11;
   price.PricePb price_incl_tax=12;
+
+  price.PricePb original_price=13;
 
   price.PricePb row_total = 20;
   price.PricePb row_total_tax = 21;
   price.PricePb row_total_incl_tax=22;
 
-  price.PricePb original_price=30;
 
   price.PricePb row_discount=50;
 
   OrderProduct product=100;
   bool is_giveaway=101;
 
+
 }
 
+message OrderPaymentProvider{
+  string provider=1;
+  string provider_key=2;
+}
 
 message OrderProduct{
   string name=1;
   string main_pic=2;
-  string id=3;
+  optional string id=3;
   string version=4;
   string type=5;
-  string sku_id=6;
+  optional string sku_id=6;
   string sku_title=7;
+  optional string price_id=8;
 }
 
 
-message RefundAppOrderRequest{
+message RefundMyOrderRequest{
   string order_id=1;
+}
+
+message OrderPaymentProviderInfo{
+    OrderPaymentStripeInfo stripe=1;
+}
+
+message OrderPaymentStripeInfo{
+  .stripe.PaymentIntent payment_intent=11;
+  .stripe.EphemeralKey ephemeral_key=2;
 }

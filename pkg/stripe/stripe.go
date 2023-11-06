@@ -57,3 +57,7 @@ func MapStripePaymentIntent(a *stripe.PaymentIntent, b *PaymentIntent) {
 	b.ClientSecret = a.ClientSecret
 	b.Status = string(a.Status)
 }
+
+func MapStripeEphemeralKey(a *stripe.EphemeralKey, b *EphemeralKey) {
+	b.Secret = a.Secret
+}

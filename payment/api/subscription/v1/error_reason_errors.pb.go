@@ -13,33 +13,6 @@ import (
 // is compatible with the kratos package it is being compiled against.
 const _ = errors.SupportPackageIsVersion1
 
-func IsProductAcrossTenant(err error) bool {
-	if err == nil {
-		return false
-	}
-	e := errors.FromError(err)
-	return e.Reason == ErrorReason_PRODUCT_ACROSS_TENANT.String() && e.Code == 400
-}
-
-func ErrorProductAcrossTenantLocalized(ctx context.Context, data map[string]interface{}, pluralCount interface{}) *errors.Error {
-	localizer := localize.FromContext(ctx)
-	if localizer == nil {
-		return errors.New(400, ErrorReason_PRODUCT_ACROSS_TENANT.String(), "")
-	}
-	msg, err := localizer.Localize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID: "ProductAcrossTenant",
-		},
-		TemplateData: data,
-		PluralCount:  pluralCount,
-	})
-	if err == nil {
-		return errors.New(400, ErrorReason_PRODUCT_ACROSS_TENANT.String(), msg)
-	} else {
-		return errors.New(400, ErrorReason_PRODUCT_ACROSS_TENANT.String(), "")
-	}
-}
-
 func IsSubscriptionNotFound(err error) bool {
 	if err == nil {
 		return false

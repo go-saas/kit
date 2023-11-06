@@ -4966,6 +4966,9 @@
         "ownerId": {
           "type": "string"
         },
+        "productId": {
+          "type": "string"
+        },
         "currencyCode": {
           "type": "string"
         },

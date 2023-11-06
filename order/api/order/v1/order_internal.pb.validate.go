@@ -117,6 +117,8 @@ func (m *CreateInternalOrderRequest) validate(all bool) error {
 
 	// no validation rules for CustomerId
 
+	// no validation rules for CurrencyCode
+
 	if all {
 		switch v := interface{}(m.GetExtra()).(type) {
 		case interface{ ValidateAll() error }:
@@ -328,63 +330,9 @@ func (m *CreateInternalOrderItem) validate(all bool) error {
 
 	// no validation rules for Qty
 
-	if all {
-		switch v := interface{}(m.GetPrice()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateInternalOrderItemValidationError{
-					field:  "Price",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateInternalOrderItemValidationError{
-					field:  "Price",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPrice()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreateInternalOrderItemValidationError{
-				field:  "Price",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for PriceAmount
 
-	if all {
-		switch v := interface{}(m.GetOriginalPrice()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateInternalOrderItemValidationError{
-					field:  "OriginalPrice",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateInternalOrderItemValidationError{
-					field:  "OriginalPrice",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetOriginalPrice()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreateInternalOrderItemValidationError{
-				field:  "OriginalPrice",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for OriginalPriceAmount
 
 	// no validation rules for IsGiveaway
 
@@ -530,7 +478,17 @@ func (m *GetInternalOrderRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.Provider != nil {
+		// no validation rules for Provider
+	}
+
+	if m.ProviderKey != nil {
+		// no validation rules for ProviderKey
+	}
 
 	if len(errors) > 0 {
 		return GetInternalOrderRequestMultiError(errors)
@@ -703,36 +661,20 @@ func (m *InternalOrderPaySuccessRequest) validate(all bool) error {
 		}
 	}
 
-	if all {
-		switch v := interface{}(m.GetPaidPrice()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, InternalOrderPaySuccessRequestValidationError{
-					field:  "PaidPrice",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, InternalOrderPaySuccessRequestValidationError{
-					field:  "PaidPrice",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if utf8.RuneCountInString(m.GetCurrencyCode()) < 1 {
+		err := InternalOrderPaySuccessRequestValidationError{
+			field:  "CurrencyCode",
+			reason: "value length must be at least 1 runes",
 		}
-	} else if v, ok := interface{}(m.GetPaidPrice()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return InternalOrderPaySuccessRequestValidationError{
-				field:  "PaidPrice",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
+		if !all {
+			return err
 		}
+		errors = append(errors, err)
 	}
 
-	// no validation rules for PayWay
+	// no validation rules for PaidPriceAmount
+
+	// no validation rules for PayProvider
 
 	// no validation rules for PayMethod
 
@@ -1011,36 +953,20 @@ func (m *InternalOrderRefundedRequest) validate(all bool) error {
 		}
 	}
 
-	if all {
-		switch v := interface{}(m.GetRefundPrice()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, InternalOrderRefundedRequestValidationError{
-					field:  "RefundPrice",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, InternalOrderRefundedRequestValidationError{
-					field:  "RefundPrice",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if utf8.RuneCountInString(m.GetCurrencyCode()) < 1 {
+		err := InternalOrderRefundedRequestValidationError{
+			field:  "CurrencyCode",
+			reason: "value length must be at least 1 runes",
 		}
-	} else if v, ok := interface{}(m.GetRefundPrice()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return InternalOrderRefundedRequestValidationError{
-				field:  "RefundPrice",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
+		if !all {
+			return err
 		}
+		errors = append(errors, err)
 	}
 
-	// no validation rules for PayWay
+	// no validation rules for RefundPriceAmount
+
+	// no validation rules for PayProvider
 
 	// no validation rules for PayMethod
 
@@ -1226,3 +1152,142 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = InternalOrderRefundedReplyValidationError{}
+
+// Validate checks the field values on
+// UpdateInternalOrderPaymentProviderRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UpdateInternalOrderPaymentProviderRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// UpdateInternalOrderPaymentProviderRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// UpdateInternalOrderPaymentProviderRequestMultiError, or nil if none found.
+func (m *UpdateInternalOrderPaymentProviderRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateInternalOrderPaymentProviderRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetOrderId()) < 1 {
+		err := UpdateInternalOrderPaymentProviderRequestValidationError{
+			field:  "OrderId",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetProvider()) < 1 {
+		err := UpdateInternalOrderPaymentProviderRequestValidationError{
+			field:  "Provider",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetProviderKey()) < 1 {
+		err := UpdateInternalOrderPaymentProviderRequestValidationError{
+			field:  "ProviderKey",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return UpdateInternalOrderPaymentProviderRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateInternalOrderPaymentProviderRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// UpdateInternalOrderPaymentProviderRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateInternalOrderPaymentProviderRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateInternalOrderPaymentProviderRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateInternalOrderPaymentProviderRequestMultiError) AllErrors() []error { return m }
+
+// UpdateInternalOrderPaymentProviderRequestValidationError is the validation
+// error returned by UpdateInternalOrderPaymentProviderRequest.Validate if the
+// designated constraints aren't met.
+type UpdateInternalOrderPaymentProviderRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateInternalOrderPaymentProviderRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateInternalOrderPaymentProviderRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateInternalOrderPaymentProviderRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateInternalOrderPaymentProviderRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateInternalOrderPaymentProviderRequestValidationError) ErrorName() string {
+	return "UpdateInternalOrderPaymentProviderRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateInternalOrderPaymentProviderRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateInternalOrderPaymentProviderRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateInternalOrderPaymentProviderRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateInternalOrderPaymentProviderRequestValidationError{}

@@ -204,6 +204,7 @@ message GetProductRequest {
 message ProductFilter{
   query.operation.StringFilterOperation id=1;
   query.operation.StringFilterOperation name =2;
+  query.operation.BooleanFilterOperators internal = 3;
 }
 
 message ListProductRequest {

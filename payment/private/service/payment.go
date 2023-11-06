@@ -10,7 +10,6 @@ import (
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/authz/authz"
-	"github.com/go-saas/kit/pkg/price"
 	kithttp "github.com/go-saas/kit/pkg/server/http"
 	stripe2 "github.com/go-saas/kit/pkg/stripe"
 	"github.com/go-saas/kit/pkg/utils"
@@ -75,53 +74,6 @@ func (s *PaymentService) GetStripeConfig(ctx context.Context, req *pb.GetStripeC
 	return ret, nil
 }
 
-func (s *PaymentService) CreateStripePaymentIntent(ctx context.Context, req *pb.CreateStripePaymentIntentRequest) (*pb.CreateStripePaymentIntentReply, error) {
-	userInfo, err := authn.ErrIfUnauthenticated(ctx)
-	if err != nil {
-		return nil, err
-	}
-	order, err := s.orderInternalSrv.GetInternalOrder(ctx, &v1.GetInternalOrderRequest{Id: req.OrderId})
-	if err != nil {
-		return nil, err
-	}
-	if order.CustomerId != userInfo.GetId() {
-		return nil, errors.NotFound("", "")
-	}
-	userId := userInfo.GetId()
-	customer, err := s.userInternalSrv.FindOrCreateStripeCustomer(ctx, &v12.FindOrCreateStripeCustomerRequest{
-		UserId: &userId,
-	})
-	if err != nil {
-		return nil, err
-	}
-	ephemeralKey, err := s.stripeClient.EphemeralKeys.New(&stripe.EphemeralKeyParams{
-		Customer:      &customer.StripeCustomerId,
-		StripeVersion: stripe.String(stripe.APIVersion),
-	})
-	if err != nil {
-		return nil, handleStripeError(err)
-	}
-
-	paymentIntentParams := &stripe.PaymentIntentParams{
-		Amount:   &order.TotalPrice.Amount,
-		Currency: &order.TotalPrice.CurrencyCode,
-		Customer: &customer.StripeCustomerId,
-	}
-	paymentIntentParams.Metadata = map[string]string{
-		"user_id":  userInfo.GetId(),
-		"order_id": req.OrderId,
-	}
-	intent, err := s.stripeClient.PaymentIntents.New(paymentIntentParams)
-	if err != nil {
-		return nil, handleStripeError(err)
-	}
-	return &pb.CreateStripePaymentIntentReply{
-		PaymentIntent: intent.ClientSecret,
-		CustomerId:    customer.StripeCustomerId,
-		EphemeralKey:  ephemeralKey.Secret,
-	}, nil
-}
-
 func (s *PaymentService) StripeWebhook(ctx context.Context, req *emptypb.Empty) (*pb.StripeWebhookReply, error) {
 	if req, ok := kithttp.ResolveHttpRequest(ctx); ok {
 		body, err := io.ReadAll(req.Body)
@@ -139,18 +91,16 @@ func (s *PaymentService) StripeWebhook(ctx context.Context, req *emptypb.Empty) 
 		case "payment_intent.succeeded":
 			intent := stripe.PaymentIntent{}
 			json.Unmarshal(data.Raw, &intent)
-			totalPrice, err := price.NewPriceFromInt64(intent.Amount, strings.ToUpper(string(intent.Currency)))
-			if err != nil {
-				return nil, err
-			}
+
 			//TODO paid time
 			t := time.Now()
 			_, err = s.orderInternalSrv.InternalOrderPaySuccess(ctx, &v1.InternalOrderPaySuccessRequest{
-				Id:        intent.Metadata["order_id"],
-				PayExtra:  utils.Map2Structpb(data.Object),
-				PaidPrice: totalPrice.ToPricePb(ctx),
-				PayWay:    stripe2.ProviderName,
-				PaidTime:  utils.Time2Timepb(&t),
+				Id:              intent.Metadata["order_id"],
+				PayExtra:        utils.Map2Structpb(data.Object),
+				PaidPriceAmount: intent.Amount,
+				CurrencyCode:    strings.ToUpper(string(intent.Currency)),
+				PayProvider:     stripe2.ProviderName,
+				PaidTime:        utils.Time2Timepb(&t),
 			})
 			if err != nil {
 				return nil, err
@@ -158,21 +108,18 @@ func (s *PaymentService) StripeWebhook(ctx context.Context, req *emptypb.Empty) 
 		case "charge.refunded":
 			refund := stripe.Refund{}
 			json.Unmarshal(data.Raw, &refund)
-			refundPrice, err := price.NewPriceFromInt64(refund.Amount, strings.ToUpper(string(refund.Currency)))
-			if err != nil {
-				return nil, err
-			}
 			intent, err := s.stripeClient.PaymentIntents.Get(refund.PaymentIntent.ID, nil)
 			if err != nil {
 				return nil, handleStripeError(err)
 			}
 			t := time.Now()
 			_, err = s.orderInternalSrv.InternalOrderRefunded(ctx, &v1.InternalOrderRefundedRequest{
-				Id:          intent.Metadata["order_id"],
-				PayExtra:    utils.Map2Structpb(data.Object),
-				RefundTime:  utils.Time2Timepb(&t),
-				RefundPrice: refundPrice.ToPricePb(ctx),
-				PayWay:      stripe2.ProviderName,
+				Id:                intent.Metadata["order_id"],
+				PayExtra:          utils.Map2Structpb(data.Object),
+				RefundTime:        utils.Time2Timepb(&t),
+				RefundPriceAmount: refund.Amount,
+				CurrencyCode:      strings.ToUpper(string(refund.Currency)),
+				PayProvider:       stripe2.ProviderName,
 			})
 			if err != nil {
 				return nil, err

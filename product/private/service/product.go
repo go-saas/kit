@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
+	"github.com/go-saas/kit/pkg/query"
 	"github.com/go-saas/kit/pkg/utils"
 	"github.com/go-saas/kit/product/api"
 	v1 "github.com/go-saas/kit/product/api/category/v1"
@@ -17,6 +18,7 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 type ProductService struct {
@@ -50,8 +52,12 @@ func (s *ProductService) ListProduct(ctx context.Context, req *pb.ListProductReq
 	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceProduct, "*"), authz.ReadAction); err != nil {
 		return nil, err
 	}
-	ret := &pb.ListProductReply{}
+	if req.Filter == nil {
+		req.Filter = &pb.ProductFilter{}
+	}
+	req.Filter.Internal = &query.BooleanFilterOperators{Neq: wrapperspb.Bool(true)}
 
+	ret := &pb.ListProductReply{}
 	totalCount, filterCount, err := s.repo.Count(ctx, req)
 	ret.TotalSize = int32(totalCount)
 	ret.FilterSize = int32(filterCount)
@@ -125,7 +131,9 @@ func (s *ProductService) UpdateProduct(ctx context.Context, req *pb.UpdateProduc
 	if g.ManageInfo.Managed {
 		return nil, pb.ErrorProductManagedLocalized(ctx, nil, nil)
 	}
-
+	if g.Internal {
+		return nil, errors.Unauthorized("", "")
+	}
 	if err := s.MapUpdatePbProduct2Biz(ctx, req.Product, g); err != nil {
 		return nil, err
 	}
@@ -155,6 +163,9 @@ func (s *ProductService) DeleteProduct(ctx context.Context, req *pb.DeleteProduc
 	}
 	if g.ManageInfo.Managed {
 		return nil, pb.ErrorProductManagedLocalized(ctx, nil, nil)
+	}
+	if g.Internal {
+		return nil, errors.Unauthorized("", "")
 	}
 	err = s.fWithEvent(ctx, func() (*biz.Product, error) {
 		err = s.repo.Delete(ctx, req.Id)
@@ -348,11 +359,12 @@ func (s *ProductService) MapUpdatePbProduct2Biz(ctx context.Context, a *pb.Updat
 			return price.ID.String() == t.Id
 		})
 		if !ok {
-			r = biz.Price{}
+			r = *biz.NewPrice(b.ID.String())
 			mapPbPrice2Biz(t, &r)
 		} else {
 			mapPbUpdatePrice2Biz(t, &r)
 		}
+		r.ProductID = b.ID.String()
 		return r
 	})
 
@@ -365,6 +377,8 @@ func (s *ProductService) MapUpdatePbProduct2Biz(ctx context.Context, a *pb.Updat
 }
 
 func (s *ProductService) MapCreatePbProduct2Biz(ctx context.Context, a *pb.CreateProductRequest, b *biz.Product) error {
+	//make sure id generated
+	b.ID = uuid.New()
 	b.Title = a.Title
 	b.ShortDesc = a.ShortDesc
 	b.Desc = a.Desc
@@ -427,7 +441,7 @@ func (s *ProductService) MapCreatePbProduct2Biz(ctx context.Context, a *pb.Creat
 	})
 
 	b.Prices = lo.Map(a.Prices, func(t *v12.PriceParams, _ int) biz.Price {
-		r := &biz.Price{}
+		r := biz.NewPrice(b.ID.String())
 		mapPbPrice2Biz(t, r)
 		return *r
 	})

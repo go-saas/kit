@@ -32,6 +32,10 @@ service OrderInternalService {
 
   }
 
+  rpc UpdateInternalOrderPaymentProvider(UpdateInternalOrderPaymentProviderRequest)returns(Order){
+
+  }
+
 }
 
 message CreateInternalOrderRequest{
@@ -42,6 +46,7 @@ message CreateInternalOrderRequest{
   string customer_id=18;
 
   optional google.protobuf.Duration pay_before=19;
+  string currency_code=20;
 
   google.protobuf.Struct extra=100;
 
@@ -50,21 +55,23 @@ message CreateInternalOrderRequest{
 
 
 message CreateInternalOrderItem{
-  int32 qty=1;
+  int64 qty=1;
 
-  price.PricePb price=30;
+  int64 price_amount=10;
+  int64 original_price_amount=11;
 
-  price.PricePb original_price=40;
-
-  bool  is_giveaway=50;
+  bool is_giveaway=50;
 
   OrderProduct product=100 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
 
 }
 
 message GetInternalOrderRequest{
-  string id=1;
+  optional string id=1;
+  optional string provider=2;
+  optional string provider_key=3;
 }
+
 
 message InternalOrderPaySuccessRequest{
   string id=1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
@@ -72,8 +79,10 @@ message InternalOrderPaySuccessRequest{
   google.protobuf.Struct pay_extra = 21;
   google.protobuf.Timestamp paid_time=22;
 
-  price.PricePb paid_price=30;
-  string pay_way = 31;
+  string currency_code=23 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+
+  int64 paid_price_amount=30;
+  string pay_provider = 31;
   string pay_method = 32;
 }
 
@@ -87,11 +96,19 @@ message InternalOrderRefundedRequest{
   google.protobuf.Struct pay_extra = 21;
   google.protobuf.Timestamp refund_time=22;
 
-  price.PricePb refund_price=30;
-  string pay_way = 31;
+  string currency_code=23 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  int64 refund_price_amount=30;
+
+  string pay_provider = 31;
   string pay_method = 32;
 }
 
 message InternalOrderRefundedReply{
 
+}
+
+message UpdateInternalOrderPaymentProviderRequest{
+  string order_id=1[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string provider=2[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string provider_key=3[(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }

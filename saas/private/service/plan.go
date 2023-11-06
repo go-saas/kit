@@ -79,6 +79,7 @@ func NewPlanService(
 				Title:      req.DisplayName,
 				ManageInfo: &v1.ProductManageInfo{Managed: true, ManagedBy: string(productbiz.ProductManageProviderInternal)},
 				Prices:     req.Prices,
+				Internal:   true,
 			})
 		if err != nil {
 			return nil, err

@@ -28,3 +28,7 @@ message Subscription{
   string id=1;
   Invoice latest_invoice=100;
 }
+
+message EphemeralKey{
+  string secret=1;
+}

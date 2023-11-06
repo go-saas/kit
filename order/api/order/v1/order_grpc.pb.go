@@ -255,161 +255,161 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	OrderAppService_ListAppOrder_FullMethodName   = "/order.api.order.v1.OrderAppService/ListAppOrder"
-	OrderAppService_GetAppOrder_FullMethodName    = "/order.api.order.v1.OrderAppService/GetAppOrder"
-	OrderAppService_RefundAppOrder_FullMethodName = "/order.api.order.v1.OrderAppService/RefundAppOrder"
+	MyOrderService_ListMyOrder_FullMethodName   = "/order.api.order.v1.MyOrderService/ListMyOrder"
+	MyOrderService_GetMyOrder_FullMethodName    = "/order.api.order.v1.MyOrderService/GetMyOrder"
+	MyOrderService_RefundMyOrder_FullMethodName = "/order.api.order.v1.MyOrderService/RefundMyOrder"
 )
 
-// OrderAppServiceClient is the client API for OrderAppService service.
+// MyOrderServiceClient is the client API for MyOrderService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type OrderAppServiceClient interface {
-	ListAppOrder(ctx context.Context, in *ListOrderRequest, opts ...grpc.CallOption) (*ListOrderReply, error)
-	GetAppOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*Order, error)
-	RefundAppOrder(ctx context.Context, in *RefundAppOrderRequest, opts ...grpc.CallOption) (*Order, error)
+type MyOrderServiceClient interface {
+	ListMyOrder(ctx context.Context, in *ListOrderRequest, opts ...grpc.CallOption) (*ListOrderReply, error)
+	GetMyOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*Order, error)
+	RefundMyOrder(ctx context.Context, in *RefundMyOrderRequest, opts ...grpc.CallOption) (*Order, error)
 }
 
-type orderAppServiceClient struct {
+type myOrderServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewOrderAppServiceClient(cc grpc.ClientConnInterface) OrderAppServiceClient {
-	return &orderAppServiceClient{cc}
+func NewMyOrderServiceClient(cc grpc.ClientConnInterface) MyOrderServiceClient {
+	return &myOrderServiceClient{cc}
 }
 
-func (c *orderAppServiceClient) ListAppOrder(ctx context.Context, in *ListOrderRequest, opts ...grpc.CallOption) (*ListOrderReply, error) {
+func (c *myOrderServiceClient) ListMyOrder(ctx context.Context, in *ListOrderRequest, opts ...grpc.CallOption) (*ListOrderReply, error) {
 	out := new(ListOrderReply)
-	err := c.cc.Invoke(ctx, OrderAppService_ListAppOrder_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, MyOrderService_ListMyOrder_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *orderAppServiceClient) GetAppOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*Order, error) {
+func (c *myOrderServiceClient) GetMyOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*Order, error) {
 	out := new(Order)
-	err := c.cc.Invoke(ctx, OrderAppService_GetAppOrder_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, MyOrderService_GetMyOrder_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *orderAppServiceClient) RefundAppOrder(ctx context.Context, in *RefundAppOrderRequest, opts ...grpc.CallOption) (*Order, error) {
+func (c *myOrderServiceClient) RefundMyOrder(ctx context.Context, in *RefundMyOrderRequest, opts ...grpc.CallOption) (*Order, error) {
 	out := new(Order)
-	err := c.cc.Invoke(ctx, OrderAppService_RefundAppOrder_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, MyOrderService_RefundMyOrder_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// OrderAppServiceServer is the server API for OrderAppService service.
-// All implementations should embed UnimplementedOrderAppServiceServer
+// MyOrderServiceServer is the server API for MyOrderService service.
+// All implementations should embed UnimplementedMyOrderServiceServer
 // for forward compatibility
-type OrderAppServiceServer interface {
-	ListAppOrder(context.Context, *ListOrderRequest) (*ListOrderReply, error)
-	GetAppOrder(context.Context, *GetOrderRequest) (*Order, error)
-	RefundAppOrder(context.Context, *RefundAppOrderRequest) (*Order, error)
+type MyOrderServiceServer interface {
+	ListMyOrder(context.Context, *ListOrderRequest) (*ListOrderReply, error)
+	GetMyOrder(context.Context, *GetOrderRequest) (*Order, error)
+	RefundMyOrder(context.Context, *RefundMyOrderRequest) (*Order, error)
 }
 
-// UnimplementedOrderAppServiceServer should be embedded to have forward compatible implementations.
-type UnimplementedOrderAppServiceServer struct {
+// UnimplementedMyOrderServiceServer should be embedded to have forward compatible implementations.
+type UnimplementedMyOrderServiceServer struct {
 }
 
-func (UnimplementedOrderAppServiceServer) ListAppOrder(context.Context, *ListOrderRequest) (*ListOrderReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListAppOrder not implemented")
+func (UnimplementedMyOrderServiceServer) ListMyOrder(context.Context, *ListOrderRequest) (*ListOrderReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListMyOrder not implemented")
 }
-func (UnimplementedOrderAppServiceServer) GetAppOrder(context.Context, *GetOrderRequest) (*Order, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAppOrder not implemented")
+func (UnimplementedMyOrderServiceServer) GetMyOrder(context.Context, *GetOrderRequest) (*Order, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMyOrder not implemented")
 }
-func (UnimplementedOrderAppServiceServer) RefundAppOrder(context.Context, *RefundAppOrderRequest) (*Order, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RefundAppOrder not implemented")
+func (UnimplementedMyOrderServiceServer) RefundMyOrder(context.Context, *RefundMyOrderRequest) (*Order, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefundMyOrder not implemented")
 }
 
-// UnsafeOrderAppServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to OrderAppServiceServer will
+// UnsafeMyOrderServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to MyOrderServiceServer will
 // result in compilation errors.
-type UnsafeOrderAppServiceServer interface {
-	mustEmbedUnimplementedOrderAppServiceServer()
+type UnsafeMyOrderServiceServer interface {
+	mustEmbedUnimplementedMyOrderServiceServer()
 }
 
-func RegisterOrderAppServiceServer(s grpc.ServiceRegistrar, srv OrderAppServiceServer) {
-	s.RegisterService(&OrderAppService_ServiceDesc, srv)
+func RegisterMyOrderServiceServer(s grpc.ServiceRegistrar, srv MyOrderServiceServer) {
+	s.RegisterService(&MyOrderService_ServiceDesc, srv)
 }
 
-func _OrderAppService_ListAppOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MyOrderService_ListMyOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListOrderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OrderAppServiceServer).ListAppOrder(ctx, in)
+		return srv.(MyOrderServiceServer).ListMyOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OrderAppService_ListAppOrder_FullMethodName,
+		FullMethod: MyOrderService_ListMyOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderAppServiceServer).ListAppOrder(ctx, req.(*ListOrderRequest))
+		return srv.(MyOrderServiceServer).ListMyOrder(ctx, req.(*ListOrderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrderAppService_GetAppOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MyOrderService_GetMyOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetOrderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OrderAppServiceServer).GetAppOrder(ctx, in)
+		return srv.(MyOrderServiceServer).GetMyOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OrderAppService_GetAppOrder_FullMethodName,
+		FullMethod: MyOrderService_GetMyOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderAppServiceServer).GetAppOrder(ctx, req.(*GetOrderRequest))
+		return srv.(MyOrderServiceServer).GetMyOrder(ctx, req.(*GetOrderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrderAppService_RefundAppOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RefundAppOrderRequest)
+func _MyOrderService_RefundMyOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefundMyOrderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OrderAppServiceServer).RefundAppOrder(ctx, in)
+		return srv.(MyOrderServiceServer).RefundMyOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OrderAppService_RefundAppOrder_FullMethodName,
+		FullMethod: MyOrderService_RefundMyOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderAppServiceServer).RefundAppOrder(ctx, req.(*RefundAppOrderRequest))
+		return srv.(MyOrderServiceServer).RefundMyOrder(ctx, req.(*RefundMyOrderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// OrderAppService_ServiceDesc is the grpc.ServiceDesc for OrderAppService service.
+// MyOrderService_ServiceDesc is the grpc.ServiceDesc for MyOrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var OrderAppService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "order.api.order.v1.OrderAppService",
-	HandlerType: (*OrderAppServiceServer)(nil),
+var MyOrderService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "order.api.order.v1.MyOrderService",
+	HandlerType: (*MyOrderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListAppOrder",
-			Handler:    _OrderAppService_ListAppOrder_Handler,
+			MethodName: "ListMyOrder",
+			Handler:    _MyOrderService_ListMyOrder_Handler,
 		},
 		{
-			MethodName: "GetAppOrder",
-			Handler:    _OrderAppService_GetAppOrder_Handler,
+			MethodName: "GetMyOrder",
+			Handler:    _MyOrderService_GetMyOrder_Handler,
 		},
 		{
-			MethodName: "RefundAppOrder",
-			Handler:    _OrderAppService_RefundAppOrder_Handler,
+			MethodName: "RefundMyOrder",
+			Handler:    _MyOrderService_RefundMyOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

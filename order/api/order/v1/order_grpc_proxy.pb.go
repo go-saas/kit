@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 var _ OrderServiceServer = (*orderServiceClientProxy)(nil)
 
-var _ OrderAppServiceServer = (*orderAppServiceClientProxy)(nil)
+var _ MyOrderServiceServer = (*myOrderServiceClientProxy)(nil)
 
 // orderServiceClientProxy is the proxy to turn OrderService client to server interface.
 type orderServiceClientProxy struct {
@@ -45,21 +45,21 @@ func (c *orderServiceClientProxy) DeleteOrder(ctx context.Context, in *DeleteOrd
 	return c.cc.DeleteOrder(ctx, in)
 }
 
-// orderAppServiceClientProxy is the proxy to turn OrderAppService client to server interface.
-type orderAppServiceClientProxy struct {
-	cc OrderAppServiceClient
+// myOrderServiceClientProxy is the proxy to turn MyOrderService client to server interface.
+type myOrderServiceClientProxy struct {
+	cc MyOrderServiceClient
 }
 
-func NewOrderAppServiceClientProxy(cc OrderAppServiceClient) OrderAppServiceServer {
-	return &orderAppServiceClientProxy{cc}
+func NewMyOrderServiceClientProxy(cc MyOrderServiceClient) MyOrderServiceServer {
+	return &myOrderServiceClientProxy{cc}
 }
 
-func (c *orderAppServiceClientProxy) ListAppOrder(ctx context.Context, in *ListOrderRequest) (*ListOrderReply, error) {
-	return c.cc.ListAppOrder(ctx, in)
+func (c *myOrderServiceClientProxy) ListMyOrder(ctx context.Context, in *ListOrderRequest) (*ListOrderReply, error) {
+	return c.cc.ListMyOrder(ctx, in)
 }
-func (c *orderAppServiceClientProxy) GetAppOrder(ctx context.Context, in *GetOrderRequest) (*Order, error) {
-	return c.cc.GetAppOrder(ctx, in)
+func (c *myOrderServiceClientProxy) GetMyOrder(ctx context.Context, in *GetOrderRequest) (*Order, error) {
+	return c.cc.GetMyOrder(ctx, in)
 }
-func (c *orderAppServiceClientProxy) RefundAppOrder(ctx context.Context, in *RefundAppOrderRequest) (*Order, error) {
-	return c.cc.RefundAppOrder(ctx, in)
+func (c *myOrderServiceClientProxy) RefundMyOrder(ctx context.Context, in *RefundMyOrderRequest) (*Order, error) {
+	return c.cc.RefundMyOrder(ctx, in)
 }

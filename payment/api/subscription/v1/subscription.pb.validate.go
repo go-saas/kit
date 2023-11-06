@@ -520,6 +520,137 @@ var _ interface {
 	ErrorName() string
 } = SubscriptionProviderInfoValidationError{}
 
+// Validate checks the field values on SubscriptionStripeInfo with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SubscriptionStripeInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SubscriptionStripeInfo with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SubscriptionStripeInfoMultiError, or nil if none found.
+func (m *SubscriptionStripeInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SubscriptionStripeInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetSubscription()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubscriptionStripeInfoValidationError{
+					field:  "Subscription",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubscriptionStripeInfoValidationError{
+					field:  "Subscription",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSubscription()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubscriptionStripeInfoValidationError{
+				field:  "Subscription",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SubscriptionStripeInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// SubscriptionStripeInfoMultiError is an error wrapping multiple validation
+// errors returned by SubscriptionStripeInfo.ValidateAll() if the designated
+// constraints aren't met.
+type SubscriptionStripeInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SubscriptionStripeInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SubscriptionStripeInfoMultiError) AllErrors() []error { return m }
+
+// SubscriptionStripeInfoValidationError is the validation error returned by
+// SubscriptionStripeInfo.Validate if the designated constraints aren't met.
+type SubscriptionStripeInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SubscriptionStripeInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SubscriptionStripeInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SubscriptionStripeInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SubscriptionStripeInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SubscriptionStripeInfoValidationError) ErrorName() string {
+	return "SubscriptionStripeInfoValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SubscriptionStripeInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSubscriptionStripeInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SubscriptionStripeInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SubscriptionStripeInfoValidationError{}
+
 // Validate checks the field values on SubscriptionItem with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -550,92 +681,9 @@ func (m *SubscriptionItem) validate(all bool) error {
 
 	// no validation rules for Quantity
 
-	if all {
-		switch v := interface{}(m.GetPrice()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SubscriptionItemValidationError{
-					field:  "Price",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, SubscriptionItemValidationError{
-					field:  "Price",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPrice()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return SubscriptionItemValidationError{
-				field:  "Price",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for PriceOwnerId
 
-	if all {
-		switch v := interface{}(m.GetProduct()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SubscriptionItemValidationError{
-					field:  "Product",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, SubscriptionItemValidationError{
-					field:  "Product",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetProduct()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return SubscriptionItemValidationError{
-				field:  "Product",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetProductSku()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SubscriptionItemValidationError{
-					field:  "ProductSku",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, SubscriptionItemValidationError{
-					field:  "ProductSku",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetProductSku()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return SubscriptionItemValidationError{
-				field:  "ProductSku",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for PriceOwnerType
 
 	if len(errors) > 0 {
 		return SubscriptionItemMultiError(errors)
@@ -2053,169 +2101,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListSubscriptionReplyValidationError{}
-
-// Validate checks the field values on CreateMySubscriptionRequest with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateMySubscriptionRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on CreateMySubscriptionRequest with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CreateMySubscriptionRequestMultiError, or nil if none found.
-func (m *CreateMySubscriptionRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *CreateMySubscriptionRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if _, ok := _CreateMySubscriptionRequest_Provider_InLookup[m.GetProvider()]; !ok {
-		err := CreateMySubscriptionRequestValidationError{
-			field:  "Provider",
-			reason: "value must be in list [stripe]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(m.GetItems()) < 1 {
-		err := CreateMySubscriptionRequestValidationError{
-			field:  "Items",
-			reason: "value must contain at least 1 item(s)",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	for idx, item := range m.GetItems() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreateMySubscriptionRequestValidationError{
-						field:  fmt.Sprintf("Items[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, CreateMySubscriptionRequestValidationError{
-						field:  fmt.Sprintf("Items[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return CreateMySubscriptionRequestValidationError{
-					field:  fmt.Sprintf("Items[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return CreateMySubscriptionRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// CreateMySubscriptionRequestMultiError is an error wrapping multiple
-// validation errors returned by CreateMySubscriptionRequest.ValidateAll() if
-// the designated constraints aren't met.
-type CreateMySubscriptionRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m CreateMySubscriptionRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m CreateMySubscriptionRequestMultiError) AllErrors() []error { return m }
-
-// CreateMySubscriptionRequestValidationError is the validation error returned
-// by CreateMySubscriptionRequest.Validate if the designated constraints
-// aren't met.
-type CreateMySubscriptionRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e CreateMySubscriptionRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e CreateMySubscriptionRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e CreateMySubscriptionRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e CreateMySubscriptionRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e CreateMySubscriptionRequestValidationError) ErrorName() string {
-	return "CreateMySubscriptionRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e CreateMySubscriptionRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCreateMySubscriptionRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = CreateMySubscriptionRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = CreateMySubscriptionRequestValidationError{}
-
-var _CreateMySubscriptionRequest_Provider_InLookup = map[string]struct{}{
-	"stripe": {},
-}
 
 // Validate checks the field values on GetMySubscriptionRequest with the rules
 // defined in the proto definition for this message. If any rules are

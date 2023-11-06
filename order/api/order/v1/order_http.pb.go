@@ -282,25 +282,25 @@ func (c *OrderServiceHTTPClientImpl) UpdateOrder(ctx context.Context, in *Update
 	return &out, err
 }
 
-const OperationOrderAppServiceGetAppOrder = "/order.api.order.v1.OrderAppService/GetAppOrder"
-const OperationOrderAppServiceListAppOrder = "/order.api.order.v1.OrderAppService/ListAppOrder"
-const OperationOrderAppServiceRefundAppOrder = "/order.api.order.v1.OrderAppService/RefundAppOrder"
+const OperationMyOrderServiceGetMyOrder = "/order.api.order.v1.MyOrderService/GetMyOrder"
+const OperationMyOrderServiceListMyOrder = "/order.api.order.v1.MyOrderService/ListMyOrder"
+const OperationMyOrderServiceRefundMyOrder = "/order.api.order.v1.MyOrderService/RefundMyOrder"
 
-type OrderAppServiceHTTPServer interface {
-	GetAppOrder(context.Context, *GetOrderRequest) (*Order, error)
-	ListAppOrder(context.Context, *ListOrderRequest) (*ListOrderReply, error)
-	RefundAppOrder(context.Context, *RefundAppOrderRequest) (*Order, error)
+type MyOrderServiceHTTPServer interface {
+	GetMyOrder(context.Context, *GetOrderRequest) (*Order, error)
+	ListMyOrder(context.Context, *ListOrderRequest) (*ListOrderReply, error)
+	RefundMyOrder(context.Context, *RefundMyOrderRequest) (*Order, error)
 }
 
-func RegisterOrderAppServiceHTTPServer(s *http.Server, srv OrderAppServiceHTTPServer) {
+func RegisterMyOrderServiceHTTPServer(s *http.Server, srv MyOrderServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/order/app/order/list", _OrderAppService_ListAppOrder0_HTTP_Handler(srv))
-	r.GET("/v1/order/app/order", _OrderAppService_ListAppOrder1_HTTP_Handler(srv))
-	r.GET("/v1/order/app/order/{id}", _OrderAppService_GetAppOrder0_HTTP_Handler(srv))
-	r.POST("/v1/order/app/refund/{order_id}", _OrderAppService_RefundAppOrder0_HTTP_Handler(srv))
+	r.POST("/v1/order/my/list", _MyOrderService_ListMyOrder0_HTTP_Handler(srv))
+	r.GET("/v1/order/my", _MyOrderService_ListMyOrder1_HTTP_Handler(srv))
+	r.GET("/v1/order/my/{id}", _MyOrderService_GetMyOrder0_HTTP_Handler(srv))
+	r.POST("/v1/order/my/{order_id}/refund", _MyOrderService_RefundMyOrder0_HTTP_Handler(srv))
 }
 
-func _OrderAppService_ListAppOrder0_HTTP_Handler(srv OrderAppServiceHTTPServer) func(ctx http.Context) error {
+func _MyOrderService_ListMyOrder0_HTTP_Handler(srv MyOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ListOrderRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -309,9 +309,9 @@ func _OrderAppService_ListAppOrder0_HTTP_Handler(srv OrderAppServiceHTTPServer) 
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationOrderAppServiceListAppOrder)
+		http.SetOperation(ctx, OperationMyOrderServiceListMyOrder)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ListAppOrder(ctx, req.(*ListOrderRequest))
+			return srv.ListMyOrder(ctx, req.(*ListOrderRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -322,15 +322,15 @@ func _OrderAppService_ListAppOrder0_HTTP_Handler(srv OrderAppServiceHTTPServer) 
 	}
 }
 
-func _OrderAppService_ListAppOrder1_HTTP_Handler(srv OrderAppServiceHTTPServer) func(ctx http.Context) error {
+func _MyOrderService_ListMyOrder1_HTTP_Handler(srv MyOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ListOrderRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationOrderAppServiceListAppOrder)
+		http.SetOperation(ctx, OperationMyOrderServiceListMyOrder)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ListAppOrder(ctx, req.(*ListOrderRequest))
+			return srv.ListMyOrder(ctx, req.(*ListOrderRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -341,7 +341,7 @@ func _OrderAppService_ListAppOrder1_HTTP_Handler(srv OrderAppServiceHTTPServer) 
 	}
 }
 
-func _OrderAppService_GetAppOrder0_HTTP_Handler(srv OrderAppServiceHTTPServer) func(ctx http.Context) error {
+func _MyOrderService_GetMyOrder0_HTTP_Handler(srv MyOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetOrderRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -350,9 +350,9 @@ func _OrderAppService_GetAppOrder0_HTTP_Handler(srv OrderAppServiceHTTPServer) f
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationOrderAppServiceGetAppOrder)
+		http.SetOperation(ctx, OperationMyOrderServiceGetMyOrder)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetAppOrder(ctx, req.(*GetOrderRequest))
+			return srv.GetMyOrder(ctx, req.(*GetOrderRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -363,9 +363,9 @@ func _OrderAppService_GetAppOrder0_HTTP_Handler(srv OrderAppServiceHTTPServer) f
 	}
 }
 
-func _OrderAppService_RefundAppOrder0_HTTP_Handler(srv OrderAppServiceHTTPServer) func(ctx http.Context) error {
+func _MyOrderService_RefundMyOrder0_HTTP_Handler(srv MyOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in RefundAppOrderRequest
+		var in RefundMyOrderRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -375,9 +375,9 @@ func _OrderAppService_RefundAppOrder0_HTTP_Handler(srv OrderAppServiceHTTPServer
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationOrderAppServiceRefundAppOrder)
+		http.SetOperation(ctx, OperationMyOrderServiceRefundMyOrder)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.RefundAppOrder(ctx, req.(*RefundAppOrderRequest))
+			return srv.RefundMyOrder(ctx, req.(*RefundMyOrderRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -388,25 +388,25 @@ func _OrderAppService_RefundAppOrder0_HTTP_Handler(srv OrderAppServiceHTTPServer
 	}
 }
 
-type OrderAppServiceHTTPClient interface {
-	GetAppOrder(ctx context.Context, req *GetOrderRequest, opts ...http.CallOption) (rsp *Order, err error)
-	ListAppOrder(ctx context.Context, req *ListOrderRequest, opts ...http.CallOption) (rsp *ListOrderReply, err error)
-	RefundAppOrder(ctx context.Context, req *RefundAppOrderRequest, opts ...http.CallOption) (rsp *Order, err error)
+type MyOrderServiceHTTPClient interface {
+	GetMyOrder(ctx context.Context, req *GetOrderRequest, opts ...http.CallOption) (rsp *Order, err error)
+	ListMyOrder(ctx context.Context, req *ListOrderRequest, opts ...http.CallOption) (rsp *ListOrderReply, err error)
+	RefundMyOrder(ctx context.Context, req *RefundMyOrderRequest, opts ...http.CallOption) (rsp *Order, err error)
 }
 
-type OrderAppServiceHTTPClientImpl struct {
+type MyOrderServiceHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewOrderAppServiceHTTPClient(client *http.Client) OrderAppServiceHTTPClient {
-	return &OrderAppServiceHTTPClientImpl{client}
+func NewMyOrderServiceHTTPClient(client *http.Client) MyOrderServiceHTTPClient {
+	return &MyOrderServiceHTTPClientImpl{client}
 }
 
-func (c *OrderAppServiceHTTPClientImpl) GetAppOrder(ctx context.Context, in *GetOrderRequest, opts ...http.CallOption) (*Order, error) {
+func (c *MyOrderServiceHTTPClientImpl) GetMyOrder(ctx context.Context, in *GetOrderRequest, opts ...http.CallOption) (*Order, error) {
 	var out Order
-	pattern := "/v1/order/app/order/{id}"
+	pattern := "/v1/order/my/{id}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationOrderAppServiceGetAppOrder))
+	opts = append(opts, http.Operation(OperationMyOrderServiceGetMyOrder))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -415,11 +415,11 @@ func (c *OrderAppServiceHTTPClientImpl) GetAppOrder(ctx context.Context, in *Get
 	return &out, err
 }
 
-func (c *OrderAppServiceHTTPClientImpl) ListAppOrder(ctx context.Context, in *ListOrderRequest, opts ...http.CallOption) (*ListOrderReply, error) {
+func (c *MyOrderServiceHTTPClientImpl) ListMyOrder(ctx context.Context, in *ListOrderRequest, opts ...http.CallOption) (*ListOrderReply, error) {
 	var out ListOrderReply
-	pattern := "/v1/order/app/order"
+	pattern := "/v1/order/my"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationOrderAppServiceListAppOrder))
+	opts = append(opts, http.Operation(OperationMyOrderServiceListMyOrder))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -428,11 +428,11 @@ func (c *OrderAppServiceHTTPClientImpl) ListAppOrder(ctx context.Context, in *Li
 	return &out, err
 }
 
-func (c *OrderAppServiceHTTPClientImpl) RefundAppOrder(ctx context.Context, in *RefundAppOrderRequest, opts ...http.CallOption) (*Order, error) {
+func (c *MyOrderServiceHTTPClientImpl) RefundMyOrder(ctx context.Context, in *RefundMyOrderRequest, opts ...http.CallOption) (*Order, error) {
 	var out Order
-	pattern := "/v1/order/app/refund/{order_id}"
+	pattern := "/v1/order/my/{order_id}/refund"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationOrderAppServiceRefundAppOrder))
+	opts = append(opts, http.Operation(OperationMyOrderServiceRefundMyOrder))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

@@ -1,18 +1,21 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "payment/api/gateway/v1/gateway.proto",
+    "title": "payment/api/subscription/v1/subscription.proto",
     "version": "version not set"
   },
   "tags": [
+    {
+      "name": "SubscriptionService"
+    },
+    {
+      "name": "CheckoutService"
+    },
     {
       "name": "PaymentGatewayService"
     },
     {
       "name": "StripePaymentGatewayService"
-    },
-    {
-      "name": "SubscriptionService"
     },
     {
       "name": "SubscriptionInternalService"
@@ -25,6 +28,87 @@
     "application/json"
   ],
   "paths": {
+    "/v1/payment/checkout/now": {
+      "post": {
+        "operationId": "CheckoutService_CheckoutNow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CheckoutNowReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CheckoutNowRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CheckoutService"
+        ]
+      }
+    },
+    "/v1/payment/checkout/order/{orderId}": {
+      "post": {
+        "operationId": "CheckoutService_CheckoutOrder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CheckoutOrderReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string"
+                },
+                "currencyCode": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "provider"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "CheckoutService"
+        ]
+      }
+    },
     "/v1/payment/methods": {
       "get": {
         "operationId": "PaymentGatewayService_GetPaymentMethod",
@@ -78,38 +162,6 @@
             }
           }
         },
-        "tags": [
-          "StripePaymentGatewayService"
-        ]
-      }
-    },
-    "/v1/payment/stripe/intent": {
-      "post": {
-        "operationId": "StripePaymentGatewayService_CreateStripePaymentIntent",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1CreateStripePaymentIntentReply"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/googlerpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1CreateStripePaymentIntentRequest"
-            }
-          }
-        ],
         "tags": [
           "StripePaymentGatewayService"
         ]
@@ -204,38 +256,6 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/v1ListSubscriptionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "SubscriptionService"
-        ]
-      }
-    },
-    "/v1/subscription/my": {
-      "post": {
-        "operationId": "SubscriptionService_CreateMySubscription",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/subscriptionv1Subscription"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/googlerpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1CreateMySubscriptionRequest"
             }
           }
         ],
@@ -1414,6 +1434,40 @@
         }
       }
     },
+    "lbsAddress": {
+      "type": "object",
+      "properties": {
+        "country": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string",
+          "title": "State or province"
+        },
+        "city": {
+          "type": "string"
+        },
+        "zipCode": {
+          "type": "string"
+        },
+        "line1": {
+          "type": "string"
+        },
+        "line2": {
+          "type": "string"
+        },
+        "line3": {
+          "type": "string"
+        },
+        "geo": {
+          "type": "object",
+          "title": "Geo geojson"
+        }
+      }
+    },
     "operationStringFilterOperation": {
       "type": "object",
       "properties": {
@@ -1518,6 +1572,14 @@
       "default": "NULL_VALUE",
       "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
     },
+    "stripeEphemeralKey": {
+      "type": "object",
+      "properties": {
+        "secret": {
+          "type": "string"
+        }
+      }
+    },
     "stripeInvoice": {
       "type": "object",
       "properties": {
@@ -1587,68 +1649,58 @@
         }
       }
     },
-    "v1Badge": {
+    "v1CheckoutItemParams": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "code": {
+        "priceId": {
           "type": "string"
         },
-        "label": {
-          "type": "string"
+        "quantity": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },
-    "v1CampaignRule": {
+    "v1CheckoutNowReply": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
+        "subscription": {
+          "$ref": "#/definitions/subscriptionv1Subscription"
         },
-        "rule": {
-          "type": "string"
-        },
-        "extra": {
-          "type": "object"
+        "order": {
+          "$ref": "#/definitions/v1Order"
         }
       }
     },
-    "v1CreateMySubscriptionRequest": {
+    "v1CheckoutNowRequest": {
       "type": "object",
       "properties": {
         "provider": {
+          "type": "string"
+        },
+        "currencyCode": {
           "type": "string"
         },
         "items": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1SubscriptionItemParams"
+            "$ref": "#/definitions/v1CheckoutItemParams"
           }
         }
-      }
+      },
+      "required": [
+        "provider"
+      ]
     },
-    "v1CreateStripePaymentIntentReply": {
+    "v1CheckoutOrderReply": {
       "type": "object",
       "properties": {
-        "paymentIntent": {
-          "type": "string"
-        },
-        "ephemeralKey": {
-          "type": "string"
-        },
-        "customerId": {
-          "type": "string"
-        }
-      }
-    },
-    "v1CreateStripePaymentIntentRequest": {
-      "type": "object",
-      "properties": {
-        "orderId": {
-          "type": "string"
+        "paymentProviderInfo": {
+          "$ref": "#/definitions/v1OrderPaymentProviderInfo"
         }
       }
     },
@@ -1717,20 +1769,6 @@
           }
         },
         "customerId": {
-          "type": "string"
-        }
-      }
-    },
-    "v1Keyword": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "text": {
-          "type": "string"
-        },
-        "refer": {
           "type": "string"
         }
       }
@@ -1828,6 +1866,187 @@
         },
         "filter": {
           "$ref": "#/definitions/v1SubscriptionFilter"
+        }
+      }
+    },
+    "v1Order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "totalPrice": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "totalPriceInclTax": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "discount": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "originalPrice": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "paidPrice": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "paidTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "payBefore": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "payProvider": {
+          "type": "string"
+        },
+        "shippingAddr": {
+          "$ref": "#/definitions/lbsAddress"
+        },
+        "billingAddr": {
+          "$ref": "#/definitions/lbsAddress"
+        },
+        "customerId": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1OrderItem"
+          }
+        },
+        "paymentProviderInfo": {
+          "$ref": "#/definitions/v1OrderPaymentProviderInfo"
+        },
+        "paymentProviders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1OrderPaymentProvider"
+          }
+        }
+      }
+    },
+    "v1OrderItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "qty": {
+          "type": "string",
+          "format": "int64"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "priceTax": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "priceInclTax": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "originalPrice": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "rowTotal": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "rowTotalTax": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "rowTotalInclTax": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "rowDiscount": {
+          "$ref": "#/definitions/pricePricePb"
+        },
+        "product": {
+          "$ref": "#/definitions/v1OrderProduct"
+        },
+        "isGiveaway": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1OrderPaymentProvider": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string"
+        },
+        "providerKey": {
+          "type": "string"
+        }
+      }
+    },
+    "v1OrderPaymentProviderInfo": {
+      "type": "object",
+      "properties": {
+        "stripe": {
+          "$ref": "#/definitions/v1OrderPaymentStripeInfo"
+        }
+      }
+    },
+    "v1OrderPaymentStripeInfo": {
+      "type": "object",
+      "properties": {
+        "paymentIntent": {
+          "$ref": "#/definitions/stripePaymentIntent"
+        },
+        "ephemeralKey": {
+          "$ref": "#/definitions/stripeEphemeralKey"
+        }
+      }
+    },
+    "v1OrderProduct": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "mainPic": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "version": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "skuId": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "skuTitle": {
+          "type": "string"
+        },
+        "priceId": {
+          "type": "string",
+          "x-nullable": true
         }
       }
     },
@@ -1934,451 +2153,6 @@
       ],
       "default": "BOTH"
     },
-    "v1Price": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "tenantId": {
-          "type": "string"
-        },
-        "ownerType": {
-          "type": "string",
-          "title": "product/product_sku"
-        },
-        "ownerId": {
-          "type": "string"
-        },
-        "currencyCode": {
-          "type": "string"
-        },
-        "default": {
-          "$ref": "#/definitions/pricePricePb"
-        },
-        "discounted": {
-          "$ref": "#/definitions/pricePricePb"
-        },
-        "discountText": {
-          "type": "string"
-        },
-        "denyMoreDiscounts": {
-          "type": "boolean"
-        },
-        "billingScheme": {
-          "type": "string"
-        },
-        "currencyOptions": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1PriceCurrencyOption"
-          }
-        },
-        "recurring": {
-          "$ref": "#/definitions/v1PriceRecurring"
-        },
-        "tiers": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1PriceTier"
-          }
-        },
-        "tiersMode": {
-          "type": "string"
-        },
-        "transformQuantity": {
-          "$ref": "#/definitions/v1PriceTransformQuantity"
-        },
-        "type": {
-          "type": "string"
-        },
-        "stripePriceId": {
-          "type": "string",
-          "x-nullable": true
-        }
-      }
-    },
-    "v1PriceCurrencyOption": {
-      "type": "object",
-      "properties": {
-        "currencyCode": {
-          "type": "string"
-        },
-        "default": {
-          "$ref": "#/definitions/pricePricePb"
-        },
-        "discounted": {
-          "$ref": "#/definitions/pricePricePb"
-        },
-        "discountText": {
-          "type": "string"
-        },
-        "denyMoreDiscounts": {
-          "type": "boolean"
-        },
-        "tiers": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1PriceCurrencyOptionTier"
-          }
-        }
-      }
-    },
-    "v1PriceCurrencyOptionTier": {
-      "type": "object",
-      "properties": {
-        "flat": {
-          "$ref": "#/definitions/pricePricePb"
-        },
-        "unit": {
-          "$ref": "#/definitions/pricePricePb"
-        },
-        "upTo": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "v1PriceRecurring": {
-      "type": "object",
-      "properties": {
-        "interval": {
-          "type": "string"
-        },
-        "intervalCount": {
-          "type": "string",
-          "format": "int64"
-        },
-        "trialPeriodDays": {
-          "type": "string",
-          "format": "int64"
-        },
-        "aggregateUsage": {
-          "type": "string"
-        },
-        "usageType": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "interval"
-      ]
-    },
-    "v1PriceTier": {
-      "type": "object",
-      "properties": {
-        "flat": {
-          "$ref": "#/definitions/pricePricePb"
-        },
-        "unit": {
-          "$ref": "#/definitions/pricePricePb"
-        },
-        "upTo": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "v1PriceTransformQuantity": {
-      "type": "object",
-      "properties": {
-        "divideBy": {
-          "type": "string",
-          "format": "int64"
-        },
-        "round": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "round"
-      ]
-    },
-    "v1Product": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "tenantId": {
-          "type": "string"
-        },
-        "version": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
-        },
-        "shortDesc": {
-          "type": "string"
-        },
-        "desc": {
-          "type": "string"
-        },
-        "mainPic": {
-          "$ref": "#/definitions/v1ProductMedia"
-        },
-        "medias": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1ProductMedia"
-          }
-        },
-        "badges": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Badge"
-          }
-        },
-        "visibleFrom": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "visibleTo": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "isNew": {
-          "type": "boolean"
-        },
-        "barcode": {
-          "type": "string"
-        },
-        "model": {
-          "type": "string"
-        },
-        "brandId": {
-          "type": "string",
-          "x-nullable": true
-        },
-        "saleableFrom": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "saleableTo": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "keywords": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Keyword"
-          }
-        },
-        "prices": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Price"
-          }
-        },
-        "isGiveaway": {
-          "type": "boolean"
-        },
-        "mainCategoryKey": {
-          "type": "string"
-        },
-        "mainCategory": {
-          "$ref": "#/definitions/v1ProductCategory"
-        },
-        "categories": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1ProductCategory"
-          }
-        },
-        "attributes": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1ProductAttribute"
-          }
-        },
-        "multiSku": {
-          "type": "boolean"
-        },
-        "campaignRules": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1CampaignRule"
-          }
-        },
-        "needShipping": {
-          "type": "boolean"
-        },
-        "stocks": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Stock"
-          }
-        },
-        "content": {
-          "type": "object"
-        },
-        "manageInfo": {
-          "$ref": "#/definitions/v1ProductManageInfo"
-        },
-        "active": {
-          "type": "boolean"
-        }
-      }
-    },
-    "v1ProductAttribute": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        }
-      }
-    },
-    "v1ProductCategory": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "path": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "parent": {
-          "type": "string"
-        }
-      }
-    },
-    "v1ProductManageInfo": {
-      "type": "object",
-      "properties": {
-        "managed": {
-          "type": "boolean"
-        },
-        "managedBy": {
-          "type": "string"
-        },
-        "lastSyncTime": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "v1ProductMedia": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        },
-        "mimeType": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        }
-      }
-    },
-    "v1ProductSku": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "tenantId": {
-          "type": "string"
-        },
-        "version": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
-        },
-        "mainPic": {
-          "$ref": "#/definitions/v1ProductMedia"
-        },
-        "medias": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1ProductMedia"
-          }
-        },
-        "barcode": {
-          "type": "string"
-        },
-        "saleableFrom": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "saleableTo": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "keywords": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Keyword"
-          }
-        },
-        "prices": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Price"
-          }
-        },
-        "stocks": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Stock"
-          }
-        }
-      }
-    },
     "v1Role": {
       "type": "object",
       "properties": {
@@ -2404,27 +2178,6 @@
             "type": "object",
             "$ref": "#/definitions/v1PermissionDefGroup"
           }
-        }
-      }
-    },
-    "v1Stock": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "inStock": {
-          "type": "boolean"
-        },
-        "level": {
-          "type": "string"
-        },
-        "amount": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "deliveryCode": {
-          "type": "string"
         }
       }
     },
@@ -2475,17 +2228,14 @@
           "type": "string"
         },
         "quantity": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string",
+          "format": "int64"
         },
-        "price": {
-          "$ref": "#/definitions/v1Price"
+        "priceOwnerId": {
+          "type": "string"
         },
-        "product": {
-          "$ref": "#/definitions/v1Product"
-        },
-        "productSku": {
-          "$ref": "#/definitions/v1ProductSku"
+        "priceOwnerType": {
+          "type": "string"
         }
       }
     },
@@ -2508,6 +2258,14 @@
       "type": "object",
       "properties": {
         "stripe": {
+          "$ref": "#/definitions/v1SubscriptionStripeInfo"
+        }
+      }
+    },
+    "v1SubscriptionStripeInfo": {
+      "type": "object",
+      "properties": {
+        "subscription": {
           "$ref": "#/definitions/stripeSubscription"
         }
       }

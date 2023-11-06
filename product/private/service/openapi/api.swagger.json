@@ -262,6 +262,30 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "filter.internal.$eq",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.internal.$neq",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.internal.$null",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "filter.internal.$nnull",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -1794,6 +1818,27 @@
         }
       }
     },
+    "operationBooleanFilterOperators": {
+      "type": "object",
+      "properties": {
+        "$eq": {
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "$neq": {
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "$null": {
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "$nnull": {
+          "type": "boolean",
+          "x-nullable": true
+        }
+      }
+    },
     "operationStringFilterOperation": {
       "type": "object",
       "properties": {
@@ -2346,6 +2391,9 @@
         "ownerId": {
           "type": "string"
         },
+        "productId": {
+          "type": "string"
+        },
         "currencyCode": {
           "type": "string"
         },
@@ -2802,6 +2850,9 @@
         },
         "name": {
           "$ref": "#/definitions/operationStringFilterOperation"
+        },
+        "internal": {
+          "$ref": "#/definitions/operationBooleanFilterOperators"
         }
       }
     },

@@ -94,6 +94,7 @@ message CreateInternalProductRequest{
   ProductManageInfo manage_info=100;
 
   bool active=101;
+  bool internal=102;
 }
 
 

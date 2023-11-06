@@ -62,6 +62,9 @@ func (c *ProductRepo) BuildFilterScope(q *v1.ListProductRequest) func(db *gorm.D
 		if filter.Name != nil {
 			ret = ret.Scopes(kitgorm.BuildStringFilter("`name`", filter.Name))
 		}
+		if filter.Internal != nil {
+			ret = ret.Scopes(kitgorm.BuildBooleanFilter("`internal`", filter.Internal))
+		}
 		return ret
 	}
 }

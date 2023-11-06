@@ -31,7 +31,7 @@ func NewHttpServerRegister(
 	order *OrderService) kithttp.ServiceRegister {
 	return kithttp.ServiceRegisterFunc(func(srv *khttp.Server, middleware ...middleware.Middleware) {
 		v12.RegisterOrderServiceHTTPServer(srv, order)
-		v12.RegisterOrderAppServiceHTTPServer(srv, order)
+		v12.RegisterMyOrderServiceHTTPServer(srv, order)
 		swaggerRouter := chi.NewRouter()
 		swaggerRouter.Use(
 			kithttp.MiddlewareConvert(errEncoder, middleware...))
@@ -44,7 +44,7 @@ func NewHttpServerRegister(
 func NewGrpcServerRegister(order *OrderService) kitgrpc.ServiceRegister {
 	return kitgrpc.ServiceRegisterFunc(func(srv *grpc.Server, middleware ...middleware.Middleware) {
 		v12.RegisterOrderServiceServer(srv, order)
-		v12.RegisterOrderAppServiceServer(srv, order)
+		v12.RegisterMyOrderServiceServer(srv, order)
 		v12.RegisterOrderInternalServiceServer(srv, order)
 	})
 }

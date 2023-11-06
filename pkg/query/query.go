@@ -43,6 +43,17 @@ func SelectContains(p Select, name string) bool {
 	return r
 }
 
+func SelectStrictContains(p Select, name string) bool {
+	if p == nil || p.GetFields() == nil {
+		return false
+	}
+	name = strcase.ToSnake(name)
+	_, r := lo.Find(p.GetFields().Paths, func(s string) bool {
+		return s == name || strings.HasPrefix(s, name+".")
+	})
+	return r
+}
+
 func SelectGetCurrentLevelPath(p Select) []string {
 	if p == nil || p.GetFields() == nil {
 		return []string{"*"}

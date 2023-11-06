@@ -42,9 +42,6 @@ func (c *subscriptionServiceClientProxy) GetSubscription(ctx context.Context, in
 func (c *subscriptionServiceClientProxy) CancelSubscription(ctx context.Context, in *CancelSubscriptionRequest) (*Subscription, error) {
 	return c.cc.CancelSubscription(ctx, in)
 }
-func (c *subscriptionServiceClientProxy) CreateMySubscription(ctx context.Context, in *CreateMySubscriptionRequest) (*Subscription, error) {
-	return c.cc.CreateMySubscription(ctx, in)
-}
 func (c *subscriptionServiceClientProxy) GetMySubscription(ctx context.Context, in *GetMySubscriptionRequest) (*Subscription, error) {
 	return c.cc.GetMySubscription(ctx, in)
 }
