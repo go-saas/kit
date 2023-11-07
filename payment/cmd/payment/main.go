@@ -11,6 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/go-saas/kit/event"
 	orderapi "github.com/go-saas/kit/order/api"
 	"github.com/go-saas/kit/payment/api"
 	"github.com/go-saas/kit/payment/private/biz"
@@ -61,8 +62,8 @@ func init() {
 	flag.Var(&flagconf, "conf", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, srvs []transport.Server, r registry.Registrar, seeder seed.Seeder) *kratos.App {
-	ctx := context.Background()
+func newApp(logger log.Logger, srvs []transport.Server, producer event.Producer, r registry.Registrar, seeder seed.Seeder) *kratos.App {
+	ctx := event.NewProducerContext(context.Background(), producer)
 	if err := seeder.Seed(context.Background(), seed.AddHost()); err != nil {
 		panic(err)
 	}

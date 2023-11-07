@@ -279,8 +279,8 @@ func (r *Repo[TEntity, TKey, TQuery]) BatchCreate(ctx context.Context, entity []
 }
 
 func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entity *TEntity, p query.Select) error {
-	var e TEntity
-	db := r.getDb(ctx).Model(&e)
+
+	db := r.getDb(ctx).Model(entity)
 
 	if err := eventbus.Publish[*data.BeforeUpdate[*TEntity]](r.Eventbus)(ctx, data.NewBeforeUpdate(entity)); err != nil {
 		return err
@@ -307,8 +307,7 @@ func (r *Repo[TEntity, TKey, TQuery]) Update(ctx context.Context, id TKey, entit
 }
 
 func (r *Repo[TEntity, TKey, TQuery]) Upsert(ctx context.Context, entity *TEntity) error {
-	var e TEntity
-	db := r.getDb(ctx).Model(&e)
+	db := r.getDb(ctx).Model(entity)
 	return db.Clauses(clause.OnConflict{
 		UpdateAll: true,
 	}).Session(&gorm.Session{FullSaveAssociations: true}).Create(entity).Error
