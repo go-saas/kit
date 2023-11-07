@@ -140,32 +140,30 @@ var _ interface {
 	ErrorName() string
 } = MessageProtoValidationError{}
 
-// Validate checks the field values on EventRequest with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *EventRequest) Validate() error {
+// Validate checks the field values on HandleEventRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *HandleEventRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on EventRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in EventRequestMultiError, or
-// nil if none found.
-func (m *EventRequest) ValidateAll() error {
+// ValidateAll checks the field values on HandleEventRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// HandleEventRequestMultiError, or nil if none found.
+func (m *HandleEventRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *EventRequest) validate(all bool) error {
+func (m *HandleEventRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Service
-
 	if m.GetMessage() == nil {
-		err := EventRequestValidationError{
+		err := HandleEventRequestValidationError{
 			field:  "Message",
 			reason: "value is required",
 		}
@@ -179,7 +177,7 @@ func (m *EventRequest) validate(all bool) error {
 		switch v := interface{}(m.GetMessage()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, EventRequestValidationError{
+				errors = append(errors, HandleEventRequestValidationError{
 					field:  "Message",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -187,7 +185,7 @@ func (m *EventRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, EventRequestValidationError{
+				errors = append(errors, HandleEventRequestValidationError{
 					field:  "Message",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -196,7 +194,7 @@ func (m *EventRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetMessage()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return EventRequestValidationError{
+			return HandleEventRequestValidationError{
 				field:  "Message",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -205,18 +203,19 @@ func (m *EventRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return EventRequestMultiError(errors)
+		return HandleEventRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// EventRequestMultiError is an error wrapping multiple validation errors
-// returned by EventRequest.ValidateAll() if the designated constraints aren't met.
-type EventRequestMultiError []error
+// HandleEventRequestMultiError is an error wrapping multiple validation errors
+// returned by HandleEventRequest.ValidateAll() if the designated constraints
+// aren't met.
+type HandleEventRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m EventRequestMultiError) Error() string {
+func (m HandleEventRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -225,11 +224,11 @@ func (m EventRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m EventRequestMultiError) AllErrors() []error { return m }
+func (m HandleEventRequestMultiError) AllErrors() []error { return m }
 
-// EventRequestValidationError is the validation error returned by
-// EventRequest.Validate if the designated constraints aren't met.
-type EventRequestValidationError struct {
+// HandleEventRequestValidationError is the validation error returned by
+// HandleEventRequest.Validate if the designated constraints aren't met.
+type HandleEventRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -237,22 +236,24 @@ type EventRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e EventRequestValidationError) Field() string { return e.field }
+func (e HandleEventRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e EventRequestValidationError) Reason() string { return e.reason }
+func (e HandleEventRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e EventRequestValidationError) Cause() error { return e.cause }
+func (e HandleEventRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e EventRequestValidationError) Key() bool { return e.key }
+func (e HandleEventRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e EventRequestValidationError) ErrorName() string { return "EventRequestValidationError" }
+func (e HandleEventRequestValidationError) ErrorName() string {
+	return "HandleEventRequestValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e EventRequestValidationError) Error() string {
+func (e HandleEventRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -264,14 +265,14 @@ func (e EventRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sEventRequest.%s: %s%s",
+		"invalid %sHandleEventRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = EventRequestValidationError{}
+var _ error = HandleEventRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -279,4 +280,151 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = EventRequestValidationError{}
+} = HandleEventRequestValidationError{}
+
+// Validate checks the field values on PublishEventRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PublishEventRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PublishEventRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PublishEventRequestMultiError, or nil if none found.
+func (m *PublishEventRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PublishEventRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetMessages()) < 1 {
+		err := PublishEventRequestValidationError{
+			field:  "Messages",
+			reason: "value must contain at least 1 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetMessages() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PublishEventRequestValidationError{
+						field:  fmt.Sprintf("Messages[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PublishEventRequestValidationError{
+						field:  fmt.Sprintf("Messages[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PublishEventRequestValidationError{
+					field:  fmt.Sprintf("Messages[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PublishEventRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PublishEventRequestMultiError is an error wrapping multiple validation
+// errors returned by PublishEventRequest.ValidateAll() if the designated
+// constraints aren't met.
+type PublishEventRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PublishEventRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PublishEventRequestMultiError) AllErrors() []error { return m }
+
+// PublishEventRequestValidationError is the validation error returned by
+// PublishEventRequest.Validate if the designated constraints aren't met.
+type PublishEventRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PublishEventRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PublishEventRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PublishEventRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PublishEventRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PublishEventRequestValidationError) ErrorName() string {
+	return "PublishEventRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PublishEventRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPublishEventRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PublishEventRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PublishEventRequestValidationError{}

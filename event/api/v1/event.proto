@@ -15,18 +15,18 @@ message MessageProto{
   map<string,string> header=3;
 }
 
-message EventRequest{
-  string service=1;
+message HandleEventRequest{
   MessageProto message=2 [(validate.rules).message.required=true];
 }
 
+message PublishEventRequest{
+  repeated MessageProto messages=2 [(validate.rules).repeated.min_items=1];
+}
 
 // EventService proxy event handler
 service EventService{
-  rpc Event(EventRequest)returns(google.protobuf.Empty){
-    option (google.api.http) = {
-      post: "/v1/{service}/proxy/event"
-      body: "*"
-    };
+  rpc HandleEvent(HandleEventRequest)returns(google.protobuf.Empty){
+  }
+  rpc PublishEvent(PublishEventRequest)returns(google.protobuf.Empty){
   }
 }

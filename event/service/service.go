@@ -11,7 +11,7 @@ import (
 
 func NewHttpServerRegister(event *EventService) kithttp.ServiceRegister {
 	return kithttp.ServiceRegisterFunc(func(server *http.Server, middleware ...middleware.Middleware) {
-		v12.RegisterEventServiceHTTPServer(server, event)
+
 	})
 }
 func NewGrpcServerRegister(event *EventService) kitgrpc.ServiceRegister {

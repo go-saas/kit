@@ -20,14 +20,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	EventService_Event_FullMethodName = "/event.api.v1.EventService/Event"
+	EventService_HandleEvent_FullMethodName  = "/event.api.v1.EventService/HandleEvent"
+	EventService_PublishEvent_FullMethodName = "/event.api.v1.EventService/PublishEvent"
 )
 
 // EventServiceClient is the client API for EventService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EventServiceClient interface {
-	Event(ctx context.Context, in *EventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	HandleEvent(ctx context.Context, in *HandleEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type eventServiceClient struct {
@@ -38,9 +40,18 @@ func NewEventServiceClient(cc grpc.ClientConnInterface) EventServiceClient {
 	return &eventServiceClient{cc}
 }
 
-func (c *eventServiceClient) Event(ctx context.Context, in *EventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *eventServiceClient) HandleEvent(ctx context.Context, in *HandleEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, EventService_Event_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, EventService_HandleEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *eventServiceClient) PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EventService_PublishEvent_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,15 +62,19 @@ func (c *eventServiceClient) Event(ctx context.Context, in *EventRequest, opts .
 // All implementations should embed UnimplementedEventServiceServer
 // for forward compatibility
 type EventServiceServer interface {
-	Event(context.Context, *EventRequest) (*emptypb.Empty, error)
+	HandleEvent(context.Context, *HandleEventRequest) (*emptypb.Empty, error)
+	PublishEvent(context.Context, *PublishEventRequest) (*emptypb.Empty, error)
 }
 
 // UnimplementedEventServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedEventServiceServer struct {
 }
 
-func (UnimplementedEventServiceServer) Event(context.Context, *EventRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Event not implemented")
+func (UnimplementedEventServiceServer) HandleEvent(context.Context, *HandleEventRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HandleEvent not implemented")
+}
+func (UnimplementedEventServiceServer) PublishEvent(context.Context, *PublishEventRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PublishEvent not implemented")
 }
 
 // UnsafeEventServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -73,20 +88,38 @@ func RegisterEventServiceServer(s grpc.ServiceRegistrar, srv EventServiceServer)
 	s.RegisterService(&EventService_ServiceDesc, srv)
 }
 
-func _EventService_Event_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EventRequest)
+func _EventService_HandleEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HandleEventRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EventServiceServer).Event(ctx, in)
+		return srv.(EventServiceServer).HandleEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: EventService_Event_FullMethodName,
+		FullMethod: EventService_HandleEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventServiceServer).Event(ctx, req.(*EventRequest))
+		return srv.(EventServiceServer).HandleEvent(ctx, req.(*HandleEventRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EventService_PublishEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PublishEventRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventServiceServer).PublishEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EventService_PublishEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventServiceServer).PublishEvent(ctx, req.(*PublishEventRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -99,8 +132,12 @@ var EventService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*EventServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Event",
-			Handler:    _EventService_Event_Handler,
+			MethodName: "HandleEvent",
+			Handler:    _EventService_HandleEvent_Handler,
+		},
+		{
+			MethodName: "PublishEvent",
+			Handler:    _EventService_PublishEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

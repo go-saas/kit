@@ -28,6 +28,9 @@ func NewEventServiceClientProxy(cc EventServiceClient) EventServiceServer {
 	return &eventServiceClientProxy{cc}
 }
 
-func (c *eventServiceClientProxy) Event(ctx context.Context, in *EventRequest) (*emptypb.Empty, error) {
-	return c.cc.Event(ctx, in)
+func (c *eventServiceClientProxy) HandleEvent(ctx context.Context, in *HandleEventRequest) (*emptypb.Empty, error) {
+	return c.cc.HandleEvent(ctx, in)
+}
+func (c *eventServiceClientProxy) PublishEvent(ctx context.Context, in *PublishEventRequest) (*emptypb.Empty, error) {
+	return c.cc.PublishEvent(ctx, in)
 }

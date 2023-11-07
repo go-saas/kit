@@ -3488,50 +3488,6 @@
           "MsgService"
         ]
       }
-    },
-    "/v1/{service}/proxy/event": {
-      "post": {
-        "operationId": "EventService_Event",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "type": "object",
-              "properties": {}
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/googlerpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "service",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "$ref": "#/definitions/v1MessageProto"
-                }
-              }
-            }
-          }
-        ],
-        "tags": [
-          "EventService"
-        ]
-      }
     }
   },
   "definitions": {
