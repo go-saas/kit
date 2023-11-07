@@ -242,6 +242,7 @@ func MapBizOrderItem2Pb(ctx context.Context, a *biz.OrderItem) *pb.OrderItem {
 			PriceId:  a.Product.PriceID,
 		},
 		IsGiveaway: a.IsGiveaway,
+		BizPayload: utils.Map2Structpb(a.BizPayload),
 	}
 }
 

@@ -2,12 +2,15 @@ package service
 
 import (
 	"context"
+	"github.com/go-saas/kit/event"
+	v13 "github.com/go-saas/kit/payment/event/v1"
 	"github.com/go-saas/kit/payment/private/biz"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/query"
 	stripe2 "github.com/go-saas/kit/pkg/stripe"
+	"github.com/go-saas/kit/pkg/utils"
 	v12 "github.com/go-saas/kit/product/api/product/v1"
 	v1 "github.com/go-saas/kit/user/api/user/v1"
 	"github.com/go-saas/saas/data"
@@ -113,9 +116,12 @@ func (s *SubscriptionService) CancelMySubscription(ctx context.Context, req *pb.
 	if g == nil || g.UserId != ui.GetId() {
 		return nil, pb.ErrorSubscriptionNotFoundLocalized(ctx, nil, nil)
 	}
+	//TODO other providers?
 	subs, err := s.stripeClient.Subscriptions.Cancel(g.ProviderKey, nil)
 	MapStripeSubscription2Biz(subs, g)
-	err = s.subsRepo.Update(ctx, subs.ID, g, nil)
+	ee, _ := event.NewMessageFromProto(&v13.SubscriptionChangedEvent{Id: g.ID.String()})
+	g.AppendEvent(ee)
+	err = s.subsRepo.Update(ctx, g.ID.String(), g, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -138,6 +144,7 @@ func (s *SubscriptionService) UpdateMySubscription(ctx context.Context, req *pb.
 	if g == nil || g.UserId != ui.GetId() {
 		return nil, pb.ErrorSubscriptionNotFoundLocalized(ctx, nil, nil)
 	}
+	//TODO update subscription
 	ret := &pb.Subscription{}
 	mapBizSubscription2Pb(g, ret)
 
@@ -197,4 +204,5 @@ func mapBizSubscriptionItem2Pb(a *biz.SubscriptionItem, b *pb.SubscriptionItem) 
 	b.PriceOwnerId = a.PriceOwnerID
 	b.PriceOwnerType = a.PriceOwnerType
 	b.Quantity = a.Quantity
+	b.BizPayload = utils.Map2Structpb(a.BizPayload)
 }

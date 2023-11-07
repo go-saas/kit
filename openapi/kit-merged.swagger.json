@@ -11589,6 +11589,9 @@
         "quantity": {
           "type": "string",
           "format": "int64"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       }
     },
@@ -11701,6 +11704,9 @@
         },
         "product": {
           "$ref": "#/definitions/v1OrderProduct"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       },
       "required": [
@@ -13688,6 +13694,9 @@
         },
         "isGiveaway": {
           "type": "boolean"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       }
     },
@@ -14687,6 +14696,9 @@
         },
         "priceOwnerType": {
           "type": "string"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       }
     },
@@ -14702,6 +14714,9 @@
         "quantity": {
           "type": "integer",
           "format": "int32"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       }
     },

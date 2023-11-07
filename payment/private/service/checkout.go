@@ -8,6 +8,7 @@ import (
 	"github.com/go-saas/kit/payment/private/biz"
 	"github.com/go-saas/kit/pkg/authn"
 	stripe2 "github.com/go-saas/kit/pkg/stripe"
+	"github.com/go-saas/kit/pkg/utils"
 	v13 "github.com/go-saas/kit/product/api/price/v1"
 	v14 "github.com/go-saas/kit/product/api/product/v1"
 	biz2 "github.com/go-saas/kit/product/private/biz"
@@ -221,7 +222,14 @@ func (s *CheckoutService) checkoutSubscription(ctx context.Context,
 	}
 	localSubs := &biz.Subscription{Provider: stripe2.ProviderName, ProviderKey: subs.ID, UserId: userId}
 	localSubs.Items = lo.Map(req.Items, func(t *pb.CheckoutItemParams, i int) biz.SubscriptionItem {
-		return biz.SubscriptionItem{PriceID: t.PriceId, PriceOwnerID: prices[i].OwnerId, PriceOwnerType: prices[i].OwnerType, ProductID: prices[i].ProductId, Quantity: t.Quantity}
+		return biz.SubscriptionItem{
+			PriceID:        t.PriceId,
+			PriceOwnerID:   prices[i].OwnerId,
+			PriceOwnerType: prices[i].OwnerType,
+			ProductID:      prices[i].ProductId,
+			Quantity:       t.Quantity,
+			BizPayload:     utils.Structpb2Map(t.BizPayload),
+		}
 	})
 	localSubs.TenantId = gorm.NewTenantId(tenantId)
 	MapStripeSubscription2Biz(subs, localSubs)
@@ -287,6 +295,7 @@ func (s *CheckoutService) checkoutOneTime(ctx context.Context,
 			PriceAmount:         priceAmount,
 			OriginalPriceAmount: originalPriceAmount,
 			IsGiveaway:          false,
+			BizPayload:          item.BizPayload,
 			Product: &v1.OrderProduct{
 				Name:    product.Title,
 				MainPic: mainPic,

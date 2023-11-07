@@ -25,6 +25,7 @@ const (
 type Subscription struct {
 	kitgorm.UIDBase
 	kitgorm.AuditedModel
+	kitgorm.AggRoot
 	sgorm.MultiTenancy
 
 	UserId string `gorm:"index;size:128"`
@@ -41,6 +42,8 @@ type Subscription struct {
 	ProviderKey string `gorm:"index;size:128"`
 
 	Items []SubscriptionItem `gorm:"foreignKey:SubscriptionID"`
+
+	Extra data.JSONMap
 }
 
 type SubscriptionItem struct {
@@ -53,6 +56,7 @@ type SubscriptionItem struct {
 	PriceOwnerID   string
 	PriceOwnerType string
 	Quantity       int64
+	BizPayload     data.JSONMap
 }
 
 type SubscriptionListPrams interface {

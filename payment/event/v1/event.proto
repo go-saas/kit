@@ -3,6 +3,6 @@ package payment.event;
 
 option go_package = "github.com/go-saas/kit/payment/event/v1;v1";
 
-message DemoEvent{
-
+message SubscriptionChangedEvent{
+  string id=1;
 }

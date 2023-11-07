@@ -129,12 +129,16 @@ message SubscriptionItem{
   string price_owner_id=13;
   string price_owner_type=14;
 
+  google.protobuf.Struct biz_payload=200;
+
 }
 
 message SubscriptionItemParams{
   string id=1;
   string price_id=10;
   int32 quantity=11;
+
+  google.protobuf.Struct biz_payload=200;
 }
 
 message UpdateSubscriptionRequest{

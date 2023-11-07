@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	event2 "github.com/go-saas/kit/event"
 	v1 "github.com/go-saas/kit/order/api/order/v1"
 	pb "github.com/go-saas/kit/payment/api/gateway/v1"
+	v13 "github.com/go-saas/kit/payment/event/v1"
 	"github.com/go-saas/kit/payment/private/biz"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn"
@@ -103,6 +105,8 @@ func (s *PaymentService) StripeWebhook(ctx context.Context, req *emptypb.Empty) 
 				return nil, err
 			}
 			MapStripeSubscription2Biz(subs, localSubs)
+			ee, _ := event2.NewMessageFromProto(&v13.SubscriptionChangedEvent{Id: localSubs.ID.String()})
+			localSubs.AppendEvent(ee)
 			err = s.subsRepo.Update(ctx, localSubs.ID.String(), localSubs, nil)
 			if err != nil {
 				return nil, err

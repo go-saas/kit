@@ -70,7 +70,7 @@ func (c *OrderRepo) DefaultSorting() []string {
 
 func (c *OrderRepo) FindByPaymentProvider(ctx context.Context, provider, providerKey string) (*biz.Order, error) {
 	g := &biz.Order{}
-	err := c.GetDb(ctx).Model(&biz.Order{}).
+	err := c.GetDb(ctx).Model(&biz.Order{}).Scopes(c.BuildDetailScope(true)).
 		Joins("left join order_payment_providers on order_payment_providers.order_id = orders.id").
 		Where("order_payment_providers.provider=? and order_payment_providers.provider_key=?", provider, providerKey).First(g).Error
 	return g, err

@@ -2286,6 +2286,9 @@
         },
         "priceOwnerType": {
           "type": "string"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       }
     },

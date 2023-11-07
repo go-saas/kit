@@ -45,6 +45,7 @@ message CheckoutItemParams{
   string id=1;
   string price_id=10;
   int64 quantity=11;
+  google.protobuf.Struct biz_payload=200;
 }
 
 message CheckoutNowReply{

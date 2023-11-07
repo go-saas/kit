@@ -35,41 +35,44 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on DemoEvent with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *DemoEvent) Validate() error {
+// Validate checks the field values on SubscriptionChangedEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SubscriptionChangedEvent) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DemoEvent with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in DemoEventMultiError, or nil
-// if none found.
-func (m *DemoEvent) ValidateAll() error {
+// ValidateAll checks the field values on SubscriptionChangedEvent with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SubscriptionChangedEventMultiError, or nil if none found.
+func (m *SubscriptionChangedEvent) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DemoEvent) validate(all bool) error {
+func (m *SubscriptionChangedEvent) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for Id
+
 	if len(errors) > 0 {
-		return DemoEventMultiError(errors)
+		return SubscriptionChangedEventMultiError(errors)
 	}
 
 	return nil
 }
 
-// DemoEventMultiError is an error wrapping multiple validation errors returned
-// by DemoEvent.ValidateAll() if the designated constraints aren't met.
-type DemoEventMultiError []error
+// SubscriptionChangedEventMultiError is an error wrapping multiple validation
+// errors returned by SubscriptionChangedEvent.ValidateAll() if the designated
+// constraints aren't met.
+type SubscriptionChangedEventMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DemoEventMultiError) Error() string {
+func (m SubscriptionChangedEventMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -78,11 +81,11 @@ func (m DemoEventMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DemoEventMultiError) AllErrors() []error { return m }
+func (m SubscriptionChangedEventMultiError) AllErrors() []error { return m }
 
-// DemoEventValidationError is the validation error returned by
-// DemoEvent.Validate if the designated constraints aren't met.
-type DemoEventValidationError struct {
+// SubscriptionChangedEventValidationError is the validation error returned by
+// SubscriptionChangedEvent.Validate if the designated constraints aren't met.
+type SubscriptionChangedEventValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -90,22 +93,24 @@ type DemoEventValidationError struct {
 }
 
 // Field function returns field value.
-func (e DemoEventValidationError) Field() string { return e.field }
+func (e SubscriptionChangedEventValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DemoEventValidationError) Reason() string { return e.reason }
+func (e SubscriptionChangedEventValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DemoEventValidationError) Cause() error { return e.cause }
+func (e SubscriptionChangedEventValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DemoEventValidationError) Key() bool { return e.key }
+func (e SubscriptionChangedEventValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DemoEventValidationError) ErrorName() string { return "DemoEventValidationError" }
+func (e SubscriptionChangedEventValidationError) ErrorName() string {
+	return "SubscriptionChangedEventValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e DemoEventValidationError) Error() string {
+func (e SubscriptionChangedEventValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -117,14 +122,14 @@ func (e DemoEventValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDemoEvent.%s: %s%s",
+		"invalid %sSubscriptionChangedEvent.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DemoEventValidationError{}
+var _ error = SubscriptionChangedEventValidationError{}
 
 var _ interface {
 	Field() string
@@ -132,4 +137,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DemoEventValidationError{}
+} = SubscriptionChangedEventValidationError{}

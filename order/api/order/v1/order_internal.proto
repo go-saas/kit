@@ -64,6 +64,8 @@ message CreateInternalOrderItem{
 
   OrderProduct product=100 [(validate.rules).message.required=true,(google.api.field_behavior) = REQUIRED];
 
+  google.protobuf.Struct biz_payload=200;
+
 }
 
 message GetInternalOrderRequest{

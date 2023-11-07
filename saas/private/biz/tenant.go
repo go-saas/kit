@@ -3,7 +3,7 @@ package biz
 import (
 	"context"
 	"github.com/go-saas/kit/pkg/data"
-	gorm2 "github.com/go-saas/kit/pkg/gorm"
+	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/query"
 	v1 "github.com/go-saas/kit/saas/api/tenant/v1"
 	"github.com/google/uuid"
@@ -13,8 +13,8 @@ import (
 )
 
 type Tenant struct {
-	gorm2.UIDBase
-	gorm2.AggRoot
+	kitgorm.UIDBase
+	kitgorm.AggRoot
 	concurrency.HasVersion
 	//unique name. usually for domain name
 	Name string `gorm:"column:name;index;size:255;"`
@@ -52,7 +52,7 @@ type TenantConn struct {
 }
 
 type TenantFeature struct {
-	gorm2.AuditedModel
+	kitgorm.AuditedModel
 	TenantId string     `gorm:"column:tenant_id;primary_key;size:36;"`
 	Key      string     `gorm:"column:key;primary_key;size:100;"`
 	Value    data.Value `gorm:"embedded"`

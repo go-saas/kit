@@ -214,7 +214,7 @@ message OrderItem{
   OrderProduct product=100;
   bool is_giveaway=101;
 
-
+  google.protobuf.Struct biz_payload=200;
 }
 
 message OrderPaymentProvider{

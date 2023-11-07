@@ -1661,6 +1661,9 @@
         "quantity": {
           "type": "string",
           "format": "int64"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       }
     },
@@ -1988,6 +1991,9 @@
         },
         "isGiveaway": {
           "type": "boolean"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       }
     },
@@ -2239,6 +2245,9 @@
         },
         "priceOwnerType": {
           "type": "string"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       }
     },
@@ -2254,6 +2263,9 @@
         "quantity": {
           "type": "integer",
           "format": "int32"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       }
     },

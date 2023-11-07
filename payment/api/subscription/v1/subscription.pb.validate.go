@@ -685,6 +685,35 @@ func (m *SubscriptionItem) validate(all bool) error {
 
 	// no validation rules for PriceOwnerType
 
+	if all {
+		switch v := interface{}(m.GetBizPayload()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubscriptionItemValidationError{
+					field:  "BizPayload",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubscriptionItemValidationError{
+					field:  "BizPayload",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBizPayload()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubscriptionItemValidationError{
+				field:  "BizPayload",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return SubscriptionItemMultiError(errors)
 	}
@@ -790,6 +819,35 @@ func (m *SubscriptionItemParams) validate(all bool) error {
 	// no validation rules for PriceId
 
 	// no validation rules for Quantity
+
+	if all {
+		switch v := interface{}(m.GetBizPayload()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubscriptionItemParamsValidationError{
+					field:  "BizPayload",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubscriptionItemParamsValidationError{
+					field:  "BizPayload",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBizPayload()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubscriptionItemParamsValidationError{
+				field:  "BizPayload",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return SubscriptionItemParamsMultiError(errors)

@@ -11,6 +11,8 @@ import (
 var ProviderSet = kitdi.NewSet(
 	NewTenantUserCase,
 	kitdi.NewProvider(NewTenantReadyEventHandler, di.As(new(event.ConsumerHandler))),
+	kitdi.NewProvider(NewSubscriptionChangedEventHandler, di.As(new(event.ConsumerHandler))),
+	kitdi.NewProvider(NewOrderChangedEventHandler, di.As(new(event.ConsumerHandler))),
 	NewConfigConnStrGenerator,
 )
 

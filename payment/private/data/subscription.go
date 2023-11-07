@@ -79,7 +79,7 @@ func (c *SubscriptionRepo) DefaultSorting() []string {
 
 func (c *SubscriptionRepo) FindByProvider(ctx context.Context, provider, providerKey string) (*biz.Subscription, error) {
 	g := &biz.Subscription{}
-	err := c.GetDb(ctx).Model(&biz.Subscription{}).First(g, "provider = ? AND provider_key = ?", provider, providerKey).Error
+	err := c.GetDb(ctx).Model(&biz.Subscription{}).Scopes(c.BuildDetailScope(true)).First(g, "provider = ? AND provider_key = ?", provider, providerKey).Error
 	if err != nil {
 		return nil, err
 	}

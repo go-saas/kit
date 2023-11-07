@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	v1 "github.com/go-saas/kit/saas/api/plan/v1"
@@ -56,4 +57,16 @@ func (g *PlanRepo) BuildFilterScope(q *v1.ListPlanRequest) func(db *gorm.DB) *go
 
 func (g *PlanRepo) BuildPrimaryField() string {
 	return "`key`"
+}
+
+func (g *PlanRepo) FindByProductId(ctx context.Context, productID string) (*biz.Plan, error) {
+	var entity biz.Plan
+	err := g.GetDb(ctx).Model(&entity).Scopes(g.BuildDetailScope(true)).First(&entity, "product_id = ?", productID).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &entity, nil
 }

@@ -1239,6 +1239,9 @@
         },
         "product": {
           "$ref": "#/definitions/v1OrderProduct"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       },
       "required": [
@@ -1468,6 +1471,9 @@
         },
         "isGiveaway": {
           "type": "boolean"
+        },
+        "bizPayload": {
+          "type": "object"
         }
       }
     },
