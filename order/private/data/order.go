@@ -32,7 +32,7 @@ func (c *OrderRepo) BuildDetailScope(withDetail bool) func(db *gorm.DB) *gorm.DB
 	return func(db *gorm.DB) *gorm.DB {
 		db = db.Preload("Items")
 		if withDetail {
-			db = db.Preload("PayExtra").Preload("FlowData").Preload("PaymentProviders")
+			db = db.Preload("PaymentProviders")
 		}
 		return db
 	}
