@@ -6,17 +6,17 @@ import (
 )
 
 type testModel struct {
-	*Embed
+	Embed
 	ID int
 }
 
 func getTestArray() []Sortable {
 	return []Sortable{
-		&testModel{ID: 1, Embed: &Embed{}},
-		&testModel{ID: 2, Embed: &Embed{}},
-		&testModel{ID: 3, Embed: &Embed{}},
-		&testModel{ID: 4, Embed: &Embed{}},
-		&testModel{ID: 5, Embed: &Embed{}},
+		&testModel{ID: 1},
+		&testModel{ID: 2},
+		&testModel{ID: 3},
+		&testModel{ID: 4},
+		&testModel{ID: 5},
 	}
 }
 

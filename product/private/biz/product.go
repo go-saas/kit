@@ -128,7 +128,7 @@ type ProductAttribute struct {
 	ProductId string
 
 	Title string
-	*sortable.Embed
+	sortable.Embed
 }
 
 // Stock holds data with product availability info

@@ -17,11 +17,11 @@ type ProductMedia struct {
 	Usage     string
 	Name      string
 	Reference string
-	*sortable.Embed
+	sortable.Embed
 }
 
 func NewProductMedia() *ProductMedia {
-	return &ProductMedia{Embed: &sortable.Embed{}}
+	return &ProductMedia{}
 }
 
 type ProductMediaRepo interface {

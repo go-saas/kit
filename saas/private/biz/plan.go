@@ -10,7 +10,7 @@ import (
 
 type Plan struct {
 	gorm.AuditedModel
-	*sortable.Embed
+	sortable.Embed
 	Key         string `gorm:"primaryKey;size:128"`
 	DisplayName string
 	Active      bool
@@ -30,7 +30,6 @@ type PlanFeature struct {
 
 func NewPlan(key, displayName, productId string, sort int) *Plan {
 	res := &Plan{
-		Embed:       &sortable.Embed{},
 		Key:         key,
 		DisplayName: displayName,
 		ProductId:   productId,
