@@ -153,6 +153,7 @@ func NewOrderItemFromPriceAndOriginalPrice(
 	priceAmount int64,
 	originalPriceAmount int64,
 	isGiveaway bool,
+	bizPayload data.JSONMap,
 ) (*OrderItem, error) {
 	i := &OrderItem{
 		CurrencyCode:        currencyCode,
@@ -161,6 +162,7 @@ func NewOrderItemFromPriceAndOriginalPrice(
 		OriginalPriceAmount: originalPriceAmount,
 		Product:             product,
 		IsGiveaway:          isGiveaway,
+		BizPayload:          bizPayload,
 	}
 
 	singleDiscount := i.OriginalPriceAmount - i.PriceAmount

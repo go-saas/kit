@@ -20,15 +20,24 @@ func (s *OrderService) CreateInternalOrder(ctx context.Context, req *pb.CreateIn
 	taxRate, _, _ := apd.NewFromString("0")
 	var orderItems []biz.OrderItem
 	for _, item := range req.Items {
-		orderItem, err := biz.NewOrderItemFromPriceAndOriginalPrice(req.CurrencyCode, biz.OrderProduct{
-			ProductName:     item.Product.Name,
-			ProductMainPic:  item.Product.MainPic,
-			ProductID:       item.Product.Id,
-			ProductVersion:  item.Product.Version,
-			ProductType:     item.Product.Type,
-			ProductSkuID:    item.Product.SkuId,
-			ProductSkuTitle: item.Product.SkuTitle,
-		}, item.Qty, *taxRate, item.PriceAmount, item.OriginalPriceAmount, item.IsGiveaway)
+		orderItem, err := biz.NewOrderItemFromPriceAndOriginalPrice(
+			req.CurrencyCode,
+			biz.OrderProduct{
+				ProductName:     item.Product.Name,
+				ProductMainPic:  item.Product.MainPic,
+				ProductID:       item.Product.Id,
+				ProductVersion:  item.Product.Version,
+				ProductType:     item.Product.Type,
+				ProductSkuID:    item.Product.SkuId,
+				ProductSkuTitle: item.Product.SkuTitle,
+			},
+			item.Qty,
+			*taxRate,
+			item.PriceAmount,
+			item.OriginalPriceAmount,
+			item.IsGiveaway,
+			utils.Structpb2Map(item.BizPayload),
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -155,7 +164,7 @@ func (s *OrderService) UpdateInternalOrderPaymentProvider(ctx context.Context, r
 	paymentProvider := &biz.OrderPaymentProvider{
 		OrderID:     g.ID,
 		Provider:    req.Provider,
-		ProviderKey: req.Provider,
+		ProviderKey: req.ProviderKey,
 	}
 	err = s.repo.UpsertPaymentProvider(ctx, g, paymentProvider)
 	if err != nil {
