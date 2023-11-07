@@ -80,7 +80,7 @@ func (c *OrderRepo) UpsertPaymentProvider(ctx context.Context, order *biz.Order,
 	if len(provider.Provider) == 0 {
 		return fmt.Errorf("provider is required")
 	}
-	err := c.GetDb(ctx).Model(&biz.OrderPaymentProvider{}).Delete("order_id = ? AND provider = ?", order.ID, provider.Provider).Error
+	err := c.GetDb(ctx).Model(&biz.OrderPaymentProvider{}).Delete(&biz.OrderPaymentProvider{}, "order_id = ? AND provider = ?", order.ID, provider.Provider).Error
 	if err != nil {
 		return err
 	}
