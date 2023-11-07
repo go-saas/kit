@@ -264,9 +264,9 @@ func (s *CheckoutService) checkoutOneTime(ctx context.Context,
 		var priceAmount, originalPriceAmount int64
 		if price.CurrencyCode == currencyCode {
 			if price.Discounted != nil {
-				priceAmount = price.Default.Amount
-			} else {
 				priceAmount = price.Discounted.Amount
+			} else {
+				priceAmount = price.Default.Amount
 			}
 			originalPriceAmount = price.Default.Amount
 		} else {
@@ -275,9 +275,9 @@ func (s *CheckoutService) checkoutOneTime(ctx context.Context,
 				return option.CurrencyCode == currencyCode
 			})
 			if currencyOption.Discounted != nil {
-				priceAmount = currencyOption.Default.Amount
-			} else {
 				priceAmount = currencyOption.Discounted.Amount
+			} else {
+				priceAmount = currencyOption.Default.Amount
 			}
 			originalPriceAmount = currencyOption.Default.Amount
 		}
