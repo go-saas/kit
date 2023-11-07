@@ -1,6 +1,7 @@
 package biz
 
 import (
+	"context"
 	v1 "github.com/go-saas/kit/payment/api/subscription/v1"
 	"github.com/go-saas/kit/pkg/data"
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
@@ -61,4 +62,5 @@ type SubscriptionListPrams interface {
 
 type SubscriptionRepo interface {
 	data.Repo[Subscription, string, SubscriptionListPrams]
+	FindByProvider(ctx context.Context, provider, providerKey string) (*Subscription, error)
 }

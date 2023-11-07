@@ -164,6 +164,7 @@ message Order{
 
   google.protobuf.Timestamp created_at =4;
   google.protobuf.Timestamp updated_at =5;
+  string tenant_id=6;
 
   string status=10;
   string currency_code=11;

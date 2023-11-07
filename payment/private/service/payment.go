@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "github.com/go-saas/kit/order/api/order/v1"
 	pb "github.com/go-saas/kit/payment/api/gateway/v1"
+	"github.com/go-saas/kit/payment/private/biz"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authn"
 	"github.com/go-saas/kit/pkg/authz/authz"
@@ -28,6 +29,7 @@ type PaymentService struct {
 	auth             authz.Service
 	orderInternalSrv v1.OrderInternalServiceServer
 	userInternalSrv  v12.UserInternalServiceServer
+	subsRepo         biz.SubscriptionRepo
 	stripeClient     *stripeclient.API
 	l                *log.Helper
 	c                *stripe2.Conf
@@ -41,6 +43,7 @@ func NewPaymentService(
 	auth authz.Service,
 	orderInternalSrv v1.OrderInternalServiceServer,
 	userInternalSrv v12.UserInternalServiceServer,
+	subsRepo biz.SubscriptionRepo,
 	stripeClient *stripeclient.API,
 	logger log.Logger,
 	c *stripe2.Conf,
@@ -50,6 +53,7 @@ func NewPaymentService(
 		auth:             auth,
 		orderInternalSrv: orderInternalSrv,
 		userInternalSrv:  userInternalSrv,
+		subsRepo:         subsRepo,
 		stripeClient:     stripeClient,
 		l:                log.NewHelper(logger),
 		c:                c,
@@ -88,22 +92,61 @@ func (s *PaymentService) StripeWebhook(ctx context.Context, req *emptypb.Empty) 
 		eventType := event.Type
 		log.Infof("receive event type %s with data %v", eventType, data.Raw)
 		switch eventType {
-		case "payment_intent.succeeded":
-			intent := stripe.PaymentIntent{}
-			json.Unmarshal(data.Raw, &intent)
-
-			//TODO paid time
-			t := time.Now()
-			_, err = s.orderInternalSrv.InternalOrderPaySuccess(ctx, &v1.InternalOrderPaySuccessRequest{
-				Id:              intent.Metadata["order_id"],
-				PayExtra:        utils.Map2Structpb(data.Object),
-				PaidPriceAmount: intent.Amount,
-				CurrencyCode:    strings.ToUpper(string(intent.Currency)),
-				PayProvider:     stripe2.ProviderName,
-				PaidTime:        utils.Time2Timepb(&t),
-			})
+		case "customer.subscription.updated":
+			subs := &stripe.Subscription{}
+			err = json.Unmarshal(data.Raw, subs)
+			if err != nil {
+				return nil, errors.BadRequest("", "")
+			}
+			localSubs, err := s.subsRepo.FindByProvider(ctx, stripe2.ProviderName, subs.ID)
 			if err != nil {
 				return nil, err
+			}
+			MapStripeSubscription2Biz(subs, localSubs)
+			err = s.subsRepo.Update(ctx, localSubs.ID.String(), localSubs, nil)
+			if err != nil {
+				return nil, err
+			}
+		case "invoice.payment_succeeded":
+			var invoice stripe.Invoice
+			err = json.Unmarshal(event.Data.Raw, &invoice)
+			if err != nil {
+				return nil, errors.BadRequest("", "")
+			}
+			pi, _ := s.stripeClient.PaymentIntents.Get(
+				invoice.PaymentIntent.ID,
+				nil,
+			)
+			//set default payment method
+			params := &stripe.SubscriptionParams{
+				DefaultPaymentMethod: stripe.String(pi.PaymentMethod.ID),
+			}
+			_, err = s.stripeClient.Subscriptions.Update(invoice.Subscription.ID, params)
+			if err != nil {
+				return nil, err
+			}
+		case "payment_intent.succeeded":
+			intent := stripe.PaymentIntent{}
+			err = json.Unmarshal(data.Raw, &intent)
+			if err != nil {
+				return nil, errors.BadRequest("", "")
+			}
+			orderId := intent.Metadata["order_id"]
+			//no order id, maybe subscription,handled by invoice
+			// has order id, one time purchase
+			if len(orderId) != 0 {
+				t := time.Now()
+				_, err = s.orderInternalSrv.InternalOrderPaySuccess(ctx, &v1.InternalOrderPaySuccessRequest{
+					Id:              orderId,
+					PayExtra:        utils.Map2Structpb(data.Object),
+					PaidPriceAmount: intent.Amount,
+					CurrencyCode:    strings.ToUpper(string(intent.Currency)),
+					PayProvider:     stripe2.ProviderName,
+					PaidTime:        utils.Time2Timepb(&t),
+				})
+				if err != nil {
+					return nil, err
+				}
 			}
 		case "charge.refunded":
 			refund := stripe.Refund{}

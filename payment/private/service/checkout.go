@@ -162,8 +162,9 @@ func (s *CheckoutService) checkoutOrderInternal(ctx context.Context, order *v1.O
 			Customer: &customer.StripeCustomerId,
 		}
 		paymentIntentParams.Metadata = map[string]string{
-			"user_id":  order.CustomerId,
-			"order_id": order.Id,
+			"user_id":   order.CustomerId,
+			"order_id":  order.Id,
+			"tenant_id": order.TenantId,
 		}
 		intent, err = s.stripeClient.PaymentIntents.New(paymentIntentParams)
 		if err != nil {

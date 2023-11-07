@@ -76,3 +76,12 @@ func (c *SubscriptionRepo) BuildFilterScope(q biz.SubscriptionListPrams) func(db
 func (c *SubscriptionRepo) DefaultSorting() []string {
 	return []string{"-created_at"}
 }
+
+func (c *SubscriptionRepo) FindByProvider(ctx context.Context, provider, providerKey string) (*biz.Subscription, error) {
+	g := &biz.Subscription{}
+	err := c.GetDb(ctx).Model(&biz.Subscription{}).First(g, "provider = ? AND provider_key = ?", provider, providerKey).Error
+	if err != nil {
+		return nil, err
+	}
+	return g, nil
+}

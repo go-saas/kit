@@ -13613,6 +13613,9 @@
           "type": "string",
           "format": "date-time"
         },
+        "tenantId": {
+          "type": "string"
+        },
         "status": {
           "type": "string"
         },
