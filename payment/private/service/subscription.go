@@ -190,6 +190,7 @@ func mapBizSubscription2Pb(a *biz.Subscription, b *pb.Subscription) {
 	b.Provider = a.Provider
 	b.ProviderKey = a.ProviderKey
 	b.UserId = a.UserId
+	b.Status = string(a.Status)
 	b.Items = lo.Map(a.Items, func(t biz.SubscriptionItem, i int) *pb.SubscriptionItem {
 		ret := &pb.SubscriptionItem{}
 		mapBizSubscriptionItem2Pb(&t, ret)

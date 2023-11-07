@@ -40,7 +40,6 @@ func NewTenantReadyEventHandler(useCase *TenantUseCase) event.ConsumerHandler {
 func NewSubscriptionChangedEventHandler(useCase *TenantUseCase, planRepo PlanRepo, subsSrv v14.SubscriptionInternalServiceServer) event.ConsumerHandler {
 	msg := &v12.SubscriptionChangedEvent{}
 	return event.ProtoHandler[*v12.SubscriptionChangedEvent](msg, event.HandlerFuncOf[*v12.SubscriptionChangedEvent](func(ctx context.Context, msg *v12.SubscriptionChangedEvent) error {
-		//TODO change plan
 		klog.Infof("receive msg SubscriptionChangedEvent")
 		subs, err := subsSrv.GetInternalSubscription(ctx, &v14.GetInternalSubscriptionRequest{Id: msg.GetId()})
 		if err != nil {
