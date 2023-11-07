@@ -34,7 +34,7 @@ func (s *OrderService) CreateInternalOrder(ctx context.Context, req *pb.CreateIn
 		}
 		orderItems = append(orderItems, *orderItem)
 	}
-	e, err := biz.NewOrder(*taxRate, orderItems)
+	e, err := biz.NewOrder(req.CurrencyCode, *taxRate, orderItems)
 	if err != nil {
 		return nil, err
 	}

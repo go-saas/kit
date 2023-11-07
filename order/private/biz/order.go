@@ -107,8 +107,8 @@ type OrderPaymentProvider struct {
 	ProviderKey string
 }
 
-func NewOrder(taxRate apd.Decimal, items []OrderItem) (*Order, error) {
-	i := &Order{Items: items, Status: OrderStatusUnpaid}
+func NewOrder(currencyCode string, taxRate apd.Decimal, items []OrderItem) (*Order, error) {
+	i := &Order{Items: items, Status: OrderStatusUnpaid, CurrencyCode: currencyCode}
 
 	var totalPrice int64
 	var originalPrice int64
