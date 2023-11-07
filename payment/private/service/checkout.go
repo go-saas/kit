@@ -25,7 +25,7 @@ import (
 type CheckoutService struct {
 	orderInternalSrv v1.OrderInternalServiceServer
 	userInternalSrv  v12.UserInternalServiceServer
-	prodInternalSrv  v14.ProductInternalServiceClient
+	prodInternalSrv  v14.ProductInternalServiceServer
 	subsRepo         biz.SubscriptionRepo
 	stripeClient     *stripeclient.API
 }
@@ -35,7 +35,7 @@ var _ pb.CheckoutServiceServer = (*CheckoutService)(nil)
 func NewCheckoutService(
 	orderInternalSrv v1.OrderInternalServiceServer,
 	userInternalSrv v12.UserInternalServiceServer,
-	prodInternalSrv v14.ProductInternalServiceClient,
+	prodInternalSrv v14.ProductInternalServiceServer,
 	subsRepo biz.SubscriptionRepo,
 	stripeClient *stripeclient.API,
 ) *CheckoutService {
