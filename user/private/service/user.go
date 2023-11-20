@@ -286,8 +286,8 @@ func (s *UserService) InviteUser(ctx context.Context, req *pb.InviteUserRequest)
 	return &pb.InviteUserReply{RequiredConfirm: false}, nil
 }
 
-// SearchUser is for inviting user or creating user
-func (s *UserService) SearchUser(ctx context.Context, req *pb.SearchUserRequest) (*pb.SearchUserResponse, error) {
+// PublicSearchUser is for inviting user or creating user
+func (s *UserService) PublicSearchUser(ctx context.Context, req *pb.SearchUserRequest) (*pb.SearchUserResponse, error) {
 	if _, err := authn.ErrIfUnauthenticated(ctx); err != nil {
 		return nil, err
 	}

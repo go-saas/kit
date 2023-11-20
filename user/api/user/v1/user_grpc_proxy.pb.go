@@ -51,8 +51,8 @@ func (c *userServiceClientProxy) GetUserRoles(ctx context.Context, in *GetUserRo
 func (c *userServiceClientProxy) InviteUser(ctx context.Context, in *InviteUserRequest) (*InviteUserReply, error) {
 	return c.cc.InviteUser(ctx, in)
 }
-func (c *userServiceClientProxy) SearchUser(ctx context.Context, in *SearchUserRequest) (*SearchUserResponse, error) {
-	return c.cc.SearchUser(ctx, in)
+func (c *userServiceClientProxy) PublicSearchUser(ctx context.Context, in *SearchUserRequest) (*SearchUserResponse, error) {
+	return c.cc.PublicSearchUser(ctx, in)
 }
 
 // userInternalServiceClientProxy is the proxy to turn UserInternalService client to server interface.

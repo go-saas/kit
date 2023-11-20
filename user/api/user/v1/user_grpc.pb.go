@@ -20,14 +20,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_ListUsers_FullMethodName    = "/user.api.user.v1.UserService/ListUsers"
-	UserService_GetUser_FullMethodName      = "/user.api.user.v1.UserService/GetUser"
-	UserService_CreateUser_FullMethodName   = "/user.api.user.v1.UserService/CreateUser"
-	UserService_UpdateUser_FullMethodName   = "/user.api.user.v1.UserService/UpdateUser"
-	UserService_DeleteUser_FullMethodName   = "/user.api.user.v1.UserService/DeleteUser"
-	UserService_GetUserRoles_FullMethodName = "/user.api.user.v1.UserService/GetUserRoles"
-	UserService_InviteUser_FullMethodName   = "/user.api.user.v1.UserService/InviteUser"
-	UserService_SearchUser_FullMethodName   = "/user.api.user.v1.UserService/SearchUser"
+	UserService_ListUsers_FullMethodName        = "/user.api.user.v1.UserService/ListUsers"
+	UserService_GetUser_FullMethodName          = "/user.api.user.v1.UserService/GetUser"
+	UserService_CreateUser_FullMethodName       = "/user.api.user.v1.UserService/CreateUser"
+	UserService_UpdateUser_FullMethodName       = "/user.api.user.v1.UserService/UpdateUser"
+	UserService_DeleteUser_FullMethodName       = "/user.api.user.v1.UserService/DeleteUser"
+	UserService_GetUserRoles_FullMethodName     = "/user.api.user.v1.UserService/GetUserRoles"
+	UserService_InviteUser_FullMethodName       = "/user.api.user.v1.UserService/InviteUser"
+	UserService_PublicSearchUser_FullMethodName = "/user.api.user.v1.UserService/PublicSearchUser"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -55,7 +55,7 @@ type UserServiceClient interface {
 	// InviteUser
 	// authz: user.user,*,create
 	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserReply, error)
-	SearchUser(ctx context.Context, in *SearchUserRequest, opts ...grpc.CallOption) (*SearchUserResponse, error)
+	PublicSearchUser(ctx context.Context, in *SearchUserRequest, opts ...grpc.CallOption) (*SearchUserResponse, error)
 }
 
 type userServiceClient struct {
@@ -129,9 +129,9 @@ func (c *userServiceClient) InviteUser(ctx context.Context, in *InviteUserReques
 	return out, nil
 }
 
-func (c *userServiceClient) SearchUser(ctx context.Context, in *SearchUserRequest, opts ...grpc.CallOption) (*SearchUserResponse, error) {
+func (c *userServiceClient) PublicSearchUser(ctx context.Context, in *SearchUserRequest, opts ...grpc.CallOption) (*SearchUserResponse, error) {
 	out := new(SearchUserResponse)
-	err := c.cc.Invoke(ctx, UserService_SearchUser_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, UserService_PublicSearchUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +163,7 @@ type UserServiceServer interface {
 	// InviteUser
 	// authz: user.user,*,create
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error)
-	SearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error)
+	PublicSearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error)
 }
 
 // UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
@@ -191,8 +191,8 @@ func (UnimplementedUserServiceServer) GetUserRoles(context.Context, *GetUserRole
 func (UnimplementedUserServiceServer) InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InviteUser not implemented")
 }
-func (UnimplementedUserServiceServer) SearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchUser not implemented")
+func (UnimplementedUserServiceServer) PublicSearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PublicSearchUser not implemented")
 }
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -332,20 +332,20 @@ func _UserService_InviteUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_SearchUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserService_PublicSearchUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SearchUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).SearchUser(ctx, in)
+		return srv.(UserServiceServer).PublicSearchUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_SearchUser_FullMethodName,
+		FullMethod: UserService_PublicSearchUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).SearchUser(ctx, req.(*SearchUserRequest))
+		return srv.(UserServiceServer).PublicSearchUser(ctx, req.(*SearchUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -386,8 +386,8 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_InviteUser_Handler,
 		},
 		{
-			MethodName: "SearchUser",
-			Handler:    _UserService_SearchUser_Handler,
+			MethodName: "PublicSearchUser",
+			Handler:    _UserService_PublicSearchUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

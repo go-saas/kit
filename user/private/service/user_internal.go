@@ -7,7 +7,7 @@ import (
 	dtmsrv "github.com/go-saas/kit/dtm/service"
 	"github.com/go-saas/kit/dtm/utils"
 	"github.com/go-saas/kit/event"
-	api2 "github.com/go-saas/kit/pkg/api"
+	kapi "github.com/go-saas/kit/pkg/api"
 	sapi "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/errors"
@@ -30,7 +30,7 @@ import (
 type UserInternalService struct {
 	producer     event.Producer
 	auth         authz.Service
-	trust        api2.TrustedContextValidator
+	trust        kapi.TrustedContextValidator
 	seeder       seed.Seeder
 	dtmHelper    *dtmsrv.Helper
 	blob         vfs.Blob
@@ -45,7 +45,7 @@ func NewUserInternalService(
 	seeder seed.Seeder,
 	producer event.Producer,
 	auth authz.Service,
-	trust api2.TrustedContextValidator,
+	trust kapi.TrustedContextValidator,
 	dtmHelper *dtmsrv.Helper,
 	blob vfs.Blob,
 	um *biz.UserManager,
@@ -174,7 +174,7 @@ func (s *UserInternalService) FindOrCreateStripeCustomer(ctx context.Context, re
 // CheckUserTenant internal api for check user tenant
 func (s *UserInternalService) CheckUserTenant(ctx context.Context, req *pb.CheckUserTenantRequest) (*pb.CheckUserTenantReply, error) {
 	//check permission
-	if err := api2.ErrIfUntrusted(ctx, s.trust); err != nil {
+	if err := kapi.ErrIfUntrusted(ctx, s.trust); err != nil {
 		return nil, err
 	}
 

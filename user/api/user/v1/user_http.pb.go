@@ -25,7 +25,7 @@ const OperationUserServiceGetUser = "/user.api.user.v1.UserService/GetUser"
 const OperationUserServiceGetUserRoles = "/user.api.user.v1.UserService/GetUserRoles"
 const OperationUserServiceInviteUser = "/user.api.user.v1.UserService/InviteUser"
 const OperationUserServiceListUsers = "/user.api.user.v1.UserService/ListUsers"
-const OperationUserServiceSearchUser = "/user.api.user.v1.UserService/SearchUser"
+const OperationUserServicePublicSearchUser = "/user.api.user.v1.UserService/PublicSearchUser"
 const OperationUserServiceUpdateUser = "/user.api.user.v1.UserService/UpdateUser"
 
 type UserServiceHTTPServer interface {
@@ -47,7 +47,7 @@ type UserServiceHTTPServer interface {
 	// ListUsersListUsers
 	// authz: user.user,*,list
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
-	SearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error)
+	PublicSearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error)
 	// UpdateUserUpdateUser
 	// authz: user.user,id,update
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
@@ -64,7 +64,7 @@ func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
 	r.DELETE("/v1/user/{id}", _UserService_DeleteUser0_HTTP_Handler(srv))
 	r.GET("/v1/user/{id}/roles", _UserService_GetUserRoles0_HTTP_Handler(srv))
 	r.POST("/v1/user/public/invite", _UserService_InviteUser0_HTTP_Handler(srv))
-	r.GET("/v1/user/public/search", _UserService_SearchUser0_HTTP_Handler(srv))
+	r.GET("/v1/user/public/search", _UserService_PublicSearchUser0_HTTP_Handler(srv))
 }
 
 func _UserService_ListUsers0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
@@ -268,15 +268,15 @@ func _UserService_InviteUser0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx h
 	}
 }
 
-func _UserService_SearchUser0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+func _UserService_PublicSearchUser0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in SearchUserRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationUserServiceSearchUser)
+		http.SetOperation(ctx, OperationUserServicePublicSearchUser)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.SearchUser(ctx, req.(*SearchUserRequest))
+			return srv.PublicSearchUser(ctx, req.(*SearchUserRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -294,7 +294,7 @@ type UserServiceHTTPClient interface {
 	GetUserRoles(ctx context.Context, req *GetUserRoleRequest, opts ...http.CallOption) (rsp *GetUserRoleReply, err error)
 	InviteUser(ctx context.Context, req *InviteUserRequest, opts ...http.CallOption) (rsp *InviteUserReply, err error)
 	ListUsers(ctx context.Context, req *ListUsersRequest, opts ...http.CallOption) (rsp *ListUsersResponse, err error)
-	SearchUser(ctx context.Context, req *SearchUserRequest, opts ...http.CallOption) (rsp *SearchUserResponse, err error)
+	PublicSearchUser(ctx context.Context, req *SearchUserRequest, opts ...http.CallOption) (rsp *SearchUserResponse, err error)
 	UpdateUser(ctx context.Context, req *UpdateUserRequest, opts ...http.CallOption) (rsp *User, err error)
 }
 
@@ -384,11 +384,11 @@ func (c *UserServiceHTTPClientImpl) ListUsers(ctx context.Context, in *ListUsers
 	return &out, err
 }
 
-func (c *UserServiceHTTPClientImpl) SearchUser(ctx context.Context, in *SearchUserRequest, opts ...http.CallOption) (*SearchUserResponse, error) {
+func (c *UserServiceHTTPClientImpl) PublicSearchUser(ctx context.Context, in *SearchUserRequest, opts ...http.CallOption) (*SearchUserResponse, error) {
 	var out SearchUserResponse
 	pattern := "/v1/user/public/search"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationUserServiceSearchUser))
+	opts = append(opts, http.Operation(OperationUserServicePublicSearchUser))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

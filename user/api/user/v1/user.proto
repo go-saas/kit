@@ -110,13 +110,11 @@ service UserService{
     };
   }
 
-  rpc SearchUser(SearchUserRequest)returns(SearchUserResponse){
+  rpc PublicSearchUser(SearchUserRequest)returns(SearchUserResponse){
     option (google.api.http) = {
       get: "/v1/user/public/search"
     };
   }
-
-
 
 }
 

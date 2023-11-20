@@ -2564,7 +2564,7 @@
     },
     "/v1/user/public/search": {
       "get": {
-        "operationId": "UserService_SearchUser",
+        "operationId": "UserService_PublicSearchUser",
         "responses": {
           "200": {
             "description": "A successful response.",
