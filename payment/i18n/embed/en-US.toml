@@ -2,7 +2,7 @@
 other = "Payment Management"
 
 [payment.subscription]
-other = "订阅管理"
+other = "Subscription List"
 
 [permission.payment.subscription.group]
 other = "Subscription"

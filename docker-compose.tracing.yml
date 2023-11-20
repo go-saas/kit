@@ -11,7 +11,7 @@ services:
       - QUERY_BASE_PATH=/jaeger
     restart: unless-stopped
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.88.0
+    image: otel/opentelemetry-collector-contrib:0.89.0
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
       - ./quickstart/configs/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml
