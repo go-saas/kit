@@ -48,6 +48,12 @@ func (c *userServiceClientProxy) DeleteUser(ctx context.Context, in *DeleteUserR
 func (c *userServiceClientProxy) GetUserRoles(ctx context.Context, in *GetUserRoleRequest) (*GetUserRoleReply, error) {
 	return c.cc.GetUserRoles(ctx, in)
 }
+func (c *userServiceClientProxy) GetUserPermission(ctx context.Context, in *GetUserPermissionRequest) (*GetUserPermissionReply, error) {
+	return c.cc.GetUserPermission(ctx, in)
+}
+func (c *userServiceClientProxy) UpdateUserPermission(ctx context.Context, in *UpdateUserPermissionRequest) (*UpdateUserPermissionReply, error) {
+	return c.cc.UpdateUserPermission(ctx, in)
+}
 func (c *userServiceClientProxy) InviteUser(ctx context.Context, in *InviteUserRequest) (*InviteUserReply, error) {
 	return c.cc.InviteUser(ctx, in)
 }

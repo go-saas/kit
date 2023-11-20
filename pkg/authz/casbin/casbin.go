@@ -48,9 +48,9 @@ func (p *EnforcerProvider) Get(ctx context.Context) (*casbin.SyncedEnforcer, err
 		return nil, err
 	}
 	//every time reload policy by tenant
-	tenantInfo, _ := saas.FromCurrentTenant(ctx)
+	ti, _ := saas.FromCurrentTenant(ctx)
 	filter := gormadapter.Filter{
-		V4: []string{tenantInfo.GetId(), "*"},
+		V4: []string{ti.GetId(), "*"},
 	}
 	//model is not concurrency safe
 	m, _ := model.NewModelFromString(modelStr)

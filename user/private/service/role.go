@@ -236,13 +236,12 @@ func (s *RoleService) updateRolePermission(ctx context.Context, r *biz.Role, upd
 	if r.IsPreserved {
 		return pb.ErrorRolePreservedLocalized(ctx, nil, nil)
 	}
-	ti, _ := saas.FromCurrentTenant(ctx)
 	var acl = lo.Map(update, func(a *pb.UpdateRolePermissionAcl, _ int) authz.UpdateSubjectPermission {
 		effect := util.MapPbEffect2AuthEffect(a.Effect)
 		return authz.UpdateSubjectPermission{
 			Resource: authz.NewEntityResource(a.Namespace, a.Resource),
 			Action:   authz.ActionStr(a.Action),
-			TenantID: ti.GetId(),
+			TenantID: r.TenantId.String,
 			Effect:   effect,
 		}
 	})

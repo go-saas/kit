@@ -2676,6 +2676,81 @@
         ]
       }
     },
+    "/v1/user/{id}/permission": {
+      "get": {
+        "operationId": "UserService_GetUserPermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetUserPermissionReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      },
+      "put": {
+        "operationId": "UserService_UpdateUserPermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateUserPermissionReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "acl": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/definitions/v1UpdateSubjectPermissionAcl"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/v1/user/{id}/roles": {
       "get": {
         "summary": "GetUserRoles\nauthz: user.user,id,get",
@@ -4238,6 +4313,25 @@
         }
       }
     },
+    "v1GetUserPermissionReply": {
+      "type": "object",
+      "properties": {
+        "acl": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Permission"
+          }
+        },
+        "defGroups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/permissionv1PermissionDefGroup"
+          }
+        }
+      }
+    },
     "v1GetUserRoleReply": {
       "type": "object",
       "properties": {
@@ -5278,6 +5372,9 @@
       "required": [
         "id"
       ]
+    },
+    "v1UpdateUserPermissionReply": {
+      "type": "object"
     },
     "v1User": {
       "type": "object",

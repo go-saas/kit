@@ -6,6 +6,8 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	api2 "github.com/go-saas/kit/pkg/api"
 	"github.com/go-saas/kit/pkg/utils"
+	v12 "github.com/go-saas/kit/user/api/permission/v1"
+	"github.com/go-saas/kit/user/util"
 	"github.com/go-saas/saas"
 	"github.com/goxiaoy/vfs"
 	"io"
@@ -29,12 +31,13 @@ import (
 )
 
 type UserService struct {
-	um     *biz.UserManager
-	rm     *biz.RoleManager
-	auth   authz.Service
-	blob   vfs.Blob
-	trust  api2.TrustedContextValidator
-	logger *klog.Helper
+	um            *biz.UserManager
+	rm            *biz.RoleManager
+	auth          authz.Service
+	blob          vfs.Blob
+	trust         api2.TrustedContextValidator
+	permissionMgr authz.PermissionManagementService
+	logger        *klog.Helper
 }
 
 func NewUserService(
@@ -43,15 +46,17 @@ func NewUserService(
 	auth authz.Service,
 	blob vfs.Blob,
 	trust api2.TrustedContextValidator,
+	permissionMgr authz.PermissionManagementService,
 	l klog.Logger,
 ) *UserService {
 	return &UserService{
-		um:     um,
-		rm:     rm,
-		auth:   auth,
-		blob:   blob,
-		trust:  trust,
-		logger: klog.NewHelper(klog.With(l, "module", "user.UserService")),
+		um:            um,
+		rm:            rm,
+		auth:          auth,
+		blob:          blob,
+		trust:         trust,
+		permissionMgr: permissionMgr,
+		logger:        klog.NewHelper(klog.With(l, "module", "user.UserService")),
 	}
 }
 
@@ -263,6 +268,99 @@ func (s *UserService) GetUserRoles(ctx context.Context, req *pb.GetUserRoleReque
 		}
 	}
 	return resp, nil
+}
+
+func (s *UserService) GetUserPermission(ctx context.Context, req *pb.GetUserPermissionRequest) (*pb.GetUserPermissionReply, error) {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.Id), authz.ReadAction); err != nil {
+		return nil, err
+	}
+	u, err := s.um.FindByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if u == nil {
+		return nil, pb.ErrorUserNotFoundLocalized(ctx, nil, nil)
+	}
+	if err := u.CheckInCurrentTenant(ctx); err != nil {
+		return nil, err
+	}
+	userSubject := authz.NewUserSubject(u.ID.String())
+	acl, err := s.permissionMgr.ListAcl(ctx, userSubject)
+	if err != nil {
+		return nil, err
+	}
+	resItems := make([]*v12.Permission, len(acl))
+	for i, bean := range acl {
+		r := &v12.Permission{}
+		util.MapPermissionBeanToPb(bean, r)
+		resItems[i] = r
+	}
+	res := &pb.GetUserPermissionReply{
+		Acl: resItems,
+	}
+	ti, _ := saas.FromCurrentTenant(ctx)
+	var groups []*v12.PermissionDefGroup
+	authz.WalkGroups(len(ti.GetId()) == 0, true, func(group *authz.PermissionDefGroup) {
+		g := &v12.PermissionDefGroup{}
+		mapGroupDef2Pb(ctx, group, g)
+		groups = append(groups, g)
+		var defs []*v12.PermissionDef
+		group.Walk(len(ti.GetId()) == 0, true, func(def *authz.PermissionDef) {
+			d := &v12.PermissionDef{}
+			mapDef2Pb(ctx, def, d)
+			defs = append(defs, d)
+		})
+		g.Def = defs
+	})
+	requirements := lo.FlatMap(groups, func(group *v12.PermissionDefGroup, _ int) []*authz.Requirement {
+		return lo.Map(group.Def, func(def *v12.PermissionDef, _ int) *authz.Requirement {
+			return authz.NewRequirement(authz.NewEntityResource(def.Namespace, authz.AnyResource), authz.ActionStr(def.Action))
+		})
+	})
+	checkResults, err := s.auth.BatchCheckForSubjects(ctx, requirements, userSubject)
+	if err != nil {
+		return nil, err
+	}
+	i := 0
+	for _, group := range groups {
+		for _, def := range group.Def {
+			def.Granted = checkResults[i].Allowed
+			i++
+		}
+	}
+	res.DefGroups = groups
+	return res, nil
+}
+
+func (s *UserService) UpdateUserPermission(ctx context.Context, req *pb.UpdateUserPermissionRequest) (*pb.UpdateUserPermissionReply, error) {
+	if _, err := s.auth.Check(ctx, authz.NewEntityResource(api.ResourceUser, req.Id), authz.UpdateAction); err != nil {
+		return nil, err
+	}
+	u, err := s.um.FindByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if u == nil {
+		return nil, pb.ErrorUserNotFoundLocalized(ctx, nil, nil)
+	}
+	if err := u.CheckInCurrentTenant(ctx); err != nil {
+		return nil, err
+	}
+	ti, _ := saas.FromCurrentTenant(ctx)
+	var acl = lo.Map(req.Acl, func(a *v12.UpdateSubjectPermissionAcl, _ int) authz.UpdateSubjectPermission {
+		effect := util.MapPbEffect2AuthEffect(a.Effect)
+		return authz.UpdateSubjectPermission{
+			Resource: authz.NewEntityResource(a.Namespace, a.Resource),
+			Action:   authz.ActionStr(a.Action),
+			TenantID: ti.GetId(),
+			Effect:   effect,
+		}
+	})
+	if err := s.permissionMgr.UpdateGrant(ctx, authz.NewUserSubject(u.ID.String()), acl); err != nil {
+		return nil, err
+	}
+	return &pb.UpdateUserPermissionReply{}, nil
+
 }
 
 func (s *UserService) InviteUser(ctx context.Context, req *pb.InviteUserRequest) (*pb.InviteUserReply, error) {

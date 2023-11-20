@@ -20,14 +20,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_ListUsers_FullMethodName        = "/user.api.user.v1.UserService/ListUsers"
-	UserService_GetUser_FullMethodName          = "/user.api.user.v1.UserService/GetUser"
-	UserService_CreateUser_FullMethodName       = "/user.api.user.v1.UserService/CreateUser"
-	UserService_UpdateUser_FullMethodName       = "/user.api.user.v1.UserService/UpdateUser"
-	UserService_DeleteUser_FullMethodName       = "/user.api.user.v1.UserService/DeleteUser"
-	UserService_GetUserRoles_FullMethodName     = "/user.api.user.v1.UserService/GetUserRoles"
-	UserService_InviteUser_FullMethodName       = "/user.api.user.v1.UserService/InviteUser"
-	UserService_PublicSearchUser_FullMethodName = "/user.api.user.v1.UserService/PublicSearchUser"
+	UserService_ListUsers_FullMethodName            = "/user.api.user.v1.UserService/ListUsers"
+	UserService_GetUser_FullMethodName              = "/user.api.user.v1.UserService/GetUser"
+	UserService_CreateUser_FullMethodName           = "/user.api.user.v1.UserService/CreateUser"
+	UserService_UpdateUser_FullMethodName           = "/user.api.user.v1.UserService/UpdateUser"
+	UserService_DeleteUser_FullMethodName           = "/user.api.user.v1.UserService/DeleteUser"
+	UserService_GetUserRoles_FullMethodName         = "/user.api.user.v1.UserService/GetUserRoles"
+	UserService_GetUserPermission_FullMethodName    = "/user.api.user.v1.UserService/GetUserPermission"
+	UserService_UpdateUserPermission_FullMethodName = "/user.api.user.v1.UserService/UpdateUserPermission"
+	UserService_InviteUser_FullMethodName           = "/user.api.user.v1.UserService/InviteUser"
+	UserService_PublicSearchUser_FullMethodName     = "/user.api.user.v1.UserService/PublicSearchUser"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -52,6 +54,8 @@ type UserServiceClient interface {
 	// GetUserRoles
 	// authz: user.user,id,get
 	GetUserRoles(ctx context.Context, in *GetUserRoleRequest, opts ...grpc.CallOption) (*GetUserRoleReply, error)
+	GetUserPermission(ctx context.Context, in *GetUserPermissionRequest, opts ...grpc.CallOption) (*GetUserPermissionReply, error)
+	UpdateUserPermission(ctx context.Context, in *UpdateUserPermissionRequest, opts ...grpc.CallOption) (*UpdateUserPermissionReply, error)
 	// InviteUser
 	// authz: user.user,*,create
 	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserReply, error)
@@ -120,6 +124,24 @@ func (c *userServiceClient) GetUserRoles(ctx context.Context, in *GetUserRoleReq
 	return out, nil
 }
 
+func (c *userServiceClient) GetUserPermission(ctx context.Context, in *GetUserPermissionRequest, opts ...grpc.CallOption) (*GetUserPermissionReply, error) {
+	out := new(GetUserPermissionReply)
+	err := c.cc.Invoke(ctx, UserService_GetUserPermission_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserPermission(ctx context.Context, in *UpdateUserPermissionRequest, opts ...grpc.CallOption) (*UpdateUserPermissionReply, error) {
+	out := new(UpdateUserPermissionReply)
+	err := c.cc.Invoke(ctx, UserService_UpdateUserPermission_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserReply, error) {
 	out := new(InviteUserReply)
 	err := c.cc.Invoke(ctx, UserService_InviteUser_FullMethodName, in, out, opts...)
@@ -160,6 +182,8 @@ type UserServiceServer interface {
 	// GetUserRoles
 	// authz: user.user,id,get
 	GetUserRoles(context.Context, *GetUserRoleRequest) (*GetUserRoleReply, error)
+	GetUserPermission(context.Context, *GetUserPermissionRequest) (*GetUserPermissionReply, error)
+	UpdateUserPermission(context.Context, *UpdateUserPermissionRequest) (*UpdateUserPermissionReply, error)
 	// InviteUser
 	// authz: user.user,*,create
 	InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error)
@@ -187,6 +211,12 @@ func (UnimplementedUserServiceServer) DeleteUser(context.Context, *DeleteUserReq
 }
 func (UnimplementedUserServiceServer) GetUserRoles(context.Context, *GetUserRoleRequest) (*GetUserRoleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserRoles not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserPermission(context.Context, *GetUserPermissionRequest) (*GetUserPermissionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserPermission not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserPermission(context.Context, *UpdateUserPermissionRequest) (*UpdateUserPermissionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserPermission not implemented")
 }
 func (UnimplementedUserServiceServer) InviteUser(context.Context, *InviteUserRequest) (*InviteUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InviteUser not implemented")
@@ -314,6 +344,42 @@ func _UserService_GetUserRoles_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetUserPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserPermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetUserPermission_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserPermission(ctx, req.(*GetUserPermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserPermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UpdateUserPermission_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserPermission(ctx, req.(*UpdateUserPermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_InviteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InviteUserRequest)
 	if err := dec(in); err != nil {
@@ -380,6 +446,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserRoles",
 			Handler:    _UserService_GetUserRoles_Handler,
+		},
+		{
+			MethodName: "GetUserPermission",
+			Handler:    _UserService_GetUserPermission_Handler,
+		},
+		{
+			MethodName: "UpdateUserPermission",
+			Handler:    _UserService_UpdateUserPermission_Handler,
 		},
 		{
 			MethodName: "InviteUser",

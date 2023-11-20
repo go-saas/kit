@@ -22,11 +22,13 @@ const _ = http.SupportPackageIsVersion1
 const OperationUserServiceCreateUser = "/user.api.user.v1.UserService/CreateUser"
 const OperationUserServiceDeleteUser = "/user.api.user.v1.UserService/DeleteUser"
 const OperationUserServiceGetUser = "/user.api.user.v1.UserService/GetUser"
+const OperationUserServiceGetUserPermission = "/user.api.user.v1.UserService/GetUserPermission"
 const OperationUserServiceGetUserRoles = "/user.api.user.v1.UserService/GetUserRoles"
 const OperationUserServiceInviteUser = "/user.api.user.v1.UserService/InviteUser"
 const OperationUserServiceListUsers = "/user.api.user.v1.UserService/ListUsers"
 const OperationUserServicePublicSearchUser = "/user.api.user.v1.UserService/PublicSearchUser"
 const OperationUserServiceUpdateUser = "/user.api.user.v1.UserService/UpdateUser"
+const OperationUserServiceUpdateUserPermission = "/user.api.user.v1.UserService/UpdateUserPermission"
 
 type UserServiceHTTPServer interface {
 	// CreateUser CreateUser
@@ -38,6 +40,7 @@ type UserServiceHTTPServer interface {
 	// GetUserGetUser
 	// authz: user.user,id,get
 	GetUser(context.Context, *GetUserRequest) (*User, error)
+	GetUserPermission(context.Context, *GetUserPermissionRequest) (*GetUserPermissionReply, error)
 	// GetUserRolesGetUserRoles
 	// authz: user.user,id,get
 	GetUserRoles(context.Context, *GetUserRoleRequest) (*GetUserRoleReply, error)
@@ -51,6 +54,7 @@ type UserServiceHTTPServer interface {
 	// UpdateUserUpdateUser
 	// authz: user.user,id,update
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
+	UpdateUserPermission(context.Context, *UpdateUserPermissionRequest) (*UpdateUserPermissionReply, error)
 }
 
 func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
@@ -63,6 +67,8 @@ func RegisterUserServiceHTTPServer(s *http.Server, srv UserServiceHTTPServer) {
 	r.PUT("/v1/user/{user.id}", _UserService_UpdateUser1_HTTP_Handler(srv))
 	r.DELETE("/v1/user/{id}", _UserService_DeleteUser0_HTTP_Handler(srv))
 	r.GET("/v1/user/{id}/roles", _UserService_GetUserRoles0_HTTP_Handler(srv))
+	r.GET("/v1/user/{id}/permission", _UserService_GetUserPermission0_HTTP_Handler(srv))
+	r.PUT("/v1/user/{id}/permission", _UserService_UpdateUserPermission0_HTTP_Handler(srv))
 	r.POST("/v1/user/public/invite", _UserService_InviteUser0_HTTP_Handler(srv))
 	r.GET("/v1/user/public/search", _UserService_PublicSearchUser0_HTTP_Handler(srv))
 }
@@ -246,6 +252,53 @@ func _UserService_GetUserRoles0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx
 	}
 }
 
+func _UserService_GetUserPermission0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetUserPermissionRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserServiceGetUserPermission)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetUserPermission(ctx, req.(*GetUserPermissionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetUserPermissionReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _UserService_UpdateUserPermission0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateUserPermissionRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserServiceUpdateUserPermission)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateUserPermission(ctx, req.(*UpdateUserPermissionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdateUserPermissionReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _UserService_InviteUser0_HTTP_Handler(srv UserServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in InviteUserRequest
@@ -291,11 +344,13 @@ type UserServiceHTTPClient interface {
 	CreateUser(ctx context.Context, req *CreateUserRequest, opts ...http.CallOption) (rsp *User, err error)
 	DeleteUser(ctx context.Context, req *DeleteUserRequest, opts ...http.CallOption) (rsp *DeleteUserResponse, err error)
 	GetUser(ctx context.Context, req *GetUserRequest, opts ...http.CallOption) (rsp *User, err error)
+	GetUserPermission(ctx context.Context, req *GetUserPermissionRequest, opts ...http.CallOption) (rsp *GetUserPermissionReply, err error)
 	GetUserRoles(ctx context.Context, req *GetUserRoleRequest, opts ...http.CallOption) (rsp *GetUserRoleReply, err error)
 	InviteUser(ctx context.Context, req *InviteUserRequest, opts ...http.CallOption) (rsp *InviteUserReply, err error)
 	ListUsers(ctx context.Context, req *ListUsersRequest, opts ...http.CallOption) (rsp *ListUsersResponse, err error)
 	PublicSearchUser(ctx context.Context, req *SearchUserRequest, opts ...http.CallOption) (rsp *SearchUserResponse, err error)
 	UpdateUser(ctx context.Context, req *UpdateUserRequest, opts ...http.CallOption) (rsp *User, err error)
+	UpdateUserPermission(ctx context.Context, req *UpdateUserPermissionRequest, opts ...http.CallOption) (rsp *UpdateUserPermissionReply, err error)
 }
 
 type UserServiceHTTPClientImpl struct {
@@ -337,6 +392,19 @@ func (c *UserServiceHTTPClientImpl) GetUser(ctx context.Context, in *GetUserRequ
 	pattern := "/v1/user/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserServiceGetUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *UserServiceHTTPClientImpl) GetUserPermission(ctx context.Context, in *GetUserPermissionRequest, opts ...http.CallOption) (*GetUserPermissionReply, error) {
+	var out GetUserPermissionReply
+	pattern := "/v1/user/{id}/permission"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationUserServiceGetUserPermission))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -402,6 +470,19 @@ func (c *UserServiceHTTPClientImpl) UpdateUser(ctx context.Context, in *UpdateUs
 	pattern := "/v1/user/{user.id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserServiceUpdateUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *UserServiceHTTPClientImpl) UpdateUserPermission(ctx context.Context, in *UpdateUserPermissionRequest, opts ...http.CallOption) (*UpdateUserPermissionReply, error) {
+	var out UpdateUserPermissionReply
+	pattern := "/v1/user/{id}/permission"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserServiceUpdateUserPermission))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
