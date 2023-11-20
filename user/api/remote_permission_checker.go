@@ -8,15 +8,15 @@ import (
 	"github.com/samber/lo"
 )
 
-//PermissionChecker impl authz.PermissionChecker and authz.PermissionManagementService from calling remote service
+// PermissionChecker impl authz.PermissionChecker and authz.PermissionManagementService from calling remote service
 type PermissionChecker struct {
-	srv v1.PermissionServiceServer
+	srv v1.PermissionInternalServiceServer
 }
 
 var _ authz.PermissionChecker = (*PermissionChecker)(nil)
 var _ authz.PermissionManagementService = (*PermissionChecker)(nil)
 
-func NewRemotePermissionChecker(srv v1.PermissionServiceServer) *PermissionChecker {
+func NewRemotePermissionChecker(srv v1.PermissionInternalServiceServer) *PermissionChecker {
 	return &PermissionChecker{
 		srv: srv,
 	}

@@ -1,15 +1,4 @@
 groups:
-
-  - name: "permission.permission"
-    internal: true
-    def:
-      - name: "permission.permission.read"
-        namespace: "permission"
-        action: "read"
-      - name: "permission.permission.write"
-        namespace: "permission"
-        action: "write"
-
   - name: "permission.user.user.group"
     def:
       - name: "permission.user.user.any"

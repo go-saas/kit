@@ -89,7 +89,6 @@ func NewCentrifugeNode(redisOpt *redis.UniversalOptions, logger klog.Logger) (*c
 		client.OnDisconnect(func(e centrifuge.DisconnectEvent) {
 			l.Debugf("user %s disconnected, disconnect: %s", client.UserID(), e.Disconnect)
 		})
-
 		transport := client.Transport()
 		l.Debugf("user %s connected via %s", client.UserID(), transport.Name())
 	})

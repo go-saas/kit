@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package user.api.permission.v1;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/struct.proto";
+import "validate/validate.proto";
+import "user/api/permission/v1/permission.proto";
+
+option go_package = "github.com/go-saas/kit/user/api/permission/v1;v1";
+
+service PermissionInternalService{
+  rpc CheckForSubjects(CheckSubjectsPermissionRequest)returns(CheckSubjectsPermissionReply){
+  }
+
+  //management add
+  rpc AddSubjectPermission(AddSubjectPermissionRequest)returns(AddSubjectPermissionResponse){
+  }
+
+  //management list
+  rpc ListSubjectPermission(ListSubjectPermissionRequest)returns(ListSubjectPermissionResponse){
+  }
+
+  //management update
+  rpc UpdateSubjectPermission(UpdateSubjectPermissionRequest)returns(UpdateSubjectPermissionResponse){
+  }
+
+  //management remove
+  rpc RemoveSubjectPermission(RemoveSubjectPermissionRequest)returns(RemoveSubjectPermissionReply){
+  }
+
+}
+
+message CheckSubjectsPermissionRequest{
+  repeated string subjects =4;
+  string tenant_id =5;
+  repeated PermissionRequirement requirements= 6;
+}
+
+message CheckSubjectsPermissionReply{
+
+  repeated Effect effect_list=2;
+}
+

@@ -6,8 +6,6 @@ import (
 )
 
 const (
-	ResourcePermission = "permission"
-
 	ResourceUser = "user.user"
 	ResourceRole = "user.role"
 

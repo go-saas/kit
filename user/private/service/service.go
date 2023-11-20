@@ -125,5 +125,6 @@ func NewGrpcServerRegister(
 		v14.RegisterWeChatAuthServiceServer(srv, weChatAuth)
 		v1.RegisterRoleServiceServer(srv, role)
 		v15.RegisterPermissionServiceServer(srv, permission)
+		v15.RegisterPermissionInternalServiceServer(srv, permission)
 	})
 }

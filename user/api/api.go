@@ -40,7 +40,7 @@ var GrpcProviderSet = kitdi.NewSet(
 	NewUserTenantContrib, NewRefreshProvider,
 	kitdi.NewProvider(NewRemotePermissionChecker, di.As(new(authz.PermissionChecker)), di.As(new(authz.PermissionManagementService))),
 	NewGrpcConn,
-	NewUserGrpcClient, NewUserInternalGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient)
+	NewUserGrpcClient, NewUserInternalGrpcClient, NewAuthGrpcClient, NewAccountGrpcClient, NewRoleGrpcClient, NewPermissionGrpcClient, NewPermissionInternalGrpcClient)
 
 func NewUserGrpcClient(conn GrpcConn) v1.UserServiceServer {
 	return v1.NewUserServiceClientProxy(v1.NewUserServiceClient(conn))
@@ -52,6 +52,10 @@ func NewUserInternalGrpcClient(conn GrpcConn) v1.UserInternalServiceServer {
 
 func NewPermissionGrpcClient(conn GrpcConn) v15.PermissionServiceServer {
 	return v15.NewPermissionServiceClientProxy(v15.NewPermissionServiceClient(conn))
+}
+
+func NewPermissionInternalGrpcClient(conn GrpcConn) v15.PermissionInternalServiceServer {
+	return v15.NewPermissionInternalServiceClientProxy(v15.NewPermissionInternalServiceClient(conn))
 }
 
 func NewAuthGrpcClient(conn GrpcConn) v12.AuthServer {

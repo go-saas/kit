@@ -28,47 +28,10 @@ service PermissionService{
       body: "*"
     };
   }
-
-  rpc CheckForSubjects(CheckSubjectsPermissionRequest)returns(CheckSubjectsPermissionReply){
-
-  }
-
-  //management add
-  rpc AddSubjectPermission(AddSubjectPermissionRequest)returns(AddSubjectPermissionResponse){
-    option (google.api.http) = {
-      post: "/v1/permission/subject"
-      body: "*"
-    };
-  }
-
-  //management list
-  rpc ListSubjectPermission(ListSubjectPermissionRequest)returns(ListSubjectPermissionResponse){
-    option (google.api.http) = {
-      get: "/v1/permission/subject"
-      additional_bindings{
-        post : "/v1/permission/subject/list",
-        body:"*"
-      }
-    };
-  }
-
-  //management update
-  rpc UpdateSubjectPermission(UpdateSubjectPermissionRequest)returns(UpdateSubjectPermissionResponse){
-    option (google.api.http) = {
-      put: "/v1/permission/subject"
-      body: "*"
-    };
-  }
-
-  //management remove
-  rpc RemoveSubjectPermission(RemoveSubjectPermissionRequest)returns(RemoveSubjectPermissionReply){
-    option (google.api.http) = {
-      post: "/v1/permission/subject/rm"
-      body: "*"
-    };
-  }
-
 }
+
+
+
 
 message GetCurrentPermissionRequest{
 
@@ -87,18 +50,6 @@ message CheckPermissionRequest{
 
 message CheckPermissionReply{
   Effect effect = 1;
-}
-
-
-message CheckSubjectsPermissionRequest{
-  repeated string subjects =4;
-  string tenant_id =5;
-  repeated PermissionRequirement requirements= 6;
-}
-
-message CheckSubjectsPermissionReply{
-
-  repeated Effect effect_list=2;
 }
 
 
@@ -167,12 +118,6 @@ message ListSubjectPermissionResponse{
   repeated PermissionDefGroup def_groups=2;
 }
 
-message PermissionRequirement{
-  string namespace = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-  string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
-}
-
 
 enum PermissionSide{
   BOTH=0;
@@ -198,4 +143,9 @@ message PermissionDef{
 
   bool granted=6;
   string name=7;
+}
+message PermissionRequirement{
+  string namespace = 1 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string resource = 2 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
+  string action = 3 [(validate.rules).string.min_len=1,(google.api.field_behavior) = REQUIRED];
 }

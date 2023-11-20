@@ -33,18 +33,3 @@ func (c *permissionServiceClientProxy) GetCurrent(ctx context.Context, in *GetCu
 func (c *permissionServiceClientProxy) CheckCurrent(ctx context.Context, in *CheckPermissionRequest) (*CheckPermissionReply, error) {
 	return c.cc.CheckCurrent(ctx, in)
 }
-func (c *permissionServiceClientProxy) CheckForSubjects(ctx context.Context, in *CheckSubjectsPermissionRequest) (*CheckSubjectsPermissionReply, error) {
-	return c.cc.CheckForSubjects(ctx, in)
-}
-func (c *permissionServiceClientProxy) AddSubjectPermission(ctx context.Context, in *AddSubjectPermissionRequest) (*AddSubjectPermissionResponse, error) {
-	return c.cc.AddSubjectPermission(ctx, in)
-}
-func (c *permissionServiceClientProxy) ListSubjectPermission(ctx context.Context, in *ListSubjectPermissionRequest) (*ListSubjectPermissionResponse, error) {
-	return c.cc.ListSubjectPermission(ctx, in)
-}
-func (c *permissionServiceClientProxy) UpdateSubjectPermission(ctx context.Context, in *UpdateSubjectPermissionRequest) (*UpdateSubjectPermissionResponse, error) {
-	return c.cc.UpdateSubjectPermission(ctx, in)
-}
-func (c *permissionServiceClientProxy) RemoveSubjectPermission(ctx context.Context, in *RemoveSubjectPermissionRequest) (*RemoveSubjectPermissionReply, error) {
-	return c.cc.RemoveSubjectPermission(ctx, in)
-}

@@ -19,13 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PermissionService_GetCurrent_FullMethodName              = "/user.api.permission.v1.PermissionService/GetCurrent"
-	PermissionService_CheckCurrent_FullMethodName            = "/user.api.permission.v1.PermissionService/CheckCurrent"
-	PermissionService_CheckForSubjects_FullMethodName        = "/user.api.permission.v1.PermissionService/CheckForSubjects"
-	PermissionService_AddSubjectPermission_FullMethodName    = "/user.api.permission.v1.PermissionService/AddSubjectPermission"
-	PermissionService_ListSubjectPermission_FullMethodName   = "/user.api.permission.v1.PermissionService/ListSubjectPermission"
-	PermissionService_UpdateSubjectPermission_FullMethodName = "/user.api.permission.v1.PermissionService/UpdateSubjectPermission"
-	PermissionService_RemoveSubjectPermission_FullMethodName = "/user.api.permission.v1.PermissionService/RemoveSubjectPermission"
+	PermissionService_GetCurrent_FullMethodName   = "/user.api.permission.v1.PermissionService/GetCurrent"
+	PermissionService_CheckCurrent_FullMethodName = "/user.api.permission.v1.PermissionService/CheckCurrent"
 )
 
 // PermissionServiceClient is the client API for PermissionService service.
@@ -35,15 +30,6 @@ type PermissionServiceClient interface {
 	// Get current permission
 	GetCurrent(ctx context.Context, in *GetCurrentPermissionRequest, opts ...grpc.CallOption) (*GetCurrentPermissionReply, error)
 	CheckCurrent(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*CheckPermissionReply, error)
-	CheckForSubjects(ctx context.Context, in *CheckSubjectsPermissionRequest, opts ...grpc.CallOption) (*CheckSubjectsPermissionReply, error)
-	//management add
-	AddSubjectPermission(ctx context.Context, in *AddSubjectPermissionRequest, opts ...grpc.CallOption) (*AddSubjectPermissionResponse, error)
-	//management list
-	ListSubjectPermission(ctx context.Context, in *ListSubjectPermissionRequest, opts ...grpc.CallOption) (*ListSubjectPermissionResponse, error)
-	//management update
-	UpdateSubjectPermission(ctx context.Context, in *UpdateSubjectPermissionRequest, opts ...grpc.CallOption) (*UpdateSubjectPermissionResponse, error)
-	//management remove
-	RemoveSubjectPermission(ctx context.Context, in *RemoveSubjectPermissionRequest, opts ...grpc.CallOption) (*RemoveSubjectPermissionReply, error)
 }
 
 type permissionServiceClient struct {
@@ -72,51 +58,6 @@ func (c *permissionServiceClient) CheckCurrent(ctx context.Context, in *CheckPer
 	return out, nil
 }
 
-func (c *permissionServiceClient) CheckForSubjects(ctx context.Context, in *CheckSubjectsPermissionRequest, opts ...grpc.CallOption) (*CheckSubjectsPermissionReply, error) {
-	out := new(CheckSubjectsPermissionReply)
-	err := c.cc.Invoke(ctx, PermissionService_CheckForSubjects_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *permissionServiceClient) AddSubjectPermission(ctx context.Context, in *AddSubjectPermissionRequest, opts ...grpc.CallOption) (*AddSubjectPermissionResponse, error) {
-	out := new(AddSubjectPermissionResponse)
-	err := c.cc.Invoke(ctx, PermissionService_AddSubjectPermission_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *permissionServiceClient) ListSubjectPermission(ctx context.Context, in *ListSubjectPermissionRequest, opts ...grpc.CallOption) (*ListSubjectPermissionResponse, error) {
-	out := new(ListSubjectPermissionResponse)
-	err := c.cc.Invoke(ctx, PermissionService_ListSubjectPermission_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *permissionServiceClient) UpdateSubjectPermission(ctx context.Context, in *UpdateSubjectPermissionRequest, opts ...grpc.CallOption) (*UpdateSubjectPermissionResponse, error) {
-	out := new(UpdateSubjectPermissionResponse)
-	err := c.cc.Invoke(ctx, PermissionService_UpdateSubjectPermission_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *permissionServiceClient) RemoveSubjectPermission(ctx context.Context, in *RemoveSubjectPermissionRequest, opts ...grpc.CallOption) (*RemoveSubjectPermissionReply, error) {
-	out := new(RemoveSubjectPermissionReply)
-	err := c.cc.Invoke(ctx, PermissionService_RemoveSubjectPermission_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PermissionServiceServer is the server API for PermissionService service.
 // All implementations should embed UnimplementedPermissionServiceServer
 // for forward compatibility
@@ -124,15 +65,6 @@ type PermissionServiceServer interface {
 	// Get current permission
 	GetCurrent(context.Context, *GetCurrentPermissionRequest) (*GetCurrentPermissionReply, error)
 	CheckCurrent(context.Context, *CheckPermissionRequest) (*CheckPermissionReply, error)
-	CheckForSubjects(context.Context, *CheckSubjectsPermissionRequest) (*CheckSubjectsPermissionReply, error)
-	//management add
-	AddSubjectPermission(context.Context, *AddSubjectPermissionRequest) (*AddSubjectPermissionResponse, error)
-	//management list
-	ListSubjectPermission(context.Context, *ListSubjectPermissionRequest) (*ListSubjectPermissionResponse, error)
-	//management update
-	UpdateSubjectPermission(context.Context, *UpdateSubjectPermissionRequest) (*UpdateSubjectPermissionResponse, error)
-	//management remove
-	RemoveSubjectPermission(context.Context, *RemoveSubjectPermissionRequest) (*RemoveSubjectPermissionReply, error)
 }
 
 // UnimplementedPermissionServiceServer should be embedded to have forward compatible implementations.
@@ -144,21 +76,6 @@ func (UnimplementedPermissionServiceServer) GetCurrent(context.Context, *GetCurr
 }
 func (UnimplementedPermissionServiceServer) CheckCurrent(context.Context, *CheckPermissionRequest) (*CheckPermissionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckCurrent not implemented")
-}
-func (UnimplementedPermissionServiceServer) CheckForSubjects(context.Context, *CheckSubjectsPermissionRequest) (*CheckSubjectsPermissionReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckForSubjects not implemented")
-}
-func (UnimplementedPermissionServiceServer) AddSubjectPermission(context.Context, *AddSubjectPermissionRequest) (*AddSubjectPermissionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddSubjectPermission not implemented")
-}
-func (UnimplementedPermissionServiceServer) ListSubjectPermission(context.Context, *ListSubjectPermissionRequest) (*ListSubjectPermissionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListSubjectPermission not implemented")
-}
-func (UnimplementedPermissionServiceServer) UpdateSubjectPermission(context.Context, *UpdateSubjectPermissionRequest) (*UpdateSubjectPermissionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateSubjectPermission not implemented")
-}
-func (UnimplementedPermissionServiceServer) RemoveSubjectPermission(context.Context, *RemoveSubjectPermissionRequest) (*RemoveSubjectPermissionReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveSubjectPermission not implemented")
 }
 
 // UnsafePermissionServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -208,96 +125,6 @@ func _PermissionService_CheckCurrent_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PermissionService_CheckForSubjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckSubjectsPermissionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermissionServiceServer).CheckForSubjects(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermissionService_CheckForSubjects_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionServiceServer).CheckForSubjects(ctx, req.(*CheckSubjectsPermissionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PermissionService_AddSubjectPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddSubjectPermissionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermissionServiceServer).AddSubjectPermission(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermissionService_AddSubjectPermission_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionServiceServer).AddSubjectPermission(ctx, req.(*AddSubjectPermissionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PermissionService_ListSubjectPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListSubjectPermissionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermissionServiceServer).ListSubjectPermission(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermissionService_ListSubjectPermission_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionServiceServer).ListSubjectPermission(ctx, req.(*ListSubjectPermissionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PermissionService_UpdateSubjectPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateSubjectPermissionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermissionServiceServer).UpdateSubjectPermission(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermissionService_UpdateSubjectPermission_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionServiceServer).UpdateSubjectPermission(ctx, req.(*UpdateSubjectPermissionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PermissionService_RemoveSubjectPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RemoveSubjectPermissionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PermissionServiceServer).RemoveSubjectPermission(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PermissionService_RemoveSubjectPermission_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionServiceServer).RemoveSubjectPermission(ctx, req.(*RemoveSubjectPermissionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PermissionService_ServiceDesc is the grpc.ServiceDesc for PermissionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -312,26 +139,6 @@ var PermissionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckCurrent",
 			Handler:    _PermissionService_CheckCurrent_Handler,
-		},
-		{
-			MethodName: "CheckForSubjects",
-			Handler:    _PermissionService_CheckForSubjects_Handler,
-		},
-		{
-			MethodName: "AddSubjectPermission",
-			Handler:    _PermissionService_AddSubjectPermission_Handler,
-		},
-		{
-			MethodName: "ListSubjectPermission",
-			Handler:    _PermissionService_ListSubjectPermission_Handler,
-		},
-		{
-			MethodName: "UpdateSubjectPermission",
-			Handler:    _PermissionService_UpdateSubjectPermission_Handler,
-		},
-		{
-			MethodName: "RemoveSubjectPermission",
-			Handler:    _PermissionService_RemoveSubjectPermission_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

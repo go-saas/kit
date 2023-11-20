@@ -319,116 +319,6 @@ func (x *CheckPermissionReply) GetEffect() Effect {
 	return Effect_UNKNOWN
 }
 
-type CheckSubjectsPermissionRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Subjects     []string                 `protobuf:"bytes,4,rep,name=subjects,proto3" json:"subjects,omitempty"`
-	TenantId     string                   `protobuf:"bytes,5,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Requirements []*PermissionRequirement `protobuf:"bytes,6,rep,name=requirements,proto3" json:"requirements,omitempty"`
-}
-
-func (x *CheckSubjectsPermissionRequest) Reset() {
-	*x = CheckSubjectsPermissionRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[4]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CheckSubjectsPermissionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CheckSubjectsPermissionRequest) ProtoMessage() {}
-
-func (x *CheckSubjectsPermissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[4]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CheckSubjectsPermissionRequest.ProtoReflect.Descriptor instead.
-func (*CheckSubjectsPermissionRequest) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *CheckSubjectsPermissionRequest) GetSubjects() []string {
-	if x != nil {
-		return x.Subjects
-	}
-	return nil
-}
-
-func (x *CheckSubjectsPermissionRequest) GetTenantId() string {
-	if x != nil {
-		return x.TenantId
-	}
-	return ""
-}
-
-func (x *CheckSubjectsPermissionRequest) GetRequirements() []*PermissionRequirement {
-	if x != nil {
-		return x.Requirements
-	}
-	return nil
-}
-
-type CheckSubjectsPermissionReply struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	EffectList []Effect `protobuf:"varint,2,rep,packed,name=effect_list,json=effectList,proto3,enum=user.api.permission.v1.Effect" json:"effect_list,omitempty"`
-}
-
-func (x *CheckSubjectsPermissionReply) Reset() {
-	*x = CheckSubjectsPermissionReply{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[5]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CheckSubjectsPermissionReply) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CheckSubjectsPermissionReply) ProtoMessage() {}
-
-func (x *CheckSubjectsPermissionReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[5]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CheckSubjectsPermissionReply.ProtoReflect.Descriptor instead.
-func (*CheckSubjectsPermissionReply) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *CheckSubjectsPermissionReply) GetEffectList() []Effect {
-	if x != nil {
-		return x.EffectList
-	}
-	return nil
-}
-
 type Permission struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -445,7 +335,7 @@ type Permission struct {
 func (x *Permission) Reset() {
 	*x = Permission{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[6]
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -458,7 +348,7 @@ func (x *Permission) String() string {
 func (*Permission) ProtoMessage() {}
 
 func (x *Permission) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[6]
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -471,7 +361,7 @@ func (x *Permission) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Permission.ProtoReflect.Descriptor instead.
 func (*Permission) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{6}
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Permission) GetNamespace() string {
@@ -528,7 +418,7 @@ type UpdateSubjectPermissionRequest struct {
 func (x *UpdateSubjectPermissionRequest) Reset() {
 	*x = UpdateSubjectPermissionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[7]
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -541,7 +431,7 @@ func (x *UpdateSubjectPermissionRequest) String() string {
 func (*UpdateSubjectPermissionRequest) ProtoMessage() {}
 
 func (x *UpdateSubjectPermissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[7]
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -554,7 +444,7 @@ func (x *UpdateSubjectPermissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSubjectPermissionRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSubjectPermissionRequest) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{7}
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpdateSubjectPermissionRequest) GetSubject() string {
@@ -586,7 +476,7 @@ type UpdateSubjectPermissionAcl struct {
 func (x *UpdateSubjectPermissionAcl) Reset() {
 	*x = UpdateSubjectPermissionAcl{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[8]
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -599,7 +489,7 @@ func (x *UpdateSubjectPermissionAcl) String() string {
 func (*UpdateSubjectPermissionAcl) ProtoMessage() {}
 
 func (x *UpdateSubjectPermissionAcl) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[8]
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -612,7 +502,7 @@ func (x *UpdateSubjectPermissionAcl) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSubjectPermissionAcl.ProtoReflect.Descriptor instead.
 func (*UpdateSubjectPermissionAcl) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{8}
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UpdateSubjectPermissionAcl) GetNamespace() string {
@@ -661,7 +551,7 @@ type UpdateSubjectPermissionResponse struct {
 func (x *UpdateSubjectPermissionResponse) Reset() {
 	*x = UpdateSubjectPermissionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[9]
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -674,7 +564,7 @@ func (x *UpdateSubjectPermissionResponse) String() string {
 func (*UpdateSubjectPermissionResponse) ProtoMessage() {}
 
 func (x *UpdateSubjectPermissionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[9]
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -687,7 +577,7 @@ func (x *UpdateSubjectPermissionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSubjectPermissionResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSubjectPermissionResponse) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{9}
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UpdateSubjectPermissionResponse) GetAcl() []*Permission {
@@ -713,7 +603,7 @@ type RemoveSubjectPermissionRequest struct {
 func (x *RemoveSubjectPermissionRequest) Reset() {
 	*x = RemoveSubjectPermissionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[10]
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -726,7 +616,7 @@ func (x *RemoveSubjectPermissionRequest) String() string {
 func (*RemoveSubjectPermissionRequest) ProtoMessage() {}
 
 func (x *RemoveSubjectPermissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[10]
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -739,7 +629,7 @@ func (x *RemoveSubjectPermissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveSubjectPermissionRequest.ProtoReflect.Descriptor instead.
 func (*RemoveSubjectPermissionRequest) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{10}
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *RemoveSubjectPermissionRequest) GetNamespace() string {
@@ -793,7 +683,7 @@ type RemoveSubjectPermissionReply struct {
 func (x *RemoveSubjectPermissionReply) Reset() {
 	*x = RemoveSubjectPermissionReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[11]
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -806,7 +696,7 @@ func (x *RemoveSubjectPermissionReply) String() string {
 func (*RemoveSubjectPermissionReply) ProtoMessage() {}
 
 func (x *RemoveSubjectPermissionReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[11]
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -819,7 +709,7 @@ func (x *RemoveSubjectPermissionReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveSubjectPermissionReply.ProtoReflect.Descriptor instead.
 func (*RemoveSubjectPermissionReply) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{11}
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{9}
 }
 
 type AddSubjectPermissionRequest struct {
@@ -838,7 +728,7 @@ type AddSubjectPermissionRequest struct {
 func (x *AddSubjectPermissionRequest) Reset() {
 	*x = AddSubjectPermissionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[12]
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -851,7 +741,7 @@ func (x *AddSubjectPermissionRequest) String() string {
 func (*AddSubjectPermissionRequest) ProtoMessage() {}
 
 func (x *AddSubjectPermissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[12]
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -864,7 +754,7 @@ func (x *AddSubjectPermissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddSubjectPermissionRequest.ProtoReflect.Descriptor instead.
 func (*AddSubjectPermissionRequest) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{12}
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *AddSubjectPermissionRequest) GetNamespace() string {
@@ -918,7 +808,7 @@ type AddSubjectPermissionResponse struct {
 func (x *AddSubjectPermissionResponse) Reset() {
 	*x = AddSubjectPermissionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[13]
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -931,7 +821,7 @@ func (x *AddSubjectPermissionResponse) String() string {
 func (*AddSubjectPermissionResponse) ProtoMessage() {}
 
 func (x *AddSubjectPermissionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[13]
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -944,7 +834,7 @@ func (x *AddSubjectPermissionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddSubjectPermissionResponse.ProtoReflect.Descriptor instead.
 func (*AddSubjectPermissionResponse) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{13}
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{11}
 }
 
 type ListSubjectPermissionRequest struct {
@@ -958,7 +848,7 @@ type ListSubjectPermissionRequest struct {
 func (x *ListSubjectPermissionRequest) Reset() {
 	*x = ListSubjectPermissionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[14]
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -971,7 +861,7 @@ func (x *ListSubjectPermissionRequest) String() string {
 func (*ListSubjectPermissionRequest) ProtoMessage() {}
 
 func (x *ListSubjectPermissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[14]
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -984,7 +874,7 @@ func (x *ListSubjectPermissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSubjectPermissionRequest.ProtoReflect.Descriptor instead.
 func (*ListSubjectPermissionRequest) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{14}
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ListSubjectPermissionRequest) GetSubjects() []string {
@@ -1006,7 +896,7 @@ type ListSubjectPermissionResponse struct {
 func (x *ListSubjectPermissionResponse) Reset() {
 	*x = ListSubjectPermissionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[15]
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1019,7 +909,7 @@ func (x *ListSubjectPermissionResponse) String() string {
 func (*ListSubjectPermissionResponse) ProtoMessage() {}
 
 func (x *ListSubjectPermissionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[15]
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1032,7 +922,7 @@ func (x *ListSubjectPermissionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSubjectPermissionResponse.ProtoReflect.Descriptor instead.
 func (*ListSubjectPermissionResponse) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{15}
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListSubjectPermissionResponse) GetAcl() []*Permission {
@@ -1047,6 +937,188 @@ func (x *ListSubjectPermissionResponse) GetDefGroups() []*PermissionDefGroup {
 		return x.DefGroups
 	}
 	return nil
+}
+
+type PermissionDefGroup struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string           `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Side        PermissionSide   `protobuf:"varint,2,opt,name=side,proto3,enum=user.api.permission.v1.PermissionSide" json:"side,omitempty"`
+	Priority    int32            `protobuf:"varint,3,opt,name=priority,proto3" json:"priority,omitempty"`
+	Def         []*PermissionDef `protobuf:"bytes,4,rep,name=def,proto3" json:"def,omitempty"`
+	Extra       *structpb.Struct `protobuf:"bytes,5,opt,name=extra,proto3" json:"extra,omitempty"`
+	Name        string           `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+}
+
+func (x *PermissionDefGroup) Reset() {
+	*x = PermissionDefGroup{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PermissionDefGroup) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PermissionDefGroup) ProtoMessage() {}
+
+func (x *PermissionDefGroup) ProtoReflect() protoreflect.Message {
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PermissionDefGroup.ProtoReflect.Descriptor instead.
+func (*PermissionDefGroup) Descriptor() ([]byte, []int) {
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *PermissionDefGroup) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *PermissionDefGroup) GetSide() PermissionSide {
+	if x != nil {
+		return x.Side
+	}
+	return PermissionSide_BOTH
+}
+
+func (x *PermissionDefGroup) GetPriority() int32 {
+	if x != nil {
+		return x.Priority
+	}
+	return 0
+}
+
+func (x *PermissionDefGroup) GetDef() []*PermissionDef {
+	if x != nil {
+		return x.Def
+	}
+	return nil
+}
+
+func (x *PermissionDefGroup) GetExtra() *structpb.Struct {
+	if x != nil {
+		return x.Extra
+	}
+	return nil
+}
+
+func (x *PermissionDefGroup) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type PermissionDef struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	DisplayName string           `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Side        PermissionSide   `protobuf:"varint,2,opt,name=side,proto3,enum=user.api.permission.v1.PermissionSide" json:"side,omitempty"`
+	Extra       *structpb.Struct `protobuf:"bytes,3,opt,name=extra,proto3" json:"extra,omitempty"`
+	Namespace   string           `protobuf:"bytes,4,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	Action      string           `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
+	Granted     bool             `protobuf:"varint,6,opt,name=granted,proto3" json:"granted,omitempty"`
+	Name        string           `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
+}
+
+func (x *PermissionDef) Reset() {
+	*x = PermissionDef{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_user_api_permission_v1_permission_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PermissionDef) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PermissionDef) ProtoMessage() {}
+
+func (x *PermissionDef) ProtoReflect() protoreflect.Message {
+	mi := &file_user_api_permission_v1_permission_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PermissionDef.ProtoReflect.Descriptor instead.
+func (*PermissionDef) Descriptor() ([]byte, []int) {
+	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *PermissionDef) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *PermissionDef) GetSide() PermissionSide {
+	if x != nil {
+		return x.Side
+	}
+	return PermissionSide_BOTH
+}
+
+func (x *PermissionDef) GetExtra() *structpb.Struct {
+	if x != nil {
+		return x.Extra
+	}
+	return nil
+}
+
+func (x *PermissionDef) GetNamespace() string {
+	if x != nil {
+		return x.Namespace
+	}
+	return ""
+}
+
+func (x *PermissionDef) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
+func (x *PermissionDef) GetGranted() bool {
+	if x != nil {
+		return x.Granted
+	}
+	return false
+}
+
+func (x *PermissionDef) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
 }
 
 type PermissionRequirement struct {
@@ -1112,188 +1184,6 @@ func (x *PermissionRequirement) GetAction() string {
 	return ""
 }
 
-type PermissionDefGroup struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	DisplayName string           `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Side        PermissionSide   `protobuf:"varint,2,opt,name=side,proto3,enum=user.api.permission.v1.PermissionSide" json:"side,omitempty"`
-	Priority    int32            `protobuf:"varint,3,opt,name=priority,proto3" json:"priority,omitempty"`
-	Def         []*PermissionDef `protobuf:"bytes,4,rep,name=def,proto3" json:"def,omitempty"`
-	Extra       *structpb.Struct `protobuf:"bytes,5,opt,name=extra,proto3" json:"extra,omitempty"`
-	Name        string           `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
-}
-
-func (x *PermissionDefGroup) Reset() {
-	*x = PermissionDefGroup{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[17]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *PermissionDefGroup) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PermissionDefGroup) ProtoMessage() {}
-
-func (x *PermissionDefGroup) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[17]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PermissionDefGroup.ProtoReflect.Descriptor instead.
-func (*PermissionDefGroup) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{17}
-}
-
-func (x *PermissionDefGroup) GetDisplayName() string {
-	if x != nil {
-		return x.DisplayName
-	}
-	return ""
-}
-
-func (x *PermissionDefGroup) GetSide() PermissionSide {
-	if x != nil {
-		return x.Side
-	}
-	return PermissionSide_BOTH
-}
-
-func (x *PermissionDefGroup) GetPriority() int32 {
-	if x != nil {
-		return x.Priority
-	}
-	return 0
-}
-
-func (x *PermissionDefGroup) GetDef() []*PermissionDef {
-	if x != nil {
-		return x.Def
-	}
-	return nil
-}
-
-func (x *PermissionDefGroup) GetExtra() *structpb.Struct {
-	if x != nil {
-		return x.Extra
-	}
-	return nil
-}
-
-func (x *PermissionDefGroup) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type PermissionDef struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	DisplayName string           `protobuf:"bytes,1,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Side        PermissionSide   `protobuf:"varint,2,opt,name=side,proto3,enum=user.api.permission.v1.PermissionSide" json:"side,omitempty"`
-	Extra       *structpb.Struct `protobuf:"bytes,3,opt,name=extra,proto3" json:"extra,omitempty"`
-	Namespace   string           `protobuf:"bytes,4,opt,name=namespace,proto3" json:"namespace,omitempty"`
-	Action      string           `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
-	Granted     bool             `protobuf:"varint,6,opt,name=granted,proto3" json:"granted,omitempty"`
-	Name        string           `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
-}
-
-func (x *PermissionDef) Reset() {
-	*x = PermissionDef{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_user_api_permission_v1_permission_proto_msgTypes[18]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *PermissionDef) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PermissionDef) ProtoMessage() {}
-
-func (x *PermissionDef) ProtoReflect() protoreflect.Message {
-	mi := &file_user_api_permission_v1_permission_proto_msgTypes[18]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PermissionDef.ProtoReflect.Descriptor instead.
-func (*PermissionDef) Descriptor() ([]byte, []int) {
-	return file_user_api_permission_v1_permission_proto_rawDescGZIP(), []int{18}
-}
-
-func (x *PermissionDef) GetDisplayName() string {
-	if x != nil {
-		return x.DisplayName
-	}
-	return ""
-}
-
-func (x *PermissionDef) GetSide() PermissionSide {
-	if x != nil {
-		return x.Side
-	}
-	return PermissionSide_BOTH
-}
-
-func (x *PermissionDef) GetExtra() *structpb.Struct {
-	if x != nil {
-		return x.Extra
-	}
-	return nil
-}
-
-func (x *PermissionDef) GetNamespace() string {
-	if x != nil {
-		return x.Namespace
-	}
-	return ""
-}
-
-func (x *PermissionDef) GetAction() string {
-	if x != nil {
-		return x.Action
-	}
-	return ""
-}
-
-func (x *PermissionDef) GetGranted() bool {
-	if x != nil {
-		return x.Granted
-	}
-	return false
-}
-
-func (x *PermissionDef) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
 var File_user_api_permission_v1_permission_proto protoreflect.FileDescriptor
 
 var file_user_api_permission_v1_permission_proto_rawDesc = []byte{
@@ -1335,24 +1225,7 @@ var file_user_api_permission_v1_permission_proto_rawDesc = []byte{
 	0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x36, 0x0a, 0x06, 0x65, 0x66, 0x66, 0x65, 0x63, 0x74, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x1e, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69,
 	0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e, 0x45,
-	0x66, 0x66, 0x65, 0x63, 0x74, 0x52, 0x06, 0x65, 0x66, 0x66, 0x65, 0x63, 0x74, 0x22, 0xac, 0x01,
-	0x0a, 0x1e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x73, 0x50,
-	0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x12, 0x1a, 0x0a, 0x08, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x73, 0x18, 0x04, 0x20, 0x03,
-	0x28, 0x09, 0x52, 0x08, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x73, 0x12, 0x1b, 0x0a, 0x09,
-	0x74, 0x65, 0x6e, 0x61, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x08, 0x74, 0x65, 0x6e, 0x61, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x51, 0x0a, 0x0c, 0x72, 0x65, 0x71,
-	0x75, 0x69, 0x72, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x2d, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69,
-	0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73,
-	0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x0c,
-	0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x22, 0x5f, 0x0a, 0x1c,
-	0x43, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x73, 0x50, 0x65, 0x72,
-	0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x3f, 0x0a, 0x0b,
-	0x65, 0x66, 0x66, 0x65, 0x63, 0x74, 0x5f, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x02, 0x20, 0x03, 0x28,
-	0x0e, 0x32, 0x1e, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x65, 0x72,
-	0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e, 0x45, 0x66, 0x66, 0x65, 0x63,
-	0x74, 0x52, 0x0a, 0x65, 0x66, 0x66, 0x65, 0x63, 0x74, 0x4c, 0x69, 0x73, 0x74, 0x22, 0xcd, 0x01,
+	0x66, 0x66, 0x65, 0x63, 0x74, 0x52, 0x06, 0x65, 0x66, 0x66, 0x65, 0x63, 0x74, 0x22, 0xcd, 0x01,
 	0x0a, 0x0a, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x1c, 0x0a, 0x09,
 	0x6e, 0x61, 0x6d, 0x65, 0x73, 0x70, 0x61, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x09, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x70, 0x61, 0x63, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65,
@@ -1450,16 +1323,7 @@ var file_user_api_permission_v1_permission_proto_rawDesc = []byte{
 	0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2a, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70,
 	0x69, 0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e,
 	0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x44, 0x65, 0x66, 0x47, 0x72, 0x6f,
-	0x75, 0x70, 0x52, 0x09, 0x64, 0x65, 0x66, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x73, 0x22, 0x8d, 0x01,
-	0x0a, 0x15, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75,
-	0x69, 0x72, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x28, 0x0a, 0x09, 0x6e, 0x61, 0x6d, 0x65, 0x73,
-	0x70, 0x61, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0a, 0xe0, 0x41, 0x02, 0xfa,
-	0x42, 0x04, 0x72, 0x02, 0x10, 0x01, 0x52, 0x09, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x70, 0x61, 0x63,
-	0x65, 0x12, 0x26, 0x0a, 0x08, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x09, 0x42, 0x0a, 0xe0, 0x41, 0x02, 0xfa, 0x42, 0x04, 0x72, 0x02, 0x10, 0x01, 0x52,
-	0x08, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x22, 0x0a, 0x06, 0x61, 0x63, 0x74,
-	0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0a, 0xe0, 0x41, 0x02, 0xfa, 0x42,
-	0x04, 0x72, 0x02, 0x10, 0x01, 0x52, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x8b, 0x02,
+	0x75, 0x70, 0x52, 0x09, 0x64, 0x65, 0x66, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x73, 0x22, 0x8b, 0x02,
 	0x0a, 0x12, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x44, 0x65, 0x66, 0x47,
 	0x72, 0x6f, 0x75, 0x70, 0x12, 0x21, 0x0a, 0x0c, 0x64, 0x69, 0x73, 0x70, 0x6c, 0x61, 0x79, 0x5f,
 	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70,
@@ -1492,14 +1356,23 @@ var file_user_api_permission_v1_permission_proto_rawDesc = []byte{
 	0x69, 0x6f, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f,
 	0x6e, 0x12, 0x18, 0x0a, 0x07, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x65, 0x64, 0x18, 0x06, 0x20, 0x01,
 	0x28, 0x08, 0x52, 0x07, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x65, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e,
-	0x61, 0x6d, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x2a,
+	0x61, 0x6d, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22,
+	0x8d, 0x01, 0x0a, 0x15, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65,
+	0x71, 0x75, 0x69, 0x72, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x28, 0x0a, 0x09, 0x6e, 0x61, 0x6d,
+	0x65, 0x73, 0x70, 0x61, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0a, 0xe0, 0x41,
+	0x02, 0xfa, 0x42, 0x04, 0x72, 0x02, 0x10, 0x01, 0x52, 0x09, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x70,
+	0x61, 0x63, 0x65, 0x12, 0x26, 0x0a, 0x08, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0a, 0xe0, 0x41, 0x02, 0xfa, 0x42, 0x04, 0x72, 0x02, 0x10,
+	0x01, 0x52, 0x08, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x22, 0x0a, 0x06, 0x61,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0a, 0xe0, 0x41, 0x02,
+	0xfa, 0x42, 0x04, 0x72, 0x02, 0x10, 0x01, 0x52, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x2a,
 	0x2f, 0x0a, 0x06, 0x45, 0x66, 0x66, 0x65, 0x63, 0x74, 0x12, 0x0b, 0x0a, 0x07, 0x55, 0x4e, 0x4b,
 	0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x47, 0x52, 0x41, 0x4e, 0x54, 0x10,
 	0x01, 0x12, 0x0d, 0x0a, 0x09, 0x46, 0x4f, 0x52, 0x42, 0x49, 0x44, 0x44, 0x45, 0x4e, 0x10, 0x02,
 	0x2a, 0x3a, 0x0a, 0x0e, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x53, 0x69,
 	0x64, 0x65, 0x12, 0x08, 0x0a, 0x04, 0x42, 0x4f, 0x54, 0x48, 0x10, 0x00, 0x12, 0x0d, 0x0a, 0x09,
 	0x48, 0x4f, 0x53, 0x54, 0x5f, 0x4f, 0x4e, 0x4c, 0x59, 0x10, 0x01, 0x12, 0x0f, 0x0a, 0x0b, 0x54,
-	0x45, 0x4e, 0x41, 0x4e, 0x54, 0x5f, 0x4f, 0x4e, 0x4c, 0x59, 0x10, 0x02, 0x32, 0x8f, 0x09, 0x0a,
+	0x45, 0x4e, 0x41, 0x4e, 0x54, 0x5f, 0x4f, 0x4e, 0x4c, 0x59, 0x10, 0x02, 0x32, 0xba, 0x02, 0x0a,
 	0x11, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69,
 	0x63, 0x65, 0x12, 0x94, 0x01, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x43, 0x75, 0x72, 0x72, 0x65, 0x6e,
 	0x74, 0x12, 0x33, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x65, 0x72,
@@ -1519,64 +1392,11 @@ var file_user_api_permission_v1_permission_proto_rawDesc = []byte{
 	0x2e, 0x76, 0x31, 0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73,
 	0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x1f, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x19,
 	0x3a, 0x01, 0x2a, 0x22, 0x14, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73,
-	0x69, 0x6f, 0x6e, 0x2f, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x12, 0x82, 0x01, 0x0a, 0x10, 0x43, 0x68,
-	0x65, 0x63, 0x6b, 0x46, 0x6f, 0x72, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x73, 0x12, 0x36,
-	0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73,
-	0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x75, 0x62,
-	0x6a, 0x65, 0x63, 0x74, 0x73, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x34, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70,
-	0x69, 0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e,
-	0x43, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x73, 0x50, 0x65, 0x72,
-	0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0xa4,
-	0x01, 0x0a, 0x14, 0x41, 0x64, 0x64, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x50, 0x65, 0x72,
-	0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x33, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61,
-	0x70, 0x69, 0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31,
-	0x2e, 0x41, 0x64, 0x64, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x50, 0x65, 0x72, 0x6d, 0x69,
-	0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x34, 0x2e, 0x75,
-	0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69,
-	0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x64, 0x64, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74,
-	0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x21, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x1b, 0x3a, 0x01, 0x2a, 0x22, 0x16, 0x2f,
-	0x76, 0x31, 0x2f, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2f, 0x73, 0x75,
-	0x62, 0x6a, 0x65, 0x63, 0x74, 0x12, 0xc6, 0x01, 0x0a, 0x15, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x75,
-	0x62, 0x6a, 0x65, 0x63, 0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x12,
-	0x34, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69,
-	0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x53, 0x75, 0x62,
-	0x6a, 0x65, 0x63, 0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x35, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69,
-	0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e, 0x4c,
-	0x69, 0x73, 0x74, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73,
-	0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x40, 0x82, 0xd3,
-	0xe4, 0x93, 0x02, 0x3a, 0x5a, 0x20, 0x3a, 0x01, 0x2a, 0x22, 0x1b, 0x2f, 0x76, 0x31, 0x2f, 0x70,
-	0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2f, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63,
-	0x74, 0x2f, 0x6c, 0x69, 0x73, 0x74, 0x12, 0x16, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x65, 0x72, 0x6d,
-	0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2f, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x12, 0xad,
-	0x01, 0x0a, 0x17, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74,
-	0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x36, 0x2e, 0x75, 0x73, 0x65,
-	0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e,
-	0x2e, 0x76, 0x31, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63,
-	0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x37, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x65,
-	0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73,
-	0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x21, 0x82, 0xd3, 0xe4,
-	0x93, 0x02, 0x1b, 0x3a, 0x01, 0x2a, 0x1a, 0x16, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x65, 0x72, 0x6d,
-	0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2f, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x12, 0xad,
-	0x01, 0x0a, 0x17, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74,
-	0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x36, 0x2e, 0x75, 0x73, 0x65,
-	0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e,
-	0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63,
-	0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x34, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x65,
-	0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x6d, 0x6f,
-	0x76, 0x65, 0x53, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73,
-	0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x24, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x1e,
-	0x3a, 0x01, 0x2a, 0x22, 0x19, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73,
-	0x69, 0x6f, 0x6e, 0x2f, 0x73, 0x75, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x2f, 0x72, 0x6d, 0x42, 0x32,
-	0x5a, 0x30, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x6f, 0x2d,
-	0x73, 0x61, 0x61, 0x73, 0x2f, 0x6b, 0x69, 0x74, 0x2f, 0x75, 0x73, 0x65, 0x72, 0x2f, 0x61, 0x70,
-	0x69, 0x2f, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2f, 0x76, 0x31, 0x3b,
-	0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x69, 0x6f, 0x6e, 0x2f, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x42, 0x32, 0x5a, 0x30, 0x67, 0x69, 0x74,
+	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x6f, 0x2d, 0x73, 0x61, 0x61, 0x73, 0x2f,
+	0x6b, 0x69, 0x74, 0x2f, 0x75, 0x73, 0x65, 0x72, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x70, 0x65, 0x72,
+	0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2f, 0x76, 0x31, 0x3b, 0x76, 0x31, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1592,7 +1412,7 @@ func file_user_api_permission_v1_permission_proto_rawDescGZIP() []byte {
 }
 
 var file_user_api_permission_v1_permission_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_user_api_permission_v1_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_user_api_permission_v1_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_user_api_permission_v1_permission_proto_goTypes = []interface{}{
 	(Effect)(0),                             // 0: user.api.permission.v1.Effect
 	(PermissionSide)(0),                     // 1: user.api.permission.v1.PermissionSide
@@ -1600,60 +1420,46 @@ var file_user_api_permission_v1_permission_proto_goTypes = []interface{}{
 	(*GetCurrentPermissionReply)(nil),       // 3: user.api.permission.v1.GetCurrentPermissionReply
 	(*CheckPermissionRequest)(nil),          // 4: user.api.permission.v1.CheckPermissionRequest
 	(*CheckPermissionReply)(nil),            // 5: user.api.permission.v1.CheckPermissionReply
-	(*CheckSubjectsPermissionRequest)(nil),  // 6: user.api.permission.v1.CheckSubjectsPermissionRequest
-	(*CheckSubjectsPermissionReply)(nil),    // 7: user.api.permission.v1.CheckSubjectsPermissionReply
-	(*Permission)(nil),                      // 8: user.api.permission.v1.Permission
-	(*UpdateSubjectPermissionRequest)(nil),  // 9: user.api.permission.v1.UpdateSubjectPermissionRequest
-	(*UpdateSubjectPermissionAcl)(nil),      // 10: user.api.permission.v1.UpdateSubjectPermissionAcl
-	(*UpdateSubjectPermissionResponse)(nil), // 11: user.api.permission.v1.UpdateSubjectPermissionResponse
-	(*RemoveSubjectPermissionRequest)(nil),  // 12: user.api.permission.v1.RemoveSubjectPermissionRequest
-	(*RemoveSubjectPermissionReply)(nil),    // 13: user.api.permission.v1.RemoveSubjectPermissionReply
-	(*AddSubjectPermissionRequest)(nil),     // 14: user.api.permission.v1.AddSubjectPermissionRequest
-	(*AddSubjectPermissionResponse)(nil),    // 15: user.api.permission.v1.AddSubjectPermissionResponse
-	(*ListSubjectPermissionRequest)(nil),    // 16: user.api.permission.v1.ListSubjectPermissionRequest
-	(*ListSubjectPermissionResponse)(nil),   // 17: user.api.permission.v1.ListSubjectPermissionResponse
+	(*Permission)(nil),                      // 6: user.api.permission.v1.Permission
+	(*UpdateSubjectPermissionRequest)(nil),  // 7: user.api.permission.v1.UpdateSubjectPermissionRequest
+	(*UpdateSubjectPermissionAcl)(nil),      // 8: user.api.permission.v1.UpdateSubjectPermissionAcl
+	(*UpdateSubjectPermissionResponse)(nil), // 9: user.api.permission.v1.UpdateSubjectPermissionResponse
+	(*RemoveSubjectPermissionRequest)(nil),  // 10: user.api.permission.v1.RemoveSubjectPermissionRequest
+	(*RemoveSubjectPermissionReply)(nil),    // 11: user.api.permission.v1.RemoveSubjectPermissionReply
+	(*AddSubjectPermissionRequest)(nil),     // 12: user.api.permission.v1.AddSubjectPermissionRequest
+	(*AddSubjectPermissionResponse)(nil),    // 13: user.api.permission.v1.AddSubjectPermissionResponse
+	(*ListSubjectPermissionRequest)(nil),    // 14: user.api.permission.v1.ListSubjectPermissionRequest
+	(*ListSubjectPermissionResponse)(nil),   // 15: user.api.permission.v1.ListSubjectPermissionResponse
+	(*PermissionDefGroup)(nil),              // 16: user.api.permission.v1.PermissionDefGroup
+	(*PermissionDef)(nil),                   // 17: user.api.permission.v1.PermissionDef
 	(*PermissionRequirement)(nil),           // 18: user.api.permission.v1.PermissionRequirement
-	(*PermissionDefGroup)(nil),              // 19: user.api.permission.v1.PermissionDefGroup
-	(*PermissionDef)(nil),                   // 20: user.api.permission.v1.PermissionDef
-	(*structpb.Struct)(nil),                 // 21: google.protobuf.Struct
+	(*structpb.Struct)(nil),                 // 19: google.protobuf.Struct
 }
 var file_user_api_permission_v1_permission_proto_depIdxs = []int32{
-	8,  // 0: user.api.permission.v1.GetCurrentPermissionReply.acl:type_name -> user.api.permission.v1.Permission
+	6,  // 0: user.api.permission.v1.GetCurrentPermissionReply.acl:type_name -> user.api.permission.v1.Permission
 	0,  // 1: user.api.permission.v1.CheckPermissionReply.effect:type_name -> user.api.permission.v1.Effect
-	18, // 2: user.api.permission.v1.CheckSubjectsPermissionRequest.requirements:type_name -> user.api.permission.v1.PermissionRequirement
-	0,  // 3: user.api.permission.v1.CheckSubjectsPermissionReply.effect_list:type_name -> user.api.permission.v1.Effect
-	0,  // 4: user.api.permission.v1.Permission.effect:type_name -> user.api.permission.v1.Effect
-	10, // 5: user.api.permission.v1.UpdateSubjectPermissionRequest.acl:type_name -> user.api.permission.v1.UpdateSubjectPermissionAcl
-	0,  // 6: user.api.permission.v1.UpdateSubjectPermissionAcl.effect:type_name -> user.api.permission.v1.Effect
-	8,  // 7: user.api.permission.v1.UpdateSubjectPermissionResponse.acl:type_name -> user.api.permission.v1.Permission
-	0,  // 8: user.api.permission.v1.RemoveSubjectPermissionRequest.effects:type_name -> user.api.permission.v1.Effect
-	0,  // 9: user.api.permission.v1.AddSubjectPermissionRequest.effect:type_name -> user.api.permission.v1.Effect
-	8,  // 10: user.api.permission.v1.ListSubjectPermissionResponse.acl:type_name -> user.api.permission.v1.Permission
-	19, // 11: user.api.permission.v1.ListSubjectPermissionResponse.def_groups:type_name -> user.api.permission.v1.PermissionDefGroup
-	1,  // 12: user.api.permission.v1.PermissionDefGroup.side:type_name -> user.api.permission.v1.PermissionSide
-	20, // 13: user.api.permission.v1.PermissionDefGroup.def:type_name -> user.api.permission.v1.PermissionDef
-	21, // 14: user.api.permission.v1.PermissionDefGroup.extra:type_name -> google.protobuf.Struct
-	1,  // 15: user.api.permission.v1.PermissionDef.side:type_name -> user.api.permission.v1.PermissionSide
-	21, // 16: user.api.permission.v1.PermissionDef.extra:type_name -> google.protobuf.Struct
-	2,  // 17: user.api.permission.v1.PermissionService.GetCurrent:input_type -> user.api.permission.v1.GetCurrentPermissionRequest
-	4,  // 18: user.api.permission.v1.PermissionService.CheckCurrent:input_type -> user.api.permission.v1.CheckPermissionRequest
-	6,  // 19: user.api.permission.v1.PermissionService.CheckForSubjects:input_type -> user.api.permission.v1.CheckSubjectsPermissionRequest
-	14, // 20: user.api.permission.v1.PermissionService.AddSubjectPermission:input_type -> user.api.permission.v1.AddSubjectPermissionRequest
-	16, // 21: user.api.permission.v1.PermissionService.ListSubjectPermission:input_type -> user.api.permission.v1.ListSubjectPermissionRequest
-	9,  // 22: user.api.permission.v1.PermissionService.UpdateSubjectPermission:input_type -> user.api.permission.v1.UpdateSubjectPermissionRequest
-	12, // 23: user.api.permission.v1.PermissionService.RemoveSubjectPermission:input_type -> user.api.permission.v1.RemoveSubjectPermissionRequest
-	3,  // 24: user.api.permission.v1.PermissionService.GetCurrent:output_type -> user.api.permission.v1.GetCurrentPermissionReply
-	5,  // 25: user.api.permission.v1.PermissionService.CheckCurrent:output_type -> user.api.permission.v1.CheckPermissionReply
-	7,  // 26: user.api.permission.v1.PermissionService.CheckForSubjects:output_type -> user.api.permission.v1.CheckSubjectsPermissionReply
-	15, // 27: user.api.permission.v1.PermissionService.AddSubjectPermission:output_type -> user.api.permission.v1.AddSubjectPermissionResponse
-	17, // 28: user.api.permission.v1.PermissionService.ListSubjectPermission:output_type -> user.api.permission.v1.ListSubjectPermissionResponse
-	11, // 29: user.api.permission.v1.PermissionService.UpdateSubjectPermission:output_type -> user.api.permission.v1.UpdateSubjectPermissionResponse
-	13, // 30: user.api.permission.v1.PermissionService.RemoveSubjectPermission:output_type -> user.api.permission.v1.RemoveSubjectPermissionReply
-	24, // [24:31] is the sub-list for method output_type
-	17, // [17:24] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	0,  // 2: user.api.permission.v1.Permission.effect:type_name -> user.api.permission.v1.Effect
+	8,  // 3: user.api.permission.v1.UpdateSubjectPermissionRequest.acl:type_name -> user.api.permission.v1.UpdateSubjectPermissionAcl
+	0,  // 4: user.api.permission.v1.UpdateSubjectPermissionAcl.effect:type_name -> user.api.permission.v1.Effect
+	6,  // 5: user.api.permission.v1.UpdateSubjectPermissionResponse.acl:type_name -> user.api.permission.v1.Permission
+	0,  // 6: user.api.permission.v1.RemoveSubjectPermissionRequest.effects:type_name -> user.api.permission.v1.Effect
+	0,  // 7: user.api.permission.v1.AddSubjectPermissionRequest.effect:type_name -> user.api.permission.v1.Effect
+	6,  // 8: user.api.permission.v1.ListSubjectPermissionResponse.acl:type_name -> user.api.permission.v1.Permission
+	16, // 9: user.api.permission.v1.ListSubjectPermissionResponse.def_groups:type_name -> user.api.permission.v1.PermissionDefGroup
+	1,  // 10: user.api.permission.v1.PermissionDefGroup.side:type_name -> user.api.permission.v1.PermissionSide
+	17, // 11: user.api.permission.v1.PermissionDefGroup.def:type_name -> user.api.permission.v1.PermissionDef
+	19, // 12: user.api.permission.v1.PermissionDefGroup.extra:type_name -> google.protobuf.Struct
+	1,  // 13: user.api.permission.v1.PermissionDef.side:type_name -> user.api.permission.v1.PermissionSide
+	19, // 14: user.api.permission.v1.PermissionDef.extra:type_name -> google.protobuf.Struct
+	2,  // 15: user.api.permission.v1.PermissionService.GetCurrent:input_type -> user.api.permission.v1.GetCurrentPermissionRequest
+	4,  // 16: user.api.permission.v1.PermissionService.CheckCurrent:input_type -> user.api.permission.v1.CheckPermissionRequest
+	3,  // 17: user.api.permission.v1.PermissionService.GetCurrent:output_type -> user.api.permission.v1.GetCurrentPermissionReply
+	5,  // 18: user.api.permission.v1.PermissionService.CheckCurrent:output_type -> user.api.permission.v1.CheckPermissionReply
+	17, // [17:19] is the sub-list for method output_type
+	15, // [15:17] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_user_api_permission_v1_permission_proto_init() }
@@ -1711,30 +1517,6 @@ func file_user_api_permission_v1_permission_proto_init() {
 			}
 		}
 		file_user_api_permission_v1_permission_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckSubjectsPermissionRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_user_api_permission_v1_permission_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckSubjectsPermissionReply); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_user_api_permission_v1_permission_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Permission); i {
 			case 0:
 				return &v.state
@@ -1746,7 +1528,7 @@ func file_user_api_permission_v1_permission_proto_init() {
 				return nil
 			}
 		}
-		file_user_api_permission_v1_permission_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_user_api_permission_v1_permission_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSubjectPermissionRequest); i {
 			case 0:
 				return &v.state
@@ -1758,7 +1540,7 @@ func file_user_api_permission_v1_permission_proto_init() {
 				return nil
 			}
 		}
-		file_user_api_permission_v1_permission_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_user_api_permission_v1_permission_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSubjectPermissionAcl); i {
 			case 0:
 				return &v.state
@@ -1770,7 +1552,7 @@ func file_user_api_permission_v1_permission_proto_init() {
 				return nil
 			}
 		}
-		file_user_api_permission_v1_permission_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_user_api_permission_v1_permission_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSubjectPermissionResponse); i {
 			case 0:
 				return &v.state
@@ -1782,7 +1564,7 @@ func file_user_api_permission_v1_permission_proto_init() {
 				return nil
 			}
 		}
-		file_user_api_permission_v1_permission_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_user_api_permission_v1_permission_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RemoveSubjectPermissionRequest); i {
 			case 0:
 				return &v.state
@@ -1794,7 +1576,7 @@ func file_user_api_permission_v1_permission_proto_init() {
 				return nil
 			}
 		}
-		file_user_api_permission_v1_permission_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+		file_user_api_permission_v1_permission_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RemoveSubjectPermissionReply); i {
 			case 0:
 				return &v.state
@@ -1806,7 +1588,7 @@ func file_user_api_permission_v1_permission_proto_init() {
 				return nil
 			}
 		}
-		file_user_api_permission_v1_permission_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+		file_user_api_permission_v1_permission_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddSubjectPermissionRequest); i {
 			case 0:
 				return &v.state
@@ -1818,7 +1600,7 @@ func file_user_api_permission_v1_permission_proto_init() {
 				return nil
 			}
 		}
-		file_user_api_permission_v1_permission_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+		file_user_api_permission_v1_permission_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddSubjectPermissionResponse); i {
 			case 0:
 				return &v.state
@@ -1830,7 +1612,7 @@ func file_user_api_permission_v1_permission_proto_init() {
 				return nil
 			}
 		}
-		file_user_api_permission_v1_permission_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+		file_user_api_permission_v1_permission_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSubjectPermissionRequest); i {
 			case 0:
 				return &v.state
@@ -1842,8 +1624,32 @@ func file_user_api_permission_v1_permission_proto_init() {
 				return nil
 			}
 		}
-		file_user_api_permission_v1_permission_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+		file_user_api_permission_v1_permission_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListSubjectPermissionResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_user_api_permission_v1_permission_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PermissionDefGroup); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_user_api_permission_v1_permission_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PermissionDef); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1866,39 +1672,15 @@ func file_user_api_permission_v1_permission_proto_init() {
 				return nil
 			}
 		}
-		file_user_api_permission_v1_permission_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*PermissionDefGroup); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_user_api_permission_v1_permission_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*PermissionDef); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
 	}
-	file_user_api_permission_v1_permission_proto_msgTypes[10].OneofWrappers = []interface{}{}
+	file_user_api_permission_v1_permission_proto_msgTypes[8].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_user_api_permission_v1_permission_proto_rawDesc,
 			NumEnums:      2,
-			NumMessages:   19,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
