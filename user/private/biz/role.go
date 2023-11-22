@@ -7,7 +7,7 @@ import (
 	kitgorm "github.com/go-saas/kit/pkg/gorm"
 	"github.com/go-saas/kit/pkg/query"
 	v12 "github.com/go-saas/kit/user/api/role/v1"
-	gorm2 "github.com/go-saas/saas/gorm"
+	sgorm "github.com/go-saas/saas/gorm"
 	concurrency "github.com/goxiaoy/gorm-concurrency/v2"
 )
 
@@ -15,9 +15,9 @@ type Role struct {
 	kitgorm.UIDBase
 	concurrency.HasVersion `gorm:"type:char(36)"`
 	kitgorm.AuditedModel
-	TenantId       gorm2.HasTenant `gorm:"index:,unique,composite:tenant_role""`
+	TenantId       sgorm.HasTenant `gorm:"index:idx_tenant_role,unique"`
 	Name           string          `json:"name" gorm:"size:200"`
-	NormalizedName string          `gorm:"size:200,index:,unique,composite:tenant_role" json:"normalized_name" `
+	NormalizedName string          `gorm:"size:200;index:idx_tenant_role,unique" json:"normalized_name" `
 	IsPreserved    bool            `json:"is_preserved"`
 }
 
