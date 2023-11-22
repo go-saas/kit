@@ -1,8 +1,9 @@
 # This project is under development
 
-# go-saas-kit
+<p align="center"><a href="https://github.com/go-saas/kit" target="_blank"><img src="https://github.com/go-saas/kit/blob/main/docs/static/img/logo.png?raw=true" width="100"></a></p>
+<p align="center"><span  style="font-weight: 800;font-size: 20px;">GO-SAAS-KIT</span></p>
 
-Kit for golang sass project
+Starter kit for golang sass project
 
 Frontend Repo: https://github.com/go-saas/kit-frontend  
 Layout Repo( For creating new service): https://github.com/go-saas/kit-layout

@@ -4,48 +4,99 @@ import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  Src: React.ComponentType<React.ComponentProps<'svg'>>;
   description: JSX.Element;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Modularity',
+    Src: require('@site/static/img/modularity.png').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Every module is layered designed. You can composite them into services easily
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Microservice',
+    Src: require('@site/static/img/microservice.png').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Microservice compatible. Integrate with distributed event, distributed transaction. Containerized and provide observability
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Multi-Tenancy',
+    Src: require('@site/static/img/multi-tenancy.png').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Multi-tenancy natively, support different database architectures
+      </>
+    ),
+  },
+  {
+    title: 'Realtime',
+    Src: require('@site/static/img/realtime.png').default,
+    description: (
+      <>
+        Realtime with websockets
+      </>
+    ),
+  },
+  {
+    title: 'Localization',
+    Src: require('@site/static/img/localization.png').default,
+    description: (
+      <>
+        Localize your apps and design multilingual contents
+      </>
+    ),
+  },
+  {
+    title: 'Background Job',
+    Src: require('@site/static/img/backgroundjob.png').default,
+    description: (
+      <>
+        Dispatch background jobs
+      </>
+    ),
+  },
+  {
+    title: 'Business Module',
+    Src: require('@site/static/img/business-module.png').default,
+    description: (
+      <>
+        Integrated with Stripe. Design SAAS plans and products with different price models
+      </>
+    ),
+  },
+  {
+    title: 'Admin UI',
+    Src: require('@site/static/img/admin.png').default,
+    description: (
+      <>
+        Admin UI developed with React and Antd. Manage users, tenant etc.
+      </>
+    ),
+  },
+  {
+    title: 'Customizable',
+    Src: require('@site/static/img/customizable.png').default,
+    description: (
+      <>
+        Extend existing modules to fit your own business. Provide templates and tools to develop your own module
       </>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({title, Src, description}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <img className={styles.featureSvg}  src={Src}/>
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>

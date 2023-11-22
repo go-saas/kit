@@ -12,16 +12,24 @@ function HomepageHeader() {
   return (
     <header className={clsx("hero hero--primary", styles.heroBanner)}>
       <div className="container">
+        <img src={require('@site/static/img/logo.png').default} style={{height:50,width:50}} />
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
         <div className={styles.buttons}>
           <Link
-            className="button button--secondary button--lg"
+            className={`button button--secondary button--lg ${styles.buttonsItems}`}
             to="/docs/intro"
           >
-            Docusaurus Tutorial - 5min ⏱️
+            <div>Tutorial</div>
+          </Link>
+          <Link
+             className={`button button--secondary button--lg ${styles.buttonsItems}`}
+            to="https://saas.nihaosaoya.com/"
+          >
+            <div>Demo</div>
           </Link>
         </div>
+       
       </div>
     </header>
   );
@@ -32,7 +40,7 @@ export default function Home(): JSX.Element {
   return (
     <Layout
       title={`[GO-SAAS-KIT] ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />"
+      description="Full-featured open source SAAS starter kit"
     >
       <HomepageHeader />
       <main>
