@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[2535],{45641:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"\u80cc\u666f","permalink":"/kit/zh-Hans/blog/\u80cc\u666f"}]}')}}]);

@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[2775],{74719:s=>{s.exports=JSON.parse('{"label":"saas","permalink":"/kit/zh-Hans/blog/tags/saas","allTagsPath":"/kit/zh-Hans/blog/tags","count":1}')}}]);
