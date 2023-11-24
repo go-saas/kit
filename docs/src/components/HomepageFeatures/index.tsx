@@ -41,7 +41,7 @@ const FeatureList: FeatureItem[] = [
     Src: require('@site/static/img/realtime.png').default,
     description: (
       <>
-        Realtime with websockets
+        Realtime with websocket
       </>
     ),
   },
@@ -86,7 +86,7 @@ const FeatureList: FeatureItem[] = [
     Src: require('@site/static/img/customizable.png').default,
     description: (
       <>
-        Extend existing modules to fit your own business. Provide templates and tools to develop your own module
+        Extend existing modules to fit your own business. Provide templates and tools to develop your own modules
       </>
     ),
   },

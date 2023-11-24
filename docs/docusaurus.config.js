@@ -1,14 +1,12 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+import { themes as prismThemes } from "prism-react-renderer";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "GO-SAAS-KIT",
-  tagline:
-    "Full-featured open source SAAS starter kit built with golang and 💙",
+  tagline: "Open source SAAS starter kit built with golang and 💙",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
@@ -48,6 +46,9 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
+          editLocalizedFiles: true,
+          sidebarCollapsible: true,
+          sidebarCollapsed: false,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: "https://github.com/go-saas/kit/tree/main/docs",
@@ -56,7 +57,7 @@ const config = {
           showReadingTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/go-saas/kit/tree/main/docs",
+          editUrl: "https://github.com/go-saas/kit/tree/main/blog",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -79,7 +80,7 @@ const config = {
         items: [
           {
             type: "doc",
-            docId: "intro/index",
+            docId: "intro/overview",
             position: "left",
             label: "Tutorial",
           },
@@ -104,7 +105,7 @@ const config = {
             items: [
               {
                 label: "Tutorial",
-                to: "/docs/intro",
+                to: "/docs/intro/overview",
               },
             ],
           },
@@ -125,8 +126,8 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} GO-SAAS-KIT.`,
       },
       prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
+        theme: prismThemes.github,
+        darkTheme: prismThemes.dracula,
       },
       colorMode: {
         defaultMode: "dark",
