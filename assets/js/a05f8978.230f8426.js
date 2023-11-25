@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[92],{5472:e=>{e.exports=JSON.parse('{"title":"Learn","slug":"/category/learn","permalink":"/kit/docs/category/learn","navigation":{"previous":{"title":"Customize & Develop","permalink":"/kit/docs/intro/develop"},"next":{"title":"Fundamentals","permalink":"/kit/docs/category/fundamentals"}}}')}}]);

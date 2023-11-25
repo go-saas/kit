@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[2366],{5935:e=>{e.exports=JSON.parse('{"title":"Frontend","slug":"/category/frontend","permalink":"/kit/docs/category/frontend","navigation":{"previous":{"title":"ssl","permalink":"/kit/docs/learn/security/ssl"},"next":{"title":"openapi","permalink":"/kit/docs/learn/frontend/openapi"}}}')}}]);
