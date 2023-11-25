@@ -1,4 +1,34 @@
 ---
 sidebar_label: Overview
+title: Overview
 ---
-Hi
+
+**GO-SAAS-KIT** is a project built on the Go programming language with the aim of helping developers quickly create and sell Software as a Service (SaaS) solutions. While Go is renowned for its excellent performance, building a full-fledged SaaS application often entails starting from scratch and implementing numerous functionalities such as user authentication, registration, and more. Unlike traditional web frameworks, GO-SAAS-KIT is built on top of popular frameworks and middleware to provide common features and solutions required for SaaS services.
+
+This project can be seen as an inspirational template that showcases best practices and approaches for building SaaS applications using the Go language. It is not a full-fledged framework but rather a starting point with essential features that developers can extend and customize according to their specific requirements. These features include user management, permission control, data storage, RESTful API design, and more.
+
+During the development of GO-SAAS-KIT, we not only focus on solutions to common problems but also actively contribute bug fixes and feature implementations to upstream projects. Additionally, we innovate when addressing certain unique challenges to ensure that SaaS developers can start building their projects more easily.
+
+---
+
+**Applicable Scenarios:**
+
+1. **Starting from Scratch to Build a SaaS Software:** If you plan to create a SaaS software from the ground up, go-saas-kit provides an excellent starting point with many common SaaS features and solutions, helping you kickstart the development process.
+
+2. **Adding SaaS Functionality to Microservices Built with [Kratos](https://github.com/go-kratos/kratos):** If you're already using Kratos to build a microservices architecture but need to integrate SaaS functionality into your existing system, go-saas-kit can offer implementation methods for the relevant features to help you expand your service.
+
+3. **Learning How to Build Golang Microservice Systems and Solve Common Web System Issues:** If you're a learner looking to understand how to build Golang microservice systems and address common problems in web systems, go-saas-kit can serve as a valuable learning resource to help you master these skills.
+
+**Potentially Applicable Scenarios:**
+
+1. **Modifying a Monolithic Application into SaaS and Selling Immediately:** If you already have a monolithic application and want to modify it into a SaaS offering for immediate sales, as this may require changes to the data access layer to achieve data isolation, which is typically complex. In such a case, considering go-saas-kit could help simplify this process.
+
+2. **Not Needing SaaS, Not Needing Microservices:** If your business logic doesn't significantly differ between distributed and monolithic environments, or if you don't require SaaS or microservices, introducing go-saas-kit might add unnecessary maintenance overhead. However, please note that go-saas-kit prioritizes distributed scenarios, and if you only need a monolithic application, there might be more lightweight options available.
+
+**Not Recommended for Use with go-saas-kit:**
+
+1. **Already Using Other Microservices Frameworks like [go-zero](https://github.com/zeromicro/go-zero) or [go-micro](https://github.com/go-micro/go-micro):** If you're already using other microservices frameworks to build services, introducing go-saas-kit might introduce unnecessary complexity. In this case, continuing to use your current framework might be more suitable.
+
+2. **Disliking ORM Frameworks:** If you have a dislike for ORM (Object-Relational Mapping) frameworks, as go-saas-kit may depend on ORM frameworks, you might want to consider alternative approaches for building your SaaS application.
+
+Please carefully consider whether to use go-saas-kit based on your specific requirements and project context to ensure the best development experience and system architecture.

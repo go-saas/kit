@@ -1,3 +1,3 @@
 ---
-sidebar_label: Web basic knowledge
+sidebar_label: Web Basic
 ---

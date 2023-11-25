@@ -1,17 +1,18 @@
 # This project is under development
 
-<p align="center"><a href="https://github.com/go-saas/kit" target="_blank"><img src="https://github.com/go-saas/kit/blob/main/docs/static/img/logo.png?raw=true" width="100"></a></p>
-<p align="center"><span  style="font-weight: 800;font-size: 20px;">GO-SAAS-KIT</span></p>
-
-Starter kit for golang sass project
-
-Frontend Repo: https://github.com/go-saas/kit-frontend  
-Layout Repo( For creating new service): https://github.com/go-saas/kit-layout
+<div align="center">
+<p><a href="https://github.com/go-saas/kit" target="_blank"><img src="https://github.com/go-saas/kit/blob/main/docs/static/img/logo.png?raw=true" width="100"></a></p>
+<span  style="font-weight: 800;font-size: 20px;">GO-SAAS-KIT </span> <span  style="font-weight: 800;font-size: 16px;">Starter kit for golang sass project</span>
+<br> 
+<a href="https://go-saas.github.io/kit/" target="_blank"><span  style="font-weight: 600;font-size: 18px;">docs</span></a>
+<br>
+</div>
+Overview
 
 ![Overview](https://github.com/go-saas/kit/blob/main/docs/en-US/overview.png?raw=true)
 
 # Architecture
-![Architecture](https://github.com/go-saas/kit/blob/main/docs/go-saas-kit.drawio.png?raw=true)
+![Architecture](https://github.com/go-saas/kit/blob/main/docs/static/img/go-saas-kit.drawio.png?raw=true)
 
 # Demo 
 
@@ -63,6 +64,7 @@ Open `http://localhost:80` to see the web ui
 Username: admin  
 Password: 123456
 
+
 # Development
 
 ```shell
@@ -82,37 +84,6 @@ kratos new <name> -r https://github.com/go-saas/kit-layout.git
 ```
 
 
-# Modularity
+Frontend Repo: https://github.com/go-saas/kit-frontend  
+Layout Repo( For creating new service): https://github.com/go-saas/kit-layout
 
-Module design: 
-
-![Minimal](https://github.com/go-saas/kit/blob/main/docs/minimal-module-design.drawio.png?raw=true)
-
-
-**Api:** Protobuf definition for public/internal service and models
-
-**Event:** Protobuf definition for distributed event bus
-
-**Biz:** Domain layer, definition for all entities and repository interface
-
-**Service:** Business logic, depends on biz repository interface
-
-**Data:** Data access layer, implement biz repository interface, init databases( mysql ,redis), init event bus (kafka ), expose migration function
-
-**Conf:** Protobuf configuration definition
-
-**Server:** Set up http and grpc server. register all services, set up middlewares. set up distributed  event handler, seeding behavior
-
-**Host:** Process entry point, read configuration, set up tracing, logging
-
-
-
-For Microservice:
-
-![Minimal](https://github.com/go-saas/kit/blob/main/docs/microservice.drawio.png?raw=true)
-
-
-
-For Monolithic:
-
-![Minimal](https://github.com/go-saas/kit/blob/main/docs/monolithic.drawio.png?raw=true)
