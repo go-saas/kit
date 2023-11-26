@@ -21,13 +21,13 @@ During the development of GO-SAAS-KIT, we not only focus on solutions to common 
 
 **Potentially Applicable Scenarios:**
 
-1. **Modifying a Monolithic Application into SaaS and Selling Immediately:** If you already have a monolithic application and want to modify it into a SaaS offering for immediate sales, as this may require changes to the data access layer to achieve data isolation, which is typically complex. In such a case, considering go-saas-kit could help simplify this process.
+1. **Modifying a Monolithic Application into SaaS and Selling Immediately:** If you already have a monolithic application and want to modify it into a SaaS offering for immediate sales, as this may require changes to the data access layer to achieve data isolation, which is typically complex. In such a case, considering go-saas-kit could help simplify this process. You might want to push services behind [Gateway](../learn/fundamentals/gateway)
 
 2. **Not Needing SaaS, Not Needing Microservices:** If your business logic doesn't significantly differ between distributed and monolithic environments, or if you don't require SaaS or microservices, introducing go-saas-kit might add unnecessary maintenance overhead. However, please note that go-saas-kit prioritizes distributed scenarios, and if you only need a monolithic application, there might be more lightweight options available.
 
 **Not Recommended for Use with go-saas-kit:**
 
-1. **Already Using Other Microservices Frameworks like [go-zero](https://github.com/zeromicro/go-zero) or [go-micro](https://github.com/go-micro/go-micro):** If you're already using other microservices frameworks to build services, introducing go-saas-kit might introduce unnecessary complexity. In this case, continuing to use your current framework might be more suitable.
+1. **Already Using Other Microservices Frameworks like [go-zero](https://github.com/zeromicro/go-zero) or [go-micro](https://github.com/go-micro/go-micro):** If you're already using other microservices frameworks to build services, introducing go-saas-kit might introduce unnecessary complexity. In this case, continuing to use your current framework might be more suitable. You can checkout [go-saas/saas](https://github.com/go-saas/saas)
 
 2. **Disliking ORM Frameworks:** If you have a dislike for ORM (Object-Relational Mapping) frameworks, as go-saas-kit may depend on ORM frameworks, you might want to consider alternative approaches for building your SaaS application.
 

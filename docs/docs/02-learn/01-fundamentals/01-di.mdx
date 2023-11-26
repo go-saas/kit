@@ -4,3 +4,20 @@ title: Dependcy Injection
 ---
 
 Dependency Injection (DI) is a technique used in software development to manage dependencies between different components or classes. It involves providing dependencies to a class from the outside, rather than the class creating them internally. This enhances flexibility, testability, and maintainability of the code. 
+
+:::tip
+Dependency Injection is a crucial design pattern in developing complex applications. It is essential for you to master it.
+:::
+## [Wire](https://github.com/google/wire)
+
+>Wire is a code generation tool that automates connecting components using dependency injection. Dependencies between components are represented in Wire as function parameters, encouraging explicit initialization instead of global variables. Because Wire operates without runtime state or reflection, code written to be used with Wire is useful even for hand-written initialization.
+
+Wire is popular and recommended by [Kratos](https://github.com/go-kratos/kratos), but there are some missing features.
+
+- wire.List : inject one type multiple and resolved as list (usefully for seed.Contributor). see https://github.com/google/wire/issues/207
+- wire.Bind : bind one type as multiple interfaces, (usefully for service proxy). see https://github.com/google/wire/issues/191
+- wire.Subtract: replace wire.Set type by another. see https://github.com/google/wire/issues/8
+
+So we choose the next one:
+
+## [defval/di](https://github.com/defval/di)
