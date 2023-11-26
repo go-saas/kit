@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[7754],{6881:e=>{e.exports=JSON.parse('{"title":"Modules","slug":"/category/modules","permalink":"/kit/docs/category/modules","navigation":{"previous":{"title":"email-sms","permalink":"/kit/docs/develop/email-sms"},"next":{"title":"user","permalink":"/kit/docs/modules/user"}}}')}}]);
