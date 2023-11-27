@@ -1,0 +1,49 @@
+---
+sidebar_label: Virtual File System
+title: Virtual File System
+---
+A virtual file system (VFS) is an abstraction layer in an operating system that allows various types of file systems to be accessed and managed through a consistent and unified interface. It enables applications and users to interact with files and directories regardless of their physical storage or file system format.
+
+
+The virtual file system is based on [afero](https://github.com/spf13/afero)
+
+```go
+v := vfs.New() //vfs implements afero.Fs
+
+v.Mount("/", afero.NewMemMapFs()) //second prameter could be any afero.Fs 
+v.Mount("/abc", afero.NewMemMapFs())
+v.Mount("/a/b/c/d", afero.NewMemMapFs())
+
+f,err := v.Create("/a/test.txt") // Creat file, for all functions see https://github.com/spf13/afero#list-of-all-available-functions
+```
+
+You can mount different kinds of file systems into different paths.
+
+
+Github: https://github.com/goxiaoy/vfs
+
+
+You can change configuration like
+
+```yaml
+data:
+  vfs:
+    -
+      public_url: http://localhost/assets
+      mount_path: "/"
+      os:
+        dir: ".assets"
+    -
+      public_url: http://localhost/assets
+      mount_path: "/s3"
+      s3:
+        region: "xxx"
+        key: "xxx"
+        ...
+```
+
+Kit supports there kinds of file systems currently
+
+- memory: in memory
+- os: use `os` pkg
+- s3: amazon s3 compatible file system

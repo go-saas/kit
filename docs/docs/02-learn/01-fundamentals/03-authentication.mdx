@@ -3,6 +3,31 @@ sidebar_label: Authentication
 title: Authentication
 ---
 
-### Cookie
+Authentication is the process of verifying the identity of a user, system, or entity to ensure that they are who they claim to be before granting access to a system, application, or resource. 
 
-### JWT
+you can use `authn.FromUserContext(ctx)` to resolve user info after authentication
+
+source code: https://github.com/go-saas/kit/tree/main/pkg/authn
+
+## Session
+
+We use [go-saas/sessions](https://github.com/go-saas/sessions), a forked version of [gorilla/sessions](https://github.com/gorilla/sessions) to support cookie reading and writing in both gateway and services.
+
+## JWT
+
+We use [golang-jwt/jwt](github.com/golang-jwt/jwt) to extract and generate claims
+
+claims:
+
+- standard: https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-token-claims
+- uid: equal to standard subject
+- clientId: customize cliam for verifying server to server communication
+
+
+
+## [OpenID Connect](https://openid.net/foundation/)
+
+>OpenID Connect (OIDC) is an authentication protocol and identity layer built on top of the OAuth 2.0 framework. It is designed for secure and standardized user authentication and identity verification. OpenID Connect is widely used for single sign-on (SSO) and identity federation in web and mobile applications.
+
+We integrated [ory/hydra](https://www.ory.sh/hydra/) to implement OpenID Connect.
+See [oidc](../../modules/oidc) for more details

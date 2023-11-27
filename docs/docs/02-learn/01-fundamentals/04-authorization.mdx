@@ -3,4 +3,97 @@ sidebar_label: Authorization
 title: Authorization
 ---
 
+Authorization is the process of determining what actions or operations an authenticated user, system, or entity is allowed to perform within a computer system, application, or network. In other words, after a user's identity is authenticated through the process of [authentication](./authentication), authorization defines what that user is allowed to do and what resources they can access.
+
+
 ## Access Control List(ACL)
+
+<img src="/kit/img/acl.drawio.png" alt="acl" />
+
+
+For example, to define a role has the permission of reading users, you can  add an ACL like
+| subject        | namespace  | object | action | tenant              | effect |
+|----------------|------------|--------|--------|---------------------|--------|
+| role/\<role_id\> | user.user  | *      | read   | \<tenant_id\> | grant  |
+
+( * means any)
+
+See more subjects definition in https://github.com/go-saas/kit/blob/main/pkg/authz/authz/subjects.go
+
+
+#### Subject Resolver
+
+- ResolveFromContext: resolve user/client... from `context.Context`
+- ResolveProcessed: use `SubjectContrib` to resolve subjects from other subject. For example, 'UserRoleContrib' resolve roles of user subject
+
+#### Permission definition
+
+
+In order to better provide management functionalities similar to the one shown in the figure, permission definition has been extracted.
+
+<img src="/kit/img/role-permission.png" alt="acl" />
+
+For example, your can embed an `permission.yml` file into your codebase
+```YAML
+groups:
+  - name: "permission.sys.menu.group"
+    side: HOST_ONLY
+    def:
+      - name: "permission.sys.menu.any"
+        namespace: "sys.menu"
+        action: "*"
+        internal: true
+      - name: "permission.sys.menu.read"
+        namespace: "sys.menu"
+        action: "read"
+      - name: "permission.sys.menu.create"
+        namespace: "sys.menu"
+        action: "create"
+      - name: "permission.sys.menu.update"
+        namespace: "sys.menu"
+        action: "update"
+      - name: "permission.sys.menu.delete"
+        namespace: "sys.menu"
+        action: "delete"
+```
+And load it by
+```go
+//go:embed permission.yaml
+var permission []byte
+
+func init() {
+	authz.LoadFromYaml(permission)
+}
+```
+
+### [Casbin](https://casbin.org/)
+
+Casbin is our authorization provider, and the model is defined as 
+```Conf
+[request_definition]
+r = sub, namespace, obj, act, ten
+
+[policy_definition]
+p = sub, namespace, obj, act, ten, eft
+
+[policy_effect]
+e = some(where (p.eft == allow)) && !some(where (p.eft == deny))
+
+[matchers]
+m = keyMatch(r.sub, p.sub) && keyMatch(r.namespace, p.namespace) && keyMatch(r.obj, p.obj) && keyMatch(r.act, p.act) && keyMatch(r.ten, p.ten)
+```
+
+## Authz in Gateway
+
+You can use `kit_authz` [go-plugin-runner](https://apisix.apache.org/docs/go-plugin-runner/getting-started/) to check authorization
+
+```
+      jaeger:
+        uri: /jaeger*
+        upstream_id: jaeger
+        plugins:
+          ext-plugin-pre-req:
+            conf:
+              - name: "kit_authz"
+                value: "{\"requirement\":[{\"namespace\":\"dev.jaeger\",\"resource\":\"*\",\"action\":\"*\"}]}"
+```

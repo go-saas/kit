@@ -1,5 +1,4 @@
 groups:
-
   - name: "permission.sys.menu.group"
     side: HOST_ONLY
     def:

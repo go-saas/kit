@@ -13,11 +13,13 @@ Its primary purpose is to simplify and streamline the communication between clie
 
 Thanks to [go-plugin-runner](https://apisix.apache.org/docs/go-plugin-runner/getting-started/) , we've been able to consolidate many common functions in the gateway and integrate other third-party systems more effectively with our authentication system.
 
+
+### [kit_authn](https://github.com/go-saas/kit/blob/main/gateway/apisix/cmd/go-runner/plugins/kit_authn.go)
 <p style={{textAlign: 'center'}}>
 ```mermaid
 graph TD
     A[Incoming Request] -->B(Clean Untrusted Header)
-    B --> C(Recover <a href='./tracing'>Otel Tracing</a> Context)
+    B --> C(Recover <a href='./observability/tracing'>Otel Tracing</a> Context)
     C --> D(Resolve Tenant Info)
     D --> E(<a href='./authentication'>Authn</a> User From Session Cookie)
     E --> F(<a href='./authentication'>Authn</a> User From JWT)
@@ -27,7 +29,7 @@ graph TD
 ```
  </p>
 
-### [kit_authn](https://github.com/go-saas/kit/blob/main/gateway/apisix/cmd/go-runner/plugins/kit_authn.go)
-
-
 ### [kit_authz](https://github.com/go-saas/kit/blob/main/gateway/apisix/cmd/go-runner/plugins/kit_authz.go)
+
+
+See [authorization](./authorization)
