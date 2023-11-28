@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[7754],{6881:e=>{e.exports=JSON.parse('{"title":"Modules","slug":"/category/modules","permalink":"/kit/docs/category/modules","navigation":{"previous":{"title":"flutter","permalink":"/kit/docs/learn/frontend/flutter"},"next":{"title":"user","permalink":"/kit/docs/modules/user"}}}')}}]);

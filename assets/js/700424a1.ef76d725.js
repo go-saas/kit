@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[1804],{2389:e=>{e.exports=JSON.parse('{"title":"Deploy","slug":"/category/deploy","permalink":"/kit/docs/category/deploy","navigation":{"previous":{"title":"menu","permalink":"/kit/docs/develop/menu"},"next":{"title":"local development","permalink":"/kit/docs/deploy/local development"}}}')}}]);

@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[3401],{156:e=>{e.exports=JSON.parse('{"title":"Modules","slug":"/category/modules","permalink":"/kit/zh-Hans/docs/category/modules","navigation":{"previous":{"title":"menu","permalink":"/kit/zh-Hans/docs/develop/menu"},"next":{"title":"user","permalink":"/kit/zh-Hans/docs/modules/user"}}}')}}]);
