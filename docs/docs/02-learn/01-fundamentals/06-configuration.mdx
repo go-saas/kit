@@ -1,0 +1,73 @@
+---
+sidebar_label: Configuration
+title: Configuration
+---
+
+
+
+Configuration is based on [Kratos Config](https://go-kratos.dev/en/docs/component/config/) and data format is defined as [Protobuf](./protobuf)
+
+
+## [VFS](./vfs) Integration
+
+```go
+import(
+    ...
+    	kitconf "github.com/go-saas/kit/pkg/conf"
+)
+flag.Parse()
+
+source := []config.Source{
+    env.NewSource("KRATOS_"),
+}
+if flagconf == nil {
+    flagconf = append(flagconf, "./configs")
+}
+for _, s := range flagconf {
+    v := vfs.New()
+    //mount filter config files
+    v.Mount("/", afero.NewRegexpFs(afero.NewBasePathFs(afero.NewOsFs(), strings.TrimSpace(s)), regexp.MustCompile(`\.(json|proto|xml|yaml)$`)))
+    //vfs as configuration source
+    source = append(source, kitconf.NewVfs(v, "/"))
+}
+
+c := config.New(
+    config.WithSource(
+        source...,
+    ),
+)
+defer c.Close()
+if err := c.Load(); err != nil {
+    panic(err)
+}
+```
+
+## Common Configuration
+
+- data: 
+    - endpoints:
+        - databases: database dsn
+        - events: distributed eventbus
+        - redis: distributed key-value database
+        - email: email sender
+        - sms: sms sender
+    - vfs: [virtual file system](./vfs) mount paths
+- security:
+    - jwt: [jwt](./authentication#JWT)
+    - security_cookie: [session](./authentication#Session)
+    - session_cookie: [session](./authentication#Session)
+    - remember_cookie: [session](./authentication#Session)
+- services:
+    - services: configuration for [registry](./registry)
+    - servers: server config
+    - clients: server to server communication client
+    - registry: [registry](./registry)
+- logging: [logging](./observability/logging)
+- tracing: [tracing](./observability/tracing)
+- app: application config
+- dev: development config
+- stripe: [stripe](https://stripe.com/) config
+
+
+## Modules Configuration
+Refer to [modules](../../category/modules)

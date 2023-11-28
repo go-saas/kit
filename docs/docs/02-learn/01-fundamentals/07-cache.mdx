@@ -1,0 +1,16 @@
+---
+sidebar_label: Cache
+title: Cache
+---
+
+In a web system, a cache refers to a mechanism that stores and manages copies of frequently accessed data, resources, or web content in a temporary storage location. The primary purpose of a cache is to improve the performance and responsiveness of a web application or website by reducing the need to fetch data or resources from their original, slower sources. Caching is a fundamental technique used to speed up web systems and optimize resource utilization.
+
+Cache is based on [gocache](https://github.com/eko/gocache) and data format is defined as [Protobuf](./protobuf)
+
+
+## [Redis](https://redis.com/)
+
+## Cache Consistency
+
+- Event-Driven Invalidation:
+    Cache invalidation events are generated whenever relevant data changes(after [local transactions](./data-access/local-transaction)). Subscribers listen to these events and invalidate or update their caches accordingly. This approach ensures that caches stay in sync with data changes. 

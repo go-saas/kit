@@ -15,7 +15,7 @@ import (
 	"github.com/go-saas/kit/pkg/authn/jwt"
 	"github.com/go-saas/kit/pkg/authz/authz"
 	"github.com/go-saas/kit/pkg/authz/casbin"
-	conf2 "github.com/go-saas/kit/pkg/conf"
+	kitconf "github.com/go-saas/kit/pkg/conf"
 	kdal "github.com/go-saas/kit/pkg/dal"
 	kitdi "github.com/go-saas/kit/pkg/di"
 	kitflag "github.com/go-saas/kit/pkg/flag"
@@ -116,7 +116,7 @@ func main() {
 	for _, s := range flagconf {
 		v := vfs.New()
 		v.Mount("/", afero.NewRegexpFs(afero.NewBasePathFs(afero.NewOsFs(), strings.TrimSpace(s)), regexp.MustCompile(`\.(json|proto|xml|yaml)$`)))
-		source = append(source, conf2.NewVfs(v, "/"))
+		source = append(source, kitconf.NewVfs(v, "/"))
 	}
 
 	c := config.New(
