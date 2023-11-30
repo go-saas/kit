@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[1415],{9118:e=>{e.exports=JSON.parse('{"title":"Security","slug":"/category/security","permalink":"/kit/docs/category/security","navigation":{"previous":{"title":"Web Basic","permalink":"/kit/docs/learn/web-basic"},"next":{"title":"CSRF","permalink":"/kit/docs/learn/security/csrf"}}}')}}]);
