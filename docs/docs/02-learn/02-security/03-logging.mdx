@@ -1,0 +1,13 @@
+---
+sidebar_label: Logging
+title: Logging
+---
+
+## Mask Logging
+
+implement `StringWithMask` to hide sensitive information like password in your logging
+```go
+type StringWithMask interface {
+	StringWithMask(mask string) string
+}
+```

@@ -3,10 +3,83 @@ sidebar_label: Events
 title: Events
 ---
 
+An EventBus is a communication mechanism or pattern used in software development to enable the exchange of messages, events, or notifications between different parts of a software system or between loosely coupled components. It simplifies the decoupling of components and promotes a more scalable and maintainable architecture.
 
 
 ## Local Eventbus
 
+github: https://github.com/goxiaoy/go-eventbus
 
+
+The [Repository](./data-access/repository) uses local eventbus to publish [entities change events](./data-access/repository#Entity%20Change%20Events)
 
 ## Distributed Event
+
+### Producer
+
+```golang
+type Producer interface {
+	io.Closer
+	Send(ctx context.Context, msg Event) error
+	BatchSend(ctx context.Context, msg []Event) error
+}
+```
+
+:::warning
+Not all the underlying distributed event buses support atomic batch sending.
+:::
+
+### Consumer
+
+```golang
+type HandlerOf[T any] interface {
+	Process(context.Context, T) error
+}
+type ConsumerHandler HandlerOf[Event]
+
+type Consumer interface {
+	io.Closer
+	// Process start process event with handler
+	Process(ctx context.Context, handler ConsumerHandler) error
+}
+
+```
+
+## Consistency
+
+#### [Unit of Work](./data-access/local-transaction) Producer
+
+Combining with [Aggregate Root](./data-access/repository#AggregateRoot) allows for delayed event sending until the [unit of work](./data-access/local-transaction#Unit%20of%20Work) is committed.
+
+
+[`event.ConsumerFactoryServer`](https://github.com/go-saas/kit/blob/main/event/consumer.go#L102C6-L102C28) implements kratos `transport.Server` 
+You can apply middleware pattern to `ConsumerFactoryServer`
+
+```golang
+	srv := event.NewConsumerFactoryServer(e, container)
+    // panic recovery,tracing,logging,unit of work
+	srv.Use(event.ConsumerRecover(event.WithLogger(logger)), trace.Receive(), event.Logging(logger), event.ConsumerUow(uowMgr))
+```
+
+### [Two-phase message](./distributed-transaction#Two-phase%20message) Exposed Endpoint
+
+You can embed `eventserver.EventProviderSet` to your di container to expose grpc endpoints for cases like [Cache Consistency](./cache#Cache%29Consistency)
+
+```go
+eventserver "github.com/go-saas/kit/event/server"
+
+```
+
+```go
+service EventService{
+  rpc HandleEvent(HandleEventRequest)returns(google.protobuf.Empty){
+  }
+  rpc PublishEvent(PublishEventRequest)returns(google.protobuf.Empty){
+  }
+}
+```
+
+## Provider
+
+### Kafka
+### Pulsar

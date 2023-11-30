@@ -1,0 +1,32 @@
+---
+sidebar_label: Local Transaction
+title: Local Transaction
+---
+
+## Unit of Work
+
+The "Unit of Work" is a design pattern used in software development, particularly in the context of managing database transactions and ensuring data consistency. 
+
+It prevents passing the transaction database as a parameter layer by layer, simplifying future development and providing a unified mental model for transactions.
+
+Github: https://github.com/go-saas/uow
+
+:::danger
+
+This implementation is not an unbreakable version; it simply stores multiple transactions in a unit of work, which are "committed together" when the unit of work is submitted and "rolled back together" in case of an error. It cannot guarantee full "togetherness" in the true sense. If you require strong consistency, please consider looking into [distributed transactions](../distributed-transaction).
+
+:::
+
+
+### Middleware
+
+The middleware encapsulates the request into a separate unit of work, so that if any errors occur during request processing, all modifications can be rolled back promptly to prevent user inconvenience.
+ However, the following operations will be **skipped** by default from encapsulation.
+
+- Http request with safe methods `GET`, `HEAD`, `OPTIONS`, `TRACE`
+- Operations start with `GET` (case insensitive)
+- Operations start with `LIST` (case insensitive)
+
+You can also find corresponding middleware in [events](../events) and [background jobs](../background-job).
+
+

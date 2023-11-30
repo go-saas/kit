@@ -1,0 +1,80 @@
+---
+sidebar_label: Repository Pattern
+title: Repository Pattern
+---
+
+It provides an abstraction layer between the application's business logic and the data storage, which could be a database, an API, a file system, or any other data source. The primary goal of the Repository Pattern is to separate the concerns of data access and data manipulation from the core application logic.
+
+
+## Domain Declaration
+
+### Auditing
+```
+type AuditedModel struct {
+	CreatedBy *string
+	UpdatedBy *string
+	CreatedAt time.Time `gorm:"timestamp"`
+	UpdatedAt time.Time `gorm:"timestamp"`
+}
+```
+### AggregateRoot
+
+```
+type Agg interface {
+	AppendEvent(events ...event.Event)
+	ConsumeEventsIfAny(ctx context.Context, fn func(ctx context.Context, events []event.Event) error) (err error)
+}
+
+type AggRoot struct {
+	events []event.Event
+}
+```
+`AggRoot` implements `Agg` interface to hold events to be committed when db transactions being committed
+
+
+## Repository Interface
+
+```go
+type Repo[TEntity any, TKey any, TQuery any] interface {
+	List(ctx context.Context, query TQuery) ([]*TEntity, error)
+	ListCursor(ctx context.Context, query TQuery) (*CursorResult[TEntity], error)
+	First(ctx context.Context, query TQuery) (*TEntity, error)
+	Count(ctx context.Context, query TQuery) (total int64, filtered int64, err error)
+	Get(ctx context.Context, id TKey) (*TEntity, error)
+	Create(ctx context.Context, entity *TEntity) error
+	BatchCreate(ctx context.Context, entity []*TEntity, batchSize int) error
+	Update(ctx context.Context, id TKey, entity *TEntity, p query.Select) error
+	Upsert(ctx context.Context, entity *TEntity) error
+	Delete(ctx context.Context, id TKey) error
+}
+```
+To achieve CRUD functionality more quickly, kit provides default implementations of the above interfaces. You can swiftly implement a repository using the "embed struct" approach.
+
+
+## Entity Change Events
+
+The default implementation of repository will trigger the following [local events](../events#local-eventbus)
+
+```go
+type BeforeCreate[TEntity any] struct {
+	Entity TEntity
+}
+
+type AfterCreate[TEntity any] struct {
+	Entity TEntity
+}
+type BeforeUpdate[TEntity any] struct {
+	Entity TEntity
+	P      query.Select
+}
+
+type AfterUpdate[TEntity any] struct {
+	Entity TEntity
+}
+type BeforeDelete[TEntity any] struct {
+	Entity TEntity
+}
+type AfterDelete[TEntity any] struct {
+	Entity TEntity
+}
+```

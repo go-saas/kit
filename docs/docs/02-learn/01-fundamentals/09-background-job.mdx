@@ -2,3 +2,40 @@
 sidebar_label: Background Job
 title: Background Job
 ---
+
+A background job, also known as a background task or asynchronous task, refers to a process or piece of work that is executed independently and concurrently with the main execution flow of a software application or system. 
+You can use background job to do tasks like sending emails, long-run data analysis.
+
+The implementation of background job is based on [asynq](https://github.com/hibiken/asynq)
+
+## Server
+
+[`job.Server`](https://github.com/go-saas/kit/blob/main/pkg/job/server.go) implements kratos `transport.Server` 
+You can apply middleware pattern to `job.Server`
+
+```go
+import (
+	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-saas/kit/pkg/job"
+	"github.com/go-saas/kit/user/private/biz"
+	"github.com/hibiken/asynq"
+)
+
+func NewJobServer(opt asynq.RedisConnOpt, log klog.Logger, handlers []*job.Handler) *job.Server {
+    // set queue
+	srv := job.NewServer(opt, job.WithQueues(map[string]int{
+		string(biz.ConnName): 1,
+	}))
+	srv.Use(job.TracingServer(), job.Logging(log))
+	job.RegisterHandlers(srv, handlers...)
+	return srv
+}
+
+```
+
+## UI
+
+The default ui is exposed in [sys module](../../modules/sys)
+
+<img src="/kit/img/background-job-ui.png" alt="background-job-ui" />
+
