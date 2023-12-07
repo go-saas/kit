@@ -6,7 +6,6 @@ services:
 #    ports:
 #      - "16686:16686" # jaeger ui port
 #      - "14268"
-#      - "14250"
     environment:
       - QUERY_BASE_PATH=/jaeger
     restart: unless-stopped

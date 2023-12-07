@@ -22,6 +22,7 @@ message Upstream{
 message Config{
   string endpoint=1;
   string api_key=2;
+  repeated Module modules=3;
 }
 
 message Module{

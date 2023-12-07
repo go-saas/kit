@@ -1,11 +1,12 @@
 sys:
   apisix:
-    routes:
-      demo-http2https:
-        uri: /*
-        hosts: ["saas.nihaosaoya.com"]
-        priority: 200
-        vars: [ [ "scheme","==","http" ] ]
-        plugins:
-          redirect:
-            http_to_https: true
+    modules:
+      - routes:
+          demo-http2https:
+            uri: /*
+            hosts: ["saas.nihaosaoya.com"]
+            priority: 200
+            vars: [ [ "scheme","==","http" ] ]
+            plugins:
+              redirect:
+                http_to_https: true
