@@ -22,7 +22,7 @@ services:
 #      - "8889:8889"   # Prometheus exporter metrics
 #      - "13133:13133" # health_check extension
       - "4317:4317"        # OTLP gRPC receiver
-#      - "4318:4318"   # Add OTLP HTTP Receiver port mapping
+      - "4318:4318"   # Add OTLP HTTP Receiver port mapping, required for Apisix
 #      - "55670:55679" # zpages extension
 
     depends_on:

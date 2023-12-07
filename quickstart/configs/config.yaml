@@ -1,5 +1,5 @@
 app:
-  host_display_name: GO SAAS KIT
+  host_display_name: GO-SAAS-KIT
 services:
   registry:
     type: etcd

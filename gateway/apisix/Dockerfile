@@ -6,6 +6,6 @@ WORKDIR /src/gateway/apisix
 RUN make -f ./Makefile build
 
 
-FROM apache/apisix:2.15.1-centos
+FROM apache/apisix:3.7.0-redhat
 
 COPY --from=builder /src/gateway/apisix/bin /app

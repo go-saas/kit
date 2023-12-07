@@ -58,6 +58,7 @@ func (a *AdminClient) PutUpstream(id string, upstream *Upstream) error {
 	return nil
 }
 
+// PutUpstreamStruct https://apisix.apache.org/docs/apisix/admin-api/#upstream-api
 func (a *AdminClient) PutUpstreamStruct(id string, upstream *structpb.Struct) error {
 	if _, ok := upstream.Fields["name"]; !ok {
 		upstream.Fields["name"] = structpb.NewStringValue(id)
@@ -103,9 +104,6 @@ func (a *AdminClient) PutRoute(id string, route *structpb.Struct) error {
 
 // PutStreamRoute https://apisix.apache.org/docs/apisix/admin-api/#stream-route-api
 func (a *AdminClient) PutStreamRoute(id string, route *structpb.Struct) error {
-	if _, ok := route.Fields["name"]; !ok {
-		route.Fields["name"] = structpb.NewStringValue(id)
-	}
 	j, err := protojson.Marshal(route)
 	if err != nil {
 		return err
@@ -125,9 +123,6 @@ func (a *AdminClient) PutStreamRoute(id string, route *structpb.Struct) error {
 
 // PutGlobalRules https://apisix.apache.org/docs/apisix/admin-api/#global-rule-api
 func (a *AdminClient) PutGlobalRules(id string, route *structpb.Struct) error {
-	if _, ok := route.Fields["name"]; !ok {
-		route.Fields["name"] = structpb.NewStringValue(id)
-	}
 	j, err := protojson.Marshal(route)
 	if err != nil {
 		return err

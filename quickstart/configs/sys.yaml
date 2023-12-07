@@ -1,4 +1,4 @@
 sys:
   apisix:
-    endpoint: http://apisix:9080
+    endpoint: http://apisix:9280
     api_key: edd1c9f034335f136f87ad84b625c8f1

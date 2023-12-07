@@ -20,13 +20,14 @@ services:
       - "80:9080" #Http
       - "9091:9091" #Prometheus
       - "443:443" #Https
+      - "9280:9280" #Admin Api
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./gateway/apisix/Dockerfile
 
   apisix-dashboard:
-    image: apache/apisix-dashboard:2.15.0-alpine
+    image: apache/apisix-dashboard:3.0.1-alpine
     restart: always
     volumes:
       - ./quickstart/configs/apisix/dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
