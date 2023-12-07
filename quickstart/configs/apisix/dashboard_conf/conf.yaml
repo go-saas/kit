@@ -1,4 +1,4 @@
-#  https://github.com/apache/apisix-dashboard/blob/master/api/conf/conf.yaml
+#  https://github.com/apache/apisix-dashboard/blob/v3.0.1/api/conf/conf.yaml
 
 conf:
   listen:
