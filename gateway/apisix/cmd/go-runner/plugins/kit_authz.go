@@ -13,8 +13,7 @@ import (
 	"strings"
 )
 
-// KitAuthz is a demo to show how to return data directly instead of proxying
-// it to the upstream.
+// KitAuthz authorization plugin
 type KitAuthz struct {
 	plugin.DefaultPlugin
 }

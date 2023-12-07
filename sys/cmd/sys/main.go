@@ -41,7 +41,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-saas/kit/sys/private/conf"
 
-	//This helps to load i18n resources in following services for locale api
+	//This helps to load i18n resources and gateway config in following services
 	_ "github.com/go-saas/kit/realtime/api"
 	_ "github.com/go-saas/kit/saas/api"
 	_ "github.com/go-saas/kit/sys/api"

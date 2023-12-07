@@ -3,7 +3,7 @@ module github.com/go-saas/kit/gateway/apisix
 go 1.20
 
 require (
-	github.com/apache/apisix-go-plugin-runner v0.4.0
+	github.com/apache/apisix-go-plugin-runner v0.5.0
 	github.com/go-kratos/kratos/v2 v2.7.1
 	github.com/go-saas/kit v0.0.1
 	github.com/go-saas/saas v0.6.3

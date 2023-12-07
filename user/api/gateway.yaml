@@ -1,0 +1,4 @@
+routes:
+  user-api:
+    uris: ["/v1/account/*","/v1/auth/*","/v1/permission/*","/v1/role*","/v1/user*","/assets/user/*"]
+    upstream_id: user-http

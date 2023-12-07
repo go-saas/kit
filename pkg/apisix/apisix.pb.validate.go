@@ -277,3 +277,387 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpstreamValidationError{}
+
+// Validate checks the field values on Config with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Config) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Config with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in ConfigMultiError, or nil if none found.
+func (m *Config) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Config) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Endpoint
+
+	// no validation rules for ApiKey
+
+	if len(errors) > 0 {
+		return ConfigMultiError(errors)
+	}
+
+	return nil
+}
+
+// ConfigMultiError is an error wrapping multiple validation errors returned by
+// Config.ValidateAll() if the designated constraints aren't met.
+type ConfigMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ConfigMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ConfigMultiError) AllErrors() []error { return m }
+
+// ConfigValidationError is the validation error returned by Config.Validate if
+// the designated constraints aren't met.
+type ConfigValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ConfigValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ConfigValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ConfigValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ConfigValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ConfigValidationError) ErrorName() string { return "ConfigValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ConfigValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sConfig.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ConfigValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ConfigValidationError{}
+
+// Validate checks the field values on Module with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Module) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Module with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in ModuleMultiError, or nil if none found.
+func (m *Module) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Module) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	{
+		sorted_keys := make([]string, len(m.GetRoutes()))
+		i := 0
+		for key := range m.GetRoutes() {
+			sorted_keys[i] = key
+			i++
+		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetRoutes()[key]
+			_ = val
+
+			// no validation rules for Routes[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, ModuleValidationError{
+							field:  fmt.Sprintf("Routes[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, ModuleValidationError{
+							field:  fmt.Sprintf("Routes[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				}
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+				if err := v.Validate(); err != nil {
+					return ModuleValidationError{
+						field:  fmt.Sprintf("Routes[%v]", key),
+						reason: "embedded message failed validation",
+						cause:  err,
+					}
+				}
+			}
+
+		}
+	}
+
+	{
+		sorted_keys := make([]string, len(m.GetGlobalRules()))
+		i := 0
+		for key := range m.GetGlobalRules() {
+			sorted_keys[i] = key
+			i++
+		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetGlobalRules()[key]
+			_ = val
+
+			// no validation rules for GlobalRules[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, ModuleValidationError{
+							field:  fmt.Sprintf("GlobalRules[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, ModuleValidationError{
+							field:  fmt.Sprintf("GlobalRules[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				}
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+				if err := v.Validate(); err != nil {
+					return ModuleValidationError{
+						field:  fmt.Sprintf("GlobalRules[%v]", key),
+						reason: "embedded message failed validation",
+						cause:  err,
+					}
+				}
+			}
+
+		}
+	}
+
+	{
+		sorted_keys := make([]string, len(m.GetUpstreams()))
+		i := 0
+		for key := range m.GetUpstreams() {
+			sorted_keys[i] = key
+			i++
+		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetUpstreams()[key]
+			_ = val
+
+			// no validation rules for Upstreams[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, ModuleValidationError{
+							field:  fmt.Sprintf("Upstreams[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, ModuleValidationError{
+							field:  fmt.Sprintf("Upstreams[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				}
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+				if err := v.Validate(); err != nil {
+					return ModuleValidationError{
+						field:  fmt.Sprintf("Upstreams[%v]", key),
+						reason: "embedded message failed validation",
+						cause:  err,
+					}
+				}
+			}
+
+		}
+	}
+
+	{
+		sorted_keys := make([]string, len(m.GetStreamRoutes()))
+		i := 0
+		for key := range m.GetStreamRoutes() {
+			sorted_keys[i] = key
+			i++
+		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetStreamRoutes()[key]
+			_ = val
+
+			// no validation rules for StreamRoutes[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, ModuleValidationError{
+							field:  fmt.Sprintf("StreamRoutes[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, ModuleValidationError{
+							field:  fmt.Sprintf("StreamRoutes[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				}
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+				if err := v.Validate(); err != nil {
+					return ModuleValidationError{
+						field:  fmt.Sprintf("StreamRoutes[%v]", key),
+						reason: "embedded message failed validation",
+						cause:  err,
+					}
+				}
+			}
+
+		}
+	}
+
+	if len(errors) > 0 {
+		return ModuleMultiError(errors)
+	}
+
+	return nil
+}
+
+// ModuleMultiError is an error wrapping multiple validation errors returned by
+// Module.ValidateAll() if the designated constraints aren't met.
+type ModuleMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ModuleMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ModuleMultiError) AllErrors() []error { return m }
+
+// ModuleValidationError is the validation error returned by Module.Validate if
+// the designated constraints aren't met.
+type ModuleValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ModuleValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ModuleValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ModuleValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ModuleValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ModuleValidationError) ErrorName() string { return "ModuleValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ModuleValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sModule.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ModuleValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ModuleValidationError{}

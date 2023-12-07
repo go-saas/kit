@@ -1,0 +1,4 @@
+routes:
+  order-api:
+    uris: ["/v1/order*","/assets/order/*"]
+    upstream_id: order-http

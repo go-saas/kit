@@ -1,0 +1,93 @@
+upstreams:
+  api-docs:
+    nodes:
+      "api_docs:8080": 1
+    type: roundrobin
+  web:
+    nodes:
+      "web:8080": 1
+    type: roundrobin
+
+  jaeger:
+    nodes:
+      "jaeger-all-in-one:16686": 1
+    type: roundrobin
+
+  kafka-ui:
+    nodes:
+      "kafka-ui:8080": 1
+    type: roundrobin
+
+  dtm-ui:
+    nodes:
+      "dtm:36789": 1
+    type: roundrobin
+
+  hydra-public:
+    nodes:
+      "hydra:4444": 1
+    type: roundrobin
+
+global_rules:
+  opentelemetry:
+    plugins:
+      opentelemetry:
+        sampler:
+          name: always_on
+  kit_authn:
+    plugins:
+      ext-plugin-pre-req:
+        conf:
+          - name: "kit_authn"
+            value: "{}"
+  cors:
+    plugins:
+      cors:
+        allow_origins: "*"
+routes:
+  hydra-public:
+    uris: [ "/.well-known/jwks.json","/.well-known/openid-configuration","/oauth2/*","/userinfo" ]
+    upstream_id: hydra-public
+    priority: 100
+
+  api-docs:
+    uri: /swagger*
+    upstream_id: api-docs
+
+  jaeger:
+    uri: /jaeger*
+    upstream_id: jaeger
+    plugins:
+      ext-plugin-pre-req:
+        conf:
+          - name: "kit_authz"
+            value: "{\"requirement\":[{\"namespace\":\"dev.jaeger\",\"resource\":\"*\",\"action\":\"*\"}]}"
+  kafka-ui:
+    uri: /kafka-ui*
+    upstream_id: kafka-ui
+    plugins:
+      ext-plugin-pre-req:
+        conf:
+          - name: "kit_authz"
+            value: "{\"requirement\":[{\"namespace\":\"dev.events.kafka\",\"resource\":\"*\",\"action\":\"*\"}]}"
+      response-rewrite:
+        headers:
+          X-Frame-Options: ""
+
+  dtm-ui:
+    uris: ["/dtm-ui*","/api/dtmsvr*"]
+    upstream_id: dtm-ui
+    plugins:
+      ext-plugin-pre-req:
+        conf:
+          - name: "kit_authz"
+            value: "{\"requirement\":[{\"namespace\":\"dev.dtm\",\"resource\":\"*\",\"action\":\"*\"}]}"
+
+  sys-api:
+    uris: ["/v1/sys/*","/v1/oidc/*","/assets/sys/*"]
+    upstream_id: sys-http
+
+  web:
+    priority: -100
+    uri: /*
+    upstream_id: web

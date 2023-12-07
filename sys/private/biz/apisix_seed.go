@@ -89,37 +89,35 @@ func (a *ApisixSeed) Do(ctx context.Context) error {
 	return err
 }
 func (a *ApisixSeed) do(_ context.Context) error {
-	if a.Cfg.Apisix.Upstreams != nil {
-		upstreams := a.Cfg.Apisix.Upstreams
-		for id, upstream := range upstreams {
-			if err := a.Client.PutUpstreamStruct(id, upstream); err != nil {
-				return err
+	return apisix.WalkModules(func(module *apisix.Module) error {
+		if module.Upstreams != nil {
+			for id, upstream := range module.Upstreams {
+				if err := a.Client.PutUpstreamStruct(id, upstream); err != nil {
+					return err
+				}
 			}
 		}
-	}
-	if a.Cfg.Apisix.GlobalRules != nil {
-		rules := a.Cfg.Apisix.GlobalRules
-		for id, rule := range rules {
-			if err := a.Client.PutGlobalRules(id, rule); err != nil {
-				return err
+		if module.GlobalRules != nil {
+			for id, rule := range module.GlobalRules {
+				if err := a.Client.PutGlobalRules(id, rule); err != nil {
+					return err
+				}
 			}
 		}
-	}
-	if a.Cfg.Apisix.Routes != nil {
-		routes := a.Cfg.Apisix.Routes
-		for id, route := range routes {
-			if err := a.Client.PutRoute(id, route); err != nil {
-				return err
+		if module.Routes != nil {
+			for id, route := range module.Routes {
+				if err := a.Client.PutRoute(id, route); err != nil {
+					return err
+				}
 			}
 		}
-	}
-	if a.Cfg.Apisix.StreamRoutes != nil {
-		routes := a.Cfg.Apisix.StreamRoutes
-		for id, route := range routes {
-			if err := a.Client.PutStreamRoute(id, route); err != nil {
-				return err
+		if module.StreamRoutes != nil {
+			for id, route := range module.StreamRoutes {
+				if err := a.Client.PutStreamRoute(id, route); err != nil {
+					return err
+				}
 			}
 		}
-	}
-	return nil
+		return nil
+	})
 }

@@ -1,0 +1,5 @@
+routes:
+  realtime-api:
+    uris: ["/v1/realtime/*","/assets/realtime/*"]
+    upstream_id: realtime-http
+    enable_websocket: true
